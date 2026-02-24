@@ -9,17 +9,14 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
-from dotenv import load_dotenv
 
-# Setup
+# Setup logging to stdout (Railway needs this)
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
 )
 logger = logging.getLogger(__name__)
-
-# Load environment variables
-load_dotenv()
 
 
 def main():
@@ -29,7 +26,7 @@ def main():
     from database_models import init_database
     
     logger.info("=" * 50)
-    logger.info("🍽️ Las Vegas Food Curator - Bot Worker")
+    logger.info("Las Vegas Food Curator - Bot Worker")
     logger.info("=" * 50)
     
     # Initialize
@@ -38,22 +35,28 @@ def main():
     bot.init_db()
     bot.set_video_processor(VideoProcessor())
     
-    # Get credentials from environment
-    username = os.getenv("INSTAGRAM_USERNAME")
-    password = os.getenv("INSTAGRAM_PASSWORD")
+    # Get credentials from environment (Railway or local)
+    username = os.environ.get("INSTAGRAM_USERNAME") or os.getenv("INSTAGRAM_USERNAME")
+    password = os.environ.get("INSTAGRAM_PASSWORD") or os.getenv("INSTAGRAM_PASSWORD")
+    
+    logger.info(f"Username found: {bool(username)}")
+    logger.info(f"Password found: {bool(password)}")
     
     if not username or not password:
         logger.error("Missing INSTAGRAM_USERNAME or INSTAGRAM_PASSWORD")
-        return
+        logger.error(f"Available env vars: {list(os.environ.keys())}")
+        sys.exit(1)
     
     # Login
     logger.info(f"Logging in as {username}...")
     try:
         bot.login(username, password)
-        logger.info("✓ Login successful")
+        logger.info("Login successful!")
     except Exception as e:
-        logger.error(f"✗ Login failed: {e}")
-        return
+        logger.error(f"Login failed: {e}")
+        logger.error("Will retry in 60 seconds...")
+        time.sleep(60)
+        sys.exit(1)
     
     # Get configuration
     hashtags = os.getenv("HASHTAGS", "lasvegasfood,vegaseats,lasvegasdining,vegasfoodie").split(",")
@@ -85,7 +88,7 @@ def main():
                 for item in discovered:
                     try:
                         story_id = bot.publish_media(item.id)
-                        logger.info(f"✓ Published: {story_id}")
+                        logger.info(f"Published: {story_id}")
                     except Exception as e:
                         logger.error(f"Failed to publish: {e}")
             
