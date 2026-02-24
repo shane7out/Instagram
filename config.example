@@ -1,0 +1,20 @@
+# Las Vegas Food Curator - Configuration
+# Copy this file to .env and fill in your credentials
+
+# Instagram Credentials
+INSTAGRAM_USERNAME=your_username
+INSTAGRAM_PASSWORD=your_password
+
+# Bot Settings
+MIN_FOLLOWERS=1000
+MIN_ENGAGEMENT_RATE=2.0
+MAX_RESULTS_PER_HASHTAG=20
+DAILY_ACTION_LIMIT=50
+RATE_LIMIT_DELAY=30
+
+# Database
+DATABASE_PATH=lasvegas_restaurants.db
+
+# Directories
+DOWNLOADS_DIR=downloads
+PROCESSED_DIR=processed
