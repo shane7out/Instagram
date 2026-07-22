@@ -1,0 +1,651 @@
+<title>Aureus Reserve — Gold Bars & Coins, Securely Vaulted</title>
+<meta name="description" content="Buy investment-grade gold bars and sovereign coins at low premiums. Fully insured, allocated vault storage or fast insured delivery." />
+<style>
+  /* ============ TOKENS ============ */
+  :root {
+    color-scheme: light dark;
+
+    /* warm gold-biased neutrals */
+    --ink:        #17130B;
+    --ground:     #FBF7EE;
+    --ground-2:   #F3ECDC;
+    --card:       #FFFFFF;
+    --line:       #E4D9C1;
+    --text:       #241E12;
+    --muted:      #6E6450;
+    --faint:      #9A8F78;
+
+    /* gold accent family */
+    --gold-1:     #B8892E;   /* deep */
+    --gold-2:     #D9A93B;   /* core */
+    --gold-3:     #EFC96A;   /* light */
+    --gold-4:     #F6E3AC;   /* pale */
+
+    --good:       #2E7D57;
+    --up:         #2E7D57;
+    --down:       #B44A3C;
+
+    --shadow:     0 1px 2px rgba(40,30,8,.06), 0 8px 28px -12px rgba(40,30,8,.18);
+    --shadow-lg:  0 24px 60px -24px rgba(40,30,8,.30);
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    --wrap: 1200px;
+    --r: 14px;
+  }
+  :root { --faint: #9A8F78; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink:      #0C0A06;
+      --ground:   #100D08;
+      --ground-2: #171207;
+      --card:     #1A150C;
+      --line:     #322813;
+      --text:     #F1E9D6;
+      --muted:    #B0A385;
+      --faint:    #7C7157;
+      --gold-1:   #C79A3E;
+      --gold-2:   #E4C067;
+      --gold-3:   #F1D688;
+      --gold-4:   #4A3C1B;
+      --card:     #17130B;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 10px 34px -14px rgba(0,0,0,.7);
+      --shadow-lg:0 30px 70px -28px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink:#0C0A06; --ground:#100D08; --ground-2:#171207; --card:#17130B; --line:#322813;
+    --text:#F1E9D6; --muted:#B0A385; --faint:#7C7157;
+    --gold-1:#C79A3E; --gold-2:#E4C067; --gold-3:#F1D688; --gold-4:#4A3C1B;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 34px -14px rgba(0,0,0,.7);
+    --shadow-lg:0 30px 70px -28px rgba(0,0,0,.8);
+  }
+  :root[data-theme="light"] {
+    --ink:#17130B; --ground:#FBF7EE; --ground-2:#F3ECDC; --card:#FFFFFF; --line:#E4D9C1;
+    --text:#241E12; --muted:#6E6450; --faint:#9A8F78;
+    --gold-1:#B8892E; --gold-2:#D9A93B; --gold-3:#EFC96A; --gold-4:#F6E3AC;
+    --shadow:0 1px 2px rgba(40,30,8,.06), 0 8px 28px -12px rgba(40,30,8,.18);
+    --shadow-lg:0 24px 60px -24px rgba(40,30,8,.30);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--ground);
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; letter-spacing: -.01em; margin: 0; }
+  a { color: inherit; }
+  img,svg { max-width: 100%; display: block; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold-1); font-weight: 700;
+  }
+
+  /* ============ TICKER ============ */
+  .ticker {
+    background: var(--ink); color: #EFE6D2;
+    font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .ticker .wrap { display: flex; gap: 26px; align-items: center; height: 40px; overflow-x: auto; scrollbar-width: none; }
+  .ticker .wrap::-webkit-scrollbar { display: none; }
+  .quote { display: flex; gap: 8px; align-items: baseline; white-space: nowrap; }
+  .quote b { font-weight: 600; letter-spacing: .04em; color: #C9BC9E; font-size: 11px; text-transform: uppercase; }
+  .quote .px { font-variant-numeric: tabular-nums; color: #F6EDD8; }
+  .quote .chg { font-size: 12px; }
+  .up { color: #5FC08C; } .down { color: #E08A7A; }
+  .ticker .live { margin-left: auto; display: flex; align-items: center; gap: 7px; color: #9A8F78; white-space: nowrap; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #5FC08C; box-shadow: 0 0 0 0 rgba(95,192,140,.6); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(95,192,140,.55)} 70%{box-shadow:0 0 0 7px rgba(95,192,140,0)} 100%{box-shadow:0 0 0 0 rgba(95,192,140,0)} }
+  @media (prefers-reduced-motion: reduce){ .dot{animation:none} }
+
+  /* ============ HEADER ============ */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  header .wrap { display: flex; align-items: center; gap: 24px; height: 72px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand .mark { width: 38px; height: 38px; flex: none; }
+  .brand .name { font-family: var(--serif); font-size: 21px; font-weight: 600; letter-spacing: .01em; }
+  .brand .name span { color: var(--gold-1); }
+  nav.main { display: flex; gap: 4px; margin-left: 8px; }
+  nav.main a { text-decoration: none; font-size: 14.5px; color: var(--muted); padding: 8px 12px; border-radius: 8px; font-weight: 500; }
+  nav.main a:hover { color: var(--text); background: var(--ground-2); }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .phone { display: flex; flex-direction: column; line-height: 1.15; text-decoration: none; text-align: right; }
+  .phone small { font-size: 11px; color: var(--muted); }
+  .phone b { font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .icon-btn { position: relative; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); display: grid; place-items: center; cursor: pointer; color: var(--text); }
+  .icon-btn:hover { border-color: var(--gold-2); }
+  .cart-count { position: absolute; top: -6px; right: -6px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; background: var(--gold-2); color: #17130B; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+  .theme-btn { font-size: 16px; }
+
+  .btn { cursor: pointer; border: 1px solid transparent; border-radius: 10px; font-weight: 600; font-size: 14.5px; padding: 11px 18px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform .08s ease, background .15s; font-family: var(--sans); }
+  .btn:active { transform: translateY(1px); }
+  .btn-gold { background: linear-gradient(160deg, var(--gold-3), var(--gold-1)); color: #241703; box-shadow: 0 6px 16px -8px rgba(184,137,46,.8); }
+  .btn-gold:hover { filter: brightness(1.05); }
+  .btn-ghost { background: transparent; border-color: var(--line); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--gold-2); }
+
+  /* ============ HERO ============ */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero::before {
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(60% 80% at 85% 15%, color-mix(in srgb, var(--gold-3) 30%, transparent), transparent 60%),
+      radial-gradient(50% 60% at 10% 90%, color-mix(in srgb, var(--gold-1) 16%, transparent), transparent 60%);
+    pointer-events:none;
+  }
+  .hero .wrap { position: relative; display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; padding: 72px 24px 84px; }
+  .hero h1 { font-size: clamp(38px, 5.2vw, 62px); line-height: 1.03; }
+  .hero h1 em { font-style: normal; color: var(--gold-1); }
+  .hero p.lead { font-size: 18.5px; color: var(--muted); max-width: 30em; margin: 22px 0 30px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-trust { display: flex; gap: 26px; margin-top: 40px; flex-wrap: wrap; }
+  .hero-trust div { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--muted); font-weight: 500; }
+  .hero-trust svg { color: var(--gold-1); flex: none; }
+
+  /* hero price panel */
+  .spot-panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-lg); overflow: hidden; }
+  .spot-panel .head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); background: var(--ground-2); }
+  .spot-panel .head b { font-family: var(--serif); font-size: 16px; }
+  .spot-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+  .spot-row:last-child { border-bottom: 0; }
+  .spot-metal { display: flex; align-items: center; gap: 12px; }
+  .coin-chip { width: 30px; height: 30px; border-radius: 50%; flex: none; }
+  .spot-metal b { font-size: 15px; }
+  .spot-metal small { display: block; color: var(--muted); font-size: 12px; }
+  .spot-px { text-align: right; }
+  .spot-px .p { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .spot-px .d { font-size: 12.5px; }
+
+  /* ============ SECTIONS ============ */
+  section { padding: 76px 0; }
+  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 34px; flex-wrap: wrap; }
+  .sec-head h2 { font-size: clamp(28px, 3.4vw, 40px); }
+  .sec-head p { color: var(--muted); margin: 8px 0 0; max-width: 46ch; }
+
+  /* filters */
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-weight: 600; font-size: 13.5px; padding: 8px 15px; border-radius: 999px; font-family: var(--sans); transition: .15s; }
+  .chip:hover { color: var(--text); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--gold-3); border-color: var(--ink); }
+  :root[data-theme="light"] .chip[aria-pressed="true"], :root:not([data-theme]) .chip[aria-pressed="true"] { }
+
+  /* product grid */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .product { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform .16s ease, box-shadow .16s ease, border-color .16s; }
+  .product:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--gold-2) 55%, var(--line)); }
+  .p-media { position: relative; aspect-ratio: 4/3; display: grid; place-items: center; background: radial-gradient(120% 120% at 50% 18%, var(--ground-2), var(--ground)); border-bottom: 1px solid var(--line); }
+  .p-badge { position: absolute; top: 12px; left: 12px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--gold-3) 40%, var(--card)); color: var(--gold-1); border: 1px solid color-mix(in srgb,var(--gold-2) 40%, transparent); }
+  .p-body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .p-cat { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); font-weight: 700; }
+  .p-name { font-family: var(--serif); font-size: 18px; line-height: 1.2; }
+  .p-spec { font-size: 13px; color: var(--muted); }
+  .p-foot { margin-top: auto; padding-top: 14px; display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+  .p-price .now { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .p-price .prem { font-size: 12px; color: var(--muted); }
+  .p-buy { cursor: pointer; border: 1px solid var(--line); background: var(--ground-2); color: var(--text); font-weight: 600; font-size: 13.5px; padding: 9px 14px; border-radius: 9px; font-family: var(--sans); white-space: nowrap; transition: .14s; }
+  .p-buy:hover { background: linear-gradient(160deg, var(--gold-3), var(--gold-1)); color: #241703; border-color: transparent; }
+
+  /* trust / vault */
+  .band { background: var(--ink); color: #EFE6D2; }
+  .band .eyebrow { color: var(--gold-3); }
+  .band h2 { color: #F7EFDC; }
+  .band p.sub { color: #B7AA8B; }
+  .feature-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 40px; }
+  .feature { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: var(--r); padding: 26px 24px; }
+  .feature .fi { width: 44px; height: 44px; border-radius: 11px; background: linear-gradient(160deg, var(--gold-3), var(--gold-1)); color: #241703; display: grid; place-items: center; margin-bottom: 16px; }
+  .feature h3 { color: #F7EFDC; font-size: 19px; margin-bottom: 8px; }
+  .feature p { color: #A79B7C; font-size: 14.5px; margin: 0; }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; text-align: center; }
+  .stat .n { font-family: var(--serif); font-size: clamp(32px, 4vw, 48px); font-weight: 600; color: var(--gold-1); font-variant-numeric: tabular-nums; }
+  .stat .l { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  /* steps */
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+  .step { position: relative; padding: 28px 24px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); }
+  .step .num { font-family: var(--serif); font-size: 15px; font-weight: 700; color: #241703; background: linear-gradient(160deg, var(--gold-3), var(--gold-1)); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 16px; }
+  .step h3 { font-size: 19px; margin-bottom: 7px; }
+  .step p { color: var(--muted); margin: 0; font-size: 14.5px; }
+
+  /* faq */
+  .faq { max-width: 780px; margin: 0 auto; }
+  details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+  summary { cursor: pointer; list-style: none; padding: 18px 4px; font-family: var(--serif); font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--gold-1); font-size: 24px; font-family: var(--sans); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { color: var(--muted); margin: 0 4px 18px; font-size: 15px; }
+
+  /* cta strip */
+  .cta-strip { background: linear-gradient(135deg, var(--gold-2), var(--gold-1)); border-radius: 22px; padding: 52px 48px; display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap; box-shadow: var(--shadow-lg); }
+  .cta-strip h2 { color: #241703; font-size: clamp(26px, 3vw, 36px); max-width: 16ch; }
+  .cta-strip p { color: #3a2c07; margin: 8px 0 0; font-weight: 500; }
+  .btn-dark { background: #17130B; color: var(--gold-3); }
+  .btn-dark:hover { background: #241d10; }
+
+  /* footer */
+  footer { background: var(--ink); color: #B7AA8B; padding: 64px 0 30px; border-top: 1px solid rgba(255,255,255,.06); }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 36px; }
+  footer h4 { color: #F1E7D2; font-size: 13px; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 16px; }
+  footer a { display: block; color: #A99C7D; text-decoration: none; font-size: 14px; padding: 5px 0; }
+  footer a:hover { color: var(--gold-3); }
+  .foot-brand .name { font-family: var(--serif); color: #F1E7D2; font-size: 22px; }
+  .foot-brand p { font-size: 14px; max-width: 34ch; margin: 14px 0 0; }
+  .foot-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.08); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: #7C7157; }
+
+  /* toast */
+  .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--gold-3); padding: 13px 22px; border-radius: 12px; font-size: 14.5px; font-weight: 600; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: .25s; z-index: 100; border: 1px solid rgba(255,255,255,.1); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  :focus-visible { outline: 2px solid var(--gold-2); outline-offset: 2px; border-radius: 4px; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1000px) {
+    .grid { grid-template-columns: repeat(2,1fr); }
+    .hero .wrap { grid-template-columns: 1fr; gap: 40px; padding: 52px 24px 60px; }
+    .feature-grid, .steps { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2,1fr); row-gap: 34px; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    nav.main, .phone { display: none; }
+  }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+    .cta-strip { padding: 36px 26px; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- ===================== TICKER ===================== -->
+<div class="ticker">
+  <div class="wrap">
+    <div class="quote"><b>Gold</b><span class="px tnum">$3,348.20</span><span class="chg up">▲ 0.62%</span></div>
+    <div class="quote"><b>Silver</b><span class="px tnum">$41.15</span><span class="chg up">▲ 1.08%</span></div>
+    <div class="quote"><b>Platinum</b><span class="px tnum">$1,072.40</span><span class="chg down">▼ 0.34%</span></div>
+    <div class="quote"><b>Palladium</b><span class="px tnum">$1,289.00</span><span class="chg up">▲ 0.21%</span></div>
+    <div class="live"><span class="dot"></span> Live spot · per troy oz · USD</div>
+  </div>
+</div>
+
+<!-- ===================== HEADER ===================== -->
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="18.5" fill="url(#g1)" stroke="#8a6414" stroke-width="1"/>
+        <circle cx="20" cy="20" r="14" fill="none" stroke="#8a6414" stroke-width="1.1" opacity=".5"/>
+        <path d="M20 9l2.9 6.3L30 16l-5 4.8L26.2 28 20 24.3 13.8 28 15 20.8 10 16l7.1-.7z" fill="#7a5810"/>
+        <defs><linearGradient id="g1" x1="4" y1="4" x2="36" y2="36"><stop stop-color="#F6E3AC"/><stop offset=".5" stop-color="#D9A93B"/><stop offset="1" stop-color="#B8892E"/></linearGradient></defs>
+      </svg>
+      <span class="name">Aureus <span>Reserve</span></span>
+    </a>
+    <nav class="main">
+      <a href="#shop">Gold Bars</a>
+      <a href="#shop">Gold Coins</a>
+      <a href="#shop">Silver</a>
+      <a href="#vault">Vault Storage</a>
+      <a href="#faq">Learn</a>
+    </nav>
+    <div class="header-actions">
+      <a class="phone" href="tel:+18005550147"><small>Speak to a specialist</small><b>1-800-555-0147</b></a>
+      <button class="icon-btn theme-btn" id="themeToggle" aria-label="Toggle color theme" title="Toggle theme">☾</button>
+      <button class="icon-btn" aria-label="View cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.2l2.3 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21 7H5.3"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+<!-- ===================== HERO ===================== -->
+<div class="hero">
+  <div class="wrap">
+    <div class="hero-left">
+      <p class="eyebrow">Investment-grade precious metals</p>
+      <h1>Own real gold.<br><em>Vaulted, insured,</em><br>delivered on your terms.</h1>
+      <p class="lead">Buy sovereign coins and LBMA-approved gold bars at some of the lowest premiums in the market — then store them in fully allocated, insured vaults or take insured delivery to your door.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#shop">Shop gold bars &amp; coins</a>
+        <a class="btn btn-ghost" href="#vault">How vault storage works</a>
+      </div>
+      <div class="hero-trust">
+        <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg> Lloyd's-underwritten insurance</div>
+        <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="9" width="16" height="12" rx="2"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/></svg> Fully allocated &amp; segregated</div>
+        <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 13l4 4L19 7"/></svg> 4.9/5 from 12,400+ buyers</div>
+      </div>
+    </div>
+
+    <aside class="spot-panel" aria-label="Live spot prices">
+      <div class="head"><b>Today's Spot Price</b><span class="eyebrow">Updated live</span></div>
+      <div class="spot-row">
+        <div class="spot-metal">
+          <span class="coin-chip" style="background:radial-gradient(circle at 35% 30%, #F6E3AC, #C79A3E 70%, #8a6414)"></span>
+          <b>Gold <small>per troy oz</small></b>
+        </div>
+        <div class="spot-px"><div class="p tnum">$3,348.20</div><div class="d up">▲ $20.60 (0.62%)</div></div>
+      </div>
+      <div class="spot-row">
+        <div class="spot-metal">
+          <span class="coin-chip" style="background:radial-gradient(circle at 35% 30%, #F2F2F2, #B9BEC4 70%, #7d848c)"></span>
+          <b>Silver <small>per troy oz</small></b>
+        </div>
+        <div class="spot-px"><div class="p tnum">$41.15</div><div class="d up">▲ $0.44 (1.08%)</div></div>
+      </div>
+      <div class="spot-row">
+        <div class="spot-metal">
+          <span class="coin-chip" style="background:radial-gradient(circle at 35% 30%, #EAF0F2, #9FB0BA 70%, #5f6f78)"></span>
+          <b>Platinum <small>per troy oz</small></b>
+        </div>
+        <div class="spot-px"><div class="p tnum">$1,072.40</div><div class="d down">▼ $3.70 (0.34%)</div></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ===================== SHOP ===================== -->
+<section id="shop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">The vault catalog</p>
+        <h2>Gold bars &amp; coins in stock</h2>
+        <p>Every item ships insured within 2 business days, or route it straight into allocated storage at checkout.</p>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Filter products">
+        <button class="chip" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="gold-bar" aria-pressed="false">Gold Bars</button>
+        <button class="chip" data-filter="gold-coin" aria-pressed="false">Gold Coins</button>
+        <button class="chip" data-filter="silver" aria-pressed="false">Silver</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"><!-- products injected --></div>
+  </div>
+</section>
+
+<!-- ===================== VAULT / TRUST ===================== -->
+<section id="vault" class="band">
+  <div class="wrap">
+    <p class="eyebrow">Storage &amp; protection</p>
+    <h2>Your metal, held like a central bank holds theirs</h2>
+    <p class="sub" style="max-width:52ch;">Choose insured delivery or leave it with us in professional-grade vaults. Either way, the bars and coins are legally yours — allocated to you by serial number, never pooled or lent.</p>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.4"/><path d="M12 8.6V7M12 17v-1.6"/></svg></div>
+        <h3>Fully allocated</h3>
+        <p>Each bar and coin is registered to you by weight and serial number. You can withdraw or take delivery of your exact holdings at any time.</p>
+      </div>
+      <div class="feature">
+        <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/></svg></div>
+        <h3>Insured to full value</h3>
+        <p>Holdings are underwritten through a Lloyd's of London syndicate at 100% of market value — in transit and in the vault, at no extra charge.</p>
+      </div>
+      <div class="feature">
+        <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21V10l9-6 9 6v11"/><path d="M9 21v-6h6v6"/></svg></div>
+        <h3>Class-3 vaults</h3>
+        <p>Independent, audited depositories in New York, Zurich, and Singapore with 24/7 monitoring and twice-yearly third-party bar audits.</p>
+      </div>
+    </div>
+    <div class="stats" style="margin-top:56px;">
+      <div class="stat"><div class="n">$0</div><div class="l">Storage fees for your first year</div></div>
+      <div class="stat"><div class="n">2&nbsp;days</div><div class="l">Typical insured delivery</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">Insured market value</div></div>
+      <div class="stat"><div class="n">12.4k</div><div class="l">Verified 5-star reviews</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Simple by design</p>
+        <h2>Buying gold in three steps</h2>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Lock your price</h3>
+        <p>Choose your bars or coins and confirm the order. Your price is fixed against live spot the moment you check out — no surprises.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Pay your way</h3>
+        <p>Settle by bank wire, card, or ACH. Orders clear fast and every transaction is confirmed in writing.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Store or ship</h3>
+        <p>Send it to an allocated vault with one click, or take fully insured, discreetly packaged delivery to your door.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" style="background:var(--ground-2);">
+  <div class="wrap">
+    <div class="sec-head" style="justify-content:center;text-align:center;">
+      <div>
+        <p class="eyebrow">Good to know</p>
+        <h2>Questions buyers ask us</h2>
+      </div>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Are the gold bars and coins genuine and certified?</summary>
+        <p>Yes. We source only from LBMA Good Delivery refiners and sovereign mints. Bars ship with assay certification, and every item is verified on arrival at our depository before it reaches you.</p>
+      </details>
+      <details>
+        <summary>What premium am I paying over spot?</summary>
+        <p>Each product page shows the live spot price plus a transparent premium that covers minting, fabrication, and handling. Premiums are lowest on larger bars and highest on small fractional coins.</p>
+      </details>
+      <details>
+        <summary>Can I take physical delivery of vaulted metal?</summary>
+        <p>Always. Because your holdings are fully allocated, you can request delivery of your exact bars and coins at any time, or sell them back to us at the live bid price.</p>
+      </details>
+      <details>
+        <summary>Is my purchase reported or taxed?</summary>
+        <p>Reporting requirements depend on your jurisdiction and the product. We provide clear documentation for every order; for tax specifics we recommend speaking with your own advisor.</p>
+      </details>
+      <details>
+        <summary>How is shipping protected?</summary>
+        <p>All deliveries are fully insured, require an adult signature, and arrive in discreet, unmarked, tamper-evident packaging. You are covered for 100% of value until the parcel is in your hands.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section>
+  <div class="wrap">
+    <div class="cta-strip">
+      <div>
+        <h2>Ready to add gold to your portfolio?</h2>
+        <p>Talk to a specialist or start browsing the vault — no account required to see live prices.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a class="btn btn-dark" href="#shop">Browse the catalog</a>
+        <a class="btn btn-ghost" href="tel:+18005550147" style="border-color:#3a2c07;color:#241703;">Call 1-800-555-0147</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <span class="name">Aureus Reserve</span>
+        <p>Investment-grade gold and silver, sold at fair premiums and protected in fully insured, allocated vaults.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="#shop">Gold Bars</a>
+        <a href="#shop">Gold Coins</a>
+        <a href="#shop">Silver Bullion</a>
+        <a href="#shop">New Arrivals</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#vault">Vault Storage</a>
+        <a href="#how">How It Works</a>
+        <a href="#faq">Learn</a>
+        <a href="#top">Contact</a>
+      </div>
+      <div>
+        <h4>Trust</h4>
+        <a href="#vault">Insurance</a>
+        <a href="#vault">Audits</a>
+        <a href="#faq">Shipping &amp; Returns</a>
+        <a href="#faq">Authenticity</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Aureus Reserve. Prices shown are indicative and update with live spot markets.</span>
+      <span>Precious metals carry risk; past performance is not a guarantee of future value.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Added to cart</div>
+
+<script>
+  /* ---------- theme ---------- */
+  (function(){
+    var root = document.documentElement, btn = document.getElementById('themeToggle');
+    function apply(t){ root.setAttribute('data-theme', t); btn.textContent = t === 'dark' ? '☀' : '☾'; }
+    var start = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    apply(start);
+    btn.addEventListener('click', function(){
+      apply(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  })();
+
+  /* ---------- product data ---------- */
+  var SPOT_GOLD = 3348.20, SPOT_SILVER = 41.15;
+  var products = [
+    { name:"American Gold Eagle", spec:"1 oz · 22k · U.S. Mint", cat:"gold-coin", type:"coin", metal:"gold", oz:1, prem:162, badge:"Best seller" },
+    { name:"Canadian Maple Leaf", spec:"1 oz · .9999 fine · RCM", cat:"gold-coin", type:"coin", metal:"gold", oz:1, prem:122, badge:"" },
+    { name:"South African Krugerrand", spec:"1 oz · 22k · SA Mint", cat:"gold-coin", type:"coin", metal:"gold", oz:1, prem:108, badge:"" },
+    { name:"Gold Buffalo", spec:"1 oz · .9999 fine · U.S. Mint", cat:"gold-coin", type:"coin", metal:"gold", oz:1, prem:158, badge:"" },
+    { name:"1 oz Gold Bar", spec:"1 oz · .9999 · LBMA refiner", cat:"gold-bar", type:"bar", metal:"gold", oz:1, prem:78, badge:"Low premium" },
+    { name:"10 oz Gold Bar", spec:"10 oz · .9999 · LBMA refiner", cat:"gold-bar", type:"bar", metal:"gold", oz:10, prem:520, badge:"" },
+    { name:"1 kg Gold Bar", spec:"32.15 oz · .9999 · LBMA", cat:"gold-bar", type:"bar", metal:"gold", oz:32.15, prem:1150, badge:"Lowest premium" },
+    { name:"100 g Gold Bar", spec:"3.215 oz · .9999 · LBMA", cat:"gold-bar", type:"bar", metal:"gold", oz:3.215, prem:210, badge:"" },
+    { name:"American Silver Eagle", spec:"1 oz · .999 fine · U.S. Mint", cat:"silver", type:"coin", metal:"silver", oz:1, prem:5.5, badge:"" },
+    { name:"10 oz Silver Bar", spec:"10 oz · .999 · LBMA refiner", cat:"silver", type:"bar", metal:"silver", oz:10, prem:12, badge:"" },
+    { name:"Silver Maple Leaf", spec:"1 oz · .9999 fine · RCM", cat:"silver", type:"coin", metal:"silver", oz:1, prem:4.9, badge:"" },
+    { name:"1 kg Silver Bar", spec:"32.15 oz · .999 · LBMA", cat:"silver", type:"bar", metal:"silver", oz:32.15, prem:28, badge:"Value" }
+  ];
+
+  function price(p){
+    var spot = p.metal === 'gold' ? SPOT_GOLD : SPOT_SILVER;
+    return spot * p.oz + p.prem;
+  }
+  function money(n){
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  /* coin / bar SVG artwork */
+  function art(p){
+    var goldGrad = 'radial-gradient';
+    if (p.type === 'coin'){
+      var face = p.metal === 'gold'
+        ? ['#F7E7B0','#DDAF43','#A9781F'] : ['#F4F5F6','#C3C9CE','#828A92'];
+      var rim = p.metal === 'gold' ? '#8a6414' : '#6d757d';
+      return '<svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">' +
+        '<defs><radialGradient id="c'+p.id+'" cx="38%" cy="32%" r="75%">' +
+        '<stop offset="0" stop-color="'+face[0]+'"/><stop offset="55%" stop-color="'+face[1]+'"/><stop offset="100%" stop-color="'+face[2]+'"/></radialGradient></defs>' +
+        '<circle cx="75" cy="75" r="66" fill="url(#c'+p.id+')" stroke="'+rim+'" stroke-width="2.5"/>' +
+        '<circle cx="75" cy="75" r="56" fill="none" stroke="'+rim+'" stroke-width="1.4" opacity=".45"/>' +
+        reeding(rim) +
+        '<path d="M75 40l7.2 15.6L99 57l-12.4 11.9L90 86 75 77.6 60 86l3.4-17.1L51 57l16.8-1.4z" fill="'+rim+'" opacity=".85"/>' +
+        '</svg>';
+    }
+    // bar
+    var bar = p.metal === 'gold' ? ['#F7E7B0','#E0B84C','#B0851F'] : ['#F1F3F4','#CBD0D4','#93999F'];
+    var edge = p.metal === 'gold' ? '#8a6414' : '#767c82';
+    return '<svg width="176" height="120" viewBox="0 0 176 120" aria-hidden="true">' +
+      '<defs><linearGradient id="b'+p.id+'" x1="0" y1="0" x2="176" y2="120">' +
+      '<stop offset="0" stop-color="'+bar[0]+'"/><stop offset="50%" stop-color="'+bar[1]+'"/><stop offset="100%" stop-color="'+bar[2]+'"/></linearGradient></defs>' +
+      '<path d="M20 30 L156 22 L166 92 L30 100 Z" fill="url(#b'+p.id+')" stroke="'+edge+'" stroke-width="2"/>' +
+      '<path d="M20 30 L156 22 L150 34 L26 42 Z" fill="#fff" opacity=".28"/>' +
+      '<text x="92" y="60" font-family="Georgia,serif" font-size="15" fill="'+edge+'" text-anchor="middle" font-weight="bold" transform="rotate(-3 92 60)">FINE GOLD</text>' +
+      '<text x="92" y="78" font-family="Georgia,serif" font-size="11" fill="'+edge+'" text-anchor="middle" transform="rotate(-3 92 78)" opacity=".8">999.9</text>' +
+      '</svg>';
+  }
+  function reeding(color){
+    var s = '', cx=75, cy=75, r=66;
+    for (var a=0; a<360; a+=6){
+      var rad = a*Math.PI/180;
+      s += '<line x1="'+(cx+Math.cos(rad)*(r-1))+'" y1="'+(cy+Math.sin(rad)*(r-1))+'" x2="'+(cx+Math.cos(rad)*r)+'" y2="'+(cy+Math.sin(rad)*r)+'" stroke="'+color+'" stroke-width="1.5" opacity=".4"/>';
+    }
+    return s;
+  }
+
+  var grid = document.getElementById('grid');
+  var cart = 0, cartEl = document.getElementById('cartCount'), toast = document.getElementById('toast'), toastT;
+
+  function render(filter){
+    grid.innerHTML = '';
+    products.forEach(function(p, i){
+      p.id = i;
+      if (filter !== 'all' && p.cat !== filter) return;
+      var catLabel = p.cat === 'gold-bar' ? 'Gold Bar' : p.cat === 'gold-coin' ? 'Gold Coin' : (p.type === 'bar' ? 'Silver Bar' : 'Silver Coin');
+      var el = document.createElement('article');
+      el.className = 'product';
+      el.innerHTML =
+        '<div class="p-media">' + (p.badge ? '<span class="p-badge">'+p.badge+'</span>' : '') + art(p) + '</div>' +
+        '<div class="p-body">' +
+          '<span class="p-cat">'+catLabel+'</span>' +
+          '<div class="p-name">'+p.name+'</div>' +
+          '<div class="p-spec">'+p.spec+'</div>' +
+          '<div class="p-foot">' +
+            '<div class="p-price"><div class="now tnum">'+money(price(p))+'</div><div class="prem">spot + '+money(p.prem).replace('.00','')+' premium</div></div>' +
+            '<button class="p-buy" data-i="'+i+'">Add to cart</button>' +
+          '</div>' +
+        '</div>';
+      grid.appendChild(el);
+    });
+  }
+
+  grid.addEventListener('click', function(e){
+    var b = e.target.closest('.p-buy');
+    if (!b) return;
+    cart++; cartEl.textContent = cart;
+    var name = products[b.dataset.i].name;
+    toast.textContent = name + ' added to cart';
+    toast.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  });
+
+  document.getElementById('filters').addEventListener('click', function(e){
+    var c = e.target.closest('.chip');
+    if (!c) return;
+    this.querySelectorAll('.chip').forEach(function(x){ x.setAttribute('aria-pressed', x === c); });
+    render(c.dataset.filter);
+  });
+
+  render('all');
+</script>
