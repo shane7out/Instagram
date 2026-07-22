@@ -100,15 +100,103 @@
     counters.forEach((el) => co.observe(el));
   }
 
-  /* ---- Appointment form (demo — no backend) ---- */
+  /* ---- Before / after smile slider ---- */
+  document.querySelectorAll(".ba").forEach((ba) => {
+    const range = ba.querySelector(".ba__range");
+    const before = ba.querySelector(".ba__before");
+    const line = ba.querySelector(".ba__line");
+    const handle = ba.querySelector(".ba__handle");
+    if (!range || !before) return;
+    const apply = (v) => {
+      before.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+      if (line) line.style.left = v + "%";
+      if (handle) handle.style.left = v + "%";
+    };
+    range.addEventListener("input", () => apply(+range.value));
+    apply(+range.value);
+  });
+
+  /* ---- Appointment form (validation + optional backend) ---- */
   document.querySelectorAll("form[data-demo]").forEach((form) => {
-    form.addEventListener("submit", (e) => {
+    const showError = (field, msg) => {
+      field.classList.add("show-err");
+      const el = field.querySelector(".err");
+      if (el) el.textContent = msg;
+      const input = field.querySelector("input, select, textarea");
+      if (input) input.classList.add("invalid");
+    };
+    const clearError = (field) => {
+      field.classList.remove("show-err");
+      const input = field.querySelector("input, select, textarea");
+      if (input) input.classList.remove("invalid");
+    };
+    // live-clear errors as the user types
+    form.querySelectorAll("input, select, textarea").forEach((input) => {
+      input.addEventListener("input", () => {
+        const field = input.closest(".field");
+        if (field) clearError(field);
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      let ok = true;
+      let firstBad = null;
+      form.querySelectorAll("[required]").forEach((input) => {
+        const field = input.closest(".field");
+        if (!field) return;
+        const val = input.value.trim();
+        const isEmail = input.type === "email";
+        const bad = !val || (isEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val));
+        if (bad) {
+          ok = false;
+          showError(field, isEmail && val ? "Please enter a valid email." : "This field is required.");
+          if (!firstBad) firstBad = input;
+        } else {
+          clearError(field);
+        }
+      });
+      if (!ok) { if (firstBad) firstBad.focus(); return; }
+
+      const btn = form.querySelector('button[type="submit"]');
+      const endpoint = form.dataset.endpoint; // set to a Formspree URL to go live
       const card = form.closest(".form-card");
-      if (card) card.classList.add("sent");
-      form.reset();
+
+      if (endpoint) {
+        const original = btn ? btn.textContent : "";
+        if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            body: new FormData(form),
+            headers: { Accept: "application/json" },
+          });
+          if (!res.ok) throw new Error("Request failed");
+          if (card) card.classList.add("sent");
+          form.reset();
+        } catch (err) {
+          if (btn) { btn.disabled = false; btn.textContent = original; }
+          alert("Sorry — something went wrong sending your request. Please call us at (555) 123-4567.");
+        }
+      } else {
+        // Demo mode: no backend wired up yet
+        if (card) card.classList.add("sent");
+        form.reset();
+      }
     });
   });
+
+  /* ---- Back to top ---- */
+  const toTop = document.querySelector(".to-top");
+  if (toTop) {
+    const toggleTop = () => toTop.classList.toggle("show", window.scrollY > 600);
+    window.addEventListener("scroll", toggleTop, { passive: true });
+    toggleTop();
+    toTop.addEventListener("click", () => {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    });
+  }
 
   /* ---- Footer year ---- */
   const yr = document.querySelector("[data-year]");
