@@ -1,6 +1,14 @@
 import type { Coin, Category } from '@/lib/types';
-import { coins } from '@/data/inventory';
+import { coins as curatedCoins } from '@/data/inventory';
+import { importedCoins } from '@/data/imported';
 import { categories, getCategory, topCategories } from '@/data/categories';
+
+/**
+ * The full catalog = our curated certified inventory + coins imported from
+ * source dealers (Money Metals Exchange). Imported coins come first so newly
+ * synced stock surfaces at the top of listings.
+ */
+const coins: Coin[] = [...importedCoins, ...curatedCoins];
 
 /**
  * Read model over the inventory. Pages and components query the catalog through

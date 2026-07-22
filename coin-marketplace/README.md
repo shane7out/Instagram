@@ -53,36 +53,43 @@ npm run typecheck  # tsc --noEmit
 ### The three pillars
 
 **1. Markup pricing engine** — [`src/lib/pricing.ts`](src/lib/pricing.ts)
-Turns a dealer's `sourcePrice` into our marketplace `price` using tiered markups
-(bigger % on cheap coins, thinner % on trophy coins), a minimum-margin floor, a
-fixed handling recovery, and retail "charm" rounding. Pricing lives in exactly
-one place, so it's trivial to tune margins across the whole catalog.
+Turns a dealer's `sourcePrice` into our marketplace `price` with a **flat 35%
+markup** — a coin the dealer lists at $100 sells here for exactly $135. The
+percentage lives in one constant (`MARKUP_PERCENT`), so the whole catalog
+re-prices by changing one number. Rounding is `exact` by default (honest, cent-
+accurate); `dollar` and `charm` modes are available if you want retail endings.
 
 **2. Pluggable scraper / importer** — [`src/lib/sources/`](src/lib/sources/)
 - `types.ts` — the `SourceAdapter` contract every dealer integration implements.
 - `base.ts` — shared HTTP + field parsers (year, mintmark, grade, metal, price).
-- `heritage.ts` — a worked example adapter (with offline fixtures).
-- `importer.ts` — pulls from all adapters, applies markup, maps categories,
-  dedupes across sources (cheapest source wins), emits marketplace `Coin`s +
-  a margin report.
+- `moneymetals.ts` — **live adapter for Money Metals Exchange**: sweeps their
+  category pages and extracts listings via schema.org JSON-LD (with a
+  price/name heuristic fallback). Ships a grounded 20-coin snapshot as fixtures.
+- `heritage.ts` — a second worked example adapter.
+- `importer.ts` — pulls from all adapters, applies the 35% markup, maps
+  categories (metal/country-aware), dedupes across sources (cheapest wins),
+  emits marketplace `Coin`s + a margin report.
 - Add a new dealer by dropping in one file that extends `BaseSourceAdapter` and
   registering it in `sources/index.ts`.
 
-Run it end-to-end right now (no network needed):
+The catalog is seeded with **20 top-selling coins from Money Metals Exchange**
+(see `src/data/moneymetals-listings.ts` → mapped to live coins in
+`src/data/imported.ts`), each marked up 35%.
+
+Run the pipeline end-to-end right now (no network needed — uses fixtures):
 
 ```bash
-npm run import
+npm run import -- --source=moneymetals --limit=20
 # ▶ Importing coins (dry-run / fixtures)
-# ── Import report ──
-#   heritage   fetched 3  imported 3
-#   projected margin: $4,085 ...
+#   moneymetals   fetched 20  imported 20
+#   source value: $24,947   list value: $33,678   margin: $8,731  (= +35%)
 ```
 
-Write results to the file the catalog reads from:
+Refresh with a **live** pull on any machine with normal network access
+(this build sandbox blocks outbound fetches):
 
 ```bash
-npm run import -- --out=src/data/imported.json
-npm run import -- --source=heritage --limit=50 --live   # once live adapters exist
+npm run import -- --source=moneymetals --limit=20 --live --out=src/data/imported.json
 ```
 
 **3. Programmatic SEO** — [`src/lib/landing.ts`](src/lib/landing.ts)

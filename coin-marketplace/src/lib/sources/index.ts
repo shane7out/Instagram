@@ -1,5 +1,6 @@
 import type { SourceAdapter } from './types';
 import { HeritageAdapter } from './heritage';
+import { MoneyMetalsAdapter } from './moneymetals';
 
 /**
  * Source registry. Register a new dealer/auction site by adding its adapter to
@@ -11,6 +12,7 @@ import { HeritageAdapter } from './heritage';
  * extends BaseSourceAdapter — copy heritage.ts as a template.
  */
 export const adapters: SourceAdapter[] = [
+  new MoneyMetalsAdapter(),
   new HeritageAdapter(),
   // new GreatCollectionsAdapter(),
   // new EbayCertifiedAdapter(),

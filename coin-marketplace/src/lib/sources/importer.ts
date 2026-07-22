@@ -34,23 +34,43 @@ export interface ImportReport {
 
 /** Map a source's free-text category hint to one of our category slugs. */
 function mapCategory(listing: NormalizedListing): string {
-  const hint = `${listing.categoryHint ?? ''} ${listing.series ?? ''} ${listing.title}`.toLowerCase();
+  // An explicit category hint from the adapter always wins.
+  const known = new Set([
+    'us-coins',
+    'silver-dollars',
+    'gold-coins',
+    'ancient-coins',
+    'world-coins',
+    'type-coins',
+  ]);
+  if (listing.categoryHint && known.has(listing.categoryHint)) return listing.categoryHint;
+
+  const hint = `${listing.series ?? ''} ${listing.title}`.toLowerCase();
+  const country = (listing.country ?? '').toLowerCase();
+  const isUS = !country || country === 'united states' || country === 'usa' || country === 'us';
+
   if (/ancient|denarius|tetradrachm|follis|aureus|solidus|sestertius/.test(hint)) return 'ancient-coins';
-  if (/sovereign|panda|reales|maple|britannia|philharmonic|krugerrand/.test(hint)) return 'world-coins';
   if (/morgan|peace|silver dollar/.test(hint)) return 'silver-dollars';
-  if (/gold|eagle|sovereign|double eagle|\$20|\$10|\$5|\$2\.5/.test(hint)) return 'gold-coins';
+  // Metal is the strongest signal for bullion (avoids "silver eagle" → gold).
+  if (listing.metal === 'Gold') return 'gold-coins';
+  if (!isUS) return 'world-coins';
+  if (/sovereign|panda|reales|maple|britannia|philharmonic|krugerrand|kangaroo/.test(hint))
+    return 'world-coins';
   if (/dime|nickel|quarter|half dollar|cent|type/.test(hint)) return 'type-coins';
   return 'us-coins';
 }
 
 /** A dedupe key that identifies "the same coin" across different sources. */
 function dedupeKey(listing: NormalizedListing): string {
+  // A cert number uniquely identifies a certified coin on its own.
+  if (listing.certNumber) return `cert:${listing.certNumber}`;
   return [
     listing.year ?? '',
     listing.mintMark ?? '',
     (listing.series ?? '').toLowerCase(),
+    // Denomination distinguishes sizes of the same series (1 oz vs 1/10 oz Eagle).
+    (listing.denomination ?? '').toLowerCase(),
     (listing.grade ?? '').toLowerCase(),
-    listing.certNumber ?? '',
   ]
     .join('|')
     .trim();
