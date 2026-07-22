@@ -1,4 +1,4 @@
-# Christensen Coins — SEO-First Coin Marketplace
+# Crystal Coins — SEO-First Coin Marketplace
 
 A fast, SEO-optimized marketplace for rare and collectible coins, built on the
 **aggregate-and-mark-up** model: pull certified-coin listings from the world's

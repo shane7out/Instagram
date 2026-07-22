@@ -25,7 +25,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
         signal: controller.signal,
         headers: {
           'User-Agent':
-            'ChristensenCoinsBot/1.0 (+https://christensencoins.com/bot; aggregator)',
+            'CrystalCoinsBot/1.0 (+https://crystalcoins.com/bot; aggregator)',
           Accept: 'text/html,application/xhtml+xml,application/json',
         },
       });
