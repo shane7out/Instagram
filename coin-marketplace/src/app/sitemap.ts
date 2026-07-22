@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { site } from '@/lib/site';
 import { getAllCoins } from '@/lib/catalog';
 import { categories } from '@/data/categories';
+import { guides } from '@/data/guides';
 import { landingPages } from '@/lib/landing';
 
 /**
@@ -15,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${site.url}/`, lastModified: now, changeFrequency: 'daily', priority: 1 },
     { url: `${site.url}/coins`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${site.url}/learn`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${site.url}/buy`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${site.url}/sell`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${site.url}/how-it-works`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
@@ -35,6 +37,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  const guideRoutes: MetadataRoute.Sitemap = guides.map((g) => ({
+    url: `${site.url}/learn/${g.slug}`,
+    lastModified: new Date(g.updated),
+    changeFrequency: 'monthly',
+    priority: 0.75,
+  }));
+
   const coinRoutes: MetadataRoute.Sitemap = getAllCoins().map((coin) => ({
     url: `${site.url}/coins/${coin.slug}`,
     lastModified: new Date(coin.lastSyncedAt),
@@ -42,5 +51,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...landingRoutes, ...coinRoutes];
+  return [...staticRoutes, ...categoryRoutes, ...landingRoutes, ...guideRoutes, ...coinRoutes];
 }

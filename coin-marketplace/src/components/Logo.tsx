@@ -1,7 +1,7 @@
 /** Brand mark: a stylized gold coin with an "R" monogram. */
 export function Logo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} role="img" aria-label="Crystal Coins logo">
+    <svg viewBox="0 0 48 48" className={className} role="img" aria-label="Christensen Coins logo">
       <defs>
         <radialGradient id="logo-face" cx="38%" cy="32%" r="75%">
           <stop offset="0%" stopColor="#f7e9b0" />

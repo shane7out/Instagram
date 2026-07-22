@@ -6,6 +6,7 @@ import { CoinGrid } from '@/components/CoinCard';
 import { CoinMedallion } from '@/components/CoinMedallion';
 import { ItemListJsonLd } from '@/components/JsonLd';
 import { formatUsd } from '@/lib/pricing';
+import { guides } from '@/data/guides';
 
 export default function HomePage() {
   const featured = getFeaturedCoins(8);
@@ -197,6 +198,36 @@ export default function HomePage() {
         />
         <div className="mt-8">
           <CoinGrid coins={newArrivals} />
+        </div>
+      </section>
+
+      {/* ---- Learn / expert guides ---- */}
+      <section className="border-y border-white/[0.06] bg-ink-900/40">
+        <div className="container-page py-14">
+          <SectionHeading
+            eyebrow="Learn from a Real Dealer"
+            title="Coin Guides & Value Guides"
+            href="/learn"
+            linkText="All guides"
+          />
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {guides.slice(0, 3).map((g) => (
+              <Link
+                key={g.slug}
+                href={`/learn/${g.slug}`}
+                className="card group flex flex-col p-6 transition-all hover:-translate-y-1 hover:border-gold-400/30 hover:shadow-gold-glow"
+              >
+                <span className="chip w-fit border-gold-400/30 text-gold-200">{g.kicker}</span>
+                <h3 className="mt-4 font-serif text-lg font-semibold leading-snug text-white group-hover:text-gold-100">
+                  {g.title}
+                </h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-silver-300">{g.description}</p>
+                <span className="mt-4 text-xs font-semibold text-gold-300">
+                  Read guide · {g.readingMinutes} min →
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

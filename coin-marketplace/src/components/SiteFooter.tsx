@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { site } from '@/lib/site';
 import { topCategories, categories } from '@/data/categories';
+import { guides } from '@/data/guides';
 import { Logo } from '@/components/Logo';
 
 /**
@@ -11,7 +12,7 @@ export function SiteFooter() {
   const year = 2026;
   return (
     <footer className="mt-24 border-t border-white/[0.06] bg-ink-900/50">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
+      <div className="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-6">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2.5">
             <Logo className="h-8 w-8" />
@@ -54,6 +55,15 @@ export function SiteFooter() {
           <FooterLink href="/coins?q=key+date">Key Dates</FooterLink>
           <FooterLink href="/coins?series=Peace+Dollar">Peace Dollars</FooterLink>
           <FooterLink href="/coins?category=ancient-coins">Ancient Coins</FooterLink>
+        </FooterCol>
+
+        <FooterCol title="Coin Guides">
+          <FooterLink href="/learn">All Guides</FooterLink>
+          {guides.slice(0, 5).map((g) => (
+            <FooterLink key={g.slug} href={`/learn/${g.slug}`}>
+              {g.kicker}
+            </FooterLink>
+          ))}
         </FooterCol>
 
         <FooterCol title="Company">

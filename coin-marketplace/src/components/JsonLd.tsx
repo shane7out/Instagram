@@ -127,6 +127,57 @@ export function BreadcrumbJsonLd({ items }: { items: { name: string; url: string
   );
 }
 
+export function ArticleJsonLd({
+  headline,
+  description,
+  slug,
+  datePublished,
+  dateModified,
+}: {
+  headline: string;
+  description: string;
+  slug: string;
+  datePublished: string;
+  dateModified?: string;
+}) {
+  return (
+    <Script
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline,
+        description,
+        datePublished,
+        dateModified: dateModified ?? datePublished,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/learn/${slug}` },
+        author: { '@type': 'Organization', name: site.name, url: site.url },
+        publisher: {
+          '@type': 'Organization',
+          name: site.name,
+          url: site.url,
+        },
+      }}
+    />
+  );
+}
+
+export function FaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] }) {
+  if (!faqs.length) return null;
+  return (
+    <Script
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      }}
+    />
+  );
+}
+
 export function ItemListJsonLd({ coins, name }: { coins: Coin[]; name: string }) {
   return (
     <Script
