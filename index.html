@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SparkyLoan – Fast Loan Matching Service | Up to $35,000</title>
+  <meta name="description" content="SparkyLoan connects you with a network of lenders in minutes. Request up to $35,000. All credit types welcome. Secure, no hidden fees, simple process." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>⚡</text></svg>" />
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a href="#top" class="brand" aria-label="SparkyLoan home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>
+        </span>
+        <span class="brand-name">Sparky<span>Loan</span></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary">
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#benefits">Why SparkyLoan</a></li>
+          <li><a href="#requirements">Requirements</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#request" class="nav-cta">Get Started</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow">Fast. Simple. Secure.</span>
+          <h1>Request up to <span class="amount">$35,000</span> fast</h1>
+          <p class="lead">
+            SparkyLoan connects you with a network of lenders in minutes. All credit
+            types welcome — secure, no hidden fees, and a simple process from start to finish.
+          </p>
+          <div class="hero-actions">
+            <a href="#request" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="#how-it-works" class="btn btn-ghost btn-lg">How It Works</a>
+          </div>
+          <ul class="hero-trust">
+            <li><span aria-hidden="true">🔒</span> Bank-level encryption</li>
+            <li><span aria-hidden="true">✓</span> No obligation</li>
+            <li><span aria-hidden="true">⚡</span> Results in minutes</li>
+          </ul>
+        </div>
+
+        <!-- ===== Quick request card ===== -->
+        <aside class="hero-card" id="request">
+          <div class="card-head">
+            <h2>Start your request</h2>
+            <p>Takes only a few minutes</p>
+          </div>
+          <form id="loan-form" class="loan-form" novalidate>
+            <!-- Step 1 -->
+            <div class="form-step is-active" data-step="1">
+              <label class="field">
+                <span class="field-label">How much do you need?</span>
+                <select name="amount" required>
+                  <option value="">Select an amount</option>
+                  <option>$500 – $1,000</option>
+                  <option>$1,000 – $2,500</option>
+                  <option>$2,500 – $5,000</option>
+                  <option>$5,000 – $10,000</option>
+                  <option>$10,000 – $20,000</option>
+                  <option>$20,000 – $35,000</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">What is the loan for?</span>
+                <select name="purpose" required>
+                  <option value="">Select a purpose</option>
+                  <option>Debt consolidation</option>
+                  <option>Home improvement</option>
+                  <option>Major purchase</option>
+                  <option>Medical expenses</option>
+                  <option>Auto</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <button type="button" class="btn btn-primary btn-block" data-next>Continue</button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="form-step" data-step="2">
+              <div class="field-row">
+                <label class="field">
+                  <span class="field-label">First name</span>
+                  <input type="text" name="first" autocomplete="given-name" required />
+                </label>
+                <label class="field">
+                  <span class="field-label">Last name</span>
+                  <input type="text" name="last" autocomplete="family-name" required />
+                </label>
+              </div>
+              <label class="field">
+                <span class="field-label">Email address</span>
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+              <label class="field">
+                <span class="field-label">Mobile phone</span>
+                <input type="tel" name="phone" autocomplete="tel" placeholder="(555) 555-5555" required />
+              </label>
+              <div class="form-nav">
+                <button type="button" class="btn btn-ghost" data-prev>Back</button>
+                <button type="submit" class="btn btn-primary">See my options</button>
+              </div>
+            </div>
+
+            <!-- Success -->
+            <div class="form-step form-success" data-step="done">
+              <div class="success-icon" aria-hidden="true">✓</div>
+              <h3>Request received!</h3>
+              <p>This is a front-end demo — no information was submitted or stored. In a live
+                deployment, SparkyLoan would search its lender network and show your matches here.</p>
+              <button type="button" class="btn btn-ghost btn-block" data-restart>Start over</button>
+            </div>
+          </form>
+          <p class="card-foot">By continuing you agree to our
+            <a href="legal/privacy.html">Privacy Policy</a> and
+            <a href="legal/tcpa.html">Terms</a>.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== Benefits ===== -->
+    <section class="section benefits" id="benefits">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Why SparkyLoan</span>
+          <h2>A smarter way to find your loan</h2>
+        </div>
+        <div class="grid grid-4">
+          <article class="feature">
+            <div class="feature-icon">⚡</div>
+            <h3>Real-time results</h3>
+            <p>Get real-time results from our lender network — no waiting around for days.</p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">🔒</div>
+            <h3>Secure &amp; private</h3>
+            <p>Your data is protected with state-of-the-art encryption. We take your privacy seriously.</p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">👥</div>
+            <h3>All credit types</h3>
+            <p>Our diverse lender network considers applicants with all types of credit histories.</p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">💸</div>
+            <h3>Free to use</h3>
+            <p>It's completely free to submit a loan request — there are never any fees to get matched.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== How it works ===== -->
+    <section class="section how" id="how-it-works">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Simple Process</span>
+          <h2>How SparkyLoan works</h2>
+          <p class="section-sub">SparkyLoan is not a lender. We're a matching service that connects
+            you with a network of lenders — quickly and securely.</p>
+        </div>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-num">1</span>
+            <h3>Submit request</h3>
+            <p>Complete our simple form in minutes with basic information about yourself and your needs.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">2</span>
+            <h3>Search network</h3>
+            <p>We search our network of lenders to find options that may work for your specific situation.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">3</span>
+            <h3>Review offers</h3>
+            <p>If matched, review the lender's terms carefully. You're under no obligation to accept any offer.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">4</span>
+            <h3>Receive funds</h3>
+            <p>Once approved, funds may be deposited directly to your bank account as soon as the next business day.</p>
+          </li>
+        </ol>
+        <div class="how-cta">
+          <a href="#request" class="btn btn-primary btn-lg">Request up to $35,000</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Requirements ===== -->
+    <section class="section requirements" id="requirements">
+      <div class="container req-inner">
+        <div class="req-copy">
+          <span class="eyebrow">Basic Requirements</span>
+          <h2>What you'll need to get started</h2>
+          <p>To be matched with a lender in our network, you'll generally need to meet a few basic
+            requirements. Individual lenders may have additional criteria.</p>
+        </div>
+        <ul class="req-list">
+          <li><span aria-hidden="true">✓</span> Be at least 18 years old</li>
+          <li><span aria-hidden="true">✓</span> Have a valid Social Security number</li>
+          <li><span aria-hidden="true">✓</span> Have a regular source of income</li>
+          <li><span aria-hidden="true">✓</span> Have an active checking account</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="section faq" id="faq">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">FAQ</span>
+          <h2>Frequently asked questions</h2>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Is SparkyLoan a lender?</summary>
+            <p>No. SparkyLoan is not a lender. We operate as a matching service that connects
+              consumers with a network of lenders who may be able to help.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How much can I request?</summary>
+            <p>You can request up to $35,000. The amount you're ultimately offered depends on the
+              lender you're matched with and your individual circumstances.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Will this affect my credit score?</summary>
+            <p>Submitting a request through our platform does not directly impact your credit score.
+              However, if you're connected with a lender and proceed with an application, that lender
+              may perform a credit check which could affect your score.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How fast can I get funds?</summary>
+            <p>Once you're approved by a lender, funds may be deposited directly into your bank
+              account as soon as the next business day.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How much does it cost to use SparkyLoan?</summary>
+            <p>It's completely free to submit a loan request. We never charge a fee to match you
+              with lenders in our network.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do you accept all credit types?</summary>
+            <p>Yes. Our diverse lender network considers applicants with all types of credit
+              histories, so you're welcome to submit a request regardless of your credit.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Final CTA ===== -->
+    <section class="cta-band">
+      <div class="container cta-inner">
+        <h2>Ready to find your loan?</h2>
+        <p>Submit your request in minutes and see what our lender network can offer.</p>
+        <a href="#request" class="btn btn-light btn-lg">Get Started</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#top" class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>
+          </span>
+          <span class="brand-name">Sparky<span>Loan</span></span>
+        </a>
+        <p>A fast, secure loan matching service connecting you with a network of lenders.</p>
+      </div>
+      <nav class="footer-col" aria-label="Company">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#benefits">Why SparkyLoan</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Legal">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="legal/privacy.html">Privacy Policy</a></li>
+          <li><a href="legal/tcpa.html">Terms &amp; TCPA</a></li>
+          <li><a href="legal/california.html">CA — Do Not Sell My Info</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="disclaimer">
+      <div class="container">
+        <p><strong>Disclaimer:</strong> SparkyLoan is not a lender and does not make credit
+          decisions. We are a matching service that connects consumers with a network of third-party
+          lenders. We do not guarantee that you will be matched with a lender, approved for a loan,
+          or offered any particular rate or term. Loan amounts, APRs, and terms vary by lender and
+          are determined by the lender based on your creditworthiness and applicable law. Not all
+          lenders can provide up to $35,000. Cash transfer times and repayment terms vary between
+          lenders. This is a design demonstration and does not process real loan applications.</p>
+        <p class="copyright">© <span id="year">2025</span> SparkyLoan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
