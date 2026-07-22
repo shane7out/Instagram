@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  /* Font stacks (no network fetch — hermetic builds). Swap for a webfont later. */
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink-950 text-silver-100 antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(212, 175, 55, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(212, 175, 55, 0.04), transparent 55%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+
+  /* Gold gradient text for headings */
+  .text-gold-sheen {
+    @apply bg-gold-sheen bg-clip-text text-transparent;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70;
+  }
+  .btn-gold {
+    @apply btn bg-gold-sheen text-ink-950 shadow-gold-glow hover:brightness-110 hover:shadow-[0_0_0_1px_rgba(212,175,55,0.6),0_16px_50px_-12px_rgba(212,175,55,0.4)];
+  }
+  .btn-outline {
+    @apply btn border border-gold-400/40 text-gold-100 hover:border-gold-400 hover:bg-gold-400/10;
+  }
+  .btn-ghost {
+    @apply btn text-silver-200 hover:text-white hover:bg-white/5;
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/[0.06] bg-ink-900/70 backdrop-blur-sm;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-silver-200;
+  }
+
+  .hairline {
+    @apply border-t border-white/[0.06];
+  }
+
+  .link-underline {
+    @apply relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-gold-400 after:transition-all hover:after:w-full;
+  }
+}
+
+/* Coin medallion subtle rotating shine */
+@keyframes coin-shine {
+  0% { transform: translateX(-120%) rotate(8deg); opacity: 0; }
+  30% { opacity: 0.55; }
+  60% { opacity: 0; }
+  100% { transform: translateX(220%) rotate(8deg); opacity: 0; }
+}
+.coin-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+.group:hover .coin-shine::after {
+  animation: coin-shine 1.1s ease-in-out;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .group:hover .coin-shine::after { animation: none; }
+}

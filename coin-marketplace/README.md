@@ -1,0 +1,151 @@
+# RareCoinsForSale — SEO-First Coin Marketplace
+
+A fast, SEO-optimized marketplace for rare and collectible coins, built on the
+**aggregate-and-mark-up** model: pull certified-coin listings from the world's
+top dealers/auction houses, present them in one beautiful catalog at a markup,
+and fulfill orders by sourcing the coin on demand and shipping it on.
+
+Built with **Next.js 15 (App Router) + TypeScript + Tailwind CSS**. Every page
+is statically prerendered for maximum speed and search ranking.
+
+> **Brand is a placeholder.** Everything brand-related lives in
+> [`src/lib/site.ts`](src/lib/site.ts). Change `name`, `domain`, and `url` there
+> (and the logo in `src/components/Logo.tsx`) to rebrand the entire site.
+
+---
+
+## Quick start
+
+```bash
+cd coin-marketplace
+npm install
+npm run dev        # http://localhost:3000
+```
+
+Other commands:
+
+```bash
+npm run build      # production build (statically prerenders all pages)
+npm run start      # serve the production build
+npm run import     # run the coin importer (dry-run / fixtures by default)
+npm run typecheck  # tsc --noEmit
+```
+
+---
+
+## What's inside
+
+### Pages (all SEO-optimized, statically generated)
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Premium homepage: hero, categories, featured, how-it-works, new arrivals |
+| `/coins` | Full catalog with faceted filtering, search & sort |
+| `/coins/[slug]` | Individual coin listing — the money page (Product schema, specs, buy panel) |
+| `/category/[slug]` | Category landing pages (US Coins, Gold, Silver Dollars, Ancient, World, Type) |
+| `/buy` + `/buy/[slug]` | **Programmatic SEO** landing pages (see below) |
+| `/sell` | Sell-your-coins lead capture |
+| `/how-it-works` | Trust/FAQ page (FAQ rich-result schema) |
+| `/about` | About/brand story |
+| `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest` | Auto-generated |
+
+### The three pillars
+
+**1. Markup pricing engine** — [`src/lib/pricing.ts`](src/lib/pricing.ts)
+Turns a dealer's `sourcePrice` into our marketplace `price` using tiered markups
+(bigger % on cheap coins, thinner % on trophy coins), a minimum-margin floor, a
+fixed handling recovery, and retail "charm" rounding. Pricing lives in exactly
+one place, so it's trivial to tune margins across the whole catalog.
+
+**2. Pluggable scraper / importer** — [`src/lib/sources/`](src/lib/sources/)
+- `types.ts` — the `SourceAdapter` contract every dealer integration implements.
+- `base.ts` — shared HTTP + field parsers (year, mintmark, grade, metal, price).
+- `heritage.ts` — a worked example adapter (with offline fixtures).
+- `importer.ts` — pulls from all adapters, applies markup, maps categories,
+  dedupes across sources (cheapest source wins), emits marketplace `Coin`s +
+  a margin report.
+- Add a new dealer by dropping in one file that extends `BaseSourceAdapter` and
+  registering it in `sources/index.ts`.
+
+Run it end-to-end right now (no network needed):
+
+```bash
+npm run import
+# ▶ Importing coins (dry-run / fixtures)
+# ── Import report ──
+#   heritage   fetched 3  imported 3
+#   projected margin: $4,085 ...
+```
+
+Write results to the file the catalog reads from:
+
+```bash
+npm run import -- --out=src/data/imported.json
+npm run import -- --source=heritage --limit=50 --live   # once live adapters exist
+```
+
+**3. Programmatic SEO** — [`src/lib/landing.ts`](src/lib/landing.ts)
+The "rank #1 for everything" engine. It derives a landing page for every
+high-intent search phrase from live inventory:
+- `…-for-sale` per series (e.g. `/buy/morgan-dollar-for-sale`)
+- per metal (`/buy/gold-coins-for-sale`)
+- per grading service (`/buy/pcgs-certified-coins`)
+- per year+series long-tail (`/buy/1889-morgan-dollar-for-sale`)
+- themed/intent pages (key dates, investment gold, coins under $500)
+
+Each page is a real, useful, uniquely-worded filtered view — not thin doorway
+spam — and is added to the sitemap automatically. Add inventory → new ranking
+pages appear; sell out → the page stops generating.
+
+### Technical SEO baked in
+- **schema.org JSON-LD** everywhere: `Organization`, `WebSite` (+ Sitelinks
+  search box), `Product` (price/availability/returns/shipping), `BreadcrumbList`,
+  `ItemList`, `FAQPage`. See [`src/components/JsonLd.tsx`](src/components/JsonLd.tsx).
+- Per-page `<title>`/meta/canonical/Open Graph via the Next.js Metadata API.
+- Dynamic `sitemap.xml` + `robots.txt` (faceted URLs disallowed to avoid
+  duplicate-content dilution; canonical money pages indexed).
+- Deep, crawlable internal linking (footer, breadcrumbs, related coins,
+  "related searches" hubs) to spread link equity to money pages.
+- Fully static prerender = fast Core Web Vitals.
+
+---
+
+## Data model
+
+`Coin` ([`src/lib/types.ts`](src/lib/types.ts)) is the normalized listing.
+Sample inventory lives in [`src/data/inventory.ts`](src/data/inventory.ts) as
+*source* prices; the markup engine computes the sale price at load, so there's a
+single source of truth for pricing. The read model
+([`src/lib/catalog.ts`](src/lib/catalog.ts)) is the only thing pages touch — swap
+its backing store for a DB/CMS later without changing the UI.
+
+Coin visuals are rendered as self-contained SVG **medallions**
+([`src/components/CoinMedallion.tsx`](src/components/CoinMedallion.tsx)) derived
+from each coin's metal/series/year — so the site looks finished with zero
+external image dependencies. Real sourced photos drop into `coin.images` and
+take over automatically.
+
+---
+
+## Going live — a checklist
+
+1. **Rebrand**: edit `src/lib/site.ts` (name, domain, phone, email, socials).
+2. **Real sources**: implement the live path in `heritage.ts` and add more
+   adapters (GreatCollections, eBay, APMEX…). Respect each site's ToS,
+   robots.txt, and rate limits.
+3. **Persist imports**: point `npm run import -- --out=…` at
+   `src/data/imported.json` and have the catalog read it; schedule the import
+   (cron / GitHub Action) to keep inventory fresh.
+4. **Checkout**: wire `BuyPanel`'s button to Stripe (or your PSP) and build the
+   order → source-purchase → fulfillment workflow.
+5. **Leads**: point `SellForm` at your CRM/email/webhook.
+6. **Deploy**: any Node host or Vercel. `npm run build && npm run start`.
+
+---
+
+## Business model note
+
+Coin images shown for sample inventory are illustrative renderings. When wiring
+real sources, only aggregate data you're permitted to use, keep source URLs and
+dealer names internal (never shown to buyers), and confirm you can fulfill each
+order before advertising it as in stock.
