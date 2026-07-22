@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { site } from '@/lib/site';
 import { categories, getCategory } from '@/data/categories';
 import { getCoinsByCategory, sortCoins } from '@/lib/catalog';
 import { CoinGrid } from '@/components/CoinCard';
@@ -87,7 +88,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       {/* SEO body */}
       <section className="mt-16 max-w-3xl">
         <h2 className="font-serif text-2xl font-bold text-white">
-          Buying {category.name} at {`RareCoinsForSale`}
+          Buying {category.name} at {site.name}
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-silver-300">{category.seoBody}</p>
         <div className="mt-6 flex flex-wrap gap-2">

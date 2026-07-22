@@ -1,4 +1,4 @@
-# RareCoinsForSale — SEO-First Coin Marketplace
+# Christensen Coins — SEO-First Coin Marketplace
 
 A fast, SEO-optimized marketplace for rare and collectible coins, built on the
 **aggregate-and-mark-up** model: pull certified-coin listings from the world's
@@ -8,9 +8,10 @@ and fulfill orders by sourcing the coin on demand and shipping it on.
 Built with **Next.js 15 (App Router) + TypeScript + Tailwind CSS**. Every page
 is statically prerendered for maximum speed and search ranking.
 
-> **Brand is a placeholder.** Everything brand-related lives in
-> [`src/lib/site.ts`](src/lib/site.ts). Change `name`, `domain`, and `url` there
-> (and the logo in `src/components/Logo.tsx`) to rebrand the entire site.
+> **Brand lives in one file.** Everything brand-related is in
+> [`src/lib/site.ts`](src/lib/site.ts) (`name`, `domain`, `url`, contact,
+> socials). Change those (and the monogram in `src/components/Logo.tsx` /
+> `src/app/icon.svg`) to rebrand the entire site.
 
 ---
 

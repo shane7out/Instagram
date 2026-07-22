@@ -6,7 +6,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 export const metadata: Metadata = {
   title: 'How It Works — Buying & Selling Rare Coins',
   description:
-    'Learn how RareCoinsForSale works: how we source certified coins, our authenticity guarantee, insured shipping, 30-day returns, and how selling to us works.',
+    'Learn how Christensen Coins works: how we source certified coins, our authenticity guarantee, insured shipping, 30-day returns, and how selling to us works.',
   alternates: { canonical: '/how-it-works' },
 };
 

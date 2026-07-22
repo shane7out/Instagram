@@ -25,8 +25,7 @@ export function SiteHeader() {
         <Link href="/" className="flex items-center gap-2.5" aria-label={`${site.name} home`}>
           <Logo className="h-9 w-9" />
           <span className="font-serif text-xl font-bold tracking-tight text-white">
-            Rare<span className="text-gold-sheen">Coins</span>
-            <span className="text-silver-300">ForSale</span>
+            Christensen<span className="text-gold-sheen"> Coins</span>
           </span>
         </Link>
 

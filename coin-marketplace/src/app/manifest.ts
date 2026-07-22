@@ -4,7 +4,7 @@ import { site } from '@/lib/site';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: site.name,
-    short_name: 'RareCoins',
+    short_name: 'Christensen',
     description: site.shortDescription,
     start_url: '/',
     display: 'standalone',
