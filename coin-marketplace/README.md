@@ -144,10 +144,37 @@ take over automatically.
 3. **Persist imports**: point `npm run import -- --out=…` at
    `src/data/imported.json` and have the catalog read it; schedule the import
    (cron / GitHub Action) to keep inventory fresh.
-4. **Checkout**: wire `BuyPanel`'s button to Stripe (or your PSP) and build the
-   order → source-purchase → fulfillment workflow.
+4. **Checkout (Stripe — already built)**: create a Stripe account, then paste two
+   keys into `.env.local` and real payments work immediately. See below.
 5. **Leads**: point `SellForm` at your CRM/email/webhook.
 6. **Deploy**: any Node host or Vercel. `npm run build && npm run start`.
+
+### Stripe Checkout
+
+Checkout is fully wired — you just add your keys:
+
+- `POST /api/checkout` ([route](src/app/api/checkout/route.ts)) creates a Stripe
+  Checkout Session. The **price is looked up server-side from the catalog** (the
+  browser only sends the coin slug), so it can't be tampered with. Collects US
+  shipping address + phone for fulfillment.
+- `BuyPanel` redirects the buyer to Stripe's hosted, PCI-compliant page. If no
+  key is set, it gracefully falls back to the reserve/call flow — so the site
+  works today and becomes a real store the moment you add keys.
+- `/checkout/success` confirms the order; `POST /api/webhook`
+  ([route](src/app/api/webhook/route.ts)) verifies Stripe's signature and fires
+  on `checkout.session.completed` — the hook where you place the source-dealer
+  buy and kick off fulfillment (the session metadata carries the coin id, source
+  dealer, source price, and sale price).
+
+**Setup (~10 min):**
+1. Create an account at [stripe.com](https://stripe.com) and finish activation
+   (business details + bank account for payouts).
+2. Copy your secret key from [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys)
+   into `STRIPE_SECRET_KEY` (use `sk_test_…` to test, `sk_live_…` to go live).
+3. Add a webhook at [dashboard.stripe.com/webhooks](https://dashboard.stripe.com/webhooks)
+   pointing to `https://YOUR-DOMAIN/api/webhook` for the
+   `checkout.session.completed` event, and put its signing secret in
+   `STRIPE_WEBHOOK_SECRET`.
 
 ---
 

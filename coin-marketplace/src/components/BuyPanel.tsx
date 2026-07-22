@@ -6,14 +6,46 @@ import { site } from '@/lib/site';
 import { formatUsd } from '@/lib/pricing';
 
 /**
- * Purchase panel. In this build it captures buyer intent and confirms the
- * order flow (the arbitrage model: on purchase, we source the coin, take
- * delivery, and ship it on). Wire the button to a real checkout / payment
- * provider (Stripe, etc.) when you go live.
+ * Purchase panel. "Buy This Coin" starts a real Stripe Checkout session via
+ * /api/checkout and redirects to Stripe's hosted payment page. If Stripe isn't
+ * configured yet (no keys), it gracefully falls back to reserving the coin so
+ * the concierge can follow up — the arbitrage model: on purchase we source the
+ * coin from the dealer, take delivery, and ship it on.
  */
 export function BuyPanel({ coin }: { coin: Coin }) {
   const [reserved, setReserved] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const freeShipping = coin.price >= site.freeShippingThreshold;
+
+  async function handleBuy() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: coin.slug }),
+      });
+      if (res.ok) {
+        const { url } = await res.json();
+        if (url) {
+          window.location.href = url; // redirect to Stripe Checkout
+          return;
+        }
+      }
+      // 503 = checkout not configured yet → fall back to reserve flow.
+      if (res.status === 503) {
+        setReserved(true);
+      } else {
+        setError('Something went wrong starting checkout. Please call to order.');
+      }
+    } catch {
+      setError('Network error. Please call to order.');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="mt-7 rounded-2xl border border-white/[0.08] bg-ink-900/70 p-6">
@@ -43,16 +75,26 @@ export function BuyPanel({ coin }: { coin: Coin }) {
       <div className="mt-5 flex flex-col gap-3">
         <button
           type="button"
-          disabled={!coin.inStock || reserved}
-          onClick={() => setReserved(true)}
+          disabled={!coin.inStock || reserved || loading}
+          onClick={handleBuy}
           className="btn-gold w-full !py-3.5 text-base disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {reserved ? '✓ Reserved — we’ll be in touch' : coin.inStock ? 'Buy This Coin' : 'Sold Out'}
+          {loading
+            ? 'Starting secure checkout…'
+            : reserved
+              ? '✓ Reserved — we’ll be in touch'
+              : coin.inStock
+                ? 'Buy This Coin'
+                : 'Sold Out'}
         </button>
         <a href={`tel:${site.phone.replace(/[^+\d]/g, '')}`} className="btn-outline w-full !py-3">
           Call to Order · {site.phone}
         </a>
       </div>
+
+      {error && (
+        <p className="mt-4 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{error}</p>
+      )}
 
       {reserved && (
         <p className="mt-4 rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-200">
