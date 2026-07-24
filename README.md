@@ -23,7 +23,6 @@ Instagram Stories automation system for discovering and reposting high-quality L
 
 2. **Install dependencies**
    ```bash
-   cd lvfc_bot
    pip install -r requirements.txt
    ```
 
@@ -55,7 +54,6 @@ Instagram Stories automation system for discovering and reposting high-quality L
 Run the Streamlit dashboard:
 
 ```bash
-cd lvfc_bot
 streamlit run dashboard.py
 ```
 
@@ -64,7 +62,6 @@ Then open your browser to http://localhost:8501
 ### Option 2: Command Line
 
 ```bash
-cd lvfc_bot
 python main.py --cli
 ```
 
@@ -79,13 +76,16 @@ python main.py --cli
 ## Project Structure
 
 ```
-lvfc_bot/
+.
 ├── bot_engine.py        # Core Instagram automation
+├── bot_worker.py        # Headless worker for scheduled discovery
 ├── dashboard.py         # Streamlit web interface
 ├── database_models.py   # Database models
 ├── video_utils.py       # Video processing utilities
 ├── main.py              # Entry point
 ├── requirements.txt     # Python dependencies
+├── Procfile             # Worker process definition
+├── railway.json         # Railway deploy config
 └── config.example       # Configuration template
 ```
 

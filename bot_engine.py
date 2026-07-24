@@ -5,9 +5,10 @@ Handles Instagram authentication, content discovery, and posting
 
 import os
 import logging
+import re
 import time
 import random
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from instagrapi import Client
 from instagrapi.exceptions import (
@@ -21,7 +22,7 @@ from instagrapi.exceptions import (
 import requests
 
 from database_models import (
-    init_database, Creator, MediaItem, AppSettings, 
+    init_database, Creator, MediaItem, AppSettings, PostLog,
     CreatorStatus, MediaStatus, get_or_create_creator
 )
 
@@ -31,6 +32,15 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+HASHTAG_RE = re.compile(r'#(\w+)')
+
+
+def extract_hashtags(caption):
+    """Pull hashtags out of a caption. Media objects carry no hashtag field."""
+    if not caption:
+        return []
+    return HASHTAG_RE.findall(caption)
 
 
 class InstagramBot:
@@ -60,6 +70,10 @@ class InstagramBot:
         'Caesars Palace'
     ]
     
+    # app_settings keys backing the persisted daily post counter
+    ACTIONS_COUNT_KEY = 'actions_today'
+    ACTIONS_DATE_KEY = 'actions_date'
+
     def __init__(self, session_name="lasvegas_restaurants"):
         self.session_name = session_name
         self.client = Client()
@@ -170,36 +184,47 @@ class InstagramBot:
             logger.error(f"Failed to get user info for {username}: {e}")
             return None
     
-    def get_engagement_rate(self, username):
-        """Calculate engagement rate for a user"""
+    def get_engagement_rate(self, username, user_info=None):
+        """
+        Calculate engagement rate for a user
+
+        Args:
+            username: Instagram username
+            user_info: Optional pre-fetched get_user_info() result, to avoid a
+                       second profile lookup during discovery
+
+        Returns:
+            Engagement rate as a percentage, or 0 if it cannot be determined
+        """
         try:
-            # Get recent media
-            medias = self.client.user_medias(username, amount=10)
-            
+            if user_info is None:
+                user_info = self.get_user_info(username)
+
+            if not user_info or not user_info['followers_count']:
+                return 0
+
+            # user_medias takes the numeric user pk, not the username
+            medias = self.client.user_medias(user_info['pk'], amount=10)
+
             if not medias:
                 return 0
-            
+
             # Calculate average engagement
             total_likes = 0
             total_comments = 0
-            
+
             for media in medias:
-                total_likes += media.like_count
-                total_comments += media.comment_count
-            
+                total_likes += media.like_count or 0
+                total_comments += media.comment_count or 0
+
             avg_likes = total_likes / len(medias)
             avg_comments = total_comments / len(medias)
-            
-            # Get follower count
-            user_info = self.get_user_info(username)
-            if not user_info or user_info['followers_count'] == 0:
-                return 0
-            
+
             followers = user_info['followers_count']
             engagement_rate = ((avg_likes + avg_comments) / followers) * 100
-            
+
             return round(engagement_rate, 2)
-            
+
         except Exception as e:
             logger.error(f"Failed to calculate engagement rate for {username}: {e}")
             return 0
@@ -234,7 +259,7 @@ class InstagramBot:
                 logger.info(f"Scanning hashtag: #{hashtag}")
                 
                 # Get hashtag media
-                medias = self.client.hashtag_medias(hashtag, amount=max_results)
+                medias = self.client.hashtag_medias_recent(hashtag, amount=max_results)
                 
                 for media in medias:
                     # Filter: only videos
@@ -265,8 +290,10 @@ class InstagramBot:
                     if user_info['followers_count'] < min_followers:
                         continue
                     
-                    # Get engagement rate
-                    engagement_rate = self.get_engagement_rate(creator_username)
+                    # Get engagement rate (reuses user_info, no extra lookup)
+                    engagement_rate = self.get_engagement_rate(
+                        creator_username, user_info=user_info
+                    )
                     
                     # Filter by engagement rate
                     if engagement_rate < self.min_engagement_rate:
@@ -294,8 +321,10 @@ class InstagramBot:
                         like_count=media.like_count,
                         comment_count=media.comment_count,
                         view_count=getattr(media, 'view_count', 0),
-                        hashtags=','.join([h.tag for h in media.hashtags]) if hasattr(media, 'hashtags') else '',
-                        mentions=','.join([m.tag for h in media.usertags]) if hasattr(media, 'usertags') else '',
+                        hashtags=','.join(extract_hashtags(media.caption_text)),
+                        mentions=','.join(
+                            t.user.username for t in (media.usertags or []) if t.user
+                        ),
                         status=MediaStatus.PENDING_APPROVAL
                     )
                     
@@ -324,12 +353,13 @@ class InstagramBot:
             downloads_dir = Path("downloads")
             downloads_dir.mkdir(exist_ok=True)
             
-            filename = f"{media_item.code}.mp4"
-            output_path = downloads_dir / filename
-            
-            # Download video
-            self.client.media_download(media_item.original_media_pk, output_path)
-            
+            # video_download takes a destination folder and returns the path
+            # it wrote, naming the file itself
+            output_path = self.client.video_download(
+                int(media_item.original_media_pk),
+                folder=downloads_dir
+            )
+
             # Update database
             media_item.file_path = str(output_path)
             self.db_session.commit()
@@ -358,18 +388,19 @@ class InstagramBot:
         """
         try:
             # Check daily limit
-            if self.actions_today >= self.daily_action_limit:
+            if self.get_actions_today() >= self.daily_action_limit:
                 raise Exception("Daily action limit reached")
             
             # Upload to story
-            story_id = self.client.story_upload(
-                video_path,
+            story = self.client.video_upload_to_story(
+                Path(video_path),
                 caption=caption or f"📸 Credit: @{creator_username}"
             )
-            
-            self.actions_today += 1
+            story_id = str(story.pk)
+
+            self._record_action()
             logger.info(f"Posted story: {story_id}")
-            
+
             return story_id
             
         except ClientError as e:
@@ -401,7 +432,7 @@ class InstagramBot:
     
     def approve_creator(self, creator_id, status=CreatorStatus.APPROVED):
         """Update creator status"""
-        creator = self.db_session.query(Creator).get(creator_id)
+        creator = self.db_session.get(Creator, creator_id)
         if creator:
             creator.status = status
             self.db_session.commit()
@@ -409,7 +440,7 @@ class InstagramBot:
     
     def reject_media(self, media_id):
         """Reject media item"""
-        media = self.db_session.query(MediaItem).get(media_id)
+        media = self.db_session.get(MediaItem, media_id)
         if media:
             media.status = MediaStatus.REJECTED
             self.db_session.commit()
@@ -426,7 +457,7 @@ class InstagramBot:
         Returns:
             Story ID if successful
         """
-        media = self.db_session.query(MediaItem).get(media_id)
+        media = self.db_session.get(MediaItem, media_id)
         if not media:
             raise Exception("Media not found")
         
@@ -458,20 +489,78 @@ class InstagramBot:
             # Update status
             media.status = MediaStatus.PUBLISHED
             media.date_published = datetime.utcnow()
+            self.db_session.add(PostLog(
+                media_id=media.id,
+                story_id=story_id,
+                success=1
+            ))
             self.db_session.commit()
-            
+
             logger.info(f"Published media {media.code} to stories")
             return story_id
-            
+
         except Exception as e:
             media.status = MediaStatus.FAILED
             media.error_message = str(e)
+            self.db_session.add(PostLog(
+                media_id=media.id,
+                success=0,
+                error_message=str(e)
+            ))
             self.db_session.commit()
             raise
     
+    def _get_setting(self, key, default=None):
+        """Read a value from app_settings"""
+        if not self.db_session:
+            return default
+        row = self.db_session.query(AppSettings).filter_by(key=key).first()
+        return row.value if row else default
+
+    def _set_setting(self, key, value):
+        """Write a value to app_settings"""
+        if not self.db_session:
+            return
+        row = self.db_session.query(AppSettings).filter_by(key=key).first()
+        if row:
+            row.value = str(value)
+        else:
+            self.db_session.add(AppSettings(key=key, value=str(value)))
+        self.db_session.commit()
+
+    def get_actions_today(self):
+        """
+        Posts made today, counting against daily_action_limit.
+
+        Persisted in app_settings rather than held in memory so the cap still
+        applies after a worker restart, and so it rolls over on a date change
+        without anything needing to call reset_daily_counter().
+        """
+        if not self.db_session:
+            return self.actions_today
+
+        if self._get_setting(self.ACTIONS_DATE_KEY) != date.today().isoformat():
+            return 0
+
+        try:
+            self.actions_today = int(self._get_setting(self.ACTIONS_COUNT_KEY, 0))
+        except (TypeError, ValueError):
+            self.actions_today = 0
+
+        return self.actions_today
+
+    def _record_action(self):
+        """Count one post against today's limit and persist it"""
+        count = self.get_actions_today() + 1
+        self.actions_today = count
+        self._set_setting(self.ACTIONS_COUNT_KEY, count)
+        self._set_setting(self.ACTIONS_DATE_KEY, date.today().isoformat())
+
     def reset_daily_counter(self):
         """Reset daily action counter"""
         self.actions_today = 0
+        self._set_setting(self.ACTIONS_COUNT_KEY, 0)
+        self._set_setting(self.ACTIONS_DATE_KEY, date.today().isoformat())
 
 
 def create_bot(config=None):

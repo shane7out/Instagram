@@ -38,9 +38,6 @@ You'll deploy two components:
 git clone https://github.com/YOUR_USERNAME/las-vegas-food-curator.git
 cd las-vegas-food-curator
 
-# Copy all files from lvfc_bot folder
-# (upload via GitHub web interface or git commands)
-
 # Commit and push
 git add .
 git commit -m "Initial commit"
@@ -62,7 +59,7 @@ git push origin main
 ```
 Repository: YOUR_USERNAME/las-vegas-food-curator
 Branch: main
-Main file path: lvfc_bot/dashboard.py
+Main file path: dashboard.py
 ```
 
 ### 2.3 Add Secrets
@@ -70,10 +67,13 @@ Main file path: lvfc_bot/dashboard.py
 Click "Advanced settings" → "Secrets" and add:
 
 ```toml
-[secrets]
 INSTAGRAM_USERNAME = "your_username"
 INSTAGRAM_PASSWORD = "your_password"
+DATABASE_URL = "postgresql://..."
 ```
+
+Keys must be at the top level. Nesting them under a `[secrets]` table puts them at
+`st.secrets["secrets"]`, where the dashboard will not find them.
 
 ### 2.4 Deploy
 
@@ -93,26 +93,43 @@ https://YOUR_USERNAME-las-vegas-food-curator.streamlit.app
 3. Click "New Project"
 4. Select "Empty Project"
 
-### 3.2 Add Variables
+### 3.2 Add a Shared Database (required)
+
+**Do not skip this.** The worker and the dashboard run on different hosts with
+ephemeral disks. Without a shared database each one creates its own local SQLite
+file, the dashboard never sees anything the worker discovered, and a redeploy
+wipes the data. The review-and-approve workflow does not work without this step.
+
+1. In your Railway project, click "New" → "Database" → "Add PostgreSQL"
+2. Open the Postgres service → "Variables" → copy `DATABASE_URL`
+3. Set that same `DATABASE_URL` on **both** the bot worker (Step 3.3) and the
+   Streamlit dashboard (Step 2.3)
+
+Both components read `DATABASE_URL` and fall back to local SQLite only when it is
+unset — which is the right behaviour for local development, and the wrong one in
+production.
+
+### 3.3 Add Variables
 
 Go to "Variables" tab and add:
 
 | Variable | Value |
 |----------|-------|
+| DATABASE_URL | (from Step 3.2 — must match the dashboard) |
 | INSTAGRAM_USERNAME | your_username |
 | INSTAGRAM_PASSWORD | your_password |
 | HASHTAGS | lasvegasfood,vegaseats,lasvegasdining,vegasfoodie |
 | SCAN_INTERVAL_HOURS | 6 |
 | AUTO_APPROVE | false |
 
-### 3.3 Deploy Bot Worker
+### 3.4 Deploy Bot Worker
 
 1. Click "New" → "GitHub Repo"
 2. Select your repository
-3. Set root directory to: `lvfc_bot`
+3. Leave the root directory as the repository root
 4. Click "Deploy"
 
-### 3.4 Verify Deployment
+### 3.5 Verify Deployment
 
 - Check "Deployments" tab for status
 - Check "Logs" for bot activity
@@ -209,7 +226,8 @@ Approve → Post to Stories
 | Service | Plan | Monthly Cost |
 |---------|------|--------------|
 | Streamlit Cloud | Free | $0 |
-| Railway | Hobby | $5-10 |
+| Railway (worker) | Hobby | $5-10 |
+| Railway Postgres | Hobby | included in usage |
 | **Total** | | **$5-10/month** |
 
 ---

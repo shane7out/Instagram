@@ -31,8 +31,12 @@ def create_directories():
 
 def run_dashboard():
     """Run the Streamlit dashboard"""
-    import streamlit as st
-    st.run("dashboard.py")
+    import subprocess
+    dashboard = Path(__file__).parent / "dashboard.py"
+    subprocess.run(
+        [sys.executable, "-m", "streamlit", "run", str(dashboard)],
+        check=True
+    )
 
 
 def run_bot_cli():
@@ -109,9 +113,7 @@ def main():
         run_bot_cli()
     else:
         print("Starting Streamlit Dashboard...")
-        print("Run: streamlit run dashboard.py")
-        print("\nOr use CLI mode:")
-        print("  python main.py --cli")
+        print("(CLI mode is available via: python main.py --cli)")
         run_dashboard()
 
 

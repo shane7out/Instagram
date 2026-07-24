@@ -3,9 +3,9 @@ Las Vegas Food Curator - Database Models
 SQLite-based database for managing creators and content
 """
 
+import os
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Enum, ForeignKey, Text, BigInteger
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from datetime import datetime
 import enum
 
@@ -108,9 +108,26 @@ class PostLog(Base):
         return f"<PostLog {self.id} - {'Success' if self.success else 'Failed'}>"
 
 
-def init_database(db_path="lasvegas_restaurants.db"):
-    """Initialize the database"""
-    engine = create_engine(f'sqlite:///{db_path}')
+def init_database(db_path=None):
+    """
+    Initialize the database.
+
+    Honours DATABASE_URL when set, so the Railway worker and the Streamlit
+    dashboard can share one Postgres instance. Without it, each host gets its
+    own SQLite file on an ephemeral disk, neither sees the other's rows, and a
+    redeploy wipes them — which breaks the discover-then-approve workflow.
+    """
+    url = os.getenv('DATABASE_URL')
+
+    if url:
+        # SQLAlchemy wants postgresql://, but Railway and Heroku hand out postgres://
+        if url.startswith('postgres://'):
+            url = url.replace('postgres://', 'postgresql://', 1)
+    else:
+        path = db_path or os.getenv('DATABASE_PATH', 'lasvegas_restaurants.db')
+        url = f'sqlite:///{path}'
+
+    engine = create_engine(url, pool_pre_ping=True)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     return Session()

@@ -10,8 +10,8 @@ import time
 from pathlib import Path
 from datetime import datetime
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Modules live alongside this file at the repo root
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from bot_engine import InstagramBot, create_bot
 from video_utils import VideoProcessor
@@ -106,6 +106,25 @@ def init_session():
     return state
 
 
+def _credential_defaults():
+    """
+    Instagram credentials from Streamlit secrets, falling back to environment.
+
+    st.secrets raises rather than returning empty when no secrets file is
+    configured, which is the normal case for a local run.
+    """
+    user = os.getenv("INSTAGRAM_USERNAME", "")
+    pw = os.getenv("INSTAGRAM_PASSWORD", "")
+
+    try:
+        user = st.secrets.get("INSTAGRAM_USERNAME", user)
+        pw = st.secrets.get("INSTAGRAM_PASSWORD", pw)
+    except Exception:
+        pass
+
+    return user, pw
+
+
 def login_screen():
     """Display login screen"""
     st.title("🍽️ Las Vegas Food Curator")
@@ -113,10 +132,14 @@ def login_screen():
     
     col1, col2, col3 = st.columns([1, 2, 1])
     
+    # Prefill from Streamlit secrets or environment when they are configured,
+    # so a deployed dashboard does not need the credentials retyped each time
+    default_user, default_pass = _credential_defaults()
+
     with col2:
         with st.form("login_form"):
-            username = st.text_input("Instagram Username")
-            password = st.text_input("Instagram Password", type="password")
+            username = st.text_input("Instagram Username", value=default_user)
+            password = st.text_input("Instagram Password", type="password", value=default_pass)
             submit = st.form_submit_button("Login")
             
             if submit:

@@ -29,7 +29,7 @@ context to continue any of the projects below without prior conversation history
   - [2.3 Data model](#23-data-model)
   - [2.4 Configuration](#24-configuration)
   - [2.5 Deployment as documented](#25-deployment-as-documented)
-  - [2.6 Known issues — verified](#26-known-issues--verified)
+  - [2.6 Known issues — fixed 2026-07-24](#26-known-issues--fixed-2026-07-24)
 - [§3 Consolidated open items](#3-consolidated-open-items)
 
 ---
@@ -41,11 +41,9 @@ One owner, one Mac, several small tools. Two entirely separate technology stacks
 | Stack | Tech | Hosting | Data store | Covered in |
 |---|---|---|---|---|
 | Web properties | Single-file HTML apps | Firebase Hosting | Shared Firebase RTDB | §1 |
-| Instagram automation (LVFC) | Python | Streamlit Cloud + Railway | Local SQLite | §2 |
+| Instagram automation (LVFC) | Python | Streamlit Cloud + Railway | Postgres via `DATABASE_URL` | §2 |
 
-The two stacks do not talk to each other today. That matters — see
-[§3 item 1](#3-consolidated-open-items), because the RTDB in §1 is a ready-made fix for the
-database problem in §2.
+The two stacks do not talk to each other, and do not need to.
 
 ### 0.1 Properties
 
@@ -55,7 +53,7 @@ database problem in §2.
 | ALS (containers) | the-atl.web.app | Live |
 | Badge Trading | badge-trading.web.app | Live; custom domain pending DNS |
 | Torch Dating | lvr-data-a60c1.web.app/dating.html | Live, SPARK_V=53 |
-| LVFC Instagram bot | this repo | Deployed, but see §2.6 |
+| LVFC Instagram bot | this repo | Code fixed 2026-07-24; needs Postgres + a live run — §2.6 |
 
 ### 0.2 Tooling paths on the Mac (not on default PATH)
 
@@ -328,7 +326,9 @@ Streamlit dashboard
    → approve → download → FFmpeg credit overlay → post to Stories
 ```
 
-**This flow does not currently work end to end.** See [§2.6](#26-known-issues--verified).
+Until 2026-07-24 this flow **had never worked** — three of the Instagram API methods it called
+did not exist, and the two components did not share a database. Both are fixed; see
+[§2.6](#26-known-issues--fixed-2026-07-24) for what was wrong and what remains.
 
 ### 2.2 File-by-file reference
 
@@ -365,7 +365,7 @@ SQLite via SQLAlchemy. Default path `lasvegas_restaurants.db`.
 | `creators` | `username` (unique), `instagram_pk` (unique), follower/following/media counts, `avg_engagement`, `status` |
 | `media_items` | `original_media_pk` (unique), `code`, `creator_id` FK, `media_type`, `file_path`, caption, like/comment/view counts, `status`, `date_discovered`, `date_published`, `error_message` |
 | `app_settings` | `key`/`value` pairs |
-| `post_logs` | `media_id`, `posted_at`, `story_id`, `success`, `error_message` — **table is created but never written to** |
+| `post_logs` | `media_id`, `posted_at`, `story_id`, `success`, `error_message` — written on publish success and failure |
 
 **Status enums:**
 
@@ -390,8 +390,10 @@ Note `discovered` and `ready` are defined but never assigned — discovery write
 | `DAILY_ACTION_LIMIT` | 50 | `create_bot()` config dict / dashboard Settings |
 | `RATE_LIMIT_DELAY` | 30s | attribute; dashboard Settings |
 
-`config.example` also lists `DATABASE_PATH`, `DOWNLOADS_DIR`, `PROCESSED_DIR` — **none of these
-three are actually read by any code.** Paths are hardcoded defaults.
+`DATABASE_URL` overrides everything and is **required in production** so the worker and dashboard
+share one database. `DATABASE_PATH` is the SQLite fallback used only when `DATABASE_URL` is unset.
+`DOWNLOADS_DIR` and `PROCESSED_DIR` are still listed in `config.example` but read by nothing —
+those paths remain hardcoded defaults.
 
 Between discovered items the engine sleeps `random.uniform(2, 5)` seconds. The `rate_limit_delay`
 attribute (30s) is settable from the dashboard but never consumed.
@@ -400,85 +402,105 @@ attribute (30s) is settable from the dashboard but never consumed.
 
 Two components, per DEPLOYMENT_GUIDE.md:
 
-1. **Dashboard → Streamlit Cloud.** Main file path should be `dashboard.py` (the guide says
-   `lvfc_bot/dashboard.py`, which is wrong).
-2. **Worker → Railway.** Root directory should be the repo root (the guide says `lvfc_bot`).
-   Env vars per §2.4. `Procfile` declares `bot: python bot_worker.py`.
+0. **Postgres → Railway.** Provision it first and set the same `DATABASE_URL` on both components
+   below. Without this they cannot see each other's data.
+1. **Dashboard → Streamlit Cloud.** Main file path `dashboard.py`. Secrets as top-level TOML keys.
+2. **Worker → Railway.** Root directory is the repo root. Env vars per §2.4.
+   `railway.json` sets `startCommand: python bot_worker.py`.
 
 Documented cost: Streamlit Cloud free + Railway Hobby ≈ **$5–10/month**.
 
-### 2.6 Known issues — verified
+### 2.6 Known issues — fixed 2026-07-24
 
-Everything below was verified against **instagrapi 2.18.9** and by reading the source on
-2026-07-24. Line numbers are from the current `claude/master-file-e6ofy0` tree.
+Everything in this section was verified against **instagrapi 2.18.9** and fixed on branch
+`claude/master-file-e6ofy0`. Kept here because the failure modes are worth recognising if they
+recur.
 
-#### Blocker A — the dashboard and the worker never share a database
+#### Blocker A — dashboard and worker never shared a database *(fixed)*
 
-`init_database()` opens a **local SQLite file**. The Railway worker and the Streamlit Cloud
-dashboard run on **different hosts with ephemeral disks**, each creating its own
-`lasvegas_restaurants.db`. The worker's discoveries are therefore invisible to the dashboard, and
-a Railway redeploy wipes the file.
+`init_database()` opened a **local SQLite file**. The Railway worker and the Streamlit dashboard
+run on **different hosts with ephemeral disks**, so each created its own
+`lasvegas_restaurants.db`. The worker's discoveries were invisible to the dashboard, and a
+redeploy wiped the file. The review-and-approve workflow could not work as deployed.
 
-The review-and-approve workflow described in DEPLOYMENT_GUIDE.md **cannot work** in the deployed
-topology, regardless of the API bugs below. Fixing this requires a shared store — Postgres on
-Railway, or the Firebase RTDB the owner already operates (see §1.2).
+`init_database()` now honours **`DATABASE_URL`**, rewriting Railway/Heroku's `postgres://` to the
+`postgresql://` scheme SQLAlchemy requires, and falls back to SQLite only when it is unset. No
+model changes were needed. **Deployment now requires provisioning Postgres and setting the same
+`DATABASE_URL` on both components** — DEPLOYMENT_GUIDE.md Step 3.2.
 
-#### Blocker B — three instagrapi methods do not exist
+#### Blocker B — three instagrapi methods did not exist *(fixed)*
 
-| Location | Call | Reality | Fix |
-|---|---|---|---|
-| `bot_engine.py:237` | `client.hashtag_medias(hashtag, amount=...)` | No such method | `hashtag_medias_recent(name, amount)` or `hashtag_medias_top(name, amount)` |
-| `bot_engine.py:331`, `video_utils.py:30` | `client.media_download(pk, output_path)` | No such method | `video_download(media_pk: int, folder: Path)` — note it takes a **folder** and returns the written path, not a file path in |
-| `bot_engine.py:365` | `client.story_upload(path, caption=...)` | No such method | `video_upload_to_story(path, caption=...)` — returns a `Story` object, not a bare id, so `publish_media()` currently stores the wrong thing in `story_id` |
-
-The hashtag one is the most damaging because of how it fails. `discover_content()` wraps each
-hashtag in a broad `except Exception` (`bot_engine.py:312`) that logs and continues, so **every
-scan raises `AttributeError` per hashtag, swallows it, and returns 0 items.** Railway logs look
-healthy — "Discovered 0 new items" — while nothing has ever worked.
-
-#### Blocker C — engagement filter can never pass
-
-`bot_engine.py:177` calls `client.user_medias(username, amount=10)`, but the parameter is
-`user_id` (a numeric pk), not a username. The call raises, the `except` at line 203 returns `0`,
-and every creator is then rejected by the `min_engagement_rate >= 2.0` check at line 272.
-
-**Even with Blocker B fixed, discovery would still yield nothing.** Resolve the username to
-`user_info['pk']` (already fetched) and pass that.
-
-#### Other bugs
-
-| Location | Issue |
-|---|---|
-| `bot_engine.py:298` | `','.join([m.tag for h in media.usertags])` — loop binds `h`, expression uses undefined `m` → `NameError`. Also `usertags` items are `UserTag` objects exposing `.user`, not `.tag` |
-| `main.py:35` | `st.run("dashboard.py")` — Streamlit has no `run()`. Bare `python main.py` prints instructions then crashes |
-| `bot_engine.py:76`, `472` | `actions_today` is in-memory only. `reset_daily_counter()` is never called by any scheduler, and a worker restart zeroes it — the 50/day cap is **not** enforced across restarts |
-| `bot_engine.py:404`, `410`, `429` | `Query.get()` is legacy in SQLAlchemy 2.0 (which `requirements.txt` pins). Use `session.get(Model, id)` |
-| `database_models.py:96` | `PostLog` is created but never written; `publish_media()` doesn't log to it |
-| `bot_engine.py:54` | `DEFAULT_LOCATIONS` and the `locations` parameter are accepted and ignored |
-
-#### Documentation and deploy mismatches
-
-| Where | Says | Should say |
+| Location | Was | Now |
 |---|---|---|
-| README.md — Project Structure, and every `cd lvfc_bot` | Files live under `lvfc_bot/` | Files are at the repo root |
-| DEPLOYMENT_GUIDE.md §2.2 | Main file path `lvfc_bot/dashboard.py` | `dashboard.py` |
-| DEPLOYMENT_GUIDE.md §3.3 | Root directory `lvfc_bot` | Repo root |
-| DEPLOYMENT_GUIDE.md §2.3 | Secrets under a `[secrets]` TOML header | Top-level keys — a header nests them at `st.secrets["secrets"]`. Moot regardless: **`dashboard.py` never reads `st.secrets` or env vars at all**, so Streamlit secrets are unused and login is always manual |
-| `Procfile` | `bot: python bot_worker.py` | A `bot:` process type is not auto-started; Railway needs `web:` or an explicit start command. `railway.json` sets no `startCommand` |
+| `bot_engine.py` discovery | `client.hashtag_medias(...)` | `client.hashtag_medias_recent(...)` |
+| `bot_engine.py` download, `video_utils.py` | `client.media_download(pk, path)` | `client.video_download(pk, folder=...)` — takes a **folder** and returns the path written |
+| `bot_engine.py` publish | `client.story_upload(...)` | `client.video_upload_to_story(...)` — returns a `Story`, so `story_id` now reads `story.pk` |
 
-`.docx` and `.pdf` copies of README and DEPLOYMENT_GUIDE are committed alongside the `.md`
-originals. They carry the same errors and will drift — treat the Markdown as authoritative.
+The hashtag one was the most damaging because of how it failed. `discover_content()` wraps each
+hashtag in a broad `except Exception` that logs and continues, so **every scan raised
+`AttributeError`, swallowed it, and returned 0 items.** Railway logs read "Discovered 0 new items"
+and looked healthy while nothing had ever worked.
 
----
+> That broad `except` is still there. It is load-bearing for network flakiness, but it will hide
+> the next programming error just as effectively.
+
+#### Blocker C — engagement filter could never pass *(fixed)*
+
+`get_engagement_rate()` called `user_medias(username, ...)`, but the parameter is `user_id` (a
+numeric pk). The call raised, the handler returned `0`, and every creator was then rejected by the
+`min_engagement_rate >= 2.0` check. **Even with Blocker B fixed, discovery would still have
+yielded nothing.**
+
+It now takes an optional pre-fetched `user_info` and uses `user_info['pk']`. Discovery passes the
+profile it already fetched, which also removes a redundant API call per candidate — worth having
+where rate limiting is the binding constraint.
+
+#### Other bugs *(fixed)*
+
+| Was | Now |
+|---|---|
+| `','.join([m.tag for h in media.usertags])` — binds `h`, uses undefined `m` → `NameError` | `t.user.username for t in (media.usertags or [])`. `Usertag` exposes `.user`, never `.tag` |
+| `hashtags` column written from `media.hashtags` | **`Media` has no `hashtags` field at all**, so `hasattr` was always False and the column was always empty. Now parsed from `caption_text` via `extract_hashtags()` |
+| `st.run("dashboard.py")` in `main.py` — not a Streamlit function | `subprocess.run([sys.executable, "-m", "streamlit", "run", ...])` |
+| `actions_today` in memory; `reset_daily_counter()` never called | Persisted in `app_settings` with a date stamp, so the 50/day cap survives restarts and rolls over on its own |
+| `Query.get()` — legacy in SQLAlchemy 2.0 | `session.get(Model, id)` |
+| `declarative_base` from `sqlalchemy.ext.declarative` — moved in 2.0 | imported from `sqlalchemy.orm` |
+| `PostLog` created but never written | Written on both publish success and failure |
+
+#### Documentation and deploy mismatches *(fixed)*
+
+`lvfc_bot/` does not exist and never did — all files are at the repo root. Every `cd lvfc_bot`,
+the README project-structure block, the Streamlit main-file path, and the Railway root directory
+referenced it. All corrected.
+
+Also fixed: the Streamlit secrets example used a `[secrets]` TOML header, which nests keys at
+`st.secrets["secrets"]` where nothing looks for them. Keys are now top-level, and `dashboard.py`
+actually reads them (it previously read neither secrets nor environment, so the documented
+secrets did nothing and login was always manual). `Procfile` declared a `bot:` process type that
+nothing starts; it is now `worker:`, with an explicit `startCommand` in `railway.json`.
+
+#### Still open
+
+- `DEFAULT_LOCATIONS` and the `locations` parameter of `discover_content()` are accepted and
+  ignored — only hashtags are scanned. Either implement location scanning or drop the parameter.
+- `rate_limit_delay` (30s) is settable from the dashboard but never consumed; the real pacing is a
+  hardcoded `random.uniform(2, 5)` between items.
+- `MediaStatus.DISCOVERED` and `.READY` are defined but never assigned.
+- `.docx` and `.pdf` copies of both guides are committed alongside the `.md` originals and still
+  carry the old errors. They will keep drifting — treat the Markdown as authoritative, or drop
+  the binaries.
+- Nothing has been run against live Instagram credentials. The fixes are verified by unit-level
+  tests and by checking every call site against instagrapi, not by a real discovery run.
 
 ## §3 Consolidated open items
 
 Ordered by cost of leaving it broken.
 
-1. **LVFC is non-functional in production.** Blockers A, B, and C in §2.6 each independently
-   prevent the pipeline from working. Fixing B and C is a small patch; A is an architecture
-   decision. Cheapest path given what's already running: point LVFC at the shared Firebase RTDB
-   from §1.2 instead of SQLite.
+1. **LVFC needs Postgres provisioned and a live run.** The code blockers are fixed and verified
+   (§2.6), but nothing has been exercised against real Instagram credentials. Provision Railway
+   Postgres, set `DATABASE_URL` on both components, then watch one discovery cycle. The tell that
+   it is genuinely working is a non-zero "Discovered N new items" — the old failure mode reported
+   zero while looking healthy.
 2. **Advertisers: 8 ghost records** (§1.6). Needs an owner decision — unhide or purge — before
    they cause a num collision.
 3. **Dashboard audit is unfinished** (§1.6). Remaining: runtime view-sweep in READ-ONLY preview
@@ -492,3 +514,5 @@ Ordered by cost of leaving it broken.
 7. **This repo is public.** It holds Instagram automation code for a live account. Consider making
    it private — that would also let this master file carry real PINs and make it genuinely
    cold-start complete.
+8. **Smaller LVFC cleanups** are listed at the end of §2.6 (unused `locations` parameter, unused
+   `rate_limit_delay`, unassigned status enums, stale `.docx`/`.pdf` doc copies).

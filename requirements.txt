@@ -6,6 +6,10 @@ python-dotenv>=1.0.0
 SQLAlchemy>=2.0.0
 pandas>=2.0.0
 
+# Database driver - only used when DATABASE_URL points at Postgres.
+# Without DATABASE_URL the app falls back to local SQLite and this is unused.
+psycopg2-binary>=2.9.9
+
 # Instagram Automation
 instagrapi>=0.9.9
 

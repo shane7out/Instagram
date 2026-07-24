@@ -23,13 +23,22 @@ class VideoProcessor:
         self.downloads_dir.mkdir(parents=True, exist_ok=True)
         self.processed_dir.mkdir(parents=True, exist_ok=True)
     
-    def download_video(self, client, media_pk, filename):
+    def download_video(self, client, media_pk, filename=None):
         """Download video from Instagram"""
         try:
-            output_path = self.downloads_dir / filename
-            client.media_download(media_pk, output_path)
-            logger.info(f"Downloaded video to {output_path}")
-            return str(output_path)
+            # video_download takes a folder, names the file itself, and returns
+            # the path it wrote
+            downloaded = Path(client.video_download(
+                int(media_pk), folder=self.downloads_dir
+            ))
+
+            if filename and downloaded.name != filename:
+                target = self.downloads_dir / filename
+                downloaded.replace(target)
+                downloaded = target
+
+            logger.info(f"Downloaded video to {downloaded}")
+            return str(downloaded)
         except Exception as e:
             logger.error(f"Failed to download video {media_pk}: {e}")
             raise

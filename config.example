@@ -13,6 +13,11 @@ DAILY_ACTION_LIMIT=50
 RATE_LIMIT_DELAY=30
 
 # Database
+# Set DATABASE_URL to share one database between the worker and the dashboard.
+# Required in production - see DEPLOYMENT_GUIDE.md Step 3.2.
+# DATABASE_URL=postgresql://user:pass@host:5432/dbname
+
+# Local SQLite fallback, used only when DATABASE_URL is unset
 DATABASE_PATH=lasvegas_restaurants.db
 
 # Directories
