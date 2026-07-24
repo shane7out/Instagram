@@ -215,6 +215,48 @@ def sidebar():
     return page
 
 
+def show_discovery_breakdown(stats):
+    """
+    Explain a scan's result, especially when it found nothing.
+
+    A scan that returns zero because the API gave us nothing looks exactly like
+    one that returns zero because every candidate was filtered out, unless the
+    difference is spelled out.
+    """
+    if not stats:
+        return
+
+    if stats.get('candidates', 0) == 0:
+        st.warning(
+            "No media came back for any hashtag. That is not a normal quiet scan — "
+            "check the login, rate limiting, or whether Instagram changed the "
+            "hashtag endpoint."
+        )
+    elif stats.get('accepted', 0) == 0:
+        st.warning(
+            f"{stats['candidates']} candidates found, none accepted. "
+            "The filters below are probably too tight."
+        )
+
+    if stats.get('hashtags_failed'):
+        st.error(f"{stats['hashtags_failed']} hashtag(s) failed to scan.")
+
+    with st.expander("Why candidates were rejected"):
+        labels = [
+            ('not_video', 'Not a video'),
+            ('already_known', 'Already in the database'),
+            ('no_profile', 'Profile unavailable'),
+            ('private', 'Private account'),
+            ('low_followers', 'Below follower minimum'),
+            ('low_engagement', 'Below engagement minimum'),
+        ]
+        for key, label in labels:
+            st.write(f"- {label}: **{stats.get(key, 0)}**")
+        st.caption(
+            f"{stats.get('accepted', 0)} accepted of {stats.get('candidates', 0)} candidates"
+        )
+
+
 def discovery_page():
     """Discovery page"""
     st.title("📥 Content Discovery")
@@ -269,9 +311,10 @@ def discovery_page():
                     hashtags=hashtag_list,
                     min_followers=min_followers
                 )
-                
+
                 st.success(f"Discovery complete! Found {len(discovered)} new items")
-                
+                show_discovery_breakdown(st.session_state.bot.last_discovery_stats)
+
             except Exception as e:
                 st.error(f"Discovery failed: {str(e)}")
     

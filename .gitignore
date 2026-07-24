@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+venv/
+.venv/
+
+# Secrets and local config
+.env
+
+# Instagram session blobs - these hold live auth
+*_session.json
+
+# Local database
+*.db
+
+# Media working directories
+downloads/
+processed/
+logs/

@@ -89,6 +89,20 @@ python main.py --cli
 └── config.example       # Configuration template
 ```
 
+## Running the Tests
+
+```bash
+pip install -r requirements.txt
+pytest
+```
+
+`tests/test_api_surface.py` is the important one: it asserts that every
+instagrapi method this project calls actually exists. instagrapi tracks a
+private, moving API, so its method names change between releases — three of the
+calls in this codebase once pointed at methods that did not exist, and the
+resulting errors were swallowed and reported as "0 items found" for months. That
+test turns the next such rename into a CI failure instead.
+
 ## Configuration Options
 
 | Setting | Default | Description |

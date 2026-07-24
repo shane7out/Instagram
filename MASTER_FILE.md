@@ -356,7 +356,7 @@ and DEPLOYMENT_GUIDE.md say.
 | `database_models.py` | SQLAlchemy models + `init_database()` + `get_or_create_creator()` |
 | `video_utils.py` | `VideoProcessor` — FFmpeg 9:16 scale + `drawtext` credit box; thumbnails; duration; cleanup. Plus a MoviePy alternative, `create_vertical_video()` |
 | `main.py` | Entry point. `--cli` gives an interactive menu; bare invocation tries to launch Streamlit |
-| `test_dashboard.cjs` | Node smoke test for the dashboard |
+| `tests/` | pytest suite: API-surface pinning, discovery accounting, persistence |
 | `Procfile`, `railway.json` | Railway deploy config |
 | `config.example` | Template to copy to `.env` |
 
@@ -492,6 +492,36 @@ actually reads them (it previously read neither secrets nor environment, so the 
 secrets did nothing and login was always manual). `Procfile` declared a `bot:` process type that
 nothing starts; it is now `worker:`, with an explicit `startCommand` in `railway.json`.
 
+#### Hardening added 2026-07-24
+
+Three follow-ups, done after the fixes above.
+
+**Failures are now visible.** The root problem was never the three wrong method
+names — it was that a broken scan and an empty scan produced identical output.
+`discover_content()` now re-raises `BUG_EXCEPTIONS` (`AttributeError`, `TypeError`,
+`NameError`, `ImportError`, `IndexError`, `KeyError`) instead of logging them as
+Instagram's fault, and swallows only genuine network and API errors. The same split
+was applied to `get_user_info()` and `get_engagement_rate()`, which had the same
+flaw. Every filter stage now counts its rejections, exposed on
+`bot.last_discovery_stats` and rendered in the dashboard, so "0 accepted" always
+comes with a reason. Two cases log a warning: zero candidates from any hashtag
+(the alarming one), and candidates arriving but none passing (filters too tight).
+
+**A test suite that pins the API.** `test_dashboard.cjs` was deleted — it hardcoded
+`/workspace/lvfc_bot` and used ESM `import` in a `.cjs` file, so it had never run.
+In its place, 48 pytest tests. The highest-value file is
+`tests/test_api_surface.py`, which asserts every `client.X()` call resolves against
+the installed instagrapi and that the three phantom methods stay gone. All the
+tests were mutation-checked: reverting each fix was confirmed to turn the
+corresponding test red.
+
+**The Instagram session persists in the database.** It was written to
+`{session_name}_session.json` in the working directory, which Railway discards on
+every redeploy — so the bot logged in cold each deploy, and repeated fresh logins
+from a datacenter IP invite a challenge. `save_session()`/`load_session()` now use
+`app_settings`, falling back to a file when there is no database, and migrating an
+existing file into the database on first load.
+
 #### Still open
 
 - `DEFAULT_LOCATIONS` and the `locations` parameter of `discover_content()` are accepted and
@@ -502,8 +532,10 @@ nothing starts; it is now `worker:`, with an explicit `startCommand` in `railway
 - `.docx` and `.pdf` copies of both guides are committed alongside the `.md` originals and still
   carry the old errors. They will keep drifting — treat the Markdown as authoritative, or drop
   the binaries.
-- Nothing has been run against live Instagram credentials. The fixes are verified by unit-level
-  tests and by checking every call site against instagrapi, not by a real discovery run.
+- Nothing has been run against live Instagram credentials. The fixes are verified by 48 tests
+  and by checking every call site against instagrapi, not by a real discovery run.
+- `rate_limit_delay` is still unwired, and permission to repost is still not tracked as data —
+  see §3 items 4 and 5.
 
 ## §3 Consolidated open items
 
