@@ -67,13 +67,20 @@ Main file path: dashboard.py
 Click "Advanced settings" → "Secrets" and add:
 
 ```toml
-INSTAGRAM_USERNAME = "your_username"
-INSTAGRAM_PASSWORD = "your_password"
+DASHBOARD_PASSWORD = "pick-something-long"
 DATABASE_URL = "postgresql://..."
 ```
 
 Keys must be at the top level. Nesting them under a `[secrets]` table puts them at
 `st.secrets["secrets"]`, where the dashboard will not find them.
+
+**The dashboard does not take Instagram credentials.** It only reads and writes the
+database; the worker holds the Instagram login and does all posting. That keeps the
+account to one login from one host, and keeps your password off Streamlit Cloud.
+
+`DASHBOARD_PASSWORD` is this app's own gate. A Streamlit Cloud URL is reachable by
+anyone who has the link, and this UI approves posts to a live account — so if the
+password is unset, the dashboard refuses to unlock rather than defaulting to open.
 
 ### 2.4 Deploy
 
@@ -141,7 +148,7 @@ Go to "Variables" tab and add:
 ### 4.1 Check Dashboard
 
 1. Open your Streamlit Cloud URL
-2. Login with Instagram credentials
+2. Unlock with `DASHBOARD_PASSWORD`
 3. Navigate to "Content Queue"
 
 ### 4.2 Check Bot Logs
@@ -161,20 +168,23 @@ Go to "Variables" tab and add:
 ### Discovery Flow
 
 ```
-Railway Bot
-    ↓ (every 6 hours)
-Scans Instagram hashtags
-    ↓
-Finds food videos
-    ↓
-Filters by followers/engagement
-    ↓
-Saves to database
-    ↓
-Streamlit Dashboard
-    ↓ (you review)
-Approve → Post to Stories
+Railway worker                       Streamlit dashboard
+  (holds Instagram credentials)        (database only)
+    │                                      │
+    │ every 6h, or on request              │
+    ├─ scan hashtags                       │
+    ├─ filter followers/engagement         │
+    ├─ save as pending_approval  ─────────▶│ you review
+    │                                      │
+    │◀──────── marked ready ───────────────┤ you approve
+    │                                      │
+    └─ post to Stories with credit         │
+       (checked every 60s)                 │
 ```
+
+Only the worker talks to Instagram. Approving in the dashboard marks an item
+`ready`; the worker picks it up within a minute and posts it. "Request Discovery
+Scan" works the same way — the dashboard raises a flag, the worker acts on it.
 
 ### Daily Workflow
 
@@ -187,6 +197,9 @@ Approve → Post to Stories
 ## Important Settings
 
 ### Bot Settings (Railway Variables)
+
+Settings saved in the dashboard are stored in the database and override these,
+so the controls in the UI actually steer the worker's scans.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -234,9 +247,11 @@ Approve → Post to Stories
 
 ## Security Notes
 
-1. **Never commit** `.env` file to GitHub
-2. **Use Railway secrets** for passwords
-3. **Use Streamlit secrets** for dashboard credentials
+1. **Never commit** `.env`, `*_session.json`, or `*.db` — all three are gitignored.
+   A session file is live authentication material.
+2. **Instagram credentials belong on the worker only.** The dashboard does not need
+   them and should never be given them.
+3. **Set `DASHBOARD_PASSWORD`.** Without it the dashboard will not unlock.
 4. **Monitor logs** for suspicious activity
 5. **Follow Instagram ToS** to avoid bans
 
@@ -254,9 +269,9 @@ Approve → Post to Stories
 
 After deployment:
 
-1. Test discovery by clicking "Run Discovery Scan"
+1. Test discovery by clicking "Request Discovery Scan"
 2. Review content in "Content Queue"
-3. Click "Approve" to post to Stories
+3. Click "Approve" to queue it — the worker posts it within a minute
 4. Monitor Railway logs for activity
 5. Adjust hashtags and settings as needed
 

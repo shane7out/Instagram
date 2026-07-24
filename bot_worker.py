@@ -20,9 +20,71 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def publish_approved(bot):
+    """
+    Publish everything approved in the dashboard.
+
+    The dashboard marks items READY and never talks to Instagram itself, so
+    this is the only place Stories get posted.
+    """
+    try:
+        approved = bot.get_approved_content()
+    except Exception as e:
+        logger.error(f"Could not read the approval queue: {e}")
+        return 0
+
+    published = 0
+    for index, item in enumerate(approved):
+        # Stop before the cap rather than letting publish_media fail on it.
+        # Hitting the limit mid-loop would mark perfectly good items FAILED,
+        # permanently, when all they need is to wait until tomorrow.
+        if bot.get_actions_today() >= bot.daily_action_limit:
+            logger.info(
+                "Daily post limit reached, leaving %d item(s) queued for tomorrow",
+                len(approved) - index
+            )
+            break
+
+        try:
+            story_id = bot.publish_media(item.id)
+            logger.info(f"Published {item.code} -> story {story_id}")
+            published += 1
+        except Exception as e:
+            logger.error(f"Failed to publish {item.code}: {e}")
+
+    return published
+
+
+def wait_for_next_cycle(bot, scan_interval_hours, poll_seconds=60):
+    """
+    Wait out the scan interval without going deaf to the dashboard.
+
+    Sleeping the full interval in one call would leave an approval sitting for
+    up to six hours, so this wakes periodically to publish approved items and
+    returns early when a scan has been requested.
+    """
+    deadline = time.monotonic() + scan_interval_hours * 3600
+
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            return
+
+        time.sleep(min(poll_seconds, remaining))
+
+        try:
+            if bot.consume_scan_request():
+                logger.info("Discovery scan requested from the dashboard")
+                return
+        except Exception as e:
+            logger.error(f"Could not check for a scan request: {e}")
+
+        publish_approved(bot)
+
+
 def main():
     """Main worker loop"""
-    from bot_engine import create_bot
+    from bot_engine import create_bot, BUG_EXCEPTIONS
     from video_utils import VideoProcessor
     from database_models import init_database
     
@@ -79,11 +141,23 @@ def main():
         logger.info(f"\n--- Iteration {iteration} ---")
         
         try:
+            # Post anything the dashboard approved since the last pass
+            published = publish_approved(bot)
+            if published:
+                logger.info(f"Published {published} approved item(s)")
+
+            # Prefer settings saved from the dashboard, falling back to env vars
+            saved = bot.load_discovery_settings()
+            scan_hashtags = saved['hashtags'] or hashtags
+            if saved['min_followers'] is not None:
+                bot.min_followers = saved['min_followers']
+            if saved['min_engagement_rate'] is not None:
+                bot.min_engagement_rate = saved['min_engagement_rate']
+
             # Run discovery
-            logger.info("Running content discovery...")
-            discovered = bot.discover_content(hashtags=hashtags)
-            logger.info(f"Discovered {len(discovered)} new items")
-            
+            logger.info(f"Running content discovery over {len(scan_hashtags)} hashtags...")
+            discovered = bot.discover_content(hashtags=scan_hashtags)
+
             if auto_approve and discovered:
                 logger.info("Auto-approve enabled - publishing new content...")
                 for item in discovered:
@@ -92,17 +166,23 @@ def main():
                         logger.info(f"Published: {story_id}")
                     except Exception as e:
                         logger.error(f"Failed to publish: {e}")
-            
+
             # Get pending count
             pending = bot.get_pending_content()
             logger.info(f"Pending approval: {len(pending)}")
-            
+
+        except BUG_EXCEPTIONS:
+            # A bug in our own code. Let the process die so Railway restarts it
+            # and the traceback lands in the logs, rather than looping silently.
+            logger.exception("Bug in the worker - exiting so it is not hidden")
+            raise
+
         except Exception as e:
             logger.error(f"Error in iteration: {e}")
-        
-        # Wait before next scan
-        logger.info(f"Waiting {scan_interval} hours before next scan...")
-        time.sleep(scan_interval * 3600)
+
+        # Wait, staying responsive to approvals and scan requests
+        logger.info(f"Next scan in up to {scan_interval} hours")
+        wait_for_next_cycle(bot, scan_interval)
 
 
 if __name__ == "__main__":

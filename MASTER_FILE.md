@@ -351,8 +351,8 @@ and DEPLOYMENT_GUIDE.md say.
 | File | Role |
 |---|---|
 | `bot_engine.py` | `InstagramBot` — login/session, discovery, filtering, download, publish. Factory `create_bot(config)` |
-| `bot_worker.py` | Headless Railway loop: login, discover every `SCAN_INTERVAL_HOURS`, optional auto-publish |
-| `dashboard.py` | Streamlit UI: Discovery, Content Queue, Creators, History, Settings pages |
+| `bot_worker.py` | Headless Railway loop, and the only process that talks to Instagram: login, discover, publish approved items |
+| `dashboard.py` | Streamlit UI: Discovery, Content Queue, Creators, History, Settings. Database only — holds no Instagram credentials |
 | `database_models.py` | SQLAlchemy models + `init_database()` + `get_or_create_creator()` |
 | `video_utils.py` | `VideoProcessor` — FFmpeg 9:16 scale + `drawtext` credit box; thumbnails; duration; cleanup. Plus a MoviePy alternative, `create_vertical_video()` |
 | `main.py` | Entry point. `--cli` gives an interactive menu; bare invocation tries to launch Streamlit |
@@ -386,8 +386,9 @@ SQLite via SQLAlchemy. Default path `lasvegas_restaurants.db`.
 - `MediaStatus`: `discovered`, `pending_approval`, `processing`, `ready`, `published`, `failed`,
   `rejected`
 
-Note `discovered` and `ready` are defined but never assigned — discovery writes rows straight to
-`pending_approval`, and publish goes `processing` → `published`/`failed`.
+`ready` means approved in the dashboard and awaiting the worker. `discovered` is still never
+assigned — discovery writes rows straight to `pending_approval`, and publish goes
+`processing` → `published`/`failed`.
 
 ### 2.4 Configuration
 
@@ -522,6 +523,34 @@ from a datacenter IP invite a challenge. `save_session()`/`load_session()` now u
 `app_settings`, falling back to a file when there is no database, and migrating an
 existing file into the database on first load.
 
+#### Dashboard and worker split 2026-07-24
+
+The dashboard and the worker were both logging into the same Instagram account
+from different hosts. Persisting the session to the database made that sharper —
+they would then share one session blob and could clobber each other's auth state,
+and two IPs on one session is the pattern that draws a challenge.
+
+Fixed by shape rather than by coordination: **only the worker touches Instagram.**
+
+- Approving in the dashboard sets `MediaStatus.READY` (previously defined and
+  unused) and writes nothing else. It makes no Instagram call.
+- The worker publishes `READY` items, checking every 60s, so an approval is not
+  stuck behind a six-hour sleep.
+- "Request Discovery Scan" sets a flag in `app_settings`; the worker consumes it
+  and scans on its next poll.
+- Discovery settings saved in the dashboard persist to `app_settings` and override
+  the worker's env vars — otherwise those controls would silently do nothing, which
+  is the same defect as the unwired `rate_limit_delay`.
+- The last scan's rejection breakdown persists too, so the dashboard can show why
+  a scan found nothing even though the worker ran it.
+- The dashboard now has its own gate, `DASHBOARD_PASSWORD`, and **fails closed** —
+  unset means it will not unlock. Removing the Instagram login would otherwise have
+  left a public Streamlit URL with no authentication at all.
+
+The worker also stops before the daily cap instead of letting `publish_media` hit
+it. Hitting the limit mid-loop marked good items `FAILED` permanently when all they
+needed was to wait for tomorrow. A test caught that one.
+
 #### Still open
 
 - `DEFAULT_LOCATIONS` and the `locations` parameter of `discover_content()` are accepted and
@@ -536,6 +565,8 @@ existing file into the database on first load.
   and by checking every call site against instagrapi, not by a real discovery run.
 - `rate_limit_delay` is still unwired, and permission to repost is still not tracked as data —
   see §3 items 4 and 5.
+- `AUTO_APPROVE=true` still posts discovered content with no human review. It bypasses the
+  approval queue entirely.
 
 ## §3 Consolidated open items
 

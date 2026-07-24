@@ -1,9 +1,14 @@
 # Las Vegas Food Curator - Configuration
 # Copy this file to .env and fill in your credentials
 
-# Instagram Credentials
+# Instagram Credentials - WORKER ONLY.
+# The dashboard does not use these and should not be given them; the worker is
+# the only process that talks to Instagram.
 INSTAGRAM_USERNAME=your_username
 INSTAGRAM_PASSWORD=your_password
+
+# Dashboard access gate. Required - the dashboard refuses to unlock without it.
+DASHBOARD_PASSWORD=pick-something-long
 
 # Bot Settings
 MIN_FOLLOWERS=1000

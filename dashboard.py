@@ -4,6 +4,7 @@ Web interface for managing content discovery and approval
 """
 
 import streamlit as st
+import hmac
 import os
 import sys
 import time
@@ -106,69 +107,70 @@ def init_session():
     return state
 
 
-def _credential_defaults():
+def _dashboard_password():
     """
-    Instagram credentials from Streamlit secrets, falling back to environment.
+    The dashboard's own access password.
 
-    st.secrets raises rather than returning empty when no secrets file is
-    configured, which is the normal case for a local run.
+    This app no longer holds Instagram credentials, but it still needs a gate:
+    a Streamlit Cloud URL is reachable by anyone who has it, and this UI
+    approves posts to a live account.
+
+    st.secrets raises rather than returning empty when no secrets file exists,
+    which is the normal case for a local run.
     """
-    user = os.getenv("INSTAGRAM_USERNAME", "")
-    pw = os.getenv("INSTAGRAM_PASSWORD", "")
+    password = os.getenv("DASHBOARD_PASSWORD", "")
 
     try:
-        user = st.secrets.get("INSTAGRAM_USERNAME", user)
-        pw = st.secrets.get("INSTAGRAM_PASSWORD", pw)
+        password = st.secrets.get("DASHBOARD_PASSWORD", password)
     except Exception:
         pass
 
-    return user, pw
+    return password
 
 
 def login_screen():
-    """Display login screen"""
+    """Password gate. No Instagram credentials are held by the dashboard."""
     st.title("🍽️ Las Vegas Food Curator")
-    st.markdown("### Instagram Stories Automation System")
-    
+    st.markdown("### Content review dashboard")
+
+    expected = _dashboard_password()
+
     col1, col2, col3 = st.columns([1, 2, 1])
-    
-    # Prefill from Streamlit secrets or environment when they are configured,
-    # so a deployed dashboard does not need the credentials retyped each time
-    default_user, default_pass = _credential_defaults()
 
     with col2:
+        if not expected:
+            st.error(
+                "DASHBOARD_PASSWORD is not set, so this dashboard will not "
+                "unlock. Set it in Streamlit secrets or the environment — this "
+                "app is reachable from the public internet."
+            )
+            return
+
         with st.form("login_form"):
-            username = st.text_input("Instagram Username", value=default_user)
-            password = st.text_input("Instagram Password", type="password", value=default_pass)
-            submit = st.form_submit_button("Login")
-            
+            password = st.text_input("Dashboard Password", type="password")
+            submit = st.form_submit_button("Unlock")
+
             if submit:
-                if username and password:
-                    try:
-                        bot = create_bot()
-                        bot.init_db()
-                        bot.set_video_processor(st.session_state.video_processor)
-                        
-                        with st.spinner("Logging in..."):
-                            bot.login(username, password)
-                        
-                        st.session_state.bot = bot
-                        st.session_state.logged_in = True
-                        st.success("Successfully logged in!")
-                        st.rerun()
-                        
-                    except Exception as e:
-                        st.error(f"Login failed: {str(e)}")
+                if hmac.compare_digest(password, expected):
+                    bot = create_bot()
+                    bot.init_db()
+                    bot.set_video_processor(st.session_state.video_processor)
+
+                    st.session_state.bot = bot
+                    st.session_state.logged_in = True
+                    st.rerun()
                 else:
-                    st.warning("Please enter username and password")
-    
+                    st.error("Incorrect password")
+
     st.markdown("---")
     st.markdown("""
     ### How It Works
-    1. **Discover** - Scan hashtags for Las Vegas food content
-    2. **Review** - Preview discovered content in the queue
-    3. **Approve** - Select the best videos to post
-    4. **Publish** - Automatically post to Instagram Stories with credit
+    1. **Discover** — the worker scans hashtags on a schedule
+    2. **Review** — preview discovered content in the queue
+    3. **Approve** — queue the best videos for posting
+    4. **Publish** — the worker posts them to Stories with credit
+
+    Instagram credentials live only on the worker, never in this dashboard.
     """)
 
 
@@ -178,7 +180,7 @@ def sidebar():
     
     # Connection status
     if st.session_state.logged_in:
-        st.sidebar.success("🟢 Bot Online")
+        st.sidebar.success("🟢 Connected")
         
         # Stats
         if st.session_state.db_session:
@@ -186,6 +188,9 @@ def sidebar():
             
             st.sidebar.markdown("### 📊 Queue Stats")
             st.sidebar.metric("Pending Approval", counts.get('pending_approval', 0))
+            # Approved items leave the queue but are not posted yet, so show
+            # them rather than letting them vanish until the worker runs
+            st.sidebar.metric("Queued to Post", counts.get('ready', 0))
             st.sidebar.metric("Published Today", counts.get('published', 0))
             st.sidebar.metric("Total Discovered", sum(counts.values()))
         
@@ -199,17 +204,15 @@ def sidebar():
         
         st.sidebar.markdown("---")
         
-        # Logout
-        if st.sidebar.button("Logout"):
-            if st.session_state.bot:
-                st.session_state.bot.logout()
+        # Lock
+        if st.sidebar.button("Lock"):
             st.session_state.logged_in = False
             st.session_state.bot = None
             st.rerun()
-    
+
     else:
-        st.sidebar.warning("🔴 Bot Offline")
-        st.sidebar.info("Please login to continue")
+        st.sidebar.warning("🔴 Locked")
+        st.sidebar.info("Enter the dashboard password to continue")
         page = None
     
     return page
@@ -294,29 +297,35 @@ def discovery_page():
     
     st.markdown("---")
     
-    # Run discovery
-    if st.button("🔎 Run Discovery Scan", type="primary"):
+    # Request a scan. The worker owns the Instagram connection, so the
+    # dashboard asks for a scan rather than running one itself.
+    if st.button("🔎 Request Discovery Scan", type="primary"):
         if not st.session_state.bot:
-            st.error("Bot not initialized")
+            st.error("Not connected to the database")
             return
-        
-        hashtag_list = [h.strip() for h in hashtags.split(',') if h.strip()]
-        
-        with st.spinner(f"Scanning {len(hashtag_list)} hashtags..."):
-            try:
-                st.session_state.bot.min_followers = min_followers
-                st.session_state.bot.min_engagement_rate = min_engagement
-                
-                discovered = st.session_state.bot.discover_content(
-                    hashtags=hashtag_list,
-                    min_followers=min_followers
-                )
 
-                st.success(f"Discovery complete! Found {len(discovered)} new items")
-                show_discovery_breakdown(st.session_state.bot.last_discovery_stats)
+        try:
+            hashtag_list = [h.strip() for h in hashtags.split(',') if h.strip()]
+            st.session_state.bot.save_discovery_settings(
+                hashtags=hashtag_list,
+                min_followers=min_followers,
+                min_engagement_rate=min_engagement,
+            )
+            st.session_state.bot.request_scan()
+            st.success(
+                "Scan requested. The worker picks this up within a minute; "
+                "results appear in the Content Queue."
+            )
+        except Exception as e:
+            st.error(f"Could not request a scan: {str(e)}")
 
-            except Exception as e:
-                st.error(f"Discovery failed: {str(e)}")
+    # Results of the most recent scan, whoever ran it
+    st.markdown("### 🔍 Last Scan")
+    last = st.session_state.bot.get_last_discovery_stats() if st.session_state.bot else {}
+    if last:
+        show_discovery_breakdown(last)
+    else:
+        st.caption("No scan has been recorded yet.")
     
     # Show recent discoveries
     st.markdown("### 📋 Recent Discoveries")
@@ -403,9 +412,8 @@ def content_queue_page():
             with col1:
                 if st.button(f"✅ Approve", key=f"approve_{item.id}", type="primary"):
                     try:
-                        with st.spinner("Publishing to Stories..."):
-                            story_id = st.session_state.bot.publish_media(item.id)
-                        st.success(f"Published! Story ID: {story_id}")
+                        st.session_state.bot.approve_media(item.id)
+                        st.success("Queued — the worker will post it shortly")
                         time.sleep(1)
                         st.rerun()
                     except Exception as e:
@@ -562,6 +570,11 @@ def settings_page():
             st.session_state.bot.min_engagement_rate = min_engagement
             st.session_state.bot.daily_action_limit = daily_limit
             st.session_state.bot.rate_limit_delay = rate_delay
+            # Persist, otherwise the worker never sees these
+            st.session_state.bot.save_discovery_settings(
+                min_followers=min_followers,
+                min_engagement_rate=min_engagement,
+            )
             st.success("Settings saved!")
     
     st.markdown("---")

@@ -67,11 +67,17 @@ python main.py --cli
 
 ## How It Works
 
-1. **Login**: Enter your Instagram credentials
-2. **Discover**: Run the discovery scan to find content
-3. **Review**: Go to "Content Queue" to review discovered videos
-4. **Approve**: Click approve to post to Stories
-5. **Attribution**: The system automatically adds "Credit: @username" to videos
+The worker and the dashboard are separate processes with separate jobs.
+
+1. **Discover**: the worker scans hashtags on a schedule and saves candidates
+2. **Review**: open "Content Queue" in the dashboard to review them
+3. **Approve**: approving marks an item `ready` — it does not post from the dashboard
+4. **Publish**: the worker picks up ready items within a minute and posts them
+5. **Attribution**: "Credit: @username" is burned into the video before posting
+
+Only the worker holds Instagram credentials, so the account sees a single login
+from a single host. The dashboard talks to the database and nothing else, gated by
+`DASHBOARD_PASSWORD`.
 
 ## Project Structure
 

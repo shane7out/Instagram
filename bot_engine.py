@@ -88,6 +88,13 @@ class InstagramBot:
     ACTIONS_COUNT_KEY = 'actions_today'
     ACTIONS_DATE_KEY = 'actions_date'
 
+    # app_settings keys shared between the dashboard and the worker
+    SCAN_REQUEST_KEY = 'scan_requested'
+    LAST_SCAN_KEY = 'last_discovery_stats'
+    HASHTAGS_KEY = 'hashtags'
+    MIN_FOLLOWERS_KEY = 'min_followers'
+    MIN_ENGAGEMENT_KEY = 'min_engagement_rate'
+
     def __init__(self, session_name="lasvegas_restaurants"):
         self.session_name = session_name
         self.client = Client()
@@ -434,6 +441,7 @@ class InstagramBot:
                 continue
 
         self.last_discovery_stats = stats
+        self._set_setting(self.LAST_SCAN_KEY, json.dumps(stats))
         self._log_discovery_stats(stats, hashtags, min_followers)
 
         return discovered
@@ -565,6 +573,84 @@ class InstagramBot:
             self.db_session.commit()
             logger.info(f"Updated creator {creator.username} to {status.value}")
     
+    def approve_media(self, media_id):
+        """
+        Queue an item for publishing.
+
+        Marks it READY rather than posting it here. The worker is the only
+        process holding Instagram credentials, so it performs the upload - which
+        keeps the account to a single login from a single host.
+        """
+        media = self.db_session.get(MediaItem, media_id)
+        if not media:
+            raise Exception("Media not found")
+
+        media.status = MediaStatus.READY
+        self.db_session.commit()
+        logger.info(f"Approved {media.code}, queued for the worker to publish")
+        return media
+
+    def get_approved_content(self):
+        """Items approved in the dashboard and awaiting publication"""
+        return self.db_session.query(MediaItem).filter(
+            MediaItem.status == MediaStatus.READY
+        ).order_by(MediaItem.date_discovered).all()
+
+    def request_scan(self):
+        """Ask the worker to run a discovery scan on its next pass"""
+        self._set_setting(self.SCAN_REQUEST_KEY, '1')
+        logger.info("Discovery scan requested")
+
+    def consume_scan_request(self):
+        """Return True if a scan was requested, clearing the request"""
+        if self._get_setting(self.SCAN_REQUEST_KEY) != '1':
+            return False
+        self._set_setting(self.SCAN_REQUEST_KEY, '0')
+        return True
+
+    def get_last_discovery_stats(self):
+        """The most recent scan's rejection breakdown, as recorded by the worker"""
+        raw = self._get_setting(self.LAST_SCAN_KEY)
+        if not raw:
+            return {}
+        try:
+            return json.loads(raw)
+        except ValueError:
+            return {}
+
+    def save_discovery_settings(self, hashtags=None, min_followers=None,
+                                min_engagement_rate=None):
+        """
+        Persist discovery settings chosen in the dashboard.
+
+        The worker reads these, so the dashboard's controls actually steer the
+        scans rather than adjusting an object that gets thrown away on rerun.
+        """
+        if hashtags is not None:
+            self._set_setting(self.HASHTAGS_KEY, ','.join(hashtags))
+        if min_followers is not None:
+            self._set_setting(self.MIN_FOLLOWERS_KEY, int(min_followers))
+        if min_engagement_rate is not None:
+            self._set_setting(self.MIN_ENGAGEMENT_KEY, float(min_engagement_rate))
+
+    def load_discovery_settings(self):
+        """Discovery settings saved from the dashboard. Absent keys give None."""
+        def _cast(key, fn):
+            value = self._get_setting(key)
+            try:
+                return fn(value) if value is not None else None
+            except (TypeError, ValueError):
+                return None
+
+        raw_tags = self._get_setting(self.HASHTAGS_KEY)
+        tags = [t.strip() for t in raw_tags.split(',') if t.strip()] if raw_tags else None
+
+        return {
+            'hashtags': tags or None,
+            'min_followers': _cast(self.MIN_FOLLOWERS_KEY, int),
+            'min_engagement_rate': _cast(self.MIN_ENGAGEMENT_KEY, float),
+        }
+
     def reject_media(self, media_id):
         """Reject media item"""
         media = self.db_session.get(MediaItem, media_id)
