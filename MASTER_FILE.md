@@ -77,6 +77,19 @@ Nothing secret is committed to this repo. Real values live in:
 3. **Instagram credentials** — Railway environment variables; never committed (`config.example`
    is a template only).
 
+### 0.4 Archived reference material
+
+**The previous LVR master file, dated 2026-07-16, was archived on 2026-07-24 — not deleted.**
+
+It was superseded by this document, but it is worth remembering it exists. This file and the
+2026-07-24 handoff it was built from are *summaries*: the memory files in §0.3 are described as
+carrying more detail than the handoff does. So if something about the LVR dashboard seems
+missing here — an older decision, a workaround, a value nobody wrote down twice — the 7/16 file
+is the first place to look before reconstructing it from scratch.
+
+It was moved rather than removed specifically because `~/Downloads/lv-repo-new` is TCC-blocked,
+so there may be no git history to recover it from.
+
 ---
 
 ## §1 LVR Dashboard & related sites
