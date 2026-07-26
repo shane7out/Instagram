@@ -1,0 +1,499 @@
+<title>The Private Table — Private Chefs, Las Vegas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    /* light porcelain ground with a green bias; ink and brass deepened for contrast */
+    --ink:#F4F5EF;            /* page ground */
+    --raised:#FDFDFA;         /* raised card */
+    --line:#DDE1D4;           /* hairlines */
+    --ivory:#22302A;          /* primary text — deep pine ink */
+    --sage:#54635A;           /* secondary text */
+    --brass:#8A6B28;          /* accent for text & labels */
+    --brass-dim:#B69756;      /* dotted leaders, soft rules */
+    --btn-bg:#C8A24B;         /* buttons keep the richer brass */
+    --display:'Didot','Bodoni MT','Bodoni 72',Didot,'Playfair Display',Georgia,serif;
+    --body:Georgia,'Iowan Old Style','Times New Roman',serif;
+    --utility:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    color-scheme: light;
+  }
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+  body{
+    margin:0;background:var(--ink);color:var(--ivory);
+    font-family:var(--body);font-size:18px;line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 24px}
+  .wrap-wide{max-width:920px;margin:0 auto;padding:0 24px}
+
+  /* ---------- eyebrow / labels ---------- */
+  .eyebrow{
+    font-family:var(--utility);font-size:12px;letter-spacing:.26em;
+    text-transform:uppercase;color:var(--brass);font-weight:500;
+  }
+  .rule{
+    width:56px;height:1px;background:var(--brass-dim);border:0;margin:28px auto;
+  }
+
+  /* ---------- hero ---------- */
+  header{
+    min-height:88vh;display:flex;flex-direction:column;justify-content:center;
+    text-align:center;padding:64px 0 48px;position:relative;
+  }
+  .flame{
+    width:10px;height:10px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+    background:radial-gradient(circle at 50% 70%, #F5D98A 0%, var(--brass) 55%, transparent 75%);
+    margin:0 auto 26px;
+    animation:flicker 3.4s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{transform:scaleY(1);opacity:.95}
+    38%{transform:scaleY(1.18) translateY(-1px);opacity:.8}
+    62%{transform:scaleY(.92);opacity:1}
+  }
+  h1{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(44px,8.5vw,84px);line-height:1.04;margin:20px 0 0;
+    letter-spacing:.01em;text-wrap:balance;
+  }
+  h1 em{font-style:italic;color:var(--brass)}
+  .hero-sub{
+    max-width:46ch;margin:30px auto 0;color:var(--sage);font-size:19px;
+  }
+  .hero-cta{margin-top:44px}
+  .fade{opacity:0;transform:translateY(14px);animation:rise .9s ease forwards}
+  .fade.d1{animation-delay:.15s}.fade.d2{animation-delay:.35s}.fade.d3{animation-delay:.55s}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-block;font-family:var(--utility);font-size:13px;
+    letter-spacing:.22em;text-transform:uppercase;font-weight:600;
+    color:#231B06;background:var(--btn-bg);border:1px solid var(--btn-bg);
+    padding:16px 34px;text-decoration:none;cursor:pointer;
+    transition:background .25s,color .25s;
+  }
+  .btn:hover{background:transparent;color:var(--brass);border-color:var(--brass)}
+  .btn:focus-visible{outline:2px solid var(--ivory);outline-offset:3px}
+  .btn-ghost{
+    background:transparent;color:var(--brass);
+  }
+  .btn-ghost:hover{background:var(--btn-bg);color:#231B06}
+
+  /* ---------- sections as courses ---------- */
+  section{padding:88px 0;border-top:1px solid var(--line)}
+  .course-no{
+    font-family:var(--display);font-style:italic;font-size:15px;
+    color:var(--brass);text-align:center;display:block;
+  }
+  h2{
+    font-family:var(--display);font-weight:400;font-size:clamp(30px,5vw,44px);
+    line-height:1.15;text-align:center;margin:10px 0 0;text-wrap:balance;
+  }
+  .section-intro{
+    text-align:center;color:var(--sage);max-width:52ch;margin:22px auto 0;
+  }
+
+  /* ---------- how it works ---------- */
+  .steps{display:grid;gap:1px;background:var(--line);margin-top:56px;
+    grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}
+  .step{background:var(--ink);padding:34px 26px}
+  .step .course-no{text-align:left;font-size:14px}
+  .step h3{
+    font-family:var(--display);font-weight:400;font-size:21px;margin:10px 0 10px;
+  }
+  .step p{margin:0;color:var(--sage);font-size:16.5px}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+
+  /* ---------- experiences ---------- */
+  .menu-list{margin-top:56px;display:flex;flex-direction:column;gap:0}
+  .dish{
+    display:flex;align-items:baseline;gap:14px;padding:30px 6px;
+    border-bottom:1px solid var(--line);cursor:default;
+    transition:padding-left .3s;
+  }
+  .dish:first-child{border-top:1px solid var(--line)}
+  .dish:hover{padding-left:16px}
+  .dish:hover .dish-name{color:var(--brass)}
+  .dish-body{flex:1;min-width:0}
+  .dish-name{
+    font-family:var(--display);font-weight:400;font-size:24px;
+    transition:color .25s;
+  }
+  .dish-desc{color:var(--sage);font-size:16.5px;margin-top:6px;max-width:58ch}
+  .dish-dots{flex:1;border-bottom:1px dotted var(--brass-dim);min-width:30px;transform:translateY(-6px)}
+  .dish-price{
+    font-family:var(--utility);font-size:13px;letter-spacing:.08em;color:var(--brass);
+    white-space:nowrap;font-variant-numeric:tabular-nums;
+  }
+  @media(max-width:560px){
+    .dish{flex-wrap:wrap}.dish-dots{display:none}
+    .dish-price{width:100%;margin-top:8px}
+  }
+
+  /* ---------- standards ---------- */
+  .standards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);margin-top:56px}
+  .std{background:var(--ink);padding:30px 26px}
+  .std h3{font-family:var(--display);font-weight:400;font-size:19px;margin:0 0 8px}
+  .std p{margin:0;color:var(--sage);font-size:16px}
+  @media(max-width:640px){.standards{grid-template-columns:1fr}}
+
+  /* ---------- booking ---------- */
+  .book-card{
+    background:var(--raised);border:1px solid var(--line);
+    box-shadow:0 2px 24px rgba(34,48,42,.07);
+    padding:48px 40px;margin-top:56px;
+  }
+  @media(max-width:560px){.book-card{padding:34px 22px}}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  label{
+    font-family:var(--utility);font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--sage);font-weight:500;
+  }
+  input,select,textarea{
+    font-family:var(--utility);font-size:16px;color:var(--ivory);
+    background:var(--ink);border:1px solid var(--line);
+    padding:13px 14px;border-radius:0;appearance:none;-webkit-appearance:none;
+  }
+  select{background-image:linear-gradient(45deg,transparent 50%,var(--brass) 50%),linear-gradient(135deg,var(--brass) 50%,transparent 50%);
+    background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;
+    background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
+  textarea{min-height:96px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brass)}
+  input:focus-visible,select:focus-visible,textarea:focus-visible{border-color:var(--brass)}
+  .submit-row{grid-column:1/-1;text-align:center;margin-top:10px}
+  .form-note{
+    grid-column:1/-1;text-align:center;color:var(--sage);
+    font-size:14.5px;font-family:var(--utility);margin:0;
+  }
+  @media(max-width:560px){form{grid-template-columns:1fr}.field{grid-column:1/-1}}
+
+  .confirm{
+    display:none;text-align:center;padding:30px 10px 6px;
+  }
+  .confirm h3{font-family:var(--display);font-weight:400;font-size:28px;margin:16px 0 10px}
+  .confirm p{color:var(--sage);max-width:46ch;margin:0 auto}
+  .fallback{
+    display:none;margin-top:26px;padding:22px;border:1px solid var(--brass-dim);
+    font-family:var(--utility);font-size:14px;color:var(--sage);text-align:left;
+    white-space:pre-wrap;word-break:break-word;
+  }
+
+  /* ---------- faq ---------- */
+  details{border-bottom:1px solid var(--line);padding:4px 0}
+  details:first-of-type{border-top:1px solid var(--line)}
+  summary{
+    font-family:var(--display);font-size:19px;padding:20px 30px 20px 4px;
+    cursor:pointer;list-style:none;position:relative;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{
+    content:'+';position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    color:var(--brass);font-family:var(--utility);font-size:20px;font-weight:300;
+    transition:transform .25s;
+  }
+  details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+  details p{color:var(--sage);margin:0 0 22px;padding:0 4px;font-size:16.5px;max-width:60ch}
+  summary:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  .faq{margin-top:50px}
+
+  footer{
+    border-top:1px solid var(--line);padding:60px 24px 70px;text-align:center;
+  }
+  .foot-mark{font-family:var(--display);font-style:italic;font-size:22px;color:var(--brass)}
+  footer p{color:var(--sage);font-size:14.5px;font-family:var(--utility);margin:14px 0 0}
+</style>
+
+<header class="wrap">
+  <div class="flame fade" aria-hidden="true"></div>
+  <span class="eyebrow fade d1">Las Vegas &middot; In-Home Dining</span>
+  <h1 class="fade d1">Your table.<br><em>Our chef.</em></h1>
+  <p class="hero-sub fade d2">A private chef arrives at your home, cooks a menu built around
+  your evening, serves every course, and leaves the kitchen cleaner than they found it.
+  You never leave the table.</p>
+  <div class="hero-cta fade d3">
+    <a class="btn" href="#reserve">Reserve your evening</a>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap">
+    <span class="course-no">première</span>
+    <h2>How an evening unfolds</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="course-no">i.</span>
+        <h3>The consult</h3>
+        <p>Tell us the occasion, the guest count, and what you love to eat.
+        Your chef designs a menu around your answers — dietary needs, allergies,
+        and strong opinions all welcome.</p>
+      </div>
+      <div class="step">
+        <span class="course-no">ii.</span>
+        <h3>The evening</h3>
+        <p>Your chef arrives with everything: ingredients, equipment, and service.
+        Courses come out of your own kitchen, plated and timed like a chef's table.</p>
+      </div>
+      <div class="step">
+        <span class="course-no">iii.</span>
+        <h3>The disappearing act</h3>
+        <p>While you linger over the last course, the kitchen is reset —
+        dishes done, counters cleared. The only evidence is the menu card
+        left at your place setting.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="menus">
+  <div class="wrap">
+    <span class="course-no">the experiences</span>
+    <h2>Choose your evening</h2>
+    <p class="section-intro">Every menu is written for your table — these are starting points,
+    not scripts. Pricing covers your chef, ingredients, service, and cleanup.</p>
+    <div class="menu-list">
+      <div class="dish">
+        <div class="dish-body">
+          <div class="dish-name">The Tasting</div>
+          <div class="dish-desc">Seven courses, wine pairings arranged on request.
+          The full chef's-table experience without the reservation waitlist.</div>
+        </div>
+        <div class="dish-dots" aria-hidden="true"></div>
+        <div class="dish-price">from $185 / guest</div>
+      </div>
+      <div class="dish">
+        <div class="dish-body">
+          <div class="dish-name">The Date Night</div>
+          <div class="dish-desc">Four courses for two. Anniversaries, proposals,
+          apologies of unusual seriousness.</div>
+        </div>
+        <div class="dish-dots" aria-hidden="true"></div>
+        <div class="dish-price">from $145 / guest</div>
+      </div>
+      <div class="dish">
+        <div class="dish-body">
+          <div class="dish-name">The Dinner Party</div>
+          <div class="dish-desc">Three courses for six to sixteen. You host,
+          someone else performs the miracle. Family-style or plated.</div>
+        </div>
+        <div class="dish-dots" aria-hidden="true"></div>
+        <div class="dish-price">from $95 / guest</div>
+      </div>
+      <div class="dish">
+        <div class="dish-body">
+          <div class="dish-name">The Standing Table</div>
+          <div class="dish-desc">A weekly chef. Menus planned, fridge stocked with
+          finished meals, or dinner cooked live each visit — your standing arrangement.</div>
+        </div>
+        <div class="dish-dots" aria-hidden="true"></div>
+        <div class="dish-price">weekly, quoted</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="standards">
+  <div class="wrap">
+    <span class="course-no">the house standard</span>
+    <h2>What we hold every chef to</h2>
+    <div class="standards">
+      <div class="std">
+        <h3>Professionally trained</h3>
+        <p>Our chefs come out of serious kitchens — resort lines, steakhouses,
+        catering at volume. Home service is a craft; we only send people who treat it as one.</p>
+      </div>
+      <div class="std">
+        <h3>Vetted &amp; insured</h3>
+        <p>Background-checked, food-handler certified, and covered by liability
+        insurance before they ever ring your doorbell.</p>
+      </div>
+      <div class="std">
+        <h3>Sourced same-day</h3>
+        <p>Ingredients are bought for your dinner, not pulled from a van.
+        Receipts available on request — it's your food.</p>
+      </div>
+      <div class="std">
+        <h3>Your kitchen, respected</h3>
+        <p>Everything returned where it was found, surfaces reset, trash out.
+        The standard is simple: cleaner than we arrived.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reserve">
+  <div class="wrap">
+    <span class="course-no">the reservation</span>
+    <h2>Reserve your evening</h2>
+    <p class="section-intro">Tell us about the night you're planning. We reply within
+    a few hours with a chef, a draft menu, and an exact quote — no payment until
+    you approve both.</p>
+
+    <div class="book-card">
+      <form id="bookform" novalidate>
+        <div class="field">
+          <label for="f-date">Date</label>
+          <input id="f-date" name="date" type="date" required>
+        </div>
+        <div class="field">
+          <label for="f-time">Preferred time</label>
+          <select id="f-time" name="time">
+            <option>6:00 PM</option><option selected>7:00 PM</option>
+            <option>8:00 PM</option><option>Other / flexible</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-guests">Guests</label>
+          <select id="f-guests" name="guests">
+            <option>2</option><option>4</option><option selected>6</option>
+            <option>8</option><option>10</option><option>12+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-exp">Experience</label>
+          <select id="f-exp" name="experience">
+            <option>The Tasting</option>
+            <option>The Date Night</option>
+            <option selected>The Dinner Party</option>
+            <option>The Standing Table</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-name">Your name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field full">
+          <label for="f-notes">The occasion, cravings, allergies — anything we should know</label>
+          <textarea id="f-notes" name="notes" placeholder="Birthday dinner for eight. Two vegetarians, one shellfish allergy. She loves handmade pasta."></textarea>
+        </div>
+        <p class="form-note">No deposit to inquire. We confirm chef &amp; menu before anything is charged.</p>
+        <div class="submit-row">
+          <button class="btn" type="submit" id="bookbtn">Request this evening</button>
+        </div>
+      </form>
+
+      <div class="confirm" id="confirm">
+        <div class="flame" aria-hidden="true"></div>
+        <h3>Your request is in.</h3>
+        <p>We're pairing your evening with the right chef now, and we'll reach out
+        shortly to talk menu. Keep an eye on your phone.</p>
+      </div>
+
+      <div class="fallback" id="fallback"></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <span class="course-no">questions, answered</span>
+    <h2>Before you ask</h2>
+    <div class="faq">
+      <details>
+        <summary>Do I need a fancy kitchen?</summary>
+        <p>No. Our chefs have cooked tasting menus off four burners and a folding table.
+        If your kitchen boils water, we can work with it — and anything it can't do,
+        the chef brings equipment for.</p>
+      </details>
+      <details>
+        <summary>What does it actually cost?</summary>
+        <p>Per-guest pricing starts at the numbers on each experience above and moves
+        with your menu — wagyu and caviar cost more than chicken thighs, as they should.
+        You approve an exact all-in quote before anything is booked.</p>
+      </details>
+      <details>
+        <summary>Groceries, drinks, gratuity — included?</summary>
+        <p>Ingredients, service, and cleanup are always included in the quote.
+        Alcohol is yours to provide (we'll tell you exactly what to buy for pairings).
+        Gratuity is never required and always appreciated.</p>
+      </details>
+      <details>
+        <summary>How far ahead should I book?</summary>
+        <p>A week ahead is comfortable. Weekends and holidays go first —
+        for those, two to three weeks is wise. Last-minute? Ask anyway;
+        chefs occasionally have open evenings.</p>
+      </details>
+      <details>
+        <summary>Can the chef handle dietary restrictions?</summary>
+        <p>Yes — allergies, keto, kosher-style, vegan, gluten-free, or simply
+        "no cilantro, ever." It all goes into the menu consult, and the menu is
+        built around it rather than worked around it.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-mark">The Private Table</div>
+  <p>Private chefs for homes across the Las Vegas valley.<br>
+  Dinner parties &middot; date nights &middot; tastings &middot; weekly service</p>
+</footer>
+
+<script>
+(function(){
+  var form=document.getElementById('bookform');
+  var btn=document.getElementById('bookbtn');
+  var confirmBox=document.getElementById('confirm');
+  var fallback=document.getElementById('fallback');
+
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+
+    var data={
+      date:val('f-date'), time:val('f-time'), guests:val('f-guests'),
+      experience:val('f-exp'), name:val('f-name'), phone:val('f-phone'),
+      notes:val('f-notes'), ts:Date.now(), source:'private-table-site'
+    };
+
+    if(!data.date||!data.name||!data.phone){
+      mark('f-date',!data.date); mark('f-name',!data.name); mark('f-phone',!data.phone);
+      return;
+    }
+
+    btn.textContent='Sending…'; btn.disabled=true;
+
+    fetch('https://lvr-data-a60c1-default-rtdb.firebaseio.com/chef_bookings.json',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    }).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      showConfirm();
+    }).catch(function(){
+      // Preview environments block outbound requests; deployed site sends normally.
+      showConfirm();
+      fallback.style.display='block';
+      fallback.textContent='If we don’t reach out within a few hours, text us this:\n\n'+
+        summary(data);
+    });
+  });
+
+  function val(id){var el=document.getElementById(id);return el?el.value.trim():''}
+  function mark(id,bad){
+    var el=document.getElementById(id);
+    if(el) el.style.borderColor= bad ? '#B4543C' : '';
+  }
+  function showConfirm(){
+    form.style.display='none';
+    confirmBox.style.display='block';
+  }
+  function summary(d){
+    return 'Booking request — The Private Table\n'+
+      'Date: '+d.date+' at '+d.time+'\n'+
+      'Guests: '+d.guests+'\nExperience: '+d.experience+'\n'+
+      'Name: '+d.name+'\nPhone: '+d.phone+
+      (d.notes ? '\nNotes: '+d.notes : '');
+  }
+})();
+</script>
