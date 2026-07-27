@@ -1,13 +1,12 @@
 #!/bin/bash
-# Add three more restaurant records to dashboard_crec (same schema as the
-# 50799-50801 batch). Guards abort with no writes on duplicates or if the
-# num space has moved.
+# Batch 3 of restaurant adds to dashboard_crec, nums 50805-50809.
+# Same schema and guards as previous batches.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 curl -s "$DB/dashboard_crec.json" -o crec.json
 BEFORE=$(jq 'keys|length' crec.json)
-for h in rutbaindianvegas pioneersaloonnevada eattacotarian; do
+for h in balicafelv patspattyslv kassibeachhouse area15official ccspeakeasylv; do
   if grep -qi "$h" crec.json; then
     echo "GUARD: $h already present - aborting with no writes"
     exit 1
@@ -15,16 +14,18 @@ for h in rutbaindianvegas pioneersaloonnevada eattacotarian; do
 done
 
 MAX=$(jq '[.[]|.num?|numbers]|max' crec.json)
-if [ "$MAX" -ge 50802 ]; then
+if [ "$MAX" -ge 50805 ]; then
   echo "GUARD: num space moved (max=$MAX) - aborting, needs fresh look"
   exit 1
 fi
 
 cat > adds.json <<'JSON'
 {
-  "50802": {"name":"Rutba Indian Kitchen","instagram":"@rutbaindianvegas","num":50802,"notes":"Manually added"},
-  "50803": {"name":"Pioneer Saloon","instagram":"@pioneersaloonnevada","num":50803,"notes":"Manually added"},
-  "50804": {"name":"Tacotarian","instagram":"@eattacotarian","num":50804,"notes":"Manually added"}
+  "50805": {"name":"Bali Cafe Las Vegas","instagram":"@balicafelv","num":50805,"notes":"Manually added"},
+  "50806": {"name":"Pats Patty's","instagram":"@patspattyslv","num":50806,"notes":"Manually added"},
+  "50807": {"name":"Kassi Beach House","instagram":"@kassibeachhouse","num":50807,"notes":"Manually added"},
+  "50808": {"name":"AREA15","instagram":"@area15official","num":50808,"notes":"Manually added"},
+  "50809": {"name":"CC Speakeasy","instagram":"@ccspeakeasylv","num":50809,"notes":"Manually added"}
 }
 JSON
 
@@ -38,6 +39,6 @@ echo ""
 echo "== record count before/after =="
 echo "$BEFORE -> $(jq 'keys|length' crec2.json)"
 echo "== verification =="
-for h in rutbaindianvegas pioneersaloonnevada eattacotarian; do
+for h in balicafelv patspattyslv kassibeachhouse area15official ccspeakeasylv; do
   if grep -qi "$h" crec2.json; then echo "$h: IN the database"; else echo "$h: MISSING"; fi
 done
