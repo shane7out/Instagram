@@ -1,25 +1,46 @@
 #!/bin/bash
-# Phase 1: READ-ONLY inspection of dashboard_crec so the write can mirror the
-# real record schema exactly. No mutations in this phase.
+# Phase 2: write the three restaurant records to dashboard_crec, mirroring the
+# schema captured in phase 1 (key = num as string; fields name/instagram/num).
+# Nums 50799-50801 follow the observed max (50798); none are tombstoned.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
+# Guard: refuse to write if any target handle is already present
 curl -s "$DB/dashboard_crec.json" -o crec.json
-echo "== record count =="
-jq 'keys|length' crec.json
-echo "== last key =="
-jq -r 'keys|last' crec.json
-echo "== last record (schema template) =="
-jq -c --arg k "$(jq -r 'keys|last' crec.json)" '.[$k]' crec.json
-echo "== second-to-last record (schema confirmation) =="
-jq -c --arg k "$(jq -r 'keys|.[-2]' crec.json)" '.[$k]' crec.json
-echo "== highest num in crec =="
-jq '[.[]|.num?|numbers]|max' crec.json
-echo "== target handles already present? =="
-grep -cio 'fortunelasvegas' crec.json || true
-grep -cio 'blacklabelburgerco' crec.json || true
-grep -cio 'shookshakery' crec.json || true
-echo "== tombstone info =="
-curl -s "$DB/dashboard_deleted.json" -o dele.json
-jq 'keys|length' dele.json
-jq -c 'keys|.[-5:]' dele.json
+BEFORE=$(jq 'keys|length' crec.json)
+for h in fortunelasvegas blacklabelburgerco shookshakery; do
+  if grep -qi "$h" crec.json; then
+    echo "GUARD: $h already present - aborting with no writes"
+    exit 1
+  fi
+done
+
+# Guard: confirm num space is still free (nothing else wrote since phase 1)
+MAX=$(jq '[.[]|.num?|numbers]|max' crec.json)
+if [ "$MAX" -ge 50799 ]; then
+  echo "GUARD: num space moved (max=$MAX) - aborting, needs fresh look"
+  exit 1
+fi
+
+cat > adds.json <<'JSON'
+{
+  "50799": {"name":"Fortune Seafood Restaurant","instagram":"@fortunelasvegas","num":50799,"notes":"Manually added"},
+  "50800": {"name":"Black Label Burger Company","instagram":"@blacklabelburgerco","num":50800,"notes":"Manually added"},
+  "50801": {"name":"Shook Shakery","instagram":"@shookshakery","num":50801,"notes":"Manually added"}
+}
+JSON
+
+STATUS=$(curl -s -o resp.json -w "%{http_code}" -X PATCH -H "Content-Type: application/json" \
+  -d @adds.json "$DB/dashboard_crec.json")
+echo "PATCH status: $STATUS"
+cat resp.json
+
+# Verify
+curl -s "$DB/dashboard_crec.json" -o crec2.json
+echo ""
+echo "== record count before/after =="
+echo "$BEFORE -> $(jq 'keys|length' crec2.json)"
+echo "== verification =="
+for h in fortunelasvegas blacklabelburgerco shookshakery; do
+  if grep -qi "$h" crec2.json; then echo "$h: IN the database"; else echo "$h: MISSING"; fi
+done
