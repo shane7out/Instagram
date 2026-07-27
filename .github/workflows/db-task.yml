@@ -1,0 +1,12 @@
+name: db-task
+on:
+  push:
+    branches: [claude/master-file-e6ofy0]
+    paths: ['.github/db-task/**']
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash .github/db-task/task.sh
