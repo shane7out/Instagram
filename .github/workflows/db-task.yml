@@ -2,7 +2,9 @@ name: db-task
 on:
   push:
     branches: [claude/master-file-e6ofy0]
-    paths: ['.github/db-task/**']
+    paths: ['.github/db-task/task.sh']
+permissions:
+  contents: write
 jobs:
   run:
     runs-on: ubuntu-latest

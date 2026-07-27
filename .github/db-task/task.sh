@@ -1,34 +1,51 @@
 #!/bin/bash
-# Create the LV Experiences category node (dashboard_exp_crec) and add six
-# experience businesses. Own num range (60001+) so it can never collide with
-# restaurants (~50xxx) or advertisers. Mirrors the crec record schema.
+# 1) Move AREA15 from restaurants (crec 50808) to LV Experiences (exp 60007).
+#    Removal uses PATCH-null per the house rules (deletes are blocked); falls
+#    back to a dashboard_deleted tombstone if the key survives.
+# 2) Fetch the live dashboard HTML and commit it to the repo so the tab
+#    feature can be designed against the real source.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
-curl -s "$DB/dashboard_exp_crec.json" -o exp.json
-echo "existing dashboard_exp_crec: $(jq -r 'if .==null then "empty (new node)" else (keys|length|tostring)+" records" end' exp.json)"
-for h in gunshiphelicopters skycombatace speedvegas adrenalinemountainlv stratvegas spherevegas; do
-  if grep -qi "$h" exp.json; then
-    echo "GUARD: $h already present - aborting with no writes"
-    exit 1
+echo "== move AREA15 =="
+AREA=$(curl -s "$DB/dashboard_crec/50808.json")
+echo "crec 50808: $AREA"
+if [ "$AREA" = "null" ]; then
+  echo "already moved or absent in crec"
+else
+  # add to experiences under its new num
+  curl -s -X PATCH -H "Content-Type: application/json" \
+    -d '{"60007":{"name":"AREA15","instagram":"@area15official","num":60007,"notes":"Immersive art & entertainment district (moved from restaurants)"}}' \
+    "$DB/dashboard_exp_crec.json" > /dev/null
+  echo "added to dashboard_exp_crec as 60007"
+  # remove from restaurants via PATCH-null
+  curl -s -X PATCH -H "Content-Type: application/json" \
+    -d '{"50808":null}' "$DB/dashboard_crec.json" > /dev/null
+  CHECK=$(curl -s "$DB/dashboard_crec/50808.json")
+  if [ "$CHECK" = "null" ]; then
+    echo "removed from dashboard_crec (PATCH-null worked)"
+  else
+    echo "PATCH-null blocked; writing tombstone instead"
+    TOMB=$(curl -s "$DB/dashboard_deleted.json" | jq -c 'to_entries|last|.value')
+    echo "mirroring tombstone value format: $TOMB"
+    curl -s -X PATCH -H "Content-Type: application/json" \
+      -d "{\"50808\":$TOMB}" "$DB/dashboard_deleted.json" > /dev/null
+    echo "tombstoned 50808 in dashboard_deleted"
   fi
-done
+fi
+echo "exp record count: $(curl -s "$DB/dashboard_exp_crec.json" | jq 'keys|length')"
+echo "crec record count: $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
 
-cat > adds.json <<'JSON'
-{
-  "60001": {"name":"Gunship Helicopters","instagram":"@gunshiphelicopters","num":60001,"notes":"Shoot a machine gun from an open-door helicopter"},
-  "60002": {"name":"Sky Combat Ace","instagram":"@skycombatace","num":60002,"notes":"Ride and fly a stunt plane over Red Rock Canyon"},
-  "60003": {"name":"SPEEDVEGAS","instagram":"@speedvegas","num":60003,"notes":"Race supercars and a Baja truck on a racetrack course"},
-  "60004": {"name":"Adrenaline Mountain","instagram":"@adrenalinemountainlv","num":60004,"notes":"UTVs, monster trucks, archery, shooting, flamethrower"},
-  "60005": {"name":"The STRAT","instagram":"@stratvegas","num":60005,"notes":"Tower activities incl. the SkyJump vertical zip line"},
-  "60006": {"name":"Sphere","instagram":"@spherevegas","num":60006,"notes":"Immersive shows and films at the Sphere"}
-}
-JSON
+echo "== fetch live dashboard source =="
+curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live-dashboard.html
+ls -la /tmp/live-dashboard.html
+grep -o 'APP_VERSION=[0-9]*' /tmp/live-dashboard.html | head -1
 
-STATUS=$(curl -s -o resp.json -w "%{http_code}" -X PATCH -H "Content-Type: application/json" \
-  -d @adds.json "$DB/dashboard_exp_crec.json")
-echo "PATCH status: $STATUS"
-
-curl -s "$DB/dashboard_exp_crec.json" -o exp2.json
-echo "== LV Experiences now holds: $(jq 'keys|length' exp2.json) records =="
-jq -r '.[] | "  - " + .name + " (" + .instagram + ")"' exp2.json
+mkdir -p .github/db-task/fetched
+cp /tmp/live-dashboard.html .github/db-task/fetched/live-dashboard.html
+git config user.name "db-task-runner"
+git config user.email "actions@github.com"
+git add .github/db-task/fetched/live-dashboard.html
+git commit -m "db-task: snapshot live dashboard HTML for tab design" || echo "no changes to commit"
+git push
+echo "snapshot committed"
