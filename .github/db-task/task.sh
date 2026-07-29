@@ -1,35 +1,25 @@
 #!/bin/bash
-# Yelp-migration rule: Sul & Beans, Vanderpump A Paris, Hola Habibi,
-# Guieb Cafe, Lit Wings. Add missing as name-only + Bad IG.
+# Judgment call: move Alexis Park Resort (crec 50819) to LV Experiences
+# (exp 60008), clear its badig flag, PATCH-null the crec record.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
-curl -s "$DB/dashboard_crec.json" -o crec.json
-curl -s "$DB/dashboard/customrecords.json" -o cust.json
-BEFORE=$(jq 'keys|length' crec.json)
-NUM=$(jq '[.[]|.num?|numbers]|max' crec.json)
-echo "starting count=$BEFORE, max num=$NUM"
+REC=$(curl -s "$DB/dashboard_crec/50819.json")
+echo "crec 50819: $REC"
+if [ "$REC" = "null" ]; then
+  echo "already moved or absent - nothing to do"
+  exit 0
+fi
 
-add_if_missing() {
-  local name="$1" pat="$2"
-  if grep -qiE "$pat" crec.json || grep -qiE "$pat" cust.json; then
-    echo "SKIP (already in db): $name"
-    return
-  fi
-  NUM=$((NUM+1))
-  curl -s -X PATCH -H "Content-Type: application/json" \
-    -d "{\"$NUM\":{\"name\":\"$name\",\"instagram\":\"\",\"num\":$NUM,\"notes\":\"Yelp migration - IG needed\"}}" \
-    "$DB/dashboard_crec.json" > /dev/null
-  curl -s -X PATCH -H "Content-Type: application/json" \
-    -d "{\"$NUM\":true}" "$DB/dashboard/badig.json" > /dev/null
-  echo "ADDED: $name (num $NUM, badig=$(curl -s "$DB/dashboard/badig/$NUM.json"))"
-}
+curl -s -X PATCH -H "Content-Type: application/json" \
+  -d '{"60008":{"name":"Alexis Park Resort","instagram":"","num":60008,"notes":"Resort & event spaces - IG needed (Yelp migration)"}}' \
+  "$DB/dashboard_exp_crec.json" > /dev/null
+echo "added to experiences as 60008"
 
-add_if_missing "Sul & Beans" "sul.{0,3}beans"
-add_if_missing "Vanderpump A Paris" "vanderpump.{0,4}paris"
-grep -qiE "vanderpump" crec.json cust.json && echo "note: another Vanderpump venue exists in db" || true
-add_if_missing "Hola Habibi" "hola ?habibi"
-add_if_missing "Guieb Cafe" "guieb"
-add_if_missing "Lit Wings" "lit ?wings"
+curl -s -X PATCH -H "Content-Type: application/json" -d '{"50819":null}' "$DB/dashboard_crec.json" > /dev/null
+curl -s -X PATCH -H "Content-Type: application/json" -d '{"50819":null}' "$DB/dashboard/badig.json" > /dev/null
 
-echo "final count: $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
+echo "crec 50819 now: $(curl -s "$DB/dashboard_crec/50819.json")"
+echo "badig 50819 now: $(curl -s "$DB/dashboard/badig/50819.json")"
+echo "experiences count: $(curl -s "$DB/dashboard_exp_crec.json" | jq 'keys|length')"
+echo "restaurant count: $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
