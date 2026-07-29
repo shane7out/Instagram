@@ -1,6 +1,6 @@
 #!/bin/bash
-# Yelp-migration rule: check five places, add whichever are missing as
-# name-only records with the Bad IG flag. Nums allocated from current max+1.
+# Yelp-migration rule: Sul & Beans, Vanderpump A Paris, Hola Habibi,
+# Guieb Cafe, Lit Wings. Add missing as name-only + Bad IG.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -25,11 +25,11 @@ add_if_missing() {
   echo "ADDED: $name (num $NUM, badig=$(curl -s "$DB/dashboard/badig/$NUM.json"))"
 }
 
-add_if_missing "Culichi Town" "culichi"
-add_if_missing "Daikon Vegan Sushi" "daikon"
-add_if_missing "China Mama Express" "china ?mama ?express"
-grep -qiE "china ?mama" crec.json cust.json && echo "note: a 'China Mama' (non-Express) match exists somewhere" || true
-add_if_missing "Alexis Park Resort" "alexis ?park"
-add_if_missing "Lucino's Pizza" "lucino"
+add_if_missing "Sul & Beans" "sul.{0,3}beans"
+add_if_missing "Vanderpump A Paris" "vanderpump.{0,4}paris"
+grep -qiE "vanderpump" crec.json cust.json && echo "note: another Vanderpump venue exists in db" || true
+add_if_missing "Hola Habibi" "hola ?habibi"
+add_if_missing "Guieb Cafe" "guieb"
+add_if_missing "Lit Wings" "lit ?wings"
 
 echo "final count: $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
