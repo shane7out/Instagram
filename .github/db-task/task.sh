@@ -1,6 +1,6 @@
 #!/bin/bash
-# Yelp-migration mega batch: 22 restaurant candidates + 2 experiences
-# (Shops at Crystals, Drai's Nightclub). Sparrow + Wolf already built-in.
+# Yelp-migration batch 2 of the big sweep: 23 restaurant candidates +
+# 1 experience (Miss Behaves Mavericks). Carrot & Daikon skipped (California).
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -34,30 +34,30 @@ add_exp() {
   echo "ADDED EXP: $name (num $ENUM)"
 }
 
-add_rest "Tous Les Jours" "tous ?les ?jours"
-add_rest "Born And Raised" "born ?and ?raised"
-add_rest "Rosa Mexicano" "rosa ?mexicano"
-add_rest "Slice House by Tony Gemignani" "slice ?house"
-add_rest "Cheese and Grace" "cheese ?and ?grace"
-add_rest "Lady M Cake Boutique" "lady ?m ?cake|ladym"
-add_rest "Jason Aldeans Kitchen + Bar" "jason ?aldean"
-add_rest "Paina Cafe" "paina"
-add_rest "Brooklyns Best Pizza & Pasta" "brooklyn.?s ?best"
-add_rest "Mother Wolf" "mother ?wolf"
-add_rest "Fishers Deli" "fisher.?s ?deli"
-add_rest "STK Steakhouse" "stk ?steak|eatstk|stklasvegas"
-add_rest "Halgatteok" "halgatteok"
-add_rest "ShangHai Taste" "shanghai ?taste"
-add_rest "Waffles Cafe" "waffles ?cafe"
-add_rest "Big Mamas Wings & Things" "big ?mamas? ?wings"
-add_rest "McMullans Irish Pub" "mcmullan"
-add_rest "Birria - Bite los Arcos" "bite ?los ?arcos"
-add_rest "Hello Hibachi" "hello ?hibachi"
-add_rest "702 Prep" "702 ?prep"
-add_rest "Bar Boheme" "bar ?boheme"
-add_rest "Carlitros Mariscos" "carlitros"
+add_rest "Finesse Catering and Events" "finesse ?catering"
+add_rest "The Great Greek Mediterranean Grill" "great ?greek"
+add_rest "The Pinky Ring by Bruno Mars" "pinky ?ring"
+add_rest "Cafe Landwer" "landwer"
+add_rest "Pups and Cups Coffee" "pups ?(and|&)? ?cups"
+add_rest "Las Vegas Custom Cakes" "vegas ?custom ?cakes"
+add_rest "Siempre J.B." "siempre"
+add_rest "Echo - Taste & Sound" "taste ?& ?sound|taste ?and ?sound"
+add_rest "The Taco Stand" "the ?taco ?stand"
+add_rest "Casa Playa" "casa ?playa"
+add_rest "Vegas Poke Co" "pok.? ?co|vegaspoke"
+add_rest "322 Pizza Bar" "322 ?pizza"
+add_rest "Bazaar Mar by Jose Andres" "bazaar ?mar"
+add_rest "Mariscos El Cachetes" "cachetes"
+add_rest "El Manantial Restaurant" "manantial"
+add_rest "Tacos Los Barrios" "los ?barrios"
+add_rest "Tacos El Gordo" "el ?gordo"
+add_rest "TARU" "[\"@ ]taru"
+add_rest "Raku" "aburiya|\"raku\""
+add_rest "Ramen Kobo" "ramen ?kobo"
+add_rest "TRES Social Tapas" "tres ?social"
+add_rest "Noodle Nest" "noodle ?nest"
+add_rest "8 East" "8 ?east"
 
-add_exp "The Shops at Crystals" "crystals" "Luxury shopping center on the Strip"
-add_exp "Drais Nightclub" "drai.?s" "Rooftop nightclub at The Cromwell"
+add_exp "Miss Behaves Mavericks" "miss ?behave" "Performing arts show downtown"
 
 echo "final: crec $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length'), exp $(curl -s "$DB/dashboard_exp_crec.json" | jq 'keys|length')"
