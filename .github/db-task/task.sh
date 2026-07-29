@@ -1,26 +1,23 @@
 #!/bin/bash
-# Add El Rey to dashboard_crec (num 50815). Same schema and guards.
+# READ-ONLY: check whether five Yelp-saved restaurants exist anywhere in the
+# database (crec adds + customrecords array). No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 curl -s "$DB/dashboard_crec.json" -o crec.json
-BEFORE=$(jq 'keys|length' crec.json)
-if grep -qi "elreylasvegas" crec.json; then
-  echo "GUARD: elreylasvegas already present - aborting with no writes"
-  exit 1
-fi
-
-MAX=$(jq '[.[]|.num?|numbers]|max' crec.json)
-if [ "$MAX" -ge 50815 ]; then
-  echo "GUARD: num space moved (max=$MAX) - aborting, needs fresh look"
-  exit 1
-fi
-
-curl -s -X PATCH -H "Content-Type: application/json" \
-  -d '{"50815":{"name":"El Rey","instagram":"@elreylasvegas","num":50815,"notes":"Manually added"}}' \
-  "$DB/dashboard_crec.json" > /dev/null
-
-curl -s "$DB/dashboard_crec.json" -o crec2.json
-echo "== record count before/after =="
-echo "$BEFORE -> $(jq 'keys|length' crec2.json)"
-if grep -qi "elreylasvegas" crec2.json; then echo "elreylasvegas: IN the database"; else echo "elreylasvegas: MISSING"; fi
+curl -s "$DB/dashboard/customrecords.json" -o cust.json
+echo "crec records: $(jq 'keys|length' crec.json)"
+echo "customrecords entries: $(jq 'if .==null then 0 else length end' cust.json)"
+echo "== name search (crec / customrecords) =="
+check() {
+  local label="$1" pat="$2"
+  local a b
+  a=$(grep -icE "$pat" crec.json || true)
+  b=$(grep -icE "$pat" cust.json || true)
+  echo "$label: crec=$a customrecords=$b"
+}
+check "Jins Korean BBQ" "jin.{0,3}s? ?korean"
+check "Wok To Walk" "wok ?to ?walk"
+check "Earthly Plant Based" "earthly"
+check "Carnitas Don Claudio" "don ?claudio"
+check "Tacos El Compita" "el ?compita"
