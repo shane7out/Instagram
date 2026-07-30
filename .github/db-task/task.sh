@@ -1,5 +1,6 @@
 #!/bin/bash
-# Yelp-migration batch: 6 restaurant candidates + Downtown Cinemas (exp).
+# Yelp-migration batch: 20 restaurant candidates + 2 experiences
+# (The Cromwell, ZAI Las Vegas).
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -33,13 +34,29 @@ add_exp() {
   echo "ADDED EXP: $name (num $ENUM)"
 }
 
-add_rest "Papa Aldos Peruvian Fusion" "papa ?aldo"
-add_rest "Romano Mercato Italiano" "romano ?mercato"
-add_rest "Bad to the Bone BBQ" "bad ?to ?the ?bone"
-add_rest "Carson Kitchen" "carson ?kitchen"
-add_rest "The Spot Lv" "spot ?lv"
-add_rest "The Capital of Tacos" "capital ?of ?tacos"
+add_rest "Naked City Pizza" "naked ?city"
+add_rest "Whats Zaap? Thai Food" "zaap"
+add_rest "Jammyland" "jammyland"
+add_rest "Papi Steak" "papi ?steak"
+add_rest "S Bar Las Vegas" "\"s ?bar|sbarlv"
+add_rest "Buddy Vs Ristorante" "buddy ?v"
+add_rest "Bottiglia" "bottiglia"
+add_rest "Proper Eats Food Hall" "proper ?eats"
+add_rest "La Mona Rosa" "mona ?rosa"
+add_rest "Luchini Italian Restaurant" "luchini"
+add_rest "Krispy Krunchy Chicken at Shortline Express" "krispy ?krunchy"
+add_rest "Ole Churros" "ole ?churros"
+add_rest "Mint Indian Bistro" "mint ?indian"
+add_rest "Carversteak" "carver ?steak|carversteak"
+add_rest "Rumi Room Persian Indo-Pak Cuisine" "rumi ?room"
+add_rest "Pier 88 Boiling Seafood & Bar" "pier ?88"
+add_rest "Electra Cocktail Club" "electra"
+add_rest "Little Avalon" "little ?avalon"
+add_rest "Crazy Pita Rotisserie & Grill" "crazy ?pita"
+add_rest "Rosallie Le French Cafe" "rosallie"
+add_rest "Viva" "\"viva\""
 
-add_exp "Downtown Cinemas" "downtown ?cinema" "Dine-in cinema downtown"
+add_exp "The Cromwell" "cromwell" "Boutique hotel & casino on the Strip"
+add_exp "ZAI Las Vegas" "zai" "Cocktail bar & dance club on Fremont"
 
 echo "final: crec $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length'), exp $(curl -s "$DB/dashboard_exp_crec.json" | jq 'keys|length')"
