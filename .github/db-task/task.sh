@@ -1,5 +1,5 @@
 #!/bin/bash
-# Yelp-migration batch: 23 restaurant candidates + Durango Casino & Resort (exp).
+# Yelp-migration batch: 18 restaurant candidates + The Venetian (exp).
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -35,30 +35,26 @@ add_exp() {
   echo "ADDED EXP: $name (num $ENUM)"
 }
 
-add_rest "BabyStacks Cafe" "babystacks"
-add_rest "18bin" "18 ?bin"
-add_rest "Scrambled" "\"scrambled"
-add_rest "Tamba" "tamba"
-add_rest "Doya Jjambbong" "doya"
-add_rest "Sushi Mon" "sushi ?mon"
-add_rest "Bel-Aire Lounge" "bel.?aire"
-add_rest "Boba Foxy" "boba ?foxy"
-add_rest "Tacos & Beer" "tacos ?(&|and) ?beer"
-add_rest "Proper Sandwich" "proper ?sandwich"
-add_rest "Palm Sugar" "palm ?sugar"
-add_rest "Trattoria Italia" "trattoria ?itali"
-add_rest "Horizon Shine" "horizon ?shine"
-add_rest "The Coffee Class" "coffee ?class"
-add_rest "The Boiling Crab" "boiling ?crab"
-add_rest "Rebellion Pizza" "rebellion"
-add_rest "La Casa De Juliette" "juliette"
-add_rest "Cajun Crackin" "cajun ?crackin"
-add_rest "The Laundry Room" "laundry ?room"
-add_rest "Fogo de Chao" "fogo"
-add_rest "KoMex Fusion" "komex"
-add_rest "Liquid Acai Eatery" "liquid ?acai"
-add_rest "Shang Artisan Noodle" "shang ?artisan"
+add_rest "Kona Bros Coffee" "kona ?bros"
+add_rest "Pizza Pie Guy" "pizza ?pie ?guy"
+add_rest "Early Birds - A Breakfast Spot" "early ?birds"
+add_rest "Ohjah Japanese Steakhouse" "ohjah ?japanese"
+add_rest "Ohjah Noodle House" "ohjah ?noodle"
+add_rest "Joe Vicaris Andiamo Steakhouse" "andiamo"
+add_rest "Guido Pie" "guido ?pie"
+add_rest "Goong Korean BBQ" "goong"
+add_rest "Aspire Coffee House" "aspire ?coffee"
+add_rest "Island Fin Poke" "island ?fin"
+add_rest "Strip House Steakhouse" "strip ?house"
+add_rest "SEVEN:45" "seven.?45"
+add_rest "Jeremiahs Italian Ice" "jeremiah"
+add_rest "Main St Provisions" "provisions"
+add_rest "Pot Master Street Food" "pot ?master"
+add_rest "Bacon Nation" "bacon ?nation"
+add_rest "Hwaro 2" "hwaro"
+add_rest "Panpanccs" "panpancc"
+add_rest "Broadway Burger Bar and Grill" "broadway ?burger"
 
-add_exp "Durango Casino & Resort" "durango" "Off-Strip resort & casino"
+add_exp "The Venetian Resort" "venetian" "Strip resort & casino"
 
 echo "final: crec $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length'), exp $(curl -s "$DB/dashboard_exp_crec.json" | jq 'keys|length')"
