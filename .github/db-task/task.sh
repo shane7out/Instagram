@@ -1,20 +1,18 @@
 #!/bin/bash
-# Add Gabriels Kitchen Las Vegas with IG handle from screenshot.
+# Fetch the live Torch Dating page and commit it into the repo for patching.
 set -e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
-
-curl -s "$DB/dashboard_crec.json" -o crec.json
-curl -s "$DB/dashboard/customrecords.json" -o cust.json
-BEFORE=$(jq 'keys|length' crec.json)
-if grep -qiE "gabriel.?s ?kitchen|north ?end ?pizza|gabrielskitchen" crec.json cust.json; then
-  echo "SKIP: already in db"
-  exit 0
+curl -s https://lvr-data-a60c1.web.app/dating.html -o .github/db-task/fetched/live-dating.html
+SIZE=$(wc -c < .github/db-task/fetched/live-dating.html)
+echo "fetched dating.html: $SIZE bytes"
+if [ "$SIZE" -lt 10000 ]; then
+  echo "FILE TOO SMALL - not committing"
+  head -c 500 .github/db-task/fetched/live-dating.html
+  exit 1
 fi
-NUM=$(jq '[.[]|.num?|numbers]|max' crec.json)
-NUM=$((NUM+1))
-curl -s -X PATCH -H "Content-Type: application/json" \
-  -d "{\"$NUM\":{\"name\":\"Gabriels Kitchen Las Vegas\",\"instagram\":\"@gabrielskitchenlasvegas\",\"num\":$NUM,\"notes\":\"Manually added - Boston style pizzeria (North End Pizza)\"}}" \
-  "$DB/dashboard_crec.json" > /dev/null
-echo "ADDED: Gabriels Kitchen Las Vegas (num $NUM)"
-echo "record: $(curl -s "$DB/dashboard_crec/$NUM.json")"
-echo "count: $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
+grep -c "SPARK_V" .github/db-task/fetched/live-dating.html || true
+git config user.name "db-task"
+git config user.email "actions@users.noreply.github.com"
+git add .github/db-task/fetched/live-dating.html
+git commit -m "db-task: snapshot live dating.html for patching"
+git push origin claude/master-file-e6ofy0
+echo "committed and pushed"
