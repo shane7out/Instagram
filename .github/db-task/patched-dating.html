@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FF4E67">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Torch">
+<title>Torch Dating — Free Online Dating & Matchmaking to Meet Singles Worldwide</title>
+<meta name="description" content="Torch (TorchDating.com) is a free online dating and matchmaking app to meet singles worldwide. Swipe, match and chat with men, women and LGBTQ+ singles near you or in any country. 60 days free — no credit card needed.">
+<meta name="keywords" content="torch dating, torchdating, online dating, dating app, free dating site, matchmaking, meet singles, singles near me, worldwide dating, international dating, gay dating, lesbian dating, bisexual dating, LGBTQ dating, straight dating, find love, serious relationships, casual dating, date night, best dating app, no credit card dating">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="author" content="Torch Dating">
+<link rel="canonical" href="https://torchdating.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Torch Dating">
+<meta property="og:title" content="Torch Dating — Free Online Dating & Matchmaking Worldwide">
+<meta property="og:description" content="Meet singles worldwide — men, women and LGBTQ+. Swipe, match and chat. 60 days free, no credit card needed.">
+<meta property="og:url" content="https://torchdating.com/">
+<meta property="og:image" content="https://torchdating.com/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Torch Dating — Free Online Dating & Matchmaking Worldwide">
+<meta name="twitter:description" content="Meet singles worldwide — men, women and LGBTQ+. 60 days free, no credit card needed.">
+<meta name="twitter:image" content="https://torchdating.com/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","name":"Torch Dating","alternateName":"Torch","url":"https://torchdating.com/","description":"Free online dating and matchmaking to meet singles worldwide.","potentialAction":{"@type":"SearchAction","target":"https://torchdating.com/?q={search_term_string}","query-input":"required name=search_term_string"}},
+{"@type":"Organization","name":"Torch Dating","url":"https://torchdating.com/","logo":"https://torchdating.com/icon-512.png","description":"Torch Dating is a worldwide online dating and matchmaking platform for singles of every gender and orientation."},
+{"@type":"WebApplication","name":"Torch Dating","applicationCategory":"LifestyleApplication","operatingSystem":"Web, iOS, Android","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"60 days free, then $9.99/month. No credit card required to sign up."}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is Torch Dating free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes. Torch Dating is free to join and use, with 60 days of premium features free and no credit card required to sign up. After the trial, premium is just $9.99 per month and you can cancel anytime."}},
+{"@type":"Question","name":"Can I use Torch Dating anywhere in the world?","acceptedAnswer":{"@type":"Answer","text":"Yes. Torch Dating is a worldwide dating app. You can set your country from a full list of countries and meet singles locally or internationally, anywhere on the globe."}},
+{"@type":"Question","name":"Is Torch Dating for LGBTQ+, gay and lesbian singles?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. Torch Dating welcomes everyone — men, women, nonbinary and all sexual orientations including straight, gay, lesbian, bisexual, pansexual, queer and asexual singles. You choose who you want to meet."}},
+{"@type":"Question","name":"Do I need a credit card to sign up for Torch Dating?","acceptedAnswer":{"@type":"Answer","text":"No credit card is needed to sign up for Torch Dating. You can create your profile and start matching for free."}},
+{"@type":"Question","name":"How does Torch Dating matchmaking work?","acceptedAnswer":{"@type":"Answer","text":"Torch Dating lets you build a detailed profile and search by age, distance, country, height, body type, ethnicity, religion, education, income, lifestyle and more, then swipe and match with compatible singles and chat instantly."}},
+{"@type":"Question","name":"Is Torch Dating safe?","acceptedAnswer":{"@type":"Answer","text":"Torch Dating includes profile verification, block and report tools, and dating safety tips. Never send money to anyone you meet online and always meet in a public place."}}
+]}]}</script>
+
+<style>
+  :root{
+    --pink:#FF4E67; --coral:#FF7A45; --grad:linear-gradient(135deg,#FF4E67 0%,#FF7A45 100%);
+    --ink:#222; --muted:#8a8f98; --line:#ececf0; --bg:#fafafc; --card:#fff;
+    --like:#39d98a; --nope:#ff5069; --sup:#4dc3ff;
+    --shadow:0 10px 40px rgba(0,0,0,.12);
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);overflow:hidden;position:fixed;inset:0}
+  #app{max-width:460px;margin:0 auto;height:100%;background:var(--bg);position:relative;display:flex;flex-direction:column;overflow:hidden;overflow:clip}
+  button{font-family:inherit;cursor:pointer;border:0;background:none}
+  .hidden{display:none!important}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px calc(10px);
+    background:#fff;border-bottom:1px solid var(--line);flex:0 0 auto;z-index:5}
+  .logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:22px;letter-spacing:-.5px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .logo .flame{font-size:22px;-webkit-text-fill-color:initial}
+  .topbar .tt{font-weight:800;font-size:19px}
+  .fbtn{width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.09);display:flex;align-items:center;justify-content:center;transition:transform .12s,box-shadow .12s;padding:0}
+  .fbtn:active{transform:scale(.88);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+  .fbtn svg{display:block}
+  .obtn{width:auto;padding:0 13px;gap:7px;display:flex;align-items:center;font-weight:800;font-size:13.5px;color:#2aa066}
+  .odot{width:9px;height:9px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 0 rgba(46,204,113,.5);animation:opulse 1.8s infinite}
+  @keyframes opulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,.45)}70%{box-shadow:0 0 0 8px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+  .onl-inline{color:#2ecc71;font-weight:800}
+  .mdot{position:absolute;bottom:8px;right:8px;width:13px;height:13px;border-radius:50%;background:#2ecc71;border:2.5px solid #fff;z-index:3}
+  .avwrap{position:relative;flex:0 0 auto}
+  .avdot{position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;background:#2ecc71;border:2.5px solid #fff}
+  #opage{position:absolute;inset:0;background:var(--bg);z-index:19;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .22s}
+  #opage.open{transform:none}
+  /* ---- Tonight's Torch ---- */
+  #tsBar{flex:0 0 auto;margin:12px 14px 0;border-radius:16px;padding:11px 16px;display:flex;align-items:center;gap:11px;cursor:pointer;color:#fff;background:linear-gradient(100deg,#1b1035,#3b1355 45%,#7a1e4e);box-shadow:0 6px 20px rgba(60,10,80,.32);position:relative;overflow:hidden;-webkit-user-select:none;user-select:none}
+  #tsBar.calm{background:linear-gradient(100deg,#241d3d,#3a2f55);opacity:.93}
+  #tsBar .bolt{font-size:20px;animation:tsPulse 1.5s infinite;filter:drop-shadow(0 0 8px rgba(255,213,74,.75))}
+  #tsBar.calm .bolt{animation:none;filter:none;opacity:.8}
+  #tsBar .t{font-weight:800;font-size:13.5px;line-height:1.25}
+  #tsBar .s{font-size:11.5px;opacity:.78;font-weight:600}
+  #tsBar .shine{position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);animation:tsShine 2.8s infinite}
+  @keyframes tsShine{to{left:130%}}
+  @keyframes tsPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+  #tspage{position:absolute;inset:0;z-index:30;background:radial-gradient(120% 90% at 50% 0%,#3b1355 0%,#150b26 55%,#0b0616 100%);color:#fff;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .26s}
+  #tspage.open{transform:none}
+  .tshd{display:flex;align-items:center;padding:16px 18px 4px}
+  .tshd .t{font-weight:900;font-size:16px;letter-spacing:2.5px}
+  .tshd .done{margin-left:auto;background:rgba(255,255,255,.12);border:0;color:#fff;font-size:16px;font-weight:800;width:34px;height:34px;border-radius:50%;cursor:pointer}
+  .tssub{padding:0 18px;font-size:12.5px;opacity:.65;font-weight:600}
+  .tsphoto{position:relative;flex:1;margin:12px 18px 0;border-radius:24px;overflow:hidden;background-size:cover;background-position:center;background-color:#221;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  .tsgrad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,transparent 42%)}
+  .tsinfo{position:absolute;left:16px;right:16px;bottom:14px}
+  .tsinfo .n{font-size:24px;font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+  .tsinfo .l{font-size:13px;font-weight:700;opacity:.9;margin-top:2px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+  .tsveil{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(160deg,#2a0f45,#7a1e4e);transition:opacity .6s;cursor:pointer}
+  .tsveil .zap{font-size:64px;animation:tsPulse 1.4s infinite;filter:drop-shadow(0 0 20px rgba(255,213,74,.85))}
+  .tsveil .vt{font-weight:900;font-size:15px;letter-spacing:1px}
+  .tsveil .vs{font-size:12px;opacity:.7;font-weight:600}
+  .tsveil.off{opacity:0;pointer-events:none}
+  .tsmeta{padding:12px 20px 0;text-align:center;min-height:64px}
+  .tsmeta .why{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+  .tsmeta .why span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700}
+  .tsmeta .vfull{display:inline-block;margin-top:9px;color:#ffd54a;font-weight:800;font-size:12.5px;cursor:pointer;text-decoration:none}
+  .tsacts{display:flex;justify-content:center;align-items:center;gap:18px;padding:12px 0 4px;min-height:64px}
+  .tsbtn{border:0;cursor:pointer;font-weight:900;border-radius:999px}
+  .tsbtn.pass{width:56px;height:56px;font-size:20px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+  .tsbtn.spark{height:56px;padding:0 38px;font-size:16.5px;color:#3a2500;background:linear-gradient(100deg,#ffd54a,#ff9d2e);box-shadow:0 8px 26px rgba(255,170,40,.4)}
+  .tsdone{font-weight:800;font-size:14px;opacity:.85;text-align:center}
+  .tsct{text-align:center;font-size:12px;font-weight:700;opacity:.55;padding:6px 0 16px}
+  /* ---- Blind Torch mode ---- */
+  .bscard{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.22);border:1.5px solid rgba(255,255,255,.35);border-radius:16px;padding:13px 14px;margin:2px 0 14px;cursor:pointer;-webkit-user-select:none;user-select:none}
+  .bscard.on{background:linear-gradient(100deg,#2a1045,#5b1a52);border-color:#ffd54a}
+  .bscard .bl{font-size:24px}
+  .bscard .t{font-weight:900;font-size:14px}
+  .bscard .s{font-size:11.5px;opacity:.8;font-weight:600;line-height:1.35;margin-top:2px}
+  .bscard .bsw{margin-left:auto;flex:0 0 auto;font-weight:900;font-size:12px;background:rgba(255,255,255,.18);padding:6px 12px;border-radius:999px}
+  .bscard.on .bsw{background:#ffd54a;color:#3a2500}
+  .bschip{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:5;background:rgba(20,10,40,.7);color:#fff;font-size:11.5px;font-weight:800;padding:7px 14px;border-radius:999px;white-space:nowrap}
+  .card .photo,.mcell .photo,.av,#chatAv{transition:filter .7s}
+  .cblind{margin:6px auto 2px;text-align:center;background:linear-gradient(100deg,#2a1045,#5b1a52);color:#fff;border-radius:12px;padding:9px 14px;font-size:12px;font-weight:700;max-width:86%}
+  .cblind .bar{height:5px;border-radius:99px;background:rgba(255,255,255,.18);margin-top:6px;overflow:hidden}
+  .cblind .bar i{display:block;height:100%;background:#ffd54a;border-radius:99px;transition:width .4s}
+  /* ---- Torch Quiz ---- */
+  #qpage{position:absolute;inset:0;z-index:31;background:linear-gradient(160deg,#241046,#4b1454 55%,#8a2151);color:#fff;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .26s}
+  #qpage.open{transform:none}
+  .qzhd{display:flex;align-items:center;padding:16px 18px 6px}
+  .qzhd .t{font-weight:900;font-size:16px;letter-spacing:1px}
+  .qzhd .done{margin-left:auto;background:rgba(255,255,255,.12);border:0;color:#fff;font-size:16px;font-weight:800;width:34px;height:34px;border-radius:50%;cursor:pointer}
+  .qzbar{height:6px;border-radius:99px;background:rgba(255,255,255,.15);margin:8px 18px;overflow:hidden}
+  .qzbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd54a,#ff7a45);border-radius:99px;transition:width .3s}
+  .qznum{padding:0 18px;font-size:12px;font-weight:800;opacity:.6}
+  .qzq{padding:10px 20px 6px;font-size:22px;font-weight:900;line-height:1.25}
+  .qzopts{display:flex;flex-direction:column;gap:10px;padding:12px 18px 20px;overflow-y:auto}
+  .qzopt{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.22);color:#fff;border-radius:15px;padding:15px 16px;font-size:15px;font-weight:700;text-align:left;cursor:pointer;transition:transform .12s,background .12s}
+  .qzopt:active{transform:scale(.97);background:rgba(255,255,255,.22)}
+  .qzres{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 26px;gap:6px;min-height:0;overflow-y:auto}
+  .qzres .e{font-size:72px;filter:drop-shadow(0 0 24px rgba(255,213,74,.5))}
+  .qzres .n{font-size:30px;font-weight:900}
+  .qzres .tag{font-size:13px;font-weight:800;letter-spacing:1.5px;opacity:.75;text-transform:uppercase}
+  .qzres .d{font-size:15px;line-height:1.5;opacity:.92;margin-top:8px}
+  .qzres .best{margin-top:10px;background:rgba(255,255,255,.12);border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:800}
+  .qzsh{width:calc(100% - 36px);margin:14px 18px 6px;background:linear-gradient(100deg,#ffd54a,#ff9d2e);color:#3a2500;border:0;border-radius:15px;padding:15px;font-size:16px;font-weight:900;cursor:pointer;flex:0 0 auto}
+  .qzagain{background:none;border:0;color:rgba(255,255,255,.7);font-weight:800;font-size:13px;padding:8px;margin-bottom:14px;cursor:pointer;flex:0 0 auto}
+  .qzcard{display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,#241046,#6d1b52);color:#fff;border-radius:16px;padding:14px;margin:14px 0 4px;cursor:pointer;box-shadow:0 6px 18px rgba(60,10,80,.25)}
+  .qzcard .qe{font-size:26px}
+  .qzcard .t{font-weight:900;font-size:14.5px}
+  .qzcard .s{font-size:12px;opacity:.8;font-weight:600;margin-top:1px}
+  .qzcard .qgo,.qzcard .qshare{margin-left:auto;flex:0 0 auto;background:#ffd54a;color:#3a2500;border:0;font-weight:900;font-size:12px;padding:8px 14px;border-radius:999px;cursor:pointer}
+  .qtpill{display:inline-block;background:linear-gradient(100deg,#241046,#6d1b52);color:#fff;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;vertical-align:middle;margin-left:6px}
+  /* ---- Voice intro ---- */
+  .vplay{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:1.5px solid var(--line);border-radius:15px;padding:13px 16px;cursor:pointer;font-weight:800;font-size:14px;color:#333}
+  .vplay .vic{width:34px;height:34px;flex:0 0 auto;border-radius:50%;background:linear-gradient(100deg,#FF4E67,#FF7A45);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .veq{display:flex;gap:3px;align-items:flex-end;height:18px}
+  .veq i{width:3.5px;height:6px;border-radius:2px;background:#e0407a;opacity:.45}
+  .vplay.playing .veq i{animation:veq .7s infinite ease-in-out;opacity:1}
+  .veq i:nth-child(2){animation-delay:.15s}.veq i:nth-child(3){animation-delay:.3s}.veq i:nth-child(4){animation-delay:.45s}
+  @keyframes veq{0%,100%{height:5px}50%{height:17px}}
+  /* ---- Vouches ---- */
+  .vcard{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:13px 15px;margin-top:10px;display:flex;gap:11px;align-items:flex-start}
+  .vcard .fav{width:38px;height:38px;flex:0 0 auto;border-radius:50%;background:linear-gradient(120deg,#b06bff,#e0407a);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:16px}
+  .vcard .who{font-weight:800;font-size:12.5px;color:var(--muted)}
+  .vcard .who b{color:#333}
+  .vcard .q{font-size:14.5px;font-weight:600;font-style:italic;line-height:1.4;margin-top:2px;color:#2c2f36}
+  .vcard .vdel{margin-left:auto;background:none;border:0;color:#c9ced6;font-size:15px;cursor:pointer;flex:0 0 auto;padding:2px 4px}
+  .ohd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#fff;border-bottom:1px solid var(--line)}
+  .ohd .t{display:flex;align-items:center;gap:9px;font-size:20px;font-weight:800}
+  .ohd .done{color:var(--pink);font-weight:800;font-size:16px;padding:4px 6px}
+  .osub{padding:10px 18px 0;color:var(--muted);font-size:13px}
+  #legal{position:absolute;inset:0;background:var(--bg);z-index:64;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .22s}
+  #legal.open{transform:none}
+  .lghd{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 14px;background:#fff;border-bottom:1px solid var(--line)}
+  .lghd .t{font-size:19px;font-weight:800}
+  .lghd .done{color:var(--pink);font-weight:800;font-size:16px;padding:4px 6px}
+  .lgbody{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 20px 40px;font-size:14px;line-height:1.55;color:#333}
+  .lgbody h3{margin:22px 0 6px;font-size:16px}
+  .lgbody h4{margin:14px 0 4px;font-size:13.5px}
+  .lgbody p{margin:6px 0}
+  .lgbody .aiwarn{background:#fff6e6;border:1px solid #ffd58a;border-radius:12px;padding:12px 14px;font-weight:600;margin:12px 0}
+  .onblegal{display:flex;gap:10px;align-items:flex-start;margin-top:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:13px;padding:12px}
+  .onblegal input{width:22px;height:22px;margin-top:1px;flex:0 0 auto;accent-color:#fff}
+  .onblegal label{font-size:12.5px;line-height:1.45;font-weight:600}
+  .onblegal a,.onblinks a{color:#fff;text-decoration:underline;font-weight:800}
+  .onblinks{text-align:center;margin-top:14px;font-size:12px;opacity:.9}
+  .seocontent{margin-top:34px;padding-top:22px;border-top:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.96)}
+  .seocontent h2{font-size:21px;font-weight:900;margin:0 0 8px}
+  .seocontent h3{font-size:16px;font-weight:800;margin:18px 0 5px}
+  .seocontent p{font-size:13.5px;line-height:1.55;margin:6px 0;opacity:.95}
+  .seocontent ul{margin:6px 0;padding-left:2px;list-style:none}
+  .seocontent li{font-size:13.5px;line-height:1.7;font-weight:600}
+  .proflinks{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+  .proflinks a{color:var(--pink);font-weight:700;text-decoration:none;margin:0 7px}
+  .topbar{padding-top:calc(12px + env(safe-area-inset-top,0px))}
+
+  /* ---------- main scroll area ---------- */
+  .screen{flex:1 1 auto;position:relative;overflow:hidden;display:flex;flex-direction:column;z-index:0}
+  .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+  .screen{overflow-x:clip}
+  .prof{max-width:100%;overflow-x:clip}
+  .prof .field input,.prof .field select,.prof .field textarea{max-width:100%}
+  .fbody{overflow-x:hidden;touch-action:pan-y}
+
+  /* ---------- swipe deck ---------- */
+  #deckWrap{flex:1;position:relative;padding:14px 14px 6px}
+  #deck{position:absolute;inset:14px 14px 6px}
+  .card{position:absolute;inset:0;border-radius:22px;overflow:hidden;background:#ddd var(--grad);
+    box-shadow:var(--shadow);will-change:transform;user-select:none;-webkit-user-select:none}
+  .card .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+  .card .scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.25) 34%,rgba(0,0,0,0) 55%)}
+  .card .meta{position:absolute;left:0;right:0;bottom:0;padding:18px 20px 22px;color:#fff}
+  .card .nm{font-size:27px;font-weight:800;display:flex;align-items:baseline;gap:9px;line-height:1.05}
+  .card .nm .ag{font-size:23px;font-weight:500}
+  .card .verif{font-size:15px;color:#7fd0ff}
+  .card .loc{margin-top:5px;font-size:14.5px;opacity:.92;display:flex;align-items:center;gap:5px}
+  .card .bio{margin-top:9px;font-size:14.5px;line-height:1.35;opacity:.96;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .tags{margin-top:11px;display:flex;flex-wrap:wrap;gap:7px}
+  .card .vitals{margin-top:7px;font-size:13.5px;opacity:.95;font-weight:600}
+  .intentchip{display:inline-block;font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px;color:#fff}
+  .card .intentchip{margin-top:10px}
+  .matchpill{display:inline-block;font-size:12px;font-weight:900;color:#fff;padding:5px 12px;border-radius:999px}
+  .pp-match{margin:8px 0 2px}
+  .pp-prompt{margin-top:10px}.pp-prompt .q{color:var(--muted);font-size:12.5px;font-weight:700}.pp-prompt .a{font-size:15px;font-weight:600;margin-top:2px}
+  .ppmod{text-align:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--line)}
+  .ppmod a{color:#c0454f;font-weight:700;font-size:13px;text-decoration:none;margin:0 8px;cursor:pointer}
+  .undobar{position:absolute;left:50%;bottom:86px;transform:translateX(-50%) translateY(160%);transition:transform .3s;background:#222;color:#fff;border-radius:999px;padding:11px 12px 11px 18px;display:flex;align-items:center;gap:12px;z-index:55;box-shadow:0 8px 26px rgba(0,0,0,.3);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .undobar.show{transform:translateX(-50%) translateY(0)}
+  .undobar button{background:var(--grad);color:#fff;font-weight:800;border-radius:999px;padding:8px 16px;font-size:13px}
+  .card .tag{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:999px;
+    background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28)}
+  .cardx{position:absolute;top:12px;right:12px;z-index:6;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35)}
+.cardx:active{background:rgba(255,80,105,.85)}
+.mrow-wrap{position:relative;overflow:hidden}
+.mrow-del{position:absolute;top:0;right:0;bottom:0;width:76px;background:#ff4757;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;border:0}
+.mrow-wrap .mrow{position:relative;z-index:2;background:var(--bg);transition:transform .18s;touch-action:pan-y}
+.card .likesyou{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);
+    color:#ffd54a;font-weight:700;font-size:12.5px;padding:6px 11px;border-radius:999px;border:1px solid rgba(255,213,74,.5)}
+  /* swipe stamps */
+  .stamp{position:absolute;top:34px;font-size:34px;font-weight:900;letter-spacing:2px;padding:6px 14px;
+    border:5px solid;border-radius:12px;opacity:0;transform:rotate(-18deg);pointer-events:none}
+  .stamp.like{left:22px;color:var(--like);border-color:var(--like);transform:rotate(-18deg)}
+  .stamp.nope{right:22px;color:var(--nope);border-color:var(--nope);transform:rotate(18deg)}
+  .stamp.sup{left:50%;bottom:120px;top:auto;transform:translateX(-50%) rotate(-8deg);color:var(--sup);border-color:var(--sup)}
+  .deck-empty{position:absolute;inset:14px 14px 6px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;color:var(--muted);gap:10px;padding:30px}
+  .deck-empty .big{font-size:46px}
+  .deck-empty button{margin-top:8px;background:var(--grad);color:#fff;font-weight:700;padding:12px 22px;border-radius:999px;font-size:15px}
+
+  /* ---------- action buttons ---------- */
+  .actions{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 0 14px}
+  .act{width:60px;height:60px;border-radius:50%;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.14);
+    display:flex;align-items:center;justify-content:center;font-size:26px;transition:transform .12s;border:1px solid #f0f0f3}
+  .act:active{transform:scale(.9)}
+  .act.small{width:46px;height:46px;font-size:19px}
+  .act.rewind{color:#ffb23e}.act.nope{color:var(--nope)}.act.sup{color:var(--sup)}
+  .act.like{color:var(--like)}.act.boost{color:#b06bff}
+
+  /* ---------- bottom nav ---------- */
+  .nav{flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line);
+    padding-bottom:var(--safe-b);z-index:6}
+  .nav button{flex:1;padding:11px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;
+    color:#b9bcc4;font-size:11px;font-weight:600;position:relative}
+  .nav button .ic{font-size:22px;line-height:1}
+  .nav button.on{color:var(--pink)}
+  .nav .badge{position:absolute;top:5px;right:calc(50% - 20px);background:var(--pink);color:#fff;
+    font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+  /* ---------- matches grid ---------- */
+  .pagehd{padding:16px 18px 6px}
+  .pagehd h2{margin:0;font-size:22px;font-weight:800}
+  .pagehd p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px 16px 20px}
+  .mcell{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:var(--grad);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+  .mcell .photo{position:absolute;inset:0;background-size:cover;background-position:center}
+  .mcell .sc{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),transparent 55%)}
+  .mcell .nm{position:absolute;left:8px;bottom:7px;color:#fff;font-weight:700;font-size:13px;right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mcell .new{position:absolute;top:7px;left:7px;background:var(--pink);color:#fff;font-size:9.5px;font-weight:800;padding:3px 7px;border-radius:999px}
+  .empty{padding:60px 30px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:44px}
+
+  /* ---------- messages list ---------- */
+  .mlist{padding:6px 0 20px}
+  .mrow{display:flex;align-items:center;gap:13px;padding:11px 18px}
+  .mrow:active{background:#f4f4f7}
+  .mrow .av{width:58px;height:58px;border-radius:50%;background-size:cover;background-position:center;flex:0 0 auto;background-color:#eee}
+  .mrow .tx{flex:1;min-width:0;border-bottom:1px solid var(--line);padding-bottom:11px}
+  .mrow:last-child .tx{border-bottom:0}
+  .mrow .r1{display:flex;justify-content:space-between;align-items:baseline}
+  .mrow .nm{font-weight:700;font-size:15.5px}
+  .mrow .tm{font-size:11.5px;color:var(--muted)}
+  .mrow .pv{color:var(--muted);font-size:13.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .mrow .pv.unread{color:var(--ink);font-weight:600}
+  .mrow .dot{width:9px;height:9px;border-radius:50%;background:var(--pink);flex:0 0 auto}
+  .newrow{display:flex;gap:14px;overflow-x:auto;padding:12px 16px 14px}
+  .newrow .nc{flex:0 0 auto;width:66px;text-align:center}
+  .newrow .nc .av{width:66px;height:66px;border-radius:50%;background-size:cover;background-position:center;border:3px solid var(--pink);background-color:#eee}
+  .newrow .nc .lb{font-size:11.5px;margin-top:4px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sechd{padding:6px 18px;font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase}
+
+  /* ---------- chat ---------- */
+  #chat{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:20;transform:translateX(100%);transition:transform .22s}
+  #chat.open{transform:none}
+  .chd{display:flex;align-items:center;gap:11px;padding:11px 12px;background:#fff;border-bottom:1px solid var(--line)}
+  .chd .bk{font-size:26px;color:var(--pink);padding:0 4px;line-height:1}
+  .chd .av{width:40px;height:40px;border-radius:50%;background-size:cover;background-position:center;background-color:#eee}
+  .chd .nm{font-weight:700;font-size:16px}.chd .st{font-size:11.5px;color:var(--muted)}
+  .cbody{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:8px}
+  .cmatch{text-align:center;color:var(--muted);font-size:12.5px;margin:6px 0 14px}
+  .cmatch b{color:var(--ink)}
+  .bub{max-width:76%;padding:10px 14px;border-radius:20px;font-size:14.5px;line-height:1.35;word-wrap:break-word}
+  .bub.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+  .bub.me{align-self:flex-end;color:#fff;background:var(--grad);border-bottom-right-radius:6px}
+  .cfoot{flex:0 0 auto;display:flex;gap:9px;padding:10px 12px calc(10px + var(--safe-b));background:#fff;border-top:1px solid var(--line)}
+  .cfoot input{flex:1;border:1px solid var(--line);background:#f4f4f7;border-radius:999px;padding:11px 16px;font-size:15px;outline:none}
+  .cfoot input:focus{border-color:var(--pink);background:#fff}
+  .cfoot .snd{width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+
+  /* ---------- profile ---------- */
+  .prof{padding:20px 18px 30px}
+  .prof .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+  .prof .pic{width:120px;height:120px;border-radius:50%;background-size:cover;background-position:center;box-shadow:var(--shadow);background-color:#eee;border:4px solid #fff;position:relative;cursor:pointer}
+  .cambadge{position:absolute;bottom:-4px;right:-4px;width:38px;height:38px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:18px;border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+  .pichint{font-size:12px;color:var(--muted);margin-top:-2px}
+  .prof .nm{font-size:23px;font-weight:800}
+  .prof .ed{margin-top:2px;color:var(--pink);font-weight:700;font-size:14px}
+  .mypx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+  .mypx .cell{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background-size:cover;background-position:center;background-color:#eee;cursor:pointer}
+  .mypx .cell .del{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;border:1px solid rgba(255,255,255,.4)}
+  .mypx .mainbadge{position:absolute;bottom:5px;left:5px;background:var(--grad);color:#fff;font-size:9px;font-weight:900;padding:2px 7px;border-radius:999px;z-index:2}
+  .mypx .addcell{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:3/4;border:2px dashed #d4d4dc;border-radius:12px;color:var(--muted);font-weight:800;font-size:22px;cursor:pointer;background:#fff}
+  .mypx .addcell small{font-size:10.5px;font-weight:700;margin-top:2px}
+  .prof .stats{display:flex;gap:10px;margin:20px 0}
+  .prof .stat{flex:1;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+  .prof .stat .n{font-size:22px;font-weight:800}
+  .prof .stat .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .field{margin-top:14px}
+  .field label{display:block;font-size:12px;font-weight:800;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:#fff}
+  .field textarea{resize:none;min-height:74px}
+  .field input[type=range]{accent-color:var(--pink);width:100%;padding:0;border:0;height:34px;background:transparent}
+  .distlbl{color:var(--pink);font-weight:800}
+  .dualwrap{position:relative;height:36px;margin-top:2px}
+  .dualwrap .track{position:absolute;top:50%;transform:translateY(-50%);left:0;right:0;height:5px;border-radius:3px;background:#e4e4e9}
+  .dualwrap .fill{position:absolute;top:50%;transform:translateY(-50%);height:5px;border-radius:3px;background:var(--grad)}
+  .dualwrap input[type=range]{position:absolute;left:0;top:0;width:100%;height:36px;margin:0;padding:0;background:transparent;-webkit-appearance:none;appearance:none;pointer-events:none;accent-color:transparent}
+  .dualwrap input[type=range]::-webkit-slider-runnable-track{background:transparent;border:0;height:36px}
+  .dualwrap input[type=range]::-webkit-slider-thumb{pointer-events:auto;-webkit-appearance:none;appearance:none;width:24px;height:24px;margin-top:6px;border-radius:50%;background:#fff;border:2.5px solid var(--pink);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+  #onb .dualwrap .track{background:rgba(255,255,255,.35)}
+  #onb .dualwrap .fill{background:#fff}
+  #onb .dualwrap input[type=range]::-webkit-slider-thumb{border-color:#fff;background:var(--pink)}
+  .field .row2{display:flex;gap:10px}
+  .btnbig{width:100%;margin-top:20px;background:var(--grad);color:#fff;font-weight:800;font-size:16px;padding:15px;border-radius:14px}
+  .ring{display:inline-block;width:17px;height:17px;border:3px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:ringspin .7s linear infinite;vertical-align:-4px;margin-right:9px}
+  @keyframes ringspin{to{transform:rotate(360deg)}}
+  .btnghost{width:100%;margin-top:10px;background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:700;font-size:14px;padding:13px;border-radius:14px}
+
+  /* ---------- profile detail page ---------- */
+  #ppage{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:18;transform:translateX(100%);transition:transform .22s}
+  #ppage.open{transform:none}
+  .pp-photo{position:relative;flex:0 0 54%;background-size:cover;background-position:center;background-color:#ddd}
+  .pp-photo .grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(250,250,252,1) 0%,rgba(250,250,252,0) 18%)}
+  .pp-x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);z-index:3}
+  .pp-x:active{background:rgba(255,80,105,.9)}
+  .mcell .mx,.tpc .mx{position:absolute;top:6px;right:6px;width:27px;height:27px;padding:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:5;border:1px solid rgba(255,255,255,.5)}
+  .mcell .mx:active,.tpc .mx:active{background:rgba(255,80,105,.95)}
+  .pp-back{position:absolute;top:14px;left:14px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);z-index:2}
+  .pp-likesyou{position:absolute;top:62px;right:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);color:#ffd54a;font-weight:700;font-size:12.5px;padding:6px 11px;border-radius:999px;border:1px solid rgba(255,213,74,.5)}
+  .pp-body{flex:1;overflow-y:auto;padding:6px 20px 110px;-webkit-overflow-scrolling:touch}
+  .pp-nm{font-size:26px;font-weight:800;display:flex;align-items:baseline;gap:8px}
+  .pp-nm .ag{font-size:22px;font-weight:500;color:#555}
+  .pp-loc{margin-top:4px;color:var(--muted);font-size:14px}
+  .pp-sec{margin-top:18px;font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase}
+  .pp-bio{margin-top:6px;font-size:15px;line-height:1.5}
+  .pp-tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+  .pp-tags .tag2{font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+  .pp-actions{position:absolute;left:0;right:0;bottom:0;display:flex;gap:12px;justify-content:center;align-items:center;padding:12px 16px calc(14px + var(--safe-b));background:linear-gradient(to top,var(--bg) 65%,rgba(250,250,252,0))}
+  .pp-msg{flex:1;max-width:340px;background:var(--grad);color:#fff;font-weight:800;font-size:16px;padding:15px;border-radius:999px;text-align:center}
+  .pp-note{color:var(--muted);font-size:14px;font-weight:600;padding:12px}
+  /* ---------- filters page ---------- */
+  #fpage{position:absolute;inset:0;background:var(--grad);z-index:19;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .22s;color:#fff}
+  #fpage.open{transform:none}
+  .fhd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 4px;background:transparent;border-bottom:0}
+  .fhd .t{display:flex;align-items:center;gap:8px;font-size:27px;font-weight:900;color:#fff;letter-spacing:-.5px}
+  .fhd .done{color:var(--pink);font-weight:800;font-size:15px;padding:10px 24px;background:#fff;border:0;border-radius:999px}
+  .fbody{flex:1;overflow-y:auto;padding:16px 22px 30px}
+  #fpage .field label{color:rgba(255,255,255,.95)}
+  #fpage .field select{border:0;background:rgba(255,255,255,.95);border-radius:13px;padding:14px 15px;font-size:16px;color:var(--ink)}
+  #fpage .field input[type=range]{accent-color:#fff}
+  #fpage .distlbl{color:#fff}
+  #fpage .dualwrap .track{background:rgba(255,255,255,.35)}
+  #fpage .dualwrap .fill{background:#fff}
+  #fpage .dualwrap input[type=range]::-webkit-slider-thumb{border-color:#fff;background:var(--pink)}
+  .fcount{margin-top:26px;text-align:center;color:rgba(255,255,255,.92);font-weight:700;font-size:14px}
+  /* ---------- likes-you grid + gold paywall ---------- */
+  .mcell.locked .photo{filter:blur(14px);transform:scale(1.1)}
+  .mcell .lockic{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2}
+  .tprow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:8px 16px 6px}
+  .tpc{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--grad);box-shadow:0 3px 10px rgba(0,0,0,.1)}
+  .tpc .photo{position:absolute;inset:0;background-size:cover;background-position:center}
+  .tpc.locked .photo{filter:blur(12px);transform:scale(1.1)}
+  .tpc .lockic2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;z-index:2}
+  .tpc .sc{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 55%)}
+  .tpc .nm{position:absolute;bottom:6px;left:8px;right:8px;color:#fff;font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cfp{position:absolute;top:-14px;z-index:52;animation:cfall linear forwards;pointer-events:none}
+  @keyframes cfall{to{transform:translateY(115vh) rotate(740deg);opacity:.85}}
+  .ppdots{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}
+  .ppdots span{width:26px;height:4px;border-radius:2px;background:rgba(255,255,255,.42)}
+  .ppdots span.on{background:#fff}
+  .ly-cta{margin:6px 16px 20px;background:var(--grad);color:#fff;font-weight:800;font-size:15.5px;padding:15px;border-radius:14px;width:calc(100% - 32px);text-align:center}
+  .goldbox{background:#fff;border-radius:22px;max-width:340px;width:100%;padding:24px 20px 16px;text-align:center;color:var(--ink)}
+  .gtitle{font-size:26px;font-weight:900}.gtitle span{background:linear-gradient(90deg,#f7b733,#fc4a1a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .greason{color:var(--muted);font-size:13.5px;margin-top:4px;min-height:17px}
+  .gfeat{list-style:none;margin:14px 0 6px;padding:0;text-align:left}
+  .gfeat li{padding:7px 2px;font-size:14.5px;font-weight:600;border-bottom:1px solid #f4f4f6}
+  .gplans{display:flex;gap:8px;margin:14px 0 4px}
+  .gplan{flex:1;border:2px solid var(--line);border-radius:14px;padding:12px 4px 10px;cursor:pointer;position:relative}
+  .gplan b{display:block;font-size:15px}.gplan span{font-size:12.5px;color:var(--muted)}
+  .gplan.best{border-color:#f7b733;background:#fffaf0}
+  .tagbest{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#f7b733;color:#fff;font-size:9px;font-weight:900;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .gbuy{width:100%;margin-top:12px;background:linear-gradient(90deg,#f7b733,#fc4a1a);color:#fff;font-weight:800;font-size:16px;padding:14px;border-radius:999px}
+  .gno{width:100%;margin-top:6px;color:var(--muted);font-weight:600;font-size:13.5px;padding:8px}
+  .gnote{color:#c5c8cf;font-size:11px;margin-top:4px}
+  .gfree{font-size:31px;font-weight:900;margin-top:14px;background:linear-gradient(90deg,#f7b733,#fc4a1a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .gthen{color:var(--muted);font-size:13.5px;margin-top:2px;font-weight:600}
+  .pricepill{display:inline-block;background:rgba(255,255,255,.95);color:var(--pink);font-weight:800;font-size:13.5px;padding:8px 18px;border-radius:999px;margin:10px auto 0;box-shadow:0 3px 12px rgba(0,0,0,.12)}
+  .goldtag{display:inline-block;background:linear-gradient(90deg,#f7b733,#fc4a1a);color:#fff;font-size:10.5px;font-weight:900;padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:6px}
+  .icerow{display:flex;gap:8px;overflow-x:auto;padding:8px 12px 2px;background:#fff}
+  .icerow button{flex:0 0 auto;background:#f4f4f7;border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink)}
+  .rcpt{align-self:flex-end;font-size:10.5px;color:var(--muted);margin-top:-3px;margin-right:8px;font-weight:600}
+  .lbanner{position:absolute;top:66px;left:50%;transform:translateX(-50%) translateY(-14px);opacity:0;visibility:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 8px 26px rgba(0,0,0,.2);border-radius:999px;padding:11px 19px;font-weight:700;font-size:13.5px;z-index:60;white-space:nowrap;cursor:pointer}
+  .lbanner.show{animation:lbanner1s 1s ease forwards}
+  @keyframes lbanner1s{0%{opacity:0;visibility:hidden;transform:translateX(-50%) translateY(-14px)}12%{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}82%{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}100%{opacity:0;visibility:hidden;transform:translateX(-50%) translateY(-14px)}}
+  #boostBar{display:none;align-items:center;gap:8px;background:linear-gradient(90deg,#7b2ff7,#b06bff);color:#fff;font-weight:800;font-size:12.5px;padding:8px 14px;justify-content:center;flex:0 0 auto}
+  #boostBar.on{display:flex}
+  /* ---------- match modal / onboarding ---------- */
+  .overlay{position:absolute;inset:0;background:rgba(20,10,20,.55);backdrop-filter:blur(4px);z-index:40;display:flex;align-items:center;justify-content:center;padding:24px}
+  .matchbox{text-align:center;color:#fff;max-width:340px;width:100%}
+  .matchbox h1{font-size:40px;margin:0 0 4px;font-weight:900;font-style:italic;
+    background:linear-gradient(90deg,#ff8fb0,#ffd08a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .matchbox p{margin:0 0 22px;font-size:15px;opacity:.95}
+  .matchbox .pair{display:flex;justify-content:center;gap:-10px;margin-bottom:22px}
+  .matchbox .pair .a{width:120px;height:120px;border-radius:50%;background-size:cover;background-position:center;border:4px solid #fff;background-color:#eee}
+  .matchbox .pair .a:last-child{margin-left:-26px}
+  .matchbox .heart{position:absolute;font-size:40px;margin-top:40px}
+  .matchbox button{width:100%;padding:14px;border-radius:999px;font-weight:800;font-size:15px;margin-top:10px}
+  .matchbox .msg{background:#fff;color:var(--pink)}
+  .matchbox .keep{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.4)}
+
+  /* onboarding */
+  #onb{position:absolute;inset:0;z-index:50;background:var(--grad);color:#fff;display:flex;flex-direction:column;overflow-y:auto}
+  #onb .inner{margin:auto;width:100%;max-width:380px;padding:34px 26px}
+  #onb .flame{font-size:56px;text-align:center}
+  #onb h1{text-align:center;font-size:34px;font-weight:900;margin:6px 0 2px;letter-spacing:-1px}
+  #onb .sub{text-align:center;opacity:.92;margin-bottom:26px;font-size:15px}
+  #onb .fld{margin-bottom:15px}
+  #onb label{font-size:13px;font-weight:700;opacity:.95;display:block;margin-bottom:7px}
+  #onb input,#onb select{width:100%;border:0;border-radius:13px;padding:14px 15px;font-size:16px;font-family:inherit;background:rgba(255,255,255,.95);color:var(--ink)}
+  #onb input[type=range]{background:transparent;padding:0;accent-color:#fff;height:34px}
+  #onb .seg{display:flex;gap:8px}
+  #onb .seg button{flex:1;padding:13px 0;border-radius:13px;background:rgba(255,255,255,.2);color:#fff;font-weight:700;font-size:14px;border:1px solid rgba(255,255,255,.35)}
+  #onb .seg button.sel{background:#fff;color:var(--pink)}
+  #onb .go{width:100%;margin-top:20px;background:#fff;color:var(--pink);font-weight:800;font-size:17px;padding:16px;border-radius:14px}
+  #onb .row2{display:flex;gap:10px}
+  .toast{position:absolute;left:50%;bottom:160px;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;
+    padding:10px 18px;border-radius:999px;font-size:13.5px;font-weight:600;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- top bar -->
+  <div class="topbar" id="topbar">
+    <div class="logo" onclick="goHome()" style="cursor:pointer;margin-right:auto"><svg width="15" height="31" viewBox="0 0 40 84" aria-hidden="true" style="flex:0 0 auto"><defs><linearGradient id="fgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset=".55" stop-color="#FF7A45"/><stop offset="1" stop-color="#FF4E67"/></linearGradient><linearGradient id="hgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a55e"/><stop offset="1" stop-color="#a06a35"/></linearGradient></defs><path d="M20 1 C26 11 33 15 33 25 A13 13 0 1 1 7 25 C7 15 14 11 20 1 Z" fill="url(#fgT)"/><path d="M20 13 C23 18 27 20 27 26 A7 7 0 1 1 13 26 C13 20 17 18 20 13 Z" fill="#ffe9a8"/><rect x="12" y="34" width="16" height="7" rx="3.5" fill="#ffd54a"/><polygon points="14,41 26,41 22.5,83 17.5,83" fill="url(#hgT)"/></svg>torch.dating</div>
+
+  </div>
+
+  <div id="boostBar"></div>
+  <div class="lbanner" id="likeBanner" onclick="go('likesyou');this.classList.remove('show')">🔥 Someone new just liked you — tap to see</div>
+  <!-- DISCOVER -->
+  <div class="screen" id="view-discover">
+    <div id="guestBar" style="display:none;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:linear-gradient(90deg,#FF7A45,#FF4E67);color:#fff;position:relative;z-index:5">
+      <span style="font-weight:800;letter-spacing:.01em">&#128293; torch.dating</span>
+      <span style="opacity:.9;font-size:12.5px">60 days FREE</span>
+      <button id="guestSignupBtn" style="border:0;border-radius:999px;padding:8px 18px;font-weight:800;background:#fff;color:#FF4E67;font-size:14px;cursor:pointer">Sign Up</button>
+    </div>
+    <div id="tsBar" onclick="openTonight()" style="display:none"></div>
+    <div id="deckWrap"><div id="deck"></div></div>
+    <div class="actions">
+      <button class="act small rewind" id="btnRewind" title="Rewind">↩</button>
+      <button class="act nope" id="btnNope" title="Nope">✕</button>
+      <button class="act sup" id="btnSuper" title="Super Like">★</button>
+      <button class="act like" id="btnLike" title="Like">♥</button>
+      <button class="act small boost" id="btnBoost" title="Boost">⚡</button>
+    </div>
+  </div>
+
+  <!-- MATCHES -->
+  <div class="screen hidden" id="view-matches">
+    <div class="scroll">
+      <div class="pagehd"><h2>Your Matches</h2><p id="matchSub">People who liked you back.</p></div>
+      <div id="matchGrid" class="mgrid"></div>
+    </div>
+  </div>
+
+  <!-- LIKES YOU -->
+  <div class="screen hidden" id="view-likesyou">
+    <div class="scroll">
+      <div class="pagehd"><h2>Likes You 💛</h2><p id="lySub"></p></div>
+      <div id="tpWrap"></div>
+      <div id="lyCta"></div>
+      <div id="lyGrid" class="mgrid"></div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="screen hidden" id="view-messages">
+    <div class="scroll">
+      <div class="pagehd"><h2>Messages</h2></div>
+      <div id="newMatches"></div>
+      <div id="threadList" class="mlist"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen hidden" id="view-profile">
+    <div class="scroll"><div class="prof" id="profBody"></div></div>
+  </div>
+
+  <!-- bottom nav -->
+  <div class="nav" id="nav">
+    <button data-v="discover" class="on"><span class="ic">🔥</span>Discover</button>
+    <button data-v="matches"><span class="ic">♥</span>Matches<span class="badge hidden" id="badgeMatches"></span></button>
+    <button data-v="likesyou"><span class="ic">💛</span>Likes You<span class="badge hidden" id="badgeLikes"></span></button>
+    <button data-v="messages"><span class="ic">💬</span>Messages<span class="badge hidden" id="badgeMsgs"></span></button>
+    <button data-v="profile"><span class="ic">👤</span>Profile</button>
+  </div>
+
+  <!-- Tonight's Torch reveal page -->
+  <div id="tspage"><div id="tsBody" style="display:flex;flex-direction:column;flex:1;min-height:0"></div></div>
+
+  <!-- Torch Quiz page -->
+  <div id="qpage"><div id="qBody" style="display:flex;flex-direction:column;flex:1;min-height:0"></div></div>
+
+  <!-- legal page (terms / privacy / safety) -->
+  <div id="legal">
+    <div class="lghd"><div class="t" id="lgTitle">Legal</div><button class="done" onclick="closeLegal()">Done</button></div>
+    <div class="lgbody" id="lgBody"></div>
+  </div>
+
+  <!-- online now page -->
+  <div id="opage">
+    <div class="ohd"><div class="t"><span class="odot"></span>Online Now — <span id="opCount">0</span></div><button class="done" onclick="closeOnline()">Done</button></div>
+    <div class="osub">Live — updates as people come and go</div>
+    <div class="scroll"><div id="opGrid" class="mgrid"></div></div>
+  </div>
+
+  <!-- discovery filters page -->
+  <div id="fpage">
+    <div class="fhd"><div class="t"><svg width="13" height="27" viewBox="0 0 40 84" aria-hidden="true" style="flex:0 0 auto"><defs><linearGradient id="fgF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset=".55" stop-color="#FF7A45"/><stop offset="1" stop-color="#FF4E67"/></linearGradient><linearGradient id="hgF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#e8c98f"/></linearGradient></defs><path d="M20 1 C26 11 33 15 33 25 A13 13 0 1 1 7 25 C7 15 14 11 20 1 Z" fill="url(#fgF)"/><rect x="12" y="34" width="16" height="7" rx="3.5" fill="#ffd54a"/><polygon points="14,41 26,41 22.5,83 17.5,83" fill="url(#hgF)"/></svg> torch.dating</div><button class="done" onclick="closeFilters()">Done</button></div>
+    <div class="fbody" id="fBody"></div>
+  </div>
+
+  <!-- profile detail page -->
+  <div id="ppage">
+    <div class="pp-photo" id="ppPhoto">
+      <button class="pp-back" onclick="closeProfilePage()">‹</button>
+      <button class="pp-x" onclick="ppDeleteX()">✕</button>
+      <div class="grad"></div>
+    </div>
+    <div class="pp-body" id="ppBody"></div>
+    <div class="pp-actions" id="ppActions"></div>
+  </div>
+
+  <!-- chat overlay -->
+  <div id="chat">
+    <div class="chd">
+      <button class="bk" id="chatBack">‹</button>
+      <div class="av" id="chatAv"></div>
+      <div><div class="nm" id="chatNm"></div><div class="st" id="chatSt">Online now</div></div>
+    </div>
+    <div class="cbody" id="chatBody"></div>
+    <div class="icerow hidden" id="iceRow"></div>
+    <div class="cfoot">
+      <input id="chatInput" placeholder="Say something nice…" autocomplete="off">
+      <button class="snd" id="chatSend">➤</button>
+    </div>
+  </div>
+
+  <!-- spark gold paywall -->
+  <div class="overlay hidden" id="goldModal" style="z-index:46">
+    <div class="goldbox">
+      <div class="gtitle">🔥 Torch <span>GOLD</span></div>
+      <div class="greason" id="goldReason"></div>
+      <ul class="gfeat">
+        <li>💛 See everyone who likes you</li>
+        <li>⭐ Unlimited Super Likes</li>
+        <li>🚀 Monthly free Boost</li>
+        <li>↩ Unlimited rewinds</li>
+      </ul>
+      <div class="gfree">60 DAYS FREE</div>
+      <div class="gthen">then $9.99/mo · cancel anytime</div>
+      <div style="color:#2aa066;font-weight:800;font-size:13px;margin-top:6px">✓ No credit card needed</div>
+      <button class="gbuy" onclick="buyGold(0)">Start my 60 days free</button>
+      <button class="gno" onclick="closeGold()">No thanks</button>
+      <div class="gnote">Demo — nothing is charged · <a onclick="closeGold();openLegal('terms')" style="text-decoration:underline;cursor:pointer">Terms apply</a></div>
+    </div>
+  </div>
+
+  <!-- match modal -->
+  <div class="overlay hidden" id="matchModal"></div>
+
+  <!-- onboarding -->
+  <div id="onb" class="hidden">
+    <div class="inner">
+      <div style="line-height:1"><svg width="36" height="74" viewBox="0 0 40 84" aria-hidden="true"><defs><linearGradient id="fgO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset=".55" stop-color="#FF7A45"/><stop offset="1" stop-color="#FF4E67"/></linearGradient><linearGradient id="hgO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a55e"/><stop offset="1" stop-color="#a06a35"/></linearGradient></defs><path d="M20 1 C26 11 33 15 33 25 A13 13 0 1 1 7 25 C7 15 14 11 20 1 Z" fill="url(#fgO)"/><path d="M20 13 C23 18 27 20 27 26 A7 7 0 1 1 13 26 C13 20 17 18 20 13 Z" fill="#ffe9a8"/><rect x="12" y="34" width="16" height="7" rx="3.5" fill="#ffd54a"/><polygon points="14,41 26,41 22.5,83 17.5,83" fill="url(#hgO)"/></svg></div>
+      <h1>torch.dating</h1>
+      <div class="sub" style="margin-top:2px">Let's set you up.</div>
+      <div style="text-align:center"><span class="pricepill">✨ 60 days FREE · then $9.99/mo</span></div>
+      <div style="text-align:center;margin-top:7px;margin-bottom:2px;color:rgba(255,255,255,.92);font-size:12.5px;font-weight:700">No credit card needed to sign up</div>
+      <div class="fld"><label>Your first name</label><input id="onbName" placeholder="Alex" maxlength="20"></div>
+      <div class="fld"><label>Username</label><input id="onbUser" placeholder="@alex_vegas" maxlength="20" autocapitalize="none" autocorrect="off"></div>
+      <div class="fld"><label>Your birthday <span id="onbAgeShow" style="opacity:.85"></span></label><div id="onbBdayWrap"></div></div>
+      <div class="fld"><label>I am a…</label>
+        <div class="seg" id="onbGender">
+          <button data-g="w">Woman</button><button data-g="m">Man</button><button data-g="x">Nonbinary</button>
+        </div>
+      </div>
+      <div class="fld"><label>Show me…</label>
+        <div class="seg" id="onbSeek">
+          <button data-s="w">Women</button><button data-s="m">Men</button><button data-s="all" class="sel">Everyone</button>
+        </div>
+      </div>
+      <div class="fld"><label>Age range — <span id="onbAgeLbl">21 – 45</span></label>
+        <div class="dualwrap"><div class="track"></div><div class="fill" id="onbFill"></div>
+          <input id="onbMin" type="range" value="21" min="18" max="70" step="1">
+          <input id="onbMax" type="range" value="45" min="18" max="70" step="1">
+        </div>
+      </div>
+      <div class="fld"><label>Your country</label><select id="onbCountry"></select></div>
+      <div class="fld"><label>ZIP / postal code — optional, for nearby search</label><input id="onbZip" inputmode="numeric" maxlength="10" placeholder="89109"></div>
+      <div class="fld"><label>Max distance — <span id="onbDistLbl">Anywhere</span></label>
+        <input id="onbDist" type="range" min="1" max="50" step="1" value="50">
+      </div>
+      <div class="onblegal">
+        <input type="checkbox" id="onbTos">
+        <label for="onbTos">I'm 18 or older and I agree to the <a onclick="event.preventDefault();openLegal('terms')" href="#">Terms of Service</a> and <a onclick="event.preventDefault();openLegal('privacy')" href="#">Privacy Policy</a>, and I understand Torch is a demo — profiles and chats are AI-generated simulations, not real people.</label>
+      </div>
+      <button class="go" id="onbGo">Start swiping →</button>
+      <div id="onbBack" class="hidden" style="text-align:center;margin-top:10px"><a href="#" onclick="event.preventDefault();document.getElementById('onb').classList.add('hidden')" style="color:rgba(255,255,255,.85);text-decoration:underline;cursor:pointer">← Keep browsing</a></div>
+      <div class="onblinks"><a onclick="event.preventDefault();openLegal('about')" href="#">About Us</a> · <a onclick="event.preventDefault();openLegal('safety')" href="#">Safety Tips</a> · © 2026 Torch · For entertainment purposes</div>
+      <section class="seocontent" aria-label="About Torch dating">
+        <h2>Free online dating &amp; matchmaking, worldwide</h2>
+        <p>Torch is a free online dating app and matchmaking service that helps you meet singles worldwide. Whether you're looking for love, a serious relationship, or something casual, you can swipe, match and chat with men, women and LGBTQ+ singles near you — or in any country on earth.</p>
+        <h3>Dating for everyone</h3>
+        <p>Torch is for everyone. Straight, gay, lesbian, bisexual, pansexual, queer and asexual singles are all welcome. Choose your gender, your orientation, and exactly who you want to meet — locally or internationally.</p>
+        <h3>Search by what matters to you</h3>
+        <p>Our advanced matchmaking filters let you search singles by age, distance, country, height, body type, ethnicity, religion, politics, education, profession, income, credit score, lifestyle, diet, hobbies and more — so you meet people who truly fit.</p>
+        <h3>Why singles choose Torch</h3>
+        <ul>
+          <li>💛 Meet singles worldwide — every country, every city</li>
+          <li>🌈 Inclusive of all genders and orientations</li>
+          <li>🔎 The most powerful search filters in online dating</li>
+          <li>💬 Real-time chat and see who's online now</li>
+          <li>✔ Verified profiles and safety-first design</li>
+          <li>✨ 60 days free — no credit card needed to sign up</li>
+        </ul>
+        <h3>Frequently asked questions</h3>
+        <p><b>Is Torch free?</b> Yes — free to join, 60 days of premium free, no credit card required. Then $9.99/month, cancel anytime.</p>
+        <p><b>Can I meet singles in other countries?</b> Yes. Torch is worldwide — pick any country and meet local or international singles.</p>
+        <p><b>Is Torch for gay and lesbian dating?</b> Yes. Torch welcomes all orientations and identities.</p>
+        <p><b>Do I need a credit card?</b> No credit card is needed to sign up.</p>
+      </section>
+    </div>
+  </div>
+
+  <input type="file" id="photoInput" accept="image/*" capture="user" class="hidden">
+  <input type="file" id="verifyInput" accept="image/*" capture="user" class="hidden">
+  <input type="file" id="photosInput" accept="image/*" multiple class="hidden">
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="profiles-women.js?v=46"></script>
+<script src="profiles-men.js?v=46"></script>
+<script>
+/* ============================ REAL LOCATION / DISTANCE ============================ */
+var CITY_COORDS={"Las Vegas, NV":[36.17,-115.14],"Henderson, NV":[36.04,-114.98],"North Las Vegas, NV":[36.20,-115.12],"Summerlin, NV":[36.19,-115.32],"Reno, NV":[39.53,-119.81],"Los Angeles, CA":[34.05,-118.24],"San Diego, CA":[32.72,-117.16],"San Francisco, CA":[37.77,-122.42],"Sacramento, CA":[38.58,-121.49],"Fresno, CA":[36.74,-119.77],"Long Beach, CA":[33.77,-118.19],"Oakland, CA":[37.80,-122.27],"San Jose, CA":[37.34,-121.89],"Anaheim, CA":[33.84,-117.91],"Phoenix, AZ":[33.45,-112.07],"Scottsdale, AZ":[33.49,-111.93],"Tucson, AZ":[32.22,-110.97],"Denver, CO":[39.74,-104.99],"Boulder, CO":[40.01,-105.27],"Colorado Springs, CO":[38.83,-104.82],"Seattle, WA":[47.61,-122.33],"Spokane, WA":[47.66,-117.43],"Portland, OR":[45.52,-122.68],"Eugene, OR":[44.05,-123.09],"Salt Lake City, UT":[40.76,-111.89],"Austin, TX":[30.27,-97.74],"Dallas, TX":[32.78,-96.80],"Houston, TX":[29.76,-95.37],"San Antonio, TX":[29.42,-98.49],"Fort Worth, TX":[32.76,-97.33],"El Paso, TX":[31.76,-106.49],"Oklahoma City, OK":[35.47,-97.52],"Kansas City, MO":[39.10,-94.58],"St. Louis, MO":[38.63,-90.20],"Chicago, IL":[41.88,-87.63],"Minneapolis, MN":[44.98,-93.27],"Milwaukee, WI":[43.04,-87.91],"Madison, WI":[43.07,-89.40],"Detroit, MI":[42.33,-83.05],"Ann Arbor, MI":[42.28,-83.74],"Columbus, OH":[39.96,-83.00],"Cincinnati, OH":[39.10,-84.51],"Cleveland, OH":[41.50,-81.69],"Indianapolis, IN":[39.77,-86.16],"Nashville, TN":[36.16,-86.78],"Memphis, TN":[35.15,-90.05],"Atlanta, GA":[33.75,-84.39],"Savannah, GA":[32.08,-81.09],"Charlotte, NC":[35.23,-80.84],"Raleigh, NC":[35.78,-78.64],"Asheville, NC":[35.60,-82.55],"Charleston, SC":[32.78,-79.93],"Miami, FL":[25.76,-80.19],"Orlando, FL":[28.54,-81.38],"Tampa, FL":[27.95,-82.46],"Jacksonville, FL":[30.33,-81.66],"Fort Lauderdale, FL":[26.12,-80.14],"St. Petersburg, FL":[27.77,-82.64],"New Orleans, LA":[29.95,-90.07],"Baton Rouge, LA":[30.45,-91.19],"Washington, DC":[38.91,-77.04],"Baltimore, MD":[39.29,-76.61],"Philadelphia, PA":[39.95,-75.17],"Pittsburgh, PA":[40.44,-80.00],"New York, NY":[40.71,-74.01],"Brooklyn, NY":[40.68,-73.94],"Buffalo, NY":[42.89,-78.88],"Boston, MA":[42.36,-71.06],"Providence, RI":[41.82,-71.41],"Hartford, CT":[41.77,-72.67],"Newark, NJ":[40.74,-74.17],"Richmond, VA":[37.54,-77.44],"Virginia Beach, VA":[36.85,-75.98],"Louisville, KY":[38.25,-85.76],"Birmingham, AL":[33.52,-86.80],"Albuquerque, NM":[35.08,-106.65],"Boise, ID":[43.62,-116.20],"Omaha, NE":[41.26,-95.94],"Des Moines, IA":[41.59,-93.62],"Little Rock, AR":[34.75,-92.29],"Honolulu, HI":[21.31,-157.86],"Anchorage, AK":[61.22,-149.90]};
+function _hav(a,b){ var R=3958.8,d2r=Math.PI/180; var dLat=(b.lat-a.lat)*d2r, dLng=(b.lng-a.lng)*d2r; var x=Math.sin(dLat/2),y=Math.sin(dLng/2); var h=x*x+Math.cos(a.lat*d2r)*Math.cos(b.lat*d2r)*y*y; return 2*R*Math.asin(Math.sqrt(h)); }
+function coordOf(p){ var c=CITY_COORDS[p.city]||CITY_COORDS["Las Vegas, NV"]; return { lat:c[0]+(_oh(p.id,777)-0.5)*0.28, lng:c[1]+(_oh(p.id,888)-0.5)*0.28 }; }
+function distOf(p){ if(S&&S.me&&S.me.loc){ var d=_hav(S.me.loc,coordOf(p)); return d<1?1:Math.round(d); } return p.dist; }
+function locLabel(){ return (S&&S.me&&S.me.loc)?(S.me.loc.label||("ZIP "+S.me.loc.zip)):"not set — enter ZIP for real distances"; }
+function setZip(zip,quiet){
+  zip=(zip||"").replace(/\D/g,"").slice(0,5);
+  if(zip.length!==5){ if(!quiet)toast("Enter a 5-digit ZIP"); return; }
+  fetch("https://api.zippopotam.us/us/"+zip).then(function(r){ if(!r.ok)throw 0; return r.json(); }).then(function(j){
+    var pl=(j.places&&j.places[0])||{};
+    S.me.loc={ lat:parseFloat(pl.latitude), lng:parseFloat(pl.longitude), zip:zip, label:(pl["place name"]||"")+", "+(pl["state abbreviation"]||"")+" "+zip };
+    buildOrder(); save();
+    try{ renderDeck(); updateBadges(); var l=$("fLocLbl"); if(l)l.textContent=locLabel(); var c=$("fCount"); if(c)c.textContent=currentQueue().length+" people match your filters"; }catch(e){}
+    toast("📍 Location set: "+S.me.loc.label);
+  }).catch(function(){ toast("Couldn't find that ZIP — try again"); });
+}
+function useGPS(){
+  if(!navigator.geolocation){ toast("No GPS here — enter your ZIP"); return; }
+  toast("Getting your location…");
+  navigator.geolocation.getCurrentPosition(function(pos){
+    S.me.loc={ lat:pos.coords.latitude, lng:pos.coords.longitude, label:"Current location (GPS)" };
+    buildOrder(); save();
+    try{ renderDeck(); updateBadges(); var l=$("fLocLbl"); if(l)l.textContent=locLabel(); var c=$("fCount"); if(c)c.textContent=currentQueue().length+" people match your filters"; }catch(e){}
+    toast("📍 Using your current location");
+  }, function(){ toast("Location denied — enter your ZIP instead"); }, {timeout:9000});
+}
+/* ============================ VERSION / AUTO-UPDATE ============================ */
+var SPARK_V=55; // bump on every spark deploy — stale open tabs reload themselves
+(function(){var _l=0;function chk(){if(document.visibilityState!=="visible")return;var n=Date.now();if(n-_l<60000)return;_l=n;fetch("spark-version.json?t="+n,{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}).then(function(j){if(j&&j.v&&j.v>SPARK_V)location.reload();}).catch(function(){});}setInterval(chk,5*60*1000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")setTimeout(chk,1500);});setTimeout(chk,15000);})();
+/* ============================ DATA ============================ */
+// Compact seed: [name, age, gender, city, bio, [interests], photoIndex]
+var SEED = [
+  ["Sophia",27,"w","Austin, TX","Yoga at sunrise, tacos at midnight. Looking for someone to explore the city with.",["Yoga","Tacos","Travel","Dogs"],44],
+  ["Mia",24,"w","Denver, CO","Ski bum in winter, hiker in summer. Bonus points if you can keep up. 🏔️",["Skiing","Hiking","Coffee","Dogs"],68],
+  ["Olivia",29,"w","Chicago, IL","Architect who over-analyzes every restaurant's lighting. Send wine recs.",["Wine","Design","Art","Foodie"],65],
+  ["Emma",26,"w","Seattle, WA","Bookstore lurker & amateur potter. My plants are thriving, thanks for asking.",["Reading","Pottery","Plants","Cats"],9],
+  ["Ava",31,"w","Nashville, TN","Singer-songwriter by night, dog mom always. Let's write a duet.",["Music","Guitar","Dogs","Live shows"],32],
+  ["Isabella",23,"w","Miami, FL","Beach days, salsa nights, and an unhealthy obsession with iced coffee.",["Beach","Dancing","Coffee","Travel"],47],
+  ["Zoe",28,"w","Portland, OR","Rock climber & craft-beer nerd. I will absolutely make you try the IPA.",["Climbing","Craft beer","Camping","Vinyl"],20],
+  ["Chloe",25,"w","Brooklyn, NY","Film photographer chasing golden hour. Let's get lost in a museum.",["Photography","Film","Museums","Cats"],16],
+  ["Harper",30,"w","San Diego, CA","Surfer + ER nurse. High energy, low drama. Teach me to cook something.",["Surfing","Cooking","Fitness","Dogs"],25],
+  ["Lily",22,"w","Boston, MA","Grad student running on espresso and ambition. Trivia night champion.",["Trivia","Coffee","Running","Science"],57],
+  ["Grace",33,"w","Atlanta, GA","Marketing by day, salsa dancer by night. Looking for a partner in crime.",["Dancing","Brunch","Travel","Wine"],3],
+  ["Nora",27,"w","Minneapolis, MN","Lake person. Kayaks, bonfires, and dad jokes welcome.",["Kayaking","Bonfires","Hiking","Dogs"],52],
+  ["Ruby",26,"w","New Orleans, LA","Chef with a jazz habit. I'll feed you if you dance with me.",["Cooking","Jazz","Foodie","Travel"],38],
+  ["Ella",24,"w","Phoenix, AZ","Desert hikes and rooftop sunsets. Cactus collector, proud of it.",["Hiking","Plants","Sunsets","Yoga"],75],
+  ["Maya",29,"w","Washington, DC","Policy wonk who unwinds with pottery and true-crime pods.",["Pottery","Podcasts","Museums","Wine"],12],
+  ["Aria",25,"w","Salt Lake City, UT","Snowboarder & latte artist. Adventure first, overthink later.",["Snowboarding","Coffee","Travel","Music"],41],
+  ["Liam",28,"m","Austin, TX","Software dev who'd rather be on a trail. I make a mean breakfast taco.",["Hiking","Cooking","Coding","Dogs"],31],
+  ["Noah",30,"m","Denver, CO","Mountain biker, mediocre guitarist, excellent hype-man. Let's get outside.",["Biking","Guitar","Camping","Craft beer"],14],
+  ["Ethan",27,"m","Chicago, IL","Deep-dish loyalist & weekend runner. Will debate pizza with anyone.",["Running","Foodie","Sports","Travel"],52],
+  ["Mason",32,"m","Seattle, WA","Coffee roaster with a kayak problem. Ask me about single-origin.",["Coffee","Kayaking","Hiking","Vinyl"],3],
+  ["James",29,"m","Nashville, TN","Session drummer. Loud on stage, chill off it. Taco truck connoisseur.",["Music","Drums","Tacos","Live shows"],33],
+  ["Lucas",26,"m","Miami, FL","Personal trainer who can't say no to a beach day. Smoothie snob.",["Fitness","Beach","Cooking","Travel"],45],
+  ["Benjamin",34,"m","Portland, OR","Woodworker & dad-joke enthusiast. I built the table we'll have coffee at.",["Woodworking","Coffee","Camping","Dogs"],66],
+  ["Henry",28,"m","Brooklyn, NY","Illustrator chasing good light and better bagels. Museum date?",["Art","Illustration","Museums","Cats"],40],
+  ["Alexander",31,"m","San Diego, CA","Marine biologist. Yes, I'll tell you shark facts. Surf's up.",["Surfing","Science","Diving","Dogs"],55],
+  ["Daniel",25,"m","Boston, MA","Med student & pickup-basketball regular. Competitive at board games.",["Basketball","Board games","Fitness","Coffee"],7],
+  ["Michael",33,"m","Atlanta, GA","Real-estate guy who cooks to relax. My playlist is unmatched.",["Cooking","Music","Travel","Wine"],83],
+  ["William",29,"m","Minneapolis, MN","Ice hockey in winter, disc golf in summer. Golden retriever named Miles.",["Hockey","Disc golf","Dogs","Beer"],86],
+  ["Jack",27,"m","New Orleans, LA","Trumpet player & po'boy expert. Life's better with a second line.",["Music","Jazz","Foodie","Dancing"],90],
+  ["Owen",26,"m","Phoenix, AZ","Landscape photographer. I chase storms and good burritos.",["Photography","Hiking","Travel","Camping"],28],
+  ["Leo",30,"m","Los Angeles, CA","Screenwriter, terrible surfer, loyal dog dad. Pitch me your movie idea.",["Writing","Surfing","Film","Dogs"],11],
+  ["Julian",28,"m","Salt Lake City, UT","Ski patrol + espresso addict. Powder days are non-negotiable.",["Skiing","Coffee","Climbing","Travel"],23],
+  ["Sofia",30,"w","Los Angeles, CA","Producer who collects vinyl and houseplants. Taco Tuesday is sacred.",["Vinyl","Plants","Foodie","Dogs"],1],
+  ["Camila",26,"w","San Francisco, CA","UX designer, weekend cyclist, chronic list-maker. Let's ride to brunch.",["Cycling","Design","Brunch","Coffee"],56],
+  ["Ava R.",28,"w","San Francisco, CA","Data scientist by trade, baker by therapy. My sourdough has a name.",["Baking","Science","Hiking","Cats"],63],
+  ["Theo",27,"m","San Francisco, CA","Startup PM, rock climber, ramen hunter. I know the best hole-in-the-wall.",["Climbing","Foodie","Coffee","Travel"],49]
+];
+
+var PHOTO = function(g,i){ return "https://randomuser.me/api/portraits/"+(g==="m"?"men":"women")+"/"+(i%100)+".jpg"; };
+// v2: sharp local AI-face photos for the hand-written seed profiles (order matches SEED)
+var SEED_W=["Sophia","Mia","Olivia","Emma","Ava","Isabella","Zoe","Chloe","Harper","Lily","Grace","Nora","Ruby","Ella","Maya","Aria","Sofia","Camila","Ava R."];
+var SEED_M=["Liam","Noah","Ethan","Mason","James","Lucas","Benjamin","Henry","Alexander","Daniel","Michael","William","Jack","Owen","Leo","Julian","Theo"];
+function seedPhoto(name,g){var i=(g==="m"?SEED_M:SEED_W).indexOf(name);if(i<0)return null;return "photos/"+(g==="m"?"m":"s")+String(i+1).padStart(2,"0")+".jpg";}
+// SVG fallback so a broken photo never shows (initial on a warm gradient)
+function fallbackPhoto(name){
+  var ch=(name||"?").trim().charAt(0).toUpperCase();
+  if(ch.charCodeAt(0)>127) ch="?"; // btoa is Latin1-only; guard non-ASCII initials
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4E67"/><stop offset="1" stop-color="#FF7A45"/></linearGradient></defs><rect width="600" height="800" fill="url(#g)"/><text x="300" y="430" font-family="Arial" font-size="260" font-weight="bold" fill="rgba(255,255,255,.9)" text-anchor="middle">'+ch+'</text></svg>';
+  return "data:image/svg+xml;base64,"+btoa(svg);
+}
+
+var PROFILES = SEED.map(function(s,idx){
+  return { id:idx, name:s[0], age:s[1], gender:s[2], city:s[3], bio:s[4], interests:s[5],
+    photo:(seedPhoto(s[0],s[2])||PHOTO(s[2],s[6])), verified: idx%3===0, likesYou: (idx*7)%10<3, dist:(3+(idx*13)%40) };
+});
+// append the 500 generated women (profiles-women.js) — sharp local AI-face photos
+var _VC=["Las Vegas, NV","Henderson, NV","North Las Vegas, NV","Summerlin, NV"];
+(window.EXTRA_PROFILES||[]).forEach(function(e){
+  var _i=PROFILES.length;
+  PROFILES.push({ id:_i, name:e.n, age:e.a, gender:"w", city:(_i%10<4?_VC[_i%4]:e.c), bio:e.b, interests:e.t,
+    photo:e.p, verified:!!e.v, likesYou:!!e.l, dist:e.d });
+});
+(window.EXTRA_MEN||[]).forEach(function(e){
+  PROFILES.push({ id:PROFILES.length, name:e.n, age:e.a, gender:"m", city:e.c, bio:e.b, interests:e.t,
+    photo:e.p, verified:!!e.v, likesYou:!!e.l, dist:e.d });
+});
+
+var OPENERS = ["Okay your bio actually made me laugh 😄","We'd get along dangerously well.","Hi! Your photos are unreal — where was that first one?","So… taco truck date or are we too fancy for that?","I have to ask about your top interest. Go.","Hey you 👋 how's the week treating you?","Instant match energy. What are you up to this weekend?"];
+var REPLIES = ["Haha okay you're smooth, I'll give you that 😏","Honestly? Same. What's your ideal first date?","Aw stop 🙈 tell me more about you","Weekend's wide open — convince me to leave the house","Okay I'm intrigued. Coffee this week?","You seem like trouble (the good kind) 😄","Ha! That's exactly what I was going to say"];
+
+/* ============================ STATE ============================ */
+var LS="spark_state_v1";
+var S = load();
+function load(){ try{ return JSON.parse(localStorage.getItem(LS))||null; }catch(e){ return null; } }
+var _quotaWarned=false;
+function save(){ if(GUEST)return; try{ localStorage.setItem(LS, JSON.stringify(S)); }catch(e){ if(!_quotaWarned){ _quotaWarned=true; try{ toast("⚠️ Device storage full — remove a photo so changes can save"); }catch(e2){} } } }
+function fresh(){
+  return { me:null, decided:{}, order:null, ptr:0, matches:[], threads:{}, read:{}, lastPass:null, extraLikes:{}, pendingReplies:{}, lastSeen:0, boost:null };
+}
+
+/* ============================ HELPERS ============================ */
+function calcAge(iso){ // exact age from a YYYY-MM-DD birthday
+  if(!iso)return null;
+  var b=new Date(iso+"T12:00:00"); if(isNaN(b))return null;
+  var t=new Date(); var a=t.getFullYear()-b.getFullYear();
+  var m=t.getMonth()-b.getMonth();
+  if(m<0||(m===0&&t.getDate()<b.getDate()))a--;
+  return a;
+}
+function cleanUser(u){ return (u||"").replace(/^@+/,"").replace(/[^A-Za-z0-9._]/g,"").slice(0,20); }
+function _bdaySelects(pfx, iso){ // Month / Day / Year dropdowns, prefilled from ISO date
+  var m=iso?parseInt(iso.slice(5,7),10):0, d=iso?parseInt(iso.slice(8,10),10):0, y=iso?parseInt(iso.slice(0,4),10):0;
+  var MN=["Month","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var h='<div class="row2" style="display:flex;gap:8px">';
+  h+='<select id="'+pfx+'M" style="flex:1.35">';
+  for(var i=0;i<=12;i++)h+='<option value="'+(i||"")+'"'+(i===m?' selected':'')+'>'+MN[i]+'</option>';
+  h+='</select><select id="'+pfx+'D" style="flex:1"><option value="">Day</option>';
+  for(var j=1;j<=31;j++)h+='<option value="'+j+'"'+(j===d?' selected':'')+'>'+j+'</option>';
+  var yNow=new Date().getFullYear();
+  h+='</select><select id="'+pfx+'Y" style="flex:1.25"><option value="">Year</option>';
+  for(var yy=yNow-18;yy>=yNow-100;yy--)h+='<option value="'+yy+'"'+(yy===y?' selected':'')+'>'+yy+'</option>';
+  h+='</select></div>';
+  return h;
+}
+function _bdayRead(pfx){
+  var m=parseInt($(pfx+"M").value,10), d=parseInt($(pfx+"D").value,10), y=parseInt($(pfx+"Y").value,10);
+  if(!m||!d||!y)return null;
+  var dt=new Date(y,m-1,d);
+  if(dt.getMonth()!==m-1||dt.getDate()!==d)return "bad";
+  return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+}
+function $(id){ return document.getElementById(id); }
+function esc(t){ return (t==null?"":String(t)).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+function P(id){ return PROFILES[id]; }
+function toast(t){ var el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(function(){el.classList.remove("show");},1600); }
+function bgFor(p){ return "background-image:url('"+p.photo+"'),url('"+fallbackPhoto(p.name)+"')"; }
+
+/* ============================ ONBOARDING ============================ */
+function initOnb(){
+  var g=null, s="all";
+  $("onbGender").addEventListener("click",function(e){ var b=e.target.closest("button"); if(!b)return;
+    [].forEach.call(this.children,function(x){x.classList.remove("sel");}); b.classList.add("sel"); g=b.dataset.g; });
+  $("onbSeek").addEventListener("click",function(e){ var b=e.target.closest("button"); if(!b)return;
+    [].forEach.call(this.children,function(x){x.classList.remove("sel");}); b.classList.add("sel"); s=b.dataset.s; });
+  function _oAgeLbl(){
+    var a=parseInt($("onbMin").value)||18, b=parseInt($("onbMax").value)||70;
+    var lo=Math.min(a,b), hi=Math.max(a,b);
+    $("onbAgeLbl").textContent=lo+" – "+hi;
+    var f=$("onbFill"); if(f){ var pl=(lo-18)/(70-18)*100, pr=(hi-18)/(70-18)*100; f.style.left=pl+"%"; f.style.width=(pr-pl)+"%"; }
+  }
+  $("onbMin").oninput=_oAgeLbl; $("onbMax").oninput=_oAgeLbl; _oAgeLbl();
+  var _od=$("onbDist");
+  if(_od){ _od.oninput=function(){ $("onbDistLbl").textContent=(parseInt(this.value)>=50?"Anywhere":("up to "+this.value+" miles")); }; }
+  var _oc=$("onbCountry"); if(_oc && !_oc.options.length){ _oc.innerHTML=COUNTRIES.map(function(c){ return '<option value="'+c+'"'+(c==="United States"?' selected':'')+'>'+c+'</option>'; }).join(''); }
+  var _obw=$("onbBdayWrap");
+  if(_obw){
+    _obw.innerHTML=_bdaySelects("onbB","");
+    ["onbBM","onbBD","onbBY"].forEach(function(id){
+      $(id).onchange=function(){
+        var v=_bdayRead("onbB");
+        var a=(v&&v!=="bad")?calcAge(v):null;
+        $("onbAgeShow").textContent=(a!=null&&a>=0)?("— you're "+a):"";
+      };
+    });
+  }
+  $("onbGo").addEventListener("click",function(){
+    var name=$("onbName").value.trim()||"You";
+    if(!g){ toast("Pick who you are 🙂"); return; }
+    var uname=cleanUser($("onbUser").value);
+    if(!uname){ toast("Pick a username 🙂"); return; }
+    if(!$("onbTos").checked){ toast("Please agree to the Terms to continue"); return; }
+    var bday=_bdayRead("onbB");
+    if(bday==="bad"){ toast("That date doesn't exist 🙂"); return; }
+    if(!bday){ toast("Enter your birthday 🎂"); return; }
+    var age=calcAge(bday);
+    if(age==null||age<18){ toast("You must be 18 or older"); return; }
+    if(age>100){ toast("Check that birthday 🙂"); return; }
+    var min=Math.max(18,parseInt($("onbMin").value)||21), max=Math.min(99,parseInt($("onbMax").value)||45);
+    if(max<min){ var t=min;min=max;max=t; }
+    S=fresh();
+    var maxDist=(_od?parseInt(_od.value):50)||50;
+    var country=($("onbCountry")&&$("onbCountry").value)||"United States";
+    S.me={ name:name, username:uname, bday:bday, age:age, tosAccepted:Date.now(), country:country, gender:g, seek:s, min:min, max:max, maxDist:maxDist,
+      city:"Your City", bio:"New here and ready to meet someone real. Say hi 👋",
+      interests:["Coffee","Travel","Music"], photo:PHOTO(g==="m"?"m":"w", 90+(name.length%9)) };
+    buildOrder(); save();
+    var _z=($("onbZip")&&$("onbZip").value)||""; if(_z.replace(/\D/g,"").length===5)setTimeout(function(){ setZip(_z,true); },600);
+    $("onb").classList.add("hidden");
+    GUEST=false; var _gb=$("guestBar"); if(_gb)_gb.style.display="none";
+    renderAll(); go("discover");
+    toast("Welcome to Torch, "+name+"! 🔥");
+  });
+}
+function buildOrder(){
+  var seek=S.me.seek;
+  // single source of truth: _passFilters applies seek/age/distance AND every advanced filter
+  var list=PROFILES.filter(function(p){ return _passFilters(p); }).map(function(p){return p.id;});
+  var sort=(S.me&&S.me.sort)||'shuffle';
+  if(sort==='match'){ list.sort(function(a,b){ return matchScore(P(b))-matchScore(P(a)); }); }
+  else if(sort==='distance'){ list.sort(function(a,b){ return distOf(P(a))-distOf(P(b)); }); }
+  else if(sort==='young'){ list.sort(function(a,b){ return P(a).age-P(b).age; }); }
+  else { for(var i=list.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=list[i];list[i]=list[j];list[j]=t; } }
+  S.order=list; S.ptr=0;
+}
+
+/* ============================ DECK ============================ */
+function currentQueue(){ return (S.order||[]).slice(S.ptr).filter(function(id){ return !S.decided[id]; }); }
+function renderDeck(){
+  try{ tsRender(); }catch(e){}
+  var deck=$("deck"); deck.innerHTML="";
+  var q=currentQueue();
+  if(!q.length){
+    var e=document.createElement("div"); e.className="deck-empty";
+    e.innerHTML='<div class="big">🎉</div><div style="font-size:17px;font-weight:700;color:#444">You\'re all caught up!</div><div>You\'ve seen everyone in your filters.</div><button id="reshuffle">Start over</button>';
+    deck.appendChild(e);
+    $("reshuffle").onclick=function(){ S.decided={}; buildOrder(); save(); renderDeck(); toast("Fresh deck! ✨"); };
+    return;
+  }
+  // render up to 3 stacked (top last for z-order)
+  var show=q.slice(0,3).reverse();
+  show.forEach(function(id,i){
+    var p=P(id); var pos=show.length-1-i; // 0 = top
+    var c=document.createElement("div"); c.className="card"; c.dataset.id=id;
+    var scale=1-pos*0.04, ty=pos*10;
+    c.style.transform="translateY("+ty+"px) scale("+scale+")";
+    c.style.zIndex=100-pos;
+    c.innerHTML=
+      '<div class="photo" style="'+bgFor(p)+(_bsOn()?';filter:blur(24px);transform:scale(1.12)':'')+'"></div>'+
+      '<div class="scrim"></div>'+
+      (_bsOn()?'<div class="bschip">🎭 Blind Torch — revealed through chat</div>':'')+
+      (likesMe(p)?'<div class="likesyou">⭐ Likes you</div>':'')+
+      '<button class="cardx" onclick="cardDismiss('+id+')">✕</button>'+
+      '<div class="stamp like">LIKE</div><div class="stamp nope">NOPE</div><div class="stamp sup">SUPER</div>'+
+      '<div class="meta">'+
+        '<div class="nm">'+esc(p.name)+' <span class="ag">'+p.age+'</span>'+(p.verified?' <span class="verif">✔</span>':'')+'</div>'+
+        '<div class="loc">'+placeLine(p)+(isOnline(id)?' · <span class="onl-inline">● Online</span>':'')+'</div>'+
+        '<div style="margin-top:8px">'+matchBadge(p)+'</div>'+
+        '<div class="vitals">'+fmtHeight(heightOf(p))+' · '+signOf(p)[1]+' '+signOf(p)[0]+' · '+ethOf(p)+'</div>'+
+        '<div class="bio">'+esc(p.bio)+'</div>'+
+        intentChip(p)+
+        '<div class="tags" style="margin-top:8px">'+p.interests.slice(0,4).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+'</div>'+
+      '</div>';
+    deck.appendChild(c);
+    if(pos===0) attachDrag(c,id);
+  });
+}
+var animating=false;
+function topCard(){ var cs=$("deck").querySelectorAll(".card"); return cs[cs.length-1]; }
+function attachDrag(card,id){
+  var sx=0,sy=0,dx=0,dy=0,drag=false;
+  var likeS=card.querySelector(".stamp.like"),nopeS=card.querySelector(".stamp.nope"),supS=card.querySelector(".stamp.sup");
+  function down(e){ if(animating)return; if(e.target&&e.target.closest&&e.target.closest('.cardx'))return; drag=true; var t=e.touches?e.touches[0]:e; sx=t.clientX; sy=t.clientY; card.style.transition="none"; }
+  function move(e){ if(!drag)return; var t=e.touches?e.touches[0]:e; dx=t.clientX-sx; dy=t.clientY-sy;
+    var rot=dx*0.06; card.style.transform="translate("+dx+"px,"+dy+"px) rotate("+rot+"deg)";
+    var up = dy<-60 && Math.abs(dx)<80;
+    supS.style.opacity= up?Math.min(1,(-dy-60)/80):0;
+    likeS.style.opacity= (!up&&dx>0)?Math.min(1,dx/90):0;
+    nopeS.style.opacity= (!up&&dx<0)?Math.min(1,-dx/90):0;
+    if(e.cancelable)e.preventDefault();
+  }
+  function up(e){ if(!drag)return; drag=false; card.style.transition="transform .3s";
+    if(dy<-90 && Math.abs(dx)<90){ fly(card,id,"super"); }
+    else if(dx>95){ fly(card,id,"like"); }
+    else if(dx<-95){ fly(card,id,"pass"); }
+    else {
+      var wasTap = Math.abs(dx)<6 && Math.abs(dy)<6;
+      card.style.transform=""; likeS.style.opacity=nopeS.style.opacity=supS.style.opacity=0;
+      if(wasTap && e && !(e.target&&e.target.closest&&e.target.closest(".cardx"))){ openProfilePage(id); } // tap = open their page
+    }
+    dx=dy=0;
+  }
+  card.addEventListener("touchstart",down,{passive:true});
+  card.addEventListener("touchmove",move,{passive:false});
+  card.addEventListener("touchend",up);
+  card.addEventListener("mousedown",down);
+  window.addEventListener("mousemove",move);
+  window.addEventListener("mouseup",up);
+}
+function fly(card,id,action){
+  if(animating)return;
+  if(GUEST && action!=="pass"){ card.style.transition="transform .3s"; card.style.transform=""; openSignup(); return; }
+  if(action==="super" && !canSuper()){ card.style.transition="transform .3s"; card.style.transform=""; openGold("You're out of free Super Likes today"); return; }
+  animating=true;
+  var dir = action==="like"?1:action==="pass"?-1:0;
+  var tx = dir*window.innerWidth*1.2, ty = action==="super"?-window.innerHeight:0;
+  card.style.transition="transform .38s ease-out"; card.style.opacity="0.9";
+  card.style.transform="translate("+tx+"px,"+ty+"px) rotate("+(dir*22)+"deg)";
+  decide(id,action);
+  setTimeout(function(){ animating=false; renderDeck(); }, 300);
+}
+function decide(id,action){
+  if(GUEST && action!=="pass"){ openSignup(); return; }
+  if(action==="super" && !S.gold){ var d=new Date().toDateString(); if(!S.supers||S.supers.d!==d)S.supers={d:d,n:0}; S.supers.n++; }
+  S.decided[id]=action; S.lastPass=(action==="pass")?id:S.lastPass;
+  if(_bsOn()&&(action==="like"||action==="super")){ S.blindIds=S.blindIds||{}; S.blindIds[id]=true; }
+  save();
+  if(action==="like"||action==="super"){
+    var p=P(id);
+    var matched = likesMe(p) || Math.random()< (action==="super"?0.85:0.55);
+    if(matched){ makeMatch(id, action==="super"); }
+    else if(action==="super"){ toast("Super Like sent to "+p.name+" ⭐"); }
+  }
+}
+var _lastDel=null;
+function _snapshotDelete(id){ _lastDel={ id:id, decided:S.decided[id], match:S.matches.indexOf(id)>=0, thread:S.threads[id]?JSON.parse(JSON.stringify(S.threads[id])):null, read:S.read[id], extraLike:S.extraLikes?S.extraLikes[id]:undefined, t:Date.now() }; _showUndo(P(id)?P(id).name:"Profile"); }
+function _showUndo(name){ /* undo bar removed 2026-07-19 (owner) — deletes are instant & permanent */ }
+function undoLastDelete(){
+  if(!_lastDel){ $("undoBar").classList.remove("show"); return; }
+  var d=_lastDel, id=d.id;
+  if(d.decided===undefined)delete S.decided[id]; else S.decided[id]=d.decided;
+  if(d.match && S.matches.indexOf(id)<0)S.matches.unshift(id);
+  if(d.thread)S.threads[id]=d.thread;
+  if(d.read!==undefined)S.read[id]=d.read;
+  if(d.extraLike!==undefined){ S.extraLikes=S.extraLikes||{}; S.extraLikes[id]=d.extraLike; }
+  _lastDel=null; save();
+  try{ renderDeck(); renderMatches(); renderMessages(); renderLikesYou(); if($("opage").classList.contains("open"))renderOnline(); updateBadges(); }catch(e){}
+  $("undoBar").classList.remove("show"); toast("Brought back 💫");
+}
+function cardDismiss(id){ // X on the card: gone instantly, no animation
+  if(animating)return;
+  _snapshotDelete(id);
+  S.decided[id]='pass'; S.lastPass=id; save();
+  renderDeck();
+}
+function btnAct(action){ var c=topCard(); if(!c||animating)return;
+  var id=parseInt(c.dataset.id); fly(c,id,action); }
+
+/* ============================ MATCH ============================ */
+function makeMatch(id, sup){
+  if(S.matches.indexOf(id)<0) S.matches.unshift(id);
+  if(!S.threads[id]){ S.threads[id]=[{from:"them",text:OPENERS[id%OPENERS.length],ts:Date.now()}]; }
+  S.read[id]=false;
+  save(); updateBadges();
+  showMatchModal(id);
+}
+function _confetti(){
+  try{ if(navigator.vibrate)navigator.vibrate([35,45,80]); }catch(e){}
+  var m=$("matchModal"); if(!m)return;
+  var colors=["#FF4E67","#FF7A45","#ffd54a","#4dc3ff","#39d98a","#b06bff","#ffffff"];
+  for(var i=0;i<46;i++){
+    var d=document.createElement("div"); d.className="cfp";
+    d.style.left=(4+Math.random()*92)+"%";
+    d.style.background=colors[i%colors.length];
+    d.style.width=d.style.height=(6+Math.random()*7)+"px";
+    if(i%3===0)d.style.borderRadius="50%";
+    d.style.animationDelay=(Math.random()*0.55)+"s";
+    d.style.animationDuration=(1.6+Math.random()*1.5)+"s";
+    m.appendChild(d);
+    (function(el){ setTimeout(function(){ try{el.remove();}catch(e){} },3600); })(d);
+  }
+}
+function showMatchModal(id){
+  var p=P(id), me=S.me;
+  var m=$("matchModal"); m.classList.remove("hidden");
+  m.innerHTML='<div class="matchbox">'+
+    '<div class="pair"><div class="a" style="'+bgFor2(me)+'"></div><div class="a" style="'+bgFor(p)+_bsBlur(id,12)+'"></div></div>'+
+    '<h1>Two torches, one flame 🔥</h1>'+
+    '<p>You and '+esc(p.name)+' lit each other up. Say something warm.</p>'+
+    '<button class="msg" id="mmMsg">Send a message</button>'+
+    '<button class="keep" id="mmKeep">Keep swiping</button></div>';
+  _confetti();
+  $("mmMsg").onclick=function(){ m.classList.add("hidden"); openChat(id); };
+  $("mmKeep").onclick=function(){ m.classList.add("hidden"); };
+}
+function bgFor2(me){ return "background-image:url('"+me.photo+"'),url('"+fallbackPhoto(me.name)+"')"; }
+
+/* ============================ MATCHES VIEW ============================ */
+function renderMatches(){
+  var g=$("matchGrid");
+  if(!S.matches.length){ g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">💘</div><p>No matches yet.<br>Start swiping to find your spark.</p></div>'; $("matchSub").textContent="People who liked you back."; return; }
+  $("matchSub").textContent=S.matches.length+" match"+(S.matches.length>1?"es":"")+" — say hello 👋";
+  g.innerHTML=S.matches.map(function(id){ var p=P(id);
+    return '<div class="mcell" data-id="'+id+'"><button class="mx" data-id="'+id+'">✕</button>'+(isOnline(id)?'<span class="mdot"></span>':'')+(S.read[id]===false?'<span class="new">NEW</span>':'')+
+      '<div class="photo" style="'+bgFor(p)+_bsBlur(id,16)+'"></div><div class="sc"></div><div class="nm">'+esc(p.name)+' '+p.age+'</div></div>';
+  }).join('');
+  [].forEach.call(g.querySelectorAll(".mcell"),function(c){ c.onclick=function(){ openProfilePage(parseInt(c.dataset.id)); }; });
+  [].forEach.call(g.querySelectorAll(".mcell .mx"),function(x){ x.onclick=function(e){ e.stopPropagation(); unmatchX(parseInt(x.dataset.id)); }; });
+}
+
+/* ============================ MESSAGES VIEW ============================ */
+function renderMessages(){
+  var newWrap=$("newMatches"), list=$("threadList");
+  var withMsgs=S.matches.filter(function(id){ var t=S.threads[id]; return t&&t.length; });
+  // "new matches" = matched but you haven't replied yet
+  var fresh=S.matches.filter(function(id){ var t=S.threads[id]||[]; return !t.some(function(m){return m.from==="me";}); });
+  if(fresh.length){
+    newWrap.innerHTML='<div class="sechd">New Matches</div><div class="newrow">'+fresh.map(function(id){var p=P(id);
+      return '<div class="nc" data-id="'+id+'"><div class="av" style="'+bgFor(p)+_bsBlur(id,8)+'"></div><div class="lb">'+esc(p.name)+'</div></div>';}).join('')+'</div>';
+    [].forEach.call(newWrap.querySelectorAll(".nc"),function(c){ c.onclick=function(){ openChat(parseInt(c.dataset.id)); }; });
+  } else newWrap.innerHTML="";
+  if(!withMsgs.length){ list.innerHTML='<div class="empty"><div class="big">💬</div><p>No conversations yet.<br>Match with someone to start chatting.</p></div>'; return; }
+  list.innerHTML='<div class="sechd">Messages</div>'+withMsgs.map(function(id){ var p=P(id); var t=S.threads[id]; var last=t[t.length-1];
+    var unread=S.read[id]===false;
+    return '<div class="mrow-wrap" data-id="'+id+'"><button class="mrow-del" onclick="deleteThread('+id+')">🗑</button>'+
+      '<div class="mrow"><div class="avwrap"><div class="av" style="'+bgFor(p)+_bsBlur(id,8)+'"></div>'+(isOnline(id)?'<div class="avdot"></div>':'')+'</div>'+
+      '<div class="tx"><div class="r1"><span class="nm">'+esc(p.name)+'</span><span class="tm">'+timeAgo(last.ts)+'</span></div>'+
+      '<div class="pv '+(unread?'unread':'')+'">'+(last.from==="me"?"You: ":"")+esc(last.text)+'</div></div>'+
+      (unread?'<div class="dot"></div>':'')+'</div></div>';
+  }).join('');
+  [].forEach.call(list.querySelectorAll(".mrow-wrap"),function(w){ _attachRowSwipe(w); });
+}
+var _openRow=null;
+function _attachRowSwipe(wrap){
+  var row=wrap.querySelector('.mrow'), id=parseInt(wrap.dataset.id);
+  var sx=0,dx=0,dragging=false,moved=false,startOpen=false;
+  function setX(x){ row.style.transform=x?'translateX('+x+'px)':''; }
+  function closeRow(){ setX(0); if(_openRow===wrap)_openRow=null; }
+  wrap._close=closeRow;
+  function down(e){ var t=e.touches?e.touches[0]:e; sx=t.clientX; dx=0; dragging=true; moved=false; startOpen=(_openRow===wrap); row.style.transition='none'; if(_openRow&&_openRow!==wrap){ _openRow._close(); } }
+  function move(e){ if(!dragging)return; var t=e.touches?e.touches[0]:e; dx=t.clientX-sx; if(Math.abs(dx)>8)moved=true; var base=startOpen?-76:0; var x=Math.min(0,Math.max(-96,base+dx)); setX(x); }
+  function up(){ if(!dragging)return; dragging=false; row.style.transition='transform .18s'; var base=startOpen?-76:0; var x=base+dx;
+    if(x<-40){ setX(-76); _openRow=wrap; } else { closeRow(); }
+    dx=0; }
+  row.addEventListener('touchstart',down,{passive:true});
+  row.addEventListener('touchmove',move,{passive:true});
+  row.addEventListener('touchend',up);
+  row.addEventListener('mousedown',down);
+  row.addEventListener('mousemove',move);
+  row.addEventListener('mouseup',up);
+  row.addEventListener('mouseleave',function(){ if(dragging)up(); });
+  row.addEventListener('click',function(){ if(moved){ moved=false; return; } if(_openRow===wrap){ closeRow(); return; } openChat(id); });
+}
+function deleteThread(id){
+  delete S.threads[id]; delete S.read[id];
+  S.matches=S.matches.filter(function(x){return x!==id;});
+  _openRow=null; save();
+  renderMessages(); renderMatches(); updateBadges();
+  toast('Conversation deleted 🗑');
+}
+function timeAgo(ts){ var s=(Date.now()-ts)/1000; if(s<60)return "now"; if(s<3600)return Math.floor(s/60)+"m"; if(s<86400)return Math.floor(s/3600)+"h"; return Math.floor(s/86400)+"d"; }
+
+/* ============================ CHAT ============================ */
+var chatId=null;
+function openChat(id){
+  chatId=id; var p=P(id);
+  S.read[id]=true; save(); updateBadges();
+  $("chatAv").style.cssText=bgFor(p)+_bsBlur(id,7)+";cursor:pointer"; $("chatAv").onclick=function(){ openProfilePage(id); };
+  $("chatSt").textContent = isOnline(id) ? "Online now" : "Active recently";
+  $("chatNm").textContent=p.name;
+  renderChat();
+  renderIce();
+  $("chat").classList.add("open");
+}
+function renderChat(){
+  var t=S.threads[chatId]||[]; var p=P(chatId);
+  var body=$("chatBody");
+  _bsTick(chatId);
+  var _bsB='';
+  if(_bsFlagged(chatId)){
+    var _lf=_bsLeft(chatId);
+    _bsB='<div class="cblind">🎭 Blind Torch — '+_lf+' message'+(_lf===1?'':'s')+' until the big reveal<div class="bar"><i style="width:'+Math.round((BS_MSGS-_lf)/BS_MSGS*100)+'%"></i></div></div>';
+    try{ $("chatAv").style.cssText=bgFor(p)+_bsBlur(chatId,7)+";cursor:pointer"; }catch(e){}
+  } else { try{ if($("chatAv").style.filter)$("chatAv").style.filter=''; }catch(e){} }
+  var lastMe=-1; t.forEach(function(m,i){ if(m.from==="me")lastMe=i; });
+  body.innerHTML='<div class="cmatch">You matched with <b>'+esc(p.name)+'</b></div>'+_bsB+
+    t.map(function(m,i){ return '<div class="bub '+(m.from==="me"?"me":"them")+'">'+esc(m.text)+'</div>'+(i===lastMe?'<div class="rcpt">'+(m.st==="r"?"Read ✓✓":"Delivered ✓")+'</div>':''); }).join('');
+  body.scrollTop=body.scrollHeight;
+}
+function renderIce(){
+  var row=$("iceRow"); if(!row)return;
+  var t=S.threads[chatId]||[];
+  var sentAny=t.some(function(m){return m.from==="me";});
+  if(sentAny){ row.classList.add("hidden"); return; }
+  var p=P(chatId); var i=(p.interests[0]||"food").toLowerCase(); var city=(p.city||"here").split(",")[0];
+  var chips=["How into "+i+" are you really?","Okay, best date spot in "+city+" — go","Two truths and a lie. Ready?"];
+  row.innerHTML=chips.map(function(c){return '<button>'+esc(c)+'</button>';}).join('');
+  [].forEach.call(row.querySelectorAll("button"),function(b){ b.onclick=function(){ $("chatInput").value=b.textContent; $("chatInput").focus(); }; });
+  row.classList.remove("hidden");
+}
+function sendMsg(){
+  var inp=$("chatInput"); var txt=inp.value.trim(); if(!txt)return;
+  S.threads[chatId].push({from:"me",text:txt,ts:Date.now(),st:"d"}); inp.value=""; save(); renderChat(); renderIce();
+  // realistic reply pacing: quick-ish when online (20-90s), slower when away (3-15 min).
+  // Scheduled in S.pendingReplies so it still arrives if the app is closed and reopened.
+  var d = isOnline(chatId) ? (20+Math.random()*70)*1000 : (3+Math.random()*12)*60*1000;
+  S.pendingReplies=S.pendingReplies||{}; S.pendingReplies[chatId]=Date.now()+d; save();
+}
+
+/* smarter replies: reference their own profile */
+function genReply(p){
+  var i=(p.interests[Math.floor(Math.random()*p.interests.length)]||"food").toLowerCase();
+  var city=(p.city||"here").split(",")[0];
+  var T=[
+    "Okay but how serious are you about "+i+"? Because same 😍",
+    "A fellow "+i+" person!! Finally someone gets it",
+    city+" honestly has the best spots for "+i+" — I might show you sometime 😏",
+    "Haha you're trouble. Anyway — "+i+" date or coffee first?",
+    "I was literally just doing "+i+" this morning… that's a sign",
+    "Ok you pass the vibe check. What's your weekend looking like?",
+    "Careful, I'll talk about "+i+" for hours if you let me 😅",
+    "You seem fun. Best date idea in "+city+" — go!",
+    REPLIES[Math.floor(Math.random()*REPLIES.length)]
+  ];
+  return T[Math.floor(Math.random()*T.length)];
+}
+/* ============================ PROFILE ============================ */
+function renderProfile(){
+  var me=S.me; var swipes=Object.keys(S.decided).length;
+  $("profBody").innerHTML=
+    '<div class="hero"><div class="pic" style="'+bgFor2(me)+'" onclick="openCamera()"><div class="cambadge">📷</div></div>'+
+      '<div class="pichint">Tap your photo to take a new one</div>'+
+      (me.verified?'':'<button class="btnghost" style="width:auto;padding:9px 20px;margin-top:8px;color:#1e9fe0;border-color:#bfe4f7;font-weight:800" onclick="startVerify()">Get verified ✔</button>')+
+      '<div class="nm">'+esc(me.name)+', '+(me.bday?calcAge(me.bday):ageGuess())+(me.verified?' <span style="color:#4dc3ff">✔</span>':'')+(S.gold?'<span class="goldtag">GOLD</span>':'')+'</div>'+
+      (me.username?'<div style="color:var(--muted);font-weight:600;font-size:14px;margin-top:-4px">@'+esc(me.username)+'</div>':'')+
+      '<div style="color:var(--muted);font-size:13.5px;margin-top:2px">🔍 Looking for: <b>'+(me.seek==="w"?"Women":me.seek==="m"?"Men":"Everyone")+', '+me.min+'–'+me.max+'</b>'+((me.maxDist||50)<50?' · within '+me.maxDist+' mi':'')+'</div>'+
+      (function(){ var bits=[]; if(me.heightIn)bits.push('📏 '+fmtHeight(me.heightIn)); if(me.weightLb)bits.push('⚖️ '+me.weightLb+' lbs'); var z=zodiacFromISO(me.bday); if(z)bits.push(z[1]+' '+z[0]); if(me.ethnicity)bits.push('🌎 '+me.ethnicity); return bits.length?'<div style="color:var(--muted);font-size:13.5px;margin-top:2px">'+bits.join(' · ')+'</div>':''; })()+
+      '<div class="ed">'+esc(me.city)+'</div></div>'+
+    '<div class="stats">'+
+      '<div class="stat" onclick="go(\'matches\')" style="cursor:pointer"><div class="n">'+S.matches.length+'</div><div class="l">Matches</div></div>'+
+      '<div class="stat" onclick="go(\'likesyou\')" style="cursor:pointer"><div class="n">'+likesYouList().length+'</div><div class="l">Likes You</div></div>'+
+    '</div>'+
+    (function(){ var T=me.quizType&&_QT[me.quizType]; return T
+      ? '<div class="qzcard" onclick="openQuiz()"><div class="qe">'+T.e+'</div><div class="bt"><div class="t">You&#39;re a '+T.n+'</div><div class="s">'+T.tag+' · tap to retake</div></div><button class="qshare" onclick="event.stopPropagation();shareQuizType()">Share</button></div>'
+      : '<div class="qzcard" onclick="openQuiz()"><div class="qe">🧪</div><div class="bt"><div class="t">Take the Torch Test</div><div class="s">20 fun questions · discover your Torch Type</div></div><div class="qgo">GO</div></div>'; })()+
+    '<div class="field"><label>Display name</label><input id="pfName" value="'+esc(me.name)+'" maxlength="20"></div>'+
+    '<div class="field"><label>Username</label><input id="pfUser" value="'+esc(me.username||'')+'" maxlength="20" autocapitalize="none" autocorrect="off" placeholder="@username"></div>'+
+    '<div class="field"><label>Birthday — <span class="distlbl" id="pfAgeShow">'+(me.bday?('age '+calcAge(me.bday)):'not set')+'</span></label>'+
+      _bdaySelects("pfB", me.bday||"")+'</div>'+
+    '<div class="field"><label>Height & weight'+(function(){ var z=zodiacFromISO(me.bday); return z?' — <span class="distlbl">'+z[1]+' '+z[0]+'</span>':''; })()+'</label><div class="row2" style="display:flex;gap:10px">'+
+      '<select id="pfHeight" style="flex:1">'+(function(){ var o='<option value="">Height</option>'; for(var i=58;i<=84;i++){ o+='<option value="'+i+'"'+(me.heightIn===i?' selected':'')+'>'+fmtHeight(i)+'</option>'; } return o; })()+'</select>'+
+      '<input id="pfWeight" type="number" inputmode="numeric" min="80" max="400" placeholder="Weight (lbs)" value="'+(me.weightLb||'')+'" style="flex:1">'+
+    '</div></div>'+
+    '<div class="field"><label>Ethnicity</label><select id="pfEth">'+(function(){ var opts=["Prefer not to say","White","Black","Latino/Hispanic","Asian","Middle Eastern","Native American","Pacific Islander","Mixed","Other"]; return opts.map(function(o){ return '<option value="'+(o==="Prefer not to say"?"":o)+'"'+((me.ethnicity||"")===(o==="Prefer not to say"?"":o)?" selected":"")+'>'+o+'</option>'; }).join(""); })()+'</select></div>'+
+    (function(){
+      function sel(id,ph,opts,cur){ var h='<select id="'+id+'" style="flex:1"><option value="">'+ph+'</option>'; opts.forEach(function(o){ h+='<option value="'+o+'"'+(cur===o?' selected':'')+'>'+o+'</option>'; }); return h+'</select>'; }
+      return '<div class="field"><label>Lifestyle</label>'+
+        '<div class="row2" style="display:flex;gap:10px">'+
+          sel('pfStatus','Status',["Single","Divorced","Separated","Widowed"],me.relstatus)+
+          sel('pfKids','Children',["No kids","No kids, wants kids","Has kids","Has kids, wants more"],me.kids)+
+        '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+          sel('pfPets','Pets',["No pets","Dog 🐶","Cat 🐱","Dog & cat","Fish/other pet"],me.pets)+
+          sel('pfDrinks','Drinking',["Never drinks","Rarely drinks","Drinks socially","Regular drinker"],me.drinks)+
+        '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+          sel('pfSmokes','🚬 Cigarettes',["Non-smoker","Social smoker","Smoker"],me.smokes)+
+          sel('pfWeed','🌿 Weed',["Never","420 friendly","Sometimes","Prefer not to say"],me.weed)+
+        '</div><div style="margin-top:8px">'+
+          sel('pfVax','💉 COVID vaccine — optional',["Vaccinated","Not vaccinated"],me.vax)+
+        '</div></div>'+
+        '<div class="field"><label>Hobbies — comma separated</label><input id="pfHobbies" placeholder="Poker, golf, karaoke" value="'+esc((me.hobbies||[]).join(', '))+'"></div>'+
+        '<div style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.6px;margin:18px 0 2px">MORE ABOUT ME</div>'+
+        attrEditHTML(me)+
+        '<div style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.6px;margin:18px 0 2px">MY VOICE INTRO 🎙️</div>'+
+        '<div class="field"><label>A 15-second hello — people fall for voices</label>'+(me.voice
+          ? '<div style="display:flex;gap:8px"><button class="btnghost" style="flex:1" onclick="playMyVoice()">▶ Play</button><button class="btnghost" style="flex:1;color:#c0454f;border-color:#eec7ca" onclick="delMyVoice()">🗑 Delete</button></div>'
+          : '<button class="btnghost" style="width:100%" id="vrecBtn" onclick="recVoice()">🎙️ Record your voice intro</button>')+'</div>'+
+        '<div style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.6px;margin:18px 0 2px">MY PROMPTS</div>'+
+        (function(){ var mp=me.prompts||[]; var qs=["My ideal Sunday…","Green flags I look for…","The way to my heart is…"]; return qs.map(function(q,i){ return '<div class="field"><label>'+q+'</label><input id="pfprompt'+i+'" maxlength="120" value="'+esc((mp[i]&&mp[i].a)||'')+'"></div>'; }).join(''); })()+
+        '<div style="color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.6px;margin:18px 0 2px">MY VOUCHES 💬</div>'+
+        ((me.vouches||[]).map(function(v,i){ return '<div class="vcard"><div class="fav">'+esc(v.n.charAt(0))+'</div><div style="flex:1"><div class="who"><b>'+esc(v.n)+'</b> · '+esc(v.r)+'</div><div class="q">&ldquo;'+esc(v.t)+'&rdquo;</div></div><button class="vdel" onclick="delVouch('+i+')">✕</button></div>'; }).join(''))+
+        '<div class="field" style="margin-top:10px"><label>A friend&#39;s one-liner about you = instant trust</label>'+
+          '<input id="vchName" placeholder="Friend&#39;s name" maxlength="20" style="margin-bottom:8px">'+
+          '<select id="vchRel" style="width:100%;margin-bottom:8px"><option value="best friend">Best friend</option><option value="sister">Sister</option><option value="brother">Brother</option><option value="roommate">Roommate</option><option value="coworker">Coworker</option><option value="mom">Mom</option><option value="friend">Friend</option></select>'+
+          '<input id="vchText" placeholder="What did they say about you?" maxlength="140" style="margin-bottom:8px">'+
+          '<div style="display:flex;gap:8px"><button class="btnghost" style="flex:1" onclick="addVouch()">＋ Add vouch</button><button class="btnghost" style="flex:1" onclick="askVouch()">📣 Ask a friend</button></div></div>'+
+        (blockedCount()?'<div class="field"><label>Blocked accounts — '+blockedCount()+'</label><button class="btnghost" style="width:auto;padding:9px 18px" onclick="unblockAll()">Unblock all</button></div>':'');
+    })()+
+    '<div class="field"><label>City</label><input id="pfCity" value="'+esc(me.city)+'"></div>'+
+    '<div class="field"><label>🌍 Country</label><select id="pfCountry">'+COUNTRIES.map(function(c){ return '<option value="'+c+'"'+((me.country||"United States")===c?' selected':'')+'>'+c+'</option>'; }).join('')+'</select></div>'+
+    '<div class="field"><label>About me</label><textarea id="pfBio" maxlength="160">'+esc(me.bio)+'</textarea></div>'+
+    (function(){
+      var ph=myPhotos();
+      var cells=ph.map(function(u,i){
+        return '<div class="cell" data-i="'+i+'" style="background-image:url(\''+u+'\')">'+
+          '<button class="del" data-i="'+i+'">✕</button>'+(i===0?'<span class="mainbadge">MAIN</span>':'')+'</div>';
+      }).join('');
+      if(ph.length<20)cells+='<div class="addcell" onclick="addMyPhotos()">＋<small>Add</small></div>';
+      return '<div class="field"><label>My photos — <span class="distlbl">'+ph.length+'/20</span></label><div class="mypx" id="myPx">'+cells+'</div>'+
+        '<div style="color:var(--muted);font-size:11.5px;margin-top:6px">Tap a photo to make it your main · ✕ to remove</div></div>';
+    })()+
+    (function(){ var opts=[["long","💍 Long-term"],["short","🔥 Short-term fun"],["casual","😎 Something casual"],["friends","🤝 New friends"],["figuring","🤔 Figuring it out"]]; return '<div class="field"><label>What I\'m here for</label><select id="pfIntent"><option value="">Choose…</option>'+opts.map(function(o){ return '<option value="'+o[0]+'"'+(me.intent===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('')+'</select></div>'; })()+
+    '<div class="field"><label>Show me</label><select id="pfSeek">'+
+      '<option value="all"'+(me.seek==="all"?" selected":"")+'>Everyone</option>'+
+      '<option value="w"'+(me.seek==="w"?" selected":"")+'>Women</option>'+
+      '<option value="m"'+(me.seek==="m"?" selected":"")+'>Men</option></select></div>'+
+    '<div class="field"><label>Age range — <span class="distlbl" id="pfAgeLbl"></span></label>'+
+      '<div class="dualwrap"><div class="track"></div><div class="fill" id="pfFill"></div>'+
+      '<input id="pfMin" type="range" value="'+me.min+'" min="18" max="70" step="1">'+
+      '<input id="pfMax" type="range" value="'+me.max+'" min="18" max="70" step="1"></div></div>'+
+    '<div class="field"><label>Max distance — <span class="distlbl" id="pfDistLbl"></span></label>'+
+      '<input id="pfDist" type="range" min="1" max="50" step="1" value="'+(me.maxDist||50)+'"></div>'+
+    '<button class="btnbig" id="pfSave">Save changes</button>'+
+    '<button class="btnghost" id="pfReset">Reset app & start over</button>'+
+    '<div style="text-align:center;color:var(--muted);font-size:12px;margin-top:14px">📲 Get the app feel: Share → <b>Add to Home Screen</b></div>'+
+    '<div class="proflinks"><a onclick="openLegal(\'about\')">About Us</a>·<a onclick="openLegal(\'terms\')">Terms</a>·<a onclick="openLegal(\'privacy\')">Privacy</a>·<a onclick="openLegal(\'safety\')">Safety</a></div>'+
+    '<div style="text-align:center;color:#c5c8cf;font-size:11px;margin-top:6px">© 2026 Torch · Demo — profiles are AI-generated · For entertainment purposes</div>';
+  $("pfEth").onchange=function(){ me.ethnicity=this.value||undefined; save(); renderProfile(); if(this.value)toast("Saved 🌎"); };
+  [["pfStatus","relstatus"],["pfKids","kids"],["pfPets","pets"],["pfDrinks","drinks"],["pfSmokes","smokes"],["pfWeed","weed"],["pfVax","vax"]].forEach(function(pair){
+    var el=$(pair[0]); if(!el)return;
+    el.onchange=function(){ me[pair[1]]=this.value||undefined; save(); if(this.value)toast("Saved ✓"); };
+  });
+  $("pfHeight").onchange=function(){ var v=parseInt(this.value)||0; me.heightIn=v||undefined; save(); renderProfile(); if(v)toast("Height saved 📏"); };
+  $("pfWeight").onchange=function(){ var v=parseInt(this.value)||0; if(v&&(v<80||v>400)){ toast("Check that weight 🙂"); this.value=me.weightLb||""; return; } me.weightLb=v||undefined; save(); renderProfile(); if(v)toast("Weight saved ⚖️"); };
+  // username + birthday apply instantly
+  $("pfUser").onchange=function(){ var u=cleanUser(this.value); if(u){ me.username=u; save(); this.value=u; toast("@"+u+" saved"); } };
+  ["pfBM","pfBD","pfBY"].forEach(function(id){
+    $(id).onchange=function(){
+      var v=_bdayRead("pfB");
+      if(!v)return;
+      if(v==="bad"){ toast("That date doesn't exist 🙂"); return; }
+      var a=calcAge(v);
+      if(a==null)return;
+      if(a<18){ toast("You must be 18 or older"); renderProfile(); return; }
+      if(a>100){ toast("Check that birthday 🙂"); renderProfile(); return; }
+      me.bday=v; me.age=a; save(); renderProfile(); toast("Age updated — you're "+a);
+    };
+  });
+  var _pfSaveNow=function(){
+    me.name=$("pfName").value.trim()||me.name; me.city=$("pfCity").value.trim()||me.city;
+    var _u=cleanUser($("pfUser").value); if(_u) me.username=_u;
+    var _b=_bdayRead("pfB"); // FIX: old $("pfBday") was removed with the dropdowns — this crashed every save
+    if(_b&&_b!=="bad"){ var _a=calcAge(_b); if(_a!=null&&_a>=18&&_a<=100){ me.bday=_b; me.age=_a; } }
+    me.bio=$("pfBio").value.trim(); var os=me.seek; me.seek=$("pfSeek").value;
+    me.min=Math.max(18,parseInt($("pfMin").value)||me.min); me.max=Math.min(99,parseInt($("pfMax").value)||me.max);
+    if(me.max<me.min){var t=me.min;me.min=me.max;me.max=t;}
+    if(os!==me.seek){ buildOrder(); } save(); renderAll(); toast("Profile saved ✅");
+    if(os!==me.seek){ go("discover"); } else if(cur==="profile"){ renderProfile(); }
+  };
+  $("pfSave").onclick=function(){
+    var b=this; if(b._busy)return; b._busy=true;
+    b.innerHTML='<span class="ring"></span>Saving…'; // white ring = your save is going through
+    setTimeout(function(){ try{ _pfSaveNow(); }finally{ b._busy=false; } },650);
+  };
+  $("pfReset").onclick=function(){ if(confirm("Reset everything and start over?")){ S=null; localStorage.removeItem(LS); location.reload(); } }; // S=null first — the on-hide autosave was re-persisting the session mid-reload
+  var _pi=$("pfIntent"); if(_pi)_pi.onchange=function(){ me.intent=this.value||undefined; save(); if(this.value)toast("Saved 💫"); };
+  var _ph2=$("pfHobbies");
+  if(_ph2){ _ph2.onchange=function(){ me.hobbies=this.value.split(",").map(function(x){return x.trim();}).filter(Boolean).slice(0,10); save(); if(me.hobbies.length)toast("Hobbies saved 🎯"); }; }
+  attrWireEdit(me);
+  (function(){ var qs=["My ideal Sunday…","Green flags I look for…","The way to my heart is…"]; qs.forEach(function(q,i){ var el=$('pfprompt'+i); if(el)el.onchange=function(){ me.prompts=me.prompts||[]; me.prompts[i]={q:q,a:this.value.trim()}; save(); if(this.value.trim())toast('Prompt saved ✍️'); }; }); })();
+  var _pc=$("pfCountry"); if(_pc)_pc.onchange=function(){ me.country=this.value; save(); toast("Country saved 🌍"); };
+  var _px=$("myPx");
+  if(_px){
+    [].forEach.call(_px.querySelectorAll(".cell .del"),function(b){ b.onclick=function(e){ e.stopPropagation(); delMyPhoto(parseInt(b.dataset.i)); }; });
+    [].forEach.call(_px.querySelectorAll(".cell"),function(c){ c.onclick=function(){ mainMyPhoto(parseInt(c.dataset.i)); }; });
+  }
+  // apply "Show me" instantly on change — no Save tap needed (owner: switching to women stayed on men)
+  $("pfSeek").onchange=function(){
+    var os=me.seek; me.seek=this.value;
+    if(os!==me.seek){ buildOrder(); save(); toast("Showing "+(me.seek==="w"?"women":me.seek==="m"?"men":"everyone")+" \u2728"); go("discover"); }
+  };
+  // age range also applies on change
+  function _ageApply(){ var mn=Math.max(18,parseInt($("pfMin").value)||me.min), mx=Math.min(99,parseInt($("pfMax").value)||me.max); if(mx<mn){var t=mn;mn=mx;mx=t;} if(mn!==me.min||mx!==me.max){ me.min=mn; me.max=mx; buildOrder(); save(); renderDeck(); } }
+  function _ageLbl(){
+    var a=parseInt($("pfMin").value)||18, b=parseInt($("pfMax").value)||70;
+    var lo=Math.min(a,b), hi=Math.max(a,b);
+    $("pfAgeLbl").textContent=lo+" – "+hi;
+    var f=$("pfFill"); if(f){ var pl=(lo-18)/(70-18)*100, pr=(hi-18)/(70-18)*100; f.style.left=pl+"%"; f.style.width=(pr-pl)+"%"; }
+  }
+  _ageLbl();
+  $("pfMin").oninput=_ageLbl; $("pfMax").oninput=_ageLbl;
+  $("pfMin").onchange=function(){ _ageApply(); _ageLbl(); toast(currentQueue().length+" people in your filters"); };
+  $("pfMax").onchange=function(){ _ageApply(); _ageLbl(); toast(currentQueue().length+" people in your filters"); };
+  // distance slider: live label while sliding, instant re-filter on release
+  function _distLbl(v){ return v>=50?"Anywhere":("up to "+v+" mile"+(v>1?"s":"")); }
+  var _pd=$("pfDist");
+  $("pfDistLbl").textContent=_distLbl(parseInt(_pd.value));
+  _pd.oninput=function(){ $("pfDistLbl").textContent=_distLbl(parseInt(this.value)); };
+  _pd.onchange=function(){
+    me.maxDist=parseInt(this.value)||50;
+    buildOrder(); save(); renderDeck();
+    var n=currentQueue().length;
+    toast(me.maxDist>=50 ? (n+" people — anywhere") : (n+" people within "+me.maxDist+" miles"));
+  };
+}
+function ageGuess(){ return Math.round((S.me.min+S.me.max)/2); }
+function likesCount(){ return Object.keys(S.decided).filter(function(k){return S.decided[k]==="like"||S.decided[k]==="super";}).length; }
+
+/* ============================ PHOTO GALLERIES (extra shots) ============================ */
+var EXTRAS={};
+fetch("photos-extra.json?t="+Date.now(),{cache:"no-store"}).then(function(r){ return r.ok?r.json():{}; }).then(function(j){ EXTRAS=j||{}; }).catch(function(){});
+function extrasFor(p){
+  var m=(p.photo||"").match(/photos\/(\w+)\.jpg/); if(!m)return [];
+  return (EXTRAS[m[1]]||[]).map(function(n){ return "photos/"+m[1]+"_"+n+".jpg"; });
+}
+var _ppPics=[], _ppIdx=0;
+function _ppShow(){
+  var ph=$("ppPhoto"); if(!ph||!_ppPics.length)return;
+  ph.style.backgroundImage="url('"+_ppPics[_ppIdx]+"'),url('"+fallbackPhoto(P(ppId).name)+"')";
+  var d=ph.querySelector(".ppdots");
+  if(d)d.innerHTML=_ppPics.map(function(_,i){ return '<span class="'+(i===_ppIdx?"on":"")+'"></span>'; }).join('');
+}
+/* ============================ ONLINE-NOW PRESENCE ============================ */
+// Simulated live presence: each profile flips on/off on a rotating 4-minute cycle, so the
+// online set churns like real traffic. Deterministic within a cycle (no flicker on re-render).
+function _ob(){ return Math.floor(Date.now()/(4*60*1000)); }
+function _oh(id,b){ var x=((id+7)*2654435761 ^ (b+13)*40503)>>>0; x^=x>>>13; x=(x*1274126177)>>>0; return (x%1000)/1000; }
+function isOnline(id){ var b=_ob(); return _oh(id,b)<0.13 || (_oh(id,b-1)<0.13 && _oh(id,b)<0.4); }
+function onlineList(){
+  return PROFILES.filter(function(p){ return isOnline(p.id) && _passFilters(p) && S.decided[p.id]!=="pass"; }).map(function(p){return p.id;});
+}
+function _onlCountRefresh(){ var el=$("onlCount"); if(el){ try{ el.textContent=onlineList().length; }catch(e){} } }
+function openOnline(){ renderOnline(); $("opage").classList.add("open"); }
+function closeOnline(){ $("opage").classList.remove("open"); }
+function renderOnline(){
+  var ids=onlineList();
+  $("opCount").textContent=ids.length;
+  _onlCountRefresh();
+  var g=$("opGrid");
+  if(!ids.length){ g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">🌙</div><p>Nobody online right now.<br>Check back in a few minutes.</p></div>'; return; }
+  g.innerHTML=ids.map(function(id){ var p=P(id);
+    return '<div class="mcell" data-id="'+id+'"><button class="mx" data-id="'+id+'">✕</button><span class="mdot"></span>'+
+      '<div class="photo" style="'+bgFor(p)+'"></div><div class="sc"></div>'+
+      '<div class="nm">'+esc(p.name)+' '+p.age+'</div></div>';
+  }).join('');
+  [].forEach.call(g.querySelectorAll(".mcell"),function(c){ c.onclick=function(){ openProfilePage(parseInt(c.dataset.id)); }; });
+  [].forEach.call(g.querySelectorAll(".mcell .mx"),function(x){ x.onclick=function(e){ e.stopPropagation(); olDeleteX(parseInt(x.dataset.id)); }; });
+}
+function olDeleteX(id){ // X on an Online-Now tile: instant delete, everywhere
+  _snapshotDelete(id);
+  S.decided[id]="pass"; delete S.threads[id]; delete S.read[id];
+  S.matches=S.matches.filter(function(x){return x!==id;});
+  save();
+  try{ renderOnline(); renderDeck(); updateBadges(); }catch(e){}
+  toast("Deleted ✕");
+}
+// live refresh: grid every 25s while open; topbar count every 45s
+setInterval(function(){ try{ if($("opage").classList.contains("open")) renderOnline(); }catch(e){} }, 25000);
+setInterval(function(){ try{ if(S&&S.me) _onlCountRefresh(); }catch(e){} }, 45000);
+/* ============================ LEGAL (terms / privacy / safety) ============================ */
+var _LEGAL={
+about:'<h3>About Us</h3>'
++'<p><b>Torch is a private site.</b> We are a privately owned and operated community — not a public forum. Access is a privilege we extend, not a right.</p>'
++'<h4>Membership is at our discretion</h4><p><b>We reserve the right, at our sole discretion, to remove, suspend, or permanently delete any profile, photo, message, or account — at any time, for any reason or for no reason, with or without notice.</b> Decisions are final and are not subject to appeal.</p>'
++'<h4>Why we do this</h4><p>Keeping this community safe, respectful, and real matters more to us than any single account. Fake profiles, harassment, spam, scams, and disrespect get removed — and we don\u2019t owe anyone a debate about it.</p>'
++'<h4>The demo</h4><p>Today Torch runs as a demonstration experience — member profiles and conversations are AI-generated simulations (see the Terms for full details).</p>'
++'<h4>Contact</h4><p>Questions about the site? Reach the operator through the page where you received access.</p>',
+terms:'<div class="aiwarn">⚠️ IMPORTANT — DEMONSTRATION SERVICE: Torch is a demonstration/entertainment product. All member profiles, photos, likes, matches and chat conversations are COMPUTER-GENERATED SIMULATIONS created with artificial intelligence. They do not depict real people, and no real introductions, dates or relationships are offered or implied.</div>'
++'<h3>Terms of Service</h3><p>Effective: July 17, 2026</p>'
++'<h4>1. Eligibility</h4><p>You must be at least 18 years old to use Torch. By using Torch you represent that you are 18+.</p>'
++'<h4>2. Nature of the Service</h4><p>Torch is provided for demonstration and entertainment purposes only. Profile content, photographs, availability indicators (including “online” status), likes, matches and message replies are simulated and AI-generated. Torch is not a matchmaking, dating, introduction or escort service and makes no representation that any person shown is real or available.</p>'
++'<h4>3. Subscriptions & Pricing</h4><p>Advertised pricing (60 days free, then $9.99/month) is illustrative. In this demo, no payment method is collected and no charges are made. If billing is enabled in the future, terms, renewal and cancellation details will be presented before any charge, and you may cancel at any time effective the next billing cycle.</p>'
++'<h4>4. Your Content</h4><p>Photos and information you add are stored on your own device only (see Privacy Policy). You are responsible for content you add and must have the right to use it. Do not upload unlawful, infringing or explicit content, or images of any person without their consent.</p>'
++'<h4>5. Acceptable Use</h4><p>You agree not to use Torch for harassment, commercial solicitation, data scraping, reverse engineering, or any unlawful purpose.</p>'
++'<h4>6. Disclaimers</h4><p>SPARK IS PROVIDED “AS IS” AND “AS AVAILABLE,” WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. WE DO NOT WARRANT UNINTERRUPTED OR ERROR-FREE OPERATION.</p>'
++'<h4>7. Limitation of Liability</h4><p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, SPARK AND ITS OWNER SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES, OR ANY LOSS OF DATA, ARISING FROM OR RELATED TO YOUR USE OF THE SERVICE. TOTAL AGGREGATE LIABILITY SHALL NOT EXCEED THE AMOUNTS YOU PAID TO USE THE SERVICE (CURRENTLY $0).</p>'
++'<h4>8. Indemnity</h4><p>You agree to indemnify and hold harmless Torch and its owner from claims arising out of your use of the service or violation of these terms.</p>'
++'<h4>9. Termination</h4><p>We may suspend or end the service, or your access to it, at any time without notice. You may stop using Torch at any time; “Reset app” deletes your local data.</p>'
++'<h4>10. Changes</h4><p>We may update these terms; continued use after changes constitutes acceptance. Material changes will be reflected by an updated effective date.</p>'
++'<h4>11. Governing Law & Disputes</h4><p>These terms are governed by the laws of the State of Nevada, USA. Any dispute shall be resolved in the state or federal courts located in Clark County, Nevada, and you consent to their exclusive jurisdiction. To the extent permitted, each party waives trial by jury and agrees claims may be brought only individually and not as part of a class action.</p>'
++'<h4>12. Contact</h4><p>Questions: contact the operator via the page where you received access to this demo.</p>',
+privacy:'<h3>Privacy Policy</h3><p>Effective: July 17, 2026</p>'
++'<p><b>Short version: your data stays on your device.</b></p>'
++'<h4>What we store</h4><p>Your profile details (name, username, birthday, photos, preferences), matches and chats are stored in your browser’s local storage on your own device. We operate no accounts and no user database; this information is not transmitted to or stored on our servers.</p>'
++'<h4>Location</h4><p>If you enter a ZIP code, it is sent to the free geocoding service zippopotam.us solely to convert it to coordinates; only the ZIP itself is sent. If you use GPS, your coordinates are read by your browser and kept on your device. Location is used only to calculate distances inside the app.</p>'
++'<h4>Photos</h4><p>Photos you add are resized and saved on your device only. They are never uploaded.</p>'
++'<h4>Cookies & tracking</h4><p>No advertising trackers, no analytics, no sale or sharing of personal information (including for purposes of the California Consumer Privacy Act). The site host (Google Firebase Hosting) may log standard web-server request data (such as IP address) to serve the site.</p>'
++'<h4>Data deletion</h4><p>Use “Reset app & start over” on the Profile tab, or clear your browser data for this site — this permanently deletes everything Torch stored on your device.</p>'
++'<h4>Children</h4><p>Torch is for adults 18+. We do not knowingly collect information from anyone under 18.</p>'
++'<h4>Changes</h4><p>Updates to this policy will be posted here with a new effective date.</p>',
+safety:'<h3>Dating Safety Tips</h3>'
++'<p>Torch’s profiles are simulated — but if you use any real dating service, protect yourself:</p>'
++'<h4>💬 Before you meet</h4><p>Video chat first. Keep conversations inside the app. Never share your home address, workplace schedule, or financial details.</p>'
++'<h4>💸 Money = red flag</h4><p>Never send money, gift cards or crypto to someone you met online, no matter the story. Requests for money are the #1 sign of a romance scam. Report them.</p>'
++'<h4>🤝 Meeting up</h4><p>Meet in a public place. Tell a friend where you are going and who you are meeting. Arrange your own transportation both ways. Stay sober enough to stay sharp.</p>'
++'<h4>🚩 Trust your instincts</h4><p>If something feels off, leave. You never owe anyone a second meeting, a reason, or a reply. Block and report abusive behavior.</p>'
++'<h4>🆘 Emergencies</h4><p>If you are in danger, call 911. For romance-scam reporting in the US: reportfraud.ftc.gov.</p>'
+};
+function openLegal(which){
+  $("lgTitle").textContent = which==="privacy"?"Privacy Policy":which==="safety"?"Safety Tips":which==="about"?"About Us":"Terms of Service";
+  $("lgBody").innerHTML=_LEGAL[which]||_LEGAL.terms;
+  $("lgBody").scrollTop=0;
+  $("legal").classList.add("open");
+}
+function closeLegal(){ $("legal").classList.remove("open"); }
+/* ============================ DISCOVERY FILTERS PAGE ============================ */
+function goHome(){ // Torch logo tap: main page with all the filters
+  if(!S||!S.me)return; // still onboarding — nothing to show yet
+  try{ $("chat").classList.remove("open"); closeProfilePage(); }catch(e){}
+  go("discover");
+  openFilters();
+}
+function fltReset(){ if(S&&S.me){ S.me.flt={}; buildOrder(); save(); renderFilters(); toast("Filters reset"); } }
+function openFilters(){ renderFilters(); $("fpage").classList.add("open"); }
+function closeFilters(){ $("fpage").classList.remove("open"); _dashFiltersDone(); }
+function _dashFiltersDone(){ try{ renderDeck(); updateBadges(); }catch(e){} }
+function renderFilters(){
+  var me=S.me; if(!me)return;
+  $("fBody").innerHTML=
+    '<div class="bscard'+(me.blind?' on':'')+'" id="fBlind"><div class="bl">🎭</div><div class="bt"><div class="t">Blind Torch mode</div><div class="s">Photos stay blurred and sharpen as you chat. Fall for the conversation first.</div></div><div class="bsw">'+(me.blind?'ON':'OFF')+'</div></div>'+
+    '<div class="field"><label>✨ Sort by</label><select id="fSort"><option value="shuffle"'+((me.sort||'shuffle')==='shuffle'?' selected':'')+'>Discover (shuffle)</option><option value="match"'+(me.sort==='match'?' selected':'')+'>Best match</option><option value="distance"'+(me.sort==='distance'?' selected':'')+'>Closest first</option><option value="young"'+(me.sort==='young'?' selected':'')+'>Youngest first</option></select></div>'+
+    '<div class="field"><label>Show me</label><select id="fSeek">'+
+      '<option value="all"'+(me.seek==="all"?" selected":"")+'>Everyone</option>'+
+      '<option value="w"'+(me.seek==="w"?" selected":"")+'>Women</option>'+
+      '<option value="m"'+(me.seek==="m"?" selected":"")+'>Men</option></select></div>'+
+    '<div class="field"><label>Age range — <span class="distlbl" id="fAgeLbl"></span></label>'+
+      '<div class="dualwrap"><div class="track"></div><div class="fill" id="fFill"></div>'+
+      '<input id="fMin" type="range" value="'+me.min+'" min="18" max="70" step="1">'+
+      '<input id="fMax" type="range" value="'+me.max+'" min="18" max="70" step="1"></div></div>'+
+    '<div class="field"><label>My location — <span class="distlbl" id="fLocLbl">'+locLabel()+'</span></label>'+
+      '<div class="row2" style="display:flex;gap:10px"><input id="fZip" inputmode="numeric" maxlength="5" placeholder="ZIP code" style="flex:1;border:0;border-radius:13px;padding:14px 15px;font-size:16px;color:var(--ink)">'+
+      '<button onclick="setZip(document.getElementById(\'fZip\').value)" style="background:#fff;color:var(--pink);font-weight:800;border-radius:13px;padding:0 22px;font-size:15px">Set</button></div>'+
+      '<button onclick="useGPS()" style="width:100%;margin-top:9px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.45);color:#fff;font-weight:800;border-radius:13px;padding:12px;font-size:14px">📍 Use my current location</button></div>'+
+    '<div class="field"><label>Max distance — <span class="distlbl" id="fDistLbl"></span></label>'+
+      '<input id="fDist" type="range" min="1" max="50" step="1" value="'+(me.maxDist||50)+'"></div>'+
+    (function(){
+      var flt=me.flt=me.flt||{};
+      function fsel(id,ph,opts,cur){ var h='<select id="'+id+'" style="flex:1"><option value="">'+ph+': Any</option>'; opts.forEach(function(o){ h+='<option value="'+o[0]+'"'+(cur===o[0]?' selected':'')+'>'+o[1]+'</option>'; }); return h+'</select>'; }
+      return '<div style="color:rgba(255,255,255,.85);font-weight:800;font-size:12px;letter-spacing:.6px;margin:18px 0 2px">MORE FILTERS</div>'+
+      '<div class="field"><label>🌍 Country</label><select id="flt_country" style="width:100%"><option value="">Any country</option>'+COUNTRIES.map(function(c){ return '<option value="'+c+'"'+((flt.country||"")===c?' selected':'')+'>'+c+'</option>'; }).join('')+'</select></div>'+
+      '<div class="field"><label>Height — <span class="distlbl" id="fHLbl"></span></label>'+
+        '<div class="dualwrap"><div class="track"></div><div class="fill" id="fHFill"></div>'+
+        '<input id="fHmin" type="range" min="58" max="77" step="1" value="'+(flt.hmin||58)+'">'+
+        '<input id="fHmax" type="range" min="58" max="77" step="1" value="'+(flt.hmax||77)+'"></div></div>'+
+      '<div class="field"><label>Weight — <span class="distlbl" id="fWLbl"></span></label>'+
+        '<div class="dualwrap"><div class="track"></div><div class="fill" id="fWFill"></div>'+
+        '<input id="fWmin" type="range" min="90" max="250" step="5" value="'+(flt.wmin||90)+'">'+
+        '<input id="fWmax" type="range" min="90" max="250" step="5" value="'+(flt.wmax||250)+'"></div></div>'+
+      '<div class="field"><div class="row2" style="display:flex;gap:10px">'+
+        fsel('fEth','Ethnicity',[['White','White'],['Latina','Latina'],['Asian','Asian'],['Black','Black'],['Mixed','Mixed']],flt.eth)+
+        fsel('fSign','Sign',[['Aries','♈ Aries'],['Taurus','♉ Taurus'],['Gemini','♊ Gemini'],['Cancer','♋ Cancer'],['Leo','♌ Leo'],['Virgo','♍ Virgo'],['Libra','♎ Libra'],['Scorpio','♏ Scorpio'],['Sagittarius','♐ Sagittarius'],['Capricorn','♑ Capricorn'],['Aquarius','♒ Aquarius'],['Pisces','♓ Pisces']],flt.sign)+
+      '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+        fsel('fCig','🚬 Cigarettes',[['non','Non-smokers only'],['smoker','Smokers only']],flt.cig)+
+        fsel('fWeed','🌿 Weed',[['420','420 friendly'],['no','No weed']],flt.weed)+
+      '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+        fsel('fStatus','Status',[['Single','Single'],['Divorced','Divorced'],['Separated','Separated'],['Widowed','Widowed']],flt.status)+
+        fsel('fKids','Kids',[['none','No kids'],['has','Has kids'],['wants','Wants kids']],flt.kids)+
+      '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+        fsel('fPets','Pets',[['dog','Dog people'],['cat','Cat people'],['none','No pets']],flt.pets)+
+        fsel('fDrinks','Drinks',[['social','Socially'],['light','Rarely / never'],['regular','Regular']],flt.drinks)+
+      '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+        fsel('fVer','Verified',[['1','✔ Verified only']],flt.verified?'1':'')+
+        fsel('fOnl','Online',[['1','● Online now only']],flt.online?'1':'')+
+      '</div><div class="row2" style="display:flex;gap:10px;margin-top:8px">'+
+        fsel('fVax','💉 Vaccine',[['yes','Vaccinated'],['no','Not vaccinated']],flt.vax)+
+        fsel('fHobby','Hobby',_HOBBIES.map(function(h){return [h,h];}),flt.hobby)+
+      '</div><div class="field" style="margin-top:8px">'+
+        fsel('fIntent','Here for',_INTENT_KEYS.map(function(k){return [k,_INTENTS[k][0]];}),flt.intent)+
+      '</div>'+attrFilterHTML(flt)+'</div>'+
+      '<button onclick="fltReset()" style="width:100%;margin-top:6px;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.45);color:#fff;font-weight:800;border-radius:13px;padding:12px;font-size:14px">↺ Reset all filters</button>';
+    })()+
+    '<div class="fcount" id="fCount"></div>';
+  function count(){ $("fCount").textContent=currentQueue().length+" people match your filters"; }
+  function ageUI(){
+    var a=parseInt($("fMin").value)||18, b=parseInt($("fMax").value)||70;
+    var lo=Math.min(a,b), hi=Math.max(a,b);
+    $("fAgeLbl").textContent=lo+" – "+hi;
+    var f=$("fFill"); var pl=(lo-18)/(70-18)*100, pr=(hi-18)/(70-18)*100; f.style.left=pl+"%"; f.style.width=(pr-pl)+"%";
+  }
+  function distUI(){ var v=parseInt($("fDist").value); $("fDistLbl").textContent=v>=50?"Anywhere":("up to "+v+" mile"+(v>1?"s":"")); }
+  function applyAge(){ var a=parseInt($("fMin").value)||me.min, b=parseInt($("fMax").value)||me.max; me.min=Math.min(a,b); me.max=Math.max(a,b); buildOrder(); save(); count(); }
+  ageUI(); distUI(); count();
+  var _fbl=$("fBlind"); if(_fbl)_fbl.onclick=function(){ me.blind=!me.blind; save(); _fbl.classList.toggle('on',me.blind); _fbl.querySelector('.bsw').textContent=me.blind?'ON':'OFF'; renderDeck(); toast(me.blind?'🎭 Blind Torch on — photos hidden until you chat':'🎭 Blind Torch off'); };
+  var _fso=$("fSort"); if(_fso)_fso.onchange=function(){ me.sort=this.value; buildOrder(); save(); count(); };
+  $("fSeek").onchange=function(){ me.seek=this.value; buildOrder(); save(); count(); };
+  $("fMin").oninput=ageUI; $("fMax").oninput=ageUI;
+  $("fMin").onchange=applyAge; $("fMax").onchange=applyAge;
+  $("fDist").oninput=distUI;
+  $("fDist").onchange=function(){ me.maxDist=parseInt(this.value)||50; buildOrder(); save(); count(); };
+  // ---- advanced filters ----
+  var flt=me.flt=me.flt||{};
+  function fApply(){ buildOrder(); save(); count(); }
+  function hUI(){
+    var a=parseInt($("fHmin").value), b=parseInt($("fHmax").value);
+    var lo=Math.min(a,b), hi=Math.max(a,b);
+    $("fHLbl").textContent=(lo<=58&&hi>=77)?"Any":(fmtHeight(lo)+" – "+fmtHeight(hi));
+    var f2=$("fHFill"); if(f2){ var pl=(lo-58)/(77-58)*100, pr=(hi-58)/(77-58)*100; f2.style.left=pl+"%"; f2.style.width=(pr-pl)+"%"; }
+  }
+  function wUI(){
+    var a=parseInt($("fWmin").value), b=parseInt($("fWmax").value);
+    var lo=Math.min(a,b), hi=Math.max(a,b);
+    $("fWLbl").textContent=(lo<=90&&hi>=250)?"Any":(lo+" – "+hi+" lbs");
+    var f2=$("fWFill"); if(f2){ var pl=(lo-90)/(250-90)*100, pr=(hi-90)/(250-90)*100; f2.style.left=pl+"%"; f2.style.width=(pr-pl)+"%"; }
+  }
+  hUI(); wUI();
+  $("fHmin").oninput=hUI; $("fHmax").oninput=hUI;
+  $("fWmin").oninput=wUI; $("fWmax").oninput=wUI;
+  function hApply(){ var a=parseInt($("fHmin").value), b=parseInt($("fHmax").value); var lo=Math.min(a,b), hi=Math.max(a,b); flt.hmin=lo>58?lo:0; flt.hmax=hi<77?hi:0; hUI(); fApply(); }
+  function wApply(){ var a=parseInt($("fWmin").value), b=parseInt($("fWmax").value); var lo=Math.min(a,b), hi=Math.max(a,b); flt.wmin=lo>90?lo:0; flt.wmax=hi<250?hi:0; wUI(); fApply(); }
+  $("fHmin").onchange=hApply; $("fHmax").onchange=hApply;
+  $("fWmin").onchange=wApply; $("fWmax").onchange=wApply;
+  [["fEth","eth"],["fSign","sign"],["fCig","cig"],["fWeed","weed"],["fStatus","status"],["fKids","kids"],["fPets","pets"],["fDrinks","drinks"],["fVax","vax"],["fHobby","hobby"],["fIntent","intent"]].forEach(function(pr){
+    var el=$(pr[0]); if(!el)return;
+    el.onchange=function(){ flt[pr[1]]=this.value||0; fApply(); };
+  });
+  var fv=$("fVer"); if(fv)fv.onchange=function(){ flt.verified=this.value?1:0; fApply(); };
+  var fo=$("fOnl"); if(fo)fo.onchange=function(){ flt.online=this.value?1:0; fApply(); };
+  attrWireFilter(flt);
+  var _fc=$("flt_country"); if(_fc)_fc.onchange=function(){ flt.country=this.value||0; buildOrder(); save(); var c=$("fCount"); if(c)c.textContent=currentQueue().length+" people match your filters"; };
+}
+/* ============================ LIKES YOU + SPARK GOLD ============================ */
+function _passFilters(p){
+  if(S&&S.blocked&&S.blocked[p.id])return false;
+  var seek=S.me.seek;
+  if(seek==="w"&&p.gender!=="w")return false;
+  if(seek==="m"&&p.gender!=="m")return false;
+  if(p.age<S.me.min||p.age>S.me.max)return false;
+  var maxD=S.me.maxDist||50;
+  if(maxD<50 && distOf(p)>maxD)return false;
+  var f=S.me.flt||{};
+  if(f.hmin&&heightOf(p)<f.hmin)return false;
+  if(f.hmax&&heightOf(p)>f.hmax)return false;
+  if(f.wmin&&weightOf(p)<f.wmin)return false;
+  if(f.wmax&&weightOf(p)>f.wmax)return false;
+  if(f.eth&&ethOf(p)!==f.eth)return false;
+  if(f.cig){ var _c=smokesOf(p); if(f.cig==="non"&&_c!=="🚬 Non-smoker")return false; if(f.cig==="smoker"&&_c==="🚬 Non-smoker")return false; }
+  if(f.weed){ var _w=weedOf(p); var _wYes=(_w==="🌿 420 friendly"||_w==="🌿 Sometimes"); if(f.weed==="420"&&!_wYes)return false; if(f.weed==="no"&&_wYes)return false; }
+  if(f.status&&statusOf(p)!==f.status)return false;
+  if(f.kids){ var _k=kidsOf(p); if(f.kids==="none"&&_k.indexOf("No kids")!==0)return false; if(f.kids==="has"&&_k.indexOf("Has kids")!==0)return false; if(f.kids==="wants"&&_k.toLowerCase().indexOf("wants")<0)return false; }
+  if(f.pets){ var _p2=petsOf(p); if(f.pets==="dog"&&_p2.indexOf("Dog")<0)return false; if(f.pets==="cat"&&_p2.toLowerCase().indexOf("cat")<0)return false; if(f.pets==="none"&&_p2!=="No pets")return false; }
+  if(f.drinks){ var _d=drinksOf(p); if(f.drinks==="social"&&_d!=="Drinks socially")return false; if(f.drinks==="light"&&_d!=="Rarely drinks"&&_d!=="Never drinks")return false; if(f.drinks==="regular"&&_d!=="Regular drinker")return false; }
+  if(f.sign&&signOf(p)[0]!==f.sign)return false;
+  if(f.vax){ var _vx=vaxOf(p); if(f.vax==="yes"&&_vx!=="💉 Vaccinated")return false; if(f.vax==="no"&&_vx!=="💉 Not vaccinated")return false; }
+  if(f.hobby && hobbiesOf(p).indexOf(f.hobby)<0)return false;
+  if(f.intent && intentOf(p)!==f.intent)return false;
+  if(!attrPass(p,f))return false;
+  if(f.country && countryOf(p)!==f.country)return false;
+  if(f.verified&&!p.verified)return false;
+  if(f.online&&!isOnline(p.id))return false;
+  return true;
+}
+function likesYouList(){
+  return PROFILES.filter(function(p){ return likesMe(p) && !S.decided[p.id] && S.matches.indexOf(p.id)<0 && _passFilters(p); }).map(function(p){return p.id;});
+}
+function topPicks(){
+  var day=Math.floor(Date.now()/86400000);
+  return PROFILES.filter(function(p){ return _passFilters(p)&&!S.decided[p.id]&&S.matches.indexOf(p.id)<0; })
+    .map(function(p){ return {id:p.id, s:_oh(p.id, day*7+3)}; })
+    .sort(function(a,b){ return a.s-b.s; })
+    .slice(0,9).map(function(x){ return x.id; }); // 9 = clean 3×3 grid
+}
+function tpDeleteX(id){ // X on a Top Pick: instant delete; the next-ranked pick fills the slot
+  _snapshotDelete(id);
+  S.decided[id]="pass"; delete S.threads[id]; delete S.read[id];
+  S.matches=S.matches.filter(function(x){return x!==id;});
+  save();
+  try{ renderLikesYou(); renderDeck(); updateBadges(); }catch(e){}
+  toast("Deleted ✕");
+}
+function renderTopPicks(){
+  var w=$("tpWrap"); if(!w)return;
+  var picks=topPicks();
+  if(!picks.length){ w.innerHTML=""; return; }
+  w.innerHTML='<div class="sechd" style="padding:4px 18px">⭐ TODAY\'S TOP PICKS — NEW EVERY DAY</div><div class="tprow">'+
+    picks.map(function(id,i){ var p=P(id); var locked=!S.gold&&i>=3; // first row (3) free, rows 2-3 locked
+      return '<div class="tpc'+(locked?' locked':'')+'" data-id="'+id+'" data-locked="'+(locked?1:0)+'"><button class="mx" data-id="'+id+'">✕</button>'+
+        '<div class="photo" style="'+bgFor(p)+'"></div>'+(locked?'<div class="lockic2">🔒</div>':'')+
+        '<div class="sc"></div><div class="nm">'+(locked?'? ?':esc(p.name)+' '+p.age)+'</div></div>';
+    }).join('')+'</div>';
+  [].forEach.call(w.querySelectorAll(".tpc"),function(c){
+    c.onclick=function(){ if(c.dataset.locked==="1"){ openGold("Unlock all of today's Top Picks"); } else { openProfilePage(parseInt(c.dataset.id)); } };
+  });
+  [].forEach.call(w.querySelectorAll(".tpc .mx"),function(x){
+    x.onclick=function(e){ e.stopPropagation(); tpDeleteX(parseInt(x.dataset.id)); };
+  });
+}
+function renderLikesYou(){
+  renderTopPicks();
+  var ids=likesYouList(), g=$("lyGrid"), cta=$("lyCta");
+  $("lySub").textContent = ids.length ? (ids.length+" people already like you") : "";
+  if(!ids.length){ cta.innerHTML=""; g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="big">💛</div><p>No pending likes right now.<br>Keep swiping!</p></div>'; return; }
+  var gold=!!S.gold;
+  cta.innerHTML = gold ? "" : '<button class="ly-cta" onclick="openGold(\'See everyone who already likes you\')">🔓 Unlock '+ids.length+' likes with Torch Gold</button>';
+  g.innerHTML=ids.map(function(id){ var p=P(id);
+    return '<div class="mcell'+(gold?'':' locked')+'" data-id="'+id+'"><button class="mx" data-id="'+id+'">✕</button>'+
+      '<div class="photo" style="'+bgFor(p)+'"></div>'+(gold?'':'<div class="lockic">🔒</div>')+'<div class="sc"></div>'+
+      '<div class="nm">'+(gold?esc(p.name)+' '+p.age:'? ? ?')+'</div></div>';
+  }).join('');
+  [].forEach.call(g.querySelectorAll(".mcell"),function(c){
+    c.onclick=function(){ if(S.gold){ openProfilePage(parseInt(c.dataset.id)); } else { lyLockTap(); } };
+  });
+  [].forEach.call(g.querySelectorAll(".mcell .mx"),function(x){ x.onclick=function(e){ e.stopPropagation(); lyDeleteX(parseInt(x.dataset.id)); }; });
+}
+function lyDeleteX(id){ // white X on a Likes-You tile: delete at any stage, even locked
+  _snapshotDelete(id);
+  S.decided[id]="pass"; save();
+  try{ renderLikesYou(); updateBadges(); renderDeck(); }catch(e){}
+  if(typeof toast==="function")toast("Deleted ✕");
+}
+function lyLockTap(){ // padlock tap: secret code 777 unlocks Gold instantly (owner backdoor)
+  var c=prompt("🔒 Enter unlock code:");
+  if(c===null)return;
+  if((c+"").trim()==="777"){ S.gold=true; save(); renderLikesYou(); updateBadges(); toast("🔓 Unlocked — Gold active"); }
+  else { openGold("See everyone who already likes you"); }
+}
+function openGold(reason){
+  $("goldReason").textContent=reason||"";
+  $("goldModal").classList.remove("hidden");
+}
+function closeGold(){ $("goldModal").classList.add("hidden"); }
+function buyGold(months){
+  S.gold=true; save(); closeGold();
+  toast("✨ Your 60 days free started — then $9.99/mo (demo, nothing charged)");
+  try{ if(cur==="likesyou")renderLikesYou(); if(cur==="profile")renderProfile(); updateBadges(); }catch(e){}
+}
+function canSuper(){
+  if(S.gold)return true;
+  var d=new Date().toDateString();
+  if(!S.supers||S.supers.d!==d)S.supers={d:d,n:0};
+  return S.supers.n<3;
+}
+/* ============================ PROFILE DETAIL PAGE ============================ */
+var ppId=null;
+function openProfilePage(id){
+  var p=P(id); if(!p)return;
+  ppId=id;
+  var ph=$("ppPhoto");
+  _ppPics=[p.photo].concat(extrasFor(p)); _ppIdx=0;
+  ph.style.backgroundImage="url('"+p.photo+"'),url('"+fallbackPhoto(p.name)+"')";
+  ph.style.filter=(_bsFlagged(p.id)||(_bsOn()&&S.decided[p.id]==null))?'blur(20px)':'';
+  var lk=ph.querySelector(".pp-likesyou"); if(lk)lk.remove();
+  var od=ph.querySelector(".ppdots"); if(od)od.remove();
+  if(_ppPics.length>1){ ph.insertAdjacentHTML("beforeend",'<div class="ppdots"></div>'); }
+  ph.onclick=function(e){
+    if(e.target.closest("button"))return;
+    if(_ppPics.length<2)return;
+    var r=ph.getBoundingClientRect(); var x=(e.clientX-r.left)/r.width;
+    _ppIdx = x<0.45 ? (_ppIdx-1+_ppPics.length)%_ppPics.length : (_ppIdx+1)%_ppPics.length;
+    _ppShow();
+  };
+  _ppShow();
+  if(likesMe(p) && !dmDecided(id)) ph.insertAdjacentHTML("beforeend",'<div class="pp-likesyou">⭐ Likes you</div>');
+  $("ppBody").innerHTML=
+    '<div class="pp-nm">'+esc(p.name)+' <span class="ag">'+p.age+'</span>'+(p.verified?' <span class="verif" style="color:#4dc3ff">✔</span>':'')+'</div>'+
+    '<div class="pp-loc">'+placeLine(p)+'</div>'+
+    '<div class="pp-loc">🔍 Looking for: <b style="color:var(--ink)">'+lookingFor(p)+'</b></div>'+
+    (function(){ var z=signOf(p); return '<div class="pp-loc">📏 '+fmtHeight(heightOf(p))+' · ⚖️ '+weightOf(p)+' lbs · '+z[1]+' '+z[0]+' · 🌎 '+ethOf(p)+'</div>'; })()+
+    '<div class="pp-match">'+matchBadge(p)+sparkTypeChip(p)+'</div>'+
+    '<div class="pp-loc" style="margin-top:8px">'+intentChip(p)+'</div>'+
+    (isOnline(id)?'<div class="pp-loc"><span class="onl-inline">● Online now</span></div>':'')+
+    '<div class="pp-sec">Details</div><div class="pp-tags">'+[statusOf(p),kidsOf(p),petsOf(p),drinksOf(p),smokesOf(p),weedOf(p),vaxOf(p)].map(function(t){ return '<span class="tag2">'+t+'</span>'; }).join('')+'</div>'+
+    '<div class="pp-sec">About</div><div class="pp-bio">'+esc(p.bio)+'</div>'+
+    '<div class="pp-sec">Interests</div><div class="pp-tags">'+p.interests.map(function(t){return '<span class="tag2">'+esc(t)+'</span>';}).join('')+'</div>'+
+    '<div class="pp-sec">Hobbies</div><div class="pp-tags">'+hobbiesOf(p).map(function(t){return '<span class="tag2">'+t+'</span>';}).join('')+'</div>'+
+    '<div class="pp-sec">More about '+esc(p.name)+'</div><div class="pp-tags">'+attrChips(p)+'</div>'+
+    '<div class="pp-sec">Voice intro</div>'+
+    '<button class="vplay" id="vbtn'+p.id+'" onclick="toggleVoice('+p.id+')"><span class="vic">▶</span><span class="veq"><i></i><i></i><i></i><i></i></span><span>Hear '+esc(p.name)+'&#39;s voice</span></button>'+
+    '<div class="pp-sec">Prompts</div>'+promptsOf(p).map(function(pr){ return '<div class="pp-prompt"><div class="q">'+pr.q+'</div><div class="a">'+esc(pr.ans)+'</div></div>'; }).join('')+
+    '<div class="pp-sec">💬 Vouched by friends</div>'+
+    vouchesOf(p).map(function(v){ return '<div class="vcard"><div class="fav">'+v.n.charAt(0)+'</div><div><div class="who"><b>'+v.n+'</b> · '+esc(p.name)+'&#39;s '+v.r+'</div><div class="q">&ldquo;'+v.t+'&rdquo;</div></div></div>'; }).join('')+
+    '<div class="ppmod"><a onclick="reportProfile()">🚩 Report</a> · <a onclick="blockProfile()">🚫 Block</a></div>';
+  var act=$("ppActions");
+  if(S.matches.indexOf(id)>=0){
+    act.innerHTML='<button class="pp-msg" onclick="ppMessage()">💬 Message '+esc(p.name)+'</button>';
+  } else if(S.decided[id]==="like"||S.decided[id]==="super"){
+    act.innerHTML='<div class="pp-note">♥ You liked '+esc(p.name)+'</div>';
+  } else if(S.decided[id]==="pass"){
+    act.innerHTML='<div class="pp-note">You passed</div><button class="act small rewind" onclick="ppUnpass()" title="Bring back">↩</button>';
+  } else {
+    act.innerHTML='<button class="act nope" onclick="ppAct(\'pass\')">✕</button>'+
+      '<button class="act sup" onclick="ppAct(\'super\')">★</button>'+
+      '<button class="act like" onclick="ppAct(\'like\')">♥</button>';
+  }
+  $("ppage").classList.add("open");
+}
+function likesMe(p){ return !!(p.likesYou || (S && S.extraLikes && S.extraLikes[p.id])); }
+var _ZODIAC=[["Capricorn","♑"],["Aquarius","♒"],["Pisces","♓"],["Aries","♈"],["Taurus","♉"],["Gemini","♊"],["Cancer","♋"],["Leo","♌"],["Virgo","♍"],["Libra","♎"],["Scorpio","♏"],["Sagittarius","♐"],["Capricorn","♑"]];
+function zodiacOf(m,d){ var last=[19,18,20,19,20,20,22,22,22,22,21,21]; var idx=(d<=last[m-1])?(m-1):m; return _ZODIAC[idx]; }
+function zodiacFromISO(iso){ if(!iso)return null; var mm=parseInt(iso.slice(5,7),10), dd=parseInt(iso.slice(8,10),10); if(!mm||!dd)return null; return zodiacOf(mm,dd); }
+function fmtHeight(inches){ return Math.floor(inches/12)+"'"+(inches%12)+'"'; }
+function heightOf(p){ var base=p.gender==="m"?66:59, span=p.gender==="m"?11:12; return base+Math.round(_oh(p.id,555)*span); }
+function weightOf(p){ var h=heightOf(p); if(p.gender==="m")return 145+Math.round(_oh(p.id,666)*55)+(h-66)*2; return 102+Math.round(_oh(p.id,666)*48)+(h-59)*2; }
+function signOf(p){ var m=1+Math.floor(_oh(p.id,321)*12), d=1+Math.floor(_oh(p.id,432)*28); return zodiacOf(m,d); }
+function petsOf(p){ return ["No pets","Dog 🐶","Cat 🐱","Dog & cat","No pets","Dog 🐶","Fish/other pet","No pets"][Math.floor(_oh(p.id,911)*8)]; }
+function kidsOf(p){ var r=_oh(p.id,922); if(p.age<27)return r<0.8?"No kids":"Has kids"; if(r<0.45)return "No kids"; if(r<0.6)return "No kids, wants kids"; if(r<0.9)return "Has kids"; return "Has kids, wants more"; }
+function statusOf(p){ var r=_oh(p.id,933); if(p.age>=35){ if(r<0.55)return "Single"; if(r<0.85)return "Divorced"; if(r<0.93)return "Separated"; return "Widowed"; } return r<0.85?"Single":(r<0.97?"Divorced":"Separated"); }
+function drinksOf(p){ var r=_oh(p.id,944); return r<0.55?"Drinks socially":r<0.8?"Rarely drinks":r<0.92?"Never drinks":"Regular drinker"; }
+function smokesOf(p){ var r=_oh(p.id,955); return r<0.78?"🚬 Non-smoker":r<0.92?"🚬 Smokes sometimes":"🚬 Smoker"; }
+function weedOf(p){ var r=_oh(p.id,966); return r<0.5?"🌿 No weed":r<0.78?"🌿 420 friendly":r<0.92?"🌿 Sometimes":"🌿 Prefers not to say"; }
+function vaxOf(p){ var r=_oh(p.id,977); return r<0.52?"💉 Vaccinated":r<0.78?"💉 Not vaccinated":"💉 Prefer not to say"; }
+var _HOBBIES=["Poker","Golf","Gym & fitness","Gaming","Fishing","Bowling","Karaoke","Cooking","Dancing","Motorcycles","Basketball","Camping","Painting","Photography","Traveling","Volunteering"];
+function hobbiesOf(p){ var out=[],i=0; while(out.length<3&&i<12){ var h=_HOBBIES[Math.floor(_oh(p.id,988+i)*_HOBBIES.length)%_HOBBIES.length]; if(out.indexOf(h)<0)out.push(h); i++; } return out; }
+
+/* ============================ MATCHMAKER ATTRIBUTES (data-driven) ============================ */
+// Every attribute a world-class matchmaker asks. Each: key, icon, label, opts, and flags
+// disp (show on profile), edit (own-profile select), filt (searchable filter).
+var ATTR = [
+  { key:'orient',   icon:'🌈', label:'Orientation', filt:1, opts:['Straight','Gay','Lesbian','Bisexual','Pansexual','Queer','Asexual'] },
+  { key:'body',     icon:'🏋', label:'Body type',   filt:1, opts:['Slim','Athletic','Average','Curvy','A few extra pounds','Muscular','Full-figured'] },
+  { key:'religion', icon:'🙏', label:'Religion',    filt:1, opts:['Christian','Catholic','Jewish','Muslim','Hindu','Buddhist','Spiritual','Agnostic','Atheist','Other'] },
+  { key:'politics', icon:'🗳', label:'Politics',    filt:1, opts:['Liberal','Moderate','Conservative','Libertarian','Apolitical'] },
+  { key:'education',icon:'🎓', label:'Education',   filt:1, opts:['High school','Some college','Associate’s','Bachelor’s','Master’s','Doctorate','Trade school'] },
+  { key:'work',     icon:'💼', label:'Work',        filt:1, opts:['Healthcare','Tech','Education','Finance','Legal','Creative / Arts','Hospitality','Skilled trades','Retail','Entrepreneur','Real estate','Marketing','Government','Fitness','Student','Retired'] },
+  { key:'income',   icon:'💰', label:'Income',      filt:1, opts:['Under $50k','$50–100k','$100–150k','$150–250k','$250k+'] },
+  { key:'credit',   icon:'💳', label:'Credit score',filt:1, opts:['Excellent (800+)','Very good (740–799)','Good (670–739)','Fair (580–669)','Building it'] },
+  { key:'diet',     icon:'🥗', label:'Diet',        filt:1, opts:['Omnivore','Vegetarian','Vegan','Pescatarian','Keto','Halal','Kosher'] },
+  { key:'exercise', icon:'🏃', label:'Exercise',    filt:0, opts:['Daily','Often','Sometimes','Rarely'] },
+  { key:'love',     icon:'💞', label:'Love language',filt:0,opts:['Words of affirmation','Quality time','Physical touch','Acts of service','Gifts'] },
+  { key:'person',   icon:'🧠', label:'Personality', filt:0, opts:['Introvert','Extrovert','Ambivert'] },
+  { key:'marriage', icon:'💍', label:'Marriage',    filt:1, opts:['Wants to marry','Open to marriage','Not sure yet','Married before','Never married'] },
+  { key:'lang',     icon:'🗣', label:'Language',    filt:1, opts:['English','Spanish','French','Portuguese','Mandarin','Arabic','Hindi','Tagalog','German','Italian','Russian','Japanese','Korean'] }
+];
+var _ATTR_BY = {}; ATTR.forEach(function(a,i){ a._salt=1300+i*17; _ATTR_BY[a.key]=a; });
+function attrOf(p,key){ var a=_ATTR_BY[key]; if(!a)return ''; return a.opts[Math.floor(_oh(p.id,a._salt)*a.opts.length)%a.opts.length]; }
+function attrChips(p){ return ATTR.map(function(a){ return '<span class="tag2">'+a.icon+' '+attrOf(p,a.key)+'</span>'; }).join(''); }
+function attrEditHTML(me){
+  return ATTR.map(function(a){
+    var cur=me[a.key]||'';
+    var o='<option value="">'+a.label+': Prefer not to say</option>'+a.opts.map(function(x){ return '<option value="'+x+'"'+(cur===x?' selected':'')+'>'+x+'</option>'; }).join('');
+    return '<div class="field"><label>'+a.icon+' '+a.label+'</label><select id="pfa_'+a.key+'">'+o+'</select></div>';
+  }).join('');
+}
+function attrWireEdit(me){
+  ATTR.forEach(function(a){ var el=$('pfa_'+a.key); if(el)el.onchange=function(){ me[a.key]=this.value||undefined; save(); if(this.value&&typeof toast==='function')toast('Saved ✓'); }; });
+}
+function attrFilterHTML(flt){
+  var f=ATTR.filter(function(a){return a.filt;});
+  var rows='';
+  for(var i=0;i<f.length;i+=2){
+    rows+='<div class="row2" style="display:flex;gap:10px;margin-top:8px">';
+    for(var j=i;j<Math.min(i+2,f.length);j++){ var a=f[j];
+      rows+='<select id="flt_'+a.key+'" style="flex:1"><option value="">'+a.label+': Any</option>'+a.opts.map(function(x){ return '<option value="'+x+'"'+((flt[a.key]||'')===x?' selected':'')+'>'+x+'</option>'; }).join('')+'</select>';
+    }
+    rows+='</div>';
+  }
+  return rows;
+}
+function attrWireFilter(flt){
+  ATTR.filter(function(a){return a.filt;}).forEach(function(a){ var el=$('flt_'+a.key); if(el)el.onchange=function(){ flt[a.key]=this.value||0; buildOrder(); save(); var c=$('fCount'); if(c)c.textContent=currentQueue().length+' people match your filters'; }; });
+}
+function attrPass(p,f){ for(var i=0;i<ATTR.length;i++){ var a=ATTR[i]; if(a.filt && f[a.key] && attrOf(p,a.key)!==f[a.key])return false; } return true; }
+
+/* ============================ WORLDWIDE (countries) ============================ */
+var COUNTRIES = ["United States","Canada","Mexico","United Kingdom","Ireland","France","Germany","Spain","Italy","Portugal","Netherlands","Belgium","Switzerland","Austria","Sweden","Norway","Denmark","Finland","Iceland","Poland","Czech Republic","Hungary","Greece","Romania","Ukraine","Russia","Turkey","Australia","New Zealand","Japan","South Korea","China","Hong Kong","Taiwan","Singapore","Malaysia","Thailand","Vietnam","Philippines","Indonesia","India","Pakistan","Bangladesh","Sri Lanka","Nepal","United Arab Emirates","Saudi Arabia","Qatar","Kuwait","Israel","Lebanon","Jordan","Egypt","Morocco","Nigeria","Ghana","Kenya","South Africa","Ethiopia","Tanzania","Brazil","Argentina","Chile","Colombia","Peru","Venezuela","Ecuador","Uruguay","Paraguay","Bolivia","Costa Rica","Panama","Guatemala","Dominican Republic","Puerto Rico","Jamaica","Cuba","Trinidad and Tobago","Croatia","Serbia","Slovakia","Slovenia","Bulgaria","Lithuania","Latvia","Estonia","Luxembourg","Malta","Cyprus","Georgia","Armenia","Azerbaijan","Kazakhstan","Uzbekistan","Cambodia","Laos","Myanmar","Mongolia","Fiji","Other"];
+var _INTL = [["Canada","Toronto, ON"],["United Kingdom","London"],["Australia","Sydney"],["Mexico","Mexico City"],["Brazil","São Paulo"],["Germany","Berlin"],["France","Paris"],["Spain","Madrid"],["Italy","Milan"],["Japan","Tokyo"],["South Korea","Seoul"],["Philippines","Manila"],["India","Mumbai"],["Colombia","Bogotá"],["Netherlands","Amsterdam"],["Ireland","Dublin"],["Sweden","Stockholm"],["United Arab Emirates","Dubai"],["South Africa","Cape Town"],["Argentina","Buenos Aires"],["New Zealand","Auckland"],["Portugal","Lisbon"]];
+function countryOf(p){ var r=_oh(p.id,2100); if(r<0.72)return "United States"; var i=Math.floor(_oh(p.id,2117)*_INTL.length)%_INTL.length; return _INTL[i][0]; }
+function cityOf(p){ var c=countryOf(p); if(c==="United States")return p.city||"United States"; for(var i=0;i<_INTL.length;i++)if(_INTL[i][0]===c)return _INTL[i][1]+", "+c; return c; }
+function placeLine(p){ var c=countryOf(p); if(c==="United States"){ return '📍 '+esc(p.city)+' · '+distOf(p)+' mi away'; } return '📍 '+esc(cityOf(p))+' 🌍'; }
+
+
+function ethOf(p){ // matches the descriptor the photo was GENERATED with, so label always fits the face
+  var m=(p.photo||"").match(/photos\/w(\d+)\.jpg/);
+  if(m){ var i=parseInt(m[1],10); return ["White","Latina","Asian","Black","Mixed","White","White","Latina"][Math.floor(i/8)%8]; }
+  return "White";
+}
+var _INTENTS={ "long":["💍 Long-term","#e0407a"], "short":["🔥 Short-term fun","#ff7a45"], "casual":["😎 Something casual","#9b59b6"], "friends":["🤝 New friends","#3fa9f5"], "figuring":["🤔 Figuring it out","#7f8c8d"] };
+var _INTENT_KEYS=["long","short","casual","friends","figuring"];
+function intentOf(p){ var r=_oh(p.id,1210); var k = r<0.42?"long": r<0.62?"short": r<0.78?"casual": r<0.9?"friends":"figuring"; return k; }
+function intentChip(p){ var i=_INTENTS[intentOf(p)]; return '<span class="intentchip" style="background:'+i[1]+'">'+i[0]+'</span>'; }
+
+/* ============================ COMPATIBILITY SCORE ============================ */
+function matchScore(p){
+  if(!S||!S.me) return 72;
+  var me=S.me, sc=58 + Math.floor(_oh(p.id,1900)*11); // deterministic base 58-68
+  var mine=(me.interests||[]).concat(me.hobbies||[]).map(function(x){return (x||'').toLowerCase();});
+  var theirs=(p.interests||[]).concat(hobbiesOf(p)).map(function(x){return (x||'').toLowerCase();});
+  var shared=theirs.filter(function(t){return mine.indexOf(t)>=0;}).length;
+  sc += Math.min(9, shared*3);
+  if(me.intent && me.intent===intentOf(p)) sc+=7;
+  if(me.religion && me.religion===attrOf(p,'religion')) sc+=4;
+  if(me.diet && me.diet===attrOf(p,'diet')) sc+=3;
+  if(me.politics && me.politics===attrOf(p,'politics')) sc+=3;
+  if(me.education && me.education===attrOf(p,'education')) sc+=2;
+  var d=distOf(p); if(d<=10)sc+=6; else if(d<=25)sc+=3;
+  if(S.me.quizType && S.me.quizType===sparkTypeOf(p)) sc+=4;
+  return Math.max(55,Math.min(99,Math.round(sc)));
+}
+function matchColor(v){ return v>=85?'#2aa066':v>=72?'#e0407a':'#8a8f98'; }
+function matchBadge(p){ var v=matchScore(p); return '<span class="matchpill" style="background:'+matchColor(v)+'">'+v+'% Match</span>'; }
+
+/* ============================ VOUCHES ============================ */
+/* Friend endorsements. Demo profiles get 1-2 deterministic vouches; the user can add real ones. */
+function vouchesOf(p){
+  var names=["Rachel","Jess","Amanda","Katie","Priya","Sam","Nina","Lauren","Mike","Chris","Dev","Tony","Jake","Marcus","Ben","Andre"];
+  var rels=["best friend","college roommate","big sister","coworker","gym buddy","childhood friend","little brother","neighbor"];
+  var n=1+Math.floor(_oh(p.id,4100)*2), out=[];
+  for(var i=0;i<n;i++){
+    var fn=names[Math.floor(_oh(p.id,4110+i*7)*names.length)%names.length];
+    var rl=rels[Math.floor(_oh(p.id,4120+i*7)*rels.length)%rels.length];
+    var yrs=3+Math.floor(_oh(p.id,4130+i*7)*15);
+    var intr=(p.interests[0]||"trivia").toLowerCase();
+    var T=[
+      "I've known "+p.name+" for "+yrs+" years — hands down the funniest person I know.",
+      p.name+" is the friend who shows up at 2am, no questions asked. Whoever gets them is lucky.",
+      "Warning: "+p.name+" will destroy you at "+intr+" and be weirdly humble about it.",
+      "The most loyal human alive. And the playlists? Elite.",
+      p.name+" plans the best weekends of anyone I know. You will never be bored. Promise.",
+      "Smart, kind, and lowkey the best cook in our whole group.",
+      "If "+p.name+" likes you, you basically won the lottery. I don't make the rules.",
+      "Don't let the pretty face fool you — deepest soul I know."
+    ];
+    out.push({n:fn,r:rl,t:T[Math.floor(_oh(p.id,4140+i*7)*T.length)%T.length]});
+  }
+  return out;
+}
+function addVouch(){
+  var n=$("vchName").value.trim(), r=$("vchRel").value, t=$("vchText").value.trim();
+  if(!n||!t){ toast("Add their name and their one line 🙂"); return; }
+  S.me.vouches=S.me.vouches||[]; S.me.vouches.push({n:n,r:r||"friend",t:t.slice(0,140)});
+  save(); renderProfile(); toast("Vouch added 💬");
+}
+function delVouch(i){ if(!confirm("Remove this vouch?"))return; S.me.vouches.splice(i,1); save(); renderProfile(); }
+function askVouch(){
+  var txt="Hey! Will you vouch for me on my Torch dating profile (torchdating.com)? Reply with one honest (nice 😄) line about me and I'll add it.";
+  if(navigator.share){ navigator.share({text:txt}).catch(function(){}); }
+  else{ try{ navigator.clipboard.writeText(txt); toast("Copied — send it to a friend 📋"); }catch(e){ toast(txt); } }
+}
+
+/* ============================ THE SPARK QUIZ ============================ */
+var _QT={
+ wildfire:{e:"🔥",n:"Wildfire",tag:"Bold · spontaneous · all-in",d:"You live loud, love fast, and turn ordinary nights into stories people retell for years. Routine is your only enemy — bring someone who can keep up.",best:"slowburn"},
+ slowburn:{e:"🕯️",n:"Slow Burn",tag:"Deep · intentional · romantic",d:"You fall slow, then all at once. Depth over drama, meaning over noise — when you love, it's the whole library, not one page.",best:"wildfire"},
+ goldenflame:{e:"✨",n:"Golden Flame",tag:"Warm · loyal · steady",d:"You're the calm in everyone's chaos and secretly everyone's favorite person. You build love that feels like home — and the fire never goes out.",best:"firecracker"},
+ firecracker:{e:"🎆",n:"Firecracker",tag:"Witty · playful · electric",d:"Quick wit, big laugh, zero boring days. You flirt like it's a sport and love like it's a party everyone's dying to get into.",best:"goldenflame"}
+};
+var QZ=[
+ ["It's Friday night. Dream scenario?",[["Rooftop party with strangers who become friends","f"],["Road trip. No plan. Go.","w"],["Candlelit dinner and a conversation that gets real","s"],["Cooking together, music on, phones away","g"]]],
+ ["Your texting style?",[["Thoughtful paragraphs, sent once it matters","s"],["Reply in 0.2 seconds with three jokes","f"],["Voice notes and beautiful chaos","w"],["Good-morning texts, every morning","g"]]],
+ ["Pick a first date:",[["Karaoke — winner picks round two","f"],["Sunrise hike, coffee after","w"],["Wine and a record store","s"],["Farmers market, then brunch","g"]]],
+ ["Your flirting move?",[["Remembering exactly how they take their coffee","g"],["Teasing them until they crack a smile","f"],["Eye contact that says everything","s"],["\"Let's just go — right now\"","w"]]],
+ ["Biggest green flag in a person?",[["Says yes to adventures","w"],["Makes me laugh until I cry","f"],["Asks the deep questions","s"],["Kind to the waiter","g"]]],
+ ["Vacation vibe?",[["Festival weekend, zero sleep","f"],["Backpack and a one-way ticket","w"],["Tiny cabin, no wifi, big blankets","s"],["Beach house full of people I love","g"]]],
+ ["The love you give is mostly…",[["Playful banter and inside jokes","f"],["Wild shared memories","w"],["Words straight from the soul","s"],["Showing up, every single time","g"]]],
+ ["Your ex would say you're…",[["Intense — in the best way","s"],["Impossible to be bored with","f"],["A beautiful hurricane","w"],["The one that got away","g"]]],
+ ["Perfect Sunday?",[["Bottomless brunch with the group chat","f"],["Woke up in another city, honestly","w"],["Books, rain, coffee, repeat","s"],["Long walk, meal prep, early night","g"]]],
+ ["You fall in love…",[["Fast and often","f"],["Like jumping off a cliff","w"],["Slow… then all at once","s"],["Once, and forever","g"]]],
+ ["Dance floor status:",[["I AM the dance floor","f"],["I started it before the music came on","w"],["Slow dancing in the corner with one person","s"],["Happily holding everyone's drinks","g"]]],
+ ["Dream pet situation?",[["Chaotic little dog with big opinions","f"],["Adventure cat on a leash","w"],["Old-soul rescue dog","s"],["A whole cozy zoo","g"]]],
+ ["When there's conflict, you…",[["Talk it through for hours until it's really fixed","s"],["Joke until the tension breaks","f"],["Say it loud, forgive fast","w"],["Make tea and talk it out under a blanket","g"]]],
+ ["Your camera roll is mostly…",[["Blurry night-out chaos","f"],["Mountains and sunsets","w"],["Screenshots of songs and poems","s"],["Food I made and people I love","g"]]],
+ ["Pick a dating superpower:",[["Always knowing the perfect joke","f"],["Teleport us anywhere, together","w"],["Reading hearts like books","s"],["Making anywhere feel like home","g"]]],
+ ["Money's burning a hole in your pocket. You buy…",[["A dream house fund gets it, honestly","g"],["Concert tickets for tonight","f"],["Flights. Always flights.","w"],["A first-edition of a book I love","s"]]],
+ ["What hooks you first?",[["Their laugh","f"],["Their energy","w"],["Their mind","s"],["Their warmth","g"]]],
+ ["Your relationship pace:",[["Fun first, labels later","f"],["All-in from day one","w"],["A slow burn that turns into forever","s"],["Steady, like the seasons","g"]]],
+ ["Your toast at a wedding would be…",[["A roast. Obviously.","f"],["Unplanned, and somehow the tearjerker","w"],["A short poem I secretly worked on for weeks","s"],["Thank-yous until they cut the mic","g"]]],
+ ["Why are you really here?",[["To have stupid amounts of fun","f"],["To find a partner in crime","w"],["To be truly known by someone","s"],["To build something real","g"]]]
+];
+var _q=null;
+function openQuiz(){ _q={i:0,t:{w:0,s:0,g:0,f:0}}; _qRender(); $("qpage").classList.add("open"); }
+function closeQuiz(){ $("qpage").classList.remove("open"); _q=null; }
+function _qRender(){
+  var q=QZ[_q.i];
+  $("qBody").innerHTML='<div class="qzhd"><div class="t">🧪 THE TORCH TEST</div><button class="done" onclick="closeQuiz()">✕</button></div>'+
+   '<div class="qzbar"><i style="width:'+Math.round(_q.i/QZ.length*100)+'%"></i></div>'+
+   '<div class="qznum">'+(_q.i+1)+' / '+QZ.length+'</div>'+
+   '<div class="qzq">'+q[0]+'</div>'+
+   '<div class="qzopts">'+q[1].map(function(o,j){ return '<button class="qzopt" onclick="_qPick('+j+')">'+o[0]+'</button>'; }).join('')+'</div>';
+}
+function _qPick(j){
+  var q=QZ[_q.i]; _q.t[q[1][j][1]]++; _q.i++;
+  if(_q.i<QZ.length){ _qRender(); return; }
+  var map={w:"wildfire",s:"slowburn",g:"goldenflame",f:"firecracker"},best="wildfire",hi=-1;
+  ["w","s","g","f"].forEach(function(k){ if(_q.t[k]>hi){hi=_q.t[k];best=map[k];} });
+  S.me.quizType=best; save();
+  var T=_QT[best],B=_QT[T.best];
+  $("qBody").innerHTML='<div class="qzhd"><div class="t">🧪 YOUR TORCH TYPE</div><button class="done" onclick="closeQuiz();renderProfile()">✕</button></div>'+
+   '<div class="qzres"><div class="e">'+T.e+'</div><div class="n">'+T.n+'</div><div class="tag">'+T.tag+'</div><div class="d">'+T.d+'</div>'+
+   '<div class="best">Sparks hardest with '+B.e+' '+B.n+'</div></div>'+
+   '<button class="qzsh" onclick="shareQuizType()">Share my Torch Type</button>'+
+   '<button class="qzagain" onclick="openQuiz()">Retake the quiz</button>';
+  try{ if(navigator.vibrate)navigator.vibrate([30,40,90]); }catch(e){}
+}
+function shareQuizType(){
+  var T=_QT[(S.me&&S.me.quizType)||"wildfire"];
+  var txt="I'm a "+T.e+" "+T.n+" on Torch — take the Torch Test and find your type!";
+  var url="https://torchdating.com/";
+  if(navigator.share){ navigator.share({title:"My Torch Type",text:txt,url:url}).catch(function(){}); }
+  else{ try{ navigator.clipboard.writeText(txt+" "+url); toast("Copied — paste it anywhere 📋"); }catch(e){ toast(txt); } }
+}
+function sparkTypeOf(p){ var ks=["wildfire","slowburn","goldenflame","firecracker"]; return ks[Math.floor(_oh(p.id,3100)*ks.length)%4]; }
+function sparkTypeChip(p){ var t=sparkTypeOf(p),T=_QT[t]; var same=S&&S.me&&S.me.quizType===t; return '<span class="qtpill">'+T.e+' '+T.n+(same?' · you too!':'')+'</span>'; }
+
+/* ============================ VOICE INTROS ============================ */
+/* Demo profiles: synthesized voice intro (SpeechSynthesis — no storage). Own profile: real 15s mic recording. */
+var _voiceId=null;
+function voiceLineOf(p){ return "Hey, it's "+p.name+". "+promptsOf(p)[0].ans+" If that sounds like your kind of thing… say hi."; }
+function toggleVoice(id){
+  try{
+    var b=$("vbtn"+id);
+    if(_voiceId===id){ speechSynthesis.cancel(); _voiceStopUI(); return; }
+    speechSynthesis.cancel(); _voiceStopUI();
+    var p=P(id); var u=new SpeechSynthesisUtterance(voiceLineOf(p));
+    var vs=speechSynthesis.getVoices().filter(function(v){ return /^en/i.test(v.lang); });
+    if(vs.length)u.voice=vs[Math.floor(_oh(id,3300)*vs.length)%vs.length];
+    u.pitch=(p.gender==="w"?1.05:0.85)+_oh(id,3310)*0.15; u.rate=0.95+_oh(id,3320)*0.1;
+    u.onend=u.onerror=function(){ _voiceStopUI(); };
+    _voiceId=id;
+    if(b){ b.classList.add("playing"); var ic=b.querySelector(".vic"); if(ic)ic.textContent="⏸"; }
+    speechSynthesis.speak(u);
+  }catch(e){ toast("Voice isn't supported on this device"); }
+}
+function _voiceStopUI(){ _voiceId=null; var b=document.querySelector(".vplay.playing"); if(b){ b.classList.remove("playing"); var ic=b.querySelector(".vic"); if(ic)ic.textContent="▶"; } }
+var _rec=null,_recChunks=[],_recTimer=null,_myAudio=null;
+function recVoice(){
+  if(_rec){ _rec.stop(); return; }
+  if(!navigator.mediaDevices||!window.MediaRecorder){ toast("Recording isn't supported here"); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){
+    _recChunks=[]; _rec=new MediaRecorder(st);
+    _rec.ondataavailable=function(e){ if(e.data&&e.data.size)_recChunks.push(e.data); };
+    _rec.onstop=function(){
+      st.getTracks().forEach(function(t){ t.stop(); });
+      clearTimeout(_recTimer);
+      var blob=new Blob(_recChunks,{type:(_rec&&_rec.mimeType)||"audio/webm"}); _rec=null;
+      if(blob.size>450000){ toast("That one's a little long — try again, shorter"); renderProfile(); return; }
+      var rd=new FileReader();
+      rd.onload=function(){ S.me.voice=rd.result; save(); renderProfile(); toast("Voice intro saved 🎙️"); };
+      rd.readAsDataURL(blob);
+    };
+    _rec.start();
+    var b=$("vrecBtn"); if(b){ b.textContent="⏹ Recording… tap to stop (15s max)"; b.style.color="#c0454f"; b.style.borderColor="#eec7ca"; }
+    _recTimer=setTimeout(function(){ if(_rec)_rec.stop(); },15000);
+  }).catch(function(){ toast("Microphone permission needed 🎙️"); });
+}
+function playMyVoice(){
+  try{
+    if(_myAudio){ _myAudio.pause(); _myAudio=null; toast("Stopped"); return; }
+    _myAudio=new Audio(S.me.voice); _myAudio.onended=function(){ _myAudio=null; }; _myAudio.play();
+  }catch(e){ toast("Couldn't play"); }
+}
+function delMyVoice(){ if(!confirm("Delete your voice intro?"))return; delete S.me.voice; save(); renderProfile(); toast("Voice intro deleted"); }
+
+/* ============================ BLIND SPARK MODE ============================ */
+/* Photos start blurred; each message exchanged sharpens them. Fully revealed at BS_MSGS. */
+var BS_MSGS=8;
+function _bsOn(){ return !!(S&&S.me&&S.me.blind); }
+function _bsFlagged(id){ return !!(S&&S.blindIds&&S.blindIds[id]); }
+function _bsCount(id){ return (S.threads[id]||[]).length; }
+function _bsLeft(id){ return Math.max(0,BS_MSGS-_bsCount(id)); }
+function _bsBlur(id,maxPx){ if(!_bsFlagged(id))return ''; var px=Math.ceil(maxPx*_bsLeft(id)/BS_MSGS); return px>0?';filter:blur('+px+'px)':''; }
+function _bsTick(id){
+  if(!_bsFlagged(id))return;
+  if(_bsCount(id)>=BS_MSGS){
+    delete S.blindIds[id]; save();
+    try{ if(navigator.vibrate)navigator.vibrate([30,40,90]); }catch(e){}
+    toast('🎭✨ '+(P(id)?P(id).name:'They')+' is fully revealed!');
+    try{ renderMatches(); renderMessages(); }catch(e){}
+  }
+}
+
+/* ============================ TONIGHT'S SPARK ============================ */
+/* One hand-picked top match per day. Drops at 7pm local; first-ever Torch is
+   available immediately so new users see the feature right away. */
+function _tsPad(n){ return (n<10?'0':'')+n; }
+function tsDayKey(){ var n=new Date(); var d=new Date(n.getFullYear(),n.getMonth(),n.getDate()); if(n.getHours()<19)d.setDate(d.getDate()-1); return d.getFullYear()+'-'+_tsPad(d.getMonth()+1)+'-'+_tsPad(d.getDate()); }
+function _tsNextDrop(){ var n=new Date(); var d=new Date(n.getFullYear(),n.getMonth(),n.getDate(),19,0,0); if(n>=d)d.setDate(d.getDate()+1); return d; }
+function _tsCt(){ var ms=_tsNextDrop()-new Date(); var m=Math.max(1,Math.round(ms/60000)); var h=Math.floor(m/60); return h>0? h+'h '+(m%60)+'m' : m+'m'; }
+function tsPick(day){
+  var cands=PROFILES.filter(function(p){ return _passFilters(p) && S.decided[p.id]==null; });
+  if(!cands.length)cands=PROFILES.filter(function(p){ return _passFilters(p); });
+  if(!cands.length)return null;
+  cands.sort(function(a,b){ return matchScore(b)-matchScore(a); });
+  var top=cands.slice(0,Math.min(5,cands.length));
+  var seed=parseInt(day.replace(/-/g,''),10)||0;
+  return top[seed%top.length].id;
+}
+function tsEnsure(){
+  if(!S||!S.me)return;
+  var day=tsDayKey();
+  if(!S.ts || S.ts.day!==day){ S.ts={day:day,id:tsPick(day),done:null,seen:false}; save(); }
+}
+function tsReasons(p){
+  var r=[], me=S.me||{};
+  var mine=(me.interests||[]).concat(me.hobbies||[]).map(function(x){return (x||'').toLowerCase();});
+  var sh=(p.interests||[]).concat(hobbiesOf(p)).filter(function(x){return mine.indexOf((x||'').toLowerCase())>=0;});
+  if(sh.length)r.push('You both love '+sh[0].toLowerCase());
+  if(me.intent && me.intent===intentOf(p))r.push('Wants the same thing you do');
+  var d=distOf(p); if(d<=25)r.push('Only '+d+' mi away');
+  if(matchScore(p)>=85)r.push('One of your highest matches');
+  if(!r.length)r.push('Hand-picked for you tonight');
+  return r.slice(0,3);
+}
+function tsRender(){
+  var bar=$("tsBar"); if(!bar)return;
+  if(!S||!S.me){ bar.style.display='none'; return; }
+  tsEnsure();
+  var t=S.ts;
+  if(!t||t.id==null){ bar.style.display='none'; return; }
+  bar.style.display='flex';
+  if(t.done){
+    bar.className='calm';
+    bar.innerHTML='<span class="bolt">🔥</span><div><div class="t">Tonight&#39;s Torch — see you tomorrow</div><div class="s">New Torch in '+_tsCt()+'</div></div>';
+  }else{
+    bar.className='';
+    bar.innerHTML='<div class="shine"></div><span class="bolt">🔥</span><div><div class="t">Tonight&#39;s Torch is waiting</div><div class="s">One hand-picked match · new drop in '+_tsCt()+'</div></div><span style="margin-left:auto;font-weight:900;font-size:17px;opacity:.8">›</span>';
+  }
+  if(!S.tsIntro && !t.seen && !t.done && cur==='discover' && !$("tspage").classList.contains('open')){
+    S.tsIntro=1; save(); setTimeout(openTonight,900);
+  }
+}
+function openTonight(){
+  if(!S||!S.me)return;
+  tsEnsure(); var t=S.ts;
+  if(!t||t.id==null){ toast('No Torch tonight — try widening your filters'); return; }
+  var p=P(t.id), revealed=!!t.seen;
+  var acts;
+  if(t.done){ acts='<div class="tsdone">'+(t.done==='like'?'You sent a Torch 🔥':'You passed')+' — next drop at 7:00 PM</div>'; }
+  else if(revealed){ acts='<button class="tsbtn pass" onclick="tsAct(\'pass\')">✕</button><button class="tsbtn spark" onclick="tsAct(\'like\')">🔥 Pass the Torch</button>'; }
+  else { acts='<div class="tsdone" style="opacity:.5">Reveal them to decide</div>'; }
+  $("tsBody").innerHTML=
+    '<div class="tshd"><div class="t">🔥 TONIGHT&#39;S TORCH</div><button class="done" onclick="closeTonight()">✕</button></div>'+
+    '<div class="tssub">One person. Hand-picked from your highest matches. A new one drops every night at 7.</div>'+
+    '<div class="tsphoto" style="'+bgFor(p)+'">'+
+      '<div class="tsveil'+(revealed?' off':'')+'" onclick="tsReveal()"><div class="zap">🔥</div><div class="vt">Tap to reveal</div><div class="vs">Your top pick tonight</div></div>'+
+      '<div class="tsgrad"></div>'+
+      '<div class="tsinfo"><div class="n">'+esc(p.name)+', '+p.age+'</div><div class="l">'+esc((p.city||'').split(',')[0])+' · '+distOf(p)+' mi away</div></div>'+
+    '</div>'+
+    '<div class="tsmeta" id="tsMeta" style="'+(revealed?'':'visibility:hidden')+'">'+matchBadge(p)+
+      '<div class="why">'+tsReasons(p).map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>'+
+      '<a class="vfull" onclick="closeTonight();openProfilePage('+t.id+')">View full profile →</a>'+
+    '</div>'+
+    '<div class="tsacts" id="tsActs">'+acts+'</div>'+
+    '<div class="tsct">New Torch in <span class="tsct2">'+_tsCt()+'</span></div>';
+  $("tspage").classList.add('open');
+}
+function closeTonight(){ $("tspage").classList.remove('open'); tsRender(); }
+function tsReveal(){
+  var t=S.ts; if(!t)return;
+  var v=document.querySelector('#tspage .tsveil'); if(v)v.classList.add('off');
+  var m=$("tsMeta"); if(m)m.style.visibility='visible';
+  try{ if(navigator.vibrate)navigator.vibrate(30); }catch(e){}
+  if(!t.seen){ t.seen=true; save(); }
+  if(!t.done){ var a=$("tsActs"); if(a)a.innerHTML='<button class="tsbtn pass" onclick="tsAct(\'pass\')">✕</button><button class="tsbtn spark" onclick="tsAct(\'like\')">🔥 Pass the Torch</button>'; }
+}
+function tsAct(a){
+  var t=S.ts; if(!t||t.id==null||t.done)return;
+  t.done=a; S.decided[t.id]=(a==='like')?'like':'pass'; save();
+  closeTonight();
+  var p=P(t.id);
+  if(a==='like'){
+    if(likesMe(p) || Math.random()<0.9){ setTimeout(function(){ makeMatch(t.id,true); },300); }
+    else toast('🔥 Torch sent to '+p.name);
+  }else{
+    toast('Passed — a new Torch drops at 7pm');
+  }
+  try{ renderDeck(); updateBadges(); }catch(e){}
+}
+setInterval(function(){ try{ if(S&&S.me){ tsRender(); var el=document.querySelector('#tspage.open .tsct2'); if(el)el.textContent=_tsCt(); } }catch(e){} },30000);
+
+/* ============================ BIO PROMPTS ============================ */
+var _PROMPTS=[
+ "My ideal Sunday…","Green flags I look for…","Two truths and a lie…","The way to my heart is…",
+ "My simple pleasures…","We'll get along if…","I'm looking for someone who…","Don't hate me if I…"
+];
+function _promptAns(p,idx){
+  var i=(p.interests[0]||'good food').toLowerCase();
+  var h=(hobbiesOf(p)[0]||'a night out').toLowerCase();
+  var city=(p.city||'this city').split(',')[0];
+  var A=[
+   "sleeping in, "+h+", and "+i+" — bonus points if brunch is involved.",
+   "kindness, texting back, and a genuine love of "+i+".",
+   "I've gone skydiving, I hate cilantro, and I'm secretly great at "+h+". One's a lie.",
+   "great "+i+" and letting me pick the playlist.",
+   "sunset walks, "+i+", and my morning coffee ritual.",
+   "you can laugh at yourself and you're down for "+h+" on a whim.",
+   "is kind, curious, and won't judge my "+i+" obsession.",
+   "quote entire movies and get way too into "+h+"."
+  ];
+  return A[idx%A.length];
+}
+function promptsOf(p){
+  var a=Math.floor(_oh(p.id,2200)*_PROMPTS.length)%_PROMPTS.length;
+  var b=(a+1+Math.floor(_oh(p.id,2222)*(_PROMPTS.length-1)))%_PROMPTS.length;
+  return [{q:_PROMPTS[a],ans:_promptAns(p,a)},{q:_PROMPTS[b],ans:_promptAns(p,b)}];
+}
+
+/* ============================ REPORT / BLOCK ============================ */
+function blockProfile(){ var id=ppId; if(id==null)return; if(!confirm('Block '+(P(id)?P(id).name:'this person')+"? They won't appear again."))return; _doBlock(id); toast('Blocked 🚫'); }
+function reportProfile(){ var id=ppId; if(id==null)return; var r=prompt('Report '+(P(id)?P(id).name:'this profile')+' — reason (optional):'); if(r===null)return; S.reported=S.reported||{}; S.reported[id]=r||'reported'; _doBlock(id); toast('Reported — thanks for keeping Torch safe 🛡️'); }
+function _doBlock(id){
+  S.blocked=S.blocked||{}; S.blocked[id]=Date.now();
+  S.decided[id]='pass'; delete S.threads[id]; delete S.read[id];
+  S.matches=S.matches.filter(function(x){return x!==id;});
+  if(S.extraLikes)delete S.extraLikes[id];
+  save(); closeProfilePage();
+  try{ renderDeck(); renderMatches(); renderMessages(); renderLikesYou(); updateBadges(); }catch(e){}
+}
+function blockedCount(){ return S&&S.blocked?Object.keys(S.blocked).length:0; }
+function unblockAll(){ if(!blockedCount())return; if(!confirm('Unblock all '+blockedCount()+' blocked profiles?'))return; S.blocked={}; S.reported={}; save(); renderProfile(); try{buildOrder();renderDeck();}catch(e){} toast('Unblocked everyone'); }
+
+function lookingFor(p){ // deterministic per profile: seeking + age window, e.g. "Men, 25–38"
+  var id=p.id||0, r=id%10;
+  var seek = p.gender==="w" ? (r<8?"Men":(r<9?"Women":"Everyone")) : (r<8?"Women":"Everyone");
+  var lo=Math.max(21, p.age-4-(id%4));
+  var hi=Math.min(60, p.age+8+(id%7));
+  return seek+", "+lo+"–"+hi;
+}
+function dmDecided(id){ return !!S.decided[id]; }
+function ppDeleteX(){ // X on the profile page: instantly gone from everywhere
+  var id=ppId; if(id==null)return; _snapshotDelete(id);
+  S.decided[id]="pass"; delete S.threads[id]; delete S.read[id];
+  S.matches=S.matches.filter(function(x){return x!==id;});
+  save(); closeProfilePage();
+  try{ renderDeck(); renderMatches(); renderMessages(); updateBadges(); }catch(e){}
+  if(typeof toast==="function")toast("Deleted ✕");
+}
+function unmatchX(id){ // X on a match tile: instant unmatch, no confirm
+  _snapshotDelete(id);
+  S.decided[id]="pass"; delete S.threads[id]; delete S.read[id];
+  S.matches=S.matches.filter(function(x){return x!==id;});
+  save();
+  try{ renderMatches(); renderMessages(); updateBadges(); }catch(e){}
+  if(typeof toast==="function")toast("Deleted ✕");
+}
+function closeProfilePage(){ $("ppage").classList.remove("open"); ppId=null; }
+function ppAct(action){
+  var id=ppId; if(id==null)return;
+  if(action==="super" && !canSuper()){ openGold("You're out of free Super Likes today"); return; }
+  closeProfilePage();
+  var card=topCard();
+  if(card && parseInt(card.dataset.id)===id){ fly(card,id,action); } // animate if it is the top deck card
+  else { decide(id,action); renderDeck(); }
+}
+function ppUnpass(){ var id=ppId; if(id==null)return; delete S.decided[id]; save(); renderDeck(); openProfilePage(id); }
+function ppMessage(){ var id=ppId; closeProfilePage(); openChat(id); }
+
+/* ============================ CAMERA / PHOTO ============================ */
+function openCamera(){ var i=$("photoInput"); if(i) i.click(); }
+(function(){
+  var inp=$("photoInput"); if(!inp)return;
+  inp.addEventListener("change",function(){
+    var f=inp.files&&inp.files[0]; inp.value=""; if(!f||!S||!S.me)return;
+    function done(dataUrl){
+      var ph=myPhotos(); ph.unshift(dataUrl); if(ph.length>20)ph.length=20;
+      S.me.photo=ph[0]; save(); renderProfile();
+      if(typeof toast==="function")toast("Profile photo updated 📸 ("+ph.length+"/20)");
+    }
+    function draw(src,w,h){ var SZ=512, c=document.createElement("canvas"); c.width=SZ; c.height=SZ; var x=c.getContext("2d");
+      var side=Math.min(w,h); x.drawImage(src,(w-side)/2,(h-side)/2,side,side,0,0,SZ,SZ); done(c.toDataURL("image/jpeg",0.82)); }
+    function fallback(){ var r=new FileReader(); r.onload=function(){ var im=new Image(); im.onload=function(){ draw(im,im.naturalWidth,im.naturalHeight); }; im.src=r.result; }; r.readAsDataURL(f); }
+    if(window.createImageBitmap){ createImageBitmap(f,{imageOrientation:"from-image"}).then(function(b){ draw(b,b.width,b.height); }).catch(fallback); }
+    else fallback();
+  });
+})();
+
+/* ============================ ACTIVITY ENGINE (alive between visits) ============================ */
+function _likeBannerShow(){ var b=$("likeBanner"); if(!b)return; b.classList.remove("show"); void b.offsetWidth; /* reflow so the 1s CSS animation restarts cleanly */ b.classList.add("show"); }
+// belt-and-suspenders: whenever the CSS animation ends, strip .show so it is fully reset (never lingers)
+document.addEventListener("animationend",function(e){ if(e.target&&e.target.id==="likeBanner")e.target.classList.remove("show"); });
+function _addExtraLike(silent){
+  var cands=PROFILES.filter(function(p){ return _passFilters(p)&&!likesMe(p)&&!S.decided[p.id]&&S.matches.indexOf(p.id)<0; });
+  if(!cands.length)return false;
+  var p=cands[Math.floor(Math.random()*cands.length)];
+  S.extraLikes=S.extraLikes||{}; S.extraLikes[p.id]=Date.now(); save(); updateBadges();
+  try{ if(cur==="likesyou")renderLikesYou(); }catch(e){}
+  if(!silent)_likeBannerShow();
+  return true;
+}
+function _fireReply(id,when){
+  id=parseInt(id); var p=P(id); if(!p||!S.threads[id])return;
+  var t=S.threads[id];
+  t.forEach(function(m){ if(m.from==="me")m.st="r"; });
+  t.push({from:"them",text:genReply(p),ts:when||Date.now()});
+  if(chatId===id && $("chat").classList.contains("open")){ S.read[id]=true; renderChat(); $("chatSt").textContent=isOnline(id)?"Online now":"Active recently"; }
+  else S.read[id]=false;
+  save(); updateBadges();
+  try{ if(cur==="messages")renderMessages(); }catch(e){}
+}
+var _INIT_MSGS=["So are we ever getting that drink? 😏","Okay I caved and texted first. Your move 😄","Random, but something today reminded me of your profile","How's your week treating you? 👀","Two truths and a lie — you go first","Still thinking about your bio ngl 😅"];
+function _activityCatchUp(){
+  if(!S||!S.me)return;
+  var now=Date.now(), last=S.lastSeen||now, gap=now-last;
+  S.extraLikes=S.extraLikes||{}; S.pendingReplies=S.pendingReplies||{};
+  Object.keys(S.pendingReplies).forEach(function(id){ if(S.pendingReplies[id]<=now){ var w=S.pendingReplies[id]; delete S.pendingReplies[id]; _fireReply(id,w); } });
+  if(gap>3*60*1000){
+    var nl=Math.min(5, 1+Math.floor(gap/(20*60*1000)));
+    for(var i=0;i<nl;i++)_addExtraLike(true);
+    var sent=0;
+    S.matches.forEach(function(id){
+      if(sent>=3)return;
+      if(!S.threads[id]||S.pendingReplies[id]||S.read[id]===false)return;
+      if(Math.random()<Math.min(.45,(gap/3600000)*.22)){
+        S.threads[id].forEach(function(m){ if(m.from==="me")m.st="r"; });
+        S.threads[id].push({from:"them",text:_INIT_MSGS[Math.floor(Math.random()*_INIT_MSGS.length)],ts:last+Math.random()*gap});
+        S.read[id]=false; sent++;
+      }
+    });
+    save(); updateBadges();
+    if(sent>0)setTimeout(function(){ toast("💬 "+sent+" new message"+(sent>1?"s":"")+" while you were away"); },1200);
+    if(nl>0)setTimeout(_likeBannerShow,2800);
+  }
+  S.lastSeen=now; save();
+}
+setInterval(function(){ // reply due-checker + typing hint
+  if(!S||!S.me)return; var now=Date.now();
+  Object.keys(S.pendingReplies||{}).forEach(function(id){
+    var due=S.pendingReplies[id];
+    if(due<=now){ delete S.pendingReplies[id]; _fireReply(id); }
+    else if(chatId===parseInt(id) && $("chat").classList.contains("open") && due-now<8000){ $("chatSt").textContent="typing…"; }
+  });
+},8000);
+setInterval(function(){ if(S&&S.me&&document.visibilityState==="visible"&&Math.random()<0.22)_addExtraLike(false); },90000);
+document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible"&&S&&S.me)_activityCatchUp(); else if(S&&S.me){ S.lastSeen=Date.now(); save(); } });
+
+/* ============================ GET VERIFIED ============================ */
+function _photoToSquare(file, cb){ // any image file → 512px square JPEG dataURL
+  function draw(src,w,h){ var SZ=512, c=document.createElement("canvas"); c.width=SZ; c.height=SZ; var x=c.getContext("2d");
+    var side=Math.min(w,h); x.drawImage(src,(w-side)/2,(h-side)/2,side,side,0,0,SZ,SZ); cb(c.toDataURL("image/jpeg",0.78)); }
+  function fb(){ var r=new FileReader(); r.onload=function(){ var im=new Image(); im.onload=function(){ draw(im,im.naturalWidth,im.naturalHeight); }; im.src=r.result; }; r.readAsDataURL(file); }
+  if(window.createImageBitmap){ createImageBitmap(file,{imageOrientation:"from-image"}).then(function(b){ draw(b,b.width,b.height); }).catch(fb); } else fb();
+}
+function myPhotos(){ if(!S||!S.me)return []; if(!S.me.photos||!S.me.photos.length){ S.me.photos=[S.me.photo]; } return S.me.photos; }
+function addMyPhotos(){ var i=$("photosInput"); if(i)i.click(); }
+function delMyPhoto(i){
+  var ph=myPhotos(); ph.splice(i,1);
+  if(!ph.length)ph.push(PHOTO(S.me.gender==="m"?"m":"w",90));
+  S.me.photo=ph[0]; save(); renderProfile(); toast("Photo removed");
+}
+function mainMyPhoto(i){
+  var ph=myPhotos(); if(i<=0||i>=ph.length)return;
+  var p=ph.splice(i,1)[0]; ph.unshift(p); S.me.photo=ph[0];
+  save(); renderProfile(); toast("Main photo updated ⭐");
+}
+(function(){
+  var pi=$("photosInput"); if(!pi)return;
+  pi.addEventListener("change",function(){
+    var files=[].slice.call(pi.files||[]); pi.value="";
+    if(!files.length||!S||!S.me)return;
+    var ph=myPhotos(); var room=20-ph.length;
+    if(room<=0){ toast("You're at the 20-photo max"); return; }
+    var take=files.slice(0,room), doneN=0;
+    take.forEach(function(f){
+      _photoToSquare(f,function(dataUrl){
+        ph.push(dataUrl); doneN++;
+        if(doneN===take.length){
+          S.me.photo=ph[0]; save(); renderProfile();
+          toast("+"+doneN+" photo"+(doneN>1?"s":"")+" added ("+ph.length+"/20)");
+          if(files.length>room)setTimeout(function(){ toast("20-photo max — "+(files.length-room)+" skipped"); },1600);
+          try{ if(JSON.stringify(S).length>4500000)setTimeout(function(){ toast("⚠️ Storage nearly full — that's plenty of photos"); },2600); }catch(e){}
+        }
+      });
+    });
+  });
+})();
+function startVerify(){ var i=$("verifyInput"); if(i)i.click(); }
+(function(){
+  var vi=$("verifyInput"); if(!vi)return;
+  vi.addEventListener("change",function(){
+    var f=vi.files&&vi.files[0]; vi.value=""; if(!f||!S||!S.me)return;
+    S.me.verified=true; save(); renderProfile();
+    if(typeof toast==="function")toast("✔ You're verified");
+  });
+})();
+
+/* ============================ BOOST (working countdown) ============================ */
+function _bmmss(ms){ var s2=Math.max(0,Math.floor(ms/1000)); return Math.floor(s2/60)+":"+String(s2%60).padStart(2,"0"); }
+function _boostTick(){
+  var bar=$("boostBar"); if(!bar||!S)return;
+  var now=Date.now();
+  if(!S.boost || S.boost.until<=now){
+    if(bar.classList.contains("on")){
+      bar.classList.remove("on");
+      if(S.boost){ toast("🚀 Boost ended — "+(140+(S.boost.views||0))+" people saw you"); S.boost=null; save(); }
+    }
+    return;
+  }
+  bar.classList.add("on");
+  if(Math.random()<0.5)S.boost.views=(S.boost.views||0)+1+Math.floor(Math.random()*3);
+  bar.textContent="🚀 Boost active · "+_bmmss(S.boost.until-now)+" · "+(140+(S.boost.views||0))+" people seeing you";
+}
+setInterval(_boostTick,1000);
+
+/* ============================ NAV / RENDER ============================ */
+var cur="discover";
+function go(v){
+  if(GUEST && v!=="discover"){ openSignup(); return; }
+  cur=v;
+  ["discover","matches","likesyou","messages","profile"].forEach(function(x){ $("view-"+x).classList.toggle("hidden", x!==v); });
+  [].forEach.call($("nav").children,function(b){ b.classList.toggle("on", b.dataset.v===v); });
+  $("topbar").classList.toggle("hidden", false);
+  if(v==="matches"){ renderMatches(); }
+  if(v==="likesyou"){ renderLikesYou(); }
+  if(v==="messages"){ renderMessages(); }
+  if(v==="profile"){ renderProfile(); }
+  if(v==="discover"){ renderDeck(); }
+  try{ _onlCountRefresh(); }catch(e){}
+}
+function updateBadges(){
+  var unread=S.matches.filter(function(id){return S.read[id]===false;}).length;
+  var bm=$("badgeMatches"), bg=$("badgeMsgs");
+  var newM=S.matches.filter(function(id){ var t=S.threads[id]||[]; return !t.some(function(m){return m.from==="me";}); }).length;
+  if(newM>0){ bm.textContent=newM; bm.classList.remove("hidden"); } else bm.classList.add("hidden");
+  if(unread>0){ bg.textContent=unread; bg.classList.remove("hidden"); } else bg.classList.add("hidden");
+  var bl=$("badgeLikes");
+  if(bl){ var ln=likesYouList().length; if(ln>0){ bl.textContent=(ln>9?"9+":ln); bl.classList.remove("hidden"); } else bl.classList.add("hidden"); }
+}
+function renderAll(){ renderDeck(); renderMatches(); renderMessages(); updateBadges(); }
+
+/* horizontal-drift lock (owner: profile screen was sliding left-right) */
+(function(){
+  [].forEach.call(document.querySelectorAll(".scroll,.fbody"),function(el){
+    el.addEventListener("scroll",function(){ if(el.scrollLeft!==0)el.scrollLeft=0; },{passive:true});
+  });
+})();
+/* ============================ WIRE UP ============================ */
+$("nav").addEventListener("click",function(e){ var b=e.target.closest("button"); if(!b)return;
+  if(b.dataset.v==="discover" && cur==="discover"){ openFilters(); return; } // re-tap Discover = filters
+  go(b.dataset.v); });
+$("btnLike").onclick=function(){ btnAct("like"); };
+$("btnNope").onclick=function(){ btnAct("pass"); };
+$("btnSuper").onclick=function(){ btnAct("super"); };
+$("btnRewind").onclick=function(){ if(S.lastPass!=null && S.decided[S.lastPass]){ delete S.decided[S.lastPass]; S.lastPass=null; save(); renderDeck(); toast("Brought them back ↩"); } else toast("Nothing to rewind"); };
+$("btnBoost").onclick=function(){
+  if(GUEST){ openSignup(); return; }
+  if(!S.gold){ openGold("Boosts are a Torch Gold perk"); return; }
+  var now=Date.now();
+  if(S.boost && S.boost.until>now){ toast("🚀 Boost already running — "+_bmmss(S.boost.until-now)+" left"); return; }
+  S.boost={until:now+30*60*1000,views:0}; save(); _boostTick();
+  toast("🚀 Boost started — front of the line for 30 minutes");
+};
+$("chatBack").onclick=function(){ $("chat").classList.remove("open"); chatId=null; if(cur==="messages")renderMessages(); if(cur==="matches")renderMatches(); updateBadges(); };
+$("chatSend").onclick=sendMsg;
+$("chatInput").addEventListener("keydown",function(e){ if(e.key==="Enter")sendMsg(); });
+
+/* ===================== GUEST PREVIEW (v55) =====================
+   First open lands on the discover deck (browse mode). The signup form
+   only appears via the Sign Up button, or when a guest tries to like,
+   super-like, boost, or open another tab. Guest state is never saved. */
+var GUEST=false;
+function openSignup(){
+  var o=$("onb"); o.classList.remove("hidden");
+  var b=$("onbBack"); if(b)b.classList.toggle("hidden", !GUEST);
+  try{ (o.querySelector(".inner")||o).scrollTop=0; }catch(e){}
+}
+function startGuest(){
+  GUEST=true;
+  S=fresh();
+  S.me={ name:"Guest", username:"@guest", bday:"2000-01-01", age:26, country:"United States",
+         gender:"m", seek:"w", min:18, max:70, maxDist:50, city:"Your City",
+         bio:"", interests:[], photo:PHOTO("w",95), guest:true };
+  buildOrder(); renderAll(); go("discover");
+  var gb=$("guestBar"); if(gb){ gb.style.display="flex"; var sb=$("guestSignupBtn"); if(sb)sb.onclick=openSignup; }
+}
+
+/* ============================ BOOT ============================ */
+// Horizontal-scroll lock: the off-screen chat panel + fly-off animations could nudge #app's
+// scrollLeft, shoving the match modal / views sideways. Snap it back to 0 whenever it drifts.
+(function(){ var a=$("app"); a.addEventListener("scroll",function(){ if(a.scrollLeft!==0)a.scrollLeft=0; },{passive:true}); a.scrollLeft=0; })();
+initOnb();
+if(S && S.me){ if(!S.order)buildOrder(); renderAll(); go("discover"); _activityCatchUp();
+  try{ if(localStorage.getItem("spark_price_note2")!=="1"){ localStorage.setItem("spark_price_note2","1"); setTimeout(function(){ toast("🎉 60 days FREE — no credit card needed · then $9.99/mo"); },1800); } }catch(e){}
+}
+else { startGuest(); }
+</script>
+</body>
+</html>
