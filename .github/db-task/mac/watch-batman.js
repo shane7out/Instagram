@@ -7,6 +7,8 @@ const https=require('https'), fs=require('fs'), path=require('path'), zlib=requi
 const ROOT=path.join(__dirname,'..');
 const UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)';
 const CARD=/\b(card|cards|topps)\b/i;
+const MINP=100; // owner 2026-08-03: no imports under $100
+const WTB=/\b(wtb|wanted|looking for|looking to buy|i buy|we buy|cash (?:paid|for)|buying|will pay)\b/i; // no want-to-buy ads
 const BATMAN=/\bbatman\b/i;
 
 function fetch(url,bin){return new Promise((res,rej)=>{
@@ -43,6 +45,7 @@ async function pmap(arr,fn,n){const out=[];let i=0;const w=Array.from({length:n}
     if(!d||!Array.isArray(d.items))return;
     d.items.forEach(raw=>{const it=parseItem(raw);
       if(!it.token||!it.title)return;
+      if(!(typeof it.price==='number'&&it.price>=MINP))return; // $100+ only
       if(!byTok[it.token]){it.where=(a.Description||a.Hostname)+(a.Country&&a.Country!=='US'?(', '+a.Country):'');byTok[it.token]=it;}
     });
   },8);
@@ -56,16 +59,17 @@ async function pmap(arr,fn,n){const out=[];let i=0;const w=Array.from({length:n}
     const det=await detail(src);
     const atext=it.title+' '+det.text;
     if(!CARD.test(atext)||!BATMAN.test(atext)){skipped++;continue;}  // must read as Batman cards
+    if(WTB.test(atext)){skipped++;continue;}  // seller ads only, no want-to-buy
     let urls=det.imgs.length?det.imgs:it.images.map(imgUrl); urls=urls.slice(0,24);
     const slug=('batman-'+it.token.slice(0,8)).toLowerCase();
     const imgs=[];
     for(let i=0;i<urls.length;i++){try{const im=await fetchR(urls[i],true);if(im&&im.status===200&&im.buf.length>2000){const fn='carimg/'+slug+'-'+(i+1)+'.jpg';fs.writeFileSync(path.join(ROOT,fn),im.buf);imgs.push('/'+fn);}}catch(e){}}
     if(!imgs.length){skipped++;continue;}
-    const price=(typeof it.price==='number'&&it.price>0)?it.price:0;
+    const price=it.price;
     manual.push({oid:'clbm'+it.token.slice(0,8),year:'1966',make:'Batman',model:it.title.replace(/\s+/g,' ').slice(0,58).trim(),type:'Batman',
       price:price,miles:null,color:'',fuel:'',sub:'Batman Cards',
       location:it.where||'Craigslist',
-      desc:(it.title||'Batman cards')+' — '+(price?('asking $'+Number(price).toLocaleString()):'no price listed')+'. 1966 Batman trading cards listing on Craigslist ('+(it.where||'')+'). See the original ad for details and to contact the seller.',
+      desc:(it.title||'Batman cards')+' — asking $'+Number(price).toLocaleString()+'. 1966 Batman trading cards listing on Craigslist ('+(it.where||'')+'). See the original ad for details and to contact the seller.',
       imgs,src,added:new Date().toISOString().slice(0,10),addedTs:new Date().toISOString(),postedTs:det.postedTs||''});
     added++;
     console.error('IMPORTED BATMAN $'+price+' ['+(it.where||'')+'] '+it.title.slice(0,48));
