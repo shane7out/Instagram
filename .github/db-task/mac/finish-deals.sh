@@ -30,10 +30,10 @@ NODE
 node <<'NODE' >> "$LOG" 2>&1
 const fs=require('fs');let idx=fs.readFileSync('index.html','utf8');const before=idx;
 // batman chip -> link
-idx=idx.replace(/<button class="chip chip-batman"[^>]*>🦇 Batman Cards<\/button>/,'<a class="chip chip-batman" href="/batman.html" style="text-decoration:none">🦇 Batman Cards</a>');
+idx=idx.replace(/<button class="chip chip-batman"[^>]*>🦇 Batman Cards<\/button>/,'<a class="chip chip-batman" href="/batman" style="text-decoration:none">🦇 Batman Cards</a>');
 // add coins chip right after the batman chip if not already present
 if(!/chip-coins/.test(idx)){
-  idx=idx.replace(/(<a class="chip chip-batman" href="\/batman.html"[^>]*>🦇 Batman Cards<\/a>)/,'$1\n        <a class="chip chip-coins" href="/coins.html" style="text-decoration:none">🪙 US Coins</a>');
+  idx=idx.replace(/(<a class="chip chip-batman" href="\/batman.html"[^>]*>🦇 Batman Cards<\/a>)/,'$1\n        <a class="chip chip-coins" href="/coins" style="text-decoration:none">🪙 US Coins</a>');
 }
 if(idx!==before){fs.writeFileSync('index.html.bak-tabs',before);fs.writeFileSync('index.html',idx);console.log('chips patched (batman link + coins chip)');}
 else{console.log('chips: no change (already patched?)');}
