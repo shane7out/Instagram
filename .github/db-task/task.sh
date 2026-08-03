@@ -6,3 +6,4 @@ curl -s https://classiccarsforsale-co.web.app/ -o d.html
 curl -s https://classiccarsforsale-co.web.app/cars.json -o cars.json
 echo "DEALS chip-batman: $(grep -c chip-batman d.html)"
 echo "DEALS cars.json batman entries: $(grep -c clbm cars.json)"
+# recheck 2
