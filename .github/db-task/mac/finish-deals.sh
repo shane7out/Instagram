@@ -29,15 +29,15 @@ NODE
 # 3) make both chips links in index.html (idempotent)
 node <<'NODE' >> "$LOG" 2>&1
 const fs=require('fs');let idx=fs.readFileSync('index.html','utf8');const before=idx;
-// batman chip -> link
-idx=idx.replace(/<button class="chip chip-batman"[^>]*>🦇 Batman Cards<\/button>/,'<a class="chip chip-batman" href="/batman" style="text-decoration:none">🦇 Batman Cards</a>');
+const BAT='<a class="chip chip-batman" href="/batman" style="text-decoration:none">🦇 Batman Cards</a>';
+const COIN='<a class="chip chip-coins" href="/coins" style="text-decoration:none">🪙 US Coins</a>';
+// normalize the batman chip (button OR existing link) to the canonical link
+idx=idx.replace(/<(?:button|a) class="chip chip-batman"[^>]*>🦇 Batman Cards<\/(?:button|a)>/, BAT);
 // add coins chip right after the batman chip if not already present
-if(!/chip-coins/.test(idx)){
-  idx=idx.replace(/(<a class="chip chip-batman" href="\/batman.html"[^>]*>🦇 Batman Cards<\/a>)/,'$1\n        <a class="chip chip-coins" href="/coins" style="text-decoration:none">🪙 US Coins</a>');
-}
-if(idx!==before){fs.writeFileSync('index.html.bak-tabs',before);fs.writeFileSync('index.html',idx);console.log('chips patched (batman link + coins chip)');}
-else{console.log('chips: no change (already patched?)');}
-console.log('chip-batman link: '+(/chip-batman" href="\/batman.html"/.test(idx)?'yes':'no')+' | chip-coins: '+(/chip-coins/.test(idx)?'yes':'no'));
+if(!/chip-coins/.test(idx)) idx=idx.replace(BAT, BAT+'\n        '+COIN);
+if(idx!==before){fs.writeFileSync('index.html.bak-tabs',before);fs.writeFileSync('index.html',idx);console.log('chips patched');}
+else{console.log('chips: no change');}
+console.log('chip-batman link: '+(/chip-batman" href="\/batman"/.test(idx)?'yes':'no')+' | chip-coins: '+(/chip-coins/.test(idx)?'yes':'no'));
 NODE
 
 # 4) deploy once
@@ -45,8 +45,8 @@ echo "-- deploying --" >> "$LOG"
 node _tools/rest-deploy.js >> "$LOG" 2>&1
 
 # 5) verify live
-echo "LIVE coins.html: $(curl -s -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/coins.html)" >> "$LOG"
-echo "LIVE batman.html: $(curl -s -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/batman.html)" >> "$LOG"
-echo "chips live: $(curl -s https://classiccarsforsale-co.web.app/ | grep -oE 'chip-(batman|coins)" href' | tr '\n' ' ')" >> "$LOG"
+echo "LIVE /coins: $(curl -sL -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/coins)" >> "$LOG"
+echo "LIVE /batman: $(curl -sL -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/batman)" >> "$LOG"
+echo "chips live: $(curl -s https://classiccarsforsale-co.web.app/ | grep -oE 'chip-coins|chip-batman' | sort -u | tr '\n' ' ')" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/finish.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
