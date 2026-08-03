@@ -29,15 +29,20 @@ NODE
 # 3) make both chips links in index.html (idempotent)
 node <<'NODE' >> "$LOG" 2>&1
 const fs=require('fs');let idx=fs.readFileSync('index.html','utf8');const before=idx;
-const BAT='<a class="chip chip-batman" href="/batman" style="text-decoration:none">🦇 Batman Cards</a>';
-const COIN='<a class="chip chip-coins" href="/coins" style="text-decoration:none">🪙 US Coins</a>';
-// normalize the batman chip (button OR existing link) to the canonical link
-idx=idx.replace(/<(?:button|a) class="chip chip-batman"[^>]*>🦇 Batman Cards<\/(?:button|a)>/, BAT);
-// add coins chip right after the batman chip if not already present
-if(!/chip-coins/.test(idx)) idx=idx.replace(BAT, BAT+'\n        '+COIN);
-if(idx!==before){fs.writeFileSync('index.html.bak-tabs',before);fs.writeFileSync('index.html',idx);console.log('chips patched');}
-else{console.log('chips: no change');}
-console.log('chip-batman link: '+(/chip-batman" href="\/batman"/.test(idx)?'yes':'no')+' | chip-coins: '+(/chip-coins/.test(idx)?'yes':'no'));
+// standalone LINK tabs (NOT class "chip" — the filter script hijacks .chip clicks,
+// which blanked the grid instead of navigating). class "tablink" is ignored by it.
+const S='display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:999px;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer';
+const COIN='<a class="tablink" href="/coins" style="'+S+';border:1.5px solid #b8860b;color:#b8860b">🪙 US Coins</a>';
+const BAT='<a class="tablink" href="/batman" style="'+S+';border:1.5px solid #4b3a1a;color:#4b3a1a">🦇 Batman Cards</a>';
+// remove any prior versions of these two tabs (old chip buttons/links or tablinks)
+idx=idx.replace(/<(?:button|a) [^>]*chip-batman[^>]*>[^<]*<\/(?:button|a)>/g,'');
+idx=idx.replace(/<(?:button|a) [^>]*chip-coins[^>]*>[^<]*<\/(?:button|a)>/g,'');
+idx=idx.replace(/<a class="tablink"[^>]*>(?:🦇 Batman Cards|🪙 US Coins)<\/a>/g,'');
+// insert both right after the built-in Deals chip
+idx=idx.replace(/(<button class="chip chip-deals"[^>]*>🔥 Deals<\/button>)/, '$1\n        '+COIN+'\n        '+BAT);
+if(idx!==before){fs.writeFileSync('index.html.bak-tabs',before);fs.writeFileSync('index.html',idx);console.log('tabs patched');}
+else{console.log('tabs: no change (anchor not found?)');}
+console.log('coins tab: '+(/tablink" href="\/coins"/.test(idx)?'yes':'no')+' | batman tab: '+(/tablink" href="\/batman"/.test(idx)?'yes':'no'));
 NODE
 
 # 4) deploy once
