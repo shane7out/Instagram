@@ -8,3 +8,4 @@ echo "DEALS chip-batman: $(grep -c chip-batman d.html)"
 echo "DEALS cars.json batman entries: $(grep -c clbm cars.json)"
 # recheck 2
 # recheck 3
+# recheck 4
