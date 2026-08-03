@@ -1,10 +1,11 @@
 #!/bin/bash
-# Check the standalone Batman page live + read the build log.
+# Verify the batman card photos are live under /carimg (they'd be deployed with prior runs).
 set +e
-echo "batman.html status: $(curl -s -o bat.html -w '%{http_code}' https://classiccarsforsale-co.web.app/batman.html)"
-echo "size: $(wc -c < bat.html)"
-echo "cards on page: $(grep -oc 'class=\"card\"' bat.html)"
-echo "title present: $(grep -c 'Batman 1966 Trading Cards' bat.html)"
-echo "chip is link on home: $(curl -s https://classiccarsforsale-co.web.app/ | grep -c 'chip-batman\" href=\"/batman.html\"')"
-echo "=== BUILD LOG ==="
-curl -s "https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json" | python3 -c "import sys,json;print(json.load(sys.stdin) or 'EMPTY')"
+B="https://classiccarsforsale-co.web.app"
+for p in \
+  "/carimg/batman-cjn4kkuu-1.jpg" \
+  "/carimg/batman-cjN4kkUu-1.jpg" \
+  "/carimg/batman-qhhffyxpf-1.jpg" \
+  "/carimg/batman-qhHFYxPf-1.jpg" ; do
+  echo "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' "$B$p")  $p"
+done
