@@ -21,10 +21,12 @@ def search(area):
     aid, host, desc, country = area["AreaID"], area["Hostname"], area["Description"], area["Country"]
     url = f"https://sapi.craigslist.org/web/v8/postings/search/full?batch={aid}-0-360-0-0&cc={country}&lang=en&query={Q}&searchPath=sss"
     try:
-        d = json.loads(get(url))["data"]
+        d = json.loads(get(url)).get("data")
+        if not isinstance(d, dict):
+            return ("ERR", aid, host, "non-dict data")
     except Exception as e:
         return ("ERR", aid, host, str(e)[:80])
-    dec = d.get("decode", {})
+    dec = d.get("decode", {}) if isinstance(d.get("decode"), dict) else {}
     minid = dec.get("minPostingId", 0)
     locs = dec.get("locations", [])
     out = []
@@ -56,7 +58,11 @@ results, errs = {}, 0
 with ThreadPoolExecutor(max_workers=8) as ex:
     futs = [ex.submit(search, a) for a in areas]
     for i, f in enumerate(as_completed(futs)):
-        st, aid, host, data = f.result()
+        try:
+            st, aid, host, data = f.result()
+        except Exception:
+            errs += 1
+            continue
         if st == "ERR":
             errs += 1
             continue
