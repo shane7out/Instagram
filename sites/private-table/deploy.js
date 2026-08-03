@@ -15,7 +15,7 @@ const API = 'https://firebasehosting.googleapis.com/v1beta1';
 const token = execSync('gcloud auth print-access-token').toString().trim();
 
 async function api(method, url, body, raw) {
-  const headers = { Authorization: 'Bearer ' + token };
+  const headers = { Authorization: 'Bearer ' + token, 'x-goog-user-project': PROJECT };
   if (!raw) headers['Content-Type'] = 'application/json';
   else headers['Content-Type'] = 'application/octet-stream';
   const r = await fetch(url, {
