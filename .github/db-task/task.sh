@@ -6,3 +6,4 @@ curl -s "https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json" | 
 echo "=== LIVE ==="
 curl -s https://classiccarsforsale-co.web.app/cars.json -o cars.json
 echo "live clbm: $(grep -c clbm cars.json)"
+# recheck 8
