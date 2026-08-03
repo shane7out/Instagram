@@ -1,33 +1,20 @@
 #!/bin/bash
-# Yelp migration batch: IMG_8012 (Duck Donuts, Hakkasan, Scoop LV, Sweet Mong; Kassi Beach already in).
-set -e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+# Probe: can this runner search Craigslist? Test HTML search, sapi JSON API, and the areas reference.
+set +e
+echo "=== probe 1: classic HTML search page ==="
+curl -s -o p1.html -w "status=%{http_code} size=%{size_download}\n" \
+  -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36" \
+  "https://lasvegas.craigslist.org/search/sss?query=batman+1966+cards"
+grep -c "cl-search-result\|result-row\|nearby" p1.html 2>/dev/null
+head -c 300 p1.html; echo
 
-curl -s "$DB/dashboard_crec.json" -o crec.json
-curl -s "$DB/dashboard/customrecords.json" -o cust.json
-BEFORE=$(jq 'keys|length' crec.json)
-NUM=$(jq '[.[]|.num?|numbers]|max' crec.json)
-echo "start: crec=$BEFORE (max $NUM)"
+echo "=== probe 2: sapi JSON API ==="
+curl -s -o p2.json -w "status=%{http_code} size=%{size_download}\n" \
+  -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36" \
+  "https://sapi.craigslist.org/web/v8/postings/search/full?batch=32-0-360-0-0&cc=US&lang=en&query=batman%201966%20cards&searchPath=sss"
+head -c 300 p2.json; echo
 
-add_rest() {
-  local name="$1" pat="$2"
-  if grep -qiE "$pat" crec.json || grep -qiE "$pat" cust.json; then
-    echo "SKIP: $name"
-    return
-  fi
-  NUM=$((NUM+1))
-  local jname
-  jname=$(printf '%s' "$name" | sed 's/"/\\"/g')
-  curl -s -X PATCH -H "Content-Type: application/json" \
-    -d "{\"$NUM\":{\"name\":\"$jname\",\"instagram\":\"\",\"num\":$NUM,\"notes\":\"Yelp migration - IG needed\"}}" \
-    "$DB/dashboard_crec.json" > /dev/null
-  curl -s -X PATCH -H "Content-Type: application/json" -d "{\"$NUM\":true}" "$DB/dashboard/badig.json" > /dev/null
-  echo "ADDED: $name (num $NUM)"
-}
-
-add_rest "Duck Donuts" "duck ?donut"
-add_rest "Hakkasan Restaurant" "hakkasan"
-add_rest "Scoop LV" "scoop"
-add_rest "Sweet Mong" "sweet ?mong"
-
-echo "final: crec $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
+echo "=== probe 3: areas reference (list of all CL regions) ==="
+curl -s -o p3.json -w "status=%{http_code} size=%{size_download}\n" \
+  "https://reference.craigslist.org/Areas"
+head -c 300 p3.json; echo
