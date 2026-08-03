@@ -19,7 +19,7 @@ async function pmap(arr,fn,n){const out=[];let i=0;const w=Array.from({length:n}
 
 const COIN=/\b(coins?|morgan|peace dollar|silver dollar|half dollar|walking liberty|mercury dime|barber|franklin|buffalo nickel|indian head|lincoln cent|wheat penn(y|ies)|silver eagle|gold coin|proof set|mint set|numismat|bullion|krugerrand|double eagle|seated liberty|standing liberty|kennedy half|susan b|sacagawea|commemorative coin)\b/i;
 const USA=/\b(us|u\.?s\.?|usa|america|american|morgan|peace|walking liberty|mercury|barber|franklin|buffalo|indian head|lincoln|wheat|kennedy|eagle|susan b|sacagawea|liberty|washington|jefferson|roosevelt)\b/i;
-const BAD=/\b(bitcoin|crypto|litecoin|dogecoin|ethereum|arcade|laundr|washer|dryer|token machine|coin op|coin-op|coinstar|counter|sorter|pusher|wanted|wtb|looking for|looking to buy|i buy|we buy|cash (?:paid|for)|will pay)\b/i;
+const BAD=/\b(bitcoin|crypto|litecoin|dogecoin|ethereum|arcade|laundr|washer|dryer|token machine|coin op|coin-op|coinstar|counter|sorter|pusher|wanted|wtb|looking for|looking to buy|i buy|we buy|buying|paying|top dollar|cash (?:paid|for)|will pay|replica|repro|reproduction|copy coin|copy replica|tribute|novelty|pamphlet|stamps? only)\b/i;
 
 (async()=>{
   const ar=await fetchR('https://reference.craigslist.org/Areas',false);
