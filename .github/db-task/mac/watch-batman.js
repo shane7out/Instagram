@@ -3,7 +3,7 @@
 // Unlike the other watchers this is not Vegas-only and has no deal math — every
 // listing whose ad reads as Batman cards is imported. type:'Batman' entries in
 // manual.json, photos to carimg/. Prints "ADDED n".
-const https=require('https'), fs=require('fs'), path=require('path');
+const https=require('https'), fs=require('fs'), path=require('path'), zlib=require('zlib');
 const ROOT=path.join(__dirname,'..');
 const UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)';
 const CARD=/\b(card|cards|topps)\b/i;
@@ -12,7 +12,7 @@ const BATMAN=/\bbatman\b/i;
 function fetch(url,bin){return new Promise((res,rej)=>{
   const req=https.get(url,{headers:{'user-agent':UA,accept:bin?'*/*':'application/json'}},r=>{
     if(r.statusCode>=300&&r.statusCode<400&&r.headers.location){r.resume();return fetch(r.headers.location,bin).then(res,rej);}
-    const c=[];r.on('data',x=>c.push(x));r.on('end',()=>res({status:r.statusCode,buf:Buffer.concat(c)}));
+    const c=[];r.on('data',x=>c.push(x));r.on('end',()=>{let b=Buffer.concat(c);const enc=(r.headers['content-encoding']||'').toLowerCase();try{if(enc==='gzip'||(b[0]===0x1f&&b[1]===0x8b))b=zlib.gunzipSync(b);else if(enc==='deflate'||b[0]===0x78)b=zlib.inflateSync(b);}catch(e){}res({status:r.statusCode,buf:b});});
   });
   req.on('error',rej);req.setTimeout(30000,()=>req.destroy(new Error('timeout')));
 });}
