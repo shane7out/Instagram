@@ -1,9 +1,10 @@
 #!/bin/bash
-# Check whether coins/batman tabs are live yet + read any deploy log.
+# Read finish-deals result + verify both tabs live.
 set +e
 B="https://classiccarsforsale-co.web.app"
-echo "coins.html: $(curl -s -o /dev/null -w '%{http_code}' $B/coins.html)"
-echo "batman.html: $(curl -s -o /dev/null -w '%{http_code}' $B/batman.html)"
-echo "chips on home: $(curl -s $B/ | grep -oE 'chip-(batman|coins)' | tr '\n' ' ')"
-echo "=== DEPLOY LOG ==="
+echo "=== FINISH LOG ==="
 curl -s "https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json" | python3 -c "import sys,json;print(json.load(sys.stdin) or 'EMPTY')"
+echo "=== LIVE NOW ==="
+echo "/coins: $(curl -sL -o c.html -w '%{http_code}' $B/coins)  cards=$(grep -c 'class=\"card\"' c.html)"
+echo "/batman: $(curl -sL -o b.html -w '%{http_code}' $B/batman)  cards=$(grep -c 'class=\"card\"' b.html)"
+echo "chips on home: $(curl -s $B/ | grep -oE 'chip-coins|chip-batman' | sort -u | tr '\n' ' ')"
