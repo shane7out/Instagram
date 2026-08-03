@@ -13,3 +13,4 @@ echo "DEALS chip-batman: $(grep -c chip-batman d.html)"
 echo "DEALS batman entries: $(grep -c clbm cars.json)"
 # recheck 5
 # recheck 6
+# recheck 7
