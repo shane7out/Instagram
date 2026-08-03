@@ -8,3 +8,4 @@ echo "=== LIVE NOW ==="
 echo "/coins: $(curl -sL -o c.html -w '%{http_code}' $B/coins)  cards=$(grep -c 'class=\"card\"' c.html)"
 echo "/batman: $(curl -sL -o b.html -w '%{http_code}' $B/batman)  cards=$(grep -c 'class=\"card\"' b.html)"
 echo "chips on home: $(curl -s $B/ | grep -oE 'chip-coins|chip-batman' | sort -u | tr '\n' ' ')"
+# r2
