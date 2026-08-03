@@ -10,3 +10,4 @@ echo "live clbm: $(grep -c clbm cars.json)"
 # recheck 9
 # recheck 10
 # recheck 11
+# recheck 12
