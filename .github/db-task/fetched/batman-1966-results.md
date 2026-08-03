@@ -1,0 +1,146 @@
+# Batman 1966 trading cards — worldwide Craigslist sweep
+
+- Unique 'batman 1966' listings: **134**
+- Card/Topps matches: **9**
+- Regions with errors: 1
+
+## Card matches
+
+- **$1** — [1960s Batman Topps Trading Cards](https://hanford.craigslist.org/sss/d/san-luis-obispo-1960s-batman-topps/7943907872.html) — SF bay area, US
+- **$1** — [various non sports cards from the 1960’s and 70’s.](https://newhaven.craigslist.org/sss/d/wallingford-various-non-sports-cards/7943538752.html) — boston, US
+- **$100** — [1966 Batman cards](https://cleveland.craigslist.org/sss/d/cleveland-1966-batman-cards/7918473786.html) — detroit metro, US
+- **$10** — [1966 TOPPS BATMAN BAT LAFFS TRADING CARDS](https://grandrapids.craigslist.org/sss/d/cleveland-1966-topps-batman-bat-laffs/7949283770.html) — detroit metro, US
+- **$10** — [1966 TOPPS BATMAN BLACK BAT TRADING CARDS](https://grandrapids.craigslist.org/sss/d/cleveland-1966-topps-batman-black-bat/7949590920.html) — detroit metro, US
+- **$10** — [1966 TOPPS BATMAN BLUE BAT PUZZLE BACK TRADING CARDS](https://grandrapids.craigslist.org/sss/d/cleveland-1966-topps-batman-blue-bat/7949283875.html) — detroit metro, US
+- **$10** — [1966 TOPPS BATMAN RED BAT PUZZLE BACK TRADING CARDS](https://grandrapids.craigslist.org/sss/d/cleveland-1966-topps-batman-red-bat/7949591020.html) — detroit metro, US
+- **$10** — [1966 Topps Batman TV show Bat Laffs Trading Card #41 the Joker](https://philadelphia.craigslist.org/sss/d/ransom-1966-topps-batman-tv-show-bat/7944936957.html) — new york city, US
+- **$65** — [1966 Topps Batman #40 Following the Clue Black Bat Series CGC 6](https://showlow.craigslist.org/sss/d/tucson-1966-topps-batman-40-following/7946600719.html) — phoenix, AZ, US
+
+## All other 'batman 1966' listings
+
+- $250 — [1966 BATMAN Adam West UK QUAD Movie Poster THE JOKER - CATWOMAN](https://buffalo.craigslist.org/sss/d/buffalo-1966-batman-adam-west-uk-quad/7950083101.html) — toronto, CA
+- $5 — [Board Games Galore - New, Used , Vintage, Collectible](https://toronto.craigslist.org/tor/sss/d/mississauga-board-games-galore-new-used/7919804616.html) — toronto, CA
+- $30 — [Loot Crate exclusives from 2015 and 2016 - FIGURINES and PINS](https://toronto.craigslist.org/yrk/sss/d/maple-loot-crate-exclusives-from-2015/7944785823.html) — toronto, CA
+- $60 — [Coverless Vintage Comics](https://goldcountry.craigslist.org/sss/d/elverta-coverless-vintage-comics/7946245007.html) — SF bay area, US
+- no price — [Funko Pop Marvel, Star Wars, Harry Potter, keychains for sale](https://sfbay.craigslist.org/eby/sss/d/moraga-funko-pop-marvel-star-wars-harry/7944181304.html) — SF bay area, US
+- $350 — [Lego builds bundle set!](https://sfbay.craigslist.org/sss/d/reno-lego-builds-bundle-set/7951254818.html) — SF bay area, US
+- $20 — [Vintage Pepsi 1966 DC Comics BATMAN (Collector Series) Glass 6 1/4"](https://sfbay.craigslist.org/sby/sss/d/santa-clara-vintage-pepsi-1966-dc/7934758602.html) — SF bay area, US
+- $80 — [Vintage Pepsi Collector Series Glasses from 1970s promotional campaign](https://modesto.craigslist.org/sss/d/redwood-estates-vintage-pepsi-collector/7949503730.html) — SF bay area, US
+- no price — [Wanted OLD Motorcycles ☎️1(800)220-9683 www.wantedoldmotorcycles.com](https://visalia.craigslist.org/sss/d/hanford-wanted-old-motorcycles/7947781246.html) — SF bay area, US
+- no price — [Wanted Old Motorcycles 1(800)220-9683 www.wantedoldmotorcycles.com](https://visalia.craigslist.org/sss/d/roseville-wanted-old-motorcycles/7947927866.html) — SF bay area, US
+- no price — [Wanted Old Motorcycles 1(800)220-9683 www.wantedoldmotorcycles.com](https://chico.craigslist.org/sss/d/reno-wanted-old-motorcycles/7947927886.html) — SF bay area, US
+- no price — [Wanted Old Motorcycles 1-800-220-9683 www.wantedoldmotorcycles.com](https://yubasutter.craigslist.org/sss/d/sacramento-wanted-old-motorcycles/7946653036.html) — SF bay area, US
+- no price — [Wanted Old Motorcycles ☎️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://yubasutter.craigslist.org/sss/d/camino-wanted-old-motorcycles/7947356145.html) — SF bay area, US
+- no price — [Wanted Old Motorcycles 🏍📞 (800)220-9683 www.wantedoldmotorcycles.com](https://chico.craigslist.org/sss/d/chico-wanted-old-motorcycles/7947356146.html) — SF bay area, US
+- no price — [Wanted Old Motorcycles 🏍📞 (800)220-9683 www.wantedoldmotorcycles.com](https://slo.craigslist.org/sss/d/santa-maria-wanted-old-motorcycles/7947781239.html) — SF bay area, US
+- no price — [Wanted old Motorcycles 🏍️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://sacramento.craigslist.org/sss/d/modesto-wanted-old-motorcycles/7947485109.html) — SF bay area, US
+- no price — [wanted OLD Motorcycles 1(800)220-9683 www.wantedoldmotorcycles.com](https://chico.craigslist.org/sss/d/fresno-wanted-old-motorcycles/7947927867.html) — SF bay area, US
+- no price — [Wanted OLD Motorcycles ☎️1(800)220-9683 www.wantedoldmotorcycles.com](https://roswell.craigslist.org/sss/d/roswell-wanted-old-motorcycles/7947356011.html) — albuquerque, US
+- no price — [Wanted Old Motorcycles 📞 1-800-220-9683 www.wantedoldmotorcycles.com](https://lascruces.craigslist.org/sss/d/las-cruces-wanted-old-motorcycles/7947355986.html) — albuquerque, US
+- $150 — [A very rare bendale Batman from 1966..](https://tricities.craigslist.org/sss/d/kingsport-very-rare-bendale-batman-from/7943758391.html) — atlanta, GA, US
+- $175 — [Vintage Batman pin](https://atlanta.craigslist.org/nat/sss/d/marietta-vintage-batman-pin/7945507327.html) — atlanta, GA, US
+- no price — [Wanted old Motorcycles ☏ 1(800)220-9683 www.wantedoldmotorcycles.com](https://twinfalls.craigslist.org/sss/d/twin-falls-wanted-old-motorcycles/7947780894.html) — boise, ID, US
+- $10 — ["Batman" Books - 1966](https://albany.craigslist.org/sss/d/holmdel-batman-books/7943870220.html) — boston, US
+- $49 — [Batman, Spiderman, MadHader,  DVD, VHS collectables EVERYTHING for $49](https://boston.craigslist.org/nwb/sss/d/dracut-batman-spiderman-madhader-dvd/7947092748.html) — boston, US
+- $35 — [I Dream of Jeannie #4 (Dell, 1966) – Silver Age TV Comic – Barbara Ede](https://jerseyshore.craigslist.org/sss/d/bridgewater-dream-of-jeannie-dell/7944820979.html) — boston, US
+- no price — [Kawasaki Z1 KZ 900 KZ900 KZ1000 MKII H2 Z1R 1973 1974 1975 MOTORCYCLES](https://boston.craigslist.org/gbs/sss/d/wayland-kawasaki-z1-kz-900-kz900-kz1000/7947833734.html) — boston, US
+- $20 — [Vintage 1966 Batman Irwin Black Molded Thick Plastic Mask](https://boston.craigslist.org/sss/d/round-lake-vintage-1966-batman-irwin/7950404171.html) — boston, US
+- $350 — [1966 Troll Bat Cave-Rare](https://chicago.craigslist.org/nwi/sss/d/crown-point-1966-troll-bat-cave-rare/7948018505.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7925904513.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7925560268.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7941634140.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7933171496.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7925332148.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7925110505.html) — chicago, US
+- $55 — [BATMAN CUP 1966 VINTAGE](https://chicago.craigslist.org/chc/sss/d/willow-springs-batman-cup-1966-vintage/7925754489.html) — chicago, US
+- $35 — [Superhero action figures. Played with Marvel/DC WILL SHIP](https://richmondin.craigslist.org/sss/d/plymouth-superhero-action-figures/7944658851.html) — chicago, US
+- no price — [Wanted Old Motorcycles  📞. (800)220-9683 www.wantedoldmotorcycles.com](https://muskegon.craigslist.org/sss/d/richmond-wanted-old-motorcycles/7948284619.html) — chicago, US
+- no price — [Wanted Old Motorcycles ☎️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://muskegon.craigslist.org/sss/d/muskegon-wanted-old-motorcycles/7947833872.html) — chicago, US
+- no price — [Wanted Old Motorcycles 📞 1-800-220-9683 www.wantedoldmotorcycles.com](https://grandrapids.craigslist.org/sss/d/grand-rapids-wanted-old-motorcycles/7947833893.html) — chicago, US
+- no price — [Wanted Old Motorcycles 📞1(800) 220-9683 www.wantedoldmotorcycles.com](https://muskegon.craigslist.org/sss/d/glenview-wanted-old-motorcycles/7947833886.html) — chicago, US
+- no price — [Wanted Old Motorcycles 📞. 1-800-220-9683 www.wantedoldmotorcycles.com](https://eastky.craigslist.org/sss/d/garner-wanted-old-motorcycles/7948284730.html) — cincinnati, OH, US
+- $250 — [Batman 181 First Appearance of Poison Ivy 1966](https://akroncanton.craigslist.org/sss/d/cleveland-batman-181-first-appearance/7936289565.html) — detroit metro, US
+- $250 — [Batman 181 First appearance of Poison Ivy 1966](https://akroncanton.craigslist.org/sss/d/wooster-batman-181-first-appearance-of/7936288722.html) — detroit metro, US
+- no price — [Wanted OLD Motorcycles ☎️1(800)220-9683 www.wantedoldmotorcycles.com](https://jxn.craigslist.org/sss/d/jackson-wanted-old-motorcycles/7948284879.html) — detroit metro, US
+- no price — [Wanted Old Motorcycles ☎️1 (800)220-9683 www.wantedoldmotorcycles.com](https://jxn.craigslist.org/sss/d/the-plains-wanted-old-motorcycles/7948284342.html) — detroit metro, US
+- no price — [Wanted Old Motorcycles  📞. (800)220-9683 www.wantedoldmotorcycles.com](https://lakecharles.craigslist.org/sss/d/lake-charles-wanted-old-motorcycles/7948509891.html) — houston, TX, US
+- no price — [Wanted old Motorcycles ☏ 1(800)220-9683 www.wantedoldmotorcycles.com](https://lakecharles.craigslist.org/sss/d/alexandria-wanted-old-motorcycles/7948509883.html) — houston, TX, US
+- no price — [Wanted Old Motorcycles  📞. (800)220-9683 www.wantedoldmotorcycles.com](https://stjoseph.craigslist.org/sss/d/saint-joseph-wanted-old-motorcycles/7947833746.html) — kansas city, MO, US
+- $149 — [Huge die cast Batmobile hot wheels new in box 1:18 scale](https://visalia.craigslist.org/sss/d/henderson-huge-die-cast-batmobile-hot/7939738019.html) — los angeles, US
+- $149 — [Huge die cast Batmobile hot wheels new in box 1:18 scale](https://visalia.craigslist.org/sss/d/henderson-huge-die-cast-batmobile-hot/7940595783.html) — los angeles, US
+- $149 — [Huge die cast Batmobile hot wheels new in box 1:18 scale](https://visalia.craigslist.org/sss/d/henderson-huge-die-cast-batmobile-hot/7940276520.html) — los angeles, US
+- $60 — [McFarlane Toys DC Direct Batman - Batman 1966 - 1:1 Scale Cowl Replica](https://losangeles.craigslist.org/sss/d/the-lakes-mcfarlane-toys-dc-direct/7927336121.html) — los angeles, US
+- no price — [Wanted Old Motorcycles ☎️1 (800)220-9683 www.wantedoldmotorcycles.com](https://hanford.craigslist.org/sss/d/las-vegas-wanted-old-motorcycles/7948509881.html) — los angeles, US
+- $125 — [Very Rare Ideal 1966 BATMAN Hand Puppet!! $125.00 Shipped!](https://northernwi.craigslist.org/sss/d/duluth-very-rare-ideal-1966-batman-hand/7942350219.html) — minneapolis / st paul, US
+- no price — [WANTED OLD MOTORCYCLES classic vintage antique GET OFFERS 800-220-9683](https://minneapolis.craigslist.org/csw/sss/d/minneapolis-wanted-old-motorcycles/7945597777.html) — minneapolis / st paul, US
+- no price — [Wanted Old Motorcycles 📞 1-800-220-9683 www.wantedoldmotorcycles.com](https://minneapolis.craigslist.org/csw/sss/d/hawkins-wanted-old-motorcycles/7947833606.html) — minneapolis / st paul, US
+- $80 — [1966 Batmobile Batman Classic TV Series (2013) Mattel 18" & Figures](https://boston.craigslist.org/nwb/sss/d/springfield-1966-batmobile-batman/7948950727.html) — new york city, US
+- no price — [50 recordable VHS tapes (Free)](https://boston.craigslist.org/gbs/sss/d/alexandria-50-recordable-vhs-tapes-free/7950632793.html) — new york city, US
+- $220 — [Batman Classic TV Series Diecast Vehicle 1966 Batmobile Bluetooth by H](https://newyork.craigslist.org/sss/d/hellertown-batman-classic-tv-series/7940364102.html) — new york city, US
+- $1 — [End Streaming - Build a Physical Media Library - DVD Bluray](https://newhaven.craigslist.org/sss/d/aston-end-streaming-build-physical/7950405543.html) — new york city, US
+- $800 — [Hot Toys Batman & Robin 1966 Classic TV Series 1/6 Scale Figure Set NE](https://newyork.craigslist.org/sss/d/hellertown-hot-toys-batman-robin-1966/7946164232.html) — new york city, US
+- $25 — [Records  Batman-Robin](https://tucson.craigslist.org/sss/d/palo-verde-records-batman-robin/7925774199.html) — phoenix, AZ, US
+- $125 — [Two Classic Hot Wheels Batmobiles](https://phoenix.craigslist.org/wvl/sss/d/wittmann-two-classic-hot-wheels/7928268963.html) — phoenix, AZ, US
+- no price — [Wanted Old Motorcycles ☎️1(800)220-9683 www.wantedoldmotorcycles.com](https://yuma.craigslist.org/sss/d/lakeside-wanted-old-motorcycles/7947484680.html) — phoenix, AZ, US
+- no price — [Wanted Old Motorcycles 📞. 1(800)220-9683 www.wantedoldmotorcycles.com](https://sierravista.craigslist.org/sss/d/fort-huachuca-wanted-old-motorcycles/7947356396.html) — phoenix, AZ, US
+- $40 — [1966 Joker vs Batman No. 3 Pocket Book Comic](https://vancouver.craigslist.org/rds/sss/d/surrey-1966-joker-vs-batman-no-pocket/7918436743.html) — portland, OR, US
+- $265 — [Batman Classic TV Show Shakespeare Bust Bank by Diamond Sele](https://seattle.craigslist.org/see/sss/d/seattle-batman-classic-tv-show/7924391869.html) — portland, OR, US
+- $100 — [Batman TV Guide](https://eugene.craigslist.org/sss/d/tacoma-batman-tv-guide/7945083000.html) — portland, OR, US
+- $100 — [Batman TV Guide](https://eugene.craigslist.org/sss/d/tacoma-batman-tv-guide/7945143089.html) — portland, OR, US
+- $100 — [Batman TV Guide](https://eugene.craigslist.org/sss/d/tacoma-batman-tv-guide/7951131302.html) — portland, OR, US
+- $20 — [Batman The Best Of The Original Batman Paperback 1966](https://medford.craigslist.org/sss/d/medford-batman-the-best-of-the-original/7948878338.html) — portland, OR, US
+- $40 — [Batman View-Master](https://eugene.craigslist.org/sss/d/tacoma-batman-view-master/7939447983.html) — portland, OR, US
+- $40 — [Batman View-Master](https://eugene.craigslist.org/sss/d/tacoma-batman-view-master/7945549341.html) — portland, OR, US
+- $40 — [Batman View-Master](https://eugene.craigslist.org/sss/d/tacoma-batman-view-master/7945166498.html) — portland, OR, US
+- $20 — [Batman and Robin Costume Pattern](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-costume-pattern/7941465566.html) — portland, OR, US
+- $20 — [Batman and Robin Costume Pattern](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-costume-pattern/7941432751.html) — portland, OR, US
+- $20 — [Batman and Robin Costume Pattern](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-costume-pattern/7948204742.html) — portland, OR, US
+- $20 — [Batman and Robin Costume Pattern](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-costume-pattern/7948235884.html) — portland, OR, US
+- $70 — [Batman and Robin dining set](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-dining-set/7940481983.html) — portland, OR, US
+- $70 — [Batman and Robin dining set](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-dining-set/7945572801.html) — portland, OR, US
+- $70 — [Batman and Robin dining set](https://eugene.craigslist.org/sss/d/tacoma-batman-and-robin-dining-set/7946744252.html) — portland, OR, US
+- $70 — [LEGO DC Batman: Batman Classic TV Series Batmobile (76188)](https://seattle.craigslist.org/tac/sss/d/issaquah-lego-dc-batman-batman-classic/7947839179.html) — portland, OR, US
+- $35 — [Retro BATMOBILE and JOKER Action Figure (Batman) McFarlane Toys](https://portland.craigslist.org/sss/d/delta-retro-batmobile-and-joker-action/7940202826.html) — portland, OR, US
+- no price — [Wanted OLD Motorcycles 🏍️ (800)220-9683 www.wantedoldmotorcycles.com](https://seattle.craigslist.org/est/sss/d/seattle-wanted-old-motorcycles/7947296731.html) — portland, OR, US
+- no price — [Wanted Old Motorcycles  📞. (800)220-9683 www.wantedoldmotorcycles.com](https://salem.craigslist.org/sss/d/corvallis-wanted-old-motorcycles/7947927868.html) — portland, OR, US
+- no price — [Wanted Old Motorcycles ☎️. 1(800)220-9683 www.wantedoldmotorcycles.com](https://moseslake.craigslist.org/sss/d/moses-lake-wanted-old-motorcycles/7948509750.html) — portland, OR, US
+- no price — [Wanted Old Motorcycles 📞. 1(800)220-9683 www.wantedoldmotorcycles.com](https://salem.craigslist.org/sss/d/salem-wanted-old-motorcycles/7947780994.html) — portland, OR, US
+- no price — [Wanted old Motorcycles 🏍️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://roseburg.craigslist.org/sss/d/roseburg-wanted-old-motorcycles/7947356265.html) — portland, OR, US
+- no price — [Wanted Old Motorcycles ☎️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://seattle.craigslist.org/est/sss/d/helena-wanted-old-motorcycles/7947781395.html) — pullman / moscow, US
+- $75 — [RARE 3-D Batman Adventures In 3-D (1966 Glasses Attached  Comic Book](https://wilmington.craigslist.org/sss/d/wilmington-rare-d-batman-adventures-in/7948145323.html) — raleigh / durham / CH, US
+- no price — [Wanted Old Motorcycles 📞. 1-800-220-9683 www.wantedoldmotorcycles.com](https://ogden.craigslist.org/sss/d/ogden-wanted-old-motorcycles/7948509746.html) — salt lake city, US
+- $15 — [Batman Mattel Hot Wheels 1966 Batman Classic TV Series BATCOPTER](https://losangeles.craigslist.org/lac/sss/d/los-angeles-batman-mattel-hot-wheels/7947119130.html) — san diego, US
+- $80 — [DC Direct McFarlane Classic Batman TV Series 1966 Cowl Replica Full 1:1 Scale 
+S](https://losangeles.craigslist.org/wst/sss/d/compton-dc-direct-mcfarlane-classic/7942011904.html) — san diego, US
+- $10 — [Diecast Cars 1:24 Scale](https://inlandempire.craigslist.org/sss/d/palm-desert-diecast-cars-124-scale/7922365926.html) — san diego, US
+- $140 — [GHOSTLY TALES COMICS #55 (1ST DR GRAVES, SCARCE, DITKO ART, 1966)](https://sandiego.craigslist.org/nsd/sss/d/vista-ghostly-tales-comics-55-1st-dr/7939104569.html) — san diego, US
+- no price — [Original Rare Vintage Movie Poster 1966 Batman  Poster](https://orangecounty.craigslist.org/sss/d/garden-grove-original-rare-vintage/7948271700.html) — san diego, US
+- $25 — [Rare Original Batmobile Large Print on Canvas 42"x 30.5" Unused](https://losangeles.craigslist.org/sfv/sss/d/burbank-rare-original-batmobile-large/7947905885.html) — san diego, US
+- $1 — [Sell Your Estate, Exclusive High End Collections Auction NCauctions.com](https://imperial.craigslist.org/sss/d/san-diego-sell-your-estate-exclusive/7945978502.html) — san diego, US
+- $1 — [Sell Your Estate, Exclusive High End Collections Auction NCauctions.com](https://imperial.craigslist.org/sss/d/ocotillo-sell-your-estate-exclusive/7945976428.html) — san diego, US
+- $1 — [Sell Your Estate, Exclusive High End Collections Auction NCauctions.com](https://imperial.craigslist.org/sss/d/palm-desert-sell-your-estate-exclusive/7945977959.html) — san diego, US
+- $1 — [Sell Your Estate, Exclusive High End Collections Auction NCauctions.com](https://imperial.craigslist.org/sss/d/la-habra-sell-your-estate-exclusive/7945977431.html) — san diego, US
+- $1 — [Sell Your Estate, Exclusive High End Collections Auction NCauctions.com](https://imperial.craigslist.org/sss/d/ontario-sell-your-estate-exclusive-high/7945976843.html) — san diego, US
+- no price — [Wanted Old Motorcycles ☎️1(800)220-9683 www.wantedoldmotorcycles.com](https://palmsprings.craigslist.org/sss/d/coachella-wanted-old-motorcycles/7947356198.html) — san diego, US
+- no price — [Wanted Old Motorcycles ☎️1(800)220-9683 www.wantedoldmotorcycles.com](https://yuma.craigslist.org/sss/d/yuma-wanted-old-motorcycles/7947355902.html) — san diego, US
+- no price — [Wanted Old Motorcycles 📞. 1(800)220-9683 www.wantedoldmotorcycles.com](https://yuma.craigslist.org/sss/d/northridge-wanted-old-motorcycles/7947356229.html) — san diego, US
+- $75 — [1966 Batman Pillow](https://seattle.craigslist.org/sss/d/otis-orchards-1966-batman-pillow/7944770122.html) — seattle-tacoma, US
+- $30 — [Al (He's The King) Hirt – The Horn Meets "The Hornet" NEAR MINT VINYL!](https://moseslake.craigslist.org/sss/d/surrey-northeast-al-hes-the-king-hirt/7946806427.html) — seattle-tacoma, US
+- $20 — [Funko Pop! Heroes: Batman TV Classic 1966](https://spokane.craigslist.org/sss/d/vancouver-funko-pop-heroes-batman-tv/7929781895.html) — seattle-tacoma, US
+- no price — [HOT TOYS STATUES COLLECTIBLES SIDESHOW statue figure](https://spokane.craigslist.org/sss/d/vancouver-hot-toys-statues-collectibles/7938009912.html) — seattle-tacoma, US
+- $5 — [Hot Wheels for sale](https://eugene.craigslist.org/sss/d/richmond-hot-wheels-for-sale/7939331406.html) — seattle-tacoma, US
+- no price — [Marvel and DC Comics - Silver + Bronze + Copper Age Comic Collection](https://seattle.craigslist.org/sss/d/burnaby-marvel-and-dc-comics-silver/7939126203.html) — seattle-tacoma, US
+- $10 — [Music CDs For Sale (Personal Collection): 3,000 Titles (Rock/Jazz) 4/5](https://salem.craigslist.org/sss/d/richmond-southwest-music-cds-for-sale/7941919896.html) — seattle-tacoma, US
+- $30 — [Neal Hefti – Batman Theme And 11 Hefti Bat Songs - VG/VG VINYL!](https://moseslake.craigslist.org/sss/d/surrey-northeast-neal-hefti-batman/7914197913.html) — seattle-tacoma, US
+- no price — [Wanted old Motorcycles 🏍️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://siouxcity.craigslist.org/sss/d/sioux-city-wanted-old-motorcycles/7948509887.html) — south dakota, US
+- $50 — [1966 BATMAN TV SHOW SHAKESPEARE BUST W/ BAT PHONE](https://miami.craigslist.org/mdc/sss/d/miami-1966-batman-tv-show-shakespeare/7944156150.html) — south florida, US
+- $70 — [BOXSPRINGS, BOX SPRING ONLY, QUEEN, FULL, TWIN, KING SIZES. NEW](https://miami.craigslist.org/sss/d/orlando-boxsprings-box-spring-only/7945414568.html) — south florida, US
+- $35 — [Batman Sidecar Batcycle 1966 New in Box - unopened](https://spacecoast.craigslist.org/sss/d/cocoa-batman-sidecar-batcycle-1966-new/7931858324.html) — south florida, US
+- $35 — [Batman Sidecar Batcycle 1966 New in Box - unopened](https://orlando.craigslist.org/sss/d/orlando-batman-sidecar-batcycle-1966/7931858702.html) — south florida, US
+- $100 — [Batmania #9 2/1966-Batman Fanzine](https://tampa.craigslist.org/hil/sss/d/apollo-beach-batmania-batman-fanzine/7921109702.html) — south florida, US
+- $100 — [QUEEN MATTRESS SET. QUEEN BED. FULL, TWIN, KING SIZE BEDS. BED FRAMES.](https://miami.craigslist.org/sss/d/queen-mattress-set-queen-bed-full-twin/7945415305.html) — south florida, US
+- no price — [Wanted old Motorcycles 🏍️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://stlouis.craigslist.org/sss/d/saint-louis-wanted-old-motorcycles/7948285177.html) — st louis, MO, US
+- no price — [Wanted old Motorcycles 🏍️ 1(800)220-9683 www.wantedoldmotorcycles.com](https://springfield.craigslist.org/sss/d/springfield-wanted-old-motorcycles/7947833649.html) — st louis, MO, US
+- $100 — [Huge Lifesize 1:1 Scale 1966 BATMAN Replica Cowl Bust Statue](https://washingtondc.craigslist.org/sss/d/wake-forest-huge-lifesize-11-scale-1966/7929469349.html) — washington, DC, US
+- $5 — [Johnny Lightning Die-Cast For Sale](https://pittsburgh.craigslist.org/sss/d/trafford-johnny-lightning-die-cast-for/7948085003.html) — washington, DC, US
+- $275 — [Vintage Batman Collectible Lot](https://raleigh.craigslist.org/sss/d/coraopolis-vintage-batman-collectible/7931205534.html) — washington, DC, US
