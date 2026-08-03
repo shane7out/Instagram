@@ -1,11 +1,9 @@
 #!/bin/bash
-# Check live status: Private Table site + Batman tab on the Deals site.
+# Read the Mac's uploaded deploy log + live status.
 set +e
-echo "PRIVATE TABLE: $(curl -s -o pt.html -w '%{http_code}' -L https://private-table-lv.web.app) $(grep -o '<title>[^<]*</title>' pt.html | head -1)"
+echo "=== MAC DEPLOY LOG ==="
+curl -s "https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/pt_log.json" | python3 -c "import sys,json;print(json.load(sys.stdin) or 'EMPTY')"
+echo "=== LIVE ==="
+echo "PRIVATE TABLE: $(curl -s -o /dev/null -w '%{http_code}' -L https://private-table-lv.web.app)"
 curl -s https://classiccarsforsale-co.web.app/ -o d.html
-curl -s https://classiccarsforsale-co.web.app/cars.json -o cars.json
 echo "DEALS chip-batman: $(grep -c chip-batman d.html)"
-echo "DEALS cars.json batman entries: $(grep -c clbm cars.json)"
-# recheck 2
-# recheck 3
-# recheck 4
