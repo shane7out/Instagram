@@ -1,15 +1,17 @@
 #!/bin/bash
-# Diagnose why coin-page images don't render: test the CDN image URLs.
-set +e
-curl -s https://classiccarsforsale-co.web.app/coins -o coins.html
-echo "coins.html size: $(wc -c < coins.html)"
-echo "=== first 3 img srcs ==="
-grep -oE 'src="https://images.craigslist.org/[^"]+"' coins.html | head -3
-echo "=== fetch each (no referer) ==="
-for u in $(grep -oE 'https://images.craigslist.org/[^"]+' coins.html | head -3); do
-  echo "$(curl -s -o /dev/null -w '%{http_code} %{size_download} %{content_type}' "$u")  $u"
-done
-echo "=== with a foreign referer (simulate browser on our site) ==="
-for u in $(grep -oE 'https://images.craigslist.org/[^"]+' coins.html | head -1); do
-  echo "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' -e 'https://classiccarsforsale-co.web.app/coins' "$u")  $u"
-done
+# Add Krung Siam Thai Restaurant & Bar (IMG_8045); other 4 already covered.
+set -e
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+curl -s "$DB/dashboard_crec.json" -o crec.json
+curl -s "$DB/dashboard/customrecords.json" -o cust.json
+BEFORE=$(jq 'keys|length' crec.json)
+if grep -qiE "krung ?siam" crec.json cust.json; then
+  echo "SKIP: already in db"; exit 0
+fi
+NUM=$(jq '[.[]|.num?|numbers]|max' crec.json); NUM=$((NUM+1))
+curl -s -X PATCH -H "Content-Type: application/json" \
+  -d "{\"$NUM\":{\"name\":\"Krung Siam Thai Restaurant & Bar\",\"instagram\":\"\",\"num\":$NUM,\"notes\":\"Yelp migration - IG needed\"}}" \
+  "$DB/dashboard_crec.json" > /dev/null
+curl -s -X PATCH -H "Content-Type: application/json" -d "{\"$NUM\":true}" "$DB/dashboard/badig.json" > /dev/null
+echo "ADDED: Krung Siam Thai Restaurant & Bar (num $NUM)"
+echo "count: $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
