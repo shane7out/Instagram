@@ -5,7 +5,7 @@ set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
 cd /Users/mac/wholesale-classic-cars || { echo "no dir"; exit 1; }
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
-SHA="372386a249057069380d6a4e4f8f8c7569499b27"
+SHA="de4aea2e8567320432acf8168582cbbfcff52001"
 LOG=/tmp/finish.txt
 : > "$LOG"
 
