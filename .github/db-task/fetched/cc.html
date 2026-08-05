@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<title>CC — Credit Cards</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --panel:#111726; --panel2:#161d30; --line:rgba(255,255,255,.10);
+    --line2:rgba(255,255,255,.16); --text:#eaf0fb; --muted:#8a97b1; --muted2:#647089;
+    --accent:#4f8cff; --accent2:#2f6bff; --good:#39d98a; --warn:#ffb020; --bad:#ff5d6c;
+    --chip:#1b2338;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 700px at 50% -10%,#16203a 0%,var(--bg) 55%) fixed;
+    color:var(--text);min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:18px 16px 90px}
+  a{color:inherit}
+  button{font-family:inherit}
+  .hidden{display:none!important}
+
+  /* ---------- top bar ---------- */
+  .top{display:flex;align-items:center;gap:12px;margin:6px 2px 18px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7a5cff);
+    display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 6px 18px rgba(79,140,255,.35)}
+  .brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.02em}
+  .brand p{margin:1px 0 0;font-size:12px;color:var(--muted)}
+  .spacer{flex:1}
+  .iconbtn{background:var(--panel);border:1px solid var(--line);color:var(--text);
+    width:40px;height:40px;border-radius:11px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .iconbtn:active{transform:scale(.94)}
+
+  /* ---------- lock screen ---------- */
+  .lock{max-width:400px;margin:6vh auto 0;text-align:center;padding:0 8px}
+  .lock .logo{width:64px;height:64px;border-radius:18px;font-size:30px;margin:0 auto 18px}
+  .lock h2{font-size:22px;margin:0 0 6px;font-weight:800}
+  .lock p{color:var(--muted);font-size:14px;margin:0 0 22px;line-height:1.5}
+  .field{margin-bottom:12px;text-align:left}
+  .field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+  input,select,textarea{
+    width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--text);
+    border-radius:12px;padding:13px 14px;font-size:16px;outline:none;transition:border-color .15s,background .15s}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--panel2)}
+  textarea{min-height:70px;resize:vertical}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+    background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border:none;
+    border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 22px rgba(47,107,255,.34)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--panel);border:1px solid var(--line2);box-shadow:none;color:var(--text)}
+  .btn.danger{background:linear-gradient(135deg,#c62b3b,var(--bad));box-shadow:0 8px 22px rgba(255,93,108,.3)}
+  .msg{font-size:13px;margin-top:12px;min-height:18px}
+  .msg.err{color:var(--bad)} .msg.ok{color:var(--good)} .msg.muted{color:var(--muted)}
+  .hint{font-size:12px;color:var(--muted2);margin-top:16px;line-height:1.5}
+
+  /* ---------- summary cards ---------- */
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 12px}
+  .stat .k{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .stat .v{font-size:19px;font-weight:800;margin-top:4px}
+  .stat .v.debt{color:var(--bad)} .stat .v.avail{color:var(--good)}
+  @media(max-width:460px){.summary{grid-template-columns:1fr 1fr}.stat.util{grid-column:span 2}}
+
+  .sectionhdr{display:flex;align-items:center;gap:8px;margin:4px 2px 12px}
+  .sectionhdr h3{font-size:14px;margin:0;font-weight:800;color:var(--muted)}
+  .sectionhdr .count{font-size:12px;color:var(--muted2);background:var(--chip);border:1px solid var(--line);padding:2px 9px;border-radius:999px}
+
+  /* ---------- card tiles ---------- */
+  .cards{display:flex;flex-direction:column;gap:12px}
+  .cc{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:15px 15px 13px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .1s}
+  .cc:active{transform:scale(.995)}
+  .cc.due-soon{border-color:rgba(255,176,32,.55)}
+  .cc.due-over{border-color:rgba(255,93,108,.6)}
+  .cc .rowtop{display:flex;align-items:flex-start;gap:10px}
+  .cc .nick{font-size:16px;font-weight:800;line-height:1.2}
+  .cc .iss{font-size:12px;color:var(--muted);margin-top:2px}
+  .cc .net{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--muted);
+    border:1px solid var(--line2);border-radius:7px;padding:3px 8px;text-transform:uppercase;white-space:nowrap}
+  .cc .pan{font-variant-numeric:tabular-nums;letter-spacing:.12em;font-size:15px;color:#cdd8ee;margin:12px 0 12px;font-weight:600}
+  .cc .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+  .cc .cell .lab{font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  .cc .cell .val{font-size:15px;font-weight:800;margin-top:2px}
+  .cc .val.bal{color:var(--text)} .cc .val.due{color:var(--warn)} .cc .val.due.over{color:var(--bad)} .cc .val.due.ok{color:var(--text)}
+  .util{height:6px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden;margin-top:11px}
+  .util > i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--good),var(--warn))}
+  .util.high > i{background:linear-gradient(90deg,var(--warn),var(--bad))}
+  .badge{position:absolute;top:0;right:0;font-size:10.5px;font-weight:800;padding:4px 10px;border-bottom-left-radius:10px;letter-spacing:.03em}
+  .badge.soon{background:rgba(255,176,32,.16);color:var(--warn)}
+  .badge.over{background:rgba(255,93,108,.16);color:var(--bad)}
+  .actions{display:flex;gap:8px;margin-top:12px}
+  .actions a{flex:1;text-align:center;text-decoration:none;font-size:13px;font-weight:800;padding:9px;border-radius:10px;
+    border:1px solid var(--line2);color:var(--text);background:rgba(255,255,255,.03)}
+  .empty{text-align:center;color:var(--muted);padding:40px 10px;font-size:15px;line-height:1.6}
+
+  /* ---------- add button (floating) ---------- */
+  .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));
+    background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border:none;border-radius:999px;
+    padding:14px 24px;font-size:15px;font-weight:800;box-shadow:0 10px 30px rgba(47,107,255,.45);cursor:pointer;z-index:40}
+  .fab:active{transform:translateX(-50%) translateY(1px)}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;background:rgba(4,7,15,.72);backdrop-filter:blur(4px);z-index:60;
+    display:flex;align-items:flex-end;justify-content:center}
+  .sheet{background:var(--bg);border:1px solid var(--line2);border-radius:20px 20px 0 0;width:100%;max-width:720px;
+    max-height:92vh;overflow:auto;padding:18px 16px calc(24px + env(safe-area-inset-bottom))}
+  @media(min-width:560px){.modal{align-items:center}.sheet{border-radius:20px;max-height:88vh}}
+  .sheet h3{margin:2px 2px 16px;font-size:18px;font-weight:800}
+  .grabber{width:38px;height:4px;background:var(--line2);border-radius:99px;margin:2px auto 14px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .frow.one{grid-template-columns:1fr}
+  .field.mb{margin-bottom:14px}
+  .withtoggle{position:relative}
+  .withtoggle .reveal{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;
+    color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:6px}
+  .sheet .savebar{display:flex;gap:10px;margin-top:18px}
+  .sheet .savebar .btn{flex:1}
+</style>
+</head>
+<body>
+
+<!-- ========== LOCK SCREEN ========== -->
+<section id="lock" class="lock">
+  <div class="logo">💳</div>
+  <h2 id="lock-title">Unlock your cards</h2>
+  <p id="lock-sub">Enter your passphrase to decrypt your credit cards.</p>
+
+  <div class="field">
+    <label id="pp1-label">Passphrase</label>
+    <input id="pp1" type="password" autocomplete="off" inputmode="text" placeholder="Your passphrase">
+  </div>
+  <div id="pp2-wrap" class="field hidden">
+    <label>Confirm passphrase</label>
+    <input id="pp2" type="password" autocomplete="off" placeholder="Type it again">
+  </div>
+
+  <button class="btn" id="unlock-btn">Unlock</button>
+  <div id="lock-msg" class="msg muted"></div>
+  <div class="hint" id="lock-hint">
+    🔒 Everything is encrypted <b>in your browser</b> before it's saved. The passphrase never leaves this device
+    and is never stored anywhere. If you forget it, the data can't be recovered.
+  </div>
+</section>
+
+<!-- ========== VAULT ========== -->
+<main id="vault" class="wrap hidden">
+  <div class="top">
+    <div class="brand">
+      <div class="logo">💳</div>
+      <div><h1>Credit Cards</h1><p id="sub-count">—</p></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="lock-again" title="Lock">🔒</button>
+  </div>
+
+  <div class="summary">
+    <div class="stat"><div class="k">Total debt</div><div class="v debt" id="s-debt">$0</div></div>
+    <div class="stat"><div class="k">Available</div><div class="v avail" id="s-avail">$0</div></div>
+    <div class="stat util"><div class="k">Utilization</div><div class="v" id="s-util">0%</div></div>
+  </div>
+
+  <div class="sectionhdr">
+    <h3>Your cards</h3><span class="count" id="s-n">0</span>
+  </div>
+  <div id="cards" class="cards"></div>
+  <button class="fab" id="add-btn">＋ Add card</button>
+</main>
+
+<!-- ========== EDITOR MODAL ========== -->
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <h3 id="modal-title">Add a card</h3>
+    <input type="hidden" id="f-id">
+
+    <div class="frow mb">
+      <div class="field"><label>Nickname</label><input id="f-nick" placeholder="e.g. Amex Gold"></div>
+      <div class="field"><label>Issuer / Bank</label><input id="f-issuer" placeholder="e.g. American Express"></div>
+    </div>
+
+    <div class="field mb">
+      <label>Card number</label>
+      <div class="withtoggle">
+        <input id="f-pan" inputmode="numeric" autocomplete="off" placeholder="•••• •••• •••• ••••">
+        <button type="button" class="reveal" id="pan-toggle">show</button>
+      </div>
+    </div>
+
+    <div class="frow mb">
+      <div class="field"><label>Network</label>
+        <select id="f-net">
+          <option value="">—</option><option>Visa</option><option>Mastercard</option>
+          <option>Amex</option><option>Discover</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Customer service phone</label><input id="f-phone" inputmode="tel" placeholder="1-800-…"></div>
+    </div>
+
+    <div class="frow mb">
+      <div class="field"><label>Current balance ($)</label><input id="f-bal" inputmode="decimal" placeholder="0.00"></div>
+      <div class="field"><label>Credit limit ($)</label><input id="f-limit" inputmode="decimal" placeholder="0.00"></div>
+    </div>
+
+    <div class="frow mb">
+      <div class="field"><label>Minimum payment ($)</label><input id="f-min" inputmode="decimal" placeholder="0.00"></div>
+      <div class="field"><label>APR (%)</label><input id="f-apr" inputmode="decimal" placeholder="0.0"></div>
+    </div>
+
+    <div class="frow mb">
+      <div class="field"><label>Next payment due</label><input id="f-due" type="date"></div>
+      <div class="field"><label>Statement balance ($)</label><input id="f-stmt" inputmode="decimal" placeholder="0.00"></div>
+    </div>
+
+    <div class="field mb"><label>Notes</label><textarea id="f-notes" placeholder="Autopay on? Rewards, login, anything…"></textarea></div>
+
+    <div class="savebar">
+      <button class="btn ghost" id="cancel-btn">Cancel</button>
+      <button class="btn" id="save-btn">Save card</button>
+    </div>
+    <div class="savebar" id="delrow" style="margin-top:10px">
+      <button class="btn danger" id="del-btn">Delete this card</button>
+    </div>
+    <div id="modal-msg" class="msg muted" style="text-align:center"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const DB = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/dashboard_cc";
+const enc = new TextEncoder(), dec = new TextDecoder();
+let KEY = null;         // CryptoKey after unlock
+let CARDS = [];         // [{id, rec}]
+let META = null;        // {salt, verifier}
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const money = n => (isFinite(n)?n:0).toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+const money2 = n => (isFinite(n)?n:0).toLocaleString("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2});
+const num = v => { const n = parseFloat(String(v).replace(/[^0-9.\-]/g,"")); return isFinite(n)?n:0; };
+
+async function rtGet(path){ const r = await fetch(DB+path+".json"); if(!r.ok) throw new Error("read "+r.status); return r.json(); }
+async function rtPut(path,val){ const r = await fetch(DB+path+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)}); if(!r.ok) throw new Error("write "+r.status); }
+async function rtPatch(path,val){ const r = await fetch(DB+path+".json",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)}); if(!r.ok) throw new Error("patch "+r.status); }
+
+/* ---------- crypto (PBKDF2 -> AES-GCM) ---------- */
+async function deriveKey(pass, salt){
+  const base = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    {name:"PBKDF2", salt, iterations:210000, hash:"SHA-256"},
+    base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
+}
+async function encJSON(obj){
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({name:"AES-GCM", iv}, KEY, enc.encode(JSON.stringify(obj)));
+  return {iv:b64(iv), ct:b64(ct)};
+}
+async function decJSON(blob){
+  const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:unb64(blob.iv)}, KEY, unb64(blob.ct));
+  return JSON.parse(dec.decode(pt));
+}
+
+/* ---------- unlock flow ---------- */
+async function boot(){
+  try { META = await rtGet("/meta"); } catch(e){ META = null; }
+  const first = !META || !META.salt || !META.verifier;
+  if(first){
+    $("#lock-title").textContent = "Create your vault";
+    $("#lock-sub").textContent = "Pick a passphrase. It encrypts every card on this device.";
+    $("#pp2-wrap").classList.remove("hidden");
+    $("#unlock-btn").textContent = "Create vault";
+  }
+}
+async function unlock(){
+  const msg = $("#lock-msg");
+  const p1 = $("#pp1").value;
+  const first = !META || !META.salt || !META.verifier;
+  if(p1.length < 4){ msg.className="msg err"; msg.textContent="Passphrase must be at least 4 characters."; return; }
+  msg.className="msg muted"; msg.textContent="Working…";
+  try{
+    if(first){
+      if(p1 !== $("#pp2").value){ msg.className="msg err"; msg.textContent="Passphrases don't match."; return; }
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      KEY = await deriveKey(p1, salt);
+      const verifier = await encJSON("CC-OK");
+      META = { salt:b64(salt), verifier };
+      await rtPut("/meta", META);
+      CARDS = [];
+    } else {
+      const salt = unb64(META.salt);
+      KEY = await deriveKey(p1, salt);
+      try{ const chk = await decJSON(META.verifier); if(chk!=="CC-OK") throw 0; }
+      catch(e){ KEY=null; msg.className="msg err"; msg.textContent="Wrong passphrase."; return; }
+      await loadCards();
+    }
+    $("#lock").classList.add("hidden");
+    $("#vault").classList.remove("hidden");
+    $("#pp1").value=""; if($("#pp2")) $("#pp2").value="";
+    render();
+  }catch(e){ msg.className="msg err"; msg.textContent="Error: "+e.message; }
+}
+async function loadCards(){
+  const raw = await rtGet("/cards") || {};
+  const out = [];
+  for(const id of Object.keys(raw)){
+    try{ out.push({id, rec: await decJSON(raw[id])}); }catch(e){ /* skip undecryptable */ }
+  }
+  CARDS = out;
+}
+function lock(){
+  KEY=null; CARDS=[];
+  $("#vault").classList.add("hidden"); $("#lock").classList.remove("hidden");
+  $("#lock-msg").textContent=""; $("#pp1").value="";
+}
+
+/* ---------- due-date logic ---------- */
+function dueInfo(rec){
+  if(!rec.due) return {label:"—", cls:"ok", days:null};
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(rec.due+"T00:00:00"); if(isNaN(d)) return {label:"—", cls:"ok", days:null};
+  const days = Math.round((d - today)/86400000);
+  const fmt = d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  if(days < 0) return {label:fmt+" · "+(-days)+"d late", cls:"over", days};
+  if(days === 0) return {label:fmt+" · today", cls:"over", days};
+  if(days <= 7) return {label:fmt+" · in "+days+"d", cls:"soon", days};
+  return {label:fmt+" · in "+days+"d", cls:"ok", days};
+}
+
+/* ---------- render ---------- */
+function render(){
+  let debt=0, avail=0, limitSum=0;
+  CARDS.forEach(c=>{ const b=num(c.rec.bal), l=num(c.rec.limit); debt+=b; if(l>0){limitSum+=l; avail+=Math.max(0,l-b);} });
+  $("#s-debt").textContent = money(debt);
+  $("#s-avail").textContent = money(avail);
+  const util = limitSum>0 ? Math.round(debt/limitSum*100) : 0;
+  $("#s-util").textContent = util+"%";
+  $("#s-n").textContent = CARDS.length;
+  $("#sub-count").textContent = CARDS.length + (CARDS.length===1?" card":" cards");
+
+  const sorted = CARDS.slice().sort((a,b)=>{
+    const da=dueInfo(a.rec).days, db=dueInfo(b.rec).days;
+    if(da===null && db===null) return 0; if(da===null) return 1; if(db===null) return -1;
+    return da-db;
+  });
+
+  const box = $("#cards");
+  if(!sorted.length){
+    box.innerHTML = '<div class="empty">No cards yet.<br>Tap <b>＋ Add card</b> to add your first one.</div>';
+    return;
+  }
+  box.innerHTML = sorted.map(c=>tile(c)).join("");
+  box.querySelectorAll("[data-edit]").forEach(el=>el.addEventListener("click",e=>{
+    if(e.target.closest("a")) return; // let phone links work
+    openEditor(el.getAttribute("data-edit"));
+  }));
+}
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function last4(pan){ const d=String(pan||"").replace(/\D/g,""); return d?("•••• "+d.slice(-4)):"—"; }
+function tile(c){
+  const r=c.rec, di=dueInfo(r);
+  const bal=num(r.bal), lim=num(r.limit), u = lim>0?Math.min(100,Math.round(bal/lim*100)):0;
+  const soonCls = di.cls==="over"?"due-over":(di.cls==="soon"?"due-soon":"");
+  const badge = di.cls==="over"?'<div class="badge over">DUE</div>':(di.cls==="soon"?'<div class="badge soon">DUE SOON</div>':"");
+  const phone = r.phone?('<a href="tel:'+esc(String(r.phone).replace(/[^0-9+]/g,''))+'">📞 '+esc(r.phone)+'</a>'):"";
+  return `<div class="cc ${soonCls}" data-edit="${c.id}">${badge}
+    <div class="rowtop">
+      <div><div class="nick">${esc(r.nick||"Card")}</div><div class="iss">${esc(r.issuer||"")}</div></div>
+      ${r.net?'<div class="net">'+esc(r.net)+'</div>':''}
+    </div>
+    <div class="pan">${esc(last4(r.pan))}</div>
+    <div class="grid2">
+      <div class="cell"><div class="lab">Balance</div><div class="val bal">${money2(bal)}</div></div>
+      <div class="cell"><div class="lab">Next due</div><div class="val due ${di.cls}">${esc(di.label)}</div></div>
+      <div class="cell"><div class="lab">Min payment</div><div class="val bal">${r.min?money2(num(r.min)):"—"}</div></div>
+      <div class="cell"><div class="lab">Limit</div><div class="val bal">${lim>0?money(lim):"—"}</div></div>
+    </div>
+    ${lim>0?`<div class="util ${u>=50?'high':''}"><i style="width:${u}%"></i></div>`:''}
+    ${phone?'<div class="actions">'+phone+'</div>':''}
+  </div>`;
+}
+
+/* ---------- editor ---------- */
+function openEditor(id){
+  const c = id ? CARDS.find(x=>x.id===id) : null;
+  const r = c ? c.rec : {};
+  $("#modal-title").textContent = c ? "Edit card" : "Add a card";
+  $("#f-id").value = id||"";
+  $("#f-nick").value=r.nick||""; $("#f-issuer").value=r.issuer||"";
+  $("#f-pan").value=r.pan||""; $("#f-pan").type="password";
+  $("#pan-toggle").textContent="show";
+  $("#f-net").value=r.net||""; $("#f-phone").value=r.phone||"";
+  $("#f-bal").value=r.bal||""; $("#f-limit").value=r.limit||"";
+  $("#f-min").value=r.min||""; $("#f-apr").value=r.apr||"";
+  $("#f-due").value=r.due||""; $("#f-stmt").value=r.stmt||"";
+  $("#f-notes").value=r.notes||"";
+  $("#delrow").style.display = c ? "flex" : "none";
+  $("#modal-msg").textContent="";
+  $("#modal").classList.remove("hidden");
+}
+function closeEditor(){ $("#modal").classList.add("hidden"); }
+
+async function saveCard(){
+  const m=$("#modal-msg"); m.className="msg muted"; m.textContent="Saving…";
+  const id = $("#f-id").value || ("c"+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36));
+  const rec = {
+    nick:$("#f-nick").value.trim(), issuer:$("#f-issuer").value.trim(),
+    pan:$("#f-pan").value.trim(), net:$("#f-net").value, phone:$("#f-phone").value.trim(),
+    bal:$("#f-bal").value.trim(), limit:$("#f-limit").value.trim(),
+    min:$("#f-min").value.trim(), apr:$("#f-apr").value.trim(),
+    due:$("#f-due").value, stmt:$("#f-stmt").value.trim(), notes:$("#f-notes").value.trim(),
+  };
+  if(!rec.nick && !rec.issuer && !rec.pan){ m.className="msg err"; m.textContent="Add at least a nickname or card number."; return; }
+  try{
+    const blob = await encJSON(rec);
+    await rtPatch("/cards", {[id]: blob});
+    const existing = CARDS.find(x=>x.id===id);
+    if(existing) existing.rec = rec; else CARDS.push({id, rec});
+    closeEditor(); render();
+  }catch(e){ m.className="msg err"; m.textContent="Error: "+e.message; }
+}
+async function deleteCard(){
+  const id=$("#f-id").value; if(!id) return;
+  if(!confirm("Delete this card permanently?")) return;
+  const m=$("#modal-msg"); m.className="msg muted"; m.textContent="Deleting…";
+  try{
+    await rtPatch("/cards", {[id]: null});
+    CARDS = CARDS.filter(x=>x.id!==id);
+    closeEditor(); render();
+  }catch(e){ m.className="msg err"; m.textContent="Error: "+e.message; }
+}
+
+/* ---------- wire up ---------- */
+$("#unlock-btn").addEventListener("click", unlock);
+$("#pp1").addEventListener("keydown", e=>{ if(e.key==="Enter"){ if($("#pp2-wrap").classList.contains("hidden")) unlock(); else $("#pp2").focus(); }});
+if($("#pp2")) $("#pp2").addEventListener("keydown", e=>{ if(e.key==="Enter") unlock(); });
+$("#lock-again").addEventListener("click", lock);
+$("#add-btn").addEventListener("click", ()=>openEditor(null));
+$("#cancel-btn").addEventListener("click", closeEditor);
+$("#save-btn").addEventListener("click", saveCard);
+$("#del-btn").addEventListener("click", deleteCard);
+$("#pan-toggle").addEventListener("click", ()=>{ const i=$("#f-pan"); const s=i.type==="password"; i.type=s?"text":"password"; $("#pan-toggle").textContent=s?"hide":"show"; });
+$("#modal").addEventListener("click", e=>{ if(e.target.id==="modal") closeEditor(); });
+boot();
+</script>
+</body>
+</html>
