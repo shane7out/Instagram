@@ -1,5 +1,5 @@
 #!/bin/bash
-# Yelp migration batch: IMG_8071 (5 restaurants).
+# Yelp migration batch: IMG_8072 (5 restaurants/bars/cafes).
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 curl -s "$DB/dashboard_crec.json" -o crec.json
@@ -20,10 +20,10 @@ add_rest() {
   echo "ADDED: $name (num $NUM)"
 }
 
-add_rest "Basil 'n Lime" "basil .?n ?lime"
-add_rest "Wing Nutz Tavern" "wing ?nutz"
-add_rest "North Italia" "north ?italia"
-add_rest "Chickie's & Pete's" "chickie"
-add_rest "El Compa Leo Mariscos" "compa ?leo"
+add_rest "Easy's Cocktail Lounge" "easy.?s ?cocktail"
+add_rest "Lucy's Waffles & Ice Cream" "lucy.?s ?waffles"
+add_rest "Vesta Coffee Roasters" "vesta ?coffee"
+add_rest "Chatos Tacos" "chatos"
+add_rest "Humo Barbecue" "humo ?barbe"
 
 echo "final: crec $BEFORE -> $(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')"
