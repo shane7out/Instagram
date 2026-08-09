@@ -67,7 +67,7 @@ if [ -d "$DASH" ]; then
   # find the dashboard html (index.html at root, else first *.html)
   IDX="index.html"; [ -f "$IDX" ] || IDX="$(ls *.html 2>/dev/null | head -1)"
   say "dashboard file: $IDX"
-  CC_URL="$CC_URL" node <<'NODE' >> "$LOG" 2>&1
+  IDX="$IDX" CC_URL="$CC_URL" node <<'NODE' >> "$LOG" 2>&1
 const fs=require('fs');
 const IDX=process.env.IDX||'index.html';
 let f=IDX; if(!fs.existsSync(f)){ const h=require('child_process').execSync('ls *.html').toString().split('\n').filter(Boolean); f=h[0]; }
