@@ -1,5 +1,5 @@
 #!/bin/bash
-# READ-ONLY: dump the _debug diag relay (deploy-refresh-ui.sh result) + live-site v3 check.
+# READ-ONLY: check rui deploy result + live v3 state (run 2).
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 echo "===== _debug/diag relay ====="
