@@ -12,8 +12,22 @@ const DBROOT = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 const LIVE = 'https://classiccarsforsale-co.web.app';
 const STALE_MS = 3 * 3600 * 1000;
 
+async function fetchRetry(url, opt, tries) {
+  tries = tries || 4;
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try { return await fetch(url, opt); }
+    catch (e) {
+      lastErr = e;
+      console.log(`fetch attempt ${i + 1}/${tries} failed for ${url}: ${e.message}${e.cause ? ' — ' + e.cause.message : ''}`);
+      await new Promise(res => setTimeout(res, 2000 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 async function jf(url, opt) {
-  const r = await fetch(url, opt);
+  const r = await fetchRetry(url, opt);
   const t = await r.text();
   let d; try { d = JSON.parse(t); } catch (e) { d = null; }
   return { status: r.status, json: d, text: t };
@@ -48,7 +62,7 @@ async function isDead(url) {
   if (!flagDue && !staleDue && !force) { console.log('not due — exiting.'); return; }
 
   // 1) live page -> [slug, url] per card
-  const html = await (await fetch(`${LIVE}/index.html?ci=` + now)).text();
+  const html = await (await fetchRetry(`${LIVE}/index.html?ci=` + now)).text();
   console.log('fetched index.html: ' + html.length + ' bytes');
   const a = html.indexOf('<!--GRID:START-->'), b = html.indexOf('<!--GRID:END-->');
   if (a < 0 || b < 0) { console.log('grid markers missing — abort'); process.exit(1); }
@@ -77,18 +91,18 @@ async function isDead(url) {
   console.log(`checked ${checked}, dead: ${deadN}` + (deadN ? ' -> ' + Object.keys(dead).slice(0, 10).join(', ') : ''));
 
   // 3) publish results for the page
-  let r = await fetch(`${DBROOT}/_deals/removed.json`, {
+  let r = await fetchRetry(`${DBROOT}/_deals/removed.json`, {
     method: 'PUT', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(deadN ? dead : null),
   });
   console.log('removed write: ' + r.status);
-  r = await fetch(`${DBROOT}/_deals/updated.json`, {
+  r = await fetchRetry(`${DBROOT}/_deals/updated.json`, {
     method: 'PUT', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(Date.now()),
   });
   console.log('updated write: ' + r.status);
   if (reqTs != null) {
-    await fetch(`${DBROOT}/_deals/refresh_handled.json`, {
+    await fetchRetry(`${DBROOT}/_deals/refresh_handled.json`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reqTs),
     });
