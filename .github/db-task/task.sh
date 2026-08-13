@@ -1,12 +1,13 @@
 #!/bin/bash
-# Verify two CI-flagged "dead" Craigslist listings really are expired (false-positive check).
+# READ-ONLY: dump the _debug diag relay (deploy-refresh-ui.sh result) + live-site v3 check.
 set -e
-check() {
-  echo "=== $1"
-  CODE=$(curl -sL -o /tmp/p.html -w '%{http_code}' -A "Mozilla/5.0" "$1")
-  echo "status: $CODE, bytes: $(wc -c < /tmp/p.html)"
-  grep -oiE "this posting has been (deleted|flagged)[^<]*|this posting has expired[^<]*|page not found" /tmp/p.html | head -2 || echo "no dead-marker in body"
-  grep -oE "<title>[^<]*</title>" /tmp/p.html | head -1 || true
-}
-check "https://www.craigslist.org/view/d/northridge-2017-tesla-model-100d-will/do7h4GWhUbG2bEvamrNePH"
-check "https://www.craigslist.org/view/d/san-luis-obispo-2021-tesla-model-long/6dkuLgp5rjEwvkLkALcGis"
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+echo "===== _debug/diag relay ====="
+curl -s "$DB/_debug/diag.json"
+echo
+echo "===== live checks ====="
+curl -s "https://classiccarsforsale-co.web.app/?v=$(date +%s)" -o live.html
+echo "live v3 blocks: $(grep -c 'DEALS-REFRESH-v3' live.html)"
+echo "lastupd line: $(grep -o '<div class="lastupd" id="lastupd">[^<]*' live.html | head -1)"
+echo "_deals/updated: $(curl -s "$DB/_deals/updated.json")"
+echo "_deals/removed count: $(curl -s "$DB/_deals/removed.json" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d) if d else 0)')"
