@@ -21,6 +21,7 @@ let s=fs.readFileSync(F,'utf8'); const before=s;
 s=s.replace(/<style>\/\*DEALS-REFRESH-v[123]\*\/[\s\S]*?<\/style>\n?/g,'');
 s=s.replace(/<script>\/\*DEALS-REFRESH-v[123]\*\/[\s\S]*?<\/script>\n?/g,'');
 s=s.replace(/\s*<a class="tablink"[^>]*>\u21bb Refresh<\/a>/g,'');
+s=s.replace(/\s*<a class="tablink"[^>]*>\ud83e\udd87 Batman Cards<\/a>/g,'');
 // baked date: drop the word "Updated"
 s=s.replace(/(<div class="lastupd" id="lastupd">)\s*Updated\s*/,'$1');
 
@@ -81,6 +82,23 @@ if(s!==before){fs.writeFileSync('index.html.bak-v3',before);fs.writeFileSync(F,s
 else console.log('v3 refresh UI: NO CHANGE (unexpected)');
 console.log('v3 present: '+((s.match(/DEALS-REFRESH-v3/g)||[]).length)+' (expect 2)');
 NODE
+
+# neutralize the auto-updater's old patcher: from now on it only cleans up
+# (strips old v1/v2 UI + Batman tab) and leaves the v3 refresh UI alone
+cat > /Users/mac/patch-deals-refresh.js <<'P2EOF'
+const fs=require('fs');
+const F='/Users/mac/wholesale-classic-cars/index.html';
+let s=fs.readFileSync(F,'utf8'); const before=s;
+s=s.replace(/<style>\/\*DEALS-REFRESH-v[12]\*\/[\s\S]*?<\/style>\n?/g,'');
+s=s.replace(/<script>\/\*DEALS-REFRESH-v[12]\*\/[\s\S]*?<\/script>\n?/g,'');
+s=s.replace(/\s*<a class="tablink"[^>]*>\u21bb Refresh<\/a>/g,'');
+s=s.replace(/\s*<a class="tablink"[^>]*>\ud83e\udd87 Batman Cards<\/a>/g,'');
+s=s.replace(/(<div class="lastupd" id="lastupd">)\s*Updated\s*/,'$1');
+if(s!==before){fs.writeFileSync(F,s);console.log('cleanup patch: applied');}
+else console.log('cleanup patch: nothing to do');
+console.log('v3 present: '+(/DEALS-REFRESH-v3/.test(s)?'yes':'NO — rerun deploy-refresh-ui.sh'));
+P2EOF
+echo "agent patcher updated to cleanup-only" >> "$LOG"
 
 echo "-- deploying --" >> "$LOG"
 node _tools/rest-deploy.js >> "$LOG" 2>&1
