@@ -17,61 +17,19 @@ say(){ echo "$@" >> "$LOG"; }
 # 1) the idempotent page patcher (re-applied after every gen.js run)
 # ---------------------------------------------------------------------------
 cat > /Users/mac/patch-deals-refresh.js <<'JSEOF'
-// Adds/refreshes the DEALS-REFRESH-v1 block in index.html:
-//  - round ⟳ button fixed top-right (spins while a refresh runs)
-//  - #lastupd (Updated date) enlarged to match the car-count size
-//  - page JS: writes a refresh request to RTDB, polls for completion, reloads;
-//    on load, overwrites the date from RTDB so it is always current
-// Also removes the old "↻ Refresh" tab (superseded by the button). Idempotent.
+// Cleans up old refresh UI (v1 corner button, old ↻ tab) after each gen.js rebuild.
+// The refresh button + big date are now owned by the GitHub-side refresher
+// (.github/db-task/deals-ci/refresh.js, DEALS-REFRESH-v2) so the site refreshes
+// without the Mac. This just makes sure gen rebuilds never resurrect the old UI.
 const fs=require('fs');
 const F='/Users/mac/wholesale-classic-cars/index.html';
 let s=fs.readFileSync(F,'utf8'); const before=s;
-
-// drop old versions of our block + the old refresh tab
 s=s.replace(/<style>\/\*DEALS-REFRESH-v1\*\/[\s\S]*?<\/style>\n?/g,'');
 s=s.replace(/<script>\/\*DEALS-REFRESH-v1\*\/[\s\S]*?<\/script>\n?/g,'');
-s=s.replace(/\s*<a class="tablink"[^>]*>↻ Refresh<\/a>/g,'');
-
-const CSS='<style>/*DEALS-REFRESH-v1*/'
- +'#refreshbtn{position:fixed;top:12px;right:12px;width:46px;height:46px;border-radius:50%;'
- +'border:2px solid #0d47a1;background:#fff;color:#0d47a1;font-size:24px;font-weight:800;'
- +'cursor:pointer;z-index:9999;box-shadow:0 4px 14px rgba(13,40,80,.25);display:flex;'
- +'align-items:center;justify-content:center;padding:0;line-height:1}'
- +'#refreshbtn.busy{animation:spinbtn 1s linear infinite;opacity:.75}'
- +'@keyframes spinbtn{to{transform:rotate(360deg)}}'
- +'#lastupd{font-size:clamp(17px,4vw,24px)!important;font-weight:800!important;line-height:1.25!important;color:#0d47a1!important}'
- +'</style>';
-
-const JS='<script>/*DEALS-REFRESH-v1*/\n'
- +"(function(){\n"
- +"var DB='https://lvr-data-a60c1-default-rtdb.firebaseio.com/_deals';\n"
- +"var btn=document.createElement('button');btn.id='refreshbtn';btn.title='Refresh listings';\n"
- +"btn.setAttribute('aria-label','Refresh listings');btn.innerHTML='\\u27F3';\n"
- +"document.body.appendChild(btn);\n"
- +"function el(){return document.getElementById('lastupd');}\n"
- +"function fmt(ts){var d=new Date(ts);return 'Updated '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}\n"
- +"var base=null;\n"
- +"fetch(DB+'/updated.json').then(function(r){return r.json();}).then(function(ts){if(ts){base=ts;if(el())el().textContent=fmt(ts);}}).catch(function(){});\n"
- +"btn.onclick=function(){\n"
- +" if(btn.classList.contains('busy'))return;\n"
- +" btn.classList.add('busy');\n"
- +" if(el())el().textContent='Refreshing\\u2026 takes a few minutes';\n"
- +" fetch(DB+'/refresh_request.json',{method:'PUT',body:JSON.stringify(Date.now())}).then(function(){\n"
- +"  var n=0;var iv=setInterval(function(){n++;\n"
- +"   fetch(DB+'/updated.json').then(function(r){return r.json();}).then(function(ts){\n"
- +"    if(ts&&(!base||ts>base)&&ts!==base){clearInterval(iv);location.replace('/?r='+Date.now());}\n"
- +"    else if(n>=40){clearInterval(iv);btn.classList.remove('busy');if(el())el().textContent='No response \\u2014 is the Mac awake?';}\n"
- +"   }).catch(function(){});\n"
- +"  },15000);\n"
- +" }).catch(function(){btn.classList.remove('busy');if(el())el().textContent='Refresh failed \\u2014 no connection';});\n"
- +"};\n"
- +"})();\n"
- +'</script>';
-
-s=s.replace(/<\/body>/, CSS+'\n'+JS+'\n</body>');
-if(s!==before){fs.writeFileSync(F,s);console.log('refresh block: applied');}
-else console.log('refresh block: NO CHANGE (unexpected)');
-console.log('button present: '+(/refreshbtn/.test(s)?'yes':'no')+' | big date css: '+(/DEALS-REFRESH-v1/.test(s)?'yes':'no'));
+s=s.replace(/\s*<a class="tablink"[^>]*>\u21bb Refresh<\/a>/g,'');
+if(s!==before){fs.writeFileSync(F,s);console.log('old refresh UI stripped');}
+else console.log('no old refresh UI present');
+console.log('v2 (CI) block present: '+(/DEALS-REFRESH-v2/.test(s)?'yes':'no — CI will add it on its next run'));
 JSEOF
 say "patch-deals-refresh.js installed"
 

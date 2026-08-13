@@ -1,0 +1,20 @@
+name: deals-refresh
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [claude/master-file-e6ofy0]
+    paths: ['.github/db-task/deals-ci/**']
+permissions:
+  contents: read
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: refresh deals site
+        env:
+          FIREBASE_SA_KEY: ${{ secrets.FIREBASE_SA_KEY }}
+        run: node .github/db-task/deals-ci/refresh.js
