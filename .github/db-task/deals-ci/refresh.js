@@ -62,7 +62,8 @@ async function isDead(url) {
   if (!flagDue && !staleDue && !force) { console.log('not due — exiting.'); return; }
 
   // 1) live page -> [slug, url] per card
-  const html = await (await fetchRetry(`${LIVE}/index.html?ci=` + now)).text();
+  // NOTE: fetch "/" not "/index.html" — hosting's clean-URLs redirect loops on the latter
+  const html = await (await fetchRetry(`${LIVE}/?ci=` + now)).text();
   console.log('fetched index.html: ' + html.length + ' bytes');
   const a = html.indexOf('<!--GRID:START-->'), b = html.indexOf('<!--GRID:END-->');
   if (a < 0 || b < 0) { console.log('grid markers missing — abort'); process.exit(1); }
