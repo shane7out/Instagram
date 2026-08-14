@@ -68,12 +68,18 @@ async function isDead(url) {
   const a = html.indexOf('<!--GRID:START-->'), b = html.indexOf('<!--GRID:END-->');
   if (a < 0 || b < 0) { console.log('grid markers missing — abort'); process.exit(1); }
   const cards = html.slice(a, b).match(/<article class="card[^"]*"[\s\S]*?<\/article>/g) || [];
-  const items = cards.map(c => {
+  const MAX_AGE_DAYS = 30;
+  const items = [];
+  const tooOld = {};
+  cards.forEach(c => {
     const slug = (c.match(/data-fav="([^"]+)"/) || [])[1];
     const url = (c.match(/href="(https:\/\/[^"]*craigslist[^"]*)"/) || [])[1];
-    return slug && url ? { slug, url } : null;
-  }).filter(Boolean);
-  console.log(`cards: ${cards.length}, checkable: ${items.length}`);
+    if (!slug || !url) return;
+    const age = parseInt((c.match(/listedage">(\d+) days? on the market/) || [])[1], 10);
+    if (isFinite(age) && age > MAX_AGE_DAYS) { tooOld[slug] = true; return; }
+    items.push({ slug, url });
+  });
+  console.log(`cards: ${cards.length}, over ${MAX_AGE_DAYS} days: ${Object.keys(tooOld).length}, checkable: ${items.length}`);
 
   // 2) check each listing (gentle concurrency)
   const dead = {};
@@ -88,6 +94,7 @@ async function isDead(url) {
     }
   }
   await Promise.all(Array.from({ length: CONC }, worker));
+  Object.assign(dead, tooOld);            // 30-day rule: retire stale listings too
   const deadN = Object.keys(dead).length;
   console.log(`checked ${checked}, dead: ${deadN}` + (deadN ? ' -> ' + Object.keys(dead).slice(0, 10).join(', ') : ''));
 
