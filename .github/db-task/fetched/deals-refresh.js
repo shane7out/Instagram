@@ -28,10 +28,35 @@
     var gt=$('grandTotal');if(gt)gt.textContent=vis;
   }
 
+  // --- pill counts must match what clicking shows (data minus removed minus >30d) ---
+  var CARSDATA=null;
+  function ageDays(c){var t=c.postedTs||c.addedTs||c.added;if(!t)return 0;var d=new Date(t);if(isNaN(d))return 0;return (Date.now()-d.getTime())/864e5;}
+  function eligible(c){if(removedCache&&removedCache[c.slug])return false;if(ageDays(c)>MAX_AGE)return false;return true;}
+  function fixChips(){
+    if(!CARSDATA)return;
+    var typeChips={};
+    document.querySelectorAll('.chip').forEach(function(b){
+      var t=b.dataset&&b.dataset.type;if(!t)return;
+      if(['Land','House','Business','Antique','Rental','RV','Ebike','Room','PVCars'].indexOf(t)>=0)typeChips[t]=0;
+      if(t==='foreclosures')typeChips[t]=0;
+      if(t==='deals')typeChips[t]=0;
+    });
+    CARSDATA.forEach(function(c){
+      if(!eligible(c))return;
+      if(typeChips[c.type]!=null)typeChips[c.type]++;
+      if(c.fcl&&typeChips.foreclosures!=null)typeChips.foreclosures++;
+      if(c.deal&&typeChips.deals!=null)typeChips.deals++;
+    });
+    document.querySelectorAll('.chip').forEach(function(b){
+      var t=b.dataset&&b.dataset.type;if(t==null||typeChips[t]==null)return;
+      if(!b.dataset.lbl)b.dataset.lbl=b.textContent.replace(/\s*\d+$/,'').trim();
+      b.textContent=b.dataset.lbl+' '+typeChips[t];
+    });
+  }
   function watchGrid(){
     var grid=$('grid');if(!grid||!window.MutationObserver)return;
     var t=null;
-    new MutationObserver(function(){clearTimeout(t);t=setTimeout(sweep,150);})
+    new MutationObserver(function(){clearTimeout(t);t=setTimeout(function(){sweep();fixChips();},150);})
       .observe(grid,{childList:true});
   }
 
@@ -43,7 +68,8 @@
 
   function pull(){
     fetch(DB+'/updated.json').then(function(r){return r.json();}).then(function(ts){if(ts){if(!base)base=ts;setDate(ts);}}).catch(function(){});
-    fetch(DB+'/removed.json').then(function(r){return r.json();}).then(function(o){removedCache=o||{};sweep();}).catch(function(){sweep();});
+    fetch(DB+'/removed.json').then(function(r){return r.json();}).then(function(o){removedCache=o||{};sweep();fixChips();}).catch(function(){sweep();});
+    if(!CARSDATA){fetch('/cars.json').then(function(r){return r.json();}).then(function(j){if(Array.isArray(j)){CARSDATA=j;fixChips();}}).catch(function(){});}
   }
 
   function go(){
@@ -55,7 +81,7 @@
         fetch(DB+'/updated.json').then(function(r){return r.json();}).then(function(ts){
           if(ts&&base&&ts>base){base=ts;clearInterval(iv);
             fetch(DB+'/removed.json').then(function(r){return r.json();}).then(function(o){
-              removedCache=o||{};sweep();setDate(ts);
+              removedCache=o||{};sweep();fixChips();setDate(ts);
               btn.classList.remove('busy');btn.classList.add('done');btn.innerHTML='✓';
               say('Up to date — '+fmt(ts),6000);
               setTimeout(function(){btn.classList.remove('done');btn.innerHTML='<span class="rg">⟳</span>';},4000);
