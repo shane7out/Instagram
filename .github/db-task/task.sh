@@ -1,23 +1,18 @@
 #!/bin/bash
-# DIAGNOSTIC: what's live on the Deals site + what cache rules is it serving with?
+# READ-ONLY: verify v7 live — baked button, photo-fixed coins/land, relay log.
 set -e
-echo "===== response headers for / ====="
-curl -sI "https://classiccarsforsale-co.web.app/" | grep -iE "cache-control|etag|last-modified|age:" || true
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+echo "===== _debug/diag relay ====="
+curl -s "$DB/_debug/diag.json"
 echo
-echo "===== live content (cache-busted) ====="
+echo "===== live checks (cache-busted) ====="
 curl -s "https://classiccarsforsale-co.web.app/?cb=$(date +%s)" -o live.html
-echo "bytes: $(wc -c < live.html)"
-echo "v6 blocks: $(grep -c 'DEALS-REFRESH-v6' live.html)"
-echo "v7 blocks: $(grep -c 'DEALS-REFRESH-v7' live.html)"
-echo "baked button: $(grep -c '<button id=\"refreshbtn\"' live.html)"
-echo "lastupd: $(grep -o '<div class="lastupd" id="lastupd">[^<]*' live.html | head -1)"
-echo
-echo "===== coins page (cache-busted) ====="
+echo "v7 blocks: $(grep -c 'DEALS-REFRESH-v7' live.html || true)"
+echo "baked button: $(grep -c '<button id=\"refreshbtn\"' live.html || true)"
+echo "lastupd+button: $(grep -o '<div class="lastupd" id="lastupd">[^<]*</div><button id="refreshbtn"' live.html | head -1)"
 curl -sL "https://classiccarsforsale-co.web.app/coins?cb=$(date +%s)" -o coins.html
-echo "hosted imgs: $(grep -c 'raw.githubusercontent' coins.html)"
-echo "craigslist imgs: $(grep -c 'images.craigslist.org' coins.html)"
-echo
-echo "===== a hosted image actually loads? ====="
+echo "coins hosted imgs: $(grep -c 'raw.githubusercontent' coins.html || true) | craigslist leftovers: $(grep -c 'images.craigslist.org' coins.html || true)"
+curl -sL "https://classiccarsforsale-co.web.app/land-eaglepoint?cb=$(date +%s)" -o land.html
+echo "land hosted imgs: $(grep -c 'raw.githubusercontent' land.html || true)"
 IMG=$(grep -o 'https://raw.githubusercontent[^"]*' coins.html | head -1)
-echo "sample: $IMG"
-[ -n "$IMG" ] && curl -sL -o /tmp/img.jpg -w "img status %{http_code}, %{size_download} bytes, type %{content_type}\n" "$IMG"
+if [ -n "$IMG" ]; then curl -sL -o /tmp/i.jpg -w "sample img: %{http_code}, %{size_download}b, %{content_type}\n" "$IMG"; else echo "no hosted img found"; fi
