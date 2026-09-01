@@ -75,7 +75,7 @@
   function go(){
     var btn=$('refreshbtn');if(!btn||btn.classList.contains('busy'))return;
     btn.classList.add('busy');btn.classList.remove('done');
-    say('Refreshing… checking every listing. Takes up to ~15 min — you can leave this page.');
+    say('Refresh requested ✓  GitHub will re-check every listing. This can take a few hours — you can close this page, it updates itself.');
     fetch(DB+'/refresh_request.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(Date.now())}).then(function(){
       var n=0;var iv=setInterval(function(){n++;
         fetch(DB+'/updated.json').then(function(r){return r.json();}).then(function(ts){
@@ -87,9 +87,9 @@
               setTimeout(function(){btn.classList.remove('done');btn.innerHTML='<span class="rg">⟳</span>';},4000);
             }).catch(function(){});
           } else if(ts&&!base){base=ts;}
-          else if(n>=80){clearInterval(iv);btn.classList.remove('busy');say('Timed out — tap to try again',6000);}
+          else if(n>=240){clearInterval(iv);btn.classList.remove('busy');say('Still queued — the page will update itself when it lands.',8000);}
         }).catch(function(){});
-      },15000);
+      },30000);
     }).catch(function(){btn.classList.remove('busy');say('No connection — tap to try again',5000);});
   }
 
