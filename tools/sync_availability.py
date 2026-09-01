@@ -2,7 +2,7 @@
 """Turn a calendar feed into the retreat site's availability file.
 
 Point this at an .ics feed — Google Calendar, Apple Calendar, Outlook, or a
-saved file — and it rewrites site/data/availability.json with the dates that
+saved file — and it rewrites the site's availability data with the dates that
 are taken. Staff book retreats in whatever calendar app they already use; the
 website reads the result.
 
@@ -29,7 +29,7 @@ import re
 import sys
 import urllib.request
 
-DEFAULT_OUT = pathlib.Path(__file__).resolve().parent.parent / "site" / "data" / "availability.json"
+DEFAULT_OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "st-ritas" / "data" / "availability.json"
 DEFAULT_TIMEZONE = "America/Los_Angeles"
 
 
@@ -148,7 +148,7 @@ def merge(blocks):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("source", help="URL or path of the .ics calendar feed")
-    parser.add_argument("--out", default=str(DEFAULT_OUT), help="file to write (default: site/data/availability.json)")
+    parser.add_argument("--out", default=str(DEFAULT_OUT), help="file to write (default: docs/st-ritas/data/availability.json)")
     parser.add_argument("--include-labels", action="store_true", help="publish event summaries (off by default)")
     parser.add_argument("--timezone", default=DEFAULT_TIMEZONE, help="timezone recorded in the output file")
     parser.add_argument("--months", type=int, default=24, help="how far ahead to keep events (default: 24)")

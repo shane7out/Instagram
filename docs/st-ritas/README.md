@@ -22,7 +22,7 @@ No build step and no dependencies — open `index.html` directly, or serve the
 folder:
 
 ```
-python3 -m http.server 8000 --directory site
+python3 -m http.server 8000 --directory docs
 ```
 
 Then visit <http://localhost:8000>.
