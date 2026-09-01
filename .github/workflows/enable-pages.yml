@@ -1,0 +1,50 @@
+name: enable-pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/master-file-e6ofy0]
+    paths: ['.github/workflows/enable-pages.yml']
+permissions:
+  contents: read
+  pages: write
+jobs:
+  enable:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: turn on GitHub Pages (docs/ on the st-ritas branch)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          API="https://api.github.com/repos/${{ github.repository }}/pages"
+          echo "=== current Pages status ==="
+          curl -s -o /tmp/cur.json -w "GET %{http_code}\n" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" "$API"
+          cat /tmp/cur.json | head -c 400; echo
+          echo
+          echo "=== attempting to create the Pages site ==="
+          curl -s -o /tmp/new.json -w "POST %{http_code}\n" -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"source":{"branch":"claude/st-ritas-retreat-clone-ntz6ys","path":"/docs"}}' \
+            "$API"
+          cat /tmp/new.json | head -c 600; echo
+          echo
+          echo "=== status after ==="
+          curl -s -o /tmp/aft.json -w "GET %{http_code}\n" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" "$API"
+          python3 -c "
+import json
+try:
+    d=json.load(open('/tmp/aft.json'))
+    print('url:', d.get('html_url'))
+    print('status:', d.get('status'))
+    src=d.get('source') or {}
+    print('source:', src.get('branch'), src.get('path'))
+except Exception as e:
+    print('not enabled yet:', e)
+"
