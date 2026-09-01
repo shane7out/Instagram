@@ -1,0 +1,239 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="robots" content="noindex">
+<title>LVR Site Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#0b1020;
+    --panel:#141b2e;
+    --panel-hi:#1b2438;
+    --line:rgba(255,255,255,.10);
+    --line-hi:rgba(255,255,255,.18);
+    --text:#e8edf7;
+    --muted:#8f9cb5;
+    --dim:#6b7893;
+    --accent:#4f8cff;
+    --live:#3fbf7f;
+    --pending:#f0a92e;
+    --display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --ui:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--text);
+    font-family:var(--ui);
+    -webkit-text-size-adjust:100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 56px}
+
+  /* ---- masthead ---- */
+  header{
+    display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:26px;
+  }
+  h1{
+    font-family:var(--display);font-weight:800;font-size:clamp(26px,6.5vw,38px);
+    letter-spacing:-.02em;margin:0;text-wrap:balance;
+  }
+  .tally{
+    font-family:var(--mono);font-size:12.5px;color:var(--muted);
+    margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums;
+  }
+  .tally b{color:var(--live);font-weight:500}
+
+  /* ---- section headings ---- */
+  h2{
+    font-family:var(--ui);font-weight:600;font-size:11.5px;
+    text-transform:uppercase;letter-spacing:.13em;color:var(--dim);
+    margin:34px 0 12px;display:flex;align-items:center;gap:10px;
+  }
+  h2:first-of-type{margin-top:0}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* ---- the list ---- */
+  .list{display:flex;flex-direction:column;gap:8px}
+  .site{
+    display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+    gap:0 13px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 15px;text-decoration:none;color:inherit;
+    transition:border-color .14s,background .14s,transform .08s;
+  }
+  .site:hover{background:var(--panel-hi);border-color:var(--line-hi)}
+  .site:active{transform:scale(.995)}
+  .site:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .dot.live{background:var(--live);box-shadow:0 0 0 3px rgba(63,191,127,.13)}
+  .dot.pending{background:var(--pending);box-shadow:0 0 0 3px rgba(240,169,46,.13)}
+  .dot.ext{background:var(--dim)}
+
+  .name{font-weight:600;font-size:16px;letter-spacing:-.005em;line-height:1.25}
+  .desc{
+    grid-column:2;font-size:13.5px;color:var(--muted);line-height:1.45;margin-top:3px;
+  }
+  .host{
+    grid-column:2;font-family:var(--mono);font-size:11.5px;color:var(--dim);
+    margin-top:6px;word-break:break-all;
+  }
+  .go{
+    font-family:var(--mono);font-size:17px;color:var(--dim);
+    align-self:center;transition:color .14s,transform .14s;
+  }
+  .site:hover .go{color:var(--accent);transform:translateX(2px)}
+
+  /* sub-destinations, only where they really exist */
+  .subs{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .sub{
+    font-family:var(--mono);font-size:11px;color:var(--muted);
+    border:1px solid var(--line-hi);border-radius:999px;padding:3px 9px;
+    text-decoration:none;transition:color .14s,border-color .14s;
+  }
+  .sub:hover{color:var(--accent);border-color:var(--accent)}
+  .sub:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* the one row that isn't a link yet */
+  .site.soon{opacity:.72;cursor:default}
+  .site.soon:hover{background:var(--panel);border-color:var(--line)}
+  .todo{
+    grid-column:2;margin-top:9px;font-size:12.5px;color:var(--pending);
+    line-height:1.45;
+  }
+
+  footer{
+    margin-top:38px;padding-top:16px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7;
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head><body><div class="wrap">
+  <header>
+    <h1>Site Index</h1>
+    <div class="tally"><b>9 live</b> · 1 pending</div>
+  </header>
+
+  <h2>Your sites</h2>
+  <div class="list">
+
+    <a class="site" href="https://lvr-data-a60c1.web.app" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">LVR Dashboard</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">The master restaurant database — 814 records, influencers, advertisers. PIN&nbsp;gated.</span>
+      <span class="host">lvr-data-a60c1.web.app</span>
+    </a>
+
+    <a class="site" href="https://classiccarsforsale-co.web.app" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">Deals</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Craigslist deal finder — cars, land, foreclosures, RVs. Sweeps itself and drops anything sold or over 30&nbsp;days.</span>
+      <span class="host">classiccarsforsale-co.web.app</span>
+      <span class="subs">
+        <a class="sub" href="https://classiccarsforsale-co.web.app/coins" target="_blank" rel="noopener">US Coins</a>
+        <a class="sub" href="https://classiccarsforsale-co.web.app/land-eaglepoint" target="_blank" rel="noopener">Eagle Point Land</a>
+      </span>
+    </a>
+
+    <a class="site" href="https://lvr-cc.web.app" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">CC — Credit Cards</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Balances, due dates, limits and card numbers. Encrypted in your browser with your passphrase.</span>
+      <span class="host">lvr-cc.web.app</span>
+    </a>
+
+    <a class="site" href="https://the-atl.web.app" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">Storage Containers</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Shipping containers for sale, priced against the going rate.</span>
+      <span class="host">the-atl.web.app</span>
+    </a>
+
+    <a class="site" href="https://private-table-lv.web.app" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">Private Chef</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">The Private Table — in-home chef service.</span>
+      <span class="host">private-table-lv.web.app</span>
+    </a>
+
+    <a class="site" href="https://findmyforeclosure.web.app" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">Foreclosures</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Shane's foreclosure listings.</span>
+      <span class="host">findmyforeclosure.web.app</span>
+    </a>
+
+    <a class="site" href="https://lasvegasrestaurantspecials.com" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">LV Restaurant Specials</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Public-facing specials site on its own domain.</span>
+      <span class="host">lasvegasrestaurantspecials.com</span>
+    </a>
+
+    <a class="site" href="https://lvr-data-a60c1.web.app/dating.html" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">Dating</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Torch — opens straight to the profiles; the filter only appears on sign&nbsp;up.</span>
+      <span class="host">lvr-data-a60c1.web.app/dating.html</span>
+    </a>
+
+    <a class="site" href="https://lvr-data-a60c1.web.app/badges.html" target="_blank" rel="noopener">
+      <span class="dot live" aria-hidden="true"></span>
+      <span class="name">Badges</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Badge trading.</span>
+      <span class="host">lvr-data-a60c1.web.app/badges.html</span>
+    </a>
+
+  </div>
+
+  <h2>Built, not switched on</h2>
+  <div class="list">
+    <div class="site soon">
+      <span class="dot pending" aria-hidden="true"></span>
+      <span class="name">St Rita's Retreat</span>
+      <span class="go" aria-hidden="true">·</span>
+      <span class="desc">Five-page site for the retreat center in Gold Hill, Oregon — rooms, chapel, grounds, and a booking calendar.</span>
+      <span class="host">shane7out.github.io/Instagram/st-ritas/</span>
+      <span class="todo">Waiting on hosting: GitHub → Settings → Pages → branch <b>claude/st-ritas-retreat-clone-ntz6ys</b>, folder <b>/docs</b>.</span>
+    </div>
+  </div>
+
+  <h2>Outside tools</h2>
+  <div class="list">
+    <a class="site" href="https://pro.cleverkit.ai" target="_blank" rel="noopener">
+      <span class="dot ext" aria-hidden="true"></span>
+      <span class="name">Credit</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">CleverKit — not yours, linked for convenience.</span>
+      <span class="host">pro.cleverkit.ai</span>
+    </a>
+    <a class="site" href="https://fullyfunded.co" target="_blank" rel="noopener">
+      <span class="dot ext" aria-hidden="true"></span>
+      <span class="name">Business Funding</span>
+      <span class="go" aria-hidden="true">→</span>
+      <span class="desc">Fully Funded — not yours, linked for convenience.</span>
+      <span class="host">fullyfunded.co</span>
+    </a>
+  </div>
+
+  <footer>
+    Every address above was checked and answered on 9/1/26.<br>
+    Green means it loaded. Amber means it's built but not hosted yet.
+  </footer>
+</div></body></html>
