@@ -1,21 +1,28 @@
 #!/bin/bash
-# Check which of the owner's sites are live, for building the directory page.
+# DIAGNOSTIC: did deploy-sites-pill.sh run? what's live on the dashboard right now?
 set -e
-check(){ printf '%-34s %s\n' "$1" "$(curl -sL -o /dev/null -w '%{http_code}' --max-time 20 "$2")"; }
-echo "=== owner sites ==="
-check "LVR Dashboard"        "https://lvr-data-a60c1.web.app"
-check "Deals (cars/land)"    "https://classiccarsforsale-co.web.app"
-check "  - US Coins"         "https://classiccarsforsale-co.web.app/coins"
-check "  - Eagle Point Land" "https://classiccarsforsale-co.web.app/land-eaglepoint"
-check "Storage Containers"   "https://the-atl.web.app"
-check "Private Chef"         "https://private-table-lv.web.app"
-check "Foreclosures"         "https://findmyforeclosure.web.app"
-check "CC (credit cards)"    "https://lvr-cc.web.app"
-check "Badges"               "https://lvr-data-a60c1.web.app/badges.html"
-check "Dating"               "https://lvr-data-a60c1.web.app/dating.html"
-check "LV Restaurant Specials" "https://lasvegasrestaurantspecials.com"
-echo "=== outside tools linked from the dashboard ==="
-check "Credit (cleverkit)"   "https://pro.cleverkit.ai"
-check "Business Funding"     "https://fullyfunded.co"
-echo "=== not yet hosted ==="
-check "St Rita's (Pages off)" "https://shane7out.github.io/Instagram/st-ritas/"
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+echo "===== _debug/diag relay (last Mac script log) ====="
+curl -s "$DB/_debug/diag.json" | head -c 1500
+echo
+echo
+echo "===== live dashboard ====="
+curl -s "https://lvr-data-a60c1.web.app/?cb=$(date +%s)" -o dash.html
+echo "bytes: $(wc -c < dash.html)"
+echo "APP_VERSION: $(grep -oE 'APP_VERSION=[0-9]+' dash.html | head -1)"
+echo "has /sites.html link: $(grep -c '/sites.html' dash.html || true)"
+echo "has All Sites text: $(grep -c 'All Sites' dash.html || true)"
+echo
+echo "===== is the page itself deployed? ====="
+echo "/sites.html -> $(curl -sL -o /dev/null -w '%{http_code}' https://lvr-data-a60c1.web.app/sites.html)"
+echo
+echo "===== the exact Deals-pill markup my regex must match ====="
+python3 - <<'PY'
+import re
+s=open('dash.html',encoding='utf-8',errors='replace').read()
+i=s.find('classiccarsforsale-co.web.app')
+print(repr(s[max(0,i-120):i+220]) if i>=0 else 'DEALS ANCHOR NOT PRESENT')
+print()
+m=re.search(r'(<a href="https://classiccarsforsale-co\.web\.app"[\s\S]*?>Deals</a>)', s)
+print('regex matches Deals pill:', bool(m))
+PY
