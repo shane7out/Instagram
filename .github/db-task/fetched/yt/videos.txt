@@ -1,0 +1,28 @@
+OK   llcRsfSUhvs | WELCOME to St. Rita Retreat Center let me show you around! | LeRoy Tomes
+OK   e9WlVu-hm_o | St. Rita Retreat Center 2006 DVD | LeRoy Tomes
+OK   xiQWVlvHUhA | Rogue River - Wild and Scenic | Dan Ransom
+OK   nfnbRgeicSw | Destination: The Wild and Scenic Rogue River, Oregon | Canoe & Kayak Magazine
+OK   PoAc9_pkr5I | Must See in Oregon the Rogue River Valley! Ep 28 | 2TexansTravel
+OK   3a77VqrGoFM | Complete Guide to Rogue River, Oregon | Living & Exploring in Southern Oregon | Oregon Adventure Realty
+OK   CcopJ09DaBY | The Rogue River: A Must Do For All Adventurers | Earth Trek
+OK   iMdkibxOuTg | Valley of The Rogue State Park / Oregon / A RV & Tent Campground Fav! | Travel Small Live Big
+---- posters ----
+  3a77VqrGoFM  720x405  53,273 bytes
+  CcopJ09DaBY  720x405  70,049 bytes
+  PoAc9_pkr5I  720x405  77,768 bytes
+  e9WlVu-hm_o  480x270  27,285 bytes
+  iMdkibxOuTg  720x405  71,812 bytes
+  llcRsfSUhvs  640x360  31,703 bytes
+  nfnbRgeicSw  720x405  83,999 bytes
+  xiQWVlvHUhA  720x405  79,624 bytes
+total 508
+drwxr-xr-x 2 runner runner  4096 Sep  2 00:51 .
+drwxr-xr-x 3 runner runner  4096 Sep  2 00:51 ..
+-rw-r--r-- 1 runner runner 53273 Sep  2 00:51 3a77VqrGoFM.jpg
+-rw-r--r-- 1 runner runner 70049 Sep  2 00:51 CcopJ09DaBY.jpg
+-rw-r--r-- 1 runner runner 77768 Sep  2 00:51 PoAc9_pkr5I.jpg
+-rw-r--r-- 1 runner runner 27285 Sep  2 00:51 e9WlVu-hm_o.jpg
+-rw-r--r-- 1 runner runner 71812 Sep  2 00:51 iMdkibxOuTg.jpg
+-rw-r--r-- 1 runner runner 31703 Sep  2 00:51 llcRsfSUhvs.jpg
+-rw-r--r-- 1 runner runner 83999 Sep  2 00:51 nfnbRgeicSw.jpg
+-rw-r--r-- 1 runner runner 79624 Sep  2 00:51 xiQWVlvHUhA.jpg
