@@ -1,62 +1,59 @@
 #!/bin/bash
-# Snapshot the live dashboard so the CRM audit is against what is actually deployed,
-# not the older local copy (local is v443, live was v446).
+# Where do the CRM customers actually live, and how many are there?
+# The owner dashboard saves the whole record to /dashboard.json, so crmcustomers
+# sits at dashboard/crmcustomers - not under dashboard/customrecords.
 set +e
-OUT=.github/db-task/fetched
-mkdir -p "$OUT"
-NOTES="$OUT/crm-snapshot.txt"
-: > "$NOTES"
-
-curl -sL --max-time 90 -o "$OUT/live-dashboard.html" https://lvr-data-a60c1.web.app/
-echo "dashboard: $(wc -c < "$OUT/live-dashboard.html") bytes  $(grep -ao 'APP_VERSION=[0-9]*' "$OUT/live-dashboard.html" | head -1)" >> "$NOTES"
-curl -sI --max-time 30 https://lvr-data-a60c1.web.app/ | grep -i 'content-security-policy\|cache-control' >> "$NOTES"
-
-for f in gate.js version.json; do
-  curl -sL --max-time 60 -o "$OUT/dash-$f" "https://lvr-data-a60c1.web.app/$f"
-  echo "$f: $(wc -c < "$OUT/dash-$f") bytes" >> "$NOTES"
-done
-
-# what the CRM actually stores, and how much of it there is
 DB=https://lvr-data-a60c1-default-rtdb.firebaseio.com
-for NODE in dashboard/customrecords dashboard_crec dashboard_exp_crec dashboard_adv_crec; do
-  N=$(curl -s --max-time 60 "$DB/$NODE.json?shallow=true" | python3 -c "
+OUT=.github/db-task/fetched
+NOTES="$OUT/crm-data.txt"
+mkdir -p "$OUT"; : > "$NOTES"
+
+for ROOT in dashboard dashboard_friend company_dashboard lvr_rewards; do
+  echo "== $ROOT ==" >> "$NOTES"
+  curl -s --max-time 60 "$DB/$ROOT.json?shallow=true" -o /tmp/s.json
+  python3 - "$ROOT" >> "$NOTES" 2>&1 <<'PY'
 import json,sys
-try:
-  d=json.load(sys.stdin); print(len(d) if isinstance(d,dict) else 'n/a')
-except Exception as e: print('err')")
-  echo "$NODE keys: $N" >> "$NOTES"
+try: d=json.load(open('/tmp/s.json'))
+except Exception as e: print("  unreadable:",e); raise SystemExit
+print("  keys:", sorted(d.keys()) if isinstance(d,dict) else type(d).__name__)
+PY
+  curl -s --max-time 90 "$DB/$ROOT/crmcustomers.json" -o /tmp/c.json
+  python3 >> "$NOTES" 2>&1 <<'PY'
+import json,collections,re
+try: c=json.load(open('/tmp/c.json'))
+except Exception as e: print("  crmcustomers: unreadable",e); raise SystemExit
+if not c: print("  crmcustomers: EMPTY/null"); raise SystemExit
+if isinstance(c,dict): c=[v for v in c.values() if isinstance(v,dict)]
+print("  crmcustomers:",len(c),"records")
+fields=collections.Counter(); filled=collections.Counter()
+ids=collections.Counter(); dupes=collections.Counter()
+for cu in c:
+    if not isinstance(cu,dict): continue
+    ids[str(cu.get('id'))]+=1
+    nm=(cu.get('name') or '').strip().lower()
+    if nm: dupes[nm]+=1
+    for k,v in cu.items():
+        fields[k]+=1
+        if v not in (None,'',[],{},0,False): filled[k]+=1
+print("  fields present:",dict(fields.most_common()))
+print("  fields filled :",dict(filled.most_common()))
+rep=[i for i,n in ids.items() if n>1]
+print("  duplicate ids:",rep[:20] or "none")
+dn=[n for n,k in dupes.items() if k>1]
+print("  duplicate names:",dn[:20] or "none")
+PY
 done
 
-# the CRM customer list lives inside a record - find where
-curl -s --max-time 90 "$DB/dashboard/customrecords.json" -o /tmp/cust.json
-echo "customrecords: $(wc -c < /tmp/cust.json) bytes" >> "$NOTES"
-python3 - >> "$NOTES" 2>&1 <<'PY'
-import json
-d=json.load(open('/tmp/cust.json'))
-if isinstance(d,dict): items=list(d.items())
-else: items=list(enumerate(d or []))
-print("records:",len(items))
-for k,v in items:
-    if isinstance(v,dict) and 'crmcustomers' in v:
-        c=v.get('crmcustomers') or []
-        print("  crmcustomers in record",k,"->",len(c),"customers")
-        keys=set()
-        for cu in c[:400]:
-            if isinstance(cu,dict): keys|=set(cu.keys())
-        print("  fields:",sorted(keys))
-        # how full is each field
-        import collections
-        cnt=collections.Counter()
-        for cu in c:
-            if isinstance(cu,dict):
-                for kk,vv in cu.items():
-                    if vv not in (None,"",[],{}): cnt[kk]+=1
-        print("  filled:",dict(cnt.most_common()))
-PY
+# every top-level node, so nothing is missed
+curl -s --max-time 60 "$DB/.json?shallow=true" -o /tmp/root.json
+echo "== root nodes ==" >> "$NOTES"
+python3 -c "
+import json;d=json.load(open('/tmp/root.json'))
+print('  '+', '.join(sorted(d.keys())))" >> "$NOTES" 2>&1
 
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git add -A "$OUT"
-git commit -m "snapshot: live dashboard + CRM data shape" || { echo "nothing to commit"; exit 0; }
+git commit -m "snapshot: where the CRM customers live" || { echo "nothing to commit"; exit 0; }
 for i in 1 2 3 4; do git push origin HEAD:claude/master-file-e6ofy0 && break; sleep $((i*3)); git pull --rebase origin claude/master-file-e6ofy0; done
 cat "$NOTES"
