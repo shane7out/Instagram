@@ -1,63 +1,62 @@
 #!/bin/bash
-# Widen the video set: confirm more real retreat / Rogue Valley / Oregon-nature
-# videos via oEmbed (real title + channel, or it does not go on the site),
-# and pull a poster frame for every one that checks out.
+# Snapshot the live dashboard so the CRM audit is against what is actually deployed,
+# not the older local copy (local is v443, live was v446).
 set +e
-OUT=.github/db-task/fetched/st-ritas/img/poster
+OUT=.github/db-task/fetched
 mkdir -p "$OUT"
-NOTES=.github/db-task/fetched/yt/videos.txt
+NOTES="$OUT/crm-snapshot.txt"
 : > "$NOTES"
-UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36'
-python3 -m pip install --quiet --disable-pip-version-check Pillow 2>&1 | tail -1 >> "$NOTES"
 
-# already on the site
-KNOWN="llcRsfSUhvs e9WlVu-hm_o xiQWVlvHUhA nfnbRgeicSw PoAc9_pkr5I"
-# verified real earlier but never used, plus further candidates
-MORE="3a77VqrGoFM CcopJ09DaBY iMdkibxOuTg"
+curl -sL --max-time 90 -o "$OUT/live-dashboard.html" https://lvr-data-a60c1.web.app/
+echo "dashboard: $(wc -c < "$OUT/live-dashboard.html") bytes  $(grep -ao 'APP_VERSION=[0-9]*' "$OUT/live-dashboard.html" | head -1)" >> "$NOTES"
+curl -sI --max-time 30 https://lvr-data-a60c1.web.app/ | grep -i 'content-security-policy\|cache-control' >> "$NOTES"
 
-for ID in $KNOWN $MORE; do
-  CODE=$(curl -s -o /tmp/o.json -w '%{http_code}' --max-time 30 \
-    "https://www.youtube.com/oembed?url=https%3A//www.youtube.com/watch%3Fv%3D${ID}&format=json")
-  if [ "$CODE" = "200" ]; then
-    python3 -c "
-import json;d=json.load(open('/tmp/o.json'))
-print('OK   $ID | ' + d.get('title','?') + ' | ' + d.get('author_name','?'))" >> "$NOTES"
-    for Q in maxresdefault sddefault hqdefault; do
-      C=$(curl -sL -A "$UA" --max-time 60 -o "$OUT/raw-$ID.jpg" -w '%{http_code}' "https://i.ytimg.com/vi/$ID/$Q.jpg")
-      S=$(wc -c < "$OUT/raw-$ID.jpg" 2>/dev/null || echo 0)
-      if [ "$C" = "200" ] && [ "$S" -gt 5000 ]; then break; else rm -f "$OUT/raw-$ID.jpg"; fi
-    done
-  else
-    echo "DEAD $ID (http $CODE)" >> "$NOTES"
-  fi
+for f in gate.js version.json; do
+  curl -sL --max-time 60 -o "$OUT/dash-$f" "https://lvr-data-a60c1.web.app/$f"
+  echo "$f: $(wc -c < "$OUT/dash-$f") bytes" >> "$NOTES"
 done
 
-python3 - "$OUT" <<'PY' >> "$NOTES" 2>&1
-import sys,os,glob
-from PIL import Image
-out=sys.argv[1]
-print("---- posters ----")
-for f in sorted(glob.glob(os.path.join(out,'raw-*.jpg'))):
-    vid=os.path.basename(f)[4:-4]
-    try:
-        im=Image.open(f); im.load(); im=im.convert('RGB')
-        w,h=im.size; want=w*9/16
-        if h>want+6:
-            top=round((h-want)/2); im=im.crop((0,top,w,top+round(want)))
-        if im.width>720:
-            im=im.resize((720,round(im.height*720/im.width)),Image.LANCZOS)
-        dst=os.path.join(out,vid+'.jpg')
-        im.save(dst,'JPEG',quality=74,optimize=True,progressive=True)
-        print(f"  {vid}  {im.width}x{im.height}  {os.path.getsize(dst):,} bytes")
-        os.remove(f)
-    except Exception as e:
-        print(f"  {vid}: FAILED {e}")
+# what the CRM actually stores, and how much of it there is
+DB=https://lvr-data-a60c1-default-rtdb.firebaseio.com
+for NODE in dashboard/customrecords dashboard_crec dashboard_exp_crec dashboard_adv_crec; do
+  N=$(curl -s --max-time 60 "$DB/$NODE.json?shallow=true" | python3 -c "
+import json,sys
+try:
+  d=json.load(sys.stdin); print(len(d) if isinstance(d,dict) else 'n/a')
+except Exception as e: print('err')")
+  echo "$NODE keys: $N" >> "$NOTES"
+done
+
+# the CRM customer list lives inside a record - find where
+curl -s --max-time 90 "$DB/dashboard/customrecords.json" -o /tmp/cust.json
+echo "customrecords: $(wc -c < /tmp/cust.json) bytes" >> "$NOTES"
+python3 - >> "$NOTES" 2>&1 <<'PY'
+import json
+d=json.load(open('/tmp/cust.json'))
+if isinstance(d,dict): items=list(d.items())
+else: items=list(enumerate(d or []))
+print("records:",len(items))
+for k,v in items:
+    if isinstance(v,dict) and 'crmcustomers' in v:
+        c=v.get('crmcustomers') or []
+        print("  crmcustomers in record",k,"->",len(c),"customers")
+        keys=set()
+        for cu in c[:400]:
+            if isinstance(cu,dict): keys|=set(cu.keys())
+        print("  fields:",sorted(keys))
+        # how full is each field
+        import collections
+        cnt=collections.Counter()
+        for cu in c:
+            if isinstance(cu,dict):
+                for kk,vv in cu.items():
+                    if vv not in (None,"",[],{}): cnt[kk]+=1
+        print("  filled:",dict(cnt.most_common()))
 PY
-ls -la "$OUT" >> "$NOTES"
 
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-git add -A "$OUT" .github/db-task/fetched/yt
-git commit -m "source material: verified video set + poster frames" || { echo "nothing to commit"; exit 0; }
+git add -A "$OUT"
+git commit -m "snapshot: live dashboard + CRM data shape" || { echo "nothing to commit"; exit 0; }
 for i in 1 2 3 4; do git push origin HEAD:claude/master-file-e6ofy0 && break; sleep $((i*3)); git pull --rebase origin claude/master-file-e6ofy0; done
 cat "$NOTES"
