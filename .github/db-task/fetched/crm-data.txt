@@ -1,0 +1,14 @@
+== dashboard ==
+  keys: ['attempts', 'badig', 'customrecords', 'deleted', 'dm', 'followup', 'foodtrade', 'foodtradedone', 'ghosted', 'golfapproved', 'golfbadig', 'golfdm', 'igovr', 'inflbadig', 'infldeleted', 'infldm', 'inflstaging', 'inflstgapp', 'interested', 'modelstaging', 'nameoverride', 'notinterested', 'problem', 'projects', 'projects_at', 'rspriority', 'rsremoved', 'savedAt', 'savedBy', 'status', 'todos', 'todos_at', 'usernotes']
+  crmcustomers: EMPTY/null
+== dashboard_friend ==
+  keys: ['attempts', 'badig', 'customrecords', 'deleted', 'dm', 'igovr', 'inflstaging', 'modelstaging', 'nameoverride', 'ownerrecords', 'rsremoved', 'savedAt', 'savedBy']
+  crmcustomers: EMPTY/null
+== company_dashboard ==
+  keys: ['attempts', 'dm', 'inflstaging', 'modelstaging', 'rsremoved', 'savedAt', 'savedBy', 'status', 'todos']
+  crmcustomers: EMPTY/null
+== lvr_rewards ==
+  keys: ['-Osr2MoAuw7f_A2T6cGb', '-OsrCqet2KvBq9QB_qMe', '-OsrCqgzZOObJRXpwPvk', '-OsrCqk2FaH0BS7QaFlL', '-OsrCqnhMxeHHqid4hmy', '-OsrCqqGpo7MC6OpMonA', '-OssTztMqYpX1MheRjWL']
+  crmcustomers: EMPTY/null
+== root nodes ==
+  error
