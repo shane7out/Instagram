@@ -889,17 +889,17 @@ body {
             color:rgba(255,255,255,0.55);font-size:14px;letter-spacing:0.01em;
             border:1px solid rgba(255,255,255,0.25);border-radius:10px;
             padding:8px 20px;">Deals</a>
-
-  <!-- The ATL (friend 0604489: private Craigslist search, 1000mi radius of LV) -->
-  <a href="https://the-atl.web.app" target="_blank" rel="noopener"
+  <!-- CC: private credit-card manager (client-side encrypted) -->
+  <a href="https://lvr-cc.web.app" target="_blank" rel="noopener"
      style="display:inline-block;text-decoration:none;
             color:rgba(255,255,255,0.55);font-size:14px;letter-spacing:0.01em;
             border:1px solid rgba(255,255,255,0.25);border-radius:10px;
-            padding:8px 20px;">ALS</a><a href="https://private-table-lv.web.app" target="_blank" rel="noopener"
+            padding:8px 20px;">CC</a>
+  <a href="https://private-table-lv.web.app" target="_blank" rel="noopener"
      style="display:inline-block;text-decoration:none;
             color:rgba(255,255,255,0.55);font-size:14px;letter-spacing:0.01em;
             border:1px solid rgba(255,255,255,0.25);border-radius:10px;
-            padding:8px 20px;">PC</a>
+            padding:8px 20px;">Private Chef</a>
 
   <!-- Brandon (platepost.io) — passwordless link into his 10-restaurant view -->
   
@@ -965,7 +965,7 @@ body {
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
         <span aria-hidden="true" style="padding:12px 18px;font-size:26px;font-weight:900;line-height:1;visibility:hidden;flex-shrink:0;">✕</span>
         <span id="fb-msg" style="color:#fff !important;font-size:15px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;">Ready</span>
-        <script>var APP_VERSION=441;</script><script>(function(){/* v425 auto-update: stale open tabs reload themselves when a new version deploys — prevents old-code tabs (the root of cross-device weirdness) */var _l=0;function chk(){if(document.visibilityState!=="visible")return;var n=Date.now();if(n-_l<60000)return;_l=n;fetch("version.json?t="+n,{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}).then(function(j){if(!j||!j.v||j.v<=APP_VERSION)return;try{if(window._fbUnsaved||window._fbSaveTimer||window._fbSyncing)return;}catch(e){}location.reload();}).catch(function(){});}setInterval(chk,5*60*1000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")setTimeout(chk,1500);});setTimeout(chk,20000);})();</script><script>(function(){ var t=new Date(),h=t.getHours(),mi=t.getMinutes(),ap=h>=12?'PM':'AM'; h=h%12||12; var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; var ds=days[t.getDay()]+' '+(t.getMonth()+1)+'/'+t.getDate(); var txt=ds+' · '+h+':'+(mi<10?'0'+mi:mi)+' '+ap+' · v'+(typeof APP_VERSION!=='undefined'?APP_VERSION:7); var el=document.getElementById('fb-msg'); if(el){el.textContent=txt;el.style.color='#fff';el.style.fontSize='15px';el.style.textAlign='center';} var pv=document.getElementById('pin-version'); if(pv){pv.textContent=txt;pv.style.color='#fff';pv.style.fontSize='15px';pv.style.textAlign='center';} })();</script>
+        <script>var APP_VERSION=446;</script><script>(function(){/* v425 auto-update: stale open tabs reload themselves when a new version deploys — prevents old-code tabs (the root of cross-device weirdness) */var _l=0;function chk(){if(document.visibilityState!=="visible")return;var n=Date.now();if(n-_l<60000)return;_l=n;fetch("version.json?t="+n,{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}).then(function(j){if(!j||!j.v||j.v<=APP_VERSION)return;try{if(window._fbUnsaved||window._fbSaveTimer||window._fbSyncing)return;}catch(e){}location.reload();}).catch(function(){});}setInterval(chk,5*60*1000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")setTimeout(chk,1500);});setTimeout(chk,20000);})();</script><script>(function(){ var t=new Date(),h=t.getHours(),mi=t.getMinutes(),ap=h>=12?'PM':'AM'; h=h%12||12; var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; var ds=days[t.getDay()]+' '+(t.getMonth()+1)+'/'+t.getDate(); var txt=ds+' · '+h+':'+(mi<10?'0'+mi:mi)+' '+ap+' · v'+(typeof APP_VERSION!=='undefined'?APP_VERSION:7); var el=document.getElementById('fb-msg'); if(el){el.textContent=txt;el.style.color='#fff';el.style.fontSize='15px';el.style.textAlign='center';} var pv=document.getElementById('pin-version'); if(pv){pv.textContent=txt;pv.style.color='#fff';pv.style.fontSize='15px';pv.style.textAlign='center';} })();</script>
         <button id="logout-btn" onclick="logOut()" ontouchstart="_logoutTouchStart()" ontouchend="_logoutTouchEnd()" onmousedown="_logoutTouchStart()" onmouseup="_logoutTouchEnd()" onmouseleave="_logoutTouchEnd()" style="background:transparent;color:rgba(255,255,255,0.7);border:none;border-radius:10px;padding:12px 18px;font-size:26px;font-weight:900;cursor:pointer;flex-shrink:0;line-height:1;">✕</button>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
@@ -976,6 +976,7 @@ body {
         <button onclick="openStaffView()" ontouchend="event.preventDefault();openStaffView();" id="staff-tab-btn" style="background:#2E7D32;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">👔 Staff</button>
         <button onclick="openTimeClockView()" ontouchend="event.preventDefault();openTimeClockView();" id="timeclock-tab-btn" style="background:#00695C;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">⏱ Time</button>
         <button id="teams-tab-btn" onclick="window.open('https://lvr-data-a60c1.web.app/lvr-teams.html','_blank')" style="background:#F97316;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🍽 Teams</button>
+        <button onclick="showExperiencesView()" ontouchend="event.preventDefault();showExperiencesView();" id="experiences-tab-btn" style="background:#7B1FA2;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Experiences</button>
         <button id="restore-btn" onclick="openRestoreModal()" style="background:#455A64;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🛟 Restore</button>
         <input type="file" id="import-file-input" accept=".json,application/json,text/plain,*/*" onchange="importBackup(event)" style="display:none;">
       </div>
@@ -16238,5 +16239,38 @@ function tcDeleteEmployee() {
   _tcToast(emp.name+' removed','#FF9800');
 }
 </script>
-
+<style>body.lv-guest10 #experiences-tab-btn,body.lv-inflonly #experiences-tab-btn{display:none!important}</style>
+<script>(function(){
+var EXPDB='https://lvr-data-a60c1-default-rtdb.firebaseio.com/dashboard_exp_crec.json';
+window.showExperiencesView=function(){
+  var old=document.getElementById('exp-overlay'); if(old)old.remove();
+  var ov=document.createElement('div');
+  ov.id='exp-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#0F172A;color:#fff;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch;';
+  ov.innerHTML='<div style="display:flex;align-items:center;gap:10px;max-width:720px;margin:0 auto 14px;">'
+    +'<h2 style="margin:0;font-size:20px;flex:1;">🎢 LV Experiences <span id="exp-count" style="opacity:.6;font-size:14px;"></span></h2>'
+    +'<button onclick="document.getElementById(\'exp-overlay\').remove()" style="background:#334155;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-weight:700;cursor:pointer;">✕ Close</button></div>'
+    +'<div id="exp-list" style="max-width:720px;margin:0 auto;">Loading…</div>';
+  document.body.appendChild(ov);
+  fetch(EXPDB).then(function(r){return r.json()}).then(function(d){
+    var list=document.getElementById('exp-list'); if(!list)return;
+    d=d||{};
+    var rows=Object.keys(d).map(function(k){return d[k]}).filter(Boolean)
+      .sort(function(a,b){return (a.num||0)-(b.num||0)});
+    var c=document.getElementById('exp-count'); if(c)c.textContent='('+rows.length+')';
+    if(!rows.length){list.textContent='No experiences yet.';return;}
+    list.innerHTML=rows.map(function(r){
+      var ig=(r.instagram||'').replace('@','');
+      return '<div style="background:#1E293B;border-radius:10px;padding:14px 16px;margin-bottom:10px;">'
+        +'<div style="font-weight:800;font-size:16px;">'+(r.name||'')+'</div>'
+        +(ig?'<a href="https://instagram.com/'+ig+'" target="_blank" style="color:#38BDF8;text-decoration:none;font-size:14px;">@'+ig+'</a>':'')
+        +(r.notes?'<div style="opacity:.75;font-size:13.5px;margin-top:6px;">'+r.notes+'</div>':'')
+        +'</div>';
+    }).join('');
+  }).catch(function(e){
+    var list=document.getElementById('exp-list');
+    if(list)list.textContent='Could not load experiences: '+e;
+  });
+};
+})();</script>
 </body></html>
