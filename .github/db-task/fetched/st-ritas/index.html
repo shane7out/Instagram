@@ -3,11 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>St Rita's Retreat | Personal &amp; Group Retreat Center</title>
-<meta name="description" content="A quiet retreat center above the Rogue River Valley in Gold Hill, Oregon. Personal stays, group retreats, and hosted gatherings with simple comfort and supportive hosting.">
+<!--SEO-->
+<title>Retreat Center in Southern Oregon | St Rita's Retreat, Gold Hill</title>
+<meta name="description" content="A quiet retreat center on 63 acres above the Rogue River Valley in Gold Hill, Oregon. Personal and group retreats near Medford and Ashland.">
+<link rel="canonical" href="https://www.stritaretreat.com/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="geo.region" content="US-OR">
+<meta name="geo.placename" content="Gold Hill, Oregon">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="St Rita's Retreat">
+<meta property="og:title" content="Retreat Center in Southern Oregon | St Rita's Retreat, Gold Hill">
+<meta property="og:description" content="A quiet retreat center on 63 acres above the Rogue River Valley in Gold Hill, Oregon. Personal and group retreats near Medford and Ashland.">
+<meta property="og:url" content="https://www.stritaretreat.com/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Retreat Center in Southern Oregon | St Rita's Retreat, Gold Hill">
+<meta name="twitter:description" content="A quiet retreat center on 63 acres above the Rogue River Valley in Gold Hill, Oregon. Personal and group retreats near Medford and Ashland.">
+<meta name="theme-color" content="#17403c">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["LodgingBusiness","PlaceOfWorship"],"@id":"https://www.stritaretreat.com/#retreat","name":"St Rita's Retreat","description":"A personal and group retreat center on 63 acres above the Rogue River Valley in Gold Hill, Southern Oregon.","url":"https://www.stritaretreat.com","telephone":"+1-541-660-0032","email":"info@stritaretreat.com","address":{"@type":"PostalAddress","streetAddress":"10800 Blackwell Road","addressLocality":"Gold Hill","addressRegion":"OR","postalCode":"97525","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.439,"longitude":-123.047},"areaServed":[{"@type":"City","name":"Medford"},{"@type":"City","name":"Grants Pass"},{"@type":"City","name":"Ashland"},{"@type":"City","name":"Central Point"},{"@type":"State","name":"Oregon"}],"amenityFeature":[{"@type":"LocationFeatureSpecification","name":"Guest rooms","value":true},{"@type":"LocationFeatureSpecification","name":"Chapel","value":true},{"@type":"LocationFeatureSpecification","name":"Library","value":true},{"@type":"LocationFeatureSpecification","name":"Dining hall","value":true},{"@type":"LocationFeatureSpecification","name":"Grotto","value":true},{"@type":"LocationFeatureSpecification","name":"Labyrinth","value":true},{"@type":"LocationFeatureSpecification","name":"Walking trails","value":true},{"@type":"LocationFeatureSpecification","name":"Quiet hours","value":true}],"numberOfRooms":20,"petsAllowed":false,"smokingAllowed":false,"isAccessibleForFree":false,"currenciesAccepted":"USD"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.stritaretreat.com/"}]}</script>
+<!--/SEO-->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Karla:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -161,11 +179,11 @@
   <section class="videos section-sand">
     <div class="wrap">
       <h2>See the retreat</h2>
-      <p class="vid-intro">A walk through the grounds and buildings, filmed at St Rita&rsquo;s.</p>
+      <p class="vid-intro">A walk through the grounds and buildings at St Rita&rsquo;s, filmed on the hill.</p>
       <div class="vid-grid">
       <article class="vid">
         <div class="vid-frame" data-vid="llcRsfSUhvs">
-          <button class="vid-play" type="button" aria-label="Play: Welcome to St. Rita Retreat Center &mdash; a look around">
+          <button class="vid-play" type="button" aria-label="Play video: Welcome to St. Rita Retreat Center &mdash; a look around">
             <span class="vid-disc" aria-hidden="true">&#9654;</span>
             <span class="vid-cue">Play video</span>
           </button>
@@ -177,7 +195,7 @@
       </article>
       <article class="vid">
         <div class="vid-frame" data-vid="e9WlVu-hm_o">
-          <button class="vid-play" type="button" aria-label="Play: St. Rita Retreat Center, 2006">
+          <button class="vid-play" type="button" aria-label="Play video: St. Rita Retreat Center, 2006">
             <span class="vid-disc" aria-hidden="true">&#9654;</span>
             <span class="vid-cue">Play video</span>
           </button>
@@ -239,21 +257,19 @@
 <script src="assets/main.js"></script>
 
 <script>
-/* click-to-load YouTube: nothing loads from YouTube until the visitor asks for it */
+/* click-to-load: nothing is requested from YouTube until a visitor presses play */
 (function(){
   document.addEventListener('click', function (event) {
     var btn = event.target.closest && event.target.closest('.vid-play');
     if (!btn) return;
-    var frame = btn.parentNode;
-    var id = frame.getAttribute('data-vid');
+    var frame = btn.parentNode, id = frame.getAttribute('data-vid');
     if (!id) return;
     var f = document.createElement('iframe');
     f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
     f.title = btn.getAttribute('aria-label') || 'Video';
     f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
     f.allowFullscreen = true;
-    frame.innerHTML = '';
-    frame.appendChild(f);
+    frame.innerHTML = ''; frame.appendChild(f);
   });
 })();
 </script>
