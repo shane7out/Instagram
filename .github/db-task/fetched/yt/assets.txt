@@ -1,0 +1,39 @@
+200  2377  .github/db-task/fetched/st-ritas/img/rose-parchment.svg
+200  2377  .github/db-task/fetched/st-ritas/img/rose-blue.svg
+200  1239  .github/db-task/fetched/st-ritas/img/rose-32.png
+200  173899  .github/db-task/fetched/st-ritas/img/raw-hero.jpg
+200  129057  .github/db-task/fetched/st-ritas/img/raw-statue.jpg
+200  172066  .github/db-task/fetched/st-ritas/img/raw-entrance.jpg
+200  132924  .github/db-task/fetched/st-ritas/img/raw-gathering.jpg
+200  194437  .github/db-task/fetched/st-ritas/img/raw-grounds.jpg
+200  223773  .github/db-task/fetched/st-ritas/img/raw-group.jpg
+200  51661  .github/db-task/fetched/st-ritas/img/raw-grotto.jpg
+---- resized ----
+.github/db-task/task.sh: line 41: convert: command not found
+entrance     bytes
+.github/db-task/task.sh: line 41: convert: command not found
+gathering     bytes
+.github/db-task/task.sh: line 41: convert: command not found
+grotto     bytes
+.github/db-task/task.sh: line 41: convert: command not found
+grounds     bytes
+.github/db-task/task.sh: line 41: convert: command not found
+group     bytes
+.github/db-task/task.sh: line 41: convert: command not found
+hero     bytes
+.github/db-task/task.sh: line 41: convert: command not found
+statue     bytes
+---- rose svg head ----
+<svg width="225" height="335" viewBox="0 0 225 335" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 85C2.43437 62.5134 10.034 53.4688 37 45C20.8362 79.0781 31.0001 91.7003 72 106.5C147.533 128.957 168.014 150.673 148 213C179.158 186.935 191.277 165.253 203 113.5C204.925 105 211.35 99.2833 220 92.5C228.128 169.994 218.261 203.566 144.5 225C141.331 246.603 137.11 258 125 277L191 231.5C175.404 233.988 165.246 239.886 146 254C154.503 227.406 171.261 218.726 217 225C193.903 262.859 177.99 270.602 146 268C136.894 276.774 119 291 119 291C117.292 293.107 107 306.751 105.004 312.5C102.4 320 100.5 319.5 102 331C102.776 336.95 92.5844 335.5 92 331C90.9856 323.189 89.2146 317.964 92 311C100 
+page about 24012 bytes
+page stays-and-retreats 25353 bytes
+page availability 23364 bytes
+page contact 12401 bytes
+page faqs 30846 bytes
+total 20
+drwxr-xr-x 2 runner runner 4096 Sep  2 00:44 .
+drwxr-xr-x 3 runner runner 4096 Sep  2 00:44 ..
+-rw-r--r-- 1 runner runner 1239 Sep  2 00:44 rose-32.png
+-rw-r--r-- 1 runner runner 2377 Sep  2 00:44 rose-blue.svg
+-rw-r--r-- 1 runner runner 2377 Sep  2 00:44 rose-parchment.svg
