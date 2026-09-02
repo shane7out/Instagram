@@ -1,26 +1,28 @@
 /* St Rita's Retreat — site styles */
 
 :root {
-  --evergreen: #17403c;
-  --evergreen-dark: #0e2b28;
-  --sand: #f2f4ef;
-  --sand-deep: #e3e8df;
-  --paper: #ffffff;
-  --ink: #1a211e;
-  --stone: #6b7873;
-  --terracotta: #a8752a;
-  --line: #d6ddd4;
+  --evergreen: #4c6b57;
+  --evergreen-dark: #3a5544;
+  --sand: #f8f4ec;
+  --sand-deep: #f1eade;
+  --paper: #fffefb;
+  --ink: #2b2822;
+  --stone: #837c70;
+  --terracotta: #b9764f;
+  --line: #e6ddcc;
 
   --serif: "Fraunces", Georgia, "Times New Roman", serif;
   --sans: "Karla", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 
   --wrap: 1120px;
   --gutter: 24px;
-  --radius: 3px;
-  --moss: #3f6b5c;
-  --gold: #a8752a;
-  --gold-soft: #f0e6d0;
-  --shadow: 0 1px 2px rgba(23,64,60,.05), 0 8px 24px rgba(23,64,60,.06);
+  --radius: 4px;
+  --sage: #6d8a76;
+  --sage-pale: #e9f0ea;
+  --clay-pale: #f7ece3;
+  --shade-1: 0 1px 2px rgba(60,50,35,.04);
+  --shade-2: 0 2px 4px rgba(60,50,35,.04), 0 12px 28px rgba(60,50,35,.06);
+  --shade-3: 0 4px 10px rgba(60,50,35,.06), 0 20px 44px rgba(60,50,35,.08);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -216,7 +218,7 @@ img { max-width: 100%; display: block; }
   color: #fff;
   background:
     linear-gradient(180deg, rgba(20, 32, 24, 0.62), rgba(20, 32, 24, 0.5)),
-    radial-gradient(120% 90% at 20% 15%, #55705a 0%, #35513f 45%, #223428 100%);
+    radial-gradient(120% 90% at 20% 15%, #dfe9e1 0%, #cbdacf 45%, #b6c9bc 100%);
   overflow: hidden;
 }
 
@@ -368,7 +370,7 @@ section { padding-block: clamp(64px, 8vw, 104px); }
   aspect-ratio: 4 / 3;
   border-radius: var(--radius);
   overflow: hidden;
-  background: linear-gradient(160deg, #4a6650, #2f4739 60%, #24382c);
+  background: linear-gradient(160deg, #e3ece5, #cfdcd3 60%, #bccdc1);
 }
 .plate svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .plate-sand { background: linear-gradient(160deg, #e6dcc7, #d6c9ae 60%, #c8b998); }
@@ -768,37 +770,89 @@ section { padding-block: clamp(64px, 8vw, 104px); }
 }
 
 
-/* ---- palette refinements ---- */
-.section-sand { background: linear-gradient(180deg, var(--sand) 0%, #eef1ea 100%); }
-.quote { background: var(--evergreen-dark); color: #eef1ea; }
-.quote blockquote { color: #eef1ea; }
-a { color: var(--moss); }
-a:hover { color: var(--evergreen); }
-.btn { background: var(--evergreen); color: #fff; border: 1px solid var(--evergreen); }
-.btn:hover { background: var(--evergreen-dark); border-color: var(--evergreen-dark); }
-.btn-ghost { background: transparent; color: var(--evergreen); border: 1px solid var(--line); }
-.btn-ghost:hover { border-color: var(--evergreen); background: rgba(23,64,60,.04); }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+/* ================= refinement layer ================= */
 
-/* ---- video sections ---- */
-.videos { padding: 72px 0; }
-.videos .vid-intro { max-width: 60ch; margin: 0 0 32px; color: var(--stone); }
-.vid-grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-.vid { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
-  background: var(--paper); display: flex; flex-direction: column; box-shadow: var(--shadow); }
+body { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* Type: quieter, better rhythm. Fraunces wants a little optical sizing. */
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -.008em; text-wrap: balance; color: var(--evergreen-dark); }
+h1 { font-variation-settings: "opsz" 96, "SOFT" 20; line-height: 1.06; }
+h2 { font-variation-settings: "opsz" 48; line-height: 1.14; }
+p  { max-width: 68ch; }
+a  { color: var(--evergreen); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--evergreen-dark); }
+
+/* Header: hairline instead of a hard rule, gentle blur on scroll surfaces */
+.site-header { background: rgba(255,254,251,.86); backdrop-filter: saturate(1.3) blur(8px);
+  border-bottom: 1px solid var(--line); box-shadow: var(--shade-1); }
+.brand { color: var(--evergreen-dark); }
+.brand span { color: var(--stone); }
+.nav a { color: var(--ink); }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--evergreen); }
+
+/* Sections: more air, softer transitions between bands */
+.section-sand { background: linear-gradient(180deg, var(--sand) 0%, var(--sand-deep) 100%); }
+section { padding-block: clamp(56px, 8vw, 96px); }
+
+/* Hero: lighter, airier — no heavy slab */
+.hero { background: linear-gradient(178deg, var(--sand) 0%, var(--paper) 78%); }
+.hero h1 { color: var(--evergreen-dark); }
+.hero-ridge path:first-child { fill: #c9d6cb; }
+.hero-ridge path:last-child  { fill: #dde6dd; }
+
+/* Quote band: pale sage rather than a dark slab, so the page stays light */
+.quote { background: var(--sage-pale); color: var(--evergreen-dark); border-block: 1px solid var(--line); }
+.quote blockquote { color: var(--evergreen-dark); }
+.quote cite, .quote figcaption { color: var(--stone); }
+
+/* Buttons: quiet, confident */
+.btn { background: var(--evergreen); color: #fff; border: 1px solid var(--evergreen);
+  border-radius: var(--radius); box-shadow: var(--shade-1); transition: background .16s, box-shadow .16s, transform .1s; }
+.btn:hover { background: var(--evergreen-dark); border-color: var(--evergreen-dark); box-shadow: var(--shade-2); }
+.btn:active { transform: translateY(1px); }
+.btn-ghost { background: transparent; color: var(--evergreen); border: 1px solid var(--line); box-shadow: none; }
+.btn-ghost:hover { border-color: var(--evergreen); background: rgba(76,107,87,.05); }
+:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 3px; border-radius: 2px; }
+
+/* Cards: lift with light, not lines */
+.card, .facility, .tier, .panel {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shade-1); transition: box-shadow .18s, transform .18s; }
+.card:hover, .facility:hover, .tier:hover { box-shadow: var(--shade-2); transform: translateY(-2px); }
+
+/* Calendar: legible on cream */
+.cal-day.booked  { background: var(--clay-pale); color: #8a4f30; border-color: #ecd9c9; }
+.cal-day.held    { background: #fdf6e3; color: #8a6d2f; border-color: #efe3c6; }
+.cal-day.open    { background: var(--paper); color: var(--ink); }
+.cal-legend span { color: var(--stone); }
+
+/* ---- videos, on light ground ---- */
+.videos .vid-intro { max-width: 62ch; margin: 0 0 34px; color: var(--stone); }
+.vid-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.vid { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shade-1);
+  transition: box-shadow .18s, transform .18s; }
+.vid:hover { box-shadow: var(--shade-2); transform: translateY(-2px); }
 .vid-frame { position: relative; aspect-ratio: 16 / 9;
-  background: linear-gradient(155deg, var(--moss) 0%, var(--evergreen-dark) 100%); }
+  background: linear-gradient(155deg, #dfe8e0 0%, #c6d4c8 100%); }
 .vid-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .vid-play { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; cursor: pointer;
   background: transparent; display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 12px; color: #eef1ea; padding: 20px; }
+  flex-direction: column; gap: 11px; color: var(--evergreen-dark); padding: 20px; }
 .vid-play:hover .vid-disc, .vid-play:focus-visible .vid-disc {
-  transform: scale(1.06); background: var(--gold); border-color: var(--gold); color: #fff; }
-.vid-disc { width: 58px; height: 58px; border-radius: 50%; border: 2px solid #eef1ea;
-  display: flex; align-items: center; justify-content: center; font-size: 20px; padding-left: 4px;
-  transition: transform .15s, background .15s, color .15s, border-color .15s; }
-.vid-cue { font: 500 12px/1.4 var(--sans); letter-spacing: .09em; text-transform: uppercase; opacity: .9; }
-.vid-meta { padding: 16px 18px 18px; }
-.vid-meta h3 { font: 500 20px/1.3 var(--serif); margin: 0 0 4px; color: var(--evergreen); }
-.vid-meta .vid-by { font: 400 13px/1.5 var(--sans); color: var(--stone); margin: 0; }
-@media (prefers-reduced-motion: reduce) { .vid-disc { transition: none; } }
+  background: var(--evergreen); border-color: var(--evergreen); color: #fff; transform: scale(1.06); }
+.vid-disc { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.82);
+  border: 1px solid rgba(76,107,87,.45); display: flex; align-items: center; justify-content: center;
+  font-size: 19px; padding-left: 3px; box-shadow: var(--shade-1);
+  transition: transform .16s, background .16s, color .16s, border-color .16s; }
+.vid-cue { font: 500 11.5px/1.4 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--stone); }
+.vid-meta { padding: 17px 19px 19px; }
+.vid-meta h3 { font-size: 20px; margin: 0 0 5px; }
+.vid-by { font: 400 13px/1.5 var(--sans); color: var(--stone); margin: 0; }
+
+footer { background: var(--sand); border-top: 1px solid var(--line); color: var(--stone); }
+footer a { color: var(--evergreen); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
