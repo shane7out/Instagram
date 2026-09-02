@@ -1,0 +1,13 @@
+{
+  "updated": "2026-09-01",
+  "timezone": "America/Los_Angeles",
+  "note": "Dates are nights occupied, inclusive of both start and end. A stay arriving Sep 14 and departing Sep 17 occupies the nights of Sep 14, 15 and 16, so it is recorded as start 2026-09-14, end 2026-09-16.",
+  "blocks": [
+    { "start": "2026-09-11", "end": "2026-09-13", "status": "booked", "label": "Parish weekend" },
+    { "start": "2026-09-25", "end": "2026-09-27", "status": "booked", "label": "Group retreat" },
+    { "start": "2026-10-05", "end": "2026-10-08", "status": "held", "label": "Tentative hold" },
+    { "start": "2026-10-16", "end": "2026-10-18", "status": "booked", "label": "Group retreat" },
+    { "start": "2026-11-02", "end": "2026-11-06", "status": "closed", "label": "House maintenance" },
+    { "start": "2026-11-20", "end": "2026-11-22", "status": "booked", "label": "Day of reflection" }
+  ]
+}
