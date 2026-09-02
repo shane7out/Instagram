@@ -1,0 +1,43 @@
+thumb llcRsfSUhvs maxresdefault http=404 bytes=1097
+thumb llcRsfSUhvs sddefault http=200 bytes=51661
+frame llcRsfSUhvs 1 http=200 bytes=3934
+frame llcRsfSUhvs 2 http=200 bytes=4486
+frame llcRsfSUhvs 3 http=200 bytes=4881
+thumb e9WlVu-hm_o maxresdefault http=404 bytes=1097
+thumb e9WlVu-hm_o sddefault http=404 bytes=1097
+thumb e9WlVu-hm_o hqdefault http=200 bytes=26528
+frame e9WlVu-hm_o 1 http=200 bytes=4365
+frame e9WlVu-hm_o 2 http=200 bytes=3099
+frame e9WlVu-hm_o 3 http=200 bytes=4393
+watchpage llcRsfSUhvs bytes=1224413
+==== llcRsfSUhvs ====
+keywords        video, sharing, camera phone, video phone, free, upload
+watchpage e9WlVu-hm_o bytes=1020407
+==== e9WlVu-hm_o ====
+keywords        video, sharing, camera phone, video phone, free, upload
+domain stritaretreat.org http=000 bytes=0
+domain stritasretreat.org http=000 bytes=0
+domain st-ritas.org http=200 bytes=38597
+<title>
+domain stritaretreatcenter.org http=000 bytes=38597
+domain stritaretreat.com http=200 bytes=24777
+<title>
+<meta content="https://cdn.prod.website-files.com/697c3a303419b908ce7938f2/69aab17b281424604b23e5be_St-Rita_Home-OG_02-17-2026_crop-opt.jpg" property="og:image"/>
+<title>
+<title>
+domain stritasretreatcenter.com http=000 bytes=24777
+---- files ----
+total 200
+drwxr-xr-x 2 runner runner  4096 Sep  2 00:42 .
+drwxr-xr-x 5 runner runner  4096 Sep  2 00:42 ..
+-rw-r--r-- 1 runner runner  4365 Sep  2 00:42 e9WlVu-hm_o-f1.jpg
+-rw-r--r-- 1 runner runner  3099 Sep  2 00:42 e9WlVu-hm_o-f2.jpg
+-rw-r--r-- 1 runner runner  4393 Sep  2 00:42 e9WlVu-hm_o-f3.jpg
+-rw-r--r-- 1 runner runner 26528 Sep  2 00:42 e9WlVu-hm_o-hqdefault.jpg
+-rw-r--r-- 1 runner runner  3934 Sep  2 00:42 llcRsfSUhvs-f1.jpg
+-rw-r--r-- 1 runner runner  4486 Sep  2 00:42 llcRsfSUhvs-f2.jpg
+-rw-r--r-- 1 runner runner  4881 Sep  2 00:42 llcRsfSUhvs-f3.jpg
+-rw-r--r-- 1 runner runner 51661 Sep  2 00:42 llcRsfSUhvs-sddefault.jpg
+-rw-r--r-- 1 runner runner  1238 Sep  2 00:42 notes.txt
+-rw-r--r-- 1 runner runner 38597 Sep  2 00:42 site-st-ritas.org.html
+-rw-r--r-- 1 runner runner 24777 Sep  2 00:42 site-stritaretreat.com.html
