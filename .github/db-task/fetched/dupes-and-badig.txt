@@ -1,0 +1,165 @@
+dashboard_crec -> 108961 bytes
+dashboard/customrecords -> 175544 bytes
+dashboard/badig -> 2936 bytes
+dashboard/deleted -> 9162 bytes
+dashboard/igovr -> 79 bytes
+dashboard/nameoverride -> 94 bytes
+
+==== sizes ====
+dashboard_crec        : 815
+customrecords         : 1249
+badig entries         : 237
+deleted entries       : 811
+igovr (IG overrides)  : 3
+live records (deleted excluded): 2059
+
+==== DUPLICATES ====
+A. same IG handle AND same name  : 707 groups, 709 rows would be removed
+B. same IG handle, different name: 0 groups, 0 rows
+C. same name, different IG       : 5 groups, 8 rows
+
+---- A. same IG + same name  (safe to collapse) (showing 20 of 707) ----
+  shookshakery  x3
+      1289    Shook Shakery                            @shookshakery               cust
+      50801   Shook Shakery                            @shookshakery               crec
+      50801   Shook Shakery                            @shookshakery               cust
+  ccspeakeasylv  x3
+      1296    CC Speakeasy                             @ccspeakeasylv              cust
+      50809   CC Speakeasy                             @ccspeakeasylv              crec
+      50809   CC Speakeasy                             @ccspeakeasylv              cust
+  ascendedtaste_lv  x2
+      50113   Ascendedtaste                            @ascendedtaste_lv           crec
+      50113   Ascendedtaste                            @ascendedtaste_lv           cust
+  corkandthorn  x2
+      50114   Cork & Thorn                             @corkandthorn               crec
+      50114   Cork & Thorn                             @corkandthorn               cust
+  royalcoffeelasvegas  x2
+      50115   Royal Coffee Roasting                    @royalcoffeelasvegas        crec
+      50115   Royal Coffee Roasting                    @royalcoffeelasvegas        cust
+  custompizzafoodtruck  x2
+      50116   Custom Pizza Food Truck                  @custompizzafoodtruck       crec
+      50116   Custom Pizza Food Truck                  @custompizzafoodtruck       cust
+  thelasvegasbakery  x2
+      50117   The Las Vegas Bakery                     @thelasvegasbakery          crec
+      50117   The Las Vegas Bakery                     @thelasvegasbakery          cust
+  anyaurbanthai  x2
+      50118   Anya Urban Thai                          @anyaurbanthai              crec
+      50118   Anya Urban Thai                          @anyaurbanthai              cust
+  taqueriaelparienteoriginal  x2
+      50119   Taqueria El Pariente                     @taqueriaelparienteoriginal crec
+      50119   Taqueria El Pariente                     @taqueriaelparienteoriginal cust
+  elchinotacos  x2
+      50120   El Chinos Tacos                          @elchinotacos               crec
+      50120   El Chinos Tacos                          @elchinotacos               cust
+  lugoscoffee  x2
+      50121   Lugo's Coffee                            @lugoscoffee                crec
+      50121   Lugo's Coffee                            @lugoscoffee                cust
+  abyssinialasvegas  x2
+      50122   Abyssinia                                @abyssinialasvegas          crec
+      50122   Abyssinia                                @abyssinialasvegas          cust
+  sweetkingsvegas  x2
+      50123   Sweet Kings                              @sweetkingsvegas            crec
+      50123   Sweet Kings                              @sweetkingsvegas            cust
+  chefchyina  x2
+      50124   Chef Chyina                              @chefchyina                 crec
+      50124   Chef Chyina                              @chefchyina                 cust
+  nanas_house_of_soul_food  x2
+      50125   Nana's house of Soul Food                @nanas_house_of_soul_food   crec
+      50125   Nana's house of Soul Food                @nanas_house_of_soul_food   cust
+  soyteppanyakicatering  x2
+      50126   NSF HibachiCatering                      @soyteppanyakicatering      crec
+      50126   NSF HibachiCatering                      @soyteppanyakicatering      cust
+  goodinsgoodies  x2
+      50127   Goodin's Goodies                         @goodinsgoodies             crec
+      50127   Goodin's Goodies                         @goodinsgoodies             cust
+  topshakaslv  x2
+      50128   Top Shakas Food Co                       @topshakaslv                crec
+      50128   Top Shakas Food Co                       @topshakaslv                cust
+  chili.shack  x2
+      50129   Chili Shack                              @chili.shack                crec
+      50129   Chili Shack                              @chili.shack                cust
+  konacoffeehouselv  x2
+      50130   Kona Coffee House LV                     @konacoffeehouselv          crec
+      50130   Kona Coffee House LV                     @konacoffeehouselv          cust
+
+---- B. same IG, different name  (check these) (showing 0 of 0) ----
+
+---- C. same name, different IG  (check these) (showing 5 of 5) ----
+  viva  x4
+      50465   VIVA!                                    @eatdrinkviva               crec
+      50465   VIVA!                                    @eatdrinkviva               cust
+      50867   Viva                                     @                           crec
+      50867   Viva                                     @                           cust
+  oodlenoodle  x3
+      1358    Oodle_Noodle                             @oodle_noodle_lv            cust
+      50913   Oodle Noodle                             @                           crec
+      50913   Oodle Noodle                             @                           cust
+  aiponocafe  x2
+      50164   Ai pono Cafe                             @aiponocafelasvegas         crec
+      50164   Ai pono Cafe                             @aiponocafe                 cust
+  mikiyawagyushabuhouse  x2
+      50187   Mikiya Wagyu Shabu House                 @mikiyalasvegas             crec
+      50187   Mikiya Wagyu Shabu House                 @mikiyashabu                cust
+  enzaramenkatsucurry  x2
+      50266   Enza Ramen Katsu Curry                   @enza_rainbowlv             crec
+      50266   Enza Ramen Katsu Curry                   @enza.ramen_katsu_curry     cust
+
+==== same record number appearing twice ====
+  815 numbers appear more than once
+  by source pair: {('crec', 'cust'): 815}
+
+==== BAD IG ====
+flagged bad-IG record numbers: 237
+of those, still live (not deleted): 144
+with something website-ish in notes/address: 1
+already carrying an IG override: 1
+
+first 40 bad-IG records:
+  50125   Nana's house of Soul Food                  @nanas_house_of_soul_food   Manually added
+  50204   Whiskful Thinking Cakes                    @whiskfulthinkingcakes      Manually added
+  50206   Backyard Bbq Village                       @baackyardbbqvillage        Manually added
+  50221   Bowltastic                                 @bowltasticfood             Manually added
+  50278   Teriyaki Madness                           @teriyaakimadnesslv         Manually added
+  50315   Sonrisa Grill                              @sonrisagrill.nv            Manually added
+  50345   Earthly Plant Based Eatery                 @eathlyplantbased           Manually added
+  50360   El chavo handcrafted snack bar             @aguas_el_chaavo            Manually added
+  50395   Snooze                                     @eatsnooze                  Manually added
+  50608   La Flor De Michoacan Ice Cream             @laflordemichoacanicecrea   
+  50611   Korea House                                @korehouselv                
+  50745   Dom DeMarco’s Pizzeria & Wine Bar          @domdemarcos                
+  50816   Wok To Walk                                @                           Manually added - no IG found
+  50817   Trap Wingz                                 @                           Yelp migration - IG needed
+  50818   Daikon Vegan Sushi                         @                           Yelp migration - IG needed
+  50820   Lucino's Pizza                             @                           Yelp migration - IG needed
+  50821   Sul & Beans                                @                           Yelp migration - IG needed
+  50822   Vanderpump A Paris                         @                           Yelp migration - IG needed
+  50823   Lady M Cake Boutique                       @                           Yelp migration - IG needed
+  50824   Paina Cafe                                 @                           Yelp migration - IG needed
+  50825   Brooklyns Best Pizza & Pasta               @                           Yelp migration - IG needed
+  50826   Fishers Deli                               @                           Yelp migration - IG needed
+  50827   Halgatteok                                 @                           Yelp migration - IG needed
+  50828   Waffles Cafe                               @                           Yelp migration - IG needed
+  50829   Big Mamas Wings & Things                   @                           Yelp migration - IG needed
+  50830   McMullans Irish Pub                        @                           Yelp migration - IG needed
+  50831   Birria - Bite los Arcos                    @                           Yelp migration - IG needed
+  50832   Hello Hibachi                              @                           Yelp migration - IG needed
+  50833   702 Prep                                   @                           Yelp migration - IG needed
+  50834   Bar Boheme                                 @                           Yelp migration - IG needed
+  50835   Finesse Catering and Events                @                           Yelp migration - IG needed
+  50836   The Pinky Ring by Bruno Mars               @                           Yelp migration - IG needed
+  50837   Bazaar Mar by Jose Andres                  @                           Yelp migration - IG needed
+  50838   El Manantial Restaurant                    @                           Yelp migration - IG needed
+  50839   Noodle Nest                                @                           Yelp migration - IG needed
+  50840   Lammys Bakehouse                           @                           Yelp migration - IG needed
+  50841   Mariposa Cocina & Cocktails                @                           Yelp migration - IG needed
+  50842   Geos Tacos                                 @                           Yelp migration - IG needed
+  50843   Scarpetta                                  @                           Yelp migration - IG needed
+  50844   The Sand Dollar Downtown                   @                           Yelp migration - IG needed
+
+==== web reachability from the runner ====
+  duckduckgo html -> http=202 bytes=14246
+  duckduckgo lite -> http=202 bytes=14251
+  bing -> http=200 bytes=124883
+  (control, expected fail) -> http=000 bytes=124883
+  instagram profile -> http=200 bytes=625207
+  a restaurant website -> http=200 bytes=10912
