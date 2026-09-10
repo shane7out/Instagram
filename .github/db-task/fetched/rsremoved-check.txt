@@ -1,0 +1,14 @@
+rsremoved: 4871 bytes | friend: 1501 bytes
+rsremoved entries          : 487
+numeric keys               : 487
+key range                  : 20001 .. 20487
+staging nums 20001..20487  : 487
+staging nums marked removed: 487
+staging nums still live    : 0
+rsremoved keys OUTSIDE the staging range: 0 []
+
+sample of the values stored: {'20001': 1, '20002': 1, '20003': 1, '20004': 1, '20005': 1}
+
+friend rsremoved entries   : 150
+
+==> live staging queue size = 0
