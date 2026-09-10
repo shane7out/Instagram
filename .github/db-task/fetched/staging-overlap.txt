@@ -1,0 +1,71 @@
+crec 108961  cust 175544  deleted 9162  rsremoved 4871
+staging records parsed: 487
+num range: 20001 .. 20487  (contiguous: True)
+
+==== how much of the staging queue is already in the main database? ====
+  already there (IG and name match) : 5
+  already there (IG only)           : 12
+  already there (name only)         : 22
+  ------------------------------------------
+  ALREADY IN MAIN DB                : 39 of 487
+  GENUINELY NEW                     : 448 of 487
+
+==== owner-removed staging entries (dashboard/rsremoved) ====
+  entries: 487
+  staging records NOT yet removed: 0
+
+==== cuisine spread of the genuinely-new ones ====
+   Italian-American                       6
+   American Steakhouse                    5
+   Southern American                      4
+   North Indian                           4
+   Vietnamese Pho                         3
+   Mediterranean/Lebanese                 3
+   Modern Mexican                         3
+   Breakfast/Brunch                       3
+   Modern Steakhouse                      3
+   American Burgers                       3
+   Italian                                3
+   Modern Chinese                         3
+   Italian Seafood                        3
+   Classic Steakhouse                     3
+   Mexican Street Food                    3
+
+==== first 30 genuinely new (not in main db) ====
+   20002   Yardbird Table & Bar                   @yardbirdlv                 Southern American
+   20003   Herbs & Rye                            @herbsandryelv              New American/Cocktail Ba
+   20005   Glutton                                @glutton_lv                 New American Comfort
+   20007   Penny Quarter                          @pennyquarterlv             New American Bar
+   20008   Insert Coins                           @insertcoinslv              Bar/Arcade/American
+   20011   Lady Luck Cocktail Lounge              @ladylucklv                 Cocktail Bar/Bites
+   20013   Vesta Coffee Roasters                  @vestacoffeelv              Specialty Coffee/Cafe
+   20014   The Black Sheep                        @theblacksheeplv            New American/Fusion
+   20015   PKWY Tavern Multiple                   @pkwytavern                 American Sports Bar/Brun
+   20016   Sunrise Coffee Las Vegas               @sunrisecoffeelv            Coffee/Breakfast/Brunch
+   20017   Raku                                   @rakulv                     Japanese Robata/Izakaya
+   20018   Sweets Raku                            @sweetsraku                 Japanese Patisserie/Dess
+   20019   Monta Ramen                            @montaramen                 Japanese Ramen
+   20020   Pho Bosa                               @phobosalv                  Vietnamese Pho
+   20021   HongKong BBQ Cafe                      @hongkongbbqlv              Cantonese BBQ/Dim Sum
+   20022   Veggie House                           @veggiehouse_lv             Vegan Chinese
+   20023   Bachi Burger                           @bachiburgerlv              Asian Fusion Burgers
+   20024   Little Sheep Hot Pot                   @littlesheephotpot          Mongolian Hot Pot
+   20025   Honey Salt                             @honeysaltlv                American Farm-to-Table
+   20026   Cleo\'s Mediterranean Cuisine          @cleolv                     Mediterranean/Lebanese
+   20027   La Cave Wine & Food Hideaway           @lacavelv                   Wine Bar/Mediterranean
+   20028   Todd\'s Unique Dining                  @toddsuniquedining          New American Fine Dining
+   20030   Bonefish Grill Summerlin               @bonefishgrill              Seafood/American
+   20031   Egg Works                              @eggworkslv                 Breakfast/Brunch/America
+   20033   Viet Noodle Bar                        @vietnoodlebarlv            Vietnamese Pho/Noodles
+   20034   Lucille\'s Smokehouse Bar-B-Que        @lucillesbbq                Southern BBQ Chain
+   20035   Station House                          @stationhouselv             New American/Brunch
+   20036   Tacos El Compita                       @tacoscompita               Authentic Mexican Tacos
+   20037   Sendero Modern Mexican Kitchen         @senderolv                  Modern Mexican
+   20038   Hana Japanese Eatery                   @hanajapaneselv             Japanese/Sushi/Izakaya
+
+==== data quality inside the staging list ====
+  blank fields: {'phone': 1, 'email': 1}
+  duplicate IG handles inside staging: none
+  duplicate names inside staging: ['herbsrye', 'makersfinders', 'vestacoffeeroasters', 'sweetsraku', 'bachiburger', 'toddsuniquedining', 'bonannosnewyorkpizzeria', 'stksteakhouselasvegas', 'sammysrestaurantbar']
+  duplicate nums inside staging: none
+  staging nums colliding with main-db nums: none
