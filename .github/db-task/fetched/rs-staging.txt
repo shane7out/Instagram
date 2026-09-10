@@ -1,0 +1,14 @@
+seed-data.js: 1295083 bytes
+top-level arrays declared:
+    ADVERTISERS_STAGING
+    RESTAURANTS_BASE
+    RESTAURANTS_STAGING
+    GOLF_STAGING
+    MODELS_STAGING_SEED
+    INFL_STAGING_SEED
+
+RESTAURANTS_STAGING blob: 108683 bytes
+  could not parse: Expecting value: line 2 column 23 (char 24)
+  first 400 chars: [
+  {num:20001,name:'Sparrow + Wolf',ig:'sparrowandwolflv',phone:'(702) 790-2147',email:'info@sparrowandwolflv.com',cuisine:'New American/Small Plates',address:'4480 Spring Mountain Rd Ste 100, Las Vegas, NV 89102',defaultStatus:'pending'},
+  {num:20002,name:'Yardbird Table & Bar',ig:'yardbirdlv',phone:'(702) 297-6541',email:'info@yardbirdlv.com',cuisine:'Southern American',address:'3355 S Las Veg
