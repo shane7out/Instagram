@@ -1,0 +1,41 @@
+==== instagram profile fingerprinting ====
+  @herbsandrye  http=429 bytes=0 notfound_markers=0
+      og:title = <none>
+      og:desc  = <none>
+  @nobu  http=429 bytes=0 notfound_markers=0
+      og:title = <none>
+      og:desc  = <none>
+  @pinkboxdoughnuts  http=429 bytes=0 notfound_markers=0
+      og:title = <none>
+      og:desc  = <none>
+  @zzzz_definitely_not_a_real_handle_9911  http=429 bytes=0 notfound_markers=0
+      og:title = <none>
+      og:desc  = <none>
+  @qqqq_nope_8842  http=429 bytes=0 notfound_markers=0
+      og:title = <none>
+      og:desc  = <none>
+
+==== bing: instagram handles + website, for real bad-IG records ====
+  --- Trap Wingz (bing 123441 bytes) ---
+      ig candidates: none
+      website candidates: ['www.w3.org', 'schemas.live.com', 'www.imdb.com', 'www.rottentomatoes.com', 'www.britannica.com']
+  --- Daikon Vegan Sushi (bing 123943 bytes) ---
+      ig candidates: none
+      website candidates: ['www.w3.org', 'schemas.live.com', 'timepilot.co', 'cinephoria.fr', 'www.cinefil.com']
+  --- McMullans Irish Pub (bing 122097 bytes) ---
+      ig candidates: none
+      website candidates: ['www.w3.org', 'schemas.live.com', 'notes.io', 'storage.live.com']
+  --- Scarpetta (bing 123767 bytes) ---
+      ig candidates: none
+      website candidates: ['www.w3.org', 'schemas.live.com', 'm.imdb.com', 'www.primevideo.com', 'www.rogerebert.com']
+  --- The Sand Dollar Downtown (bing 125090 bytes) ---
+      ig candidates: none
+      website candidates: ['www.w3.org', 'schemas.live.com', 'thisissand.com', 'www.homedepot.com', 'www.britannica.com']
+  --- Backyard Bbq Village (bing 123756 bytes) ---
+      ig candidates: none
+      website candidates: ['www.w3.org', 'schemas.live.com', 'www.hgtv.com', 'www.backyarddiscovery.com', 'www.backyardbaseball.com']
+
+==== scraping a website for its instagram link ====
+  https://www.sanddollarlv.com/ http=000 bytes=0 -> no ig link found
+  https://mcmullansirishpub.com/ http=200 bytes=39966 -> no ig link found
+  https://herbsandrye.com/ http=200 bytes=10912 -> instagram.com/herbsandrye 
