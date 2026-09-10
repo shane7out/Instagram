@@ -1,0 +1,36 @@
+unique live records (by num): 1244
+  in both nodes : 815
+  customrecords only: 429
+  dashboard_crec only: 0
+
+==== REAL DUPLICATES (one restaurant, two record numbers) ====
+A. same IG + same name      :   3 groups ->   3 rows to delete
+B. same IG, different name  :   0 groups ->   0 rows
+C. same name, different IG  :   2 groups ->   2 rows
+                              TOTAL removable: 5
+
+---- A. same IG + same name (3 groups) ----
+  area15official
+      KEEP   1263    Area 15                                @area15official           2fld cust
+      delete 50808   AREA15                                 @area15official           1fld cust
+  shookshakery
+      KEEP   1289    Shook Shakery                          @shookshakery             2fld cust
+      delete 50801   Shook Shakery                          @shookshakery             1fld both
+  ccspeakeasylv
+      KEEP   1296    CC Speakeasy                           @ccspeakeasylv            2fld cust
+      delete 50809   CC Speakeasy                           @ccspeakeasylv            1fld both
+
+---- B. same IG, different name (0 groups) ----
+
+---- C. same name, different IG (2 groups) ----
+  oodlenoodle
+      KEEP   1358    Oodle_Noodle                           @oodle_noodle_lv          2fld cust
+      delete 50913   Oodle Noodle                           @                         1fld badIG,both
+  viva
+      delete 50465   VIVA!                                  @eatdrinkviva             0fld both
+      KEEP   50867   Viva                                   @                         1fld badIG,both
+
+==== proposed delete lists ====
+A: [50801, 50808, 50809]
+B: []
+C: [50465, 50913]
