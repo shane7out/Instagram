@@ -1,0 +1,103 @@
+crec 108961  cust 175544  advstg 22964  adv 78154
+
+==== counts ====
+dashboard_crec           : 815
+dashboard/customrecords  : 1249
+dashboard_adv_crec       : 541
+dashboard_adv_stg_crec   : 128
+
+---- fields in dashboard_crec (n=815) ----
+   instagram                815  (100%)
+   name                     815  (100%)
+   num                      815  (100%)
+   notes                    423  (52%)
+   igHandle                 398  (49%)
+   address                  289  (35%)
+   cuisine                  289  (35%)
+   email                    289  (35%)
+   owner                    289  (35%)
+   phone                    289  (35%)
+
+---- fields in dashboard_adv_stg_crec (n=128) ----
+   cat                      128  (100%)
+   ig                       128  (100%)
+   name                     128  (100%)
+   notes                    128  (100%)
+   num                      128  (100%)
+   defaultStatus            124  (97%)
+   email                    124  (97%)
+   phone                    124  (97%)
+   status                   124  (97%)
+   category                   4  (3%)
+
+---- a sample advertiser-staging record ----
+{
+  "cat": "Interior Designer",
+  "defaultStatus": "pending",
+  "email": "",
+  "ig": "theidearoomlv",
+  "name": "The Idea Room LV",
+  "notes": "",
+  "num": 8101,
+  "phone": "",
+  "status": "pending"
+}
+
+==== restaurants with an IG handle: 1830 of 2064 ====
+
+==== flagged as recently opened / dated 2025-2026 (4) ====
+  50919   Cobra Clutch                           @cobraclutch_lv              2026           Manually added - cocktail/sake bar, Arts District, opening 2026
+  50919   Cobra Clutch                           @cobraclutch_lv              2026           Manually added - cocktail/sake bar, Arts District, opening 2026
+  50689   Golden Egg Ice Cream                   @goldenegglv                 Brand new      Brand new — opened 4/22, only 4 posts; good timing angle
+  50689   Golden Egg Ice Cream                   @goldenegglv                 Brand new      Brand new — opened 4/22, only 4 posts; good timing angle
+
+==== 40 highest-numbered records with an IG handle (most recently added) ====
+  50932   Sofra Taverna                            @sofra_taverna               Manually added from IG profile screenshot - Mediterranean/Balkan resta
+  50931   Two Sisters Broasted Chicken & Ribs      @officialtwosistersbroasted  Manually added - broasted chicken & ribs, Skye Canyon + Henderson
+  50930   Chubby's Pub                             @chubbyspublv                Manually added - neighborhood bar/pub, Las Vegas
+  50929   Bet on Bread                             @betonbread                  Manually added - fresh-milled organic sourdough, farmers markets + wee
+  50928   Tacos El Panzon                          @tacoselpanzonlv             Manually added - Tijuana-style tacos, N Las Vegas Blvd
+  50920   Jive Turkey                              @jiveturkeydive              Manually added - late-night bar & grub, Huntridge/Downtown
+  50919   Cobra Clutch                             @cobraclutch_lv              Manually added - cocktail/sake bar, Arts District, opening 2026
+  50896   Big Dan Xian Taste                       @bigdanxiantaste             Manually added - Xian hand-pulled noodles, 5115 Spring Mountain Rd
+  50895   Sushi Mon - Sahara                       @sushimonsahara8320          Manually added - AYCE sushi, 8320 W Sahara Ave
+  50882   Gabriels Kitchen Las Vegas               @gabrielskitchenlasvegas     Manually added - Boston style pizzeria (North End Pizza)
+  50877   Mt. Charleston Lodge                     @mtcharlestonlodgelv         Manually added - Pine Dining restaurant at the lodge
+  50856   Highland Flame Grill                     @highlandflamegrill          Manually added
+  50815   El Rey                                   @elreylasvegas               Manually added
+  50814   Pollos El Dorado                         @polloseldorado.vegas        Manually added
+  50813   Doh Korean BBQ                           @doh_korean_bbq_1            Manually added
+  50812   Durango Taco Shop                        @durangotacoshop7            Manually added
+  50811   Sorellina Cucina Italiana                @sorellinalasvegas           Manually added
+  50810   Casa de Raku                             @casaderaku                  Manually added
+  50809   CC Speakeasy                             @ccspeakeasylv               Manually added
+  50808   AREA15                                   @area15official              Manually added
+  50807   Kassi Beach House                        @kassibeachhouse             Manually added
+  50806   Pats Patty's                             @patspattyslv                Manually added
+  50805   Bali Cafe Las Vegas                      @balicafelv                  Manually added
+  50804   Tacotarian                               @eattacotarian               Manually added
+  50803   Pioneer Saloon                           @pioneersaloonnevada         Manually added
+  50802   Rutba Indian Kitchen                     @rutbaindianvegas            Manually added
+  50801   Shook Shakery                            @shookshakery                Manually added
+  50800   Black Label Burger Company               @blacklabelburgerco          Manually added
+  50799   Fortune Seafood Restaurant               @fortunelasvegas             Manually added
+  50798   The LINQ                                 @thelinq                     Manually added
+  50797   Daiquiri Bar                             @daiquiribarlv               
+  50796   Evolve Brewing                           @evolvebrewing               
+  50795   TOUS les JOURS Las Vegas                 @touslesjourslv              
+  50794   Flamingo Las Vegas                       @flamingovegas               
+  50793   Pinkbox Doughnuts                        @pinkboxdoughnuts            
+  50792   4Corners Streetkitchen                   @4corners_streetkitchen      
+  50791   Oki Wave & Co.                           @okiwaveandco.lasvegas       
+  50790   Limoncello Fresh Italian Kitchen         @limoncellolv                
+  50789   SlicedPizzaVegas                         @slicedpizzavegas            
+  50788   Nobu Caesars Palace                      @nobucaesarspalace           
+
+==== any date-ish fields present ====
+    NONE - the records carry no opened/added date
+
+==== staging nodes that already exist ====
+  dashboard_adv_stg_crec : 128
+  dashboard_adv_stg_removed : 15
+  dashboard_rest_stg_crec : null
+  dashboard_rest_stg_removed : null
