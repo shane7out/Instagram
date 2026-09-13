@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add Maiz Mama (@maizmamalv) - fast-casual Mexican, newly opened in Las Vegas.
-# Restaurant -> dashboard_crec. IG-profile screenshot, so the handle goes on the
-# record and no Bad IG flag.
+# Add Taps & Barrels Beerhouse (@tapsandbarrelslv) - self-pour craft beer
+# taproom, SW Las Vegas. Bar/pub -> dashboard_crec. IG-profile screenshot, so
+# the handle goes on the record and no Bad IG flag.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -11,9 +11,9 @@ curl -s "$DB/dashboard_exp_crec.json"      -o exp.json
 BEFORE=$(jq 'keys|length' crec.json)
 echo "crec before: $BEFORE"
 
-if grep -qiE 'maizmamalv|maiz[ _-]?mama' crec.json cust.json exp.json; then
+if grep -qiE 'tapsandbarrelslv|taps[ _&-]*(and)?[ _&-]*barrels' crec.json cust.json exp.json; then
   echo "SKIP: already in db —"
-  grep -oiE '.{0,90}maiz[ _-]?mama.{0,90}' crec.json cust.json exp.json | head -5
+  grep -oiE '.{0,90}taps[ _&-]*(and)?[ _&-]*barrels.{0,90}' crec.json cust.json exp.json | head -5
   exit 0
 fi
 
@@ -22,10 +22,10 @@ echo "assigning num $NUM"
 
 curl -s -X PATCH -H "Content-Type: application/json" -d "{
   \"$NUM\": {
-    \"name\": \"Maiz Mama\",
-    \"instagram\": \"@maizmamalv\",
+    \"name\": \"Taps & Barrels Beerhouse\",
+    \"instagram\": \"@tapsandbarrelslv\",
     \"num\": $NUM,
-    \"notes\": \"Manually added from IG profile screenshot - NEWLY OPENED, bio says 'NOW OPEN IN VEGAS'. Fast-casual Mexican: handmade tortillas, trompo-roasted meats, customizable tacos, bowls, burritos. Only 11 posts / 370 followers, so very early - good timing for outreach. maizmama.com\"
+    \"notes\": \"Manually added from IG profile screenshot - pub, self-pour craft beer taproom, 36 rotating draft taps, Southwest Las Vegas. Bio says 'Open now!' and their pinned reel claims first self-pour beerhouse in Vegas (301K views). 10.8K followers, 208 posts. Already follows the account. Runs trivia; food menu too. tapsbarrelslv.com\"
   }}" "$DB/dashboard_crec.json" > /dev/null
 
 AFTER=$(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')
