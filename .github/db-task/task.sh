@@ -1,28 +1,33 @@
 #!/bin/bash
-# Check whether @_beasley_02 (food content creator, repost showing a Vegas
-# restaurant visit) is already in the influencers list, and add if not.
-# Read-only discovery first so the add goes to the right node with the right shape.
+# Add @_beasley_02 to influencers (dashboard_infl_crec).
+# Food content creator - repost/story shows them at a restaurant with a full
+# spread (onion rings, fries, burger), tagged with a location pin and their own
+# original audio. Confirmed not already present in any influencer node.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 curl -s "$DB/dashboard_infl_crec.json" -o infl.json
-curl -s "$DB/infl_approved.json"       -o approved.json
-curl -s "$DB/dashboard/infldeleted.json" -o infldel.json 2>/dev/null || echo "{}" > infldel.json
-curl -s "$DB/dashboard/inflstaging.json" -o inflstg.json 2>/dev/null || echo "{}" > inflstg.json
+BEFORE=$(jq 'keys|length' infl.json)
+echo "infl_crec before: $BEFORE"
 
-echo "== node sizes =="
-echo "dashboard_infl_crec: $(jq 'if type==\"array\" then length else (keys|length) end' infl.json 2>/dev/null || echo 'n/a')"
-echo "infl_approved:       $(jq 'if type==\"array\" then length else (keys|length) end' approved.json 2>/dev/null || echo 'n/a')"
-
-echo ""
-echo "== sample shape (first entry of dashboard_infl_crec) =="
-jq -c 'if type=="array" then .[0] else (to_entries|.[0]) end' infl.json 2>/dev/null || echo "unreadable"
-
-echo ""
-echo "== searching all influencer nodes for beasley =="
-if grep -qi 'beasley' infl.json approved.json infldel.json inflstg.json 2>/dev/null; then
-  echo "FOUND — already in the database:"
-  grep -io '.\{0,100\}beasley.\{0,100\}' infl.json approved.json infldel.json inflstg.json 2>/dev/null
-else
-  echo "NOT FOUND in any influencer node"
+if grep -qi 'beasley' infl.json; then
+  echo "SKIP: already in db —"
+  grep -io '.\{0,100\}beasley.\{0,100\}' infl.json
+  exit 0
 fi
+
+NUM=$(jq '[.[]|.num?|numbers]|max' infl.json); NUM=$((NUM+1))
+echo "assigning num $NUM"
+
+curl -s -X PATCH -H "Content-Type: application/json" -d "{
+  \"$NUM\": {
+    \"name\": \"Beasley\",
+    \"ig\": \"_beasley_02\",
+    \"num\": $NUM,
+    \"cat\": \"Food & Dining\",
+    \"notes\": \"Manually added from IG repost screenshot - food content creator, posts restaurant visits with original audio. Seen dining on a full spread (onion rings, fries, burger) with a location tag.\"
+  }}" "$DB/dashboard_infl_crec.json" > /dev/null
+
+AFTER=$(curl -s "$DB/dashboard_infl_crec.json" | jq 'keys|length')
+echo "infl_crec after: $AFTER  (was $BEFORE)"
+curl -s "$DB/dashboard_infl_crec/$NUM.json" | jq .
