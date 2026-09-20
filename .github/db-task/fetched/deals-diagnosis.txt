@@ -1,0 +1,37 @@
+== live site reachability ==
+  /?ci=  http=200 bytes=173522
+  /cars.json  http=200 bytes=627768
+  /deals-refresh.js  http=200 bytes=6017
+
+== Firebase _deals state ==
+1789911805474 <- updated (ms epoch)
+1788036239336 <- last refresh_request (ms epoch)
+  removed.json: 3055 bytes, 94 keys
+<stdin>:29: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+<stdin>:60: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+== timestamp sanity ==
+_deals/updated: 1789911805474  ->  2026-09-20 13:43:25.474000 UTC  (2.0 hours ago)
+_deals/refresh_request: 1788036239336  ->  2026-08-29 20:43:59.336000 UTC  (523.0 hours ago)
+
+== cars.json content ==
+total entries in cars.json: 669
+marked removed (sold/expired): 94
+older than 30 days (by client rule): 669
+no parseable age at all: 0
+would survive both rules (rough): 0
+
+first 5 raw entries (trimmed):
+   {'slug': 'land-2-acres-stunning-lot-2-acres-in-park-county-w9rq6p', 'type': 'Land', 'postedTs': '', 'addedTs': '2026-07-07T00:58:24.012Z', 'added': '2026-07-07'}
+   {'slug': 'land-1-35-acres-7-000-price-reduced-1-35-acres-adjacent-t-gajzez', 'type': 'Land', 'postedTs': '', 'addedTs': '2026-07-07T00:59:07.551Z', 'added': '2026-07-07'}
+   {'slug': 'land-5-acres-stunning-lot-5-acres-in-park-county-vf9mhg', 'type': 'Land', 'postedTs': '', 'addedTs': '2026-07-07T01:01:10.908Z', 'added': '2026-07-07'}
+   {'slug': '2014-tesla-model-s-bnxqc4', 'type': 'Car', 'postedTs': '', 'addedTs': '2026-07-07T05:31:20.824Z', 'added': '2026-07-07'}
+   {'slug': 'house-fire-damage-house-guc84s', 'type': 'House', 'postedTs': '2026-05-30T01:44:12.000Z', 'addedTs': '2026-07-07T14:50:47.098Z', 'added': '2026-07-07'}
+
+== live page: does it even reference cars.json / deals-refresh.js? ==
+0
+1
+1
+1
+94
+  ^ counts, in order: cars.json refs, deals-refresh.js refs, #grid present, #lastupd present, <article class=card> count in the STATIC html (0 is normal if built client-side)
