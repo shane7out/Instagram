@@ -1,5 +1,5 @@
 #!/bin/bash
-# Add Yu by Sijie (@yubysijie) - Chinese fusion restaurant, Las Vegas.
+# Add Toros Tacos LV (@torostacoslv) - taco restaurant, Las Vegas.
 # Restaurant -> dashboard_crec. IG-profile screenshot, so the handle goes on
 # the record and no Bad IG flag.
 set -e
@@ -11,9 +11,9 @@ curl -s "$DB/dashboard_exp_crec.json"      -o exp.json
 BEFORE=$(jq 'keys|length' crec.json)
 echo "crec before: $BEFORE"
 
-if grep -qiE 'yubysijie|yu[ _-]?by[ _-]?sijie' crec.json cust.json exp.json; then
+if grep -qiE 'torostacoslv|toros[ _-]?tacos' crec.json cust.json exp.json; then
   echo "SKIP: already in db —"
-  grep -oiE '.{0,90}yu[ _-]?by[ _-]?sijie.{0,90}' crec.json cust.json exp.json | head -5
+  grep -oiE '.{0,90}toros[ _-]?tacos.{0,90}' crec.json cust.json exp.json | head -5
   exit 0
 fi
 
@@ -22,11 +22,11 @@ echo "assigning num $NUM"
 
 curl -s -X PATCH -H "Content-Type: application/json" -d "{
   \"$NUM\": {
-    \"name\": \"Yu by Sijie\",
-    \"instagram\": \"@yubysijie\",
+    \"name\": \"Toros Tacos LV\",
+    \"instagram\": \"@torostacoslv\",
     \"num\": $NUM,
-    \"address\": \"400 S Rampart Blvd, Suite 190, Las Vegas, NV\",
-    \"notes\": \"Manually added from IG profile screenshot - Chinese fusion restaurant (Yu by Sijie / Si Jie). Soup dumplings, Peking duck, liquid-nitrogen tableside presentations. Bio is IG-flagged 'AI-generated profile' (the description text, not the restaurant itself - it's a real location with its own address). 826 followers, 12 posts. yubysijie.com\"
+    \"address\": \"3347 E Russell Rd, Las Vegas, NV\",
+    \"notes\": \"Manually added from IG profile screenshot - tacos hechos al carbon, dine-in/takeout/delivery. Mon-Thu 11am-9pm, Fri-Sun 11am-10pm. 454 followers, 8 posts. Also on Facebook as Toros Tacos.\"
   }}" "$DB/dashboard_crec.json" > /dev/null
 
 AFTER=$(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')
