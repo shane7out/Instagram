@@ -1,5 +1,5 @@
 #!/bin/bash
-# Add Toros Tacos LV (@torostacoslv) - taco restaurant, Las Vegas.
+# Add Don Rice Bar (@donricebar) - Japanese donburi bowl restaurant, Las Vegas.
 # Restaurant -> dashboard_crec. IG-profile screenshot, so the handle goes on
 # the record and no Bad IG flag.
 set -e
@@ -11,9 +11,9 @@ curl -s "$DB/dashboard_exp_crec.json"      -o exp.json
 BEFORE=$(jq 'keys|length' crec.json)
 echo "crec before: $BEFORE"
 
-if grep -qiE 'torostacoslv|toros[ _-]?tacos' crec.json cust.json exp.json; then
+if grep -qiE 'donricebar|don[ _-]?rice[ _-]?bar' crec.json cust.json exp.json; then
   echo "SKIP: already in db —"
-  grep -oiE '.{0,90}toros[ _-]?tacos.{0,90}' crec.json cust.json exp.json | head -5
+  grep -oiE '.{0,90}don[ _-]?rice[ _-]?bar.{0,90}' crec.json cust.json exp.json | head -5
   exit 0
 fi
 
@@ -22,11 +22,10 @@ echo "assigning num $NUM"
 
 curl -s -X PATCH -H "Content-Type: application/json" -d "{
   \"$NUM\": {
-    \"name\": \"Toros Tacos LV\",
-    \"instagram\": \"@torostacoslv\",
+    \"name\": \"Don Rice Bar\",
+    \"instagram\": \"@donricebar\",
     \"num\": $NUM,
-    \"address\": \"3347 E Russell Rd, Las Vegas, NV\",
-    \"notes\": \"Manually added from IG profile screenshot - tacos hechos al carbon, dine-in/takeout/delivery. Mon-Thu 11am-9pm, Fri-Sun 11am-10pm. 454 followers, 8 posts. Also on Facebook as Toros Tacos.\"
+    \"notes\": \"Manually added from IG profile screenshot - traditional Japanese donburi bowls. Open daily 11am-9pm. Multiple Las Vegas locations. 2,057 followers, 51 posts. donricebar.com\"
   }}" "$DB/dashboard_crec.json" > /dev/null
 
 AFTER=$(curl -s "$DB/dashboard_crec.json" | jq 'keys|length')
