@@ -51,14 +51,24 @@ echo "==== 5) malformed instagram handles (not @handle format) in dashboard_crec
 jq -r '[.[] | select(.instagram != null and .instagram != "" and (.instagram | test("^@[A-Za-z0-9._]+$") | not))] | map({num,name,instagram})' /tmp/crec.json
 
 echo
-echo "==== 6) dashboard/badig entries pointing at a num not present in crec or customrecords ===="
+echo "==== 6) dashboard/badig entries pointing at a num not present ANYWHERE (crec/cust/exp/adv/infl) ===="
+echo "     (a hit here still 'missing' after also allowing for a soft-delete is the real signal)"
 jq -r 'keys' /tmp/badig.json > /tmp/badig_keys.json
-jq -r '[.[] | .num]' /tmp/crec.json > /tmp/crec_nums.json
+jq -r '[.[] | .num?] | map(select(. != null))' /tmp/crec.json > /tmp/crec_nums.json
 jq -r '[.[] | .num?] | map(select(. != null))' /tmp/cust.json > /tmp/cust_nums.json
-jq -n --slurpfile b /tmp/badig_keys.json --slurpfile c /tmp/crec_nums.json --slurpfile u /tmp/cust_nums.json '
+jq -r '[.[] | .num?] | map(select(. != null))' /tmp/exp.json > /tmp/exp_nums.json
+jq -r '[.[] | .num?] | map(select(. != null))' /tmp/adv.json > /tmp/adv_nums.json
+jq -r '[.[] | .num?] | map(select(. != null))' /tmp/infl.json > /tmp/infl_nums.json
+jq -r 'keys' /tmp/deleted.json > /tmp/deleted_keys.json
+jq -n --slurpfile b /tmp/badig_keys.json --slurpfile c /tmp/crec_nums.json --slurpfile u /tmp/cust_nums.json \
+      --slurpfile e /tmp/exp_nums.json --slurpfile a /tmp/adv_nums.json --slurpfile i /tmp/infl_nums.json \
+      --slurpfile d /tmp/deleted_keys.json '
   ($b[0] | map(tonumber)) as $bk |
-  (($c[0] + $u[0]) | unique) as $all |
-  [$bk[] | select(. as $x | ($all | index($x)) | not)]
+  (($c[0] + $u[0] + $e[0] + $a[0] + $i[0]) | unique) as $all |
+  ($d[0] | map(tonumber)) as $del |
+  [$bk[] | select(. as $x | ($all | index($x)) | not)] as $orphans |
+  { truly_missing_everywhere: [$orphans[] | select(. as $x | ($del | index($x)) | not)],
+    missing_but_soft_deleted_explains_it: [$orphans[] | select(. as $x | ($del | index($x)))] }
 '
 
 echo
