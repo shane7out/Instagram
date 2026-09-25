@@ -2,7 +2,7 @@
 
 Repo: `shane7out/Instagram` (public — never commit real PINs/card numbers)
 Working branch: `claude/master-file-e6ofy0`
-Last updated: 2026-09-20
+Last updated: 2026-09-25
 
 This file exists so a brand-new Claude session can pick up exactly where things
 stand without re-discovering everything from scratch. Paste this whole file in
@@ -178,6 +178,59 @@ Bad IG flag). Duplicates across categories are fine — "just ignore them."
   HTML copies, JSON dumps) — useful for re-reading what was actually checked.
 - `.github/db-task/backups/` — timestamped Firebase node backups taken before
   any destructive-looking operation (e.g. the duplicate cleanup).
+
+---
+
+## 8. ⚠️ OPEN SECURITY ITEM — logged 2026-09-25, deliberately not fixed yet
+
+The LVR Firebase RTDB (`lvr-data-a60c1-default-rtdb.firebaseio.com`) has **no
+authentication on its security rules.** Confirmed directly: a raw unauthenticated
+`PUT` to a scratch key from the GitHub Actions runner returned HTTP 200. Anyone
+who has the database URL — which sits in plain text in the dashboard's own page
+source — can read, write, or delete every node in this database with no PIN,
+no login, nothing. The dashboard's PIN screen only gates the app's UI, not the
+data behind it.
+
+The owner has explicitly said: this is a real, live problem with everything
+already sitting in the LVR database today, not just a reason to keep other
+projects away from it — and he wants it scoped and fixed as its own dedicated
+session, not folded into whatever else is happening. **Do not attempt to fix
+this opportunistically inside an unrelated task.**
+
+Whoever picks this up should know going in: every existing automation in this
+repo (`task.sh`, every `mac/deploy-*.sh` script) currently works specifically
+*because* there's no auth — they all do raw unauthenticated REST calls from a
+GitHub Actions runner or a browser session. Locking down the rules will break
+all of them until they're updated to authenticate (e.g. a service account for
+the GitHub Actions side, the owner's existing Google login for the dashboard
+side). That redesign is the actual scope of the fix, not just flipping the
+rules.
+
+---
+
+## 9. Sibling project: The Table — separate from LVR entirely
+
+The owner is building a second, unrelated product: **The Table**, a ticketed
+communal-dining business (one table, one restaurant, strangers book individual
+seats, phones away, family-style meal). Full spec was handed off 2026-09-25 as
+`HANDOFF.md`.
+
+**This is explicitly and permanently separate from everything above:**
+its own Firebase project, its own GitHub repo, its own database. Nothing about
+it touches `shane7out/Instagram`, the LVR RTDB, or any of the sites in §2 — the
+only thing the two projects share is the brand name in a footer. Do not reuse
+LVR's Firebase project, credentials, or database for any part of The Table, and
+do not treat item §8 above as blocking it — they're unrelated by design.
+
+Status as of 2026-09-25: static front end (HTML/CSS/vanilla JS, no build step,
+Leaflet vendored) is built and working, being sent over as a zip. Backend
+(Firestore, Cloud Functions, Stripe Checkout) not started. Build order per the
+handoff: Firestore schema + security rules → wire front end read-only →
+`holdSeat` + Stripe test mode, don't proceed past the double-booking race-
+condition test → `stripeWebhook` → scheduled functions → transfers → waitlist
+→ admin page. The dietary-notes field is safety-critical (family-style
+service, guests never order for themselves) and must never be dropped,
+truncated, or buried — surfaced prominently in the 72-hour pre-event email.
 
 ---
 
