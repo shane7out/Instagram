@@ -1,8 +1,8 @@
-# Key Technology website
+# Key Technologies website
 
-The marketing/lead-generation website for Key Technology (keytechnology.si)
+The marketing/lead-generation website for Key Technologies (keytechnologies.si)
 — Shane Christensen's AI consulting and intelligent business systems
-company. Rebranded from "KEY" to "Key Technology" on 2026-10-04 — see
+company. Rebranded from "KEY" to "Key Technologies" on 2026-10-04 — see
 `CLAUDE.md`'s "Brand name / domain" for why and what changed.
 
 See `CLAUDE.md` for the full set of rules and the current design system
@@ -13,14 +13,14 @@ before changing anything.
 Built from the full written specification (no byte-for-byte original
 site was available to port — see `CLAUDE.md`'s "Known open items"). One
 page (`index.html`) with everything inline: hero, two lead-capture
-forms, services, solutions, the Key Technology Method, About Shane,
+forms, services, solutions, the Key Technologies Method, About Shane,
 locations, FAQ, and footer. Forms are real, working UI with honest
 validation — they are **not** connected to a backend yet, and
 intentionally don't pretend to be.
 
 ## Deploy (GitHub Pages)
 
-Live (once enabled) at **https://keytechnology.si/** once DNS is pointed
+Live (once enabled) at **https://keytechnologies.si/** once DNS is pointed
 at GitHub Pages; until then, at `shane7out.github.io/Instagram/` via the
 branch's `/docs` folder.
 
@@ -28,7 +28,7 @@ branch's `/docs` folder.
    case, on the `claude/key-website` branch).
 2. Repo → Settings → Pages → Deploy from a branch → branch
    `claude/key-website`, folder `/docs` → Save.
-3. Repo → Settings → Pages → Custom domain → `keytechnology.si` → add
+3. Repo → Settings → Pages → Custom domain → `keytechnologies.si` → add
    the DNS records GitHub asks for at your domain registrar → Enforce
    HTTPS once it's verified.
 
@@ -40,9 +40,9 @@ index.html     The whole site today (CSS + JS inline)
 privacy.html   Placeholder — finalize once backend/business terms are set
 terms.html     Placeholder — finalize once backend/business terms are set
 robots.txt
-sitemap.xml    Points at https://keytechnology.si/
+sitemap.xml    Points at https://keytechnologies.si/
 CLAUDE.md      Rules, design tokens, open items — read first
-firebase-leads-rtdb.rules.json   Security rules for Key Technology's own lead database
+firebase-leads-rtdb.rules.json   Security rules for Key Technologies' own lead database
 ```
 
 ## Lead database — one Mac step away from live
@@ -73,10 +73,13 @@ phone.
 
 ## Next steps
 
-- **Point `keytechnology.si`'s DNS at GitHub Pages and set it as the
-  custom domain** — see "Deploy" above. Until this is done, the real
-  domain isn't actually live yet, even though the site's own content
-  already assumes it everywhere (canonical URL, sitemap, schema.org).
+- **Confirm `keytechnologies.si` is actually registered**, then point its
+  DNS at GitHub Pages and set it as the custom domain — see "Deploy"
+  above. As of 2026-10-04 the domain was only decided on, not confirmed
+  purchased — see `CLAUDE.md`'s "Brand name / domain." Until it's
+  registered and DNS is pointed, the site's content assumes this domain
+  everywhere (canonical URL, sitemap, schema.org) but it isn't live at
+  that address yet.
 - **Create the Firebase project and flip the forms on** — see "Lead
   database" above.
 - **Set `KEY_FORMSPREE_URL` and `KEY_CALENDLY_URL`** — see above.

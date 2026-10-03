@@ -1,4 +1,4 @@
-# Key Technology website — rules for anyone (human or Claude) working on this repo
+# Key Technologies website — rules for anyone (human or Claude) working on this repo
 
 Read this before changing anything. This file is the standing source of
 truth for the project; it summarizes the full original handoff doc plus
@@ -6,10 +6,10 @@ decisions made since.
 
 ## What this is
 
-The website for **Key Technology** (brand name as of 2026-10-04 — see
+The website for **Key Technologies** (brand name as of 2026-10-04 — see
 "Brand name / domain" below for history), an AI consulting and
 intelligent business systems company founded by Shane Christensen.
-Domain: **keytechnology.si**. Based in Manhattan Beach, CA and Las Vegas,
+Domain (intended, not yet confirmed registered — see below): **keytechnologies.si**. Based in Manhattan Beach, CA and Las Vegas,
 NV. A completely separate business and project from Shane's "LVR" (Las
 Vegas Restaurants) properties — nothing here shares a database, a repo,
 or infrastructure with that project. Don't mix the two.
@@ -19,19 +19,28 @@ or infrastructure with that project. Don't mix the two.
 The company was originally specced as just "KEY," with an explicit rule
 against using "SI" anywhere in the brand (an earlier prototype briefly
 used `keysi.com`, then deliberately dropped it — both the domain and the
-letters "SI" — before this project started). **On 2026-10-04, Shane
-registered `keytechnology.si` and explicitly asked to rebrand everything
-to it**, which supersedes that original rule exactly the way it always
-said it could ("unless Shane explicitly asks for it later" — this is
-that ask, in writing, with a real registered domain behind it).
+letters "SI" — before this project started). **On 2026-10-04, Shane said
+he was registering `keytechnology.si` and asked to rebrand everything to
+it** — the first exception to the no-SI rule, exactly as it always said
+it could ("unless Shane explicitly asks for it later").
 
-Current state: company name is **Key Technology**, domain is
-**keytechnology.si**, logo wordmark is **"KEY TECHNOLOGY"** (same
-horizontal-key icon as before, just the longer wordmark — see "Design
-system" below for the font-size adjustment that made it fit the thin
-header). Every file in this repo was updated in that pass
-(`index.html`, `404.html`, `privacy.html`, `terms.html`, `sitemap.xml`,
-this file, `README.md`).
+**Then, still on 2026-10-04, before that domain was actually paid for,
+Shane decided on the plural instead: `keytechnologies.si` / "Key
+Technologies."** As of right now the site's own content (this file
+included) assumes that domain and name throughout, but **the domain
+itself is not confirmed registered yet** — don't tell Shane or anyone
+else that keytechnologies.si is live or owned until he's confirmed the
+purchase actually went through. If he comes back having registered the
+singular instead, or a different domain entirely, this whole pass needs
+redoing — check with him before assuming either name/domain is final.
+
+Current state: company name is **Key Technologies**, domain (intended,
+not yet confirmed registered) is **keytechnologies.si**, logo wordmark is
+**"KEY TECHNOLOGIES"** (same horizontal-key icon as before, just the
+longer wordmark — see "Design system" below for the font-size adjustment
+that made it fit the thin header). Every file in this repo reflects this
+name/domain (`index.html`, `404.html`, `privacy.html`, `terms.html`,
+`sitemap.xml`, this file, `README.md`).
 
 **Don't revert any of this without Shane explicitly saying to** — same
 standard as any other branding change.
@@ -77,7 +86,7 @@ Font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif
 ```
 
 The logo is an inline SVG (not a PNG/JPG) — a horizontal key symbol
-followed by the separate wordmark "KEY TECHNOLOGY". Keep the key symbol
+followed by the separate wordmark "KEY TECHNOLOGIES". Keep the key symbol
 perfectly straight, and keep the symbol and the wordmark visually separate
 (don't merge them into one mark). Same logo treatment in header and footer.
 The wordmark is set smaller than the original "KEY"-only version
@@ -107,10 +116,10 @@ index.html       Everything lives here today — CSS and JS are embedded
 privacy.html      Placeholder content — needs Shane's real policy once
 terms.html        the backend and business structure are finalized.
 robots.txt
-sitemap.xml       Points at https://keytechnology.si/ (set 2026-10-04).
+sitemap.xml       Points at https://keytechnologies.si/ (set 2026-10-04).
 CLAUDE.md         This file.
 README.md
-firebase-leads-rtdb.rules.json   Security rules for Key Technology's own
+firebase-leads-rtdb.rules.json   Security rules for Key Technologies' own
                   lead database (separate from LVR) — see "Lead
                   database" below.
 ```
@@ -122,9 +131,9 @@ page.
 
 ## Known open items (don't invent answers to these — ask Shane)
 
-- **Domain**: resolved 2026-10-04 — `keytechnology.si`. See "Brand name /
-  domain" above.
-- **Lead database**: decided 2026-10-03 — Key Technology gets its own, separate
+- **Domain**: name decided 2026-10-04 — `keytechnologies.si` — but
+  **registration not yet confirmed**. See "Brand name / domain" above.
+- **Lead database**: decided 2026-10-03 — Key Technologies gets its own, separate
   Firebase Realtime Database (not LVR's, and not the CRM/system Shane
   mentioned connecting "eventually" — that's a possible later upgrade,
   this is the simple thing that ships now). The form-submission code in
@@ -134,7 +143,7 @@ page.
   allow *creating* a new lead — no client, including the one that just
   submitted, can read, overwrite, or delete any lead. That's the
   deliberate fix for the problem LVR's database has (it accepts
-  unauthenticated reads AND writes to everything) — Key Technology's
+  unauthenticated reads AND writes to everything) — Key Technologies'
   database should never end up in that state.
 
   **One-time setup (needs Shane's Google login, so this is a Mac task):**
