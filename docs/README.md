@@ -73,13 +73,12 @@ phone.
 
 ## Next steps
 
-- **Confirm `keytechnologies.si` is actually registered**, then point its
-  DNS at GitHub Pages and set it as the custom domain — see "Deploy"
-  above. As of 2026-10-04 the domain was only decided on, not confirmed
-  purchased — see `CLAUDE.md`'s "Brand name / domain." Until it's
-  registered and DNS is pointed, the site's content assumes this domain
-  everywhere (canonical URL, sitemap, schema.org) but it isn't live at
-  that address yet.
+- **Point `keytechnologies.si`'s DNS at GitHub Pages** (domain is
+  registered and confirmed active on Dynadot as of 2026-10-03) and set
+  it as the custom domain — see "Deploy" above. Until DNS is pointed,
+  the site's content assumes this domain everywhere (canonical URL,
+  sitemap, schema.org, `CNAME`) but it isn't actually live at that
+  address yet.
 - **Create the Firebase project and flip the forms on** — see "Lead
   database" above.
 - **Set `KEY_FORMSPREE_URL` and `KEY_CALENDLY_URL`** — see above.

@@ -9,7 +9,8 @@ decisions made since.
 The website for **Key Technologies** (brand name as of 2026-10-04 — see
 "Brand name / domain" below for history), an AI consulting and
 intelligent business systems company founded by Shane Christensen.
-Domain (intended, not yet confirmed registered — see below): **keytechnologies.si**. Based in Manhattan Beach, CA and Las Vegas,
+Domain: **keytechnologies.si** (registered 2026-10-03 via Dynadot, confirmed
+active). Based in Manhattan Beach, CA and Las Vegas,
 NV. A completely separate business and project from Shane's "LVR" (Las
 Vegas Restaurants) properties — nothing here shares a database, a repo,
 or infrastructure with that project. Don't mix the two.
@@ -26,21 +27,17 @@ it could ("unless Shane explicitly asks for it later").
 
 **Then, still on 2026-10-04, before that domain was actually paid for,
 Shane decided on the plural instead: `keytechnologies.si` / "Key
-Technologies."** As of right now the site's own content (this file
-included) assumes that domain and name throughout, but **the domain
-itself is not confirmed registered yet** — don't tell Shane or anyone
-else that keytechnologies.si is live or owned until he's confirmed the
-purchase actually went through. If he comes back having registered the
-singular instead, or a different domain entirely, this whole pass needs
-redoing — check with him before assuming either name/domain is final.
+Technologies."** He registered it via Dynadot on 2026-10-03 (confirmed
+active, 364 days remaining as of the registration screenshot) — this is
+now the real, owned, final domain, not a placeholder.
 
-Current state: company name is **Key Technologies**, domain (intended,
-not yet confirmed registered) is **keytechnologies.si**, logo wordmark is
+Current state: company name is **Key Technologies**, domain is
+**keytechnologies.si** (registered, owned, on Dynadot), logo wordmark is
 **"KEY TECHNOLOGIES"** (same horizontal-key icon as before, just the
 longer wordmark — see "Design system" below for the font-size adjustment
 that made it fit the thin header). Every file in this repo reflects this
 name/domain (`index.html`, `404.html`, `privacy.html`, `terms.html`,
-`sitemap.xml`, this file, `README.md`).
+`sitemap.xml`, `CNAME`, this file, `README.md`).
 
 **Don't revert any of this without Shane explicitly saying to** — same
 standard as any other branding change.
@@ -131,8 +128,9 @@ page.
 
 ## Known open items (don't invent answers to these — ask Shane)
 
-- **Domain**: name decided 2026-10-04 — `keytechnologies.si` — but
-  **registration not yet confirmed**. See "Brand name / domain" above.
+- **Domain**: `keytechnologies.si` — registered and confirmed active
+  (Dynadot, 2026-10-03). Not yet hosting the site — DNS needs to be
+  pointed at GitHub Pages. See "Deploy" in `README.md`.
 - **Lead database**: decided 2026-10-03 — Key Technologies gets its own, separate
   Firebase Realtime Database (not LVR's, and not the CRM/system Shane
   mentioned connecting "eventually" — that's a possible later upgrade,
