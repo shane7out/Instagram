@@ -743,6 +743,23 @@
   // about a successful submission.
   var KEY_LEADS_DB_URL = "";
 
+  // ---- lead alert email (optional, additive) ----
+  // Formspree is a free form-to-email service - no backend to write. Create
+  // a form at formspree.io with the email address that should receive lead
+  // alerts, then paste its endpoint here (looks like
+  // "https://formspree.io/f/xxxxxxxx"). Fires alongside the database write,
+  // never instead of it - the database stays the source of truth, this is
+  // just the "someone needs to know right now" channel. Empty = no email
+  // alert is sent (the lead still saves to the database either way).
+  var KEY_FORMSPREE_URL = "";
+
+  // ---- post-submit scheduling link (optional, additive) ----
+  // A Calendly (or similar) link for "Explore My Options" to turn into an
+  // actual next step instead of just a thank-you message. Paste the real
+  // booking link here once one exists. Empty = the success message stands
+  // alone, no broken/placeholder button is ever shown.
+  var KEY_CALENDLY_URL = "";
+
   // ---- mobile menu ----
   var burger = document.getElementById("burgerBtn");
   var menu = document.getElementById("mobileMenu");
@@ -820,7 +837,26 @@
         body: JSON.stringify(data)
       }).then(function(r){
         if(!r.ok) throw new Error("HTTP " + r.status);
-        status.textContent = "Thanks — we've received this and will follow up soon.";
+
+        // The database write succeeded - that's the real save, and the
+        // success message below is honest from this point on regardless
+        // of what happens next. The email alert is a nice-to-have on top
+        // of it, so its failure must never change what the visitor sees.
+        if(KEY_FORMSPREE_URL){
+          fetch(KEY_FORMSPREE_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: JSON.stringify(data)
+          }).catch(function(){ /* lead is already saved; a missed email alert isn't fatal */ });
+        }
+
+        var msg = "Thanks — we've received this and will follow up soon.";
+        if(KEY_CALENDLY_URL){
+          status.innerHTML = msg + ' <a href="' + KEY_CALENDLY_URL + '" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:10px;">Book a time now</a>';
+          status.querySelector("a").style.display = "inline-flex";
+        } else {
+          status.textContent = msg;
+        }
         status.className = "form-status ok";
         form.reset();
       }).catch(function(){

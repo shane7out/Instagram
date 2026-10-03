@@ -51,10 +51,29 @@ database." This is intentionally simple — no backend server, no Cloud
 Functions, just the database and rules that only allow creating a new
 lead (never reading, overwriting, or deleting one).
 
+## Lead alert email + booking link — both built, both off until you add one line
+
+Two more additive, optional features in `index.html`, both off by default
+and documented in full in `CLAUDE.md`:
+
+- `KEY_FORMSPREE_URL` — set this (free formspree.io signup, 2 minutes) and
+  every lead also sends an email alert, on top of the database save.
+- `KEY_CALENDLY_URL` — set this and a successful submission shows a real
+  "Book a time now" button instead of just a thank-you line.
+
+Neither needs the Mac — both are plain web signups you can do from a
+phone.
+
 ## Next steps
 
-- **Create the Firebase project and flip the forms on** — see above.
-- Get a real domain, then update every placeholder URL in one pass
+- **Get a real domain.** The current GitHub Pages URL
+  (`shane7out.github.io/Instagram/`) works but isn't something to put in
+  front of a prospect or run ads to — this is the highest-priority item
+  left.
+- **Create the Firebase project and flip the forms on** — see "Lead
+  database" above.
+- **Set `KEY_FORMSPREE_URL` and `KEY_CALENDLY_URL`** — see above.
+- Once a domain exists, update every placeholder URL in one pass
   (`sitemap.xml`, the `<meta>`/canonical tags in `index.html`).
 - Eventually: a way to actually read the collected leads back out (a
   small PIN-gated viewer page, or an export), and/or wire this up to

@@ -131,6 +131,28 @@ page.
   the database and its rules. Reading the leads back out (a dashboard,
   CSV export, etc.) is a separate, later task once there's something to
   look at.
+- **Lead alert email**: built 2026-10-04, off by default. `index.html`
+  has a second, additive config line, `var KEY_FORMSPREE_URL = "";`,
+  right under `KEY_LEADS_DB_URL`. When set, every successful form
+  submission also POSTs to that Formspree endpoint, which emails
+  whoever set up the Formspree form — the database write is still the
+  real save either way; the email is just a "know about it right now"
+  side channel, and its failure never changes what the visitor sees.
+
+  **One-time setup (no Mac needed, just a web signup):**
+  1. Go to formspree.io, sign up free, create a new form.
+  2. Set its notification email to whichever inbox should get lead
+     alerts.
+  3. Copy the form's endpoint (looks like
+     `https://formspree.io/f/xxxxxxxx`).
+  4. Paste it into `KEY_FORMSPREE_URL` in `index.html`.
+
+- **Post-submit booking link**: built 2026-10-04, off by default.
+  `index.html` has `var KEY_CALENDLY_URL = "";`. When set, a successful
+  submission shows a "Book a time now" button pointing at it, instead of
+  just a thank-you line with no next step. Empty = no button is shown at
+  all (never a broken placeholder link). Paste in a real Calendly (or
+  equivalent) scheduling link once one exists.
 - **Analytics**: not installed yet — don't add any analytics platform
   until Shane picks one.
 - **Contact email/phone**: not yet provided — currently absent from the
