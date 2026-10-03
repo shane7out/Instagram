@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Domain is TBD (see CLAUDE.md). Replace every REPLACE-WITH-DOMAIN below
-     the moment a real domain is chosen — sitemaps require absolute URLs. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://REPLACE-WITH-DOMAIN/</loc>
+    <loc>https://keytechnology.si/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>

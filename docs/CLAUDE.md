@@ -1,20 +1,42 @@
-# KEY website — rules for anyone (human or Claude) working on this repo
+# Key Technology website — rules for anyone (human or Claude) working on this repo
 
 Read this before changing anything. This file is the standing source of
-truth for the project; it summarizes the full original handoff doc.
+truth for the project; it summarizes the full original handoff doc plus
+decisions made since.
 
 ## What this is
 
-The website for KEY, an AI consulting and intelligent business systems
-company founded by Shane Christensen. Based in Manhattan Beach, CA and Las
-Vegas, NV. A completely separate business and project from Shane's "LVR"
-(Las Vegas Restaurants) properties — nothing here shares a database, a
-repo, or infrastructure with that project. Don't mix the two.
+The website for **Key Technology** (brand name as of 2026-10-04 — see
+"Brand name / domain" below for history), an AI consulting and
+intelligent business systems company founded by Shane Christensen.
+Domain: **keytechnology.si**. Based in Manhattan Beach, CA and Las Vegas,
+NV. A completely separate business and project from Shane's "LVR" (Las
+Vegas Restaurants) properties — nothing here shares a database, a repo,
+or infrastructure with that project. Don't mix the two.
+
+## Brand name / domain — read this before touching branding again
+
+The company was originally specced as just "KEY," with an explicit rule
+against using "SI" anywhere in the brand (an earlier prototype briefly
+used `keysi.com`, then deliberately dropped it — both the domain and the
+letters "SI" — before this project started). **On 2026-10-04, Shane
+registered `keytechnology.si` and explicitly asked to rebrand everything
+to it**, which supersedes that original rule exactly the way it always
+said it could ("unless Shane explicitly asks for it later" — this is
+that ask, in writing, with a real registered domain behind it).
+
+Current state: company name is **Key Technology**, domain is
+**keytechnology.si**, logo wordmark is **"KEY TECHNOLOGY"** (same
+horizontal-key icon as before, just the longer wordmark — see "Design
+system" below for the font-size adjustment that made it fit the thin
+header). Every file in this repo was updated in that pass
+(`index.html`, `404.html`, `privacy.html`, `terms.html`, `sitemap.xml`,
+this file, `README.md`).
+
+**Don't revert any of this without Shane explicitly saying to** — same
+standard as any other branding change.
 
 ## Hard rules — do not violate these
-
-- **No "SI" or "Super Intelligence" anywhere**, unless Shane explicitly
-  asks for it later. The brand was already pulled back from this once.
 - **No invented content, ever**: no testimonials, no customer names, no
   case studies, no revenue numbers, no performance statistics, no
   certifications, no awards. If it isn't real and verified, it doesn't
@@ -54,10 +76,14 @@ White:         #ffffff
 Font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif
 ```
 
-The KEY logo is an inline SVG (not a PNG/JPG) — a horizontal key symbol
-followed by the separate wordmark "KEY". Keep the key symbol perfectly
-straight, and keep the symbol and the wordmark visually separate (don't
-merge them into one mark). Same logo treatment in header and footer.
+The logo is an inline SVG (not a PNG/JPG) — a horizontal key symbol
+followed by the separate wordmark "KEY TECHNOLOGY". Keep the key symbol
+perfectly straight, and keep the symbol and the wordmark visually separate
+(don't merge them into one mark). Same logo treatment in header and footer.
+The wordmark is set smaller than the original "KEY"-only version
+(`.logo-word` is 16px, 13.5px under 420px) specifically so the longer
+text still fits the thin header — don't bump that size back up without
+checking it still fits at phone width.
 
 ## Layout rules
 
@@ -81,14 +107,12 @@ index.html       Everything lives here today — CSS and JS are embedded
 privacy.html      Placeholder content — needs Shane's real policy once
 terms.html        the backend and business structure are finalized.
 robots.txt
-sitemap.xml       Domain is TBD — every absolute URL in here, and in
-                  index.html's <meta> tags, has a REPLACE-WITH-DOMAIN /
-                  TBD marker. Update ALL of them together once a domain
-                  is chosen, not piecemeal.
+sitemap.xml       Points at https://keytechnology.si/ (set 2026-10-04).
 CLAUDE.md         This file.
 README.md
-firebase-leads-rtdb.rules.json   Security rules for KEY's own lead database
-                  (separate from LVR) — see "Lead database" below.
+firebase-leads-rtdb.rules.json   Security rules for Key Technology's own
+                  lead database (separate from LVR) — see "Lead
+                  database" below.
 ```
 
 If the project grows past a single page, the next step is the
@@ -98,10 +122,9 @@ page.
 
 ## Known open items (don't invent answers to these — ask Shane)
 
-- **Domain**: not selected. An earlier prototype referenced `keysi.com` —
-  do not use it; it's both already registered and contains "SI", which
-  is off-brand now.
-- **Lead database**: decided 2026-10-03 — KEY gets its own, separate
+- **Domain**: resolved 2026-10-04 — `keytechnology.si`. See "Brand name /
+  domain" above.
+- **Lead database**: decided 2026-10-03 — Key Technology gets its own, separate
   Firebase Realtime Database (not LVR's, and not the CRM/system Shane
   mentioned connecting "eventually" — that's a possible later upgrade,
   this is the simple thing that ships now). The form-submission code in
@@ -111,8 +134,8 @@ page.
   allow *creating* a new lead — no client, including the one that just
   submitted, can read, overwrite, or delete any lead. That's the
   deliberate fix for the problem LVR's database has (it accepts
-  unauthenticated reads AND writes to everything) — KEY's database
-  should never end up in that state.
+  unauthenticated reads AND writes to everything) — Key Technology's
+  database should never end up in that state.
 
   **One-time setup (needs Shane's Google login, so this is a Mac task):**
   1. Firebase console → new project (e.g. `key-leads`).
