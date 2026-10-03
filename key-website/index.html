@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KEY — AI Consulting &amp; Intelligent Business Systems</title>
+<meta name="description" content="KEY helps businesses figure out where AI can actually improve the business — sales, customer experience, operations, and information systems. Problem first. Technology second. Manhattan Beach, CA &amp; Las Vegas, NV.">
+<link rel="canonical" href="/">
+<!-- Domain not yet selected (see CLAUDE.md) — update this canonical URL, and every
+     absolute URL in the Open Graph / schema blocks below, once a domain is chosen. -->
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="KEY — AI Consulting & Intelligent Business Systems">
+<meta property="og:description" content="KEY helps businesses figure out where AI can actually improve the business. Problem first. Technology second.">
+<meta property="og:url" content="/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KEY — AI Consulting & Intelligent Business Systems">
+<meta name="twitter:description" content="KEY helps businesses figure out where AI can actually improve the business. Problem first. Technology second.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "KEY",
+  "description": "AI consulting and intelligent business systems company. Helps businesses identify where AI and automation can improve sales, operations, customer experience, and information management.",
+  "founder": {
+    "@type": "Person",
+    "name": "Shane Christensen"
+  },
+  "areaServed": ["Manhattan Beach, CA", "Los Angeles, CA", "Las Vegas, NV", "United States"],
+  "location": [
+    {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Manhattan Beach",
+        "addressRegion": "CA",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Las Vegas",
+        "addressRegion": "NV",
+        "addressCountry": "US"
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --bg:#07111f;
+    --bg-2:#091728;
+    --card:#0c1a2b;
+    --line:#20364e;
+    --ink:#f6f8fb;
+    --ink-dim:#aab9ca;
+    --key-light:#59b5ff;
+    --key-blue:#168fff;
+    --white:#ffffff;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:16.5px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;}
+  a{color:var(--key-light);}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px;}
+  h1,h2,h3{line-height:1.18;letter-spacing:-0.01em;text-wrap:balance;margin:0;}
+  h2{font-size:clamp(26px,4vw,36px);font-weight:800;}
+  h3{font-size:19px;font-weight:700;}
+  p{margin:0;color:var(--ink-dim);}
+  .eyebrow{
+    font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--key-light);
+  }
+  section{padding-block:56px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .section-head{max-width:640px;margin-bottom:30px;}
+  .section-head p{margin-top:10px;font-size:16.5px;}
+
+  /* ---- buttons ---- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
+    padding:14px 26px;border-radius:9px;cursor:pointer;text-decoration:none;
+    border:1px solid transparent;
+  }
+  .btn-primary{background:var(--key-blue);color:var(--white);}
+  .btn-primary:hover{background:var(--key-light);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
+  .btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+
+  /* ---- logo (inline SVG, symbol + wordmark kept separate, key stays straight) ---- */
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .logo svg{display:block;flex:none;}
+  .logo-word{font-size:19px;font-weight:800;letter-spacing:.04em;color:var(--ink);}
+
+  /* ---- header: thin, sticky ---- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-row{
+    display:flex;align-items:center;justify-content:space-between;
+    height:56px;
+  }
+  .nav-links{display:flex;align-items:center;gap:26px;list-style:none;margin:0;padding:0;}
+  .nav-links a{
+    color:var(--ink-dim);text-decoration:none;font-size:14.5px;font-weight:600;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+
+  /* two-line hamburger — NOT three lines */
+  .burger{
+    display:none;width:40px;height:40px;border-radius:8px;border:1px solid var(--line);
+    background:transparent;cursor:pointer;
+    flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  }
+  .burger span{
+    display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;
+    transition:transform .2s, opacity .2s;
+  }
+  .burger[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg);}
+  .burger[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg);}
+
+  .mobile-menu{
+    display:none;position:fixed;inset:56px 0 0 0;z-index:49;
+    background:var(--bg);border-top:1px solid var(--line);
+    padding:18px 20px 28px;overflow-y:auto;
+  }
+  .mobile-menu.open{display:block;}
+  .mobile-menu ul{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:2px;}
+  .mobile-menu a{
+    display:block;padding:14px 4px;color:var(--ink);text-decoration:none;
+    font-size:17px;font-weight:600;border-bottom:1px solid var(--line);
+  }
+
+  @media (max-width:860px){
+    .nav-links, .nav-cta .btn-ghost{display:none;}
+    .burger{display:flex;}
+  }
+
+  /* ---- hero ---- */
+  .hero{padding-block:52px 40px;border-top:none;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .hero h1{
+    font-size:clamp(34px,5.6vw,58px);font-weight:800;
+  }
+  .hero h1 .accent{color:var(--key-light);}
+  .hero-sub{margin-top:18px;font-size:19px;max-width:54ch;}
+  .hero-ctas{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;}
+
+  /* ---- lead forms ---- */
+  .lead-card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:26px;
+  }
+  .lead-card h3{font-size:20px;}
+  .lead-card .eyebrow{display:block;margin-bottom:6px;}
+  form{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:13px;font-weight:600;color:var(--ink-dim);}
+  input, textarea, select{
+    font-family:inherit;font-size:16px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--line);border-radius:8px;
+    padding:12px 13px;width:100%;
+  }
+  input:focus, textarea:focus, select:focus{outline:2px solid var(--key-blue);outline-offset:1px;}
+  textarea{min-height:90px;resize:vertical;}
+  fieldset{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0;}
+  fieldset legend{padding:0 6px;font-size:13px;font-weight:600;color:var(--ink-dim);}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:8px;}
+  @media (max-width:520px){.check-grid{grid-template-columns:1fr;}}
+  .check-grid label{
+    display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink);font-weight:400;
+  }
+  .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
+  .form-status{font-size:14px;margin-top:4px;min-height:18px;}
+  .form-status.ok{color:var(--key-light);}
+  .form-status.err{color:#ff8a7a;}
+
+  /* ---- services ---- */
+  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:900px){.service-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:600px){.service-grid{grid-template-columns:1fr;}}
+  .service-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px;display:flex;flex-direction:column;gap:10px;
+  }
+  .service-card .num{font-size:13px;font-weight:700;color:var(--key-light);letter-spacing:.06em;}
+  .service-card p{font-size:15px;}
+
+  /* ---- KEY method ---- */
+  .method-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
+  @media (max-width:900px){.method-row{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:560px){.method-row{grid-template-columns:1fr 1fr;}}
+  .method-step{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px 16px;text-align:left;
+  }
+  .method-step .letter{
+    font-size:13px;font-weight:800;color:var(--key-light);letter-spacing:.08em;
+  }
+  .method-step h3{margin-top:6px;font-size:16px;}
+  .method-step p{margin-top:6px;font-size:14px;}
+
+  /* ---- about ---- */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+  @media (max-width:860px){.about-grid{grid-template-columns:1fr;}}
+  .about-grid p + p{margin-top:14px;}
+  .brand-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
+  .brand-pill{
+    border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+    font-size:13.5px;font-weight:600;color:var(--ink-dim);background:var(--card);
+  }
+
+  /* ---- locations ---- */
+  .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:700px){.loc-grid{grid-template-columns:1fr;}}
+  .loc-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;
+  }
+  .loc-card h3{font-size:18px;}
+  .loc-card p{margin-top:8px;font-size:15px;}
+
+  /* ---- FAQ ---- */
+  details{
+    border:1px solid var(--line);border-radius:12px;padding:4px 18px;
+    background:var(--card);margin-bottom:10px;
+  }
+  summary{
+    padding:16px 0;font-weight:700;font-size:16px;cursor:pointer;list-style:none;
+    position:relative;padding-right:26px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{
+    content:'+';position:absolute;right:0;top:14px;color:var(--key-light);
+    font-size:20px;font-weight:400;transition:transform .2s;
+  }
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{padding-bottom:16px;font-size:15px;}
+
+  /* ---- final CTA ---- */
+  .cta-band{
+    background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    text-align:center;padding-block:48px;
+  }
+  .cta-band h2{margin-bottom:10px;}
+  .cta-band p{max-width:52ch;margin:0 auto 22px;font-size:16.5px;}
+
+  /* ---- footer ---- */
+  footer{padding-block:40px;text-align:center;}
+  footer .logo{justify-content:center;margin-bottom:14px;}
+  .foot-links{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:16px 0;
+    list-style:none;padding:0;
+  }
+  .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
+  .foot-links a:hover{color:var(--ink);}
+  .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
+
+  .skip-link{
+    position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#fff;
+    padding:10px 16px;border-radius:0 0 8px 0;z-index:100;
+  }
+  .skip-link:focus{left:0;}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap nav-row">
+    <a class="logo" href="/" aria-label="KEY — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY</span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#solutions">Solutions</a></li>
+        <li><a href="#method">How It Works</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#locations">Locations</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="#contact">Contact</a>
+      <a class="btn btn-primary" href="#lead-short">Explore My Options</a>
+      <button class="burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="#method">How It Works</a></li>
+      <li><a href="#about">About Shane</a></li>
+      <li><a href="#locations">Locations</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-primary" style="width:100%" href="#lead-short">Explore My Options</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO + SHORT LEAD FORM ============ -->
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <h1>YOUR BUSINESS<br>JUST GOT<br><span class="accent">SMARTER.</span></h1>
+        <p class="hero-sub">KEY helps businesses turn AI into practical systems that improve sales, customer
+          experience, operations, information management and decision-making.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#lead-short">Explore My Options</a>
+          <a class="btn btn-ghost" href="#method">See How It Works</a>
+        </div>
+      </div>
+
+      <div class="lead-card" id="lead-short">
+        <span class="eyebrow">Free AI Opportunity Review</span>
+        <h3>Get a Free AI Opportunity Review</h3>
+        <form id="shortLeadForm" novalidate>
+          <div class="field">
+            <label for="s-name">Full Name</label>
+            <input id="s-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="s-email">Email</label>
+            <input id="s-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="s-phone">Phone Number</label>
+            <input id="s-phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+          <button class="btn btn-primary" type="submit">Explore My Options</button>
+          <p class="form-status" id="shortLeadStatus" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section class="wrap" id="services">
+    <div class="section-head">
+      <span class="eyebrow">Services</span>
+      <h2>Where KEY can help</h2>
+      <p>Every engagement starts with a business problem, not a tool. Technology comes second.</p>
+    </div>
+    <div class="service-grid">
+      <article class="service-card">
+        <span class="num">01</span>
+        <h3>AI Strategy</h3>
+        <p>Help businesses identify where AI can create the most value — and just as important, where it
+          can't yet, so effort goes where it actually pays off.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">02</span>
+        <h3>Business Automation</h3>
+        <p>Reduce repetitive manual work and connect business processes that currently run as disconnected,
+          manual steps.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">03</span>
+        <h3>AI Agents</h3>
+        <p>Build intelligent assistants capable of performing defined business tasks — not a generic
+          chatbot, a system built around how your business actually works.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">04</span>
+        <h3>Sales &amp; Lead Management</h3>
+        <p>Help businesses capture, qualify, organize and follow up with leads, so fewer opportunities
+          fall through the cracks.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">05</span>
+        <h3>Customer Experience</h3>
+        <p>Use AI to improve customer communication and response time without making interactions feel
+          automated or impersonal.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">06</span>
+        <h3>Operations</h3>
+        <p>Identify inefficient workflows and the specific points where automation or better information
+          flow would actually move the needle.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">07</span>
+        <h3>Data &amp; Knowledge Systems</h3>
+        <p>Make business information easier to find, understand and use — across the tools a business
+          already has.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">08</span>
+        <h3>Marketing</h3>
+        <p>Use AI to improve marketing workflows, research, content production and customer segmentation.</p>
+      </article>
+      <article class="service-card">
+        <span class="num">09</span>
+        <h3>Security &amp; Technology</h3>
+        <p>Evaluate how AI fits into existing networks, databases, permissions and business technology —
+          without widening the attack surface.</p>
+      </article>
+      <article class="service-card" style="grid-column: span 1;">
+        <span class="num">10</span>
+        <h3>Custom AI Systems</h3>
+        <p>Build systems specifically around how your business operates, not a one-size-fits-all package.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ SOLUTIONS / PROBLEM-FIRST POSITIONING ============ -->
+  <section class="wrap" id="solutions">
+    <div class="section-head">
+      <span class="eyebrow">Solutions</span>
+      <h2>Problem first. Technology second.</h2>
+      <p>KEY doesn't start by selling AI. KEY starts by understanding what's actually slowing a business
+        down, then figures out whether AI, automation, or a simpler fix solves it.</p>
+    </div>
+    <div class="service-grid">
+      <article class="service-card">
+        <h3>"We're losing leads."</h3>
+        <p>Often a sales and lead-management problem before it's an AI problem — the fix might be better
+          follow-up systems, not a new tool.</p>
+      </article>
+      <article class="service-card">
+        <h3>"Our team repeats the same work."</h3>
+        <p>A business-automation problem. The goal is connecting the steps that already exist, not adding
+          more software on top.</p>
+      </article>
+      <article class="service-card">
+        <h3>"We can't find our own information."</h3>
+        <p>A data and knowledge-systems problem — information exists somewhere in the business, it's just
+          not organized in a way people can use.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ KEY METHOD ============ -->
+  <section class="wrap" id="method">
+    <div class="section-head">
+      <span class="eyebrow">How It Works</span>
+      <h2>The KEY Method</h2>
+      <p>A straightforward process for figuring out where AI actually helps — and proving it before scaling it.</p>
+    </div>
+    <div class="method-row">
+      <div class="method-step">
+        <span class="letter">MAP</span>
+        <h3>Understand</h3>
+        <p>Understand the business as it actually runs today.</p>
+      </div>
+      <div class="method-step">
+        <span class="letter">FIND</span>
+        <h3>Identify</h3>
+        <p>Identify where AI or automation could realistically help.</p>
+      </div>
+      <div class="method-step">
+        <span class="letter">VALUE</span>
+        <h3>Prioritize</h3>
+        <p>Prioritize the highest-value opportunities first.</p>
+      </div>
+      <div class="method-step">
+        <span class="letter">BUILD</span>
+        <h3>Create</h3>
+        <p>Create the system around how the business works.</p>
+      </div>
+      <div class="method-step">
+        <span class="letter">PROVE</span>
+        <h3>Measure</h3>
+        <p>Measure results before scaling further.</p>
+      </div>
+      <div class="method-step">
+        <span class="letter">EVOLVE</span>
+        <h3>Improve</h3>
+        <p>Continue improving as the business changes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT SHANE ============ -->
+  <section class="wrap" id="about">
+    <div class="about-grid">
+      <div>
+        <span class="eyebrow">About the Founder</span>
+        <h2 style="margin-top:8px;">SHANE CHRISTENSEN</h2>
+        <p style="margin-top:14px;font-size:18px;color:var(--ink);font-weight:600;">Decades in technology.
+          Ten years building digital audiences. Now focused on what AI can do for business.</p>
+      </div>
+      <div>
+        <p>Shane Christensen started a computer business while still in high school and has spent more
+          than 25 years working with computers, software, networking and business technology.</p>
+        <p>His background spans high-end computer security, networking, database management, software,
+          websites, business technology systems, digital marketing and social media — the practical,
+          unglamorous infrastructure that businesses actually run on.</p>
+        <p>For about ten years, Shane has also built restaurant-focused social media brands and audiences,
+          growing real followings and helping local businesses get discovered.</p>
+        <div class="brand-list">
+          <span class="brand-pill">LasVegas_Restaurants</span>
+          <span class="brand-pill">OrangeCounty_Restaurants</span>
+          <span class="brand-pill">SanDiego_Restaurants</span>
+          <span class="brand-pill">and more</span>
+        </div>
+        <p style="margin-top:18px;">Shane didn't enter technology because AI became popular — he's applying
+          decades of hands-on technology and business experience to what AI can now actually do.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOCATIONS ============ -->
+  <section class="wrap" id="locations">
+    <div class="section-head">
+      <span class="eyebrow">Locations</span>
+      <h2>Based in California and Nevada</h2>
+      <p>KEY works with businesses in person around its home markets, and remotely throughout the United States.</p>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-card">
+        <h3>Manhattan Beach, California</h3>
+        <p>Serving Manhattan Beach, the South Bay, Los Angeles and Southern California businesses looking
+          to apply AI and automation to real operations.</p>
+      </div>
+      <div class="loc-card">
+        <h3>Las Vegas, Nevada</h3>
+        <p>Serving Las Vegas and Nevada businesses — including the restaurant and hospitality industry Shane
+          has worked in directly for a decade.</p>
+      </div>
+    </div>
+    <p style="margin-top:16px;">Remote consulting is available for businesses anywhere in the United States.</p>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wrap" id="faq">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+
+    <details>
+      <summary>What does KEY do?</summary>
+      <p>KEY helps businesses identify where AI, automation and better business systems can actually
+        improve how they operate — then builds the systems to do it.</p>
+    </details>
+    <details>
+      <summary>How can AI help my business?</summary>
+      <p>It depends on the business. AI can help with sales and lead follow-up, customer communication,
+        repetitive operational work, organizing information, and more — the point of a KEY review is
+        figuring out which of those actually apply to you.</p>
+    </details>
+    <details>
+      <summary>Do I need to know which AI tools I need?</summary>
+      <p>No. Most businesses don't, and that's the point of starting with the business problem instead of
+        a specific tool. KEY figures out what fits.</p>
+    </details>
+    <details>
+      <summary>Can KEY help small businesses?</summary>
+      <p>Yes. Small businesses are often where the clearest, fastest wins are — less existing complexity
+        to work around.</p>
+    </details>
+    <details>
+      <summary>Can KEY work with larger companies?</summary>
+      <p>Yes. Larger organizations typically have more existing systems to map and integrate with, which
+        the KEY Method is built to handle.</p>
+    </details>
+    <details>
+      <summary>What is an AI agent?</summary>
+      <p>An AI agent is software that can carry out a defined task — like qualifying a lead, answering a
+        common customer question, or pulling information together — rather than just responding to a
+        single prompt.</p>
+    </details>
+    <details>
+      <summary>What business processes can be automated?</summary>
+      <p>Commonly: lead intake and follow-up, repetitive data entry, routine customer responses, internal
+        reporting, and connecting tools that currently require manual work between them.</p>
+    </details>
+    <details>
+      <summary>Can KEY work with my existing software?</summary>
+      <p>Usually, yes. The goal is to work with the systems a business already has rather than replace
+        everything.</p>
+    </details>
+    <details>
+      <summary>Can KEY help with databases?</summary>
+      <p>Yes — organizing, structuring and making business data easier to find and use is one of KEY's
+        core areas.</p>
+    </details>
+    <details>
+      <summary>Can KEY help with security and networking?</summary>
+      <p>Yes. Shane's background includes high-end computer security and networking, and that's part of
+        how AI and automation get evaluated — not bolted on without regard for it.</p>
+    </details>
+    <details>
+      <summary>How does an AI consultation work?</summary>
+      <p>It starts with understanding your business (the MAP step), then identifying and prioritizing real
+        opportunities — see "How It Works" above for the full process.</p>
+    </details>
+    <details>
+      <summary>What happens after I submit Explore My Options?</summary>
+      <p>Shane or the KEY team follows up directly to learn more about your business and talk through
+        whether — and where — AI makes sense for you.</p>
+    </details>
+  </section>
+
+  <!-- ============ DETAILED LEAD FORM ============ -->
+  <section class="wrap" id="contact">
+    <div class="section-head">
+      <span class="eyebrow">Get Started</span>
+      <h2>Tell us about your business</h2>
+      <p>The more we know going in, the more useful the first conversation is.</p>
+    </div>
+
+    <div class="lead-card" style="max-width:640px;">
+      <form id="fullLeadForm" novalidate>
+        <div class="field">
+          <label for="f-name">Full Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="f-business">Business Name</label>
+          <input id="f-business" name="business" type="text" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="f-help">What would you like help with?</label>
+          <textarea id="f-help" name="help"></textarea>
+        </div>
+        <div class="field">
+          <label for="f-better">What would you like your business to do better?</label>
+          <textarea id="f-better" name="better"></textarea>
+        </div>
+        <fieldset>
+          <legend>Possible interests</legend>
+          <div class="check-grid">
+            <label><input type="checkbox" name="interest" value="Explore AI opportunities"> Explore AI opportunities</label>
+            <label><input type="checkbox" name="interest" value="Business automation"> Business automation</label>
+            <label><input type="checkbox" name="interest" value="AI agents"> AI agents</label>
+            <label><input type="checkbox" name="interest" value="Sales and lead generation"> Sales &amp; lead generation</label>
+            <label><input type="checkbox" name="interest" value="Customer service"> Customer service</label>
+            <label><input type="checkbox" name="interest" value="Operations"> Operations</label>
+            <label><input type="checkbox" name="interest" value="Databases and information systems"> Databases &amp; info systems</label>
+            <label><input type="checkbox" name="interest" value="Security"> Security</label>
+            <label><input type="checkbox" name="interest" value="Networking"> Networking</label>
+            <label><input type="checkbox" name="interest" value="Business technology"> Business technology</label>
+            <label><input type="checkbox" name="interest" value="Not sure yet"> Not sure yet</label>
+          </div>
+        </fieldset>
+        <button class="btn btn-primary" type="submit">Explore My Options</button>
+        <p class="form-status" id="fullLeadStatus" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="cta-band">
+    <div class="wrap">
+      <h2>Ready to see where AI actually fits?</h2>
+      <p>Start with a free AI opportunity review — no obligation, no sales pitch about tools you don't need.</p>
+      <a class="btn btn-primary" href="#lead-short">Explore My Options</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="KEY — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY</span>
+    </a>
+    <ul class="foot-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="#method">How It Works</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#locations">Locations</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="/privacy.html">Privacy</a></li>
+      <li><a href="/terms.html">Terms</a></li>
+    </ul>
+    <p class="foot-fine">Manhattan Beach, California &middot; Las Vegas, Nevada &middot; Remote nationwide</p>
+    <p class="foot-fine">&copy; <span id="year"></span> KEY. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- mobile menu ----
+  var burger = document.getElementById("burgerBtn");
+  var menu = document.getElementById("mobileMenu");
+  function closeMenu(){
+    menu.classList.remove("open");
+    burger.setAttribute("aria-expanded","false");
+    burger.setAttribute("aria-label","Open menu");
+  }
+  function openMenu(){
+    menu.classList.add("open");
+    burger.setAttribute("aria-expanded","true");
+    burger.setAttribute("aria-label","Close menu");
+  }
+  burger.addEventListener("click", function(){
+    if(menu.classList.contains("open")) closeMenu(); else openMenu();
+  });
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", closeMenu);
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeMenu();
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // ---- forms: honest placeholder behavior — NO fake success messages.
+  // There is no backend yet (see CLAUDE.md / README). Swap this block out
+  // the moment a real API/CRM endpoint exists.
+  function wireForm(formId, statusId){
+    var form = document.getElementById(formId);
+    var status = document.getElementById(statusId);
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var required = form.querySelectorAll("[required]");
+      for(var i=0;i<required.length;i++){
+        if(!required[i].value.trim()){
+          required[i].focus();
+          status.textContent = "Please fill in all required fields.";
+          status.className = "form-status err";
+          return;
+        }
+      }
+      // Honest, not fake: this site has no backend wired up yet.
+      status.textContent = "This form isn't connected to a live system yet — it will be soon. In the meantime, please reach out directly.";
+      status.className = "form-status ok";
+    });
+  }
+  wireForm("shortLeadForm", "shortLeadStatus");
+  wireForm("fullLeadForm", "fullLeadStatus");
+})();
+</script>
+</body>
+</html>
