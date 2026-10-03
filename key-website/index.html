@@ -735,6 +735,14 @@
 (function(){
   "use strict";
 
+  // ---- lead database config ----
+  // Separate from LVR entirely - its own Firebase Realtime Database project.
+  // Paste the new project's RTDB URL here once it exists (see CLAUDE.md for
+  // the one-time setup steps and the security rules that go with it).
+  // Empty string = forms honestly say "not connected yet" instead of lying
+  // about a successful submission.
+  var KEY_LEADS_DB_URL = "";
+
   // ---- mobile menu ----
   var burger = document.getElementById("burgerBtn");
   var menu = document.getElementById("mobileMenu");
@@ -760,10 +768,15 @@
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // ---- forms: honest placeholder behavior — NO fake success messages.
-  // There is no backend yet (see CLAUDE.md / README). Swap this block out
-  // the moment a real API/CRM endpoint exists.
-  function wireForm(formId, statusId){
+  // ---- forms: real submission once KEY_LEADS_DB_URL is set, honest
+  // placeholder when it isn't. Never a fake success message either way.
+  //
+  // Writes go to /leads/<auto-id> in KEY's own, separate Realtime Database
+  // (not LVR's). The database's security rules only allow creating a new
+  // leaf under /leads - no client can read, overwrite, or delete any lead,
+  // including its own. See CLAUDE.md for the exact rules and one-time
+  // Firebase setup steps.
+  function wireForm(formId, statusId, source){
     var form = document.getElementById(formId);
     var status = document.getElementById(statusId);
     form.addEventListener("submit", function(e){
@@ -777,13 +790,49 @@
           return;
         }
       }
-      // Honest, not fake: this site has no backend wired up yet.
-      status.textContent = "This form isn't connected to a live system yet — it will be soon. In the meantime, please reach out directly.";
-      status.className = "form-status ok";
+
+      if(!KEY_LEADS_DB_URL){
+        // Honest, not fake: no database is connected yet.
+        status.textContent = "This form isn't connected to a live system yet — it will be soon. In the meantime, please reach out directly.";
+        status.className = "form-status ok";
+        return;
+      }
+
+      var data = {source: source, createdAt: {".sv": "timestamp"}, landingPage: location.pathname};
+      var fd = new FormData(form);
+      fd.forEach(function(value, key){
+        if(key === "interest"){
+          if(!data.interests) data.interests = [];
+          data.interests.push(value);
+        } else {
+          data[key] = value;
+        }
+      });
+
+      var submitBtn = form.querySelector('[type="submit"]');
+      submitBtn.disabled = true;
+      status.textContent = "Sending…";
+      status.className = "form-status";
+
+      fetch(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+      }).then(function(r){
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        status.textContent = "Thanks — we've received this and will follow up soon.";
+        status.className = "form-status ok";
+        form.reset();
+      }).catch(function(){
+        status.textContent = "Something went wrong sending this. Please try again, or reach out directly.";
+        status.className = "form-status err";
+      }).finally(function(){
+        submitBtn.disabled = false;
+      });
     });
   }
-  wireForm("shortLeadForm", "shortLeadStatus");
-  wireForm("fullLeadForm", "fullLeadStatus");
+  wireForm("shortLeadForm", "shortLeadStatus", "homepage-short-form");
+  wireForm("fullLeadForm", "fullLeadStatus", "homepage-full-form");
 })();
 </script>
 </body>

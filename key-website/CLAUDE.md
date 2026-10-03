@@ -87,6 +87,8 @@ sitemap.xml       Domain is TBD — every absolute URL in here, and in
                   is chosen, not piecemeal.
 CLAUDE.md         This file.
 README.md
+firebase-leads-rtdb.rules.json   Security rules for KEY's own lead database
+                  (separate from LVR) — see "Lead database" below.
 ```
 
 If the project grows past a single page, the next step is the
@@ -99,12 +101,36 @@ page.
 - **Domain**: not selected. An earlier prototype referenced `keysi.com` —
   do not use it; it's both already registered and contains "SI", which
   is off-brand now.
-- **Backend / CRM**: Shane has an existing database/system this will
-  eventually connect to. Don't guess at its schema. When it's available:
-  inspect it first, understand it, then build a secure API — validate
-  inputs server-side, add spam protection and duplicate handling, track
-  `source`/`landing_page`/`campaign`, and return real success/error
-  states to the form.
+- **Lead database**: decided 2026-10-03 — KEY gets its own, separate
+  Firebase Realtime Database (not LVR's, and not the CRM/system Shane
+  mentioned connecting "eventually" — that's a possible later upgrade,
+  this is the simple thing that ships now). The form-submission code in
+  `index.html` is already built and wired for this: it POSTs to
+  `<KEY_LEADS_DB_URL>/leads.json`, and `firebase-leads-rtdb.rules.json`
+  in this folder is the exact security rules to set. Those rules only
+  allow *creating* a new lead — no client, including the one that just
+  submitted, can read, overwrite, or delete any lead. That's the
+  deliberate fix for the problem LVR's database has (it accepts
+  unauthenticated reads AND writes to everything) — KEY's database
+  should never end up in that state.
+
+  **One-time setup (needs Shane's Google login, so this is a Mac task):**
+  1. Firebase console → new project (e.g. `key-leads`).
+  2. Build → Realtime Database → Create Database.
+  3. Rules tab → paste in `firebase-leads-rtdb.rules.json` from this
+     folder → Publish.
+  4. Copy the database's URL (looks like
+     `https://key-leads-xxxxx-default-rtdb.firebaseio.com`).
+  5. In `index.html`, find `var KEY_LEADS_DB_URL = "";` near the top of
+     the `<script>` block and paste the URL in between the quotes.
+  6. Submit a test lead through the live site, then check the Firebase
+     console's Realtime Database data tab to confirm it landed under
+     `/leads`.
+
+  That's the whole setup — no Cloud Functions, no backend server, just
+  the database and its rules. Reading the leads back out (a dashboard,
+  CSV export, etc.) is a separate, later task once there's something to
+  look at.
 - **Analytics**: not installed yet — don't add any analytics platform
   until Shane picks one.
 - **Contact email/phone**: not yet provided — currently absent from the

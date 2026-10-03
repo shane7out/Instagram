@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "leads": {
+      ".read": false,
+      ".write": false,
+      "$leadId": {
+        ".read": false,
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['createdAt', 'source'])"
+      }
+    }
+  }
+}
