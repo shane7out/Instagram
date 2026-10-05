@@ -1,51 +1,54 @@
 #!/bin/bash
-# Read-only: build a filtered SMB prospect list for Key Technologies from the
-# LVR database. Keeps records that are (a) not a big resort/casino corporate
-# account, and (b) have a phone or email already on file (reachable beyond
-# just an Instagram DM). Outputs compact pipe-delimited lines so Claude can
-# turn this into a real file.
+# Read-only: build an upscale/bigger-business prospect list for Key
+# Technologies. Restaurants filtered for upscale dining signals (fine
+# dining, steakhouse, chef-driven, etc.) or multi-location group ownership,
+# plus the smaller "experiences" node (nightclubs, hotels, attractions,
+# shows - naturally skews upscale). Excludes the same big-brand noise
+# (national liquor/beer, car dealer groups) found last time, and this time
+# also explicitly keeps out medical/legal/dental - not what's wanted.
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 curl -s "$DB/dashboard_crec.json"     -o crec.json
-curl -s "$DB/dashboard_adv_crec.json" -o adv.json
+curl -s "$DB/dashboard_exp_crec.json" -o exp.json
 
 echo "crec total: $(jq 'keys|length' crec.json)"
-echo "adv total: $(jq 'keys|length' adv.json)"
+echo "exp total: $(jq 'keys|length' exp.json)"
 
-# Big resort/casino/corporate keywords to exclude (owner, address, OR email
-# domain) - these are enterprise accounts with internal teams, or
-# celebrity-chef/mega-group tenants inside them, not KEY's SMB target.
-EXCLUDE='caesars|wynn|^mgm|bellagio|venetian|palazzo|mandalay|luxor|excalibur|new york-new york|^paris |planet hollywood|^aria|cosmopolitan|park mgm|resorts world|circa|golden nugget|four seasons|ritz-carlton|waldorf|fontainebleau|durango station|red rock resort|green valley ranch|station casino|boyd gaming|hard rock hotel|virgin hotels|treasure island|flamingo|harrah|^the linq|^rio |tropicana|sahara|westgate|^plaza |golden gate hotel|downtown grand|^the d |main street station|bobby flay|gordon ramsay|wolfgang puck|^nobu|guy fieri|giada|hell.?s kitchen|morimoto|mgmresorts\.com|caesars\.com|wynnresorts|wynnlasvegas|venetianlasvegas|cosmopolitanlasvegas|stationcasinos\.com|boydgaming\.com|hardrockhotels|virginhotelslv|fourseasons\.com|ritzcarlton\.com'
-
-echo
-echo "==== filtering dashboard_crec (restaurants) ===="
-jq -r --arg ex "$EXCLUDE" '
-  to_entries[] | .value |
-  select(
-    ((.owner // "") | ascii_downcase | test($ex) | not) and
-    ((.address // "") | ascii_downcase | test($ex) | not) and
-    ((.email // "") | ascii_downcase | test($ex) | not) and
-    ((.name // "") | ascii_downcase | test($ex) | not) and
-    (((.phone // "") != "") or ((.email // "") != ""))
-  ) |
-  [(.name // ""), (.phone // ""), (.email // ""), (.instagram // ""), (.cuisine // "")] | join("|")
-' crec.json > /tmp/crec_filtered.txt
-echo "crec matches: $(wc -l < /tmp/crec_filtered.txt)"
-cat /tmp/crec_filtered.txt
+UPSCALE='fine dining|steakhouse|chef|tasting menu|omakase|michelin|award-winning|upscale|premium|rooftop|wine bar|wine list|sommelier|chef.?s table|white tablecloth|haute|gourmet|exclusive'
+GROUP='group|hospitality|collective|restaurants$|concepts'
+# Same resort/casino/celebrity-chef exclusions as the earlier SMB pass, PLUS
+# the liquor/dealer/legal/medical categories ruled out this round.
+NOISE='liquor|vodka|whisk(e)?y|tequila|bourbon|rum$|gin$|beer$|brewing|brewery|cider|seltzer|wine(ry)?$|spirits|dealer|dealership|motors$|automotive|law firm|law group|attorney|legal|injury|dental|dentist|chiropract|medspa|med spa|plastic surgery|dermatolog|caesars|wynn|^mgm|mgmresorts|bellagio|venetian|palazzo|mandalay|luxor|excalibur|new york-new york|planet hollywood|^aria|cosmopolitan|park mgm|resorts world|circa|golden nugget|four seasons|ritz-carlton|waldorf|fontainebleau|durango station|red rock resort|green valley ranch|station casino|boyd gaming|hard rock hotel|virgin hotels|treasure island|flamingo|harrah|^the linq|^rio |tropicana|sahara|westgate|^plaza |golden gate hotel|downtown grand|^the d |main street station|bobby flay|gordon ramsay|wolfgang puck|^nobu|guy fieri|giada|hell.?s kitchen|morimoto'
 
 echo
-echo "==== filtering dashboard_adv_crec (advertisers) ===="
-jq -r --arg ex "$EXCLUDE" '
+echo "==== dashboard_crec: upscale-signal or group-owned, with contact info ===="
+jq -r --arg up "$UPSCALE" --arg grp "$GROUP" --arg noise "$NOISE" '
   to_entries[] | .value |
   select(
-    ((.owner // "") | ascii_downcase | test($ex) | not) and
-    ((.address // "") | ascii_downcase | test($ex) | not) and
-    ((.email // "") | ascii_downcase | test($ex) | not) and
-    ((.name // "") | ascii_downcase | test($ex) | not) and
-    (((.phone // "") != "") or ((.email // "") != ""))
+    (((.cuisine // "") | ascii_downcase | test($up)) or
+     ((.notes // "")   | ascii_downcase | test($up)) or
+     ((.owner // "")   | ascii_downcase | test($grp))) and
+    ((.owner // "")   | ascii_downcase | test($noise) | not) and
+    ((.name // "")    | ascii_downcase | test($noise) | not) and
+    ((.email // "")   | ascii_downcase | test($noise) | not) and
+    (((.phone // "") != "") or ((.email // "") != "") or ((.instagram // "") != ""))
   ) |
-  [(.name // ""), (.phone // ""), (.email // ""), (.instagram // ""), (.cuisine // "")] | join("|")
-' adv.json > /tmp/adv_filtered.txt
-echo "adv matches: $(wc -l < /tmp/adv_filtered.txt)"
-cat /tmp/adv_filtered.txt
+  [(.name // ""), (.phone // ""), (.email // ""), (.instagram // ""), (.cuisine // ""), (.owner // "")] | join("|")
+' crec.json > /tmp/crec_upscale.txt
+echo "crec matches: $(wc -l < /tmp/crec_upscale.txt)"
+cat /tmp/crec_upscale.txt
+
+echo
+echo "==== dashboard_exp_crec: experiences (nightclubs, hotels, attractions, shows) ===="
+jq -r --arg noise "$NOISE" '
+  to_entries[] | .value |
+  select(
+    ((.owner // "") | ascii_downcase | test($noise) | not) and
+    ((.name // "")  | ascii_downcase | test($noise) | not) and
+    ((.email // "") | ascii_downcase | test($noise) | not)
+  ) |
+  [(.name // ""), (.phone // ""), (.email // ""), (.instagram // ""), (.notes // "" | .[0:60]), (.owner // "")] | join("|")
+' exp.json > /tmp/exp_all.txt
+echo "exp matches: $(wc -l < /tmp/exp_all.txt)"
+cat /tmp/exp_all.txt
