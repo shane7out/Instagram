@@ -234,6 +234,75 @@ truncated, or buried — surfaced prominently in the 72-hour pre-event email.
 
 ---
 
+## 10. ⚠️ STANDING RULE (2026-10-05) — every new business MUST be DM-able, not just "in the database"
+
+**The owner's own words: "Whenever you send me one of these or whatever to
+update, the rule is we must send them a DM first... put them in the DM, needs
+to DM pill." This is permanent — never forget it, every session, forever.**
+
+Adding a row to `dashboard_crec` / `dashboard_adv_crec` is NOT enough by
+itself. The live dashboard (`.github/db-task/patched-dashboard.html` in this
+repo is a real fetched copy of it — read it, don't guess) has specific,
+non-obvious rules for what counts as "needs DM":
+
+1. **An Instagram handle is mandatory.** The "needs DM" counter for both
+   restaurants and advertisers is gated on a non-empty IG handle
+   (`r.igHandle` / `!!ig` in the dashboard JS — see `needsDM` near line
+   10350 and the `nodm` counter near line 5328). A record added with a blank
+   Instagram field will **never** show up as needing a DM, no matter what
+   else is set. **Do not add a business without first finding its real
+   Instagram handle.** If a source (screenshot, listicle, etc.) doesn't give
+   the handle, look it up (WebSearch) before writing the record. If a real
+   handle genuinely can't be confirmed, tell the owner explicitly which
+   businesses are missing one and why — don't silently add them handle-less.
+
+2. **Restaurants need a proper, non-colliding `num`.** New restaurant records
+   go to `dashboard_crec` (confirmed via `prWriteRecord()` in the dashboard
+   JS, which writes to `dashboard_crec/<num>`) and MUST include a `num` field
+   allocated the same way the app itself does it (`_getNextNum()`: scan
+   `dashboard_crec` + `dashboard/customrecords` + the restaurant staging node
+   + `dashboard/deleted` for the current max, then `+1`). Several maps in the
+   app are keyed by `num` — a record with no `num` (or a colliding one) risks
+   cross-contaminating another record's DM/status/bad-IG state. **Always
+   fetch the live data and compute the next free num at write time —
+   never hardcode or guess one.**
+
+3. **DM status lives in separate Firebase paths, not on the record.** A new
+   restaurant's "pending" status is `dashboard/status/<num>` = `"pending"`,
+   and its attempt log is `dashboard/attempts/<num>` =
+   `[{email, status:"pending", date:null, note:""}]` (see
+   `saveNewRecord()` / `_fbPatch('status/'+num, ...)` in the dashboard JS).
+   **Every new restaurant needs both of these written**, or it'll render
+   with an undefined/blank status.
+
+4. **New advertisers (non-restaurant businesses) go to a STAGING node, not
+   straight to `dashboard_adv_crec`.** The live node is `dashboard_adv_crec`
+   but new adds from the UI go to `dashboard_adv_stg_crec` first (per
+   `advSaveNewRecord()` / `prWriteAdvStg()`), for the owner to review and
+   approve — `dashboard_adv_crec` is meant to only contain already-approved
+   records. Writing straight into `dashboard_adv_crec` skips that review
+   step. New num for advertisers is allocated starting at 9000 (scan
+   `dashboard_adv_stg_crec` + `dashboard_adv_crec` nums >9000 + a "thumbs
+   down" rejected-node + `dashboard` adv-deleted map, then `+1`), and the
+   record itself (unlike restaurants) carries `status:'pending',
+   defaultStatus:'pending'` directly on the object. The app's own UI also
+   makes the Instagram handle a hard requirement for advertiser adds
+   (`if(!ig){alert('Instagram handle is required.');return;}`) — treat that
+   as non-negotiable here too.
+
+**2026-10-05 incident this rule is logging:** 21 restaurants + 1 advertiser
+were added from an IG listicle screenshot (`@foodiedhillon`, "NEW RESTAURANT
+AND BARS IN LAS VEGAS") directly to `dashboard_crec` / `dashboard_adv_crec`
+with blank Instagram fields, no `num`, no status/attempts entries, and (for
+the advertiser) skipping the staging node entirely. None of them showed up
+in the owner's "needs to DM" queue — this is why. A corrective pass was run
+immediately after to patch real Instagram handles (found via web search,
+none invented), assign proper nums, write status/attempts, and move the
+advertiser into the staging node where it belongs. See the git log around
+this date on `claude/master-file-e6ofy0` for the exact corrective commits.
+
+---
+
 *If you're a new Claude session reading this cold: read this whole file, then
 ask the owner what they want to work on next rather than re-diagnosing
 everything above from zero — it's all still accurate as of the date at the
