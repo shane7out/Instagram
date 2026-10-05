@@ -95,11 +95,45 @@ but there are way fewer of them than before, Craigslist may be blocking the
 scraper — that's a follow-up debugging conversation, not something the script
 above can fix on its own.
 
+### Zach's dashboard access
+Gives Zach his own PIN (223344) as a full co-editor — same access level as
+the existing friend PIN, can see/edit the database and send DMs/emails. Built
+2026-10-03, never deployed.
+
+```
+curl -sL -o /tmp/zachpin.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-add-zach-pin.sh && bash /tmp/zachpin.sh
+```
+
+Known limitation: the dashboard only has two DM pools total (co-editor vs.
+guest), so Zach's activity will be mixed in with whoever else uses that PIN
+tier — there's no separate "Zach" attribution on DMs sent.
+
+### Key Technologies pill on the dashboard
+Adds a "Key Technologies" link next to the Deals/CC/Badges pills on the PIN
+screen, pointing at the Key Technologies site. Built 2026-10-03, never
+deployed. The link 404s until GitHub Pages is turned on for the
+`claude/key-website` branch (Settings → Pages → branch `claude/key-website`
+→ folder `/docs` — a GitHub.com toggle, not a Mac step, can be done from a
+phone; full details and DNS steps are in that branch's own `docs/README.md`
+and `docs/CLAUDE.md`) — turning Pages on after this runs requires no further
+dashboard redeploy, the pill just starts working.
+
+```
+curl -sL -o /tmp/keypill.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-add-key-pill.sh && bash /tmp/keypill.sh
+```
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
   the retreat center said they don't want the site built. It's parked, not
   deleted, in case that changes.
+
+Note: `deploy-cc.sh`, `deploy-refresh-ui.sh`, `finish-deals.sh`,
+`refresh-and-pills.sh`, `deploy-crm-fixes.sh`, `build-batman.sh`,
+`fix-batman.sh` also live in `.github/db-task/mac/` but are NOT pending —
+they were already run successfully earlier in the project (CC manager,
+Batman cards on the Deals site, Deals refresh v8, the standalone CRM fix
+that `deploy-dashboard-patches.sh` above now supersedes). Leave them alone.
 
 ---
 
