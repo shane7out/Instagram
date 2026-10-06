@@ -1,49 +1,37 @@
 #!/bin/bash
-# Read-only verification: confirm the 2026-10-05 corrective patch (20
-# restaurants + Etho Wellness Club + Cobra Clutch + Black Mountain Griddle)
-# actually stuck and hasn't been overwritten by anything since. Routine
-# 3-hour check-in sanity check, not a new change.
+# Read-only: 3-hour check-in sanity check - has Shane made any progress on
+# his own (GitHub Pages toggle, a Mac deploy script) since the last update,
+# without telling Claude? Checks live sites directly rather than assuming
+# nothing changed.
 set +e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
-curl -s "$DB/dashboard_crec.json"     -o crec.json
-curl -s "$DB/dashboard_adv_crec.json" -o adv.json
+echo "=== GitHub Pages (claude/key-website) ==="
+curl -s -o /dev/null -w "shane7out.github.io/Instagram/ -> HTTP %{http_code}\n" https://shane7out.github.io/Instagram/ --max-time 15
+curl -s -o /dev/null -w "keytechnologies.si/ -> HTTP %{http_code}\n" https://keytechnologies.si/ --max-time 15
 
-node <<'NODE'
-const fs = require('fs');
-const crec = JSON.parse(fs.readFileSync('crec.json', 'utf8')) || {};
-const adv = JSON.parse(fs.readFileSync('adv.json', 'utf8')) || {};
+echo
+echo "=== Live LVR dashboard: APP_VERSION + deploy markers ==="
+curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live-dash.html --max-time 20
+echo "bytes: $(wc -c < /tmp/live-dash.html)"
+grep -ao 'APP_VERSION=[0-9]*' /tmp/live-dash.html | head -1
+echo "KEYPILL01 marker present: $(grep -c 'KEYPILL01' /tmp/live-dash.html)"
+echo "ZACHPIN marker present: $(grep -c 'ZACHPIN' /tmp/live-dash.html)"
+echo "Key Technologies pill text present: $(grep -c 'Key Technologies' /tmp/live-dash.html)"
 
-const RESTAURANT_KEYS = [
-  "-P3D5Cxd2NWLmDQSo027","-P3D5CzCj8d_H6_RKw-B","-P3D5CzvEvvWT9RHlaqF","-P3D5D-eyoVDuESZDUxx",
-  "-P3D5D0N21yDDWZWqcOH","-P3D5D15jKNf51nXQMlq","-P3D5D1nyhbF75SE8c6t","-P3D5D2W_P5UY_-qoXOc",
-  "-P3D5D3Ew9ds6S_ilIjr","-P3D5D3yqtBkroEB68VJ","-P3D5D4f7Wf57WSyE_0i","-P3D5D5Otabi482O5Sye",
-  "-P3D5D66FkdD-JnXpmva","-P3D5D6pHa5TBcMcVE4m","-P3D5D7XKDN8MuBhVAtj","-P3D5D8EOpHeEctCSG7e",
-  "-P3D5D8wuHxrVBo6YkXu","-P3D5D9e5EqNNfZmdJWh","-P3D5DAMl-8jtopknOvk","-P3D5DB4p5k3QX3huIsN",
-];
-const ETHO_KEY = "-P3D5DBmIwlpOkej7Hza";
+echo
+echo "=== Deals site: has the stale scraper fix actually run? ==="
+curl -s https://classiccarsforsale-co.web.app/cars.json -o /tmp/cars.json --max-time 20
+node -e "
+try {
+  const d = JSON.parse(require('fs').readFileSync('/tmp/cars.json','utf8'));
+  const dates = [...new Set(d.map(c=>c.added))].sort();
+  console.log('total cars:', d.length);
+  console.log('distinct added-dates (last 5):', dates.slice(-5));
+} catch(e) { console.log('could not parse cars.json:', e.message); }
+"
 
-let ok = 0, missingNum = 0, missingBoth = [];
-for (const k of RESTAURANT_KEYS) {
-  const r = crec[k];
-  if (!r) { console.log(`MISSING RECORD: ${k}`); continue; }
-  const hasNum = r.num != null;
-  const hasIG = !!r.instagram;
-  if (hasNum) ok++; else missingNum++;
-  if (!hasNum) missingBoth.push(`${r.name} (key ${k}) - num:${r.num} ig:${r.instagram||'(none)'}`);
-}
-console.log(`Restaurants: ${ok}/${RESTAURANT_KEYS.length} have a num field intact, ${missingNum} missing num`);
-if (missingBoth.length) { console.log("REGRESSION DETECTED:"); missingBoth.forEach(l => console.log("  " + l)); }
-
-const etho = adv[ETHO_KEY];
-console.log(`\nEtho Wellness Club: num=${etho ? etho.num : 'RECORD MISSING'}, ig=${etho ? etho.ig : '-'}, instagram field=${etho ? etho.instagram : '-'} (should be null/absent)`);
-
-const cobra = Object.values(crec).find(v => v && v.name && String(v.name).toLowerCase().trim() === 'cobra clutch');
-console.log(`Cobra Clutch: ${cobra ? `num=${cobra.num}, instagram=${cobra.instagram}` : 'NOT FOUND'}`);
-
-const bmg = Object.values(crec).find(v => v && v.name && String(v.name).toLowerCase().trim() === 'black mountain griddle');
-console.log(`Black Mountain Griddle: ${bmg ? `num=${bmg.num}, instagram=${bmg.instagram}, phone=${bmg.phone}` : 'NOT FOUND'}`);
-
-console.log(`\ncrec total records: ${Object.keys(crec).length}`);
-console.log(`adv total records: ${Object.keys(adv).length}`);
-NODE
+echo
+echo "=== Dating site: instant-swipe fix live? ==="
+curl -s https://lvr-data-a60c1.web.app/dating.html -o /tmp/dating.html --max-time 20
+echo "bytes: $(wc -c < /tmp/dating.html)"
+grep -c "instant" /tmp/dating.html 2>/dev/null
