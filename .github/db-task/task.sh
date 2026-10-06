@@ -1,8 +1,8 @@
 #!/bin/bash
-# Read-only: 3-hour check-in sanity check - has Shane made any progress on
-# his own (GitHub Pages toggle, a Mac deploy script) since the last update,
-# without telling Claude? Checks live sites directly rather than assuming
-# nothing changed.
+# Read-only: 3-hour check-in sanity check (re-run 2026-10-06 ~18:35 UTC) -
+# has Shane made any progress on his own (GitHub Pages toggle, a Mac deploy
+# script) since the last update, without telling Claude? Checks live sites
+# directly rather than assuming nothing changed.
 set +e
 
 echo "=== GitHub Pages (claude/key-website) ==="
