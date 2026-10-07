@@ -14,7 +14,14 @@ LOG=/tmp/dateqs.txt
 cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 
 IDX="dating.html"
-[ -f "$IDX" ] || { echo "NO $IDX in $DASH"; cat "$LOG"; exit 1; }
+if [ ! -f "$IDX" ]; then
+  echo "$IDX not found locally in $DASH - fetching the live copy first" >> "$LOG"
+  curl -sL -o "$IDX" https://lvr-data-a60c1.web.app/dating.html
+  if [ ! -s "$IDX" ]; then
+    echo "FAILED to fetch live $IDX - stopping, nothing deployed" >> "$LOG"
+    cat "$LOG"; exit 1
+  fi
+fi
 echo "dating file: $IDX ($(wc -c < "$IDX") bytes)" >> "$LOG"
 
 # ---------------------------------------------------------------------------
