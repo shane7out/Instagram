@@ -1,5 +1,5 @@
 #!/bin/bash
-# Read-only: 3-hour check-in (2026-10-07 ~06:35 UTC) - checking specifically
+# Read-only: 3-hour check-in (re-run 2026-10-07 ~12:35 UTC) - checking specifically
 # whether Shane has turned on GitHub Pages / pointed DNS at keytechnologies.si
 # since the last check. All 5 Mac deploy tasks were confirmed done directly
 # via his terminal output already (not via this script) - this just covers
