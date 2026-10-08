@@ -1,28 +1,40 @@
 #!/bin/bash
-# 3-hour check-in (2026-10-08 ~03:36 UTC). Two things this cycle:
-# 1) GitHub Pages / keytechnologies.si - re-checking after ~15h gap (not every
-#    single cycle, but enough time passed it's worth a look).
-# 2) A regression sweep of every Mac deploy confirmed live earlier in the
-#    project (dashboard patches, Zach PIN, Key Technologies pill, dating
-#    instant-swipe) - none of these have been re-verified since they first
-#    went live, and nothing should be assumed to stay fixed forever.
+# 3-hour check-in (2026-10-08 ~12:36 UTC). New angle: actual DM outreach
+# progress, not just DB-visibility. dashboard/status/<num> holds each
+# restaurant's real outreach state ('pending' | whatever the dashboard sets
+# on contact/response) - this checks the live distribution so Shane has a
+# real read on how much outreach has actually happened vs. still sitting.
 set +e
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
-echo "=== GitHub Pages / DNS ==="
-curl -s -o /dev/null -w "shane7out.github.io/Instagram/ -> HTTP %{http_code}\n" https://shane7out.github.io/Instagram/ --max-time 15
-curl -s -o /dev/null -w "keytechnologies.si/ -> HTTP %{http_code}\n" https://keytechnologies.si/ --max-time 15
+curl -s "$DB/dashboard/status.json" -o /tmp/status.json --max-time 20
+curl -s "$DB/dashboard_crec.json" -o /tmp/crec.json --max-time 20
 
-echo
-echo "=== Dashboard regression sweep ==="
-curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live-dash.html --max-time 20
-echo "Key Technologies pill present: $(grep -c 'Key Technologies' /tmp/live-dash.html)"
-echo "Zach PIN marker present: $(grep -c 'ZACH_PIN' /tmp/live-dash.html)"
-APPVER=$(grep -oE "APP_VERSION[^0-9]*[0-9]+" /tmp/live-dash.html | head -1)
-echo "APP_VERSION marker: $APPVER"
+node <<'NODE'
+const fs = require('fs');
+function load(p){ try { return JSON.parse(fs.readFileSync(p,'utf8')) || {}; } catch(e){ return {}; } }
+const status = load('/tmp/status.json');
+const crec = load('/tmp/crec.json');
 
-echo
-echo "=== Dating site regression ==="
-curl -s https://lvr-data-a60c1.web.app/dating.html -o /tmp/live-dating.html --max-time 20
-echo "live dating.html bytes: $(wc -c < /tmp/live-dating.html)"
-echo "DATEQS01 (instant-swipe patch) present: $(grep -c 'DATEQS01' /tmp/live-dating.html)"
-echo "Instant demo profile present: $(grep -c 'Instant demo profile' /tmp/live-dating.html)"
+const counts = {};
+for (const v of Object.values(status||{})) {
+  const k = (v === null || v === undefined) ? '(null)' : String(v);
+  counts[k] = (counts[k]||0) + 1;
+}
+console.log('Total status entries: ' + Object.keys(status||{}).length);
+console.log('Breakdown:');
+for (const [k,c] of Object.entries(counts).sort((a,b)=>b[1]-a[1])) {
+  console.log('  ' + k + ': ' + c);
+}
+
+// cross-check: how many restaurants have a DM-able igHandle but no status entry at all (truly untouched)
+let dmable = 0, dmableNoStatus = 0;
+for (const [k,r] of Object.entries(crec)) {
+  if (!r || typeof r !== 'object') continue;
+  if (r.num == null || !r.instagram || !String(r.instagram).trim()) continue;
+  dmable++;
+  if (!(String(r.num) in status)) dmableNoStatus++;
+}
+console.log('\nDM-able restaurants (num + instagram present): ' + dmable);
+console.log('Of those, with NO status entry at all (not even "pending" written): ' + dmableNoStatus);
+NODE
