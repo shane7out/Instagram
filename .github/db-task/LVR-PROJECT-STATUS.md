@@ -2,7 +2,7 @@
 
 Repo: `shane7out/Instagram` (public — never commit real PINs/card numbers)
 Working branch: `claude/master-file-e6ofy0`
-Last updated: 2026-09-25
+Last updated: 2026-10-08
 
 This file exists so a brand-new Claude session can pick up exactly where things
 stand without re-discovering everything from scratch. Paste this whole file in
@@ -334,6 +334,47 @@ immediately after to patch real Instagram handles (found via web search,
 none invented), assign proper nums, write status/attempts, and move the
 advertiser into the staging node where it belongs. See the git log around
 this date on `claude/master-file-e6ofy0` for the exact corrective commits.
+
+---
+
+## 11. Status as of 2026-10-08 (3-hour check-in routine running since 2026-10-07)
+
+A recurring check-in (`trig_01LRZS3SN4DZ6V5jcquW5yiE`, every 3 hours, fires
+into the same ongoing session) has been active since 2026-10-07. What it's
+done so far, in case a fresh session picks this up mid-stream:
+
+- **DM-visibility audit (standing rule, section 10) re-run and clean.** 842
+  restaurants in `dashboard_crec`, 0 missing `num` — the 2026-10-05 silent-
+  invisibility bug has not recurred. However, **110 restaurants have a `num`
+  but no Instagram handle** (visible on the dashboard, but can never show up
+  as "needs DM") — these are legacy entries, not new regressions. Web search
+  could not reliably resolve handles for any of them (results were either not
+  found, or only a *national chain* account rather than the specific Las
+  Vegas location) — don't guess-write handles into the DB; ask the owner
+  directly when he recognizes one instead, same as the Mezban add below.
+  Also **2 advertisers are stuck non-DM-able** for the same reason:
+  "Wholesale Classic Cars" and "AlohaMulans" — couldn't confirm either via
+  web search (couldn't even confirm "AlohaMulans" is a real business name,
+  may be a DB typo). Still waiting on the owner to ID these.
+- **Mezban added** (`dashboard_crec/60022`, halal Pakistani, 5239 W
+  Charleston Blvd, `@mezban_lv`) from an IG screenshot the owner sent
+  directly — full DM-visibility (num + instagram + status/attempts) written
+  per section 10, confirmed live.
+- **Key Technologies marketing-plan doc** (`48cdc7f5-b47c-49c8-8ea4-
+  a417bd0299b8`): the plan ranks LinkedIn organic as the #1-priority channel
+  but had no actual outreach script for it — added a 6th template (LinkedIn
+  connection request + accept-follow-up) alongside the 5 IG/email ones. The
+  "Outreach tracker" tab (86 prospects) is still all "Not sent" — the owner
+  hasn't started working the list yet.
+- **Full regression sweep of all 5 earlier Mac deploys came back clean**:
+  Key Technologies pill, Zach PIN, and the dating-site instant-swipe patch
+  are all still live (dashboard `APP_VERSION=449`, unchanged since the Key
+  pill deploy — nothing has drifted).
+- **Still unchanged, still owner/browser-dependent:** GitHub Pages has never
+  been turned on for `claude/key-website` (`/docs`), and `keytechnologies.si`
+  DNS still isn't pointed at it (`HTTP 404` / `HTTP 000` on every check since
+  2026-10-07 ~06:36 UTC). Not worth re-checking every single 3-hour cycle —
+  only when there's a specific reason to think it changed.
 
 ---
 
