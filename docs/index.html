@@ -75,6 +75,7 @@
     html{scroll-behavior:auto;}
     *,*::before,*::after{animation:none!important;transition:none!important;}
   }
+  html,body{overflow-x:hidden;}
   body{
     margin:0;
     background:var(--bg);
@@ -194,13 +195,16 @@
   }
   input:focus, textarea:focus, select:focus{outline:2px solid var(--key-blue);outline-offset:1px;}
   textarea{min-height:90px;resize:vertical;}
-  fieldset{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0;}
+  fieldset{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0;min-width:0;}
   fieldset legend{padding:0 6px;font-size:13px;font-weight:600;color:var(--ink-dim);}
-  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:8px;}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:8px;min-width:0;}
   @media (max-width:520px){.check-grid{grid-template-columns:1fr;}}
   .check-grid label{
-    display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink);font-weight:400;
+    display:flex;align-items:flex-start;gap:8px;font-size:14.5px;color:var(--ink);font-weight:400;
+    min-width:0;
   }
+  .check-grid label input{flex:none;margin-top:3px;}
+  .check-grid label span{flex:1 1 auto;min-width:0;overflow-wrap:break-word;}
   .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
   .form-status{font-size:14px;margin-top:4px;min-height:18px;}
   .form-status.ok{color:var(--key-light);}
@@ -677,17 +681,17 @@
         <fieldset>
           <legend>Possible interests</legend>
           <div class="check-grid">
-            <label><input type="checkbox" name="interest" value="Explore AI opportunities"> Explore AI opportunities</label>
-            <label><input type="checkbox" name="interest" value="Business automation"> Business automation</label>
-            <label><input type="checkbox" name="interest" value="AI agents"> AI agents</label>
-            <label><input type="checkbox" name="interest" value="Sales and lead generation"> Sales &amp; lead generation</label>
-            <label><input type="checkbox" name="interest" value="Customer service"> Customer service</label>
-            <label><input type="checkbox" name="interest" value="Operations"> Operations</label>
-            <label><input type="checkbox" name="interest" value="Databases and information systems"> Databases &amp; info systems</label>
-            <label><input type="checkbox" name="interest" value="Security"> Security</label>
-            <label><input type="checkbox" name="interest" value="Networking"> Networking</label>
-            <label><input type="checkbox" name="interest" value="Business technology"> Business technology</label>
-            <label><input type="checkbox" name="interest" value="Not sure yet"> Not sure yet</label>
+            <label><input type="checkbox" name="interest" value="Explore AI opportunities"><span>Explore AI opportunities</span></label>
+            <label><input type="checkbox" name="interest" value="Business automation"><span>Business automation</span></label>
+            <label><input type="checkbox" name="interest" value="AI agents"><span>AI agents</span></label>
+            <label><input type="checkbox" name="interest" value="Sales and lead generation"><span>Sales &amp; lead generation</span></label>
+            <label><input type="checkbox" name="interest" value="Customer service"><span>Customer service</span></label>
+            <label><input type="checkbox" name="interest" value="Operations"><span>Operations</span></label>
+            <label><input type="checkbox" name="interest" value="Databases and information systems"><span>Databases &amp; info systems</span></label>
+            <label><input type="checkbox" name="interest" value="Security"><span>Security</span></label>
+            <label><input type="checkbox" name="interest" value="Networking"><span>Networking</span></label>
+            <label><input type="checkbox" name="interest" value="Business technology"><span>Business technology</span></label>
+            <label><input type="checkbox" name="interest" value="Not sure yet"><span>Not sure yet</span></label>
           </div>
         </fieldset>
         <button class="btn btn-primary" type="submit">Explore My Options</button>
