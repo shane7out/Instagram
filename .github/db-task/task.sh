@@ -1,73 +1,28 @@
 #!/bin/bash
-# One-shot: add Mezban (new halal Pakistani restaurant, screenshot from
-# Shane) to dashboard_crec with full DM-visibility per the standing rule
-# (section 10 of LVR-PROJECT-STATUS.md) - proper num, real instagram handle,
-# status + attempts written. Dedup-checks first.
+# 3-hour check-in (2026-10-08 ~03:36 UTC). Two things this cycle:
+# 1) GitHub Pages / keytechnologies.si - re-checking after ~15h gap (not every
+#    single cycle, but enough time passed it's worth a look).
+# 2) A regression sweep of every Mac deploy confirmed live earlier in the
+#    project (dashboard patches, Zach PIN, Key Technologies pill, dating
+#    instant-swipe) - none of these have been re-verified since they first
+#    went live, and nothing should be assumed to stay fixed forever.
 set +e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
-curl -s "$DB/dashboard_crec.json" -o /tmp/crec.json --max-time 20
-curl -s "$DB/dashboard/customrecords.json" -o /tmp/customrecords.json --max-time 20
-curl -s "$DB/dashboard/deleted.json" -o /tmp/deleted.json --max-time 20
+echo "=== GitHub Pages / DNS ==="
+curl -s -o /dev/null -w "shane7out.github.io/Instagram/ -> HTTP %{http_code}\n" https://shane7out.github.io/Instagram/ --max-time 15
+curl -s -o /dev/null -w "keytechnologies.si/ -> HTTP %{http_code}\n" https://keytechnologies.si/ --max-time 15
 
-node <<'NODE'
-const fs = require('fs');
-function load(p){ try { return JSON.parse(fs.readFileSync(p,'utf8')) || {}; } catch(e){ return {}; } }
-const crec = load('/tmp/crec.json');
-const customrecords = load('/tmp/customrecords.json');
-const deleted = load('/tmp/deleted.json');
+echo
+echo "=== Dashboard regression sweep ==="
+curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live-dash.html --max-time 20
+echo "Key Technologies pill present: $(grep -c 'Key Technologies' /tmp/live-dash.html)"
+echo "Zach PIN marker present: $(grep -c 'ZACH_PIN' /tmp/live-dash.html)"
+APPVER=$(grep -oE "APP_VERSION[^0-9]*[0-9]+" /tmp/live-dash.html | head -1)
+echo "APP_VERSION marker: $APPVER"
 
-// dedup check
-const existing = Object.values(crec).filter(Boolean);
-const dup = existing.find(r => {
-  const n = (r.name||'').toLowerCase();
-  const ig = (r.instagram||'').toLowerCase().replace('@','');
-  return n.includes('mezban') || ig.includes('mezban');
-});
-if (dup) {
-  console.log('DUP_FOUND:' + JSON.stringify(dup));
-  process.exit(0);
-}
-
-// compute next free num (restaurants start well above everything observed)
-let max = 59999;
-function scan(obj){
-  for (const r of Object.values(obj||{})) {
-    if (r && typeof r === 'object' && typeof r.num === 'number' && r.num > max) max = r.num;
-  }
-}
-scan(crec); scan(customrecords); scan(deleted);
-const num = max + 1;
-
-const record = {
-  num,
-  name: 'Mezban',
-  instagram: '@mezban_lv',
-  cuisine: 'Pakistani / Halal',
-  address: '5239 W Charleston Blvd, Las Vegas, NV 89146',
-  phone: '(702) 781-2336',
-  email: '',
-  owner: 'Local Operators',
-  notes: 'Manually added - halal Pakistani, 19 posts/107 followers as of add date'
-};
-
-fs.writeFileSync('/tmp/mezban_record.json', JSON.stringify(record));
-fs.writeFileSync('/tmp/mezban_num.txt', String(num));
-console.log('WILL_ADD num=' + num + ' ' + JSON.stringify(record));
-NODE
-
-if [ -f /tmp/mezban_num.txt ]; then
-  NUM=$(cat /tmp/mezban_num.txt)
-  echo "Writing dashboard_crec/$NUM ..."
-  curl -s -X PUT -d @/tmp/mezban_record.json "$DB/dashboard_crec/$NUM.json"
-  echo
-  curl -s -X PUT -d '"pending"' "$DB/dashboard/status/$NUM.json"
-  echo
-  curl -s -X PUT -d '[{"email":"","status":"pending","date":null,"note":""}]' "$DB/dashboard/attempts/$NUM.json"
-  echo
-  echo "Verifying..."
-  curl -s "$DB/dashboard_crec/$NUM.json"
-  echo
-else
-  echo "Skipped write - see DUP check output above"
-fi
+echo
+echo "=== Dating site regression ==="
+curl -s https://lvr-data-a60c1.web.app/dating.html -o /tmp/live-dating.html --max-time 20
+echo "live dating.html bytes: $(wc -c < /tmp/live-dating.html)"
+echo "DATEQS01 (instant-swipe patch) present: $(grep -c 'DATEQS01' /tmp/live-dating.html)"
+echo "Instant demo profile present: $(grep -c 'Instant demo profile' /tmp/live-dating.html)"
