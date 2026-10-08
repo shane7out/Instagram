@@ -736,12 +736,13 @@
   "use strict";
 
   // ---- lead database config ----
-  // Separate from LVR entirely - its own Firebase Realtime Database project.
-  // Paste the new project's RTDB URL here once it exists (see CLAUDE.md for
-  // the one-time setup steps and the security rules that go with it).
-  // Empty string = forms honestly say "not connected yet" instead of lying
-  // about a successful submission.
-  var KEY_LEADS_DB_URL = "";
+  // 2026-10-08: Shane explicitly decided against a separate Firebase
+  // project - leads go into LVR's existing database instead, under their
+  // own /key_leads node (see CLAUDE.md "Lead database" for the full
+  // tradeoff he was told and chose to accept: LVR's database currently has
+  // no security rules, so these leads are exposed the same way the rest of
+  // LVR's data is - no login needed to read or write).
+  var KEY_LEADS_DB_URL = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_leads";
 
   // ---- lead alert email (optional, additive) ----
   // Formspree is a free form-to-email service - no backend to write. Create
@@ -788,11 +789,12 @@
   // ---- forms: real submission once KEY_LEADS_DB_URL is set, honest
   // placeholder when it isn't. Never a fake success message either way.
   //
-  // Writes go to /leads/<auto-id> in Key Technologies' own, separate Realtime Database
-  // (not LVR's). The database's security rules only allow creating a new
-  // leaf under /leads - no client can read, overwrite, or delete any lead,
-  // including its own. See CLAUDE.md for the exact rules and one-time
-  // Firebase setup steps.
+  // Writes go to /key_leads/leads/<auto-id> inside LVR's existing Realtime
+  // Database (see the KEY_LEADS_DB_URL comment above for why). That
+  // database has no security rules, so unlike the original separate-DB
+  // plan, nothing here actually restricts who can read or write these
+  // leads - this was Shane's explicit, informed choice over setting up a
+  // second Firebase project.
   function wireForm(formId, statusId, source){
     var form = document.getElementById(formId);
     var status = document.getElementById(statusId);

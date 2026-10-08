@@ -11,9 +11,12 @@ The website for **Key Technologies** (brand name as of 2026-10-04 — see
 intelligent business systems company founded by Shane Christensen.
 Domain: **keytechnologies.si** (registered 2026-10-03 via Dynadot, confirmed
 active). Based in Manhattan Beach, CA and Las Vegas,
-NV. A completely separate business and project from Shane's "LVR" (Las
-Vegas Restaurants) properties — nothing here shares a database, a repo,
-or infrastructure with that project. Don't mix the two.
+NV. A completely separate business from Shane's "LVR" (Las Vegas
+Restaurants) properties — separate repo, separate site, separate brand.
+**Exception, decided 2026-10-08:** lead storage does share LVR's existing
+Firebase Realtime Database (see "Lead database" below) — that was Shane's
+explicit, informed choice over paying for/setting up a second database.
+Everything else (repo, site code, hosting) stays fully separate.
 
 ## Brand name / domain — read this before touching branding again
 
@@ -116,9 +119,9 @@ robots.txt
 sitemap.xml       Points at https://keytechnologies.si/ (set 2026-10-04).
 CLAUDE.md         This file.
 README.md
-firebase-leads-rtdb.rules.json   Security rules for Key Technologies' own
-                  lead database (separate from LVR) — see "Lead
-                  database" below.
+firebase-leads-rtdb.rules.json   Unused as of 2026-10-08 — rules for the
+                  separate-DB plan that was reversed. Kept as reference
+                  only. See "Lead database" below.
 ```
 
 If the project grows past a single page, the next step is the
@@ -131,36 +134,35 @@ page.
 - **Domain**: `keytechnologies.si` — registered and confirmed active
   (Dynadot, 2026-10-03). Not yet hosting the site — DNS needs to be
   pointed at GitHub Pages. See "Deploy" in `README.md`.
-- **Lead database**: decided 2026-10-03 — Key Technologies gets its own, separate
-  Firebase Realtime Database (not LVR's, and not the CRM/system Shane
-  mentioned connecting "eventually" — that's a possible later upgrade,
-  this is the simple thing that ships now). The form-submission code in
-  `index.html` is already built and wired for this: it POSTs to
-  `<KEY_LEADS_DB_URL>/leads.json`, and `firebase-leads-rtdb.rules.json`
-  in this folder is the exact security rules to set. Those rules only
-  allow *creating* a new lead — no client, including the one that just
-  submitted, can read, overwrite, or delete any lead. That's the
-  deliberate fix for the problem LVR's database has (it accepts
-  unauthenticated reads AND writes to everything) — Key Technologies'
-  database should never end up in that state.
+- **Lead database**: decided 2026-10-03, **reversed 2026-10-08** — Shane
+  said he didn't want a second Firebase project and wanted everything
+  running through LVR's existing database instead. He was told the real
+  tradeoff first and chose this anyway: **LVR's database currently has no
+  security rules at all** (open, unauthenticated reads AND writes to
+  everything, and its URL is already public in the LVR repo's own commit
+  history) — so unlike the original plan, Key Technologies' leads are
+  *not* protected. Anyone with the database URL can read every lead's
+  name/email/phone, or write/delete data. `firebase-leads-rtdb.rules.json`
+  in this folder is now unused — it was the ruleset for the separate-DB
+  plan that didn't happen; it's kept only as a reference for what "do this
+  properly" would look like if the LVR database is ever locked down (see
+  the LVR repo's own status doc for that open issue).
 
-  **One-time setup (needs Shane's Google login, so this is a Mac task):**
-  1. Firebase console → new project (e.g. `key-leads`).
-  2. Build → Realtime Database → Create Database.
-  3. Rules tab → paste in `firebase-leads-rtdb.rules.json` from this
-     folder → Publish.
-  4. Copy the database's URL (looks like
-     `https://key-leads-xxxxx-default-rtdb.firebaseio.com`).
-  5. In `index.html`, find `var KEY_LEADS_DB_URL = "";` near the top of
-     the `<script>` block and paste the URL in between the quotes.
-  6. Submit a test lead through the live site, then check the Firebase
-     console's Realtime Database data tab to confirm it landed under
-     `/leads`.
+  **Current, live setup:** `index.html`'s `KEY_LEADS_DB_URL` points at
+  `https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_leads` — a
+  dedicated `/key_leads` node inside LVR's database, kept separate from
+  LVR's own restaurant/advertiser data by path, not by any real access
+  control. Leads land at `/key_leads/leads/<auto-id>`. No further setup
+  needed — this is already wired and live, unlike the old separate-DB
+  plan which was never actually set up.
 
-  That's the whole setup — no Cloud Functions, no backend server, just
-  the database and its rules. Reading the leads back out (a dashboard,
-  CSV export, etc.) is a separate, later task once there's something to
-  look at.
+  **If this ever needs revisiting** (e.g. if LVR's database gets locked
+  down with real rules, or Shane changes his mind): either add Firebase
+  security rules scoped to `/key_leads` specifically — note this only
+  restores integrity (who can write), not confidentiality, since a
+  database-wide open `.read` rule cascades to every child path regardless
+  of a deeper rule — or go back to the original separate-project plan
+  using `firebase-leads-rtdb.rules.json` as-is.
 - **Lead alert email**: built 2026-10-04, off by default. `index.html`
   has a second, additive config line, `var KEY_FORMSPREE_URL = "";`,
   right under `KEY_LEADS_DB_URL`. When set, every successful form
