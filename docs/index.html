@@ -208,7 +208,10 @@
   .check-grid label:has(input:checked){
     border-color:var(--key-blue);background:rgba(22,143,255,.14);color:var(--ink);
   }
-  .check-grid label input{accent-color:var(--key-blue);flex:none;}
+  .check-grid label input[type="checkbox"]{
+    width:16px;height:16px;padding:0;margin:0;border-radius:4px;
+    background:none;accent-color:var(--key-blue);flex:none;
+  }
   .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
   .form-status{font-size:14px;margin-top:4px;min-height:18px;}
   .form-status.ok{color:var(--key-light);}
