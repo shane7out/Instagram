@@ -1,7 +1,7 @@
 #!/bin/bash
-# One-shot: add Terminal 4 (cocktail lounge, Henderson NV, screenshot from
-# Shane) to dashboard_crec with full DM-visibility per the standing rule.
-# Dedup-checks first.
+# One-shot: add What The Grill (hibachi grill, Silverado Ranch, screenshot
+# from Shane) to dashboard_crec with full DM-visibility per the standing
+# rule. Dedup-checks first.
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -20,7 +20,7 @@ const existing = Object.values(crec).filter(Boolean);
 const dup = existing.find(r => {
   const n = (r.name||'').toLowerCase();
   const ig = (r.instagram||'').toLowerCase().replace('@','');
-  return n.includes('terminal 4') || n.includes('terminal4') || ig.includes('terminal4');
+  return n.includes('what the grill') || ig.includes('whatthegrill');
 });
 if (dup) {
   console.log('DUP_FOUND:' + JSON.stringify(dup));
@@ -38,25 +38,25 @@ const num = max + 1;
 
 const record = {
   num,
-  name: 'Terminal 4',
-  instagram: '@terminal4bar',
-  cuisine: 'Cocktail lounge',
-  address: 'Henderson, NV (above Water Street)',
+  name: 'What The Grill - Silverado Ranch',
+  instagram: '@whatthegrill.lv',
+  cuisine: 'Hibachi grill',
+  address: '1310 E Silverado Ranch Blvd, Las Vegas, NV',
   phone: '',
   email: '',
   owner: 'Local Operators',
-  notes: 'Manually added - globally inspired cocktails, rare spirits, 1,247 followers as of add date'
+  notes: 'Manually added - family owned hibachi grill, build-your-own-plate, 360 followers as of add date'
 };
 
-fs.writeFileSync('/tmp/t4_record.json', JSON.stringify(record));
-fs.writeFileSync('/tmp/t4_num.txt', String(num));
+fs.writeFileSync('/tmp/wtg_record.json', JSON.stringify(record));
+fs.writeFileSync('/tmp/wtg_num.txt', String(num));
 console.log('WILL_ADD num=' + num + ' ' + JSON.stringify(record));
 NODE
 
-if [ -f /tmp/t4_num.txt ]; then
-  NUM=$(cat /tmp/t4_num.txt)
+if [ -f /tmp/wtg_num.txt ]; then
+  NUM=$(cat /tmp/wtg_num.txt)
   echo "Writing dashboard_crec/$NUM ..."
-  curl -s -X PUT -d @/tmp/t4_record.json "$DB/dashboard_crec/$NUM.json"
+  curl -s -X PUT -d @/tmp/wtg_record.json "$DB/dashboard_crec/$NUM.json"
   echo
   curl -s -X PUT -d '"pending"' "$DB/dashboard/status/$NUM.json"
   echo
