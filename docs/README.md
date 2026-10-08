@@ -14,9 +14,10 @@ Built from the full written specification (no byte-for-byte original
 site was available to port — see `CLAUDE.md`'s "Known open items"). One
 page (`index.html`) with everything inline: hero, two lead-capture
 forms, services, solutions, the Key Technologies Method, About Shane,
-locations, FAQ, and footer. Forms are real, working UI with honest
-validation — they are **not** connected to a backend yet, and
-intentionally don't pretend to be.
+locations, FAQ, and footer. Forms are real and **live** — submissions
+save to a database (see "Lead database" below) — not a placeholder
+anymore, though the site itself still isn't publicly reachable until
+GitHub Pages/DNS (see "Next steps") is turned on.
 
 ## Deploy (GitHub Pages)
 
@@ -42,21 +43,21 @@ terms.html     Placeholder — finalize once backend/business terms are set
 robots.txt
 sitemap.xml    Points at https://keytechnologies.si/
 CLAUDE.md      Rules, design tokens, open items — read first
-firebase-leads-rtdb.rules.json   Security rules for Key Technologies' own lead database
+firebase-leads-rtdb.rules.json   Unused — see "Lead database" below
 ```
 
-## Lead database — one Mac step away from live
+## Lead database — already live, not what was originally planned
 
-The forms already have real submission code wired up (see the
-`KEY_LEADS_DB_URL` note in `index.html`'s script and the full walkthrough
-in `CLAUDE.md`). It's pointed at nothing yet, so right now it shows an
-honest "not connected" message instead of a fake success. To turn it on:
-create a new Firebase project, set the Realtime Database rules from
-`firebase-leads-rtdb.rules.json`, and paste the resulting database URL
-into one line in `index.html`. Full steps are in `CLAUDE.md` under "Lead
-database." This is intentionally simple — no backend server, no Cloud
-Functions, just the database and rules that only allow creating a new
-lead (never reading, overwriting, or deleting one).
+The forms are wired up and working today: submissions POST to
+`KEY_LEADS_DB_URL` in `index.html`, which is set to a `/key_leads` node
+inside **LVR's existing Firebase database** (not a separate project —
+Shane explicitly chose this on 2026-10-08 over setting up and paying for
+a second Firebase project). Full detail, including the real tradeoff he
+accepted (LVR's database has no security rules, so these leads aren't
+access-controlled the way the original plan would have protected them),
+is in `CLAUDE.md` under "Lead database." `firebase-leads-rtdb.rules.json`
+is the ruleset for the original separate-project plan — not in use, kept
+only as a reference.
 
 ## Lead alert email + booking link — both built, both off until you add one line
 
@@ -79,8 +80,6 @@ phone.
   the site's content assumes this domain everywhere (canonical URL,
   sitemap, schema.org, `CNAME`) but it isn't actually live at that
   address yet.
-- **Create the Firebase project and flip the forms on** — see "Lead
-  database" above.
 - **Set `KEY_FORMSPREE_URL` and `KEY_CALENDLY_URL`** — see above.
 - Eventually: a way to actually read the collected leads back out (a
   small PIN-gated viewer page, or an export), and/or wire this up to
