@@ -200,11 +200,11 @@
   .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:8px;min-width:0;}
   @media (max-width:520px){.check-grid{grid-template-columns:1fr;}}
   .check-grid label{
-    display:flex;align-items:flex-start;gap:8px;font-size:14.5px;color:var(--ink);font-weight:400;
-    min-width:0;
+    display:block;max-width:100%;
+    font-size:14.5px;color:var(--ink);font-weight:400;
+    min-width:0;overflow-wrap:break-word;
   }
-  .check-grid label input{flex:none;margin-top:3px;}
-  .check-grid label span{flex:1 1 auto;min-width:0;overflow-wrap:break-word;}
+  .check-grid label input{vertical-align:top;margin:3px 8px 0 0;}
   .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
   .form-status{font-size:14px;margin-top:4px;min-height:18px;}
   .form-status.ok{color:var(--key-light);}
