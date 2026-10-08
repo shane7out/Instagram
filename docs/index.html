@@ -197,14 +197,18 @@
   textarea{min-height:90px;resize:vertical;}
   fieldset{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0;min-width:0;}
   fieldset legend{padding:0 6px;font-size:13px;font-weight:600;color:var(--ink-dim);}
-  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:8px;min-width:0;}
-  @media (max-width:520px){.check-grid{grid-template-columns:1fr;}}
+  .check-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
   .check-grid label{
-    display:block;max-width:100%;
-    font-size:14.5px;color:var(--ink);font-weight:400;
-    min-width:0;overflow-wrap:break-word;
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 16px;border-radius:999px;border:1px solid var(--line);
+    background:var(--bg-2);font-size:14px;color:var(--ink-dim);font-weight:500;
+    cursor:pointer;transition:border-color .15s,background .15s,color .15s;
   }
-  .check-grid label input{vertical-align:top;margin:3px 8px 0 0;}
+  .check-grid label:hover{border-color:var(--key-blue);}
+  .check-grid label:has(input:checked){
+    border-color:var(--key-blue);background:rgba(22,143,255,.14);color:var(--ink);
+  }
+  .check-grid label input{accent-color:var(--key-blue);flex:none;}
   .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
   .form-status{font-size:14px;margin-top:4px;min-height:18px;}
   .form-status.ok{color:var(--key-light);}
