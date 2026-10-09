@@ -1,5 +1,5 @@
 #!/bin/bash
-# Add new restaurant: Sushi Bake by Nora (@sushi_bake_lv), Las Vegas.
+# Add new restaurant: Eff-n-Hotdogs (@effnhotdogs), Las Vegas.
 # Standard DM-visibility flow: allocate num, write customrecord, set
 # dashboard/status + dashboard/attempts so it shows up for outreach.
 set -e
@@ -42,14 +42,14 @@ function put(url, body) {
 
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && /sushi bake/i.test(r.name || '') );
+  const dupe = Object.values(existing).find(r => r && /eff.?n.?hotdogs/i.test(r.name || '') || (r && r.instagram === 'effnhotdogs'));
   if (dupe) { console.log('POSSIBLE DUPLICATE found: ' + JSON.stringify(dupe)); }
-  else console.log('no existing "Sushi Bake" name match - proceeding');
+  else console.log('no existing "Eff-n-Hotdogs" match - proceeding');
 
   const record = {
     num,
-    name: 'Sushi Bake by Nora',
-    instagram: 'sushi_bake_lv',
+    name: 'Eff-n-Hotdogs',
+    instagram: 'effnhotdogs',
     category: 'Restaurant',
     city: 'Las Vegas',
     status: 'pending',
@@ -62,6 +62,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - Sushi Bake by Nora (@sushi_bake_lv)');
+  console.log('DONE: added num ' + num + ' - Eff-n-Hotdogs (@effnhotdogs)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
