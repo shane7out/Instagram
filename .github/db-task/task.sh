@@ -1,4 +1,5 @@
 #!/bin/bash
+# verify: 2026-10-09T20:42:27Z
 # Final verification pass: reassemble the latest manual.json export (plain
 # base64, no gzip - see deals-export-manual-json.sh for why), verify every
 # chunk's hash + the full payload hash, confirm entry count, and seed it as
