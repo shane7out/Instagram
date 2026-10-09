@@ -1,0 +1,15 @@
+manual.json size:  3450897 bytes
+raw read: 3450897 bytes
+source JSON valid: true (3074 entries)
+raw: 3450897 bytes, gzip+base64: 619824 bytes, sha256: fedd691c8644259056e2c3e94c19879c5368ab742e472e445819b37bf63c1b6c
+local round-trip gunzip: 3450897 bytes (expected 3450897)
+local round-trip OK — bug (if any) must be downstream
+splitting into 5 chunk(s)
+chunk 0/4 upload status: 200 (len 150000, sha256 a301b061fa12)
+chunk 1/4 upload status: 200 (len 150000, sha256 3956d4a2ca23)
+chunk 2/4 upload status: 200 (len 150000, sha256 d48a0e75b00f)
+chunk 3/4 upload status: 200 (len 150000, sha256 5d281962759b)
+chunk 4/4 upload status: 200 (len 19824, sha256 7bc2b4a24423)
+meta upload status: 200
+latest-pointer upload status: 200 -> run_1791577816407
+
