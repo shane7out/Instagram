@@ -3,7 +3,7 @@
 # live listing data - all ~20 Craigslist category watchers write into this one
 # file) to Firebase diag so Claude can read it. This file was too big for the
 # earlier scraper-source export (which skips anything over 200KB), so this
-# script gzips + base64s it and uploads in chunks to stay well within a safe
+# script base64s it and uploads in chunks to stay well within a safe
 # single-write size. Nothing sensitive here - just scraped public listing data
 # (titles, prices, photo URLs) you're already showing publicly on the site.
 set +e
@@ -33,18 +33,21 @@ try { const parsed = JSON.parse(raw.toString('utf8')); srcValid = true; srcEntry
 catch (e) { console.log('SOURCE FILE IS NOT VALID JSON: ' + e.message); }
 console.log('source JSON valid: ' + srcValid + (srcEntryCount != null ? ' (' + srcEntryCount + ' entries)' : ''));
 
-const gz = zlib.gzipSync(raw, { level: 9 });
-const b64 = gz.toString('base64');
+// NOTE: gzip is deliberately NOT used here. A prior version gzipped first, and the
+// identical gzip bytes (hash-verified byte-for-byte intact) decompressed to 3,450,897
+// bytes locally on this Mac but only 3,440,441 bytes on GitHub's Linux runners - twice,
+// by the exact same shortfall. That's a macOS/Linux zlib incompatibility, not a data
+// integrity bug. Sending plain base64 of the raw bytes sidesteps it entirely - bigger
+// payload, but no platform-dependent compression step to disagree about.
+const b64 = raw.toString('base64');
 const fullHash = crypto.createHash('sha256').update(b64).digest('hex');
-console.log('raw: ' + raw.length + ' bytes, gzip+base64: ' + b64.length + ' bytes, sha256: ' + fullHash);
+console.log('raw: ' + raw.length + ' bytes, base64: ' + b64.length + ' bytes, sha256: ' + fullHash);
 
-// LOCAL round-trip self-test, right here, before any network call - if THIS fails, the bug
-// is in this gzip/base64 step itself (or the source read), not in transit/Firebase/reassembly.
-const roundTrip = zlib.gunzipSync(Buffer.from(b64, 'base64'));
-console.log('local round-trip gunzip: ' + roundTrip.length + ' bytes (expected ' + raw.length + ')');
-if (roundTrip.length !== raw.length) {
+// LOCAL round-trip self-test, right here, before any network call.
+const roundTrip = Buffer.from(b64, 'base64');
+console.log('local round-trip base64-decode: ' + roundTrip.length + ' bytes (expected ' + raw.length + ')');
+if (roundTrip.length !== raw.length || Buffer.compare(raw, roundTrip) !== 0) {
   console.log('LOCAL ROUND-TRIP MISMATCH — bug is on this Mac, in this script, before upload. Aborting, nothing uploaded.');
-  console.log('raw buffer equals roundTrip buffer (byte compare): ' + Buffer.compare(raw, roundTrip));
   process.exit(1);
 }
 console.log('local round-trip OK — bug (if any) must be downstream');
@@ -75,7 +78,7 @@ function put(path, body) {
     console.log('chunk ' + i + '/' + (chunks.length - 1) + ' upload status: ' + r.status + ' (len ' + chunks[i].length + ', sha256 ' + chunkHashes[i].slice(0,12) + ')');
     if (r.status !== 200) { console.log('ABORT on chunk ' + i); process.exit(1); }
   }
-  const meta = { count: chunks.length, rawBytes: raw.length, gzB64Bytes: b64.length, fullHash, chunkHashes, chunkSize: CHUNK, runId: RUNID, uploadedAt: Date.now() };
+  const meta = { count: chunks.length, rawBytes: raw.length, b64Bytes: b64.length, fullHash, chunkHashes, chunkSize: CHUNK, runId: RUNID, uploadedAt: Date.now() };
   const r = await put('/_debug/deals_manual_json/' + RUNID + '/meta.json', meta);
   console.log('meta upload status: ' + r.status);
   const r2 = await put('/_debug/deals_manual_json_latest.json', RUNID);

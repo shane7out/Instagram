@@ -1,13 +1,14 @@
 #!/bin/bash
-# Final verification pass: reassemble the latest manual.json export, verify
-# every chunk's hash, verify the full payload hash, gunzip, confirm entry
-# count, and seed it as the persistent CI-state baseline for the pipeline.
+# Final verification pass: reassemble the latest manual.json export (plain
+# base64, no gzip - see deals-export-manual-json.sh for why), verify every
+# chunk's hash + the full payload hash, confirm entry count, and seed it as
+# the persistent CI-state baseline for the pipeline.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 mkdir -p .github/db-task/fetched
 
 node <<'NODE'
-const https = require('https'), fs = require('fs'), zlib = require('zlib'), crypto = require('crypto');
+const https = require('https'), fs = require('fs'), crypto = require('crypto');
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
@@ -31,7 +32,7 @@ function sha(s) { return crypto.createHash('sha256').update(s).digest('hex'); }
   const runId = JSON.parse(await get(DB + '/_debug/deals_manual_json_latest.json'));
   console.log('latest runId: ' + runId);
   const meta = JSON.parse(await get(DB + '/_debug/deals_manual_json/' + runId + '/meta.json'));
-  console.log('meta: count=' + meta.count + ' rawBytes=' + meta.rawBytes + ' gzB64Bytes=' + meta.gzB64Bytes);
+  console.log('meta: count=' + meta.count + ' rawBytes=' + meta.rawBytes + ' b64Bytes=' + meta.b64Bytes);
 
   let b64 = '';
   let anyBad = false;
@@ -48,8 +49,7 @@ function sha(s) { return crypto.createHash('sha256').update(s).digest('hex'); }
   console.log('full hash match: ' + fullOk);
   if (!fullOk) { console.log('ABORT: full hash mismatch'); process.exit(1); }
 
-  const gz = Buffer.from(b64, 'base64');
-  const raw = zlib.gunzipSync(gz).toString('utf8');
+  const raw = Buffer.from(b64, 'base64').toString('utf8');
   console.log('decoded raw: ' + raw.length + ' bytes (expected ' + meta.rawBytes + ')');
   if (raw.length !== meta.rawBytes) { console.log('ABORT: size mismatch'); process.exit(1); }
 
@@ -85,7 +85,7 @@ git add .github/db-task/fetched/manual-json-summary.json
 if git diff --cached --quiet; then
   echo "nothing new to commit"
 else
-  git commit -m "fetch: manual.json verified end-to-end, CI-state baseline seeded"
+  git commit -m "fetch: manual.json verified end-to-end (no-gzip), CI-state baseline seeded"
   git push origin HEAD:claude/master-file-e6ofy0
   echo "pushed"
 fi
