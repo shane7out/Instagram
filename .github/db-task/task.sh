@@ -50,9 +50,14 @@ function sha(s) { return crypto.createHash('sha256').update(s).digest('hex'); }
   console.log('full hash match: ' + fullOk);
   if (!fullOk) { console.log('ABORT: full hash mismatch'); process.exit(1); }
 
-  const raw = Buffer.from(b64, 'base64').toString('utf8');
-  console.log('decoded raw: ' + raw.length + ' bytes (expected ' + meta.rawBytes + ')');
-  if (raw.length !== meta.rawBytes) { console.log('ABORT: size mismatch'); process.exit(1); }
+  // NOTE: compare BYTE length, not JS string .length (UTF-16 code units) - that mismatch
+  // (not gzip, not transit, not corruption) was the entire cause of every earlier "ABORT:
+  // size mismatch" here. manual.json has multi-byte UTF-8 chars (accents, em-dashes, etc.)
+  // in listing text, so decoded.length (code units) undercounts vs the Mac's byte count.
+  const rawBuf = Buffer.from(b64, 'base64');
+  const raw = rawBuf.toString('utf8');
+  console.log('decoded raw: ' + rawBuf.length + ' bytes (expected ' + meta.rawBytes + '), string .length=' + raw.length);
+  if (rawBuf.length !== meta.rawBytes) { console.log('ABORT: size mismatch'); process.exit(1); }
 
   const arr = JSON.parse(raw);
   console.log('SUCCESS: manual.json is an array of ' + arr.length + ' entries');
