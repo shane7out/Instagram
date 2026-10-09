@@ -2,7 +2,7 @@
 
 Repo: `shane7out/Instagram` (public — never commit real PINs/card numbers)
 Working branch: `claude/master-file-e6ofy0`
-Last updated: 2026-10-08
+Last updated: 2026-10-09
 
 This file exists so a brand-new Claude session can pick up exactly where things
 stand without re-discovering everything from scratch. Paste this whole file in
@@ -375,6 +375,50 @@ done so far, in case a fresh session picks this up mid-stream:
   DNS still isn't pointed at it (`HTTP 404` / `HTTP 000` on every check since
   2026-10-07 ~06:36 UTC). Not worth re-checking every single 3-hour cycle —
   only when there's a specific reason to think it changed.
+
+---
+
+## 12. Status as of 2026-10-09
+
+- **Three more restaurants added from the owner's own IG screenshots**,
+  all with full DM-visibility per section 10: The Stadium (sports bar,
+  Arts District, `num 60025`), Duke's Dogs (Cali-style hot dog food truck,
+  `num 60026`). A third screenshot, Golden Oven Wood Fired Pizza, turned
+  out to already be in the database (`num 50472`) with a working handle —
+  no duplicate created, nothing needed.
+- **Key Technologies is dropping the "Key Technologies" / keytechnologies.si
+  brand entirely** — owner's decision, 2026-10-08/09, still in progress.
+  Nothing registered yet. Reasoning: confirmed via research that ".si"
+  isn't actually a credible signal yet (the "White House made .si the new
+  .ai" claim going around is real but narrow — a Sept 2026 executive order
+  only tells federal agencies to say "Super Intelligence"/"SI" instead of
+  "AI" in official materials; the .si domain spike since then is mostly
+  domain investors flipping names, not real businesses adopting it — .ai
+  remains the actual trusted TLD for AI companies). Separately, the owner
+  clarified restaurants/hospitality are **not** his main target audience —
+  "the last ones I'm really marketing to" — which the existing marketing
+  plan doc and a lot of the outreach work (LVR-based prospecting, the
+  restaurant-flavored DM templates) assumed was a top pool. Who the real
+  primary audience is hasn't been established yet — still an open question.
+  Current naming direction: keep the "Key" concept/logo, pair it with one
+  short, non-jargon word, 1-2 words total, avoiding anything that reads as
+  developer-insider (ruled out "KeyStackAI" for exactly that reason).
+  `KeyEdge` was the leading suggestion as of last discussion. No domain
+  registered, nothing on the live site has changed yet — this is purely a
+  naming/positioning decision in progress, not something to act on
+  unprompted.
+- **Key Technologies site (`claude/key-website` branch) also got real
+  fixes/additions on 2026-10-08**, independent of the rebrand question:
+  found via actual Playwright screenshots (not guessing) that the
+  "Possible interests" checkboxes were visually broken — a global
+  `input{width:100%}` rule meant for text fields was also inflating the
+  checkboxes themselves. Fixed, redesigned as tappable pills, and the
+  pills were synced to match all 19 services now on the site (added this
+  session: AI website development, email automation, social media
+  management, review/reputation management, AI phone/text answering,
+  booking/scheduling automation, AI staff training, custom website
+  programming, ADA/accessibility compliance). Also trimmed each page's
+  Google Fonts weight request down to only what's actually used.
 
 ---
 
