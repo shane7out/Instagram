@@ -1,8 +1,7 @@
 #!/bin/bash
-# One-shot: add Ten Seconds Yunnan Rice Noodle Las Vegas (Chinese
-# restaurant, Crossing Bridge Rice Noodles, screenshot from Shane) to
-# dashboard_crec with full DM-visibility per the standing rule.
-# Dedup-checks first.
+# One-shot: add SnoGlow Shaved Ice (mobile gourmet shaved ice food truck,
+# screenshot from Shane) to dashboard_crec with full DM-visibility per
+# the standing rule. Dedup-checks first.
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -21,7 +20,7 @@ const existing = Object.values(crec).filter(Boolean);
 const dup = existing.find(r => {
   const n = (r.name||'').toLowerCase();
   const ig = (r.instagram||'').toLowerCase().replace('@','');
-  return n.includes('ten seconds yunnan') || ig.includes('tensecondsyunnanricenoodlelv');
+  return n.includes('snoglow') || ig.includes('snoglow');
 });
 if (dup) {
   console.log('DUP_FOUND:' + JSON.stringify(dup));
@@ -39,25 +38,25 @@ const num = max + 1;
 
 const record = {
   num,
-  name: 'Ten Seconds Yunnan Rice Noodle Las Vegas',
-  instagram: '@tensecondsyunnanricenoodlelv',
-  cuisine: 'Chinese - Yunnan, Crossing Bridge Rice Noodles',
-  address: 'Las Vegas, NV',
-  phone: '725-202-0502',
+  name: 'SnoGlow Shaved Ice',
+  instagram: '@snoglow_gourmet_shavedice',
+  cuisine: 'Gourmet shaved ice (mobile food truck)',
+  address: 'Las Vegas, NV (mobile food truck - events)',
+  phone: '',
   email: '',
   owner: 'Local Operators',
-  notes: 'Manually added - traditional Crossing Bridge Rice Noodles, fresh ingredients, made fresh upon order, 418 followers as of add date'
+  notes: 'Manually added - sister owned, mobile gourmet shaved ice truck, books for events/parties, 2,461 followers as of add date'
 };
 
-fs.writeFileSync('/tmp/tsy_record.json', JSON.stringify(record));
-fs.writeFileSync('/tmp/tsy_num.txt', String(num));
+fs.writeFileSync('/tmp/sg_record.json', JSON.stringify(record));
+fs.writeFileSync('/tmp/sg_num.txt', String(num));
 console.log('WILL_ADD num=' + num + ' ' + JSON.stringify(record));
 NODE
 
-if [ -f /tmp/tsy_num.txt ]; then
-  NUM=$(cat /tmp/tsy_num.txt)
+if [ -f /tmp/sg_num.txt ]; then
+  NUM=$(cat /tmp/sg_num.txt)
   echo "Writing dashboard_crec/$NUM ..."
-  curl -s -X PUT -d @/tmp/tsy_record.json "$DB/dashboard_crec/$NUM.json"
+  curl -s -X PUT -d @/tmp/sg_record.json "$DB/dashboard_crec/$NUM.json"
   echo
   curl -s -X PUT -d '"pending"' "$DB/dashboard/status/$NUM.json"
   echo
