@@ -1,42 +1,53 @@
 #!/bin/bash
-# 3-hour check-in (2026-10-09 ~06:36 UTC). Re-checking GitHub Pages / DNS
-# after a >24h gap since the last actual check, plus a fresh outreach-
-# progress read (status distribution) since that hasn't been looked at
-# in a while either.
+# 3-hour check-in (2026-10-09 ~12:36 UTC). Sanity pass on the 9 manual
+# restaurant adds from the last ~18h (Mezban, Terminal 4, What The Grill,
+# The Stadium, Duke's Dogs, Roxie's, Ten Seconds Yunnan, SnoGlow, Rollin
+# Sweet) - checking for (a) accidental near-duplicate num/name/handle
+# collisions across the whole dashboard_crec, and (b) confirming all 9
+# still have proper num+instagram+status set (nothing got clobbered by a
+# later write).
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
-echo "=== GitHub Pages / DNS ==="
-curl -s -o /dev/null -w "shane7out.github.io/Instagram/ -> HTTP %{http_code}\n" https://shane7out.github.io/Instagram/ --max-time 15
-curl -s -o /dev/null -w "keytechnologies.si/ -> HTTP %{http_code}\n" https://keytechnologies.si/ --max-time 15
-
-echo
-echo "=== Outreach progress (status distribution) ==="
-curl -s "$DB/dashboard/status.json" -o /tmp/status.json --max-time 20
 curl -s "$DB/dashboard_crec.json" -o /tmp/crec.json --max-time 20
+curl -s "$DB/dashboard/status.json" -o /tmp/status.json --max-time 20
 
 node <<'NODE'
 const fs = require('fs');
 function load(p){ try { return JSON.parse(fs.readFileSync(p,'utf8')) || {}; } catch(e){ return {}; } }
-const status = load('/tmp/status.json');
 const crec = load('/tmp/crec.json');
+const status = load('/tmp/status.json');
 
-const counts = {};
-for (const v of Object.values(status||{})) {
-  const k = (v === null || v === undefined) ? '(null)' : String(v);
-  counts[k] = (counts[k]||0) + 1;
-}
-console.log('Total status entries: ' + Object.keys(status||{}).length);
-for (const [k,c] of Object.entries(counts).sort((a,b)=>b[1]-a[1])) {
-  console.log('  ' + k + ': ' + c);
+const recent = ['Mezban','Terminal 4','What The Grill','The Stadium',"Duke's Dogs",
+  "Roxie's Drive n' Diner",'Ten Seconds Yunnan Rice Noodle Las Vegas','SnoGlow Shaved Ice','Rollin Sweet'];
+
+console.log('=== recent-add verification ===');
+for (const name of recent) {
+  const match = Object.values(crec).find(r => r && r.name === name);
+  if (!match) { console.log('MISSING: ' + name); continue; }
+  const hasIg = !!(match.instagram && String(match.instagram).trim());
+  const hasStatus = String(match.num) in status;
+  console.log((hasIg ? 'OK' : 'NO-IG') + ' | ' + (hasStatus ? 'status-set' : 'NO-STATUS') + ' | num=' + match.num + ' | ' + name);
 }
 
-let dmable = 0;
-for (const r of Object.values(crec)) {
+console.log('\n=== duplicate scan (whole dashboard_crec) ===');
+const byNum = {};
+const seen = [];
+let numCollisions = 0;
+for (const [k, r] of Object.entries(crec)) {
   if (!r || typeof r !== 'object') continue;
-  if (r.num == null || !r.instagram || !String(r.instagram).trim()) continue;
-  dmable++;
+  if (byNum[r.num]) { numCollisions++; console.log('NUM COLLISION: ' + r.num + ' -> "' + byNum[r.num] + '" vs "' + r.name + '"'); }
+  else byNum[r.num] = r.name;
+  seen.push({ name: (r.name||'').toLowerCase().replace(/[^a-z0-9]/g,''), real: r.name, ig: (r.instagram||'').toLowerCase().replace('@','').trim() });
 }
-console.log('DM-able restaurants total: ' + dmable);
-console.log('Total restaurants in dashboard_crec: ' + Object.keys(crec).length);
+let nameDupes = 0;
+for (let i = 0; i < seen.length; i++) {
+  for (let j = i+1; j < seen.length; j++) {
+    if (seen[i].name && seen[i].name === seen[j].name) {
+      nameDupes++;
+      console.log('NAME DUPE: "' + seen[i].real + '" appears twice');
+    }
+  }
+}
+console.log('num collisions: ' + numCollisions + ', name dupes: ' + nameDupes + ' (out of ' + seen.length + ' total restaurants)');
 NODE
