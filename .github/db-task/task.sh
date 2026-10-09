@@ -1,14 +1,14 @@
 #!/bin/bash
-# Reassemble the manual.json export (3 gzip+base64 chunks) from Firebase diag,
-# decode it, sanity-check its structure, seed it into a persistent CI-state
-# location in Firebase (so the future GH-Actions pipeline has a starting
-# point), and write a small summary (NOT the full 3.4MB) into the repo.
+# Reassemble the manual.json export (gzip+base64 chunks) from Firebase diag,
+# verifying each chunk's sha256 against what the Mac actually computed before
+# upload (the earlier attempt silently lost ~10KB somewhere in transit with no
+# error - this pins down exactly which chunk, if any, is bad).
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 mkdir -p .github/db-task/fetched
 
 node <<'NODE'
-const https = require('https'), fs = require('fs'), zlib = require('zlib');
+const https = require('https'), fs = require('fs'), zlib = require('zlib'), crypto = require('crypto');
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
@@ -26,21 +26,34 @@ function put(url, body) {
     req.on('error', reject); req.write(data); req.end();
   });
 }
+function sha(s) { return crypto.createHash('sha256').update(s).digest('hex'); }
 
 (async () => {
-  const meta = JSON.parse(await get(DB + '/_debug/deals_manual_json/meta.json'));
-  console.log('meta: ' + JSON.stringify(meta));
+  const runId = JSON.parse(await get(DB + '/_debug/deals_manual_json_latest.json'));
+  console.log('latest runId: ' + runId);
+  const meta = JSON.parse(await get(DB + '/_debug/deals_manual_json/' + runId + '/meta.json'));
+  console.log('meta: count=' + meta.count + ' rawBytes=' + meta.rawBytes + ' gzB64Bytes=' + meta.gzB64Bytes + ' chunkSize=' + meta.chunkSize);
+
   let b64 = '';
+  let anyBad = false;
   for (let i = 0; i < meta.count; i++) {
-    const chunk = JSON.parse(await get(DB + '/_debug/deals_manual_json/chunks/' + i + '.json'));
+    const chunk = JSON.parse(await get(DB + '/_debug/deals_manual_json/' + runId + '/chunks/' + i + '.json'));
+    const h = sha(chunk);
+    const ok = h === meta.chunkHashes[i];
+    if (!ok) anyBad = true;
+    console.log('chunk ' + i + ': len=' + chunk.length + ' hashOK=' + ok + (ok ? '' : (' expected=' + meta.chunkHashes[i].slice(0,12) + ' got=' + h.slice(0,12))));
     b64 += chunk;
-    console.log('chunk ' + i + ' fetched: ' + chunk.length + ' chars');
   }
-  if (b64.length !== meta.gzB64Bytes) { console.log('SIZE MISMATCH: got ' + b64.length + ' expected ' + meta.gzB64Bytes); process.exit(1); }
+  if (anyBad) { console.log('ABORT: one or more chunks failed hash verification - re-export needed'); process.exit(1); }
+
+  const fullHashCheck = sha(b64);
+  console.log('full b64 hash match: ' + (fullHashCheck === meta.fullHash));
+  if (fullHashCheck !== meta.fullHash) { console.log('ABORT: reassembled b64 does not match full hash'); process.exit(1); }
+
   const gz = Buffer.from(b64, 'base64');
   const raw = zlib.gunzipSync(gz).toString('utf8');
-  if (raw.length !== meta.rawBytes) { console.log('RAW SIZE MISMATCH: got ' + raw.length + ' expected ' + meta.rawBytes); process.exit(1); }
-  console.log('decoded OK: ' + raw.length + ' bytes, matches expected');
+  console.log('decoded raw: ' + raw.length + ' bytes (expected ' + meta.rawBytes + ')');
+  if (raw.length !== meta.rawBytes) { console.log('ABORT: raw size mismatch after verified-good chunks (unexpected)'); process.exit(1); }
 
   const arr = JSON.parse(raw);
   console.log('manual.json is an array of ' + arr.length + ' entries');
@@ -48,29 +61,21 @@ function put(url, body) {
   arr.forEach(c => { const t = c.type || '(car/untyped)'; byType[t] = (byType[t] || 0) + 1; });
   console.log('breakdown by type: ' + JSON.stringify(byType));
   const sample = arr[0];
-  const sampleKeys = sample ? Object.keys(sample) : [];
-  console.log('sample entry keys: ' + sampleKeys.join(', '));
+  console.log('sample entry keys: ' + Object.keys(sample || {}).join(', '));
 
-  // Seed this as the persistent CI-state baseline for the future pipeline.
-  // Re-upload the SAME gzip+base64 chunks under a stable state path (not _debug,
-  // which is scratch/diag). The CI workflow will read from here each run and
-  // write the updated manual.json back here after harvesting.
+  // Seed persistent CI-state baseline (stable path, not _debug/scratch) for the future pipeline.
   for (let i = 0; i < meta.count; i++) {
-    const chunk = b64.slice(i * 300000, (i + 1) * 300000);
+    const chunk = b64.slice(i * meta.chunkSize, (i + 1) * meta.chunkSize);
     const r = await put(DB + '/_deals_ci_state/manual_json/chunks/' + i + '.json', chunk);
     console.log('seeded state chunk ' + i + ': ' + r.status);
   }
   const r2 = await put(DB + '/_deals_ci_state/manual_json/meta.json', meta);
   console.log('seeded state meta: ' + r2.status);
 
-  // Write a small summary (not the full data) into the repo for reference.
   const summary = {
-    rawBytes: meta.rawBytes,
-    entryCount: arr.length,
-    byType,
-    sampleKeys,
-    sampleEntry: sample,
-    seededAt: new Date().toISOString(),
+    rawBytes: meta.rawBytes, entryCount: arr.length, byType,
+    sampleKeys: Object.keys(sample || {}), sampleEntry: sample,
+    verifiedHashOK: true, seededAt: new Date().toISOString(),
   };
   fs.writeFileSync('.github/db-task/fetched/manual-json-summary.json', JSON.stringify(summary, null, 2));
   console.log('summary written to repo');
@@ -83,7 +88,7 @@ git add .github/db-task/fetched/manual-json-summary.json
 if git diff --cached --quiet; then
   echo "nothing new to commit"
 else
-  git commit -m "fetch: manual.json structure summary + seed CI-state baseline"
+  git commit -m "fetch: manual.json structure summary + seed CI-state baseline (verified)"
   git push origin HEAD:claude/master-file-e6ofy0
   echo "pushed"
 fi
