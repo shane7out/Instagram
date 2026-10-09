@@ -1,0 +1,24 @@
+name: deals-pipeline
+on:
+  push:
+    branches: [claude/master-file-e6ofy0]
+    paths: ['.github/db-task/deals-ci/**', '.github/workflows/deals-pipeline.yml']
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'auth-test | dry-run | deploy'
+        required: true
+        default: 'auth-test'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: run pipeline
+        env:
+          FIREBASE_DEALS_SA: ${{ secrets.FIREBASE_DEALS_SA }}
+          MODE: ${{ github.event.inputs.mode || 'auth-test' }}
+        run: node .github/db-task/deals-ci/run.js
