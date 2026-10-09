@@ -19,20 +19,24 @@ ls -la _tools/ >> "$LOG" 2>&1
 node <<'NODE' >> "$LOG" 2>&1
 const fs = require('fs'), path = require('path');
 const DIR = '_tools';
-const out = {};
+// NOTE: Firebase RTDB forbids '.', '#', '$', '[', ']', '/' in JSON object
+// keys at ANY nesting level, not just in the URL path. File paths like
+// "_tools/gen.js" violate that, so we store an array of {path, content}
+// instead of keying an object by path (that's what caused the 400 before).
+const out = [];
 function walk(d) {
   for (const f of fs.readdirSync(d)) {
     const p = path.join(d, f);
     const st = fs.statSync(p);
     if (st.isDirectory()) { walk(p); continue; }
     if (/\.(js|json)$/.test(f) && st.size < 200000) {
-      out[p] = fs.readFileSync(p, 'utf8');
+      out.push({ path: p, content: fs.readFileSync(p, 'utf8') });
     }
   }
 }
 try { walk(DIR); } catch (e) { console.log('walk error: ' + e.message); }
-if (fs.existsSync('package.json')) out['package.json'] = fs.readFileSync('package.json', 'utf8');
-console.log('files collected: ' + Object.keys(out).join(', '));
+if (fs.existsSync('package.json')) out.push({ path: 'package.json', content: fs.readFileSync('package.json', 'utf8') });
+console.log('files collected: ' + out.map(x => x.path).join(', '));
 fs.writeFileSync('/tmp/deals-scraper-source.json', JSON.stringify(out));
 console.log('payload size: ' + fs.statSync('/tmp/deals-scraper-source.json').size + ' bytes');
 NODE
