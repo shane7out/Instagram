@@ -25,10 +25,29 @@ say "manual.json size: $(wc -c < "$MANUAL") bytes"
 node <<NODE >> "$LOG" 2>&1
 const fs = require('fs'), zlib = require('zlib'), https = require('https'), crypto = require('crypto');
 const raw = fs.readFileSync('$MANUAL');
+console.log('raw read: ' + raw.length + ' bytes');
+
+// Is the source file itself even valid JSON? (rules out a pre-existing corrupt/truncated manual.json)
+let srcValid = false, srcEntryCount = null;
+try { const parsed = JSON.parse(raw.toString('utf8')); srcValid = true; srcEntryCount = Array.isArray(parsed) ? parsed.length : null; }
+catch (e) { console.log('SOURCE FILE IS NOT VALID JSON: ' + e.message); }
+console.log('source JSON valid: ' + srcValid + (srcEntryCount != null ? ' (' + srcEntryCount + ' entries)' : ''));
+
 const gz = zlib.gzipSync(raw, { level: 9 });
 const b64 = gz.toString('base64');
 const fullHash = crypto.createHash('sha256').update(b64).digest('hex');
 console.log('raw: ' + raw.length + ' bytes, gzip+base64: ' + b64.length + ' bytes, sha256: ' + fullHash);
+
+// LOCAL round-trip self-test, right here, before any network call - if THIS fails, the bug
+// is in this gzip/base64 step itself (or the source read), not in transit/Firebase/reassembly.
+const roundTrip = zlib.gunzipSync(Buffer.from(b64, 'base64'));
+console.log('local round-trip gunzip: ' + roundTrip.length + ' bytes (expected ' + raw.length + ')');
+if (roundTrip.length !== raw.length) {
+  console.log('LOCAL ROUND-TRIP MISMATCH — bug is on this Mac, in this script, before upload. Aborting, nothing uploaded.');
+  console.log('raw buffer equals roundTrip buffer (byte compare): ' + Buffer.compare(raw, roundTrip));
+  process.exit(1);
+}
+console.log('local round-trip OK — bug (if any) must be downstream');
 
 const CHUNK = 150000; // smaller chunks (prior 300000-char attempt silently lost bytes on one chunk)
 const chunks = [];
