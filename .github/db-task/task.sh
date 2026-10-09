@@ -1,70 +1,42 @@
 #!/bin/bash
-# One-shot: add SnoGlow Shaved Ice (mobile gourmet shaved ice food truck,
-# screenshot from Shane) to dashboard_crec with full DM-visibility per
-# the standing rule. Dedup-checks first.
+# 3-hour check-in (2026-10-09 ~06:36 UTC). Re-checking GitHub Pages / DNS
+# after a >24h gap since the last actual check, plus a fresh outreach-
+# progress read (status distribution) since that hasn't been looked at
+# in a while either.
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
+echo "=== GitHub Pages / DNS ==="
+curl -s -o /dev/null -w "shane7out.github.io/Instagram/ -> HTTP %{http_code}\n" https://shane7out.github.io/Instagram/ --max-time 15
+curl -s -o /dev/null -w "keytechnologies.si/ -> HTTP %{http_code}\n" https://keytechnologies.si/ --max-time 15
+
+echo
+echo "=== Outreach progress (status distribution) ==="
+curl -s "$DB/dashboard/status.json" -o /tmp/status.json --max-time 20
 curl -s "$DB/dashboard_crec.json" -o /tmp/crec.json --max-time 20
-curl -s "$DB/dashboard/customrecords.json" -o /tmp/customrecords.json --max-time 20
-curl -s "$DB/dashboard/deleted.json" -o /tmp/deleted.json --max-time 20
 
 node <<'NODE'
 const fs = require('fs');
 function load(p){ try { return JSON.parse(fs.readFileSync(p,'utf8')) || {}; } catch(e){ return {}; } }
+const status = load('/tmp/status.json');
 const crec = load('/tmp/crec.json');
-const customrecords = load('/tmp/customrecords.json');
-const deleted = load('/tmp/deleted.json');
 
-const existing = Object.values(crec).filter(Boolean);
-const dup = existing.find(r => {
-  const n = (r.name||'').toLowerCase();
-  const ig = (r.instagram||'').toLowerCase().replace('@','');
-  return n.includes('snoglow') || ig.includes('snoglow');
-});
-if (dup) {
-  console.log('DUP_FOUND:' + JSON.stringify(dup));
-  process.exit(0);
+const counts = {};
+for (const v of Object.values(status||{})) {
+  const k = (v === null || v === undefined) ? '(null)' : String(v);
+  counts[k] = (counts[k]||0) + 1;
+}
+console.log('Total status entries: ' + Object.keys(status||{}).length);
+for (const [k,c] of Object.entries(counts).sort((a,b)=>b[1]-a[1])) {
+  console.log('  ' + k + ': ' + c);
 }
 
-let max = 59999;
-function scan(obj){
-  for (const r of Object.values(obj||{})) {
-    if (r && typeof r === 'object' && typeof r.num === 'number' && r.num > max) max = r.num;
-  }
+let dmable = 0;
+for (const r of Object.values(crec)) {
+  if (!r || typeof r !== 'object') continue;
+  if (r.num == null || !r.instagram || !String(r.instagram).trim()) continue;
+  dmable++;
 }
-scan(crec); scan(customrecords); scan(deleted);
-const num = max + 1;
-
-const record = {
-  num,
-  name: 'SnoGlow Shaved Ice',
-  instagram: '@snoglow_gourmet_shavedice',
-  cuisine: 'Gourmet shaved ice (mobile food truck)',
-  address: 'Las Vegas, NV (mobile food truck - events)',
-  phone: '',
-  email: '',
-  owner: 'Local Operators',
-  notes: 'Manually added - sister owned, mobile gourmet shaved ice truck, books for events/parties, 2,461 followers as of add date'
-};
-
-fs.writeFileSync('/tmp/sg_record.json', JSON.stringify(record));
-fs.writeFileSync('/tmp/sg_num.txt', String(num));
-console.log('WILL_ADD num=' + num + ' ' + JSON.stringify(record));
+console.log('DM-able restaurants total: ' + dmable);
+console.log('Total restaurants in dashboard_crec: ' + Object.keys(crec).length);
 NODE
-
-if [ -f /tmp/sg_num.txt ]; then
-  NUM=$(cat /tmp/sg_num.txt)
-  echo "Writing dashboard_crec/$NUM ..."
-  curl -s -X PUT -d @/tmp/sg_record.json "$DB/dashboard_crec/$NUM.json"
-  echo
-  curl -s -X PUT -d '"pending"' "$DB/dashboard/status/$NUM.json"
-  echo
-  curl -s -X PUT -d '[{"email":"","status":"pending","date":null,"note":""}]' "$DB/dashboard/attempts/$NUM.json"
-  echo
-  echo "Verifying..."
-  curl -s "$DB/dashboard_crec/$NUM.json"
-  echo
-else
-  echo "Skipped write - see DUP check output above"
-fi
