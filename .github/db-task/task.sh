@@ -1,7 +1,7 @@
 #!/bin/bash
-# One-shot: add Duke's Dogs (Cali-style hot dog food truck, screenshot from
-# Shane) to dashboard_crec with full DM-visibility per the standing rule.
-# Dedup-checks first.
+# One-shot: add Roxie's Drive n' Diner (smash burger food truck, screenshot
+# from Shane) to dashboard_crec with full DM-visibility per the standing
+# rule. Dedup-checks first.
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -20,7 +20,7 @@ const existing = Object.values(crec).filter(Boolean);
 const dup = existing.find(r => {
   const n = (r.name||'').toLowerCase();
   const ig = (r.instagram||'').toLowerCase().replace('@','');
-  return n.includes("duke's dogs") || n.includes('dukes dogs') || ig.includes('dukesdogs702');
+  return n.includes("roxie's drive") || n.includes('roxies drive') || ig.includes('roxiesdrivendiner');
 });
 if (dup) {
   console.log('DUP_FOUND:' + JSON.stringify(dup));
@@ -38,25 +38,25 @@ const num = max + 1;
 
 const record = {
   num,
-  name: "Duke's Dogs",
-  instagram: '@dukesdogs702',
-  cuisine: 'Cali-style street hot dogs (food truck)',
-  address: 'Las Vegas, NV (mobile food truck - pop-ups)',
+  name: "Roxie's Drive n' Diner",
+  instagram: '@roxiesdrivendiner',
+  cuisine: 'Smash burgers (food truck)',
+  address: 'Las Vegas, NV (West Coast traveling food truck)',
   phone: '',
   email: '',
   owner: 'Local Operators',
-  notes: 'Manually added - O.G. Cali dogs, from Cali to Vegas, 1,921 followers as of add date'
+  notes: "Manually added - home of the best 'plain' smash burgers, roxiesdrivendiner.com, 197 followers as of add date"
 };
 
-fs.writeFileSync('/tmp/dd_record.json', JSON.stringify(record));
-fs.writeFileSync('/tmp/dd_num.txt', String(num));
+fs.writeFileSync('/tmp/roxie_record.json', JSON.stringify(record));
+fs.writeFileSync('/tmp/roxie_num.txt', String(num));
 console.log('WILL_ADD num=' + num + ' ' + JSON.stringify(record));
 NODE
 
-if [ -f /tmp/dd_num.txt ]; then
-  NUM=$(cat /tmp/dd_num.txt)
+if [ -f /tmp/roxie_num.txt ]; then
+  NUM=$(cat /tmp/roxie_num.txt)
   echo "Writing dashboard_crec/$NUM ..."
-  curl -s -X PUT -d @/tmp/dd_record.json "$DB/dashboard_crec/$NUM.json"
+  curl -s -X PUT -d @/tmp/roxie_record.json "$DB/dashboard_crec/$NUM.json"
   echo
   curl -s -X PUT -d '"pending"' "$DB/dashboard/status/$NUM.json"
   echo
