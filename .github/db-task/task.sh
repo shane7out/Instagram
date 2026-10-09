@@ -1,4 +1,5 @@
 #!/bin/bash
+# re-run: 2026-10-09T20:17:27Z
 # Reassemble the manual.json export (gzip+base64 chunks) from Firebase diag,
 # verifying each chunk's sha256 against what the Mac actually computed before
 # upload (the earlier attempt silently lost ~10KB somewhere in transit with no
