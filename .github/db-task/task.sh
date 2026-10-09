@@ -1,53 +1,25 @@
 #!/bin/bash
-# 3-hour check-in (2026-10-09 ~12:36 UTC). Sanity pass on the 9 manual
-# restaurant adds from the last ~18h (Mezban, Terminal 4, What The Grill,
-# The Stadium, Duke's Dogs, Roxie's, Ten Seconds Yunnan, SnoGlow, Rollin
-# Sweet) - checking for (a) accidental near-duplicate num/name/handle
-# collisions across the whole dashboard_crec, and (b) confirming all 9
-# still have proper num+instagram+status set (nothing got clobbered by a
-# later write).
+# Follow-up check: the sanity-pass script flagged "What The Grill" as
+# MISSING, but that was an exact-name-match bug in the script (the real
+# record is named "What The Grill - Silverado Ranch", added earlier this
+# session as num 60024) - confirming the record is actually still there,
+# not actually lost.
 set +e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+echo "=== dashboard_crec/60024 ==="
+curl -s "$DB/dashboard_crec/60024.json" --max-time 15
+echo
+echo "=== dashboard/status/60024 ==="
+curl -s "$DB/dashboard/status/60024.json" --max-time 15
+echo
 
-curl -s "$DB/dashboard_crec.json" -o /tmp/crec.json --max-time 20
-curl -s "$DB/dashboard/status.json" -o /tmp/status.json --max-time 20
-
-node <<'NODE'
-const fs = require('fs');
-function load(p){ try { return JSON.parse(fs.readFileSync(p,'utf8')) || {}; } catch(e){ return {}; } }
-const crec = load('/tmp/crec.json');
-const status = load('/tmp/status.json');
-
-const recent = ['Mezban','Terminal 4','What The Grill','The Stadium',"Duke's Dogs",
-  "Roxie's Drive n' Diner",'Ten Seconds Yunnan Rice Noodle Las Vegas','SnoGlow Shaved Ice','Rollin Sweet'];
-
-console.log('=== recent-add verification ===');
-for (const name of recent) {
-  const match = Object.values(crec).find(r => r && r.name === name);
-  if (!match) { console.log('MISSING: ' + name); continue; }
-  const hasIg = !!(match.instagram && String(match.instagram).trim());
-  const hasStatus = String(match.num) in status;
-  console.log((hasIg ? 'OK' : 'NO-IG') + ' | ' + (hasStatus ? 'status-set' : 'NO-STATUS') + ' | num=' + match.num + ' | ' + name);
+echo
+echo "=== VIVA! duplicate check ==="
+curl -s "$DB/dashboard_crec.json" -o /tmp/crec2.json --max-time 20
+node -e '
+const fs = require("fs");
+const crec = JSON.parse(fs.readFileSync("/tmp/crec2.json","utf8")) || {};
+for (const [k,r] of Object.entries(crec)) {
+  if (r && (r.name||"").toUpperCase() === "VIVA!") console.log(k, JSON.stringify(r));
 }
-
-console.log('\n=== duplicate scan (whole dashboard_crec) ===');
-const byNum = {};
-const seen = [];
-let numCollisions = 0;
-for (const [k, r] of Object.entries(crec)) {
-  if (!r || typeof r !== 'object') continue;
-  if (byNum[r.num]) { numCollisions++; console.log('NUM COLLISION: ' + r.num + ' -> "' + byNum[r.num] + '" vs "' + r.name + '"'); }
-  else byNum[r.num] = r.name;
-  seen.push({ name: (r.name||'').toLowerCase().replace(/[^a-z0-9]/g,''), real: r.name, ig: (r.instagram||'').toLowerCase().replace('@','').trim() });
-}
-let nameDupes = 0;
-for (let i = 0; i < seen.length; i++) {
-  for (let j = i+1; j < seen.length; j++) {
-    if (seen[i].name && seen[i].name === seen[j].name) {
-      nameDupes++;
-      console.log('NAME DUPE: "' + seen[i].real + '" appears twice');
-    }
-  }
-}
-console.log('num collisions: ' + numCollisions + ', name dupes: ' + nameDupes + ' (out of ' + seen.length + ' total restaurants)');
-NODE
+'
