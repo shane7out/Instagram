@@ -1,5 +1,5 @@
 #!/bin/bash
-# Add new business: Daniel's Gourmet Foods (@danielsgourmetfoods).
+# Add new business: Haunted Brunch (@hauntedbrunchlv), at The Rio, Las Vegas.
 # Standard DM-visibility flow: allocate num, write customrecord, set
 # dashboard/status + dashboard/attempts so it shows up for outreach.
 set -e
@@ -42,15 +42,15 @@ function put(url, body) {
 
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/daniel.?s gourmet/i.test(r.name || '') || r.instagram === 'danielsgourmetfoods'));
+  const dupe = Object.values(existing).find(r => r && (/haunted brunch/i.test(r.name || '') || r.instagram === 'hauntedbrunchlv'));
   if (dupe) { console.log('POSSIBLE DUPLICATE found: ' + JSON.stringify(dupe)); }
-  else console.log('no existing "Daniel\'s Gourmet Foods" match - proceeding');
+  else console.log('no existing "Haunted Brunch" match - proceeding');
 
   const record = {
     num,
-    name: "Daniel's Gourmet Foods",
-    instagram: 'danielsgourmetfoods',
-    category: 'Restaurant',
+    name: 'Haunted Brunch',
+    instagram: 'hauntedbrunchlv',
+    category: 'Entertainment',
     city: 'Las Vegas',
     status: 'pending',
   };
@@ -62,6 +62,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + " - Daniel's Gourmet Foods (@danielsgourmetfoods)");
+  console.log('DONE: added num ' + num + ' - Haunted Brunch (@hauntedbrunchlv)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
