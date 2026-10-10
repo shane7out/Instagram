@@ -422,6 +422,70 @@ done so far, in case a fresh session picks this up mid-stream:
 
 ---
 
+## 13. Status as of 2026-10-09/10
+
+- **Three more restaurants/businesses added from the owner's own IG
+  screenshots**, all with full DM-visibility per section 10: Sushi Bake by
+  Nora (`num 60032`, `@sushi_bake_lv`), Eff-n-Hotdogs (`num 60033`,
+  `@effnhotdogs`), Daniel's Gourmet Foods (`num 60034`,
+  `@danielsgourmetfoods`).
+- **Separate, much bigger thread this session: rebuilding the "Deals"
+  site (classiccarsforsale-co.web.app, a different Firebase project from
+  LVR's but sharing LVR's RTDB for its `_deals/*` state) so it stops
+  depending on the owner's Mac.** Not restaurant/LVR work, but same owner,
+  same session — documenting here so a fresh session has the context.
+  - **Root cause of the owner's "it's not updating consistently" complaint**:
+    the GH-Actions cron (`deals-refresh.yml`) only *retires* dead/aged-out
+    listings; new-listing discovery has only ever run on the Mac
+    (`_tools/gen.js` + ~20 Craigslist-category `watch-*.js` harvesters,
+    merged into `_tools/manual.json`, the real live inventory - the old
+    Atomic Motors dealer feed has been OFF since July). If the Mac isn't
+    reliably running, the site drains toward empty. Confirmed live: one
+    purge dropped the site from ~231 to ~33 listings right before a owner
+    demo; a manual Mac refresh (script given to the owner) recovered it to
+    210, then normal operation to 3,074 total entries across all categories
+    (not just cars - also land, houses, rentals, RVs, antiques, etc., all
+    in one `manual.json`).
+  - **Full scraper source + current `manual.json` (3,074 entries, hash-
+    verified byte-for-byte) have been exported from the owner's Mac and
+    captured** in `.github/db-task/fetched/deals-scraper-source.json` and
+    seeded into Firebase at `_deals_ci_state/manual_json/*` as the CI
+    pipeline's starting baseline. Getting this export right took several
+    rounds - worth noting for a fresh session: (1) Firebase RTDB rejects
+    `.`/`/` in JSON object keys at any nesting level, not just the URL path;
+    (2) gzip-compressed payloads decompressed to different byte counts on
+    macOS vs GitHub's Linux runners despite being hash-verified identical in
+    transit (a real platform zlib divergence - worked around by dropping
+    gzip entirely, plain base64 only); (3) a separate self-inflicted bug
+    compared a Mac byte count against a JS string's `.length` (UTF-16 code
+    units) after decoding, which undercounts for any multi-byte UTF-8 text
+    - every "ABORT: size mismatch" traced back to this, not real corruption.
+  - **New workflow `.github/workflows/deals-pipeline.yml`** (+ `.github/
+    db-task/deals-ci/`) started: a service-account-JSON → OAuth-token
+    exchange (pure Node crypto JWT-bearer flow, no gcloud/googleapis dep)
+    to replace `gcloud auth print-access-token` in the deploy script for
+    GH Actions. **Currently blocked**: the owner saved the
+    `FIREBASE_DEALS_SA` GitHub secret but its value isn't valid JSON
+    (missing opening `{`, stray tab/newline chars - looks like a copy/paste
+    mangling, not a bad key). Asked the owner to re-copy via
+    `pbcopy < ~/Downloads/<keyfile>.json` on the Mac and re-save the
+    secret; still outstanding as of this write (checked via a re-run of
+    the auth-test workflow each check-in cycle).
+  - **Still to build once unblocked**: the site's static template
+    (index.html/css/js/firebase.json) was never exported - plan is to
+    bootstrap it from the *live* deployed site each CI run (it's public)
+    rather than requesting another Mac export, since detail/model pages are
+    already disabled site-side so firebase.json's exact hosting config has
+    little practical effect; similarly plan to rehydrate `carimg/` from the
+    live site's existing photos each run so only genuinely new listings
+    trigger fresh downloads. Then: run the harvesters, run the owner's real
+    `gen.js` unmodified (176KB of his actual business rules - 25-year
+    cutoff with exemptions, no red/green/blue paint, no BMW/Mercedes/Jeep,
+    Ford-trucks-only, etc. - deliberately NOT reimplemented, just run
+    as-is), deploy, dry-run first before ever touching the live site.
+
+---
+
 *If you're a new Claude session reading this cold: read this whole file, then
 ask the owner what they want to work on next rather than re-diagnosing
 everything above from zero — it's all still accurate as of the date at the
