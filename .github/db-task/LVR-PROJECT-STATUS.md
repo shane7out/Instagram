@@ -486,6 +486,30 @@ done so far, in case a fresh session picks this up mid-stream:
 
 ---
 
+## 14. Status as of 2026-10-12
+
+- **"AlohaMulans" stuck-advertiser issue (section 11) resolved.** Owner sent
+  the real IG screenshot - confirmed handle `@alohamulans` (Hawaiian-themed
+  merch shop: bags, leis, backpacks; HI/LV based). Found the existing
+  advertiser record and patched it with the handle instead of creating a
+  duplicate - it's now fully DM-visible. "Wholesale Classic Cars" is the
+  only advertiser still stuck without a confirmed handle.
+- **Follow-up DM feature (dashboard) built and tested, not yet deployed.**
+  Still waiting on the owner's final go-ahead on the message wording (went
+  through two rounds of trimming it down for DM length) before he runs the
+  one-line deploy command. Patch + deploy script are both ready in
+  `.github/db-task/mac/patch-followup-dm.js` /
+  `deploy-dashboard-followup.sh`.
+- **Several more restaurant/business adds this cycle from the owner's IG
+  screenshots**, all with full DM-visibility: Banh Mi House by Dakao,
+  Smoking Pig BBQ Company, Las Vegas Lemon Bomb, Amy's Got Buns Bakery,
+  Tacos El Cha.
+- **Deals pipeline rebuild (section 13) still blocked** on the owner
+  re-saving the `FIREBASE_DEALS_SA` GitHub secret correctly (current value
+  is still invalid JSON). Nothing else to build until that lands.
+
+---
+
 *If you're a new Claude session reading this cold: read this whole file, then
 ask the owner what they want to work on next rather than re-diagnosing
 everything above from zero — it's all still accurate as of the date at the
