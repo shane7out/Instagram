@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add new restaurant: Smoking Pig BBQ Company (@smokingpigbbqlasvegas),
-# 4379 N Las Vegas Blvd. Standard DM-visibility flow: allocate num, write
-# customrecord, set dashboard/status + dashboard/attempts.
+# Add new business: Las Vegas Lemon Bomb (@chinalemontea), fresh lemon/fruit
+# tea & slush shop in Chinatown. Standard DM-visibility flow: allocate num,
+# write customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -28,7 +28,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/smoking pig/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'smokingpigbbqlasvegas'));
+  const dupe = Object.values(existing).find(r => r && (/lemon bomb/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'chinalemontea'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -50,11 +50,11 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'Smoking Pig BBQ Company',
-    instagram: 'smokingpigbbqlasvegas',
+    name: 'Las Vegas Lemon Bomb',
+    instagram: 'chinalemontea',
     category: 'Restaurant',
     city: 'Las Vegas',
-    address: '4379 N Las Vegas Blvd, Las Vegas, NV',
+    address: '5115 Spring Mountain Rd Ste 107, Las Vegas, NV',
     status: 'pending',
   };
 
@@ -65,6 +65,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - Smoking Pig BBQ Company (@smokingpigbbqlasvegas)');
+  console.log('DONE: added num ' + num + ' - Las Vegas Lemon Bomb (@chinalemontea)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
