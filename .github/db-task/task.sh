@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add new restaurant: Noodle King (@noodlekinglv), 6820 W Sahara Ave Ste 7,
-# Las Vegas. Standard DM-visibility flow: allocate num, write customrecord,
-# set dashboard/status + dashboard/attempts.
+# Add new restaurant: Cactus Mexican Buffet Las Vegas (@cactusmexicanbuffet),
+# all-you-can-eat Mexican buffet, family owned. Standard DM-visibility flow:
+# allocate num, write customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -28,7 +28,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/noodle king/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'noodlekinglv'));
+  const dupe = Object.values(existing).find(r => r && (/cactus mexican/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'cactusmexicanbuffet'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -50,11 +50,10 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'Noodle King',
-    instagram: 'noodlekinglv',
+    name: 'Cactus Mexican Buffet Las Vegas',
+    instagram: 'cactusmexicanbuffet',
     category: 'Restaurant',
     city: 'Las Vegas',
-    address: '6820 W Sahara Ave, Ste 7, Las Vegas, NV 89146',
     status: 'pending',
   };
 
@@ -65,6 +64,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - Noodle King (@noodlekinglv)');
+  console.log('DONE: added num ' + num + ' - Cactus Mexican Buffet Las Vegas (@cactusmexicanbuffet)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
