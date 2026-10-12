@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add new business: Amy's Got Buns Bakery (@amysgotbunsbakery), licensed cottage
-# baker delivering to NLV/LV/Henderson. Standard DM-visibility flow: allocate
-# num, write customrecord, set dashboard/status + dashboard/attempts.
+# Add new restaurant: Smoking Pig BBQ Company (@smokingpigbbqlasvegas),
+# 4379 N Las Vegas Blvd. Standard DM-visibility flow: allocate num, write
+# customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -26,6 +26,14 @@ function put(url, body) {
 }
 
 (async () => {
+  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
+  const existing = JSON.parse(dupCheckRaw) || {};
+  const dupe = Object.values(existing).find(r => r && (/smoking pig/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'smokingpigbbqlasvegas'));
+  if (dupe) {
+    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
+    return;
+  }
+
   const [crecRaw, custRaw, delRaw] = await Promise.all([
     get(DB + '/dashboard_crec.json?shallow=true'),
     get(DB + '/customrecords.json?shallow=true'),
@@ -40,19 +48,13 @@ function put(url, body) {
   const num = Math.max(maxNum + 1, 60000);
   console.log('allocated num: ' + num);
 
-  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
-  const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/amy.?s got buns/i.test(r.name || '') || r.instagram === 'amysgotbunsbakery'));
-  if (dupe) { console.log('POSSIBLE DUPLICATE found: ' + JSON.stringify(dupe)); }
-  else console.log('no existing Amy\'s Got Buns Bakery match - proceeding');
-
   const record = {
     num,
-    name: "Amy's Got Buns Bakery",
-    instagram: 'amysgotbunsbakery',
+    name: 'Smoking Pig BBQ Company',
+    instagram: 'smokingpigbbqlasvegas',
     category: 'Restaurant',
     city: 'Las Vegas',
-    email: 'amysgotbuns@yahoo.com',
+    address: '4379 N Las Vegas Blvd, Las Vegas, NV',
     status: 'pending',
   };
 
@@ -63,6 +65,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + " - Amy's Got Buns Bakery (@amysgotbunsbakery)");
+  console.log('DONE: added num ' + num + ' - Smoking Pig BBQ Company (@smokingpigbbqlasvegas)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
