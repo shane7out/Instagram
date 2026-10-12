@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add new restaurant: Tacos Los Brothers (@tacoslosbrothers2.00), Tijuana-style
-# tacos, 320 N Nellis Blvd Suite 5, Las Vegas. Standard DM-visibility flow:
-# allocate num, write customrecord, set dashboard/status + dashboard/attempts.
+# Add new restaurant: AYCE Sushi & Asian Fusion (@aycesushilv), all-you-can-eat
+# sushi/seafood/Asian fusion, Las Vegas. Standard DM-visibility flow: allocate
+# num, write customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -28,7 +28,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/tacos los brother/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'tacoslosbrothers2.00'));
+  const dupe = Object.values(existing).find(r => r && (/ayce sushi/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'aycesushilv'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -50,11 +50,10 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'Tacos Los Brothers',
-    instagram: 'tacoslosbrothers2.00',
+    name: 'AYCE Sushi & Asian Fusion',
+    instagram: 'aycesushilv',
     category: 'Restaurant',
     city: 'Las Vegas',
-    address: '320 N Nellis Blvd Suite 5, Las Vegas, NV',
     status: 'pending',
   };
 
@@ -65,6 +64,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - Tacos Los Brothers (@tacoslosbrothers2.00)');
+  console.log('DONE: added num ' + num + ' - AYCE Sushi & Asian Fusion (@aycesushilv)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
