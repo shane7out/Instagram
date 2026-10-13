@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add new business: CHICHA San Chen NV (@chichasanchen.nv), boba/tea shop.
-# Standard DM-visibility flow: allocate num, write customrecord, set
-# dashboard/status + dashboard/attempts.
+# Add new restaurant: THE MAC LV (@the_mac_lv), food trucks/catering/events,
+# Las Vegas. Standard DM-visibility flow: allocate num, write customrecord,
+# set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -28,7 +28,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/chicha san chen/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'chichasanchen.nv'));
+  const dupe = Object.values(existing).find(r => r && (/^the mac(\s|$)/i.test((r.name || '').trim()) || (r.instagram || '').toLowerCase() === 'the_mac_lv'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -50,10 +50,12 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'CHICHA San Chen NV',
-    instagram: 'chichasanchen.nv',
+    name: 'THE MAC LV',
+    instagram: 'the_mac_lv',
     category: 'Restaurant',
     city: 'Las Vegas',
+    phone: '725-277-5563',
+    email: 'Themaclv@gmail.com',
     status: 'pending',
   };
 
@@ -64,6 +66,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - CHICHA San Chen NV (@chichasanchen.nv)');
+  console.log('DONE: added num ' + num + ' - THE MAC LV (@the_mac_lv)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
