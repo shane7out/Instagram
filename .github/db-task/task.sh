@@ -1,7 +1,7 @@
 #!/bin/bash
-# Add new restaurant: THE MAC LV (@the_mac_lv), food trucks/catering/events,
-# Las Vegas. Standard DM-visibility flow: allocate num, write customrecord,
-# set dashboard/status + dashboard/attempts.
+# Add new restaurant: Peru Chicken (@peruchickenofficial), authentic Peruvian
+# food, 4 Las Vegas locations. Standard DM-visibility flow: allocate num,
+# write customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -28,7 +28,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/^the mac(\s|$)/i.test((r.name || '').trim()) || (r.instagram || '').toLowerCase() === 'the_mac_lv'));
+  const dupe = Object.values(existing).find(r => r && (/peru chicken/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'peruchickenofficial'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -50,12 +50,12 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'THE MAC LV',
-    instagram: 'the_mac_lv',
+    name: 'Peru Chicken',
+    instagram: 'peruchickenofficial',
     category: 'Restaurant',
     city: 'Las Vegas',
-    phone: '725-277-5563',
-    email: 'Themaclv@gmail.com',
+    address: '2055 E Tropicana Ave, Las Vegas, NV (4 locations)',
+    notes: '4 locations: 2055 E Tropicana Ave, 3886 W Sahara Ave, 2319 S Eastern Ave, 4825 S Rainbow Blvd',
     status: 'pending',
   };
 
@@ -66,6 +66,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - THE MAC LV (@the_mac_lv)');
+  console.log('DONE: added num ' + num + ' - Peru Chicken (@peruchickenofficial)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
