@@ -1,8 +1,7 @@
 #!/bin/bash
-# Add new business: The Beach House (@thebeachhousevegas), bar & grill with
-# gaming, 790 Coronado Center Dr Ste 130, Henderson NV. Standard
-# DM-visibility flow: allocate num, write customrecord, set
-# dashboard/status + dashboard/attempts.
+# Add new restaurant: Santina's New York Pizzeria (@santinasnypizzeria),
+# Las Vegas. Standard DM-visibility flow: allocate num, write customrecord,
+# set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -29,7 +28,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/the beach house/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'thebeachhousevegas'));
+  const dupe = Object.values(existing).find(r => r && (/santina.?s new york/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'santinasnypizzeria'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -51,12 +50,10 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'The Beach House',
-    instagram: 'thebeachhousevegas',
-    category: 'Bar & Grill',
-    city: 'Henderson',
-    address: '790 Coronado Center Dr Ste 130, Henderson, NV 89052',
-    phone: '702-837-7900',
+    name: "Santina's New York Pizzeria",
+    instagram: 'santinasnypizzeria',
+    category: 'Restaurant',
+    city: 'Las Vegas',
     status: 'pending',
   };
 
@@ -67,6 +64,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - The Beach House (@thebeachhousevegas)');
+  console.log('DONE: added num ' + num + " - Santina's New York Pizzeria (@santinasnypizzeria)");
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
