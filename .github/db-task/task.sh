@@ -1,6 +1,7 @@
 #!/bin/bash
-# Read-only diagnostic: scan dashboard_crec for duplicate instagram handles
-# and duplicate/near-duplicate names (case-insensitive, normalized). No writes.
+# Read-only diagnostic: pull full detail on the two duplicate pairs found
+# (VIVA!/Viva and the two Jet's Pizza entries) including DM status/attempts,
+# so a safe merge decision can be made. No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -14,37 +15,22 @@ function get(url) {
   });
 }
 
-function norm(s) {
-  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
 (async () => {
-  const raw = await get(DB + '/dashboard_crec.json');
-  const recs = JSON.parse(raw) || {};
-  const byIg = {};
-  const byName = {};
-  for (const [num, r] of Object.entries(recs)) {
-    if (!r) continue;
-    const ig = (r.instagram || '').toLowerCase().trim();
-    if (ig) (byIg[ig] = byIg[ig] || []).push({ num, name: r.name });
-    const nm = norm(r.name);
-    if (nm) (byName[nm] = byName[nm] || []).push({ num, name: r.name, instagram: r.instagram });
-  }
+  const keys = ['50465', '50867', '50217', '-P3D5D4f7Wf57WSyE_0i'];
+  const [crecRaw, statusRaw, attemptsRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json'),
+    get(DB + '/dashboard/status.json'),
+    get(DB + '/dashboard/attempts.json'),
+  ]);
+  const crec = JSON.parse(crecRaw) || {};
+  const status = JSON.parse(statusRaw) || {};
+  const attempts = JSON.parse(attemptsRaw) || {};
 
-  console.log('--- duplicate instagram handles ---');
-  let foundIg = 0;
-  for (const [ig, list] of Object.entries(byIg)) {
-    if (list.length > 1) { foundIg++; console.log(ig + ': ' + JSON.stringify(list)); }
+  for (const k of keys) {
+    console.log('--- ' + k + ' ---');
+    console.log('record: ' + JSON.stringify(crec[k]));
+    console.log('status: ' + JSON.stringify(status[k]));
+    console.log('attempts: ' + JSON.stringify(attempts[k]));
   }
-  if (!foundIg) console.log('none found');
-
-  console.log('--- duplicate/near-duplicate names ---');
-  let foundNm = 0;
-  for (const [nm, list] of Object.entries(byName)) {
-    if (list.length > 1) { foundNm++; console.log(nm + ': ' + JSON.stringify(list)); }
-  }
-  if (!foundNm) console.log('none found');
-
-  console.log('total records scanned: ' + Object.keys(recs).length);
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
