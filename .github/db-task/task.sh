@@ -1,9 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: size the email outreach channel (dashboard has a
-# separate "Sent"/"Waiting" email badge pair alongside the IG DM ones) -
-# how many records have an email on file that's never been used, and
-# sanity-check that yesterday's dedup deletes (Viva/Jet's Pizza) left no
-# orphaned references anywhere else. No writes.
+# Read-only diagnostic: pull full detail on the 7 "sent" (already DM'd)
+# records - names + any DM timestamp data - to see how many would already
+# qualify for the not-yet-deployed "Needs Follow-Up" feature once it ships.
+# No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -18,27 +17,23 @@ function get(url) {
 }
 
 (async () => {
-  const [crecRaw, custRaw] = await Promise.all([
+  const [crecRaw, statusRaw, dashRaw] = await Promise.all([
     get(DB + '/dashboard_crec.json'),
-    get(DB + '/customrecords.json'),
+    get(DB + '/dashboard/status.json'),
+    get(DB + '/dashboard.json?shallow=true'),
   ]);
   const crec = JSON.parse(crecRaw) || {};
-  const cust = JSON.parse(custRaw) || {};
+  const status = JSON.parse(statusRaw) || {};
+  const dashKeys = JSON.parse(dashRaw) || {};
 
-  let hasEmail = 0, noEmail = 0;
-  for (const r of Object.values(crec)) {
-    if (!r) continue;
-    if ((r.email || '').trim()) hasEmail++; else noEmail++;
-  }
-  console.log('--- email field coverage (dashboard_crec) ---');
-  console.log('has email on file: ' + hasEmail);
-  console.log('no email on file: ' + noEmail);
+  console.log('--- top-level keys under /dashboard ---');
+  console.log(JSON.stringify(Object.keys(dashKeys)));
 
-  console.log('--- orphan check for yesterday\'s dedup deletes ---');
-  const deadKeys = ['50867', '-P3D5D4f7Wf57WSyE_0i'];
-  for (const k of deadKeys) {
-    console.log(k + ' still in dashboard_crec: ' + (crec[k] !== undefined));
-    console.log(k + ' still in customrecords: ' + (cust[k] !== undefined));
+  const sentNums = Object.keys(status).filter(k => status[k] === 'sent');
+  console.log('--- sent records (' + sentNums.length + ') ---');
+  for (const num of sentNums) {
+    const r = crec[num];
+    console.log(num + ': ' + (r ? r.name : '(no crec record found)'));
   }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
