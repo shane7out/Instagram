@@ -1,7 +1,7 @@
 #!/bin/bash
-# Read-only diagnostic: how many DM-able restaurants have never been
-# contacted yet (status=pending, attempts=0, has an instagram handle) -
-# i.e. the real "ready to DM today" queue size. No writes.
+# Add new business: The Resort At Summerlin (@theresortatsummerlin),
+# hotel/casino/spa in Summerlin, Las Vegas NV. Standard DM-visibility flow:
+# allocate num, write customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -14,39 +14,57 @@ function get(url) {
     https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
+function put(url, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const u = new URL(url);
+    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' } }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    });
+    req.on('error', reject); req.write(data); req.end();
+  });
+}
 
 (async () => {
-  const [crecRaw, statusRaw, attemptsRaw] = await Promise.all([
-    get(DB + '/dashboard_crec.json'),
-    get(DB + '/dashboard/status.json'),
-    get(DB + '/dashboard/attempts.json'),
-  ]);
-  const crec = JSON.parse(crecRaw) || {};
-  const status = JSON.parse(statusRaw) || {};
-  const attempts = JSON.parse(attemptsRaw) || {};
-
-  let neverContacted = 0, dmdAtLeastOnce = 0, otherStatus = 0, noHandleSkipped = 0;
-  const statusCounts = {};
-
-  for (const [num, r] of Object.entries(crec)) {
-    if (!r) continue;
-    const ig = (r.instagram || '').trim();
-    const st = status[num];
-    statusCounts[st] = (statusCounts[st] || 0) + 1;
-    if (!ig) { noHandleSkipped++; continue; }
-    const att = attempts[num];
-    const attCount = (typeof att === 'number') ? att : 0;
-    if (st === 'pending' && attCount === 0) neverContacted++;
-    else if (attCount > 0 || st === 'dmd' || st === 'contacted') dmdAtLeastOnce++;
-    else otherStatus++;
+  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
+  const existing = JSON.parse(dupCheckRaw) || {};
+  const dupe = Object.values(existing).find(r => r && (/resort at summerlin/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'theresortatsummerlin'));
+  if (dupe) {
+    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
+    return;
   }
 
-  console.log('total records: ' + Object.keys(crec).length);
-  console.log('status breakdown: ' + JSON.stringify(statusCounts));
-  console.log('--- outreach queue ---');
-  console.log('never contacted yet (has handle, status=pending, attempts=0): ' + neverContacted);
-  console.log('DM\'d at least once already: ' + dmdAtLeastOnce);
-  console.log('has handle but other status/edge case: ' + otherStatus);
-  console.log('no instagram handle (can\'t be DM\'d): ' + noHandleSkipped);
+  const [crecRaw, custRaw, delRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json?shallow=true'),
+    get(DB + '/customrecords.json?shallow=true'),
+    get(DB + '/dashboard_deleted.json?shallow=true'),
+  ]);
+  const nums = [];
+  [crecRaw, custRaw, delRaw].forEach(raw => {
+    const obj = JSON.parse(raw) || {};
+    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
+  });
+  let maxNum = nums.length ? Math.max(...nums) : 59999;
+  const num = Math.max(maxNum + 1, 60000);
+  console.log('allocated num: ' + num);
+
+  const record = {
+    num,
+    name: 'The Resort At Summerlin',
+    instagram: 'theresortatsummerlin',
+    category: 'Hotel & Casino',
+    city: 'Las Vegas',
+    address: 'Summerlin, Las Vegas, NV',
+    status: 'pending',
+  };
+
+  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
+  console.log('dashboard_crec write: ' + r1.status);
+  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
+  console.log('dashboard/status write: ' + r2.status);
+  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
+  console.log('dashboard/attempts write: ' + r3.status);
+
+  console.log('DONE: added num ' + num + ' - The Resort At Summerlin (@theresortatsummerlin)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
