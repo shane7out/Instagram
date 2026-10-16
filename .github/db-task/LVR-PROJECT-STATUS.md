@@ -527,6 +527,18 @@ done so far, in case a fresh session picks this up mid-stream:
   duplicates (crec + status + attempts, all confirmed 200). Worth a repeat
   scan periodically since the push-ID-keyed record suggests at least one
   past import wrote a record under the wrong kind of key.
+- **New finding while doing that scan: 109 of 870 records (12.5%) have no
+  Instagram handle at all**, so they can never be DM'd — almost all are
+  leftovers from a past "Yelp migration" import, including a lot of
+  well-known single-location Strip restaurants (Jaleo, Carversteak,
+  HaSalon, Golden Steer, Del Frisco's, etc.). I can't reliably confirm
+  exact @handles via web search (too easy to get a close-but-wrong
+  handle, which would mean a DM landing on the wrong account), so I
+  didn't guess any in. Full prioritized list — top 15 high-value/easy
+  ones first, then everything else — is in `needs-ig-handle.md` in this
+  same folder, ready for the owner to do a quick phone pass whenever he
+  has a few minutes. Fixing one once a handle is confirmed is a one-line
+  task.sh PUT, same pattern as every restaurant add this session.
 
 ---
 
