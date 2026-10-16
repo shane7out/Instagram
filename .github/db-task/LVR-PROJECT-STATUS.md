@@ -507,6 +507,26 @@ done so far, in case a fresh session picks this up mid-stream:
 - **Deals pipeline rebuild (section 13) still blocked** on the owner
   re-saving the `FIREBASE_DEALS_SA` GitHub secret correctly (current value
   is still invalid JSON). Nothing else to build until that lands.
+- **18 more restaurant/business adds** this stretch from IG screenshots,
+  all with full DM-visibility: Sushi Bake by Nora, Eff-n-Hotdogs, Daniel's
+  Gourmet Foods, Haunted Brunch, Tacos El Cha, Banh Mi House by Dakao,
+  Smoking Pig BBQ Company, Noodle King, Cactus Mexican Buffet, Marilyn's
+  Cafe at the Tuscany, Tacos Los Brothers, AYCE Sushi & Asian Fusion,
+  CHICHA San Chen NV, THE MAC LV, Peru Chicken, The Beach House, Santina's
+  New York Pizzeria, Samurai Japanese Steakhouse and Sushi. "Rollin' Sweets"
+  (@rollinsweetsllc) was flagged, not added — looked Florida-based, owner
+  hasn't confirmed either way.
+- **Database dedup cleanup (2026-10-16).** Ran a read-only scan for
+  duplicate Instagram handles / names across `dashboard_crec` and found two
+  real duplicates, both untouched (never DM'd, so no outreach history at
+  risk): "Viva" (num 50867, blank IG, leftover Yelp-migration stub)
+  duplicating "VIVA!" (num 50465, @eatdrinkviva), and a malformed
+  push-ID-keyed "Jet's Pizza" record (num 60011 stored under a Firebase
+  push-ID key instead of its own numeric key) duplicating "Jet' Detroit
+  Sytle Pizza" (num 50217, same @jetspizza handle). Deleted both
+  duplicates (crec + status + attempts, all confirmed 200). Worth a repeat
+  scan periodically since the push-ID-keyed record suggests at least one
+  past import wrote a record under the wrong kind of key.
 
 ---
 
