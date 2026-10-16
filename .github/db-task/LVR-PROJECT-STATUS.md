@@ -539,6 +539,17 @@ done so far, in case a fresh session picks this up mid-stream:
   same folder, ready for the owner to do a quick phone pass whenever he
   has a few minutes. Fixing one once a handle is confirmed is a one-line
   task.sh PUT, same pattern as every restaurant add this session.
+- **Added "The Resort At Summerlin"** (@theresortatsummerlin, num 60052)
+  from an IG screenshot.
+- **Small data hygiene pass (2026-10-16).** Checked email-field coverage
+  (only 2 of 871 records have one - IG DM is effectively the only real
+  outreach channel, nothing to build there) and found/removed 6 orphaned
+  `dashboard/status` + `dashboard/attempts` entries (nums 4, 5, 15, 72,
+  766, 60006) marked "sent" with no matching `dashboard_crec` record at
+  all - old leftover data, unrelated to the earlier VIVA/Jet's Pizza
+  cleanup. Harmless either way since the dashboard iterates by
+  `dashboard_crec` not by status, but cleaned up for hygiene. Also
+  confirmed the earlier dedup deletes left no orphans anywhere.
 
 ---
 
