@@ -1,7 +1,9 @@
 #!/bin/bash
-# Add new business: The Resort At Summerlin (@theresortatsummerlin),
-# hotel/casino/spa in Summerlin, Las Vegas NV. Standard DM-visibility flow:
-# allocate num, write customrecord, set dashboard/status + dashboard/attempts.
+# Read-only diagnostic: size the email outreach channel (dashboard has a
+# separate "Sent"/"Waiting" email badge pair alongside the IG DM ones) -
+# how many records have an email on file that's never been used, and
+# sanity-check that yesterday's dedup deletes (Viva/Jet's Pizza) left no
+# orphaned references anywhere else. No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -14,57 +16,29 @@ function get(url) {
     https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
-function put(url, body) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify(body);
-    const u = new URL(url);
-    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' } }, r => {
-      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
-    });
-    req.on('error', reject); req.write(data); req.end();
-  });
-}
 
 (async () => {
-  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
-  const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/resort at summerlin/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'theresortatsummerlin'));
-  if (dupe) {
-    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
-    return;
-  }
-
-  const [crecRaw, custRaw, delRaw] = await Promise.all([
-    get(DB + '/dashboard_crec.json?shallow=true'),
-    get(DB + '/customrecords.json?shallow=true'),
-    get(DB + '/dashboard_deleted.json?shallow=true'),
+  const [crecRaw, custRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json'),
+    get(DB + '/customrecords.json'),
   ]);
-  const nums = [];
-  [crecRaw, custRaw, delRaw].forEach(raw => {
-    const obj = JSON.parse(raw) || {};
-    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
-  });
-  let maxNum = nums.length ? Math.max(...nums) : 59999;
-  const num = Math.max(maxNum + 1, 60000);
-  console.log('allocated num: ' + num);
+  const crec = JSON.parse(crecRaw) || {};
+  const cust = JSON.parse(custRaw) || {};
 
-  const record = {
-    num,
-    name: 'The Resort At Summerlin',
-    instagram: 'theresortatsummerlin',
-    category: 'Hotel & Casino',
-    city: 'Las Vegas',
-    address: 'Summerlin, Las Vegas, NV',
-    status: 'pending',
-  };
+  let hasEmail = 0, noEmail = 0;
+  for (const r of Object.values(crec)) {
+    if (!r) continue;
+    if ((r.email || '').trim()) hasEmail++; else noEmail++;
+  }
+  console.log('--- email field coverage (dashboard_crec) ---');
+  console.log('has email on file: ' + hasEmail);
+  console.log('no email on file: ' + noEmail);
 
-  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
-  console.log('dashboard_crec write: ' + r1.status);
-  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
-  console.log('dashboard/status write: ' + r2.status);
-  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
-  console.log('dashboard/attempts write: ' + r3.status);
-
-  console.log('DONE: added num ' + num + ' - The Resort At Summerlin (@theresortatsummerlin)');
+  console.log('--- orphan check for yesterday\'s dedup deletes ---');
+  const deadKeys = ['50867', '-P3D5D4f7Wf57WSyE_0i'];
+  for (const k of deadKeys) {
+    console.log(k + ' still in dashboard_crec: ' + (crec[k] !== undefined));
+    console.log(k + ' still in customrecords: ' + (cust[k] !== undefined));
+  }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
