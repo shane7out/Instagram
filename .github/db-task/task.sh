@@ -1,7 +1,8 @@
 #!/bin/bash
-# Add new restaurant: Rangoli Social Eats (@rangoli.vegas), casual Indian
-# eatery (pure vegetarian, many vegan options), 1395 E Tropicana Ave, Las
-# Vegas NV. Standard DM-visibility flow: allocate num, write customrecord,
+# Add new restaurant: Frank's Pizza (@frankspizzalv), New York style
+# pizza, Las Vegas NV (no street address shown in source screenshot -
+# bio only has a "Locations" button, left address blank rather than
+# guess). Standard DM-visibility flow: allocate num, write customrecord,
 # set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
@@ -29,7 +30,7 @@ function put(url, body) {
 (async () => {
   const dupCheckRaw = await get(DB + '/dashboard_crec.json');
   const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/rangoli/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'rangoli.vegas'));
+  const dupe = Object.values(existing).find(r => r && (/frank.?s pizza/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'frankspizzalv'));
   if (dupe) {
     console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
     return;
@@ -51,11 +52,11 @@ function put(url, body) {
 
   const record = {
     num,
-    name: 'Rangoli Social Eats',
-    instagram: 'rangoli.vegas',
+    name: "Frank's Pizza",
+    instagram: 'frankspizzalv',
     category: 'Restaurant',
     city: 'Las Vegas',
-    address: '1395 E Tropicana Ave, Las Vegas, NV',
+    address: '',
     status: 'pending',
   };
 
@@ -66,6 +67,6 @@ function put(url, body) {
   const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
   console.log('dashboard/attempts write: ' + r3.status);
 
-  console.log('DONE: added num ' + num + ' - Rangoli Social Eats (@rangoli.vegas)');
+  console.log('DONE: added num ' + num + ' - Frank\'s Pizza (@frankspizzalv)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
