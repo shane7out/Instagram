@@ -1,12 +1,12 @@
 #!/bin/bash
-# Read-only diagnostic: igsuggest holds real, recent-looking IG
-# verification entries (detailed notes, sources, timestamps) but keyed by
-# small sequential IDs, not LVR nums. Some of its restaurant names (e.g.
-# "Nellie's Live!", "Boba Cafe") sound like they could be LVR records
-# under a different key. Pull the FULL igsuggest dataset (not truncated)
-# and cross-reference its restaurant names against dashboard_crec by name
-# match, to see if any verified handles there could resolve LVR no-handle
-# or badig-flagged backlog items. No writes.
+# Read-only diagnostic: pull the FULL igsuggest dataset (25 entries) plus
+# full dashboard_crec, and do thorough matching: (1) confirmations - entry
+# key IS a crec num and the suggested handle matches what's already
+# stored (flag is stale, no action needed), (2) corrections - entry key IS
+# a crec num but the suggested handle DIFFERS from what's stored (real fix
+# candidate), (3) entries whose key is NOT a crec num at all (can't be
+# matched this way - note separately). No writes, just full visibility
+# before deciding anything.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -20,10 +20,6 @@ function get(url) {
   });
 }
 
-function norm(s) {
-  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
 (async () => {
   const [igsuggestRaw, crecRaw] = await Promise.all([
     get(DB + '/dashboard/igsuggest.json'),
@@ -32,33 +28,31 @@ function norm(s) {
   const igsuggest = JSON.parse(igsuggestRaw) || {};
   const crec = JSON.parse(crecRaw) || {};
 
-  const sugKeys = Object.keys(igsuggest);
-  console.log('igsuggest total entries: ' + sugKeys.length);
+  const keys = Object.keys(igsuggest);
+  console.log('igsuggest total entries: ' + keys.length);
 
-  // build a name-lookup index of dashboard_crec
-  const byName = {};
-  for (const [num, r] of Object.entries(crec)) {
-    if (!r || !r.name) continue;
-    byName[norm(r.name)] = { num, name: r.name, instagram: r.instagram || '' };
-  }
+  let confirmed = [], corrections = [], noCrecMatch = [];
 
-  let matches = 0;
-  for (const key of sugKeys) {
+  for (const key of keys) {
     const entry = igsuggest[key];
-    if (!entry || !entry.ig) continue;
-    // igsuggest doesn't carry a name field directly in the sample seen -
-    // try matching the suggested ig handle itself against crec instagram
-    // (exact or close), since that's the only reliable join key available.
+    const r = crec[key];
+    if (!r) { noCrecMatch.push({ key, entry }); continue; }
+    const curIg = (r.instagram || '').toLowerCase().replace(/^@/, '');
     const sugIg = (entry.ig || '').toLowerCase().replace(/^@/, '');
-    for (const [nName, rec] of Object.entries(byName)) {
-      const curIg = rec.instagram.toLowerCase().replace(/^@/, '');
-      if (curIg && curIg === sugIg) {
-        matches++;
-        console.log('MATCH key=' + key + ' -> crec num=' + rec.num + ' "' + rec.name + '" ig=' + rec.instagram + ' conf=' + entry.conf);
-      }
+    if (curIg === sugIg) {
+      confirmed.push({ key, name: r.name, ig: r.instagram, conf: entry.conf, note: entry.note });
+    } else {
+      corrections.push({ key, name: r.name, currentIg: r.instagram, suggestedIg: entry.ig, conf: entry.conf, note: entry.note });
     }
   }
-  console.log('total ig-handle matches found: ' + matches);
-  console.log('sample igsuggest keys (first 5 full entries): ' + JSON.stringify(sugKeys.slice(0,5).map(k => ({key:k, ...igsuggest[k]}))).slice(0, 3000));
+
+  console.log('=== CONFIRMED (key IS a crec num, suggested handle MATCHES current - flag is stale) === ' + confirmed.length);
+  confirmed.forEach(c => console.log('  ' + c.key + ': ' + c.name + ' ' + c.ig + ' [' + c.conf + ']'));
+
+  console.log('=== CORRECTIONS (key IS a crec num, suggested handle DIFFERS from current) === ' + corrections.length);
+  corrections.forEach(c => console.log('  ' + c.key + ': ' + c.name + '  current=' + c.currentIg + '  suggested=@' + c.suggestedIg + '  [' + c.conf + ']  note=' + c.note));
+
+  console.log('=== NO CREC MATCH (key is not a current crec num) === ' + noCrecMatch.length);
+  noCrecMatch.forEach(c => console.log('  key=' + c.key + ' suggested=@' + c.entry.ig + '  note=' + (c.entry.note||'').slice(0,100)));
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
