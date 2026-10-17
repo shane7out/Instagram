@@ -550,6 +550,20 @@ done so far, in case a fresh session picks this up mid-stream:
   cleanup. Harmless either way since the dashboard iterates by
   `dashboard_crec` not by status, but cleaned up for hygiene. Also
   confirmed the earlier dedup deletes left no orphans anywhere.
+- **⚠️ WARNING for future sessions: do not trust `/dashboard/igovr`,
+  `/dashboard/igsuggest`, or `/dashboard/badig` as LVR data, even though
+  some keys look like LVR nums.** Found these paths while exploring the
+  full `/dashboard` schema. Checked all 3 `igovr` entries by hand before
+  touching anything: one (num 50385, "Fogo de Chao Brasil") maps to
+  `@tigersugar.usa` - a completely unrelated bubble tea business, not a
+  real correction. This Firebase project is shared with other verticals
+  (schema also has `golf*`, `infl*`, `modelstaging` paths), and these
+  override/suggestion/bad-flag paths appear to belong to one of those,
+  not to the LVR restaurant dataset, despite some numeric key overlap.
+  **Never bulk-apply anything from these paths to `dashboard_crec`
+  without verifying each record by hand first** - this is exactly the
+  kind of "plausible but wrong" data that could silently misdirect
+  outreach to the wrong business.
 
 ---
 
