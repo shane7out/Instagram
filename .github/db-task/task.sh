@@ -1,8 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: the dashboard schema has "igsuggest" and "igovr"
-# paths under /dashboard that I haven't inspected yet - check if either
-# already holds data for any of the 109 no-handle records found earlier.
-# If so, that could solve part of the handle backlog without any guessing.
+# Read-only diagnostic: pull full detail on the 3 records that have an
+# igovr (IG override) entry sitting in Firebase, to see what the current
+# stored instagram field is vs the override, before deciding whether to
+# apply it. No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -17,18 +17,21 @@ function get(url) {
 }
 
 (async () => {
-  const [igsuggestRaw, igovrRaw, badigRaw] = await Promise.all([
-    get(DB + '/dashboard/igsuggest.json'),
+  const nums = ['50204', '50258', '50385'];
+  const [crecRaw, igovrRaw, statusRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json'),
     get(DB + '/dashboard/igovr.json'),
-    get(DB + '/dashboard/badig.json'),
+    get(DB + '/dashboard/status.json'),
   ]);
-  const igsuggest = JSON.parse(igsuggestRaw);
-  const igovr = JSON.parse(igovrRaw);
-  const badig = JSON.parse(badigRaw);
+  const crec = JSON.parse(crecRaw) || {};
+  const igovr = JSON.parse(igovrRaw) || {};
+  const status = JSON.parse(statusRaw) || {};
 
-  console.log('igsuggest: ' + (igsuggest ? JSON.stringify(igsuggest).slice(0, 2000) : 'null/empty'));
-  console.log('igovr: ' + (igovr ? JSON.stringify(igovr).slice(0, 2000) : 'null/empty'));
-  console.log('badig count: ' + (badig ? Object.keys(badig).length : 0));
-  if (badig) console.log('badig sample: ' + JSON.stringify(Object.entries(badig).slice(0, 10)));
+  for (const num of nums) {
+    console.log('--- ' + num + ' ---');
+    console.log('record: ' + JSON.stringify(crec[num]));
+    console.log('igovr: ' + igovr[num]);
+    console.log('status: ' + status[num]);
+  }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
