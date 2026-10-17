@@ -1,71 +1,48 @@
 #!/bin/bash
-# Add new restaurant: Sourdough & Co (@sourdoughcadence), sandwich shop,
-# 883 E. Lake Mead Pkwy., Ste. 135, Henderson NV. Standard DM-visibility
-# flow: allocate num, write customrecord, set dashboard/status +
-# dashboard/attempts.
+# Read-only diagnostic: an old session's deals-diagnosis.txt (from Sep 20)
+# found that 0 of 669 cars.json entries would survive the 30-day
+# freshness rule - meaning the Deals site's grid may already be close to
+# empty, given the pipeline has been blocked on FIREBASE_DEALS_SA since
+# before this session started. Re-check live, current state to see how
+# much worse it's gotten and give a concrete number for why the secret
+# fix matters. No writes.
 set -e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
-  });
-}
-function put(url, body) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify(body);
-    const u = new URL(url);
-    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' } }, r => {
-      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
-    });
-    req.on('error', reject); req.write(data); req.end();
+    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({status: r.statusCode, body: d})); }).on('error', reject);
   });
 }
 
 (async () => {
-  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
-  const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/sourdough\s*&?\s*co/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'sourdoughcadence'));
-  if (dupe) {
-    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
-    return;
+  const r = await get('https://classiccarsforsale-co.web.app/cars.json');
+  console.log('cars.json http: ' + r.status + '  bytes: ' + r.body.length);
+  let arr;
+  try { arr = JSON.parse(r.body); } catch(e) { console.log('PARSE FAIL: ' + e.message); return; }
+  console.log('total entries: ' + arr.length);
+
+  const now = Date.now();
+  const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
+  let fresh = 0, stale = 0, noDate = 0;
+  let newestAdded = null, oldestAdded = null;
+
+  for (const e of arr) {
+    const ts = e.addedTs || e.postedTs;
+    if (!ts) { noDate++; continue; }
+    const t = new Date(ts).getTime();
+    if (isNaN(t)) { noDate++; continue; }
+    if (newestAdded === null || t > newestAdded) newestAdded = t;
+    if (oldestAdded === null || t < oldestAdded) oldestAdded = t;
+    if (now - t <= THIRTY_DAYS) fresh++; else stale++;
   }
 
-  const [crecRaw, custRaw, delRaw] = await Promise.all([
-    get(DB + '/dashboard_crec.json?shallow=true'),
-    get(DB + '/customrecords.json?shallow=true'),
-    get(DB + '/dashboard_deleted.json?shallow=true'),
-  ]);
-  const nums = [];
-  [crecRaw, custRaw, delRaw].forEach(raw => {
-    const obj = JSON.parse(raw) || {};
-    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
-  });
-  let maxNum = nums.length ? Math.max(...nums) : 59999;
-  const num = Math.max(maxNum + 1, 60000);
-  console.log('allocated num: ' + num);
-
-  const record = {
-    num,
-    name: 'Sourdough & Co',
-    instagram: 'sourdoughcadence',
-    category: 'Restaurant',
-    city: 'Henderson',
-    address: '883 E. Lake Mead Pkwy., Ste. 135, Henderson, NV',
-    status: 'pending',
-  };
-
-  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
-  console.log('dashboard_crec write: ' + r1.status);
-  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
-  console.log('dashboard/status write: ' + r2.status);
-  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
-  console.log('dashboard/attempts write: ' + r3.status);
-
-  console.log('DONE: added num ' + num + ' - Sourdough & Co (@sourdoughcadence)');
+  console.log('fresh (<=30 days old): ' + fresh);
+  console.log('stale (>30 days old): ' + stale);
+  console.log('no parseable date: ' + noDate);
+  console.log('newest entry added: ' + (newestAdded ? new Date(newestAdded).toISOString() : 'n/a') + '  (' + (newestAdded ? Math.round((now-newestAdded)/3600000) + ' hours ago' : '') + ')');
+  console.log('oldest entry added: ' + (oldestAdded ? new Date(oldestAdded).toISOString() : 'n/a'));
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
