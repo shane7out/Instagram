@@ -564,6 +564,20 @@ done so far, in case a fresh session picks this up mid-stream:
   without verifying each record by hand first** - this is exactly the
   kind of "plausible but wrong" data that could silently misdirect
   outreach to the wrong business.
+  **CORRECTION (2026-10-17):** this was too broad. `/dashboard/badig` IS
+  real, trustworthy LVR data - cross-referenced against an older session's
+  log (`fetched/dupes-and-badig.txt`) and the 238 flagged numbers/names
+  match real `dashboard_crec` records exactly, including the same 109
+  no-handle records already tracked in `needs-ig-handle.md`, plus 15 more
+  that DO have a handle but it's flagged wrong (now also listed in
+  `needs-ig-handle.md`). Only `igovr` (just 3 entries, one verified wrong)
+  and `igsuggest` (keyed by small IDs like 1172/1185 that don't match
+  LVR's 50000+/60000+ convention at all) stay flagged as untrustworthy for
+  LVR. Tried verifying handles via direct HTTP to instagram.com from the
+  GH Actions runner (a prior session's log suggested this worked) - dead
+  end, Instagram returns 302 for every handle tried, real or not, so
+  that approach can't distinguish valid from broken handles. Don't retry
+  it; a human phone-check remains the only reliable way to confirm one.
 
 ---
 

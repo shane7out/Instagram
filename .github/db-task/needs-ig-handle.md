@@ -74,6 +74,41 @@ Lounge (50927), Cliff House, Dancing Dumplings, Gigolo, Pasta & Pomo
 (these last 4 are push-ID keyed, not numeric — "Manually added from IG
 post... needs lookup").
 
+## Records with a handle on file that's flagged bad (likely typos — DIFFERENT, more urgent list)
+
+Found 2026-10-17 by checking `/dashboard/badig` (a legit LVR flag path —
+confirmed by cross-referencing an older session's log in
+`dupes-and-badig.txt`, names match exactly). These 15 records already
+have an `instagram` value and are sitting at `status: pending`, so
+outreach could already be (or already was) attempted on a broken handle
+and silently go nowhere. A few look like obvious typos on sight, several
+don't (the flag may just be stale for some — one of these,
+`@whiskfulthinkingcakes`, has an `igovr` note from an earlier verification
+saying "Already correct, flag looks stale," so don't assume every flag
+here is still live). Tried checking these via direct HTTP against
+instagram.com from the GH Actions runner — dead end, Instagram returns
+302 uniformly whether a handle is real or not, so that can't be used to
+verify. These need the same quick human phone-check as the no-handle
+list above.
+
+| num | name | handle on file | looks like |
+|---|---|---|---|
+| 50125 | Nana's house of Soul Food | @nanas_house_of_soul_food | unclear, no obvious typo |
+| 50204 | Whiskful Thinking Cakes | @whiskfulthinkingcakes | flag likely stale (see note above) |
+| 50206 | Backyard Bbq Village | @baackyardbbqvillage | possible typo (double "a") |
+| 50221 | Bowltastic | @bowltasticfood | unclear |
+| 50278 | Teriyaki Madness | @teriyaakimadnesslv | possible typo ("teriyaaki") |
+| 50315 | Sonrisa Grill | @sonrisagrill.nv | unclear |
+| 50345 | Earthly Plant Based Eatery | @eathlyplantbased | possible typo ("eathly") |
+| 50360 | El chavo handcrafted snack bar | @aguas_el_chaavo | possible typo ("chaavo") |
+| 50395 | Snooze | @eatsnooze | unclear (Snooze is a real chain, worth double-checking location) |
+| 50608 | La Flor De Michoacan Ice Cream | @laflordemichoacanicecrea | may just be truncated in storage |
+| 50611 | Korea House | @korehouselv | possible typo (missing "a": "kore") |
+| 50745 | Dom DeMarco's Pizzeria & Wine Bar | @domdemarcos | unclear |
+| 50882 | Gabriels Kitchen Las Vegas | @gabrielskitchenlasvegas | unclear |
+| 60029 | Ten Seconds Yunnan Rice Noodle Las Vegas | @tensecondsyunnanricenoodlelv | unclear |
+| 60037 | Banh Mi House by Dakao | banhmihouselv | this one I added myself this session from a real screenshot — flag is almost certainly just about the missing "@", not a wrong handle |
+
 ## How to fix one
 Once you (or I, once given a confirmed handle) have the real @handle,
 it's a one-line task.sh PUT to `dashboard_crec/<num>/instagram` — same
