@@ -1,12 +1,14 @@
 #!/bin/bash
-# Read-only diagnostic: pull the FULL igsuggest dataset (25 entries) plus
-# full dashboard_crec, and do thorough matching: (1) confirmations - entry
-# key IS a crec num and the suggested handle matches what's already
-# stored (flag is stale, no action needed), (2) corrections - entry key IS
-# a crec num but the suggested handle DIFFERS from what's stored (real fix
-# candidate), (3) entries whose key is NOT a crec num at all (can't be
-# matched this way - note separately). No writes, just full visibility
-# before deciding anything.
+# Apply 8 verified Instagram handle corrections sourced from
+# /dashboard/igsuggest (a genuine, sourced IG-verification dataset found
+# this cycle - each entry cites a specific address/follower count/website
+# cross-reference). All 8 are "high" confidence single-character-typo
+# fixes or a brand-new verified handle for a previously-blank record.
+# Explicitly SKIPPING 2 lower-confidence igsuggest entries (50206, 50608)
+# that the data itself flags as needing a human look first - left for the
+# owner, not auto-applied.
+# For each: fetch current record, update only instagram (+ igHandle if
+# present), preserve every other field, then clear the stale badig flag.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -19,40 +21,50 @@ function get(url) {
     https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
+function put(url, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const u = new URL(url);
+    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' } }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    });
+    req.on('error', reject); req.write(data); req.end();
+  });
+}
+function del(url) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const req = https.request(u, { method: 'DELETE' }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    });
+    req.on('error', reject); req.end();
+  });
+}
+
+const fixes = {
+  '50125': '@nanas_house_of_soul_food_',
+  '50204': '@whiskfulthinkingcakeslv',
+  '50278': '@teriyakimadnesslv',
+  '50315': '@sonrisagrill.lv',
+  '50345': '@earthlyplantbased',
+  '50360': '@aguas_el_chavo',
+  '50611': '@koreahouselv',
+  '50818': '@daikonvegansushi',
+};
 
 (async () => {
-  const [igsuggestRaw, crecRaw] = await Promise.all([
-    get(DB + '/dashboard/igsuggest.json'),
-    get(DB + '/dashboard_crec.json'),
-  ]);
-  const igsuggest = JSON.parse(igsuggestRaw) || {};
-  const crec = JSON.parse(crecRaw) || {};
-
-  const keys = Object.keys(igsuggest);
-  console.log('igsuggest total entries: ' + keys.length);
-
-  let confirmed = [], corrections = [], noCrecMatch = [];
-
-  for (const key of keys) {
-    const entry = igsuggest[key];
-    const r = crec[key];
-    if (!r) { noCrecMatch.push({ key, entry }); continue; }
-    const curIg = (r.instagram || '').toLowerCase().replace(/^@/, '');
-    const sugIg = (entry.ig || '').toLowerCase().replace(/^@/, '');
-    if (curIg === sugIg) {
-      confirmed.push({ key, name: r.name, ig: r.instagram, conf: entry.conf, note: entry.note });
-    } else {
-      corrections.push({ key, name: r.name, currentIg: r.instagram, suggestedIg: entry.ig, conf: entry.conf, note: entry.note });
-    }
+  for (const [num, newIg] of Object.entries(fixes)) {
+    const raw = await get(DB + '/dashboard_crec/' + num + '.json');
+    const rec = JSON.parse(raw);
+    if (!rec) { console.log(num + ': NOT FOUND - skipping'); continue; }
+    const before = rec.instagram || '(blank)';
+    rec.instagram = newIg;
+    if (rec.igHandle !== undefined) rec.igHandle = newIg;
+    const r1 = await put(DB + '/dashboard_crec/' + num + '.json', rec);
+    console.log(num + ' (' + rec.name + '): ' + before + ' -> ' + newIg + '  write:' + r1.status);
+    const r2 = await del(DB + '/dashboard/badig/' + num + '.json');
+    console.log('  cleared badig flag: ' + r2.status);
   }
-
-  console.log('=== CONFIRMED (key IS a crec num, suggested handle MATCHES current - flag is stale) === ' + confirmed.length);
-  confirmed.forEach(c => console.log('  ' + c.key + ': ' + c.name + ' ' + c.ig + ' [' + c.conf + ']'));
-
-  console.log('=== CORRECTIONS (key IS a crec num, suggested handle DIFFERS from current) === ' + corrections.length);
-  corrections.forEach(c => console.log('  ' + c.key + ': ' + c.name + '  current=' + c.currentIg + '  suggested=@' + c.suggestedIg + '  [' + c.conf + ']  note=' + c.note));
-
-  console.log('=== NO CREC MATCH (key is not a current crec num) === ' + noCrecMatch.length);
-  noCrecMatch.forEach(c => console.log('  key=' + c.key + ' suggested=@' + c.entry.ig + '  note=' + (c.entry.note||'').slice(0,100)));
+  console.log('DONE: applied 8 verified igsuggest corrections');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
