@@ -599,6 +599,20 @@ done so far, in case a fresh session picks this up mid-stream:
   checking whether a DIFFERENT, better-documented source nearby (igsuggest
   here) might actually be solid. Evidence quality varies path-by-path even
   within the same shared Firebase project - check each on its own merits.**
+- **Added "Sourdough & Co"** (@sourdoughcadence, num 60053) from an IG
+  screenshot.
+- **⚠️ TIME-SENSITIVE: the live Deals site's listing grid is about to go
+  mostly empty.** Checked `cars.json` live on classiccarsforsale-co.web.app:
+  the newest entry was added 2026-09-21 - 27 days ago as of this check,
+  and NOTHING has been added since (the whole gen.js/harvest pipeline has
+  been stalled this entire time, well before this session's check-ins
+  started). Of 1,629 total entries, only 312 are still inside the 30-day
+  freshness window the site's client-side display rule uses - and since
+  no new listings have landed, that batch ages out within about 4 days of
+  this check (2026-10-17), at which point the grid will show close to
+  nothing. This raises the real urgency on fixing `FIREBASE_DEALS_SA` (or,
+  short term, just running `_tools/gen.js` once on the Mac) well beyond
+  "nice to have automated" - the site is about to visibly break.
 
 ---
 
