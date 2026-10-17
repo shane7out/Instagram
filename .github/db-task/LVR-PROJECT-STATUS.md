@@ -578,6 +578,27 @@ done so far, in case a fresh session picks this up mid-stream:
   end, Instagram returns 302 for every handle tried, real or not, so
   that approach can't distinguish valid from broken handles. Don't retry
   it; a human phone-check remains the only reliable way to confirm one.
+  **SECOND CORRECTION, same day: `igsuggest` is also partly trustworthy
+  after all.** 12 of its 25 entries use small sequential IDs with no crec
+  match (genuinely not LVR-usable), but the other 13 are keyed by real
+  `dashboard_crec` nums, and every one of those checked out: each entry
+  cites a specific address, follower count, or website cross-reference -
+  real verification work, not noise. Applied 8 of them as direct fixes
+  (single-character typo corrections to `instagram`, badig flag cleared
+  on each, all confirmed 200): Nana's house of Soul Food (50125), Whiskful
+  Thinking Cakes (50204), Teriyaki Madness (50278), Sonrisa Grill (50315),
+  Earthly Plant Based Eatery (50345), El chavo handcrafted snack bar
+  (50360), Korea House (50611), and Daikon Vegan Sushi (50818 - this one
+  had no handle at all before, now does). 3 more (Bowltastic/50221,
+  Snooze/50395, Dom DeMarco's/50745) were confirmed already-correct, flag
+  was just stale - no change needed. 2 lower-confidence ones (50206,
+  50608) were explicitly NOT auto-applied - the data itself flagged them
+  as needing a human look first, left in `needs-ig-handle.md` for the
+  owner. **Lesson for future sessions: don't trust a data source based on
+  one bad sample (the igovr "Fogo de Chao → Tiger Sugar" mismatch) without
+  checking whether a DIFFERENT, better-documented source nearby (igsuggest
+  here) might actually be solid. Evidence quality varies path-by-path even
+  within the same shared Firebase project - check each on its own merits.**
 
 ---
 

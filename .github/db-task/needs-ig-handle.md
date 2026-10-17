@@ -35,11 +35,12 @@ account actually exists (national chain accounts won't respond to local
 outreach): WaBa Grill (50847), Duck Donuts (50894), Bruster's Real Ice
 Cream (50889), Krispy Krunchy Chicken at Shortline Express (50862).
 
-**Everything else (full list of 109)** — all tagged `[Yelp migration - IG
-needed]` in `notes` except the last 4, which are `[Manually added]`/`[...
-needs lookup]`: Mura Japanese BBQ & Shabu (50281), DOMA the Korean BBQ
-(50400), Wok To Walk (50816), Trap Wingz (50817), Daikon Vegan Sushi
-(50818), Lucino's Pizza (50820), Sul & Beans (50821), Paina Cafe (50824),
+**Everything else (full list of 108 — Daikon Vegan Sushi/50818 fixed
+2026-10-17, see below, removed from this list)** — all tagged `[Yelp
+migration - IG needed]` in `notes` except the last 4, which are `[Manually
+added]`/`[... needs lookup]`: Mura Japanese BBQ & Shabu (50281), DOMA the
+Korean BBQ (50400), Wok To Walk (50816), Trap Wingz (50817),
+Lucino's Pizza (50820), Sul & Beans (50821), Paina Cafe (50824),
 Brooklyns Best Pizza & Pasta (50825), Fishers Deli (50826), Halgatteok
 (50827), Waffles Cafe (50828), Big Mamas Wings & Things (50829), McMullans
 Irish Pub (50830), Birria - Bite los Arcos (50831), Hello Hibachi (50832),
@@ -78,36 +79,41 @@ post... needs lookup").
 
 Found 2026-10-17 by checking `/dashboard/badig` (a legit LVR flag path —
 confirmed by cross-referencing an older session's log in
-`dupes-and-badig.txt`, names match exactly). These 15 records already
-have an `instagram` value and are sitting at `status: pending`, so
-outreach could already be (or already was) attempted on a broken handle
-and silently go nowhere. A few look like obvious typos on sight, several
-don't (the flag may just be stale for some — one of these,
-`@whiskfulthinkingcakes`, has an `igovr` note from an earlier verification
-saying "Already correct, flag looks stale," so don't assume every flag
-here is still live). Tried checking these via direct HTTP against
-instagram.com from the GH Actions runner — dead end, Instagram returns
-302 uniformly whether a handle is real or not, so that can't be used to
-verify. These need the same quick human phone-check as the no-handle
-list above.
+`dupes-and-badig.txt`, names match exactly). These records already have
+an `instagram` value and are sitting at `status: pending`, so outreach
+could already be (or already was) attempted on a broken handle and
+silently go nowhere.
 
-| num | name | handle on file | looks like |
+**UPDATE (2026-10-17, same day): 8 of these are now fixed.** Found
+`/dashboard/igsuggest` - a genuine, sourced IG-verification dataset (real
+addresses, follower counts, website cross-references for each entry).
+Applied these corrections directly, each a single-character typo fix or
+(for Daikon Vegan Sushi) a brand-new verified handle, badig flag cleared
+on each:
+- 50125 Nana's house of Soul Food: → `@nanas_house_of_soul_food_` (missing trailing underscore)
+- 50204 Whiskful Thinking Cakes: → `@whiskfulthinkingcakeslv` (missing "lv")
+- 50278 Teriyaki Madness: → `@teriyakimadnesslv` (doubled "a")
+- 50315 Sonrisa Grill: → `@sonrisagrill.lv` (was ".nv", should be ".lv")
+- 50345 Earthly Plant Based Eatery: → `@earthlyplantbased` ("earthly" was misspelled)
+- 50360 El chavo handcrafted snack bar: → `@aguas_el_chavo` (doubled "a")
+- 50611 Korea House: → `@koreahouselv` (missing "a" in "Korea")
+- 50818 Daikon Vegan Sushi (was blank, in the no-handle list above): → `@daikonvegansushi`
+
+**Still open — remaining 7, need a human phone-check:**
+
+| num | name | handle on file | note |
 |---|---|---|---|
-| 50125 | Nana's house of Soul Food | @nanas_house_of_soul_food | unclear, no obvious typo |
-| 50204 | Whiskful Thinking Cakes | @whiskfulthinkingcakes | flag likely stale (see note above) |
-| 50206 | Backyard Bbq Village | @baackyardbbqvillage | possible typo (double "a") |
-| 50221 | Bowltastic | @bowltasticfood | unclear |
-| 50278 | Teriyaki Madness | @teriyaakimadnesslv | possible typo ("teriyaaki") |
-| 50315 | Sonrisa Grill | @sonrisagrill.nv | unclear |
-| 50345 | Earthly Plant Based Eatery | @eathlyplantbased | possible typo ("eathly") |
-| 50360 | El chavo handcrafted snack bar | @aguas_el_chaavo | possible typo ("chaavo") |
-| 50395 | Snooze | @eatsnooze | unclear (Snooze is a real chain, worth double-checking location) |
-| 50608 | La Flor De Michoacan Ice Cream | @laflordemichoacanicecrea | may just be truncated in storage |
-| 50611 | Korea House | @korehouselv | possible typo (missing "a": "kore") |
-| 50745 | Dom DeMarco's Pizzeria & Wine Bar | @domdemarcos | unclear |
-| 50882 | Gabriels Kitchen Las Vegas | @gabrielskitchenlasvegas | unclear |
-| 60029 | Ten Seconds Yunnan Rice Noodle Las Vegas | @tensecondsyunnanricenoodlelv | unclear |
-| 60037 | Banh Mi House by Dakao | banhmihouselv | this one I added myself this session from a real screenshot — flag is almost certainly just about the missing "@", not a wrong handle |
+| 50206 | Backyard Bbq Village | @baackyardbbqvillage | igsuggest says → `@backyardbbqvillage` but flagged only "medium" confidence - worth a quick look before accepting |
+| 50221 | Bowltastic | @bowltasticfood | igsuggest confirms this is already correct, flag is stale - no action needed |
+| 50395 | Snooze | @eatsnooze | igsuggest confirms this is already correct, flag is stale - no action needed |
+| 50608 | La Flor De Michoacan Ice Cream | @laflordemichoacanicecrea | igsuggest explicitly says "worth a look before accepting" - several near-identical accounts exist, didn't want to guess |
+| 50745 | Dom DeMarco's Pizzeria & Wine Bar | @domdemarcos | igsuggest confirms this is already correct, flag is stale - no action needed |
+| 50882 | Gabriels Kitchen Las Vegas | @gabrielskitchenlasvegas | not covered by igsuggest, unclear |
+| 60029 | Ten Seconds Yunnan Rice Noodle Las Vegas | @tensecondsyunnanricenoodlelv | not covered by igsuggest, unclear |
+| 60037 | Banh Mi House by Dakao | banhmihouselv | I added this myself this session from a real screenshot - flag is almost certainly just about the missing "@", not a wrong handle |
+
+So really only 50206, 50882, 60029, and 60037 (the "@" formatting one)
+need a look now — the other 3 (50221, 50395, 50745) are confirmed fine.
 
 ## How to fix one
 Once you (or I, once given a confirmed handle) have the real @handle,
