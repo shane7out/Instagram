@@ -1,70 +1,44 @@
 #!/bin/bash
-# Add new restaurant: Pasta Vine (@pasta.vine), fresh Italian pasta /
-# viral cheese wheel pasta, Henderson NV. Standard DM-visibility flow:
-# allocate num, write customrecord, set dashboard/status + dashboard/attempts.
+# Read-only diagnostic: follow-up check on the Deals site freshness
+# countdown (last checked: 2.7 days left as of 2026-10-18 09:36 UTC).
+# Should be very close to crossing zero now. No writes.
 set -e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
-  });
-}
-function put(url, body) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify(body);
-    const u = new URL(url);
-    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' } }, r => {
-      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
-    });
-    req.on('error', reject); req.write(data); req.end();
+    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({status: r.statusCode, body: d})); }).on('error', reject);
   });
 }
 
 (async () => {
-  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
-  const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/pasta\s*vine/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'pasta.vine'));
-  if (dupe) {
-    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
-    return;
+  const r = await get('https://classiccarsforsale-co.web.app/cars.json');
+  let arr;
+  try { arr = JSON.parse(r.body); } catch(e) { console.log('PARSE FAIL: ' + e.message); return; }
+
+  const now = Date.now();
+  const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
+  let fresh = 0, stale = 0;
+  let newestAdded = null;
+
+  for (const e of arr) {
+    const ts = e.addedTs || e.postedTs;
+    if (!ts) continue;
+    const t = new Date(ts).getTime();
+    if (isNaN(t)) continue;
+    if (newestAdded === null || t > newestAdded) newestAdded = t;
+    if (now - t <= THIRTY_DAYS) fresh++; else stale++;
   }
 
-  const [crecRaw, custRaw, delRaw] = await Promise.all([
-    get(DB + '/dashboard_crec.json?shallow=true'),
-    get(DB + '/customrecords.json?shallow=true'),
-    get(DB + '/dashboard_deleted.json?shallow=true'),
-  ]);
-  const nums = [];
-  [crecRaw, custRaw, delRaw].forEach(raw => {
-    const obj = JSON.parse(raw) || {};
-    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
-  });
-  let maxNum = nums.length ? Math.max(...nums) : 59999;
-  const num = Math.max(maxNum + 1, 60000);
-  console.log('allocated num: ' + num);
-
-  const record = {
-    num,
-    name: 'Pasta Vine',
-    instagram: 'pasta.vine',
-    category: 'Restaurant',
-    city: 'Henderson',
-    address: 'Henderson, NV',
-    status: 'pending',
-  };
-
-  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
-  console.log('dashboard_crec write: ' + r1.status);
-  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
-  console.log('dashboard/status write: ' + r2.status);
-  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
-  console.log('dashboard/attempts write: ' + r3.status);
-
-  console.log('DONE: added num ' + num + ' - Pasta Vine (@pasta.vine)');
+  console.log('total entries: ' + arr.length);
+  console.log('fresh (<=30 days old): ' + fresh);
+  console.log('stale (>30 days old): ' + stale);
+  console.log('newest entry added: ' + (newestAdded ? new Date(newestAdded).toISOString() : 'n/a'));
+  if (newestAdded) {
+    const daysUntilStale = 30 - (now - newestAdded) / (24*3600*1000);
+    console.log('days until the newest batch itself goes stale: ' + daysUntilStale.toFixed(1));
+  }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
