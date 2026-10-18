@@ -1,8 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: re-run the duplicate-handle/name scan (last run
-# 2026-10-16) to make sure none of the 4 restaurants added since then
-# (Resort at Summerlin, Sourdough & Co, Rangoli Social Eats, Frank's
-# Pizza) accidentally duplicate an existing record. No writes.
+# Read-only diagnostic: haven't checked the /dashboard/problem path yet
+# (one of the dashboard's known features - a "Problem" badge/filter).
+# See if it holds any flagged records worth knowing about, same pattern
+# as the badig/igsuggest investigation. No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -16,37 +16,19 @@ function get(url) {
   });
 }
 
-function norm(s) {
-  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
 (async () => {
-  const raw = await get(DB + '/dashboard_crec.json');
-  const recs = JSON.parse(raw) || {};
-  const byIg = {};
-  const byName = {};
-  for (const [num, r] of Object.entries(recs)) {
-    if (!r) continue;
-    const ig = (r.instagram || '').toLowerCase().replace(/^@/, '').trim();
-    if (ig) (byIg[ig] = byIg[ig] || []).push({ num, name: r.name });
-    const nm = norm(r.name);
-    if (nm) (byName[nm] = byName[nm] || []).push({ num, name: r.name, instagram: r.instagram });
-  }
+  const [problemRaw, crecRaw] = await Promise.all([
+    get(DB + '/dashboard/problem.json'),
+    get(DB + '/dashboard_crec.json'),
+  ]);
+  const problem = JSON.parse(problemRaw) || {};
+  const crec = JSON.parse(crecRaw) || {};
 
-  console.log('--- duplicate instagram handles ---');
-  let foundIg = 0;
-  for (const [ig, list] of Object.entries(byIg)) {
-    if (list.length > 1) { foundIg++; console.log(ig + ': ' + JSON.stringify(list)); }
+  const keys = Object.keys(problem);
+  console.log('problem-flagged entries: ' + keys.length);
+  for (const k of keys) {
+    const r = crec[k];
+    console.log('  ' + k + ': ' + (r ? r.name + ' (' + (r.instagram||'no handle') + ')' : '(no matching crec record)') + '  value=' + JSON.stringify(problem[k]));
   }
-  if (!foundIg) console.log('none found');
-
-  console.log('--- duplicate/near-duplicate names ---');
-  let foundNm = 0;
-  for (const [nm, list] of Object.entries(byName)) {
-    if (list.length > 1) { foundNm++; console.log(nm + ': ' + JSON.stringify(list)); }
-  }
-  if (!foundNm) console.log('none found');
-
-  console.log('total records scanned: ' + Object.keys(recs).length);
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
