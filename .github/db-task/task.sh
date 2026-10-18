@@ -1,8 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: haven't checked the /dashboard/problem path yet
-# (one of the dashboard's known features - a "Problem" badge/filter).
-# See if it holds any flagged records worth knowing about, same pattern
-# as the badig/igsuggest investigation. No writes.
+# Read-only diagnostic: found 7 live restaurants flagged "problem" in
+# /dashboard/problem. Check /dashboard/usernotes for the same nums to see
+# if there's an explanation of what the problem actually is, before
+# deciding whether this is worth surfacing to the owner. No writes.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -17,18 +17,17 @@ function get(url) {
 }
 
 (async () => {
-  const [problemRaw, crecRaw] = await Promise.all([
-    get(DB + '/dashboard/problem.json'),
+  const [usernotesRaw, crecRaw] = await Promise.all([
+    get(DB + '/dashboard/usernotes.json'),
     get(DB + '/dashboard_crec.json'),
   ]);
-  const problem = JSON.parse(problemRaw) || {};
+  const usernotes = JSON.parse(usernotesRaw) || {};
   const crec = JSON.parse(crecRaw) || {};
 
-  const keys = Object.keys(problem);
-  console.log('problem-flagged entries: ' + keys.length);
-  for (const k of keys) {
-    const r = crec[k];
-    console.log('  ' + k + ': ' + (r ? r.name + ' (' + (r.instagram||'no handle') + ')' : '(no matching crec record)') + '  value=' + JSON.stringify(problem[k]));
+  const nums = ['50324', '50413', '50416', '50439', '50454', '50479', '50501'];
+  for (const n of nums) {
+    const r = crec[n];
+    console.log(n + ' (' + (r ? r.name : '?') + '): usernotes=' + JSON.stringify(usernotes[n]) + '  record_notes=' + JSON.stringify(r ? r.notes : undefined));
   }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
