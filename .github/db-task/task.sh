@@ -1,45 +1,30 @@
 #!/bin/bash
-# Read-only diagnostic: follow-up on the time-sensitive Deals site flag
-# from 2026-10-17 (newest listing was 27 days old then, ~4 days from
-# going below the 30-day freshness threshold). Re-check live to track how
-# close it's gotten. No writes.
+# Read-only dupe-check only (NOT adding yet): Penny's Waikiki Malasadas
+# (@pennyswaikikimalasadas). Bio says "Open daily at Royal Hawaiian Center"
+# (Honolulu, HI) and "LAS VEGAS -> SOON" - meaning the Vegas location
+# hasn't opened yet. Flagging to the owner rather than assuming, same as
+# the earlier Rollin' Sweets case.
 set -e
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
+const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({status: r.statusCode, body: d})); }).on('error', reject);
+    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
 
 (async () => {
-  const r = await get('https://classiccarsforsale-co.web.app/cars.json');
-  let arr;
-  try { arr = JSON.parse(r.body); } catch(e) { console.log('PARSE FAIL: ' + e.message); return; }
-
-  const now = Date.now();
-  const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
-  let fresh = 0, stale = 0;
-  let newestAdded = null;
-
-  for (const e of arr) {
-    const ts = e.addedTs || e.postedTs;
-    if (!ts) continue;
-    const t = new Date(ts).getTime();
-    if (isNaN(t)) continue;
-    if (newestAdded === null || t > newestAdded) newestAdded = t;
-    if (now - t <= THIRTY_DAYS) fresh++; else stale++;
-  }
-
-  console.log('total entries: ' + arr.length);
-  console.log('fresh (<=30 days old): ' + fresh);
-  console.log('stale (>30 days old): ' + stale);
-  console.log('newest entry added: ' + (newestAdded ? new Date(newestAdded).toISOString() : 'n/a'));
-  if (newestAdded) {
-    const daysUntilStale = 30 - (now - newestAdded) / (24*3600*1000);
-    console.log('days until the newest batch itself goes stale: ' + daysUntilStale.toFixed(1));
+  const raw = await get(DB + '/dashboard_crec.json');
+  const existing = JSON.parse(raw) || {};
+  const dupe = Object.values(existing).find(r => r && (/penn.?y.?s? waikiki malasadas/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'pennyswaikikimalasadas'));
+  if (dupe) {
+    console.log('ALREADY IN DATABASE: ' + JSON.stringify(dupe));
+  } else {
+    console.log('NOT in database yet - holding off per Vegas-location-not-open-yet flag, not adding this cycle.');
   }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
