@@ -1,33 +1,25 @@
 #!/bin/bash
-# Read-only diagnostic: found 7 live restaurants flagged "problem" in
-# /dashboard/problem. Check /dashboard/usernotes for the same nums to see
-# if there's an explanation of what the problem actually is, before
-# deciding whether this is worth surfacing to the owner. No writes.
+# Read-only diagnostic: basic health check on the live dashboard site
+# itself (lvr-data-a60c1.web.app) - confirm it's up, serving the expected
+# version, and the follow-up feature is still not live (as expected,
+# since the owner hasn't approved the wording yet). No writes.
 set -e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
+    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({status: r.statusCode, body: d})); }).on('error', reject);
   });
 }
 
 (async () => {
-  const [usernotesRaw, crecRaw] = await Promise.all([
-    get(DB + '/dashboard/usernotes.json'),
-    get(DB + '/dashboard_crec.json'),
-  ]);
-  const usernotes = JSON.parse(usernotesRaw) || {};
-  const crec = JSON.parse(crecRaw) || {};
-
-  const nums = ['50324', '50413', '50416', '50439', '50454', '50479', '50501'];
-  for (const n of nums) {
-    const r = crec[n];
-    console.log(n + ' (' + (r ? r.name : '?') + '): usernotes=' + JSON.stringify(usernotes[n]) + '  record_notes=' + JSON.stringify(r ? r.notes : undefined));
-  }
+  const r = await get('https://lvr-data-a60c1.web.app/');
+  console.log('dashboard http: ' + r.status + '  bytes: ' + r.body.length);
+  const vm = r.body.match(/APP_VERSION\s*=\s*(\d+)/);
+  console.log('APP_VERSION: ' + (vm ? vm[1] : 'not found'));
+  console.log('has openFollowupDM (should be NO - not deployed yet): ' + (r.body.includes('openFollowupDM')));
+  console.log('has openDM (core DM feature, should be YES): ' + (r.body.includes('openDM')));
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
