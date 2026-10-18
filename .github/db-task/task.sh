@@ -1,8 +1,7 @@
 #!/bin/bash
-# Read-only diagnostic: check /dashboard/interested - restaurants marked
-# as having responded positively. If any have been sitting without a
-# next step, that's a real "don't let a hot lead go cold" list worth
-# surfacing. No writes.
+# Add new restaurant: Pasta Vine (@pasta.vine), fresh Italian pasta /
+# viral cheese wheel pasta, Henderson NV. Standard DM-visibility flow:
+# allocate num, write customrecord, set dashboard/status + dashboard/attempts.
 set -e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
@@ -15,27 +14,57 @@ function get(url) {
     https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
+function put(url, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const u = new URL(url);
+    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' } }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    });
+    req.on('error', reject); req.write(data); req.end();
+  });
+}
 
 (async () => {
-  const [interestedRaw, crecRaw, foodtradeRaw, foodtradedoneRaw] = await Promise.all([
-    get(DB + '/dashboard/interested.json'),
-    get(DB + '/dashboard_crec.json'),
-    get(DB + '/dashboard/foodtrade.json'),
-    get(DB + '/dashboard/foodtradedone.json'),
-  ]);
-  const interested = JSON.parse(interestedRaw) || {};
-  const crec = JSON.parse(crecRaw) || {};
-  const foodtrade = JSON.parse(foodtradeRaw) || {};
-  const foodtradedone = JSON.parse(foodtradedoneRaw) || {};
-
-  const keys = Object.keys(interested);
-  console.log('interested-flagged entries: ' + keys.length);
-  for (const k of keys) {
-    const r = crec[k];
-    console.log('  ' + k + ': ' + (r ? r.name + ' (' + (r.instagram||'no handle') + ')' : '(no matching crec record)'));
+  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
+  const existing = JSON.parse(dupCheckRaw) || {};
+  const dupe = Object.values(existing).find(r => r && (/pasta\s*vine/i.test(r.name || '') || (r.instagram || '').toLowerCase() === 'pasta.vine'));
+  if (dupe) {
+    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
+    return;
   }
 
-  console.log('foodtrade-flagged (in progress): ' + Object.keys(foodtrade).length);
-  console.log('foodtradedone (completed): ' + Object.keys(foodtradedone).length);
+  const [crecRaw, custRaw, delRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json?shallow=true'),
+    get(DB + '/customrecords.json?shallow=true'),
+    get(DB + '/dashboard_deleted.json?shallow=true'),
+  ]);
+  const nums = [];
+  [crecRaw, custRaw, delRaw].forEach(raw => {
+    const obj = JSON.parse(raw) || {};
+    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
+  });
+  let maxNum = nums.length ? Math.max(...nums) : 59999;
+  const num = Math.max(maxNum + 1, 60000);
+  console.log('allocated num: ' + num);
+
+  const record = {
+    num,
+    name: 'Pasta Vine',
+    instagram: 'pasta.vine',
+    category: 'Restaurant',
+    city: 'Henderson',
+    address: 'Henderson, NV',
+    status: 'pending',
+  };
+
+  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
+  console.log('dashboard_crec write: ' + r1.status);
+  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
+  console.log('dashboard/status write: ' + r2.status);
+  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
+  console.log('dashboard/attempts write: ' + r3.status);
+
+  console.log('DONE: added num ' + num + ' - Pasta Vine (@pasta.vine)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
