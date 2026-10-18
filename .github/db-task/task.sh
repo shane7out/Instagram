@@ -1,8 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: basic health check on the live dashboard site
-# itself (lvr-data-a60c1.web.app) - confirm it's up, serving the expected
-# version, and the follow-up feature is still not live (as expected,
-# since the owner hasn't approved the wording yet). No writes.
+# Read-only diagnostic: follow-up on the time-sensitive Deals site flag
+# from 2026-10-17 (newest listing was 27 days old then, ~4 days from
+# going below the 30-day freshness threshold). Re-check live to track how
+# close it's gotten. No writes.
 set -e
 
 node <<'NODE'
@@ -15,11 +15,31 @@ function get(url) {
 }
 
 (async () => {
-  const r = await get('https://lvr-data-a60c1.web.app/');
-  console.log('dashboard http: ' + r.status + '  bytes: ' + r.body.length);
-  const vm = r.body.match(/APP_VERSION\s*=\s*(\d+)/);
-  console.log('APP_VERSION: ' + (vm ? vm[1] : 'not found'));
-  console.log('has openFollowupDM (should be NO - not deployed yet): ' + (r.body.includes('openFollowupDM')));
-  console.log('has openDM (core DM feature, should be YES): ' + (r.body.includes('openDM')));
+  const r = await get('https://classiccarsforsale-co.web.app/cars.json');
+  let arr;
+  try { arr = JSON.parse(r.body); } catch(e) { console.log('PARSE FAIL: ' + e.message); return; }
+
+  const now = Date.now();
+  const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
+  let fresh = 0, stale = 0;
+  let newestAdded = null;
+
+  for (const e of arr) {
+    const ts = e.addedTs || e.postedTs;
+    if (!ts) continue;
+    const t = new Date(ts).getTime();
+    if (isNaN(t)) continue;
+    if (newestAdded === null || t > newestAdded) newestAdded = t;
+    if (now - t <= THIRTY_DAYS) fresh++; else stale++;
+  }
+
+  console.log('total entries: ' + arr.length);
+  console.log('fresh (<=30 days old): ' + fresh);
+  console.log('stale (>30 days old): ' + stale);
+  console.log('newest entry added: ' + (newestAdded ? new Date(newestAdded).toISOString() : 'n/a'));
+  if (newestAdded) {
+    const daysUntilStale = 30 - (now - newestAdded) / (24*3600*1000);
+    console.log('days until the newest batch itself goes stale: ' + daysUntilStale.toFixed(1));
+  }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
