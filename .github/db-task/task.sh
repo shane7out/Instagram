@@ -1,7 +1,6 @@
 #!/bin/bash
 # Read-only diagnostic: follow-up check on the Deals site freshness
-# countdown (last checked: 2.7 days left as of 2026-10-18 09:36 UTC).
-# Should be very close to crossing zero now. No writes.
+# countdown (last checked: 2.3 days left as of 2026-10-18 18:36 UTC). No writes.
 set -e
 
 node <<'NODE'
@@ -38,7 +37,7 @@ function get(url) {
   console.log('newest entry added: ' + (newestAdded ? new Date(newestAdded).toISOString() : 'n/a'));
   if (newestAdded) {
     const daysUntilStale = 30 - (now - newestAdded) / (24*3600*1000);
-    console.log('days until the newest batch itself goes stale: ' + daysUntilStale.toFixed(1));
+    console.log('days until the newest batch itself goes stale: ' + daysUntilStale.toFixed(2));
   }
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
