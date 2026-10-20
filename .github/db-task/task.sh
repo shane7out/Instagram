@@ -1,7 +1,6 @@
 #!/bin/bash
 # Read-only diagnostic: follow-up check on the Deals site freshness
-# countdown (last checked: 1.29 days left as of 2026-10-19 18:36 UTC) -
-# should be very close to crossing zero now. No writes.
+# countdown (last checked: 0.92 days left as of 2026-10-20 03:36 UTC). No writes.
 set -e
 
 node <<'NODE'
