@@ -1,7 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: follow-up check on the Deals site freshness
-# countdown - should be crossing zero right about now (was 0.17 days left
-# as of 2026-10-20 21:36 UTC, fresh count 296 and dropping). No writes.
+# Read-only diagnostic: final confirmation check - the Sept 21 batch
+# should have fully aged out by now (was 0.04 days left / 49 fresh as of
+# 2026-10-21 00:36 UTC). Confirming the new steady-state before updating
+# the status doc. No writes.
 set -e
 
 node <<'NODE'
