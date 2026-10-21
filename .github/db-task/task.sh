@@ -1,45 +1,44 @@
 #!/bin/bash
-# Read-only diagnostic: final confirmation check - the Sept 21 batch
-# should have fully aged out by now (was 0.04 days left / 49 fresh as of
-# 2026-10-21 00:36 UTC). Confirming the new steady-state before updating
-# the status doc. No writes.
+# Read-only diagnostic: re-check badig-flagged records live, since several
+# restaurants have been added since the last pass (Resort at Summerlin,
+# Sourdough & Co, Rangoli Social Eats, Frank's Pizza, Pasta Vine) and a
+# past verification effort (igsuggest) was ongoing - check for any new
+# flagged-with-handle entries beyond the ones already fixed/known. No writes.
 set -e
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
+const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({status: r.statusCode, body: d})); }).on('error', reject);
+    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
 
 (async () => {
-  const r = await get('https://classiccarsforsale-co.web.app/cars.json');
-  let arr;
-  try { arr = JSON.parse(r.body); } catch(e) { console.log('PARSE FAIL: ' + e.message); return; }
+  const [crecRaw, badigRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json'),
+    get(DB + '/dashboard/badig.json'),
+  ]);
+  const crec = JSON.parse(crecRaw) || {};
+  const badig = JSON.parse(badigRaw) || {};
 
-  const now = Date.now();
-  const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
-  let fresh = 0, stale = 0;
-  let newestAdded = null;
+  const badigNums = Object.keys(badig);
+  console.log('total badig-flagged entries: ' + badigNums.length);
 
-  for (const e of arr) {
-    const ts = e.addedTs || e.postedTs;
-    if (!ts) continue;
-    const t = new Date(ts).getTime();
-    if (isNaN(t)) continue;
-    if (newestAdded === null || t > newestAdded) newestAdded = t;
-    if (now - t <= THIRTY_DAYS) fresh++; else stale++;
+  // already-known/handled nums from the earlier pass
+  const known = new Set(['50125','50204','50206','50221','50278','50315','50345','50360','50395','50608','50611','50745','50818','50882','60029','60037']);
+
+  let newOnes = [];
+  for (const num of badigNums) {
+    const r = crec[num];
+    if (!r) continue;
+    const ig = (r.instagram || '').trim();
+    if (ig && !known.has(num)) newOnes.push({ num, name: r.name, ig });
   }
-
-  console.log('total entries: ' + arr.length);
-  console.log('fresh (<=30 days old): ' + fresh);
-  console.log('stale (>30 days old): ' + stale);
-  console.log('newest entry added: ' + (newestAdded ? new Date(newestAdded).toISOString() : 'n/a'));
-  if (newestAdded) {
-    const daysUntilStale = 30 - (now - newestAdded) / (24*3600*1000);
-    console.log('days until the newest batch itself goes stale: ' + daysUntilStale.toFixed(2));
-  }
+  console.log('NEW badig-flagged-with-handle entries not seen before: ' + newOnes.length);
+  newOnes.forEach(x => console.log('  ' + x.num + ': ' + x.name + '  ' + x.ig));
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
