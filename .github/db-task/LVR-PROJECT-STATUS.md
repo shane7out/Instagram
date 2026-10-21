@@ -613,6 +613,16 @@ done so far, in case a fresh session picks this up mid-stream:
   nothing. This raises the real urgency on fixing `FIREBASE_DEALS_SA` (or,
   short term, just running `_tools/gen.js` once on the Mac) well beyond
   "nice to have automated" - the site is about to visibly break.
+- **UPDATE (2026-10-21): the Deals site grid is now fully empty.** Tracked
+  this countdown across the following several days - the last batch
+  (from 2026-09-21) fully aged past the 30-day freshness window as of
+  this check. 0 of 1,629 `cars.json` entries currently pass. This is a
+  steady state now, not a moving countdown - nothing changes further
+  until either `FIREBASE_DEALS_SA` gets fixed and the GH Actions pipeline
+  can run, or the owner runs `_tools/gen.js` on the Mac. Future sessions:
+  no need to keep re-polling this every cycle now that it's bottomed
+  out - just check once after the owner says they've acted on the
+  secret or run the script manually.
 
 ---
 
