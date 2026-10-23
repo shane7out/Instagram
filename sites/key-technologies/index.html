@@ -49,7 +49,10 @@
     color-scheme: dark;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  /* header is sticky at 56px + a 1px border; without this every anchor
+     jump (nav links, every button, the skip-link, footer links) lands its
+     target flush under that header, hiding the heading it scrolled to */
+  html{scroll-behavior:smooth;scroll-padding-top:72px;}
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
     *,*::before,*::after{animation:none!important;transition:none!important;}
@@ -201,6 +204,7 @@
     background:none;accent-color:var(--key-blue);flex:none;
   }
   .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
+  .req{color:#ff8a7a;margin-left:2px;}
   .form-status{font-size:14px;margin-top:4px;min-height:18px;}
   .form-status.ok{color:var(--key-light);}
   .form-status.err{color:#ff8a7a;}
@@ -407,16 +411,17 @@
         <span class="eyebrow">Free AI/SI Opportunity Review</span>
         <h2>Get a Free AI/SI Opportunity Review</h2>
         <form id="shortLeadForm" novalidate>
+          <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required.</p>
           <div class="field">
-            <label for="s-name">Full Name</label>
+            <label for="s-name">Full Name <span class="req" aria-hidden="true">*</span></label>
             <input id="s-name" name="name" type="text" autocomplete="name" required>
           </div>
           <div class="field">
-            <label for="s-email">Email</label>
+            <label for="s-email">Email <span class="req" aria-hidden="true">*</span></label>
             <input id="s-email" name="email" type="email" autocomplete="email" required>
           </div>
           <div class="field">
-            <label for="s-phone">Phone Number</label>
+            <label for="s-phone">Phone Number <span class="req" aria-hidden="true">*</span></label>
             <input id="s-phone" name="phone" type="tel" autocomplete="tel" required>
           </div>
           <button class="btn btn-primary" type="submit">Explore My Options</button>
@@ -577,6 +582,7 @@
       <span class="eyebrow">Free AI/SI Website Audit</span>
       <h3>Audit your website</h3>
       <form id="auditForm" novalidate>
+        <p class="form-note">All fields are required.</p>
         <div class="field">
           <label for="au-name">Full Name</label>
           <input id="au-name" name="name" type="text" autocomplete="name" required>
@@ -836,8 +842,9 @@
 
     <div class="lead-card" style="max-width:640px;">
       <form id="fullLeadForm" novalidate>
+        <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required.</p>
         <div class="field">
-          <label for="f-name">Full Name</label>
+          <label for="f-name">Full Name <span class="req" aria-hidden="true">*</span></label>
           <input id="f-name" name="name" type="text" autocomplete="name" required>
         </div>
         <div class="field">
@@ -845,11 +852,11 @@
           <input id="f-business" name="business" type="text" autocomplete="organization">
         </div>
         <div class="field">
-          <label for="f-email">Email</label>
+          <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
           <input id="f-email" name="email" type="email" autocomplete="email" required>
         </div>
         <div class="field">
-          <label for="f-phone">Phone</label>
+          <label for="f-phone">Phone <span class="req" aria-hidden="true">*</span></label>
           <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
         </div>
         <div class="field">
@@ -1209,11 +1216,31 @@
 
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      var name = document.getElementById("au-name").value.trim();
-      var email = document.getElementById("au-email").value.trim();
-      var target = normalizeUrl(document.getElementById("au-url").value);
-      if(!name || !email || !target){
-        status.textContent = "Please fill in your name, email, and a valid website address.";
+      var nameEl = document.getElementById("au-name");
+      var emailEl = document.getElementById("au-email");
+      var urlEl = document.getElementById("au-url");
+      var name = nameEl.value.trim();
+      var email = emailEl.value.trim();
+      var target = normalizeUrl(urlEl.value);
+
+      // Identify and focus the specific problem field, same pattern as the
+      // other two forms - a generic combined error leaves a screen reader
+      // user to guess which field needs fixing.
+      if(!name){
+        nameEl.focus();
+        status.textContent = "Please enter your name.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!email){
+        emailEl.focus();
+        status.textContent = "Please enter your email.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!target){
+        urlEl.focus();
+        status.textContent = "Please enter a valid website address, like yourbusiness.com.";
         status.className = "form-status err";
         return;
       }
