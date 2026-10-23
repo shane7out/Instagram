@@ -61,6 +61,15 @@
     font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
     color:var(--key-light);
   }
+  .eyebrow-mark{display:inline-flex;align-items:center;gap:6px;}
+  .eyebrow-mark svg{flex:none;}
+
+  /* ---- brand watermark (hero / final CTA) ---- */
+  .watermark{
+    position:absolute;top:-40px;right:-40px;z-index:-1;
+    opacity:.07;pointer-events:none;
+  }
+  .watermark-alt{top:auto;right:auto;bottom:-50px;left:-50px;}
   section{padding-block:56px;border-top:1px solid var(--line);}
   section:first-of-type{border-top:none;}
   .section-head{max-width:640px;margin-bottom:30px;}
@@ -133,7 +142,7 @@
   }
 
   /* ---- hero ---- */
-  .hero{padding-block:52px 40px;border-top:none;}
+  .hero{padding-block:52px 40px;border-top:none;position:relative;overflow:hidden;}
   .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;}
   @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
   .hero h1{
@@ -284,7 +293,7 @@
   /* ---- final CTA ---- */
   .cta-band{
     background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-    text-align:center;padding-block:48px;
+    text-align:center;padding-block:48px;position:relative;overflow:hidden;
   }
   .cta-band h2{margin-bottom:10px;}
   .cta-band p{max-width:52ch;margin:0 auto 22px;font-size:16.5px;}
@@ -362,6 +371,12 @@
 
   <!-- ============ HERO + SHORT LEAD FORM ============ -->
   <section class="hero wrap">
+    <svg class="watermark" width="420" height="280" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+      <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+      <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+      <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+      <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+    </svg>
     <div class="hero-grid">
       <div>
         <h1>YOUR BUSINESS<br>JUST GOT<br><span class="accent">SMARTER.</span></h1>
@@ -400,7 +415,7 @@
   <!-- ============ SERVICES ============ -->
   <section class="wrap" id="services">
     <div class="section-head">
-      <span class="eyebrow">Services</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Services</span>
       <h2>Where Key Technologies can help</h2>
       <p>Every engagement starts with a business problem, not a tool. Technology comes second.</p>
     </div>
@@ -536,7 +551,7 @@
   <!-- ============ FREE WEBSITE AUDIT ============ -->
   <section class="wrap" id="audit">
     <div class="section-head">
-      <span class="eyebrow">Free Tool</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Free Tool</span>
       <h2>Get your website's AI/SI Audit Grade</h2>
       <p>A real audit, not a guess — performance, accessibility, best practices and SEO, scored by
         Google's own PageSpeed Insights (the engine behind Lighthouse), plus a check for the PHP/WordPress
@@ -589,7 +604,7 @@
   <!-- ============ SOLUTIONS / PROBLEM-FIRST POSITIONING ============ -->
   <section class="wrap" id="solutions">
     <div class="section-head">
-      <span class="eyebrow">Solutions</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Solutions</span>
       <h2>Problem first. Technology second.</h2>
       <p>Key Technologies doesn't start by selling AI/SI. It starts by understanding what's actually slowing a business
         down, then figures out whether AI/SI, automation, or a simpler fix solves it.</p>
@@ -616,7 +631,7 @@
   <!-- ============ THE KEY TECHNOLOGIES METHOD ============ -->
   <section class="wrap" id="method">
     <div class="section-head">
-      <span class="eyebrow">How It Works</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>How It Works</span>
       <h2>The Key Technologies Method</h2>
       <p>A straightforward process for figuring out where AI/SI actually helps — and proving it before scaling it.</p>
     </div>
@@ -658,7 +673,7 @@
   <section class="wrap" id="about">
     <div class="about-grid">
       <div>
-        <span class="eyebrow">About the Founder</span>
+        <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>About the Founder</span>
         <h2 style="margin-top:8px;">SHANE CHRISTENSEN</h2>
         <p style="margin-top:14px;font-size:18px;color:var(--ink);font-weight:600;">Decades in technology.
           Ten years building digital audiences. Now focused on what AI/SI can do for business.</p>
@@ -686,7 +701,7 @@
   <!-- ============ LOCATIONS ============ -->
   <section class="wrap" id="locations">
     <div class="section-head">
-      <span class="eyebrow">Locations</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Locations</span>
       <h2>Based in California and Nevada</h2>
       <p>Key Technologies works with businesses in person around its home markets, and remotely throughout the United States.</p>
     </div>
@@ -708,7 +723,7 @@
   <!-- ============ FAQ ============ -->
   <section class="wrap" id="faq">
     <div class="section-head">
-      <span class="eyebrow">FAQ</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>FAQ</span>
       <h2>Questions, answered</h2>
     </div>
 
@@ -799,7 +814,7 @@
   <!-- ============ DETAILED LEAD FORM ============ -->
   <section class="wrap" id="contact">
     <div class="section-head">
-      <span class="eyebrow">Get Started</span>
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Get Started</span>
       <h2>Tell us about your business</h2>
       <p>The more we know going in, the more useful the first conversation is.</p>
     </div>
@@ -861,6 +876,12 @@
   </section>
 
   <div class="cta-band">
+    <svg class="watermark watermark-alt" width="360" height="240" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+      <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+      <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+      <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+      <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+    </svg>
     <div class="wrap">
       <h2>Ready to see where AI/SI actually fits?</h2>
       <p>Start with a free AI/SI opportunity review — no obligation, no sales pitch about tools you don't need.</p>
