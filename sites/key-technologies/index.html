@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Key Technologies — AI/SI Consulting &amp; Intelligent Business Systems</title>
-<meta name="description" content="Key Technologies is an AI/SI consultancy — Artificial Intelligence strategy and automation, paired with the Systems Intelligence (security, networking, databases, infrastructure) that makes it hold up in production. Serving Manhattan Beach, CA, Las Vegas, NV, and remote nationwide. Includes a free PHP/WordPress exposure check.">
+<meta name="description" content="Key Technologies is an AI/SI consultancy — Artificial Intelligence strategy and automation, paired with the Systems Intelligence (security, networking, databases, infrastructure) that makes it hold up in production. Serving Manhattan Beach, CA, Las Vegas, NV, and remote nationwide. Includes a free Website Audit — performance, accessibility, SEO and PHP/WordPress exposure, graded.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Key Technologies — AI/SI Consulting">
-<meta property="og:description" content="AI strategy and automation, paired with the Systems Intelligence that makes it actually work in production. Free AI/SI opportunity review, plus a free PHP/WordPress exposure check.">
+<meta property="og:description" content="AI strategy and automation, paired with the Systems Intelligence that makes it actually work in production. Free AI/SI opportunity review, plus a free Website Audit with a real grade.">
 <meta property="og:url" content="https://keytechnologies.si/">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#07111f">
@@ -189,6 +189,31 @@
   .risk-result{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
   .risk-result p{margin-top:12px;}
 
+  /* ---- website audit grade ---- */
+  .grade-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
+  .grade-badge{
+    flex:none;width:92px;height:92px;border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    border:3px solid var(--line);background:var(--bg-2);
+  }
+  .grade-badge.grade-ok{border-color:#4ade80;}
+  .grade-badge.grade-warn{border-color:#fbbf24;}
+  .grade-badge.grade-danger{border-color:#ff8a7a;}
+  .grade-badge.grade-unknown{border-color:var(--line);}
+  .grade-letter{font-size:32px;font-weight:800;color:var(--ink);line-height:1;}
+  .grade-label{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);}
+  .score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;flex:1;min-width:200px;}
+  .score-card{
+    background:var(--bg-2);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;display:flex;flex-direction:column;gap:2px;
+  }
+  .score-label{font-size:11.5px;font-weight:600;color:var(--ink-dim);}
+  .score-value{font-size:20px;font-weight:800;}
+  .score-value.score-ok{color:#4ade80;}
+  .score-value.score-warn{color:#fbbf24;}
+  .score-value.score-danger{color:#ff8a7a;}
+  .score-value.score-na{color:var(--ink-dim);}
+
   /* ---- services ---- */
   .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
   @media (max-width:900px){.service-grid{grid-template-columns:1fr 1fr;}}
@@ -296,7 +321,7 @@
     <nav aria-label="Primary">
       <ul class="nav-links">
         <li><a href="#services">Services</a></li>
-        <li><a href="#php-check">PHP Risk Check</a></li>
+        <li><a href="#audit">Free Website Audit</a></li>
         <li><a href="#solutions">Solutions</a></li>
         <li><a href="#method">How It Works</a></li>
         <li><a href="#about">About</a></li>
@@ -317,7 +342,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <ul>
       <li><a href="#services">Services</a></li>
-      <li><a href="#php-check">PHP Risk Check</a></li>
+      <li><a href="#audit">Free Website Audit</a></li>
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#method">How It Works</a></li>
       <li><a href="#about">About Shane</a></li>
@@ -493,46 +518,62 @@
         <span class="num">20</span>
         <h3>PHP &amp; WordPress Migration</h3>
         <p>Move a business off PHP and WordPress onto a modern, custom-built stack — for sites that got
-          flagged by our free risk check below, or anyone who no longer wants to depend on PHP's security
+          flagged by our free audit below, or anyone who no longer wants to depend on PHP's security
           track record.</p>
       </article>
     </div>
   </section>
 
-  <!-- ============ PHP / WORDPRESS RISK CHECK ============ -->
-  <section class="wrap" id="php-check">
+  <!-- ============ FREE WEBSITE AUDIT ============ -->
+  <section class="wrap" id="audit">
     <div class="section-head">
       <span class="eyebrow">Free Tool</span>
-      <h2>Is your website still running on PHP or WordPress?</h2>
-      <p>In October 2026, a critical unauthenticated remote-code-execution flaw in PHP itself
-        (CVE-2026-109618 / CVE-2026-109619, nicknamed "PHP2Shell") and a separate, actively-exploited
-        attack chain in WordPress core ("wp2shell") both made headlines. Paste your website address below
-        for a free, instant check.</p>
+      <h2>Get your website's AI/SI Audit Grade</h2>
+      <p>A real audit, not a guess — performance, accessibility, best practices and SEO, scored by
+        Google's own PageSpeed Insights (the engine behind Lighthouse), plus a check for the PHP/WordPress
+        exposure behind the October 2026 "PHP2Shell" / wp2shell disclosures. Enter your details and we'll
+        run it live and grade it.</p>
     </div>
 
     <div class="lead-card" style="max-width:640px;">
-      <span class="eyebrow">Free PHP &amp; WordPress Exposure Check</span>
-      <h3>Check your website</h3>
-      <form id="phpCheckForm" novalidate>
+      <span class="eyebrow">Free AI/SI Website Audit</span>
+      <h3>Audit your website</h3>
+      <form id="auditForm" novalidate>
         <div class="field">
-          <label for="pc-url">Website address</label>
-          <input id="pc-url" name="url" type="text" placeholder="yourbusiness.com" autocomplete="url" required>
+          <label for="au-name">Full Name</label>
+          <input id="au-name" name="name" type="text" autocomplete="name" required>
         </div>
-        <button class="btn btn-primary" type="submit" id="pcSubmitBtn">Check My Website</button>
-        <p class="form-status" id="phpCheckStatus" role="status"></p>
+        <div class="field">
+          <label for="au-email">Email</label>
+          <input id="au-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="au-url">Website address</label>
+          <input id="au-url" name="url" type="text" placeholder="yourbusiness.com" autocomplete="url" required>
+        </div>
+        <button class="btn btn-primary" type="submit" id="auSubmitBtn">Run My Free Audit</button>
+        <p class="form-status" id="auditStatus" role="status"></p>
       </form>
 
-      <div id="phpCheckResult" class="risk-result" hidden>
-        <span class="risk-badge" id="pcResultBadge"></span>
-        <p id="pcResultText"></p>
-        <p class="form-note" id="pcResultNote"></p>
-        <a class="btn btn-primary" href="#lead-short" style="margin-top:16px;">Get a Free Migration Review</a>
+      <div id="auditResult" class="risk-result" hidden>
+        <div class="grade-row">
+          <div class="grade-badge grade-unknown" id="auGradeBadge">
+            <span class="grade-letter" id="auGradeLetter">—</span>
+            <span class="grade-label">AI/SI Grade</span>
+          </div>
+          <div class="score-grid" id="auScoreGrid"></div>
+        </div>
+        <div id="auSecurityLine" style="margin-top:16px;" hidden>
+          <span class="risk-badge" id="auSecBadge"></span>
+          <p id="auSecText" style="margin-top:10px;"></p>
+        </div>
+        <a class="btn btn-primary" href="#lead-short" style="margin-top:16px;">Get a Free Review of These Results</a>
       </div>
 
-      <p class="form-note" style="margin-top:14px;">This is a quick, free, surface-level scan of your site's
-        publicly visible code — not a full security audit. A clean result here doesn't guarantee a site is
-        fully secure, and a flagged result doesn't mean a site is under attack right now. It's a starting
-        point for a real conversation.</p>
+      <p class="form-note" style="margin-top:14px;">Performance, accessibility, best practices and SEO
+        scores come straight from Google's own PageSpeed Insights tool. The PHP/WordPress check is a
+        surface scan of your site's public code, not a full security audit. Together they're a real
+        starting point, not the final word.</p>
     </div>
   </section>
 
@@ -669,8 +710,8 @@
         infrastructure an AI system actually has to run on. A lot of businesses learn that split the hard
         way: an AI project that looks great in a demo and falls apart in production because nobody thought
         about the systems underneath it. We lead with AI/SI so that doesn't happen here — it's also why
-        there's a free PHP/WordPress risk check built into this site, not just an AI pitch. And yes, it's
-        built into our own domain: keytechnologies.si.</p>
+        there's a free Website Audit built into this site, not just an AI pitch. And yes, it's built into
+        our own domain: keytechnologies.si.</p>
     </details>
     <details>
       <summary>What does Key Technologies do?</summary>
@@ -725,12 +766,14 @@
         how AI/SI and automation get evaluated — not bolted on without regard for it.</p>
     </details>
     <details>
-      <summary>Why did you build a free PHP/WordPress checker into this site?</summary>
+      <summary>Why did you build a free Website Audit into this site?</summary>
       <p>In October 2026, a critical unauthenticated remote-code-execution flaw in PHP itself and a
         separate, actively-exploited attack chain in WordPress core both made headlines, and a lot of
         business owners got nervous about what's actually running under their website with no easy way to
-        check. This tool gives a quick, honest first read — and if it flags something, that's exactly the
-        kind of problem Key Technologies helps fix.</p>
+        check. The audit grades the things that actually determine whether a website works — speed,
+        accessibility, best practices and SEO via Google's own PageSpeed Insights, plus that same
+        PHP/WordPress exposure check. It's a quick, honest first read — and if it flags something, that's
+        exactly the kind of problem Key Technologies helps fix.</p>
     </details>
     <details>
       <summary>How does an AI/SI consultation work?</summary>
@@ -830,7 +873,7 @@
     </a>
     <ul class="foot-links">
       <li><a href="#services">Services</a></li>
-      <li><a href="#php-check">PHP Risk Check</a></li>
+      <li><a href="#audit">Free Website Audit</a></li>
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#method">How It Works</a></li>
       <li><a href="#about">About</a></li>
@@ -873,6 +916,22 @@
   // booking link here once one exists. Empty = the success message stands
   // alone, no broken/placeholder button is ever shown.
   var KEY_CALENDLY_URL = "";
+
+  // ---- website audit: PageSpeed Insights API key (optional, additive) ----
+  // Performance, accessibility, best practices and SEO scores come from
+  // Google's public PageSpeed Insights API (the same engine behind
+  // Lighthouse). It needs a free API key to run reliably - the
+  // unauthenticated quota is shared across every site using it with no key
+  // and exhausts almost immediately. To get one: console.cloud.google.com
+  // -> enable the "PageSpeed Insights API" -> create an API key -> restrict
+  // it by HTTP referrer to keytechnologies.si/* (Google's documented safe
+  // pattern for a key that lives in public page source - a referrer-locked
+  // key can't be used from anywhere else even if someone copies it out of
+  // the page). Paste the key here once it exists. Empty = the
+  // performance/accessibility/best-practices/SEO scores are honestly
+  // skipped, not faked, and the audit falls back to the PHP/WordPress
+  // security check alone.
+  var KEY_PAGESPEED_API_KEY = "";
 
   // ---- mobile menu ----
   var burger = document.getElementById("burgerBtn");
@@ -985,31 +1044,34 @@
   wireForm("shortLeadForm", "shortLeadStatus", "homepage-short-form");
   wireForm("fullLeadForm", "fullLeadStatus", "homepage-full-form");
 
-  // ---- PHP / WordPress free risk-check tool ----
-  // No backend, so this runs entirely client-side using a public CORS
-  // proxy (api.allorigins.win) to fetch the target site's HTML, then looks
-  // for publicly-visible WordPress/PHP signatures (wp-content/wp-includes/
-  // wp-json paths, a WordPress <meta name="generator"> tag, .php links in
-  // the markup). This is a heuristic surface scan of public page source,
-  // not a real security audit or port/header scan - the on-page copy says
-  // so and this code never claims otherwise. If the proxy is unreachable
-  // or rate-limited, the visitor gets an honest "couldn't check it" error,
-  // never a fake result either way.
+  // ---- Free Website Audit tool ----
+  // No backend, so this runs entirely client-side. Two checks run in
+  // parallel: Google's public PageSpeed Insights API (performance,
+  // accessibility, best practices, SEO - needs KEY_PAGESPEED_API_KEY above
+  // to actually run; honestly skipped when it isn't set) and the same
+  // PHP/WordPress surface scan as before, via a public CORS proxy
+  // (api.allorigins.win) since there's no backend to fetch the target page
+  // through directly. Neither check is a full professional audit - the
+  // on-page copy says so - and a check that can't be reached shows an
+  // honest "couldn't run" state, never a fake score or grade.
   //
-  // Usage (destination URL + verdict only, no visitor PII) logs to
-  // /key_leads/php_checks for Shane's own visibility into who's using the
-  // tool - same no-security-rules tradeoff as every other key_leads write,
-  // see the KEY_LEADS_DB_URL comment above. A logging failure never blocks
-  // the on-screen result.
-  (function initPhpCheck(){
-    var form = document.getElementById("phpCheckForm");
+  // Submissions are real leads (name + email + URL), so they're logged to
+  // /key_leads/leads.json alongside every other lead form - same
+  // no-security-rules tradeoff as every other key_leads write, see the
+  // KEY_LEADS_DB_URL comment above. A logging failure never blocks the
+  // on-screen result.
+  (function initAudit(){
+    var form = document.getElementById("auditForm");
     if(!form) return;
-    var status = document.getElementById("phpCheckStatus");
-    var resultBox = document.getElementById("phpCheckResult");
-    var badge = document.getElementById("pcResultBadge");
-    var resultText = document.getElementById("pcResultText");
-    var resultNote = document.getElementById("pcResultNote");
-    var submitBtn = document.getElementById("pcSubmitBtn");
+    var status = document.getElementById("auditStatus");
+    var submitBtn = document.getElementById("auSubmitBtn");
+    var resultBox = document.getElementById("auditResult");
+    var gradeBadge = document.getElementById("auGradeBadge");
+    var gradeLetter = document.getElementById("auGradeLetter");
+    var scoreGrid = document.getElementById("auScoreGrid");
+    var securityLine = document.getElementById("auSecurityLine");
+    var secBadge = document.getElementById("auSecBadge");
+    var secText = document.getElementById("auSecText");
 
     function normalizeUrl(raw){
       raw = (raw || "").trim();
@@ -1018,16 +1080,16 @@
       try { return new URL(raw).toString(); } catch(e){ return null; }
     }
 
-    function logCheck(url, verdict){
+    function logAudit(payload){
       if(!KEY_LEADS_DB_URL) return;
-      fetch(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/php_checks.json", {
+      fetch(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({url: url, verdict: verdict, createdAt: {".sv": "timestamp"}})
-      }).catch(function(){ /* analytics only, never affects what the visitor sees */ });
+        body: JSON.stringify(payload)
+      }).catch(function(){ /* result is already on screen; a missed save isn't fatal */ });
     }
 
-    function analyze(html){
+    function analyzeWp(html){
       html = html || "";
       var lower = html.toLowerCase();
       var genMatch =
@@ -1045,70 +1107,169 @@
       };
     }
 
-    function setBadge(kind, label){
-      badge.className = "risk-badge risk-" + kind;
-      badge.textContent = label;
+    function fetchWpCheck(target){
+      return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(target), {cache: "no-store"})
+        .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+        .then(analyzeWp)
+        .catch(function(){ return null; });
+    }
+
+    function fetchPageSpeed(target){
+      if(!KEY_PAGESPEED_API_KEY) return Promise.resolve(null);
+      var api = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
+        + "?url=" + encodeURIComponent(target)
+        + "&strategy=mobile"
+        + "&category=performance&category=accessibility&category=best-practices&category=seo"
+        + "&key=" + encodeURIComponent(KEY_PAGESPEED_API_KEY);
+      return fetch(api).then(function(r){
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }).then(function(data){
+        var cats = (data.lighthouseResult && data.lighthouseResult.categories) || {};
+        function pct(c){ return c && typeof c.score === "number" ? Math.round(c.score * 100) : null; }
+        return {
+          performance: pct(cats.performance),
+          accessibility: pct(cats.accessibility),
+          bestPractices: pct(cats["best-practices"]),
+          seo: pct(cats.seo)
+        };
+      }).catch(function(){ return null; });
+    }
+
+    function gradeFor(score){
+      if(score >= 90) return {letter: "A", kind: "ok"};
+      if(score >= 80) return {letter: "B", kind: "ok"};
+      if(score >= 70) return {letter: "C", kind: "warn"};
+      if(score >= 60) return {letter: "D", kind: "warn"};
+      return {letter: "F", kind: "danger"};
+    }
+
+    function renderScoreCard(label, score){
+      var div = document.createElement("div");
+      div.className = "score-card";
+      if(score == null){
+        div.innerHTML = '<span class="score-label">' + label + '</span><span class="score-value score-na">—</span>';
+      } else {
+        var g = gradeFor(score);
+        div.innerHTML = '<span class="score-label">' + label + '</span><span class="score-value score-' + g.kind + '">' + score + '</span>';
+      }
+      return div;
     }
 
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      var target = normalizeUrl(document.getElementById("pc-url").value);
-      if(!target){
-        status.textContent = "Enter a valid website address, like yourbusiness.com.";
+      var name = document.getElementById("au-name").value.trim();
+      var email = document.getElementById("au-email").value.trim();
+      var target = normalizeUrl(document.getElementById("au-url").value);
+      if(!name || !email || !target){
+        status.textContent = "Please fill in your name, email, and a valid website address.";
         status.className = "form-status err";
         return;
       }
 
       resultBox.hidden = true;
-      status.textContent = "Checking…";
+      status.textContent = "Running your audit…";
       status.className = "form-status";
       submitBtn.disabled = true;
 
-      fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(target), {cache: "no-store"})
-        .then(function(r){
-          if(!r.ok) throw new Error("HTTP " + r.status);
-          return r.text();
-        })
-        .then(function(html){
-          var result = analyze(html);
-          var verdict, kind, label, text, note;
+      Promise.all([fetchPageSpeed(target), fetchWpCheck(target)]).then(function(results){
+        var speed = results[0];
+        var wp = results[1];
 
-          if(result.isWordPress){
-            verdict = "wordpress";
-            kind = result.versionExposed ? "danger" : "warn";
-            label = result.versionExposed ? "High exposure — WordPress, version visible" : "WordPress detected";
-            text = result.versionExposed
-              ? "This site is running WordPress (" + result.versionExposed + ") and the version is publicly visible in the page source — that makes it easy for an attacker to check it against known vulnerabilities, including the WordPress-core issues disclosed in 2026."
-              : "This site is running WordPress. WordPress and its plugins are a common target, including the actively-exploited WordPress-core attack chain disclosed in 2026 — staying current with core, theme and plugin updates matters.";
-            note = "WordPress itself isn't automatically unsafe, but it needs active maintenance. If updates have lapsed, this is worth a real look.";
-          } else if(result.hasPhpLinks){
-            verdict = "php";
+        scoreGrid.innerHTML = "";
+        var noteEl = null;
+        if(speed){
+          scoreGrid.appendChild(renderScoreCard("Performance", speed.performance));
+          scoreGrid.appendChild(renderScoreCard("Accessibility", speed.accessibility));
+          scoreGrid.appendChild(renderScoreCard("Best Practices", speed.bestPractices));
+          scoreGrid.appendChild(renderScoreCard("SEO", speed.seo));
+        } else {
+          noteEl = document.createElement("p");
+          noteEl.className = "form-note";
+          noteEl.style.marginTop = "4px";
+          noteEl.textContent = KEY_PAGESPEED_API_KEY
+            ? "Couldn't reach Google PageSpeed Insights right now — showing the security check only. Try again shortly."
+            : "Performance, accessibility, best practices and SEO scoring isn't turned on yet — showing the security check only.";
+          scoreGrid.appendChild(noteEl);
+        }
+
+        // overall grade: average of the available PageSpeed category scores,
+        // with a security penalty layered on top - never invented when
+        // PageSpeed itself couldn't be reached or isn't configured.
+        var overall = null;
+        if(speed){
+          var vals = [speed.performance, speed.accessibility, speed.bestPractices, speed.seo].filter(function(v){ return v != null; });
+          if(vals.length){
+            overall = vals.reduce(function(a, b){ return a + b; }, 0) / vals.length;
+            if(wp && wp.isWordPress && wp.versionExposed) overall -= 15;
+            else if(wp && wp.isWordPress) overall -= 8;
+            else if(wp && wp.hasPhpLinks) overall -= 5;
+            overall = Math.max(0, Math.round(overall));
+          }
+        }
+
+        if(overall != null){
+          var og = gradeFor(overall);
+          gradeLetter.textContent = og.letter;
+          gradeBadge.className = "grade-badge grade-" + og.kind;
+        } else {
+          gradeLetter.textContent = "—";
+          gradeBadge.className = "grade-badge grade-unknown";
+        }
+
+        var securityVerdict = "unknown";
+        if(wp){
+          var kind, label, text;
+          if(wp.isWordPress){
+            securityVerdict = "wordpress";
+            kind = wp.versionExposed ? "danger" : "warn";
+            label = wp.versionExposed ? "High exposure — WordPress, version visible" : "WordPress detected";
+            text = wp.versionExposed
+              ? "Running WordPress (" + wp.versionExposed + ") with the version publicly visible — easy for an attacker to match against known vulnerabilities, including the WordPress-core issues disclosed in 2026."
+              : "Running WordPress. A common target, including the actively-exploited WordPress-core attack chain disclosed in 2026 — staying current with core, theme and plugin updates matters.";
+          } else if(wp.hasPhpLinks){
+            securityVerdict = "php";
             kind = "warn";
             label = "PHP detected";
-            text = "This site appears to be running on PHP. A critical unauthenticated remote-code-execution flaw in PHP itself (CVE-2026-109618, \"PHP2Shell\") was disclosed in October 2026 — sites on an unpatched PHP version are exposed until updated.";
-            note = "This only means PHP was found in the page's public markup — it doesn't tell us which PHP version is running, or whether it's already patched.";
+            text = "Appears to run on PHP. A critical unauthenticated remote-code-execution flaw in PHP itself (CVE-2026-109618, \"PHP2Shell\") was disclosed in October 2026 — unpatched PHP versions are exposed until updated.";
           } else {
-            verdict = "clean";
+            securityVerdict = "clean";
             kind = "ok";
             label = "No PHP/WordPress signatures found";
-            text = "We didn't find any public signs of PHP or WordPress on this site from a surface scan. That's a good sign, but it isn't a full security audit.";
-            note = "Some sites hide these signals on purpose, or run PHP/WordPress behind a setup this quick scan can't see.";
+            text = "No public signs of PHP or WordPress from a surface scan. That's a good sign, but not a full security audit.";
           }
+          secBadge.className = "risk-badge risk-" + kind;
+          secBadge.textContent = label;
+          secText.textContent = text;
+        } else {
+          secBadge.className = "risk-badge risk-unknown";
+          secBadge.textContent = "Security check unavailable";
+          secText.textContent = "Couldn't reach this site to check for PHP/WordPress exposure right now — it may be blocking automated requests.";
+        }
+        securityLine.hidden = false;
 
-          setBadge(kind, label);
-          resultText.textContent = text;
-          resultNote.textContent = note;
-          resultBox.hidden = false;
-          status.textContent = "";
-          logCheck(target, verdict);
-        })
-        .catch(function(){
-          status.textContent = "Couldn't reach that site to check it — it may be blocking automated requests. Try again, or send it to us directly for a manual check.";
-          status.className = "form-status err";
-        })
-        .finally(function(){
-          submitBtn.disabled = false;
+        resultBox.hidden = false;
+        status.textContent = "";
+
+        logAudit({
+          source: "homepage-website-audit",
+          name: name,
+          email: email,
+          url: target,
+          createdAt: {".sv": "timestamp"},
+          landingPage: location.pathname,
+          audit: {
+            performance: speed ? speed.performance : null,
+            accessibility: speed ? speed.accessibility : null,
+            bestPractices: speed ? speed.bestPractices : null,
+            seo: speed ? speed.seo : null,
+            overallGrade: overall != null ? gradeFor(overall).letter : null,
+            security: securityVerdict
+          }
         });
+      }).finally(function(){
+        submitBtn.disabled = false;
+      });
     });
   })();
 })();
@@ -1158,7 +1319,7 @@
       "name": "What does AI/SI mean?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "We started as an AI consultancy and renamed to AI/SI because AI was only ever half the story. The other half — Systems Intelligence — is the security, networking, databases and business infrastructure an AI system actually has to run on. A lot of businesses learn that split the hard way: an AI project that looks great in a demo and falls apart in production because nobody thought about the systems underneath it. We lead with AI/SI so that doesn't happen here — it's also why there's a free PHP/WordPress risk check built into this site, not just an AI pitch. And yes, it's built into our own domain: keytechnologies.si."
+        "text": "We started as an AI consultancy and renamed to AI/SI because AI was only ever half the story. The other half — Systems Intelligence — is the security, networking, databases and business infrastructure an AI system actually has to run on. A lot of businesses learn that split the hard way: an AI project that looks great in a demo and falls apart in production because nobody thought about the systems underneath it. We lead with AI/SI so that doesn't happen here — it's also why there's a free Website Audit built into this site, not just an AI pitch. And yes, it's built into our own domain: keytechnologies.si."
       }
     },
     {
@@ -1243,10 +1404,10 @@
     },
     {
       "@type": "Question",
-      "name": "Why did you build a free PHP/WordPress checker into this site?",
+      "name": "Why did you build a free Website Audit into this site?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "In October 2026, a critical unauthenticated remote-code-execution flaw in PHP itself and a separate, actively-exploited attack chain in WordPress core both made headlines, and a lot of business owners got nervous about what's actually running under their website with no easy way to check. This tool gives a quick, honest first read — and if it flags something, that's exactly the kind of problem Key Technologies helps fix."
+        "text": "In October 2026, a critical unauthenticated remote-code-execution flaw in PHP itself and a separate, actively-exploited attack chain in WordPress core both made headlines, and a lot of business owners got nervous about what's actually running under their website with no easy way to check. The audit grades the things that actually determine whether a website works — speed, accessibility, best practices and SEO via Google's own PageSpeed Insights, plus that same PHP/WordPress exposure check. It's a quick, honest first read — and if it flags something, that's exactly the kind of problem Key Technologies helps fix."
       }
     },
     {
