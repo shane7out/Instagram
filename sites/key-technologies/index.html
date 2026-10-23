@@ -1125,7 +1125,13 @@
         + "&strategy=mobile"
         + "&category=performance&category=accessibility&category=best-practices&category=seo"
         + "&key=" + encodeURIComponent(KEY_PAGESPEED_API_KEY);
-      return fetch(api).then(function(r){
+      // A real Lighthouse run can take 20-30s; cap it at 45s so a slow or
+      // stuck PageSpeed Insights call can never leave the button disabled
+      // indefinitely - it just falls back to the honest "couldn't reach it"
+      // state, same as any other failure here.
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function(){ controller.abort(); }, 45000);
+      return fetch(api, {signal: controller.signal}).then(function(r){
         if(!r.ok) throw new Error("HTTP " + r.status);
         return r.json();
       }).then(function(data){
@@ -1137,7 +1143,7 @@
           bestPractices: pct(cats["best-practices"]),
           seo: pct(cats.seo)
         };
-      }).catch(function(){ return null; });
+      }).catch(function(){ return null; }).finally(function(){ clearTimeout(timeoutId); });
     }
 
     function gradeFor(score){
@@ -1172,7 +1178,7 @@
       }
 
       resultBox.hidden = true;
-      status.textContent = "Running your audit…";
+      status.textContent = "Running your audit — this can take up to 30 seconds…";
       status.className = "form-status";
       submitBtn.disabled = true;
 
@@ -1254,7 +1260,8 @@
         securityLine.hidden = false;
 
         resultBox.hidden = false;
-        status.textContent = "";
+        status.textContent = "Audit complete — results below.";
+        status.className = "form-status ok";
 
         logAudit({
           source: "homepage-website-audit",
