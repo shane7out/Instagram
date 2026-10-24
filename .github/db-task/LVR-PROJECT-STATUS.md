@@ -2,7 +2,7 @@
 
 Repo: `shane7out/Instagram` (public — never commit real PINs/card numbers)
 Working branch: `claude/master-file-e6ofy0`
-Last updated: 2026-10-09
+Last updated: 2026-10-24
 
 This file exists so a brand-new Claude session can pick up exactly where things
 stand without re-discovering everything from scratch. Paste this whole file in
@@ -757,6 +757,44 @@ said to build both.
 - **Next natural step if asked**: more vertical pages aren't needed yet
   (4 covers the picked verticals) - the next SEO lever is real backlinks
   and reviews, which are Shane's work, not buildable from here.
+
+---
+
+## 18. Key Technologies — founder credentials + SEO/GTM follow-through (2026-10-24, later same night)
+
+Continuing §17's work, same session:
+
+- **Founder bio expanded on the homepage** with two more real credential
+  paragraphs Shane gave directly: (1) blockchain/crypto — following
+  Bitcoin since its first week, using Ethereum since launch, Bitcoin
+  mining, built his own coin in 2017, NFTs and other blockchain projects;
+  (2) e-commerce/marketplace + collectibles — hands-on selling on Amazon,
+  eBay, OfferUp, Craigslist, and active in Pokémon card collectibles. The
+  e-commerce/marketplace credential was also echoed in `ecommerce.html`'s
+  Proof section specifically, since it's directly relevant proof for that
+  one vertical's audience — the blockchain credential was deliberately
+  **not** propagated to the vertical pages (not relevant to real estate/
+  medical/law/e-commerce buyers, risk of reading as unfocused).
+- **Founder `Person` JSON-LD schema expanded** (was just a bare name) with
+  a `description` and a `knowsAbout` list covering security, networking,
+  databases, business tech, digital marketing, blockchain/crypto and
+  e-commerce — a real, low-risk SEO/E-E-A-T lever, no visual change to the
+  page.
+- **GTM Strategy doc's stale restaurant-only targeting partially fixed**
+  (the gap §16 flagged — "revisit/rewrite that doc's templates next time
+  it comes up"): added a new "High-end vertical targeting" section right
+  after the old "Who to target first" table with a who/how-to-find-them
+  breakdown for each of the 4 verticals (linking to the matching landing
+  page), and reframed the restaurant audience as a referral source into
+  these verticals rather than the end client. **Not yet done**: the
+  doc's actual Message Templates (3 variants) are still generic enough to
+  reuse as-is but haven't been rewritten in a higher-end tone — that's
+  the next piece if this doc comes up again.
+- **GitHub Pages still failing on every push tonight** (confirmed again,
+  run #45, same root cause: `Get Pages site failed` — Settings → Pages →
+  Source has still not been flipped to "GitHub Actions"). Deals site
+  status unchanged from §15 (still 0 fresh listings, needs a dedicated
+  debugging session, not worth re-polling every cycle).
 
 ---
 
