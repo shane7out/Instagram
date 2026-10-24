@@ -953,13 +953,28 @@
   var KEY_LEADS_DB_URL = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_leads";
 
   // ---- lead alert email (optional, additive) ----
-  // Formspree is a free form-to-email service - no backend to write. Create
-  // a form at formspree.io with the email address that should receive lead
-  // alerts, then paste its endpoint here (looks like
-  // "https://formspree.io/f/xxxxxxxx"). Fires alongside the database write,
-  // never instead of it - the database stays the source of truth, this is
-  // just the "someone needs to know right now" channel. Empty = no email
-  // alert is sent (the lead still saves to the database either way).
+  // Formspree is a free form-to-email service - no backend to write.
+  // Covers all three forms on this site: the short "Explore My Options"
+  // form, the full contact form, AND the Free Website Audit tool - every
+  // one of them emails Shane the moment someone submits, once this is set.
+  //
+  // Setup (about 2 minutes, free):
+  //   1. Go to formspree.io, create a free account with your email.
+  //   2. Click "New Form", give it any name (e.g. "Key Technologies leads"),
+  //      and set the destination email to the inbox you want alerts in.
+  //   3. Formspree shows an endpoint URL that looks like
+  //      "https://formspree.io/f/xxxxxxxx" - copy it.
+  //   4. Paste it as the value below, between the quotes.
+  //   5. Formspree sends a one-time confirmation email to verify the
+  //      destination address before it starts forwarding - confirm that
+  //      first, or alerts won't arrive even though this is set correctly.
+  //
+  // Fires alongside the database write, never instead of it - the
+  // database stays the source of truth, this is just the "someone needs
+  // to know right now" channel. A failed/missed email never blocks or
+  // changes what the visitor sees. Empty = no email alert is sent (every
+  // lead still saves to the database either way). Free tier covers 50
+  // submissions/month, which is well above what this site needs to start.
   var KEY_FORMSPREE_URL = "";
 
   // ---- post-submit scheduling link (optional, additive) ----
@@ -1138,6 +1153,19 @@
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(payload)
+      }).then(function(r){
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        // Same pattern as the other two forms: the database write is the
+        // real save and already happened by the time this runs, so a
+        // missed or failed email alert here never affects what the
+        // visitor sees - it's purely a notification to Shane.
+        if(KEY_FORMSPREE_URL){
+          fetch(KEY_FORMSPREE_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: JSON.stringify(payload)
+          }).catch(function(){ /* lead is already saved; a missed email alert isn't fatal */ });
+        }
       }).catch(function(){ /* result is already on screen; a missed save isn't fatal */ });
     }
 
