@@ -721,6 +721,45 @@ templates next time it comes up rather than trusting them as-is.
 
 ---
 
+## 17. Key Technologies SEO push (2026-10-24) — site is now 5 pages, not 1
+
+Direct follow-through on §16's pivot: Shane asked what it would actually
+take to compete in search, got a straight answer (new domain = no shortcut,
+but local map-pack + real content pages are genuinely fast levers), and
+said to build both.
+
+- **4 new real landing pages**, each with original content (not a
+  templated swap), own Service + FAQPage JSON-LD, own meta/OG tags, own
+  lead form (tagged with its own `source` so these leads are
+  distinguishable from the homepage's): `real-estate.html`,
+  `medical-dental.html`, `law.html`, `ecommerce.html`. Each includes a
+  direct competitor-comparison FAQ question tuned to that industry's real
+  tools (Follow Up Boss/kvCORE for real estate, Clio/MyCase for law) -
+  deliberate, captures comparison-shopping searches.
+- **New "Industries" hub section** on the homepage linking to all four,
+  wired into the footer and mobile menu. Deliberately NOT added to the
+  top desktop nav - re-verified the nav-overlap fix from earlier today
+  still holds (gap stayed positive) rather than assuming it.
+- **All 4 new pages in sitemap.xml.**
+- **Google Business Profile copy is ready**, added as a new section in
+  the "Key Technologies — Go-to-Market Strategy" Claude Doc
+  (`9ac508d3-e6a8-4066-9a98-b7f98044f8e7`): business name, categories,
+  description, services list, and service areas for both Manhattan Beach
+  and Las Vegas. Confirmed via web search that two separate listings is
+  the *correct* move (not a guideline violation) since Google explicitly
+  allows that for service areas over a two-hour drive apart. **Still
+  needs Shane to actually create and verify both listings** - that part
+  requires his own Google account, can't be done from here.
+- Every new page tested the same way as the main site before shipping:
+  JS syntax check, JSON-LD parse check, tag-balance check, then a real
+  Playwright pass (FAQ accordion, form validation, mobile menu) - not
+  just visual inspection.
+- **Next natural step if asked**: more vertical pages aren't needed yet
+  (4 covers the picked verticals) - the next SEO lever is real backlinks
+  and reviews, which are Shane's work, not buildable from here.
+
+---
+
 *If you're a new Claude session reading this cold: read this whole file, then
 ask the owner what they want to work on next rather than re-diagnosing
 everything above from zero — it's all still accurate as of the date at the
