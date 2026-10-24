@@ -309,6 +309,19 @@
   .stat-number{font-size:38px;font-weight:800;color:var(--key-light);line-height:1.1;}
   .stat-label{margin-top:8px;font-size:14.5px;color:var(--ink-dim);}
 
+  /* ---- industries ---- */
+  .industry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media (max-width:900px){.industry-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:560px){.industry-grid{grid-template-columns:1fr;}}
+  .industry-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;
+    text-decoration:none;display:block;transition:border-color .15s;
+  }
+  .industry-card:hover{border-color:var(--key-blue);}
+  .industry-card h3{font-size:17px;color:var(--ink);}
+  .industry-card p{margin-top:8px;font-size:14px;}
+  .industry-card .arrow{color:var(--key-light);font-weight:700;margin-top:10px;display:inline-block;}
+
   /* ---- locations ---- */
   .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   @media (max-width:700px){.loc-grid{grid-template-columns:1fr;}}
@@ -418,6 +431,7 @@
   <p class="mm-group-label">Explore</p>
   <ul>
     <li><a href="#services">Services</a></li>
+    <li><a href="#industries">Industries</a></li>
     <li><a href="#solutions">Solutions</a></li>
     <li><a href="#method">How It Works</a></li>
     <li><a href="#results">Results</a></li>
@@ -625,6 +639,37 @@
           flagged by our free audit below, or anyone who no longer wants to depend on PHP's security
           track record.</p>
       </article>
+    </div>
+  </section>
+
+  <!-- ============ INDUSTRIES ============ -->
+  <section class="wrap" id="industries">
+    <div class="section-head">
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Industries</span>
+      <h2>Built for how your industry actually works</h2>
+      <p>The same services above, applied specifically to the problems each one actually has.</p>
+    </div>
+    <div class="industry-grid">
+      <a class="industry-card" href="real-estate.html">
+        <h3>Real Estate</h3>
+        <p>Custom CRM and lead automation so a cold lead doesn't cost you the deal.</p>
+        <span class="arrow">Learn more &rarr;</span>
+      </a>
+      <a class="industry-card" href="medical-dental.html">
+        <h3>Medical, Dental &amp; Aesthetic</h3>
+        <p>Patient CRM, booking automation and review management, built on real security fundamentals.</p>
+        <span class="arrow">Learn more &rarr;</span>
+      </a>
+      <a class="industry-card" href="law.html">
+        <h3>Law Firms</h3>
+        <p>Intake CRM and automation so no lead sits untouched before it becomes a retainer.</p>
+        <span class="arrow">Learn more &rarr;</span>
+      </a>
+      <a class="industry-card" href="ecommerce.html">
+        <h3>E-commerce &amp; DTC</h3>
+        <p>Automation and content systems built around your catalog, not a rented agency stack.</p>
+        <span class="arrow">Learn more &rarr;</span>
+      </a>
     </div>
   </section>
 
@@ -1018,6 +1063,7 @@
     </a>
     <ul class="foot-links">
       <li><a href="#services">Services</a></li>
+      <li><a href="#industries">Industries</a></li>
       <li><a href="#audit">Free Website Audit</a></li>
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#method">How It Works</a></li>
