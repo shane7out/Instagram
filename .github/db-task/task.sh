@@ -1,55 +1,74 @@
 #!/bin/bash
-# Read-only diagnostic: Shane just ran setup-deals-auto.sh on the Mac to fix
-# the Deals site (classiccarsforsale-co.web.app), which has had a fully empty
-# listing grid since 2026-10-21 (nothing scraped since Sept 21, everything
-# aged past the 30-day freshness window the site's client-side display rule
-# uses). The Mac terminal output only showed an image-upload/dedup step
-# (25,223 car images checked, only 1 new upload needed), which does NOT by
-# itself prove new listings were actually scraped - that's consistent with
-# either "nothing new to scrape" (deploy just re-synced the stale manifest)
-# or "Craigslist is blocking the scraper" per the known risk already logged
-# in LVR-PROJECT-STATUS.md section 14. Check the live cars.json directly
-# instead of guessing. No writes.
+# Add new restaurant/bar: Category 10 (@officialcategory10), Luke Combs'
+# honky-tonk - live music, food, spirits & sport - newly opened at Flamingo
+# Las Vegas (3555 Las Vegas Blvd S), confirmed via web search (Fox5 Vegas,
+# Pollstar, American Songwriter all report the Flamingo location, October
+# 2026 opening). Standard DM-visibility flow: dedupe check, allocate num,
+# write customrecord, set dashboard/status + dashboard/attempts.
 set -e
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
+const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
     https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
+function put(url, body) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const data = JSON.stringify(body);
+    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) } }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    });
+    req.on('error', reject); req.write(data); req.end();
+  });
+}
 
 (async () => {
-  const raw = await get('https://classiccarsforsale-co.web.app/cars.json');
-  const cars = JSON.parse(raw);
-  const list = Array.isArray(cars) ? cars : Object.values(cars);
-  console.log('total entries in live cars.json: ' + list.length);
-
-  const now = Date.now();
-  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  let fresh = 0;
-  let newestTs = 0;
-  let newestDate = null;
-  const dateCounts = {};
-
-  for (const c of list) {
-    const d = c.added;
-    if (!d) continue;
-    const ts = new Date(d).getTime();
-    if (isNaN(ts)) continue;
-    if (ts > newestTs) { newestTs = ts; newestDate = d; }
-    if (now - ts <= THIRTY_DAYS) fresh++;
-    const day = String(d).slice(0, 10);
-    dateCounts[day] = (dateCounts[day] || 0) + 1;
+  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
+  const existing = JSON.parse(dupCheckRaw) || {};
+  const dupe = Object.values(existing).find(r => r && (/category\s*10/i.test(r.name || '') || (r.instagram || '').toLowerCase().replace('@', '') === 'officialcategory10'));
+  if (dupe) {
+    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
+    return;
   }
 
-  console.log('entries within the 30-day freshness window (would show on the live grid): ' + fresh);
-  console.log('newest "added" date found: ' + newestDate);
+  const [crecRaw, custRaw, stgRaw, delRaw] = await Promise.all([
+    get(DB + '/dashboard_crec.json?shallow=true'),
+    get(DB + '/customrecords.json?shallow=true'),
+    get(DB + '/dashboard_rest_stg_crec.json?shallow=true'),
+    get(DB + '/dashboard_deleted.json?shallow=true'),
+  ]);
+  const nums = [];
+  [crecRaw, custRaw, stgRaw, delRaw].forEach(raw => {
+    const obj = JSON.parse(raw) || {};
+    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
+  });
+  let maxNum = nums.length ? Math.max(...nums) : 59999;
+  const num = Math.max(maxNum + 1, 60000);
+  console.log('allocated num: ' + num);
 
-  const days = Object.keys(dateCounts).sort().reverse().slice(0, 8);
-  console.log('most recent dates present, with counts:');
-  for (const d of days) console.log('  ' + d + ': ' + dateCounts[d]);
+  const record = {
+    num,
+    name: 'Category 10',
+    instagram: 'officialcategory10',
+    category: 'Bar & Live Music Venue',
+    city: 'Las Vegas',
+    address: '3555 Las Vegas Blvd S, Las Vegas, NV 89109 (Flamingo Las Vegas)',
+    status: 'pending',
+  };
+
+  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
+  console.log('dashboard_crec write: ' + r1.status);
+  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
+  console.log('dashboard/status write: ' + r2.status);
+  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
+  console.log('dashboard/attempts write: ' + r3.status);
+
+  console.log('DONE: added num ' + num + ' - Category 10 (@officialcategory10)');
 })().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
 NODE
