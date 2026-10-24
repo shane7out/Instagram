@@ -76,24 +76,36 @@ a Node harness before shipping.
 curl -sL -o /tmp/date.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dating-instant-swipe.sh && bash /tmp/date.sh
 ```
 
-### Deals site — the big one: it's been stale for 75 days
-`cars.json` has 669 entries and **every single one is stamped `added:
-2026-07-07`** — nothing has been scraped since. The GitHub Action that runs
-every few hours only sweeps the *existing* page for dead links (that's why
-the clock in the corner always looks current) — it does not re-scrape
-Craigslist. The real scrape (`gen.js` + `rest-deploy.js`) runs on the Mac via
-a LaunchAgent that's supposed to auto-cycle every 6 hours, and it's stopped
-(most likely: the Mac hasn't been on/logged-in enough). This reinstalls the
-agent and forces one full scrape+deploy immediately:
+### Deals site — ROOT CAUSE FOUND 2026-10-24, fix ready to run
+**Craigslist is NOT blocking the scraper — confirmed directly, not a guess.**
+Hit the exact search API `watch-houses.js` uses from a GH Actions runner:
+clean `200`, valid JSON, 21 real current listings came back. That theory
+(logged in earlier versions of this section) was wrong — ruled out, don't
+re-chase it.
+
+**The real bug:** the 6-hour auto-cycle (`deals-agent.sh`, installed by
+`setup-deals-auto.sh`) only ever ran `gen.js` (rebuild the site FROM
+`manual.json`) and `rest-deploy.js` (redeploy) — it never ran any of the 21
+`watch-*.js` harvesters, which are the *only* thing that actually fetches new
+Craigslist listings and appends them to `manual.json`. The auto-cycle has
+been rebuilding and redeploying the exact same stale data every 6 hours since
+it was installed — that's why the live timestamp always looked current while
+the listings underneath never changed. Confirmed via `grep` across every
+Mac deploy script and GH workflow in the repo: nothing, anywhere, was ever
+wired to call the harvesters automatically.
+
+**Fix** (new `_tools/harvest-all.js` runs all 21 watchers in sequence, then
+rewrites `deals-agent.sh` to harvest before rebuilding+deploying, reloads the
+LaunchAgent, runs one full cycle right now, verifies live, and reports back):
 
 ```
-curl -sL -o /tmp/setup.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/setup-deals-auto.sh && bash /tmp/setup.sh
+curl -sL -o /tmp/fixdeals.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/fix-deals-harvest.sh && bash /tmp/fixdeals.sh
 ```
 
-If after running this the listings still come back stamped with today's date
-but there are way fewer of them than before, Craigslist may be blocking the
-scraper — that's a follow-up debugging conversation, not something the script
-above can fix on its own.
+`setup-deals-auto.sh` (the old script) is now superseded by this one for the
+Deals freshness problem specifically — it still correctly installs the agent
++ LaunchAgent plumbing, it just never included the harvest step. No need to
+re-run it first.
 
 ### Zach's dashboard access
 Gives Zach his own PIN (223344) as a full co-editor — same access level as
