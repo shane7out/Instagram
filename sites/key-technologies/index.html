@@ -152,6 +152,12 @@
     display:block;padding:14px 4px;color:var(--ink);text-decoration:none;
     font-size:17px;font-weight:600;border-bottom:1px solid var(--line);
   }
+  .mm-cta-row{display:flex;gap:10px;margin-bottom:26px;}
+  .mm-cta-row .btn{flex:1;text-align:center;padding-left:10px;padding-right:10px;}
+  .mm-group-label{
+    font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-dim);margin:0 0 8px;
+  }
 
   @media (max-width:860px){
     .nav-links, .nav-cta .btn-ghost{display:none;}
@@ -383,20 +389,37 @@
     </div>
   </div>
 
-  <div class="mobile-menu" id="mobileMenu">
-    <ul>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#audit">Free Website Audit</a></li>
-      <li><a href="#solutions">Solutions</a></li>
-      <li><a href="#method">How It Works</a></li>
-      <li><a href="#about">About Shane</a></li>
-      <li><a href="#results">Results</a></li>
-      <li><a href="#locations">Locations</a></li>
-      <li><a href="#faq">FAQ</a></li>
-    </ul>
-    <a class="btn btn-primary" style="width:100%" href="#lead-short">Explore My Options</a>
-  </div>
 </header>
+
+<!-- Deliberately a sibling of header, not a child of it: header has
+     backdrop-filter for the frosted-glass sticky effect, and backdrop-filter
+     (like transform/perspective) creates a containing block for descendant
+     position:fixed elements - so a fixed child of header is positioned
+     relative to header's own box instead of the viewport, collapsing this
+     menu to a sliver instead of covering the screen. Keep it out here. -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mm-cta-row">
+    <a class="btn btn-primary" href="tel:+19498993059">Call (949) 899-3059</a>
+    <a class="btn btn-ghost" href="#audit">Free Website Audit</a>
+  </div>
+
+  <p class="mm-group-label">Explore</p>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="#method">How It Works</a></li>
+    <li><a href="#results">Results</a></li>
+  </ul>
+
+  <p class="mm-group-label">Company</p>
+  <ul>
+    <li><a href="#about">About Shane</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+
+  <a class="btn btn-primary" style="width:100%" href="#lead-short">Explore My Options</a>
+</div>
 
 <main id="main">
 
