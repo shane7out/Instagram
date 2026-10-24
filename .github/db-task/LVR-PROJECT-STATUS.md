@@ -152,6 +152,25 @@ dashboard patches use — just one more file in the same directory.
 curl -sL -o /tmp/ktcrm.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-kt-crm.sh && bash /tmp/ktcrm.sh
 ```
 
+### NEW — Key Technologies Leads viewer, standalone page + login
+Deploys a brand-new, separate tool at `lvr-data-a60c1.web.app/key-leads.html`
+— same PIN family (702950, easy to change), reads `/key_leads/leads`, the
+Firebase node every lead form on the live site already writes to (homepage
+short/full forms, the Free Website Audit, and all 4 vertical-page forms).
+Built 2026-10-24 right after Formspree got wired up, because Shane asked how
+to view/delete leads and there was no viewer for the real database (only
+Formspree's own copy, which is self-service in its own dashboard). Shows
+every lead — name, contact info, which form/page it came from, plus
+form-specific detail (interests checked, audit grade, etc.) — with a status
+dropdown (new/contacted/responded/client/not interested) and a delete
+button. Tested against mocked Firebase data via Playwright (all 4 lead
+shapes, tab filtering, status change, delete, wrong-PIN lockout) before
+shipping. Same `deploy-overlay.js` deploy mechanism as every other tool here.
+
+```
+curl -sL -o /tmp/keyleads.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-leads.sh && bash /tmp/keyleads.sh
+```
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
