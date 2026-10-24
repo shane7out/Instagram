@@ -282,6 +282,15 @@
     font-size:13.5px;font-weight:600;color:var(--ink-dim);background:var(--card);
   }
 
+  /* ---- results ---- */
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px;}
+  @media (max-width:760px){.stat-row{grid-template-columns:1fr;}}
+  .stat-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px 20px;
+  }
+  .stat-number{font-size:38px;font-weight:800;color:var(--key-light);line-height:1.1;}
+  .stat-label{margin-top:8px;font-size:14.5px;color:var(--ink-dim);}
+
   /* ---- locations ---- */
   .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   @media (max-width:700px){.loc-grid{grid-template-columns:1fr;}}
@@ -357,6 +366,7 @@
         <li><a href="#solutions">Solutions</a></li>
         <li><a href="#method">How It Works</a></li>
         <li><a href="#about">About</a></li>
+        <li><a href="#results">Results</a></li>
         <li><a href="#locations">Locations</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -378,6 +388,7 @@
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#method">How It Works</a></li>
       <li><a href="#about">About Shane</a></li>
+      <li><a href="#results">Results</a></li>
       <li><a href="#locations">Locations</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
@@ -706,15 +717,40 @@
           unglamorous infrastructure that businesses actually run on.</p>
         <p>For about ten years, Shane has also built restaurant-focused social media brands and audiences,
           growing real followings and helping local businesses get discovered.</p>
-        <div class="brand-list">
-          <span class="brand-pill">LasVegas_Restaurants</span>
-          <span class="brand-pill">OrangeCounty_Restaurants</span>
-          <span class="brand-pill">SanDiego_Restaurants</span>
-          <span class="brand-pill">and more</span>
-        </div>
         <p style="margin-top:18px;">Shane didn't enter technology because AI/SI became popular — he's applying
           decades of hands-on technology and business experience to what AI/SI can now actually do.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="wrap" id="results">
+    <div class="section-head">
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>Real Results</span>
+      <h2>Built real audiences for real businesses — before AI/SI was ever part of the pitch</h2>
+      <p>Shane's restaurant-focused social media brands reach real people today, not a slide deck of
+        projections. Growing something real and proving it works is the same approach behind every
+        AI/SI project Key Technologies takes on.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-number">200,000+</div>
+        <div class="stat-label">Combined Instagram followers across every brand Shane has built</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">124,000</div>
+        <div class="stat-label">Followers on LasVegas_Restaurants alone</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">10 yrs</div>
+        <div class="stat-label">Building and growing local-market brands — Las Vegas, Orange County, San Diego and more</div>
+      </div>
+    </div>
+    <div class="brand-list" style="margin-top:20px;">
+      <span class="brand-pill">LasVegas_Restaurants — 124,000 followers</span>
+      <span class="brand-pill">OrangeCounty_Restaurants</span>
+      <span class="brand-pill">SanDiego_Restaurants</span>
+      <span class="brand-pill">and more</span>
     </div>
   </section>
 
@@ -929,6 +965,7 @@
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#method">How It Works</a></li>
       <li><a href="#about">About</a></li>
+      <li><a href="#results">Results</a></li>
       <li><a href="#locations">Locations</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="privacy.html">Privacy</a></li>
