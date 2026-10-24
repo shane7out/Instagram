@@ -1,74 +1,41 @@
 #!/bin/bash
-# Add new restaurant/bar: Category 10 (@officialcategory10), Luke Combs'
-# honky-tonk - live music, food, spirits & sport - newly opened at Flamingo
-# Las Vegas (3555 Las Vegas Blvd S), confirmed via web search (Fox5 Vegas,
-# Pollstar, American Songwriter all report the Flamingo location, October
-# 2026 opening). Standard DM-visibility flow: dedupe check, allocate num,
-# write customrecord, set dashboard/status + dashboard/attempts.
+# Read-only diagnostic: check the live Deals site (classiccarsforsale-co.web.app)
+# cars.json freshness, same check as the 2026-10-24 diagnostic in
+# LVR-PROJECT-STATUS.md section 15. Does not write anything.
 set -e
-DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 
 node <<'NODE'
 const https = require('https');
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 
 function get(url) {
   return new Promise((resolve, reject) => {
     https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d)); }).on('error', reject);
   });
 }
-function put(url, body) {
-  return new Promise((resolve, reject) => {
-    const u = new URL(url);
-    const data = JSON.stringify(body);
-    const req = https.request(u, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) } }, r => {
-      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
-    });
-    req.on('error', reject); req.write(data); req.end();
-  });
-}
 
 (async () => {
-  const dupCheckRaw = await get(DB + '/dashboard_crec.json');
-  const existing = JSON.parse(dupCheckRaw) || {};
-  const dupe = Object.values(existing).find(r => r && (/category\s*10/i.test(r.name || '') || (r.instagram || '').toLowerCase().replace('@', '') === 'officialcategory10'));
-  if (dupe) {
-    console.log('ALREADY IN DATABASE - no duplicate created: ' + JSON.stringify(dupe));
-    return;
+  const raw = await get('https://classiccarsforsale-co.web.app/cars.json');
+  const data = JSON.parse(raw);
+  const entries = Array.isArray(data) ? data : Object.values(data);
+  console.log('Total entries:', entries.length);
+
+  const now = Date.now();
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  let freshCount = 0;
+  let newestDate = null;
+  let newestTs = 0;
+
+  for (const e of entries) {
+    const addedStr = e.added || e.addedDate || e.date;
+    if (!addedStr) continue;
+    const ts = new Date(addedStr).getTime();
+    if (isNaN(ts)) continue;
+    if (ts > newestTs) { newestTs = ts; newestDate = addedStr; }
+    if (now - ts <= THIRTY_DAYS) freshCount++;
   }
 
-  const [crecRaw, custRaw, stgRaw, delRaw] = await Promise.all([
-    get(DB + '/dashboard_crec.json?shallow=true'),
-    get(DB + '/customrecords.json?shallow=true'),
-    get(DB + '/dashboard_rest_stg_crec.json?shallow=true'),
-    get(DB + '/dashboard_deleted.json?shallow=true'),
-  ]);
-  const nums = [];
-  [crecRaw, custRaw, stgRaw, delRaw].forEach(raw => {
-    const obj = JSON.parse(raw) || {};
-    Object.keys(obj).forEach(k => { const n = parseInt(k, 10); if (!isNaN(n)) nums.push(n); });
-  });
-  let maxNum = nums.length ? Math.max(...nums) : 59999;
-  const num = Math.max(maxNum + 1, 60000);
-  console.log('allocated num: ' + num);
-
-  const record = {
-    num,
-    name: 'Category 10',
-    instagram: 'officialcategory10',
-    category: 'Bar & Live Music Venue',
-    city: 'Las Vegas',
-    address: '3555 Las Vegas Blvd S, Las Vegas, NV 89109 (Flamingo Las Vegas)',
-    status: 'pending',
-  };
-
-  const r1 = await put(DB + '/dashboard_crec/' + num + '.json', record);
-  console.log('dashboard_crec write: ' + r1.status);
-  const r2 = await put(DB + '/dashboard/status/' + num + '.json', 'pending');
-  console.log('dashboard/status write: ' + r2.status);
-  const r3 = await put(DB + '/dashboard/attempts/' + num + '.json', 0);
-  console.log('dashboard/attempts write: ' + r3.status);
-
-  console.log('DONE: added num ' + num + ' - Category 10 (@officialcategory10)');
-})().catch(e => { console.log('FATAL: ' + (e.stack || e.message)); process.exit(1); });
+  console.log('Newest added date found:', newestDate);
+  console.log('Entries within last 30 days (fresh):', freshCount);
+  console.log('Checked at (UTC):', new Date().toISOString());
+})().catch(e => { console.error('ERROR:', e.message); process.exit(1); });
 NODE
