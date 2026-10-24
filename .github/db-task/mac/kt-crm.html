@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key Technologies — Prospect CRM</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --green:#3ddc84; --yellow:#f0c239; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+
+  /* ---- PIN screen ---- */
+  #pin-screen{
+    position:fixed;inset:0;background:var(--bg);z-index:999;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  }
+  #pin-screen.hidden{display:none;}
+  .pin-logo{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--key-light);text-transform:uppercase;}
+  .pin-sub{font-size:13px;color:var(--ink-dim);margin-bottom:28px;}
+  .pin-dots{display:flex;gap:12px;margin-bottom:26px;}
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:background .15s,border-color .15s;}
+  .pin-dot.filled{background:var(--key-blue);border-color:var(--key-blue);}
+  .pin-dot.error{background:var(--red);border-color:var(--red);}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:230px;}
+  .pin-key{
+    height:58px;border-radius:12px;background:var(--card);border:1px solid var(--line);
+    color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;
+  }
+  .pin-key:active{background:var(--line);}
+  .pin-key.empty{background:transparent;border:none;cursor:default;}
+  .pin-msg{color:var(--red);font-size:13px;font-weight:600;margin-top:16px;min-height:18px;}
+
+  /* ---- app shell ---- */
+  #app{display:none;}
+  #app.visible{display:block;}
+  header{
+    position:sticky;top:0;z-index:10;background:rgba(7,17,31,.95);border-bottom:1px solid var(--line);
+    padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+  .brand svg{filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 10px rgba(22,143,255,.35));}
+  .add-btn{
+    background:var(--key-blue);color:#fff;border:none;border-radius:9px;padding:10px 16px;
+    font-size:14px;font-weight:700;cursor:pointer;
+  }
+  .add-btn:active{background:var(--key-light);}
+
+  .tabs{display:flex;gap:8px;padding:14px 18px 0;flex-wrap:wrap;}
+  .tab{
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;
+    font-size:13px;font-weight:600;color:var(--ink-dim);cursor:pointer;white-space:nowrap;
+  }
+  .tab.active{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  .stats-row{display:flex;gap:10px;padding:14px 18px 0;flex-wrap:wrap;}
+  .stat-chip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:12.5px;color:var(--ink-dim);}
+  .stat-chip b{color:var(--ink);font-size:14px;}
+
+  .list{padding:14px 18px 60px;display:flex;flex-direction:column;gap:10px;max-width:760px;margin:0 auto;}
+  .empty-note{color:var(--ink-dim);font-size:14px;padding:40px 10px;text-align:center;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .card-name{font-size:16px;font-weight:700;}
+  .card-vertical{
+    font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--key-light);margin-top:2px;
+  }
+  .card-meta{font-size:13px;color:var(--ink-dim);margin-top:8px;line-height:1.5;}
+  .card-notes{font-size:13px;color:var(--ink-dim);margin-top:8px;font-style:italic;}
+  .card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .card-actions a, .card-actions button{
+    background:var(--bg-2);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;
+    text-decoration:none;cursor:pointer;
+  }
+  .card-actions .copy-btn{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+  select.status-select{
+    background:var(--bg-2);border:1px solid var(--line);color:var(--ink);border-radius:8px;
+    padding:8px 10px;font-size:12.5px;font-weight:600;
+  }
+  .status-pending{color:var(--yellow);}
+  .status-contacted{color:var(--key-light);}
+  .status-responded{color:var(--green);}
+  .status-meeting{color:var(--green);}
+  .status-client{color:var(--green);}
+  .status-dead{color:var(--ink-dim);}
+  .del-btn{color:var(--red)!important;}
+
+  /* ---- add/edit modal ---- */
+  #modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;
+    align-items:flex-end;justify-content:center;
+  }
+  #modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--bg-2);border-top:1px solid var(--line);border-radius:18px 18px 0 0;
+    padding:20px 18px 28px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
+  }
+  .modal h2{font-size:17px;margin:0 0 16px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
+  .field input, .field select, .field textarea{
+    width:100%;background:var(--card);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;
+  }
+  .field textarea{min-height:70px;resize:vertical;}
+  .modal-actions{display:flex;gap:10px;margin-top:16px;}
+  .modal-actions button{flex:1;border-radius:9px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;border:1px solid var(--line);}
+  .btn-save{background:var(--key-blue);color:#fff;border-color:var(--key-blue);}
+  .btn-cancel{background:transparent;color:var(--ink-dim);}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--card);border:1px solid var(--key-blue);color:var(--ink);
+    padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:999;
+    opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- ============ PIN SCREEN ============ -->
+<div id="pin-screen">
+  <div class="pin-logo">Key Technologies</div>
+  <div class="pin-sub">Prospect CRM</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+    <div class="pin-dot" id="pd4"></div>
+    <div class="pin-dot" id="pd5"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-k="1">1</button>
+    <button class="pin-key" data-k="2">2</button>
+    <button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button>
+    <button class="pin-key" data-k="5">5</button>
+    <button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button>
+    <button class="pin-key" data-k="8">8</button>
+    <button class="pin-key" data-k="9">9</button>
+    <div class="pin-key empty"></div>
+    <button class="pin-key" data-k="0">0</button>
+    <button class="pin-key del" data-k="del">⌫</button>
+  </div>
+  <div class="pin-msg" id="pin-msg"></div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header>
+    <div class="brand">
+      <svg width="26" height="18" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      Key Technologies CRM
+    </div>
+    <button class="add-btn" id="openAddBtn">+ Add Prospect</button>
+  </header>
+
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-v="all">All</div>
+    <div class="tab" data-v="Real Estate">Real Estate</div>
+    <div class="tab" data-v="Medical/Dental/Aesthetic">Medical/Dental</div>
+    <div class="tab" data-v="Law">Law</div>
+    <div class="tab" data-v="E-commerce/DTC">E-commerce</div>
+  </div>
+
+  <div class="list" id="list">
+    <div class="empty-note">Loading…</div>
+  </div>
+</div>
+
+<!-- ============ ADD / EDIT MODAL ============ -->
+<div id="modal-overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add Prospect</h2>
+    <input type="hidden" id="f-num">
+    <div class="field">
+      <label for="f-name">Business / Contact Name</label>
+      <input id="f-name" type="text" placeholder="e.g. Sarah Chen, South Bay Realty">
+    </div>
+    <div class="field">
+      <label for="f-vertical">Vertical</label>
+      <select id="f-vertical">
+        <option value="Real Estate">Real Estate</option>
+        <option value="Medical/Dental/Aesthetic">Medical/Dental/Aesthetic</option>
+        <option value="Law">Law</option>
+        <option value="E-commerce/DTC">E-commerce/DTC</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-phone">Phone</label>
+      <input id="f-phone" type="tel" placeholder="(555) 555-5555">
+    </div>
+    <div class="field">
+      <label for="f-email">Email</label>
+      <input id="f-email" type="email" placeholder="name@business.com">
+    </div>
+    <div class="field">
+      <label for="f-address">Address / Area</label>
+      <input id="f-address" type="text" placeholder="Manhattan Beach, CA">
+    </div>
+    <div class="field">
+      <label for="f-notes">Notes</label>
+      <textarea id="f-notes" placeholder="How you found them, context, etc."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelBtn">Cancel</button>
+      <button class="btn-save" id="saveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ================= CONFIG =================
+  var PIN = '702950'; // change this any time - just edit this line and redeploy
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var NODE_PATH = '/kt_crm/prospects'; // deliberately separate from every dashboard_* node
+
+  // ================= OUTREACH SCRIPTS (per vertical) =================
+  var SCRIPTS = {
+    'Real Estate': "Hi [Name] - I'm Shane with Key Technologies. I build custom CRM and lead-follow-up systems for real estate teams in [Manhattan Beach/the South Bay / Las Vegas]. Most agents lose deals to slow follow-up, not bad leads - I build systems that catch that automatically before it costs you a deal. Worth 15 minutes to see if it'd fit your pipeline?",
+    'Medical/Dental/Aesthetic': "Hi [Name] - I'm Shane with Key Technologies. I build custom patient CRM, booking automation and review management for practices like yours, backed by 25+ years in security and networking - not just a marketing agency bolt-on. If patient follow-up or scheduling is eating staff time, I'd like to show you what I've built for other practices.",
+    'Law': "Hi [Name] - I'm Shane with Key Technologies. I build custom intake CRM, document automation and phone/text answering for law firms, so no lead sits untouched between the first call and the retainer. I'd like to show you what that looks like for a firm your size.",
+    'E-commerce/DTC': "Hi [Name] - I'm Shane with Key Technologies. I build custom automation and AI-assisted content systems for DTC brands - email/SMS flows, customer data systems, content production that doesn't depend on an agency retainer. Worth a quick look at what I've built?"
+  };
+
+  // ================= PIN LOGIC =================
+  var pinBuf = '';
+  var dots = [document.getElementById('pd0'),document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3'),document.getElementById('pd4'),document.getElementById('pd5')];
+  function renderDots(err){
+    dots.forEach(function(d,i){
+      d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : '');
+    });
+  }
+  function pinSubmit(){
+    if (pinBuf === PIN) {
+      document.getElementById('pin-screen').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      try { sessionStorage.setItem('kt_crm_unlocked', '1'); } catch(e){}
+      loadProspects();
+    } else {
+      renderDots(true);
+      document.getElementById('pin-msg').textContent = 'Wrong PIN';
+      setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500);
+    }
+  }
+  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-k');
+      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
+      if (pinBuf.length >= 6) return;
+      pinBuf += k;
+      renderDots(false);
+      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
+    });
+  });
+  try {
+    if (sessionStorage.getItem('kt_crm_unlocked') === '1') {
+      document.getElementById('pin-screen').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      loadProspects();
+    }
+  } catch(e){}
+
+  // ================= DATA =================
+  var prospects = {};
+  var activeTab = 'all';
+
+  function fbGet(path) {
+    return fetch(DB + path + '.json').then(function(r){ return r.json(); });
+  }
+  function fbPut(path, body) {
+    return fetch(DB + path + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  }
+  function fbDelete(path) {
+    return fetch(DB + path + '.json', { method: 'DELETE' });
+  }
+
+  function loadProspects() {
+    fbGet(NODE_PATH).then(function(data){
+      prospects = data || {};
+      render();
+    }).catch(function(){
+      document.getElementById('list').innerHTML = '<div class="empty-note">Could not load - check connection.</div>';
+    });
+  }
+
+  function nextNum() {
+    var nums = Object.keys(prospects).map(function(k){ return parseInt(k,10); }).filter(function(n){ return !isNaN(n); });
+    return nums.length ? Math.max.apply(null, nums) + 1 : 1;
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
+
+  // ================= RENDER =================
+  function render() {
+    var list = Object.keys(prospects).map(function(k){ return prospects[k]; }).filter(Boolean);
+    list.sort(function(a,b){ return (b.num||0) - (a.num||0); });
+
+    var filtered = activeTab === 'all' ? list : list.filter(function(p){ return p.vertical === activeTab; });
+
+    // stats
+    var counts = { pending: 0, contacted: 0, responded: 0, meeting: 0, client: 0 };
+    list.forEach(function(p){ if (counts[p.status] !== undefined) counts[p.status]++; });
+    document.getElementById('statsRow').innerHTML =
+      '<div class="stat-chip"><b>' + list.length + '</b> total</div>' +
+      '<div class="stat-chip"><b>' + counts.pending + '</b> not contacted</div>' +
+      '<div class="stat-chip"><b>' + counts.contacted + '</b> contacted</div>' +
+      '<div class="stat-chip"><b>' + counts.responded + '</b> responded</div>' +
+      '<div class="stat-chip"><b>' + counts.meeting + '</b> meeting booked</div>' +
+      '<div class="stat-chip"><b>' + counts.client + '</b> client</div>';
+
+    var listEl = document.getElementById('list');
+    if (!filtered.length) {
+      listEl.innerHTML = '<div class="empty-note">No prospects here yet. Tap "+ Add Prospect" to start.</div>';
+      return;
+    }
+    listEl.innerHTML = filtered.map(cardHtml).join('');
+
+    // wire up status selects, delete buttons, copy-script buttons
+    listEl.querySelectorAll('.status-select').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        var num = sel.getAttribute('data-num');
+        prospects[num].status = sel.value;
+        fbPut(NODE_PATH + '/' + num, prospects[num]).then(function(){ render(); });
+      });
+    });
+    listEl.querySelectorAll('.del-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var num = btn.getAttribute('data-num');
+        if (!confirm('Remove ' + (prospects[num] && prospects[num].name) + '?')) return;
+        fbDelete(NODE_PATH + '/' + num).then(function(){
+          delete prospects[num];
+          render();
+        });
+      });
+    });
+    listEl.querySelectorAll('.copy-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var num = btn.getAttribute('data-num');
+        var p = prospects[num];
+        var script = (SCRIPTS[p.vertical] || '').replace('[Name]', p.name || '[Name]');
+        copyToClipboard(script);
+      });
+    });
+    listEl.querySelectorAll('.edit-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ openModal(prospects[btn.getAttribute('data-num')]); });
+    });
+  }
+
+  function statusLabel(s) {
+    return { pending:'Not contacted', contacted:'Contacted', responded:'Responded', meeting:'Meeting booked', client:'Client', dead:'Not interested' }[s] || 'Not contacted';
+  }
+
+  function cardHtml(p) {
+    var phoneAction = p.phone ? '<a href="tel:' + p.phone.replace(/[^0-9+]/g,'') + '">Call</a>' : '';
+    var emailAction = p.email ? '<a href="mailto:' + p.email + '">Email</a>' : '';
+    return '' +
+      '<div class="card">' +
+        '<div class="card-top">' +
+          '<div>' +
+            '<div class="card-name">' + escapeHtml(p.name || '(no name)') + '</div>' +
+            '<div class="card-vertical">' + escapeHtml(p.vertical || '') + '</div>' +
+          '</div>' +
+          '<select class="status-select status-' + (p.status||'pending') + '" data-num="' + p.num + '">' +
+            ['pending','contacted','responded','meeting','client','dead'].map(function(s){
+              return '<option value="' + s + '"' + (p.status===s?' selected':'') + '>' + statusLabel(s) + '</option>';
+            }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="card-meta">' +
+          (p.phone ? p.phone + '<br>' : '') +
+          (p.email ? p.email + '<br>' : '') +
+          (p.address ? p.address : '') +
+        '</div>' +
+        (p.notes ? '<div class="card-notes">' + escapeHtml(p.notes) + '</div>' : '') +
+        '<div class="card-actions">' +
+          phoneAction + emailAction +
+          '<button class="copy-btn" data-num="' + p.num + '">Copy outreach script</button>' +
+          '<button class="edit-btn" data-num="' + p.num + '">Edit</button>' +
+          '<button class="del-btn" data-num="' + p.num + '">Remove</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ showToast('Script copied'); }).catch(function(){ copyFallback(text); });
+    } else {
+      copyFallback(text);
+    }
+  }
+  function copyFallback(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); showToast('Script copied'); }
+    catch(e) { showToast('Copy failed - select and copy manually'); }
+    document.body.removeChild(ta);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  // ================= TABS =================
+  document.getElementById('tabs').addEventListener('click', function(e){
+    var tab = e.target.closest('.tab');
+    if (!tab) return;
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    tab.classList.add('active');
+    activeTab = tab.getAttribute('data-v');
+    render();
+  });
+
+  // ================= ADD / EDIT MODAL =================
+  var editingNum = null;
+  function openModal(p) {
+    editingNum = p ? p.num : null;
+    document.getElementById('modalTitle').textContent = p ? 'Edit Prospect' : 'Add Prospect';
+    document.getElementById('f-name').value = p ? (p.name||'') : '';
+    document.getElementById('f-vertical').value = p ? (p.vertical||'Real Estate') : (activeTab !== 'all' ? activeTab : 'Real Estate');
+    document.getElementById('f-phone').value = p ? (p.phone||'') : '';
+    document.getElementById('f-email').value = p ? (p.email||'') : '';
+    document.getElementById('f-address').value = p ? (p.address||'') : '';
+    document.getElementById('f-notes').value = p ? (p.notes||'') : '';
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+  function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingNum = null; }
+
+  document.getElementById('openAddBtn').addEventListener('click', function(){ openModal(null); });
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', function(e){
+    if (e.target.id === 'modal-overlay') closeModal();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', function(){
+    var name = document.getElementById('f-name').value.trim();
+    if (!name) { alert('Name is required'); return; }
+    var num = editingNum || nextNum();
+    var record = {
+      num: num,
+      name: name,
+      vertical: document.getElementById('f-vertical').value,
+      phone: document.getElementById('f-phone').value.trim(),
+      email: document.getElementById('f-email').value.trim(),
+      address: document.getElementById('f-address').value.trim(),
+      notes: document.getElementById('f-notes').value.trim(),
+      status: (prospects[num] && prospects[num].status) || 'pending',
+      addedAt: (prospects[num] && prospects[num].addedAt) || new Date().toISOString()
+    };
+    fbPut(NODE_PATH + '/' + num, record).then(function(){
+      prospects[num] = record;
+      closeModal();
+      render();
+      showToast('Saved');
+    }).catch(function(){ alert('Save failed - check connection'); });
+  });
+</script>
+</body>
+</html>

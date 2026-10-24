@@ -122,6 +122,24 @@ dashboard redeploy, the pill just starts working.
 curl -sL -o /tmp/keypill.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-add-key-pill.sh && bash /tmp/keypill.sh
 ```
 
+### NEW — Key Technologies Prospect CRM, standalone page + login
+Deploys a brand-new, separate tool at `lvr-data-a60c1.web.app/kt-crm.html` —
+its own PIN (702950, easy to change), its own Firebase node
+(`/kt_crm/prospects`, completely separate from every `dashboard_*` restaurant
+node). Built 2026-10-24 after Shane decided restaurants aren't the real
+target for Key Technologies anymore (see §16) — this is for tracking
+high-end prospects (real estate, medical/dental/aesthetic, law, e-commerce)
+instead. Add/edit/remove prospects, a status pipeline (not contacted →
+contacted → responded → meeting booked → client / not interested), one-tap
+call/email, and a "copy outreach script" button per vertical with a
+tailored script already written in. Same Firebase project/database Shane
+already built, deployed through the same proven `deploy-overlay.js` the
+dashboard patches use — just one more file in the same directory.
+
+```
+curl -sL -o /tmp/ktcrm.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-kt-crm.sh && bash /tmp/ktcrm.sh
+```
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
@@ -669,6 +687,37 @@ done so far, in case a fresh session picks this up mid-stream:
   (Synthflow, forwarding (949) 899-3059 on no-answer) is in progress —
   script is written, waiting on the owner to create the Synthflow account
   and send back the number.
+
+---
+
+## 16. ⚠️ STANDING DIRECTION (2026-10-24) — Key Technologies is NOT targeting restaurants
+
+**The owner's own words: "The more I was in the restaurant game, the more I
+learned that restaurant owners are not that smart when it comes to
+technology or marketing... I really want to go back to what I was doing
+before, going after very high-end clients."** This firms up the open
+question from §13 ("restaurants/hospitality are not his main target
+audience") into a real decision — treat it as settled, not open, going
+forward.
+
+**Key Technologies' actual target verticals** (owner picked all four when
+asked to choose): Real Estate (agents/brokerages), Medical/Dental/Aesthetic
+practices, Law firms, E-commerce/DTC brands. Not restaurants. The
+restaurant/LVR database and business stays exactly as it is — this doesn't
+change anything about LVR, it's specifically about who Key Technologies
+markets to.
+
+**Built in response**: a standalone Key Technologies Prospect CRM
+(`kt-crm.html`, deploy script in §3 above) — its own PIN, its own Firebase
+node (`/kt_crm/prospects`), completely separate from every restaurant
+node, for tracking prospects across those four verticals with a status
+pipeline and a tailored outreach script per vertical built in. This is the
+tool for the "what text are we sending out" question going forward, not
+the templates in the Go-to-Market Strategy doc — those were written in a
+small-local-business tone before this pivot and are now out of date for
+the actual target buyer (a real estate broker or law firm doesn't need the
+same hand-holding as a taco shop owner). Revisit/rewrite that doc's
+templates next time it comes up rather than trusting them as-is.
 
 ---
 
