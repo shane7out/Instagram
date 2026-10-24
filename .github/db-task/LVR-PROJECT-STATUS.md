@@ -626,6 +626,52 @@ done so far, in case a fresh session picks this up mid-stream:
 
 ---
 
+## 15. Status as of 2026-10-24
+
+- **Owner ran three pending Mac deploy scripts tonight.** Results, verified
+  (not just trusted from terminal output):
+  - **Dashboard patches**: confirmed live, `APP_VERSION 450 → 451`, all
+    expected markers present (`rsLoadFirebaseStaging`, `igSuggestAccept`,
+    `s-badig-sug`, staging tab restored). Clean.
+  - **Dating site instant-swipe patch**: already live from an earlier
+    session — this run just confirmed it (`DATEQS01: 1`, old sign-up
+    code: `0`). No actual change needed.
+  - **Deals site (`setup-deals-auto.sh`) did NOT fix the stale/empty grid.**
+    The terminal output looked like a success (image dedup/upload pass,
+    "25223/25223"), but that step only checks which car *images* already
+    exist on the host — it's not evidence of a new scrape. Verified
+    independently via a one-off `task.sh` GH Actions check against the
+    live `cars.json`: still 0 entries inside the 30-day freshness window,
+    newest `added` date still `2026-09-21` — identical to the 2026-10-21
+    steady state in section 14. The LaunchAgent reinstall either isn't
+    triggering a real Craigslist harvest, or the harvest is running and
+    finding nothing (Craigslist blocking the scraper remains the leading
+    suspect, as already flagged). **Still needs a real debugging session**
+    — rerunning `setup-deals-auto.sh` again is not expected to help by
+    itself.
+  - **`enable-pages.yml` (the one-shot workflow from the St Rita's days
+    that tried to flip GitHub Pages on via the Actions `GITHUB_TOKEN`) was
+    already tried and already removed** — GitHub returns a 403, Actions
+    cannot create a Pages site this way. Confirmed via git history, not
+    re-attempted. The GitHub Pages "Source: GitHub Actions" toggle for
+    `key-technologies-pages.yml` still has no path except the owner
+    flipping it manually in repo Settings → Pages.
+- **Key Technologies (separate from LVR, same repo) got a lot of real
+  content work tonight**: a new Results section with real numbers (200,000+
+  combined IG followers, 124,000 on LasVegas_Restaurants alone), a footer
+  phone link, a mobile-menu bug fix (position:fixed was broken by the
+  header's `backdrop-filter` creating an unexpected containing block —
+  real CSS bug, verified with a Playwright test before/after, not a
+  guess), a "Custom CRM & Lead Management" service rename pushing Shane's
+  own CRM build as a sellable product, AI image/video content generation
+  added to the social/marketing services, and a custom AI training
+  software line added to staff training. An after-hours AI voice agent
+  (Synthflow, forwarding (949) 899-3059 on no-answer) is in progress —
+  script is written, waiting on the owner to create the Synthflow account
+  and send back the number.
+
+---
+
 *If you're a new Claude session reading this cold: read this whole file, then
 ask the owner what they want to work on next rather than re-diagnosing
 everything above from zero — it's all still accurate as of the date at the
