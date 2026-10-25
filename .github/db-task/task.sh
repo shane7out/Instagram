@@ -1,52 +1,59 @@
 #!/bin/bash
-# Read-only diagnostic: hit the exact Craigslist search API the Deals scraper
-# uses (from _tools/watch-houses.js, area 26 = lasvegas) and report what comes
-# back - status code, headers, and a snippet of the body - so we can tell
-# whether Craigslist is blocking the request or something else is wrong.
+# Read-only diagnostic: check whether Shane has run any of the pending Mac
+# deploy scripts since they were handed to him - checks the live Deals site
+# freshness, whether the 3 new standalone tools are reachable, and reads the
+# most recent _debug/diag.json log any deploy script would have posted.
 set -e
 
 node <<'NODE'
 const https = require('https');
 
-const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)';
-const AREA = 26; // lasvegas
-const MINP = 10000, MAXP = 99000000;
-const url = 'https://sapi.craigslist.org/web/v8/postings/search/full?batch=' + AREA +
-  '-0-360-0-0&cc=US&lang=en&searchPath=reo&query=' + encodeURIComponent('house') +
-  '&min_price=' + MINP + '&max_price=' + MAXP;
-
-function fetchOnce(u) {
+function get(url) {
   return new Promise((resolve, reject) => {
-    const req = https.get(u, { headers: { 'user-agent': UA, accept: 'application/json' } }, r => {
-      const chunks = [];
-      r.on('data', c => chunks.push(c));
-      r.on('end', () => resolve({ status: r.statusCode, headers: r.headers, buf: Buffer.concat(chunks) }));
-    });
-    req.on('error', reject);
-    req.setTimeout(30000, () => req.destroy(new Error('timeout')));
+    https.get(url, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({status: r.statusCode, body: d})); }).on('error', reject);
   });
 }
 
 (async () => {
-  console.log('Requesting:', url);
-  const r = await fetchOnce(url).catch(e => ({ error: e.message }));
-  if (r.error) {
-    console.log('REQUEST FAILED (network-level):', r.error);
-    return;
-  }
-  console.log('HTTP status:', r.status);
-  console.log('Content-Type:', r.headers['content-type']);
-  console.log('Content-Length (actual):', r.buf.length);
-  const bodyStr = r.buf.toString('utf8');
-  console.log('First 1000 chars of body:');
-  console.log(bodyStr.slice(0, 1000));
-  console.log('---');
+  // 1) Deals site freshness
   try {
-    const parsed = JSON.parse(bodyStr);
-    console.log('Parsed as JSON OK. Top-level keys:', Object.keys(parsed));
-    console.log('data.items length:', (parsed.data && parsed.data.items || []).length);
-  } catch (e) {
-    console.log('FAILED to parse body as JSON:', e.message);
+    const r = await get('https://classiccarsforsale-co.web.app/cars.json');
+    const data = JSON.parse(r.body);
+    const entries = Array.isArray(data) ? data : Object.values(data);
+    const now = Date.now(), THIRTY = 30*24*60*60*1000;
+    let newest = '', newestTs = 0, fresh = 0;
+    for (const e of entries) {
+      const a = e.added || e.addedDate || e.date; if (!a) continue;
+      const ts = new Date(a).getTime(); if (isNaN(ts)) continue;
+      if (ts > newestTs) { newestTs = ts; newest = a; }
+      if (now - ts <= THIRTY) fresh++;
+    }
+    console.log('DEALS: total', entries.length, '| newest added', newest, '| fresh(<=30d)', fresh);
+  } catch (e) { console.log('DEALS check failed:', e.message); }
+
+  // 2) Standalone tools reachability
+  for (const path of ['kt-crm.html', 'key-leads.html', 'key-advertisers.html']) {
+    try {
+      const r = await get('https://lvr-data-a60c1.web.app/' + path);
+      console.log('TOOL', path, ':', r.status, '|', r.body.length, 'bytes');
+    } catch (e) { console.log('TOOL', path, 'check failed:', e.message); }
   }
+
+  // 3) Main dashboard - check for the new KEYTECH markers (confirms the dashboard patch landed)
+  try {
+    const r = await get('https://lvr-data-a60c1.web.app/');
+    console.log('DASHBOARD has KEYTECH-PIN-REDIRECT marker:', r.body.includes('KEYTECH-PIN-REDIRECT-v1'));
+    console.log('DASHBOARD has KEYTECH-FLAGQUEUE-BTN marker:', r.body.includes('KEYTECH-FLAGQUEUE-BTN-v1'));
+    const vm = r.body.match(/APP_VERSION=(\d+)/);
+    console.log('DASHBOARD APP_VERSION:', vm ? vm[1] : 'not found');
+  } catch (e) { console.log('DASHBOARD check failed:', e.message); }
+
+  // 4) Most recent diag log any deploy script would have posted
+  try {
+    const r = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json');
+    const body = r.body && r.body !== 'null' ? r.body.slice(-1500) : '(empty)';
+    console.log('LATEST DIAG LOG (last 1500 chars):');
+    console.log(body);
+  } catch (e) { console.log('diag check failed:', e.message); }
 })();
 NODE
