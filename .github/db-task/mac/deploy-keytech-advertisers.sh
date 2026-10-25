@@ -1,0 +1,157 @@
+#!/bin/bash
+# One-shot (run on the Mac): the Key Technologies advertiser-marketing system
+# Shane asked for.
+#   - PIN 137901 on the main dashboard login now redirects to a new
+#     key-advertisers.html tool instead of unlocking the dashboard
+#   - That tool shows every APPROVED advertiser (same live dashboard_adv_crec
+#     list every login reads from), with search/category filters, its own
+#     outreach-status tracker, and a "Flag for Review" button - no delete
+#     power at all
+#   - The main dashboard's advertiser cards get the SAME "Flag for Review"
+#     button in friend/co-editor mode (Zach), replacing reliance on the
+#     existing "Problem" button, which does not actually reach the owner for
+#     friend sessions (checked: _advFbPatch deliberately no-ops for isFriend)
+#   - Owner-only "Flagged N" button + review modal: Confirm sends the record
+#     to the existing Bad Records bucket (advMainToNeedFixed - already
+#     correctly owner-only, already correctly removes it from every view),
+#     Dismiss just clears the flag
+#
+# Same safety discipline as every other dashboard patch here: pristine
+# backup before touching anything, every patcher's exit code checked, every
+# inline script syntax-checked before deploy, full rollback on any failure,
+# live verification after.
+set +e
+export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
+DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
+RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
+DASH="/Users/mac/lv-dash-work"
+LOG=/tmp/keytechadvdeploy.txt
+: > "$LOG"
+
+cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
+
+IDX="index.html"; [ -f "$IDX" ] || IDX="$(ls *.html 2>/dev/null | grep -v key-advertisers | grep -v key-leads | grep -v kt-crm | head -1)"
+echo "dashboard file: $IDX ($(wc -c < "$IDX") bytes)" >> "$LOG"
+echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
+
+# ---------------------------------------------------------------------------
+# 1) new standalone tool (doesn't touch the dashboard - download + syntax
+#    check on its own, no rollback needed if this part fails, just don't ship it)
+# ---------------------------------------------------------------------------
+curl -sL -o key-advertisers.html "$RAWB/key-advertisers.html"
+echo "key-advertisers.html: $(wc -c < key-advertisers.html) bytes" >> "$LOG"
+node <<'NODE' >> "$LOG" 2>&1
+const fs = require('fs'), cp = require('child_process');
+const s = fs.readFileSync('key-advertisers.html', 'utf8');
+const scripts = [...s.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+if (!scripts.length) { console.log('NO SCRIPT BLOCK FOUND in key-advertisers.html'); process.exit(2); }
+fs.writeFileSync('/tmp/_keyadv_block.js', scripts.join('\n;\n'));
+const r = cp.spawnSync('node', ['--check', '/tmp/_keyadv_block.js'], { encoding: 'utf8' });
+if (r.status) { console.log('key-advertisers.html SYNTAX CHECK FAILED:\n' + (r.stderr || '')); process.exit(2); }
+console.log('key-advertisers.html syntax check: OK');
+NODE
+if [ "$?" != "0" ]; then
+  echo "key-advertisers.html failed its syntax check - removing it, not deploying it" >> "$LOG"
+  rm -f key-advertisers.html
+  KEYADV_FAIL=1
+fi
+
+# ---------------------------------------------------------------------------
+# 2) patch the live dashboard (pristine backup first, full rollback on any failure)
+# ---------------------------------------------------------------------------
+PRISTINE="$IDX.pristine-$(date -u +%Y%m%dT%H%M%SZ)"
+cp "$IDX" "$PRISTINE"
+echo "pristine copy: $PRISTINE ($(wc -c < "$PRISTINE") bytes)" >> "$LOG"
+
+curl -sL -o /tmp/patch-dashboard-keytech.js "$RAWB/patch-dashboard-keytech.js"
+node /tmp/patch-dashboard-keytech.js "$IDX" >> "$LOG" 2>&1
+RC=$?
+echo "   patch-dashboard-keytech.js exit: $RC" >> "$LOG"
+if [ "$RC" != "0" ]; then
+  echo "PATCH REPORTED A FAILURE — restoring and stopping, nothing deployed" >> "$LOG"
+  cp "$PRISTINE" "$IDX"
+  node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keytechadvdeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT")).catch(function(){})'
+  echo "==== stopped ===="; cat "$LOG"; exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 3) sanity: every inline script in the patched dashboard must still parse
+# ---------------------------------------------------------------------------
+IDX="$IDX" node <<'NODE' >> "$LOG" 2>&1
+const fs=require('fs'), cp=require('child_process');
+const s=fs.readFileSync(process.env.IDX,'utf8');
+const re=/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g;
+let m,n=0,bad=0;
+while((m=re.exec(s))){
+  if(/application\/ld\+json/.test(m[0])||!m[1].trim())continue;
+  n++; fs.writeFileSync('/tmp/_blk.js',m[1]);
+  const r=cp.spawnSync('node',['--check','/tmp/_blk.js'],{encoding:'utf8'});
+  if(r.status){bad++;console.log('SCRIPT BLOCK '+n+' FAILED:\n'+(r.stderr||'').split('\n').slice(0,4).join('\n'));}
+}
+console.log('inline scripts checked: '+n+', failures: '+bad);
+if(bad) process.exit(2);
+NODE
+if [ "$?" != "0" ]; then
+  echo "SYNTAX CHECK FAILED — restoring and stopping, nothing deployed" >> "$LOG"
+  cp "$PRISTINE" "$IDX"
+  node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keytechadvdeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT")).catch(function(){})'
+  echo "==== stopped ===="; cat "$LOG"; exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 4) cache-bust so phones actually pick it up
+# ---------------------------------------------------------------------------
+IDX="$IDX" node <<'NODE' >> "$LOG" 2>&1
+const fs=require('fs');
+const F=process.env.IDX;
+let s=fs.readFileSync(F,'utf8');
+const vm=s.match(/APP_VERSION\s*=\s*(\d+)/);
+if(vm){
+  const nv=parseInt(vm[1],10)+1;
+  s=s.replace(/APP_VERSION\s*=\s*\d+/,'APP_VERSION='+nv);
+  fs.writeFileSync(F,s);
+  console.log('APP_VERSION '+vm[1]+' -> '+nv);
+  try{
+    if(fs.existsSync('version.json')){
+      fs.writeFileSync('version.json',JSON.stringify({v:nv}));
+      console.log('version.json -> {"v":'+nv+'}');
+    }
+  }catch(e){ console.log('version.json: '+e.message); }
+} else console.log('APP_VERSION not found — not bumped');
+NODE
+
+# ---------------------------------------------------------------------------
+# 5) deploy + verify
+# ---------------------------------------------------------------------------
+DEP="$(ls deploy-overlay.js 2>/dev/null | head -1)"
+[ -z "$DEP" ] && DEP="$(ls *overlay*.js deploy*.js 2>/dev/null | head -1)"
+if [ -n "$DEP" ]; then
+  echo "-- deploying ($DEP) --" >> "$LOG"
+  node "$DEP" >> "$LOG" 2>&1
+else
+  echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"
+fi
+
+sleep 3
+curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live-dash.html
+echo "-- live check: dashboard --" >> "$LOG"
+echo "live version : $(grep -ao 'APP_VERSION=[0-9]*' /tmp/live-dash.html | head -1)" >> "$LOG"
+for MARK in 'KEYTECH-PIN-REDIRECT-v1' 'KEYTECH-FLAG-BTN-v1' 'KEYTECH-FLAGQUEUE-JS-v1' 'KEYTECH-FLAGQUEUE-BTN-v1' 'KEYTECH-FLAGQUEUE-MODAL-v1'; do
+  echo "live has $MARK : $(grep -c "$MARK" /tmp/live-dash.html)" >> "$LOG"
+done
+
+echo "-- live check: key-advertisers.html --" >> "$LOG"
+if [ -z "$KEYADV_FAIL" ]; then
+  echo "live /key-advertisers.html status: $(curl -s -o /tmp/keyadv-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/key-advertisers.html)" >> "$LOG"
+  echo "live has PIN screen: $(grep -c 'id=\"pin-screen\"' /tmp/keyadv-live.html 2>/dev/null || echo 0)" >> "$LOG"
+  echo "live has ADVERTISERS title: $(grep -c 'KEY TECHNOLOGIES — ADVERTISERS' /tmp/keyadv-live.html 2>/dev/null || echo 0)" >> "$LOG"
+else
+  echo "SKIPPED - key-advertisers.html failed its syntax check earlier, was not deployed" >> "$LOG"
+fi
+
+echo "" >> "$LOG"
+echo "New PIN: 137901 — enter on the main dashboard login to go straight to the advertiser tool." >> "$LOG"
+echo "Same tool's own direct URL: https://lvr-data-a60c1.web.app/key-advertisers.html (PIN 137901)" >> "$LOG"
+
+node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keytechadvdeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
+echo "==== done ===="; cat "$LOG"

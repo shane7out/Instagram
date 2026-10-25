@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key Technologies — Advertisers</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --green:#3ddc84; --yellow:#f0c239; --red:#ff6b6b; --flag:#d84315;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+
+  /* ---- PIN screen ---- */
+  #pin-screen{
+    position:fixed;inset:0;background:var(--bg);z-index:999;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  }
+  #pin-screen.hidden{display:none;}
+  .pin-logo{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--key-light);text-transform:uppercase;}
+  .pin-sub{font-size:13px;color:var(--ink-dim);margin-bottom:28px;}
+  .pin-dots{display:flex;gap:12px;margin-bottom:26px;}
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:background .15s,border-color .15s;}
+  .pin-dot.filled{background:var(--key-blue);border-color:var(--key-blue);}
+  .pin-dot.error{background:var(--red);border-color:var(--red);}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:230px;}
+  .pin-key{
+    height:58px;border-radius:12px;background:var(--card);border:1px solid var(--line);
+    color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;
+  }
+  .pin-key:active{background:var(--line);}
+  .pin-key.empty{background:transparent;border:none;cursor:default;}
+  .pin-msg{color:var(--red);font-size:13px;font-weight:600;margin-top:16px;min-height:18px;}
+
+  /* ---- app shell ---- */
+  #app{display:none;}
+  #app.visible{display:block;}
+  header{
+    position:sticky;top:0;z-index:10;background:rgba(7,17,31,.95);border-bottom:1px solid var(--line);
+    padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+  .brand svg{filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 10px rgba(22,143,255,.35));}
+  .refresh-btn{
+    background:transparent;color:var(--ink-dim);border:1px solid var(--line);border-radius:9px;padding:9px 14px;
+    font-size:13px;font-weight:700;cursor:pointer;
+  }
+  .refresh-btn:active{border-color:var(--key-light);color:var(--key-light);}
+
+  .toolbar{padding:14px 18px 0;max-width:720px;margin:0 auto;}
+  .search-box{
+    width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:11px 14px;color:var(--ink);font-size:14px;
+  }
+  .search-box::placeholder{color:var(--ink-dim);}
+
+  .stats-row{display:flex;gap:8px;padding:12px 18px 0;flex-wrap:wrap;max-width:720px;margin:0 auto;}
+  .stat-chip{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--ink-dim);}
+  .stat-chip b{color:var(--ink);font-size:14px;}
+
+  .cat-tabs{display:flex;gap:8px;padding:14px 18px 0;flex-wrap:wrap;overflow-x:auto;max-width:720px;margin:0 auto;}
+  .cat-tab{
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+    font-size:13px;color:var(--ink-dim);cursor:pointer;white-space:nowrap;
+  }
+  .cat-tab.active{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  #list{padding:14px 18px 40px;display:flex;flex-direction:column;gap:12px;max-width:720px;margin:0 auto;}
+  .empty-note{color:var(--ink-dim);text-align:center;padding:40px 10px;font-size:14px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .card.flagged{border-color:var(--flag);}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .card-name{font-size:16px;font-weight:800;}
+  .card-cat{display:inline-block;margin-top:3px;font-size:11px;font-weight:700;letter-spacing:.03em;
+    text-transform:uppercase;color:var(--key-light);background:rgba(22,143,255,.12);border-radius:5px;padding:2px 7px;}
+  .status-select{
+    background:var(--bg-2);border:1px solid var(--line);color:var(--ink);border-radius:7px;
+    padding:6px 8px;font-size:12px;font-weight:700;
+  }
+  .status-new{color:var(--yellow);}
+  .status-contacted{color:var(--key-light);}
+  .status-responded{color:var(--green);}
+  .status-client{color:var(--green);}
+  .status-dead{color:var(--ink-dim);}
+
+  .card-meta{margin-top:10px;font-size:14px;color:var(--ink-dim);line-height:1.6;}
+  .card-meta a{color:var(--key-light);text-decoration:none;}
+
+  .card-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+  .card-actions a, .card-actions button{
+    font-size:13px;font-weight:700;border-radius:8px;padding:8px 12px;border:1px solid var(--line);
+    background:var(--bg-2);color:var(--ink);text-decoration:none;cursor:pointer;
+  }
+  .flag-btn{color:var(--flag);border-color:rgba(216,67,21,.4);}
+  .flag-btn.flagged{background:var(--flag);color:#fff;border-color:var(--flag);}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--key-blue);color:#fff;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:1000;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-logo">Key Technologies</div>
+  <div class="pin-sub">Enter PIN to view advertisers</div>
+  <div class="pin-dots">
+    <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
+    <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+    <button class="pin-key empty"></button><button class="pin-key" data-k="0">0</button><button class="pin-key" data-k="del">&larr;</button>
+  </div>
+  <div class="pin-msg" id="pin-msg"></div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <svg width="26" height="18" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      KEY TECHNOLOGIES — ADVERTISERS
+    </div>
+    <button class="refresh-btn" id="refreshBtn">Refresh</button>
+  </header>
+
+  <div class="toolbar">
+    <input class="search-box" id="searchBox" type="text" placeholder="Search by name, owner, category or address…">
+  </div>
+  <div class="stats-row" id="statsRow"></div>
+  <div class="cat-tabs" id="catTabs"></div>
+
+  <div id="list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ================= CONFIG =================
+  var PIN = '137901'; // same PIN that redirects here from the main LVR dashboard login
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var ADV_NODE = '/dashboard_adv_crec'; // the SAME live, owner-approved advertiser list every LVR login reads
+  var FLAG_NODE = '/dashboard/adv_flag_queue'; // same queue the dashboard patch's "Flag for Review" button writes to
+  var OUTREACH_NODE = '/kt_crm/adv_outreach'; // Key Technologies' own outreach-status tracking, separate from LVR's
+
+  // ================= PIN LOGIC =================
+  var pinBuf = '';
+  var dots = [document.getElementById('pd0'),document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3'),document.getElementById('pd4'),document.getElementById('pd5')];
+  function renderDots(err){
+    dots.forEach(function(d,i){
+      d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : '');
+    });
+  }
+  function pinSubmit(){
+    if (pinBuf === PIN) {
+      document.getElementById('pin-screen').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      try { sessionStorage.setItem('key_adv_unlocked', '1'); } catch(e){}
+      loadAll();
+    } else {
+      renderDots(true);
+      document.getElementById('pin-msg').textContent = 'Wrong PIN';
+      setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500);
+    }
+  }
+  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-k');
+      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
+      if (pinBuf.length >= 6) return;
+      pinBuf += k;
+      renderDots(false);
+      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
+    });
+  });
+  try {
+    if (sessionStorage.getItem('key_adv_unlocked') === '1') {
+      document.getElementById('pin-screen').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      loadAll();
+    }
+  } catch(e){}
+
+  // ================= DATA =================
+  var advertisers = {};
+  var flagged = {};
+  var outreach = {};
+  var activeCat = 'all';
+  var searchTerm = '';
+
+  function fbGet(path) {
+    return fetch(DB + path + '.json').then(function(r){ return r.json(); });
+  }
+  function fbPut(path, body) {
+    return fetch(DB + path + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  }
+  function fbDelete(path) {
+    return fetch(DB + path + '.json', { method: 'DELETE' });
+  }
+
+  function loadAll() {
+    document.getElementById('list').innerHTML = '<div class="empty-note">Loading…</div>';
+    Promise.all([
+      fbGet(ADV_NODE).then(function(d){ advertisers = d || {}; }),
+      fbGet(FLAG_NODE).then(function(d){ flagged = d || {}; }),
+      fbGet(OUTREACH_NODE).then(function(d){ outreach = d || {}; })
+    ]).then(render).catch(function(){
+      document.getElementById('list').innerHTML = '<div class="empty-note">Could not load — check connection.</div>';
+    });
+  }
+  document.getElementById('refreshBtn').addEventListener('click', loadAll);
+  document.getElementById('searchBox').addEventListener('input', function(e){
+    searchTerm = e.target.value.toLowerCase().trim();
+    render();
+  });
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
+
+  function catOf(a) { return (a.cat || a.category || 'Other').trim() || 'Other'; }
+
+  // ================= RENDER =================
+  function render() {
+    var list = Object.keys(advertisers).map(function(k){ var a = advertisers[k]; if(!a) return null; a._key = k; return a; }).filter(Boolean);
+
+    // category tabs
+    var cats = {};
+    list.forEach(function(a){ cats[catOf(a)] = (cats[catOf(a)]||0) + 1; });
+    var catNames = Object.keys(cats).sort(function(x,y){ return cats[y]-cats[x]; });
+    var tabsEl = document.getElementById('catTabs');
+    tabsEl.innerHTML = '<span class="cat-tab' + (activeCat==='all'?' active':'') + '" data-c="all">All (' + list.length + ')</span>' +
+      catNames.map(function(c){ return '<span class="cat-tab' + (activeCat===c?' active':'') + '" data-c="' + escapeHtml(c) + '">' + escapeHtml(c) + ' (' + cats[c] + ')</span>'; }).join('');
+    tabsEl.querySelectorAll('.cat-tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        activeCat = tab.getAttribute('data-c');
+        render();
+      });
+    });
+
+    var filtered = list.filter(function(a){
+      if (activeCat !== 'all' && catOf(a) !== activeCat) return false;
+      if (searchTerm) {
+        var hay = ((a.name||'') + ' ' + (a.owner||'') + ' ' + catOf(a) + ' ' + (a.address||'') + ' ' + (a.ig||'')).toLowerCase();
+        if (hay.indexOf(searchTerm) === -1) return false;
+      }
+      return true;
+    });
+    filtered.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+
+    var flaggedCount = Object.keys(flagged).length;
+    document.getElementById('statsRow').innerHTML =
+      '<div class="stat-chip"><b>' + list.length + '</b> total approved</div>' +
+      '<div class="stat-chip"><b>' + filtered.length + '</b> shown</div>' +
+      '<div class="stat-chip"><b>' + flaggedCount + '</b> flagged (awaiting owner review)</div>';
+
+    var listEl = document.getElementById('list');
+    if (!filtered.length) {
+      listEl.innerHTML = '<div class="empty-note">No advertisers match.</div>';
+      return;
+    }
+    listEl.innerHTML = filtered.map(cardHtml).join('');
+
+    listEl.querySelectorAll('.status-select').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        var num = sel.getAttribute('data-num');
+        outreach[num] = outreach[num] || {};
+        outreach[num].status = sel.value;
+        fbPut(OUTREACH_NODE + '/' + num, outreach[num]);
+        sel.className = 'status-select status-' + sel.value;
+      });
+    });
+    listEl.querySelectorAll('.flag-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var num = btn.getAttribute('data-num');
+        if (flagged[num]) {
+          showToast('Already flagged — waiting on owner review');
+          return;
+        }
+        fbPut(FLAG_NODE + '/' + num, { flaggedAt: Date.now(), flaggedBy: 'keytech' }).then(function(){
+          flagged[num] = true;
+          render();
+          showToast('🚩 Flagged for owner review');
+        });
+      });
+    });
+  }
+
+  function statusLabel(s) {
+    return { new:'Not contacted', contacted:'Contacted', responded:'Responded', client:'Client', dead:'Not interested' }[s] || 'Not contacted';
+  }
+
+  function cardHtml(a) {
+    var num = a.num != null ? a.num : a._key;
+    var phone = a.phone || '';
+    var phoneAction = phone ? '<a href="tel:' + String(phone).replace(/[^0-9+]/g,'') + '">Call</a>' : '';
+    var addr = a.address || '';
+    var addrLink = addr ? '<a href="https://maps.google.com/?q=' + encodeURIComponent(addr) + '" target="_blank" rel="noopener">' + escapeHtml(addr) + '</a>' : '';
+    var ig = a.ig || '';
+    var isFlagged = !!flagged[num];
+    var st = (outreach[num] && outreach[num].status) || 'new';
+
+    return '' +
+      '<div class="card' + (isFlagged?' flagged':'') + '">' +
+        '<div class="card-top">' +
+          '<div>' +
+            '<div class="card-name">' + escapeHtml(a.name || '(no name)') + '</div>' +
+            '<span class="card-cat">' + escapeHtml(catOf(a)) + '</span>' +
+          '</div>' +
+          '<select class="status-select status-' + st + '" data-num="' + num + '">' +
+            ['new','contacted','responded','client','dead'].map(function(s){
+              return '<option value="' + s + '"' + (st===s?' selected':'') + '>' + statusLabel(s) + '</option>';
+            }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="card-meta">' +
+          (a.owner ? escapeHtml(a.owner) + '<br>' : '') +
+          (phone ? escapeHtml(phone) + '<br>' : '') +
+          (ig ? '@' + escapeHtml(ig.replace(/^@/,'')) + '<br>' : '') +
+          addrLink +
+        '</div>' +
+        '<div class="card-actions">' +
+          phoneAction +
+          '<button class="flag-btn' + (isFlagged?' flagged':'') + '" data-num="' + num + '">' + (isFlagged ? '🚩 Flagged' : '🚩 Flag for Review') + '</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+</script>
+</body>
+</html>
