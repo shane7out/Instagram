@@ -171,6 +171,56 @@ shipping. Same `deploy-overlay.js` deploy mechanism as every other tool here.
 curl -sL -o /tmp/keyleads.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-leads.sh && bash /tmp/keyleads.sh
 ```
 
+### NEW — Key Technologies advertiser marketing system (2026-10-25)
+Shane's plan: DM outreach for the new high-end verticals will be sent from
+the LasVegas_Restaurants Instagram account (credibility — not retargeting
+restaurants as clients), using the ~4,000-business LVR advertiser pool
+("Ads" — doctors, lawyers, dentists, realtors, etc.) as the prospect source.
+He wants three logins into that same pool (owner/LVR, Zach, Key
+Technologies) with everyone seeing the same *approved* records, but only he
+can actually remove/mark one bad — everyone else can only flag something
+for his review.
+
+**New PIN `137901`** on the main dashboard login goes straight to a new
+`key-advertisers.html` tool instead of unlocking the dashboard — read-only
+view of every approved advertiser (`dashboard_adv_crec`, the same live list
+every login already reads), with search, category filters, its own
+outreach-status tracker (separate node — doesn't touch LVR's restaurant-
+oriented DM/status system), and a Flag-for-Review button. No delete power
+at all.
+
+**Real thing caught before building anything**, worth remembering: the
+existing "Problem" button on advertiser cards *looks* like it already does
+owner-reviewable flagging, but `_advFbPatch()` deliberately no-ops for
+friend/co-editor sessions (an intentional existing guard against a
+co-editor writing arbitrary paths into the owner's live data) — so a
+friend's Problem flag never actually reaches the owner, it only updates
+their own browser. Didn't build on that false assumption; built a
+dedicated `dashboard/adv_flag_queue` node instead, fed by both the new KT
+tool and a new "Flag for Review" button added to the main dashboard's
+friend-mode advertiser cards. Owner gets a new "🚩 Flagged N" button next
+to the existing Dupes filter, opening a review modal: **Confirm** reuses
+the already-correct, already owner-only `advMainToNeedFixed()` (sends it to
+Bad Records, removes it from every view) rather than new deletion logic;
+**Dismiss** just clears the flag and the record stays live.
+
+`patch-dashboard-keytech.js` is marker-fenced and idempotent — tested
+against a real copy of the live dashboard before shipping (not just
+syntax-checked blind): all 5 patches applied cleanly against real anchors,
+re-running correctly no-ops on every one (this caught and fixed one real
+bug — a marker-string mismatch that would have silently double-inserted a
+button on every future re-run), full inline-JS syntax check passed on the
+patched file. `key-advertisers.html` tested with mocked Firebase data via
+Playwright: PIN gate, search, category filtering, flagging, outreach-status
+change — no JS errors. Deploy script mirrors `deploy-dashboard-patches.sh`'s
+exact safety discipline: pristine backup, patch exit code checked, full
+syntax check, complete rollback on any failure, APP_VERSION cache-bust,
+live verification of every marker after deploy.
+
+```
+curl -sL -o /tmp/keytechadv.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-keytech-advertisers.sh && bash /tmp/keytechadv.sh
+```
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
