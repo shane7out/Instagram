@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claim Your Coupon — Las Vegas Restaurants</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --green:#3ddc84; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;display:flex;align-items:flex-start;justify-content:center;
+    padding:28px 16px 60px;
+  }
+  .wrap{width:100%;max-width:420px;}
+  .brand{display:flex;align-items:center;gap:8px;justify-content:center;font-weight:800;font-size:14px;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--key-light);margin-bottom:18px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;text-align:center;}
+  .photo{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;margin-bottom:16px;}
+  .biz-name{font-size:15px;color:var(--ink-dim);font-weight:700;margin-bottom:4px;}
+  .offer-title{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:14px;}
+  .scarcity{font-size:12.5px;color:var(--ink-dim);margin-bottom:18px;}
+  .scarcity b{color:var(--ink);}
+
+  .field{text-align:left;margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
+  .field input[type="text"], .field input[type="email"], .field input[type="tel"]{
+    width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg-2);color:var(--ink);font-size:15px;
+  }
+  .field input:focus{outline:none;border-color:var(--key-blue);}
+  .optin{display:flex;align-items:flex-start;gap:9px;text-align:left;margin:16px 0;}
+  .optin input{margin-top:3px;flex-shrink:0;}
+  .optin label{font-size:12.5px;color:var(--ink-dim);line-height:1.45;}
+  .optin-note{font-size:11.5px;color:var(--ink-dim);opacity:.8;margin-top:3px;}
+
+  .claim-btn{
+    width:100%;padding:14px;border-radius:11px;border:none;background:var(--key-blue);
+    color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;
+  }
+  .claim-btn:disabled{opacity:.6;cursor:default;}
+  .claim-btn:not(:disabled):active{background:#0f64b2;}
+
+  .msg{font-size:13.5px;margin-top:12px;min-height:18px;}
+  .msg.err{color:var(--red);}
+
+  .state-note{color:var(--ink-dim);font-size:14.5px;line-height:1.6;}
+
+  /* success state */
+  .code-box{background:var(--bg-2);border:1px dashed var(--key-blue);border-radius:12px;padding:18px;margin:18px 0;}
+  .code-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:700;}
+  .code-value{font-size:30px;font-weight:800;letter-spacing:.08em;color:var(--key-light);margin-top:6px;}
+  .instructions{font-size:13.5px;color:var(--ink-dim);line-height:1.55;}
+
+  .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.7;margin-top:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Las Vegas Restaurants</div>
+  <div class="card" id="card">
+    <div class="state-note">Loading…</div>
+  </div>
+  <div class="footer-note">Powered by Las Vegas Restaurants. Your info is only shared with the restaurant offering this coupon.</div>
+</div>
+
+<script>
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var PROGRAMS_PATH = '/lvr_coupons/programs/';
+  var CLAIMS_PATH = '/lvr_coupons/claims/';
+
+  var params = new URLSearchParams(location.search);
+  var slug = (params.get('biz') || '').trim();
+  var cardEl = document.getElementById('card');
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function fbGet(path) {
+    return fetch(DB + path + '.json').then(function(r){ return r.json(); });
+  }
+  function fbPost(path, body) {
+    return fetch(DB + path + '.json', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  }
+
+  function renderUnavailable(text) {
+    cardEl.innerHTML = '<div class="state-note">' + escapeHtml(text) + '</div>';
+  }
+
+  if (!slug) {
+    renderUnavailable("This link is missing its offer — ask whoever sent it to you for the right link.");
+  } else {
+    Promise.all([
+      fbGet(PROGRAMS_PATH + encodeURIComponent(slug)),
+      fbGet(CLAIMS_PATH + encodeURIComponent(slug))
+    ]).then(function(results){
+      var program = results[0];
+      var claims = results[1] || {};
+      if (!program) {
+        renderUnavailable("This offer isn't available.");
+        return;
+      }
+      if (program.active === false) {
+        renderUnavailable("This offer isn't available right now.");
+        return;
+      }
+      if (program.expiresAt && Date.now() > program.expiresAt) {
+        renderUnavailable("This offer has expired.");
+        return;
+      }
+      var claimCount = Object.keys(claims).length;
+      if (program.maxClaims && claimCount >= program.maxClaims) {
+        renderUnavailable("This offer has been fully claimed — check back for future offers.");
+        return;
+      }
+      renderForm(program, claims, claimCount);
+    }).catch(function(){
+      renderUnavailable("Couldn't load this offer right now. Please try again in a moment.");
+    });
+  }
+
+  function normalize(s) { return (s || '').trim().toLowerCase(); }
+
+  function findExistingClaim(claims, email, phone) {
+    var nEmail = normalize(email);
+    var nPhone = (phone || '').replace(/[^0-9]/g, '');
+    var found = null;
+    Object.keys(claims).forEach(function(id){
+      if (found) return;
+      var c = claims[id];
+      if (!c) return;
+      if (nEmail && normalize(c.email) === nEmail) { found = c; return; }
+      if (nPhone && (c.phone || '').replace(/[^0-9]/g, '') === nPhone) { found = c; }
+    });
+    return found;
+  }
+
+  function makeCode(slug, existingCodes) {
+    var prefix = (slug.replace(/[^a-z]/gi, '').slice(0, 3) || 'LVR').toUpperCase();
+    var code;
+    do {
+      var suffix = '';
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      for (var i = 0; i < 5; i++) suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+      code = prefix + '-' + suffix;
+    } while (existingCodes.indexOf(code) !== -1);
+    return code;
+  }
+
+  function renderSuccess(program, code) {
+    cardEl.innerHTML =
+      '<div class="offer-title">You\'re in! 🎉</div>' +
+      '<div class="code-box">' +
+        '<div class="code-label">Your coupon code</div>' +
+        '<div class="code-value">' + escapeHtml(code) + '</div>' +
+      '</div>' +
+      '<div class="instructions">' + escapeHtml(program.instructions || ('Show this code at ' + (program.bizName || 'the restaurant') + ' to redeem your ' + (program.offer || 'offer') + '.')) + '</div>';
+  }
+
+  function renderForm(program, claims, claimCount) {
+    var existingCodes = Object.keys(claims).map(function(id){ return claims[id] && claims[id].code; }).filter(Boolean);
+
+    var scarcityHtml = '';
+    if (program.maxClaims) {
+      scarcityHtml = '<div class="scarcity"><b>' + (program.maxClaims - claimCount) + '</b> of ' + program.maxClaims + ' left</div>';
+    }
+
+    cardEl.innerHTML =
+      (program.photoUrl ? '<img class="photo" src="' + escapeHtml(program.photoUrl) + '" alt="">' : '') +
+      '<div class="biz-name">' + escapeHtml(program.bizName || '') + '</div>' +
+      '<div class="offer-title">' + escapeHtml(program.offer || 'Special Offer') + '</div>' +
+      scarcityHtml +
+      '<form id="claimForm">' +
+        '<div class="field"><label for="cName">Name</label><input type="text" id="cName" required></div>' +
+        '<div class="field"><label for="cEmail">Email</label><input type="email" id="cEmail" required></div>' +
+        '<div class="field"><label for="cPhone">Phone (optional)</label><input type="tel" id="cPhone"></div>' +
+        '<div class="optin">' +
+          '<input type="checkbox" id="cOptin">' +
+          '<label for="cOptin">Also send me future deals and offers by text/email.<div class="optin-note">Optional — you don\'t need to check this to get your coupon.</div></label>' +
+        '</div>' +
+        '<button type="submit" class="claim-btn" id="claimBtn">Claim Your Coupon</button>' +
+        '<div class="msg" id="claimMsg"></div>' +
+      '</form>';
+
+    document.getElementById('claimForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('cName').value.trim();
+      var email = document.getElementById('cEmail').value.trim();
+      var phone = document.getElementById('cPhone').value.trim();
+      var optin = document.getElementById('cOptin').checked;
+      var btn = document.getElementById('claimBtn');
+      var msg = document.getElementById('claimMsg');
+
+      if (!name || !email) {
+        msg.className = 'msg err';
+        msg.textContent = 'Please enter your name and email.';
+        return;
+      }
+
+      btn.disabled = true;
+      msg.className = 'msg';
+      msg.textContent = 'Claiming…';
+
+      var existing = findExistingClaim(claims, email, phone);
+      if (existing) {
+        renderSuccess(program, existing.code);
+        return;
+      }
+
+      var code = makeCode(slug, existingCodes);
+      var payload = {
+        biz: slug,
+        name: name,
+        email: email,
+        phone: phone,
+        marketingOptIn: optin,
+        code: code,
+        redeemed: false,
+        createdAt: {'.sv': 'timestamp'}
+      };
+
+      fbPost(CLAIMS_PATH + encodeURIComponent(slug), payload).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        renderSuccess(program, code);
+      }).catch(function(){
+        msg.className = 'msg err';
+        msg.textContent = 'Something went wrong. Please try again.';
+        btn.disabled = false;
+      });
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LVR — Coupon Programs</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --green:#3ddc84; --yellow:#f0c239; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+
+  #pin-screen{
+    position:fixed;inset:0;background:var(--bg);z-index:999;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  }
+  #pin-screen.hidden{display:none;}
+  .pin-logo{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--key-light);text-transform:uppercase;}
+  .pin-sub{font-size:13px;color:var(--ink-dim);margin-bottom:28px;}
+  .pin-dots{display:flex;gap:12px;margin-bottom:26px;}
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:background .15s,border-color .15s;}
+  .pin-dot.filled{background:var(--key-blue);border-color:var(--key-blue);}
+  .pin-dot.error{background:var(--red);border-color:var(--red);}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:230px;}
+  .pin-key{height:58px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;}
+  .pin-key:active{background:var(--line);}
+  .pin-key.empty{background:transparent;border:none;cursor:default;}
+  .pin-msg{color:var(--red);font-size:13px;font-weight:600;margin-top:16px;min-height:18px;}
+
+  #app{display:none;}
+  #app.visible{display:block;}
+  header{
+    position:sticky;top:0;z-index:10;background:rgba(7,17,31,.95);border-bottom:1px solid var(--line);
+    padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .brand{font-weight:800;font-size:15px;}
+  .header-actions{display:flex;gap:8px;}
+  .btn{
+    background:transparent;color:var(--ink-dim);border:1px solid var(--line);border-radius:9px;padding:9px 14px;
+    font-size:13px;font-weight:700;cursor:pointer;
+  }
+  .btn:active{border-color:var(--key-light);color:var(--key-light);}
+  .btn-primary{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  #view{padding:18px;max-width:720px;margin:0 auto 60px;}
+  .empty-note{color:var(--ink-dim);text-align:center;padding:40px 10px;font-size:14px;}
+
+  .program-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .pc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .pc-name{font-size:16px;font-weight:800;}
+  .pc-offer{font-size:13.5px;color:var(--ink-dim);margin-top:2px;}
+  .pc-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;border-radius:5px;padding:2px 7px;margin-top:6px;}
+  .pc-badge.active{background:rgba(61,220,132,.14);color:var(--green);}
+  .pc-badge.inactive{background:rgba(255,107,107,.14);color:var(--red);}
+  .pc-stats{font-size:12.5px;color:var(--ink-dim);margin-top:8px;}
+  .pc-link{font-size:12px;margin-top:8px;word-break:break-all;color:var(--key-light);}
+  .pc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .pc-actions button{
+    font-size:12.5px;font-weight:700;border-radius:8px;padding:7px 11px;border:1px solid var(--line);
+    background:var(--bg-2);color:var(--ink);cursor:pointer;
+  }
+  .pc-actions .danger{color:var(--red);border-color:rgba(255,107,107,.35);}
+
+  .form-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
+  .field input, .field textarea{
+    width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);
+    background:var(--bg-2);color:var(--ink);font-size:14px;font-family:inherit;
+  }
+  .field textarea{min-height:60px;resize:vertical;}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+  .checkbox-row label{font-size:13px;color:var(--ink-dim);}
+  .form-actions{display:flex;gap:10px;}
+
+  .claims-list{display:flex;flex-direction:column;gap:10px;}
+  .claim-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+  .claim-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .claim-name{font-weight:700;font-size:14.5px;}
+  .claim-code{font-family:monospace;font-weight:700;color:var(--key-light);font-size:14px;}
+  .claim-meta{font-size:12.5px;color:var(--ink-dim);margin-top:4px;line-height:1.5;}
+  .claim-actions{display:flex;gap:8px;margin-top:8px;}
+  .claim-actions button{font-size:12px;font-weight:700;border-radius:7px;padding:5px 10px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);cursor:pointer;}
+  .redeemed-yes{color:var(--green);}
+  .redeemed-no{color:var(--yellow);}
+
+  .back-link{display:inline-block;margin-bottom:14px;font-size:13.5px;font-weight:700;color:var(--ink-dim);cursor:pointer;}
+  .back-link:hover{color:var(--ink);}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--key-blue);color:#fff;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:1000;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-logo">LVR Coupons</div>
+  <div class="pin-sub">Enter PIN to manage coupon programs</div>
+  <div class="pin-dots">
+    <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
+    <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+    <button class="pin-key empty"></button><button class="pin-key" data-k="0">0</button><button class="pin-key" data-k="del">&larr;</button>
+  </div>
+  <div class="pin-msg" id="pin-msg"></div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">LVR — COUPON PROGRAMS</div>
+    <div class="header-actions">
+      <button class="btn" id="refreshBtn">Refresh</button>
+      <button class="btn btn-primary" id="newProgramBtn">+ New Program</button>
+    </div>
+  </header>
+  <div id="view"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var PIN = '702953'; // change any time - edit this line and redeploy
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var PROGRAMS_PATH = '/lvr_coupons/programs';
+  var CLAIMS_PATH = '/lvr_coupons/claims';
+  var CLAIM_PAGE_URL = 'https://lvr-data-a60c1.web.app/lvr-coupon.html?biz=';
+
+  // ================= PIN LOGIC =================
+  var pinBuf = '';
+  var dots = [document.getElementById('pd0'),document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3'),document.getElementById('pd4'),document.getElementById('pd5')];
+  function renderDots(err){
+    dots.forEach(function(d,i){
+      d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : '');
+    });
+  }
+  function pinSubmit(){
+    if (pinBuf === PIN) {
+      document.getElementById('pin-screen').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      try { sessionStorage.setItem('lvr_coupons_unlocked', '1'); } catch(e){}
+      loadPrograms();
+    } else {
+      renderDots(true);
+      document.getElementById('pin-msg').textContent = 'Wrong PIN';
+      setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500);
+    }
+  }
+  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-k');
+      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
+      if (pinBuf.length >= 6) return;
+      pinBuf += k;
+      renderDots(false);
+      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
+    });
+  });
+  try {
+    if (sessionStorage.getItem('lvr_coupons_unlocked') === '1') {
+      document.getElementById('pin-screen').classList.add('hidden');
+      document.getElementById('app').classList.add('visible');
+      loadPrograms();
+    }
+  } catch(e){}
+
+  // ================= DATA HELPERS =================
+  function fbGet(path) { return fetch(DB + path + '.json').then(function(r){ return r.json(); }); }
+  function fbPut(path, body) { return fetch(DB + path + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  function fbPatch(path, body) { return fetch(DB + path + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  function fbDelete(path) { return fetch(DB + path + '.json', { method: 'DELETE' }); }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
+  function slugify(s) {
+    return (s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  var programs = {};
+  var view = document.getElementById('view');
+
+  document.getElementById('refreshBtn').addEventListener('click', loadPrograms);
+  document.getElementById('newProgramBtn').addEventListener('click', function(){ renderProgramForm(null); });
+
+  function loadPrograms() {
+    view.innerHTML = '<div class="empty-note">Loading…</div>';
+    fbGet(PROGRAMS_PATH).then(function(data){
+      programs = data || {};
+      renderProgramList();
+    }).catch(function(){
+      view.innerHTML = '<div class="empty-note">Could not load — check connection.</div>';
+    });
+  }
+
+  // ================= PROGRAM LIST =================
+  function renderProgramList() {
+    var slugs = Object.keys(programs);
+    if (!slugs.length) {
+      view.innerHTML = '<div class="empty-note">No coupon programs yet. Tap "+ New Program" to create one.</div>';
+      return;
+    }
+    var rows = slugs.map(function(slug){
+      var p = programs[slug];
+      return '<div class="program-card">' +
+        '<div class="pc-top">' +
+          '<div>' +
+            '<div class="pc-name">' + escapeHtml(p.bizName || slug) + '</div>' +
+            '<div class="pc-offer">' + escapeHtml(p.offer || '') + '</div>' +
+          '</div>' +
+          '<span class="pc-badge ' + (p.active === false ? 'inactive' : 'active') + '">' + (p.active === false ? 'Inactive' : 'Active') + '</span>' +
+        '</div>' +
+        '<div class="pc-stats">' +
+          (p.maxClaims ? 'Max ' + p.maxClaims + ' claims' : 'Unlimited claims') +
+          (p.expiresAt ? ' · expires ' + new Date(p.expiresAt).toLocaleDateString() : '') +
+        '</div>' +
+        '<div class="pc-link">' + CLAIM_PAGE_URL + escapeHtml(slug) + '</div>' +
+        '<div class="pc-actions">' +
+          '<button data-act="claims" data-slug="' + escapeHtml(slug) + '">View Claims</button>' +
+          '<button data-act="edit" data-slug="' + escapeHtml(slug) + '">Edit</button>' +
+          '<button data-act="copy" data-slug="' + escapeHtml(slug) + '">Copy Link</button>' +
+          '<button class="danger" data-act="delete" data-slug="' + escapeHtml(slug) + '">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    view.innerHTML = rows;
+
+    view.querySelectorAll('[data-act]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var slug = btn.getAttribute('data-slug');
+        var act = btn.getAttribute('data-act');
+        if (act === 'claims') renderClaims(slug);
+        else if (act === 'edit') renderProgramForm(slug);
+        else if (act === 'copy') {
+          var url = CLAIM_PAGE_URL + slug;
+          if (navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ showToast('Link copied'); });
+          else showToast(url);
+        } else if (act === 'delete') {
+          if (!confirm('Delete this program? Existing claims/codes already issued will stay in the database, but the claim page will stop working.')) return;
+          fbDelete(PROGRAMS_PATH + '/' + slug).then(function(){
+            delete programs[slug];
+            renderProgramList();
+            showToast('Program deleted');
+          });
+        }
+      });
+    });
+  }
+
+  // ================= CREATE / EDIT FORM =================
+  function renderProgramForm(slug) {
+    var p = slug ? programs[slug] : null;
+    var isEdit = !!slug;
+
+    view.innerHTML =
+      '<div class="back-link" id="backBtn">&larr; Back to programs</div>' +
+      '<div class="form-box">' +
+        '<div class="field"><label>Business name</label><input type="text" id="fBizName" value="' + escapeHtml(p ? p.bizName : '') + '"></div>' +
+        '<div class="field"><label>Slug (used in the claim link, letters/numbers/dashes only)</label><input type="text" id="fSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
+        '<div class="field"><label>Offer (e.g. "Free Chicken &amp; Rice Bowl")</label><input type="text" id="fOffer" value="' + escapeHtml(p ? p.offer : '') + '"></div>' +
+        '<div class="field"><label>Redemption instructions (shown after they claim)</label><textarea id="fInstructions">' + escapeHtml(p ? p.instructions : '') + '</textarea></div>' +
+        '<div class="field"><label>Photo URL (optional, a real photo of the food/offer)</label><input type="text" id="fPhoto" value="' + escapeHtml(p ? p.photoUrl : '') + '"></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Max claims (blank = unlimited)</label><input type="number" id="fMaxClaims" value="' + (p && p.maxClaims ? p.maxClaims : '') + '"></div>' +
+          '<div class="field"><label>Expires on (blank = never)</label><input type="date" id="fExpires" value="' + (p && p.expiresAt ? new Date(p.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
+        '</div>' +
+        '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!p || p.active !== false ? ' checked' : '') + '><label for="fActive">Active (claim page is live)</label></div>' +
+        '<div class="form-actions">' +
+          '<button class="btn btn-primary" id="saveBtn">' + (isEdit ? 'Save Changes' : 'Create Program') + '</button>' +
+          '<button class="btn" id="cancelBtn">Cancel</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    document.getElementById('cancelBtn').addEventListener('click', renderProgramList);
+    document.getElementById('saveBtn').addEventListener('click', function(){
+      var newSlug = isEdit ? slug : slugify(document.getElementById('fSlug').value);
+      var bizName = document.getElementById('fBizName').value.trim();
+      var offer = document.getElementById('fOffer').value.trim();
+      if (!newSlug || !bizName || !offer) {
+        showToast('Business name, slug, and offer are required');
+        return;
+      }
+      if (!isEdit && programs[newSlug]) {
+        showToast('That slug is already used by another program');
+        return;
+      }
+      var expiresVal = document.getElementById('fExpires').value;
+      var maxClaimsVal = document.getElementById('fMaxClaims').value;
+      var payload = {
+        bizName: bizName,
+        offer: offer,
+        instructions: document.getElementById('fInstructions').value.trim(),
+        photoUrl: document.getElementById('fPhoto').value.trim(),
+        maxClaims: maxClaimsVal ? parseInt(maxClaimsVal, 10) : null,
+        expiresAt: expiresVal ? new Date(expiresVal + 'T23:59:59').getTime() : null,
+        active: document.getElementById('fActive').checked,
+        createdAt: (p && p.createdAt) ? p.createdAt : {'.sv': 'timestamp'}
+      };
+      fbPut(PROGRAMS_PATH + '/' + newSlug, payload).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        programs[newSlug] = payload;
+        renderProgramList();
+        showToast(isEdit ? 'Saved' : 'Program created');
+      }).catch(function(){
+        showToast('Something went wrong saving this');
+      });
+    });
+  }
+
+  // ================= CLAIMS VIEW =================
+  function renderClaims(slug) {
+    view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back to programs</div><div class="empty-note">Loading claims…</div>';
+    document.getElementById('backBtn').addEventListener('click', renderProgramList);
+
+    fbGet(CLAIMS_PATH + '/' + slug).then(function(data){
+      var claims = data || {};
+      var ids = Object.keys(claims);
+      var p = programs[slug] || {};
+
+      var header = '<div class="back-link" id="backBtn2">&larr; Back to programs</div>' +
+        '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — Claims</h3>' +
+        '<div class="pc-stats" style="margin-bottom:14px;">' + ids.length + ' total claim' + (ids.length === 1 ? '' : 's') + '</div>';
+
+      if (!ids.length) {
+        view.innerHTML = header + '<div class="empty-note">No one has claimed this offer yet.</div>';
+        document.getElementById('backBtn2').addEventListener('click', renderProgramList);
+        return;
+      }
+
+      var list = ids.map(function(id){ var c = claims[id]; c._id = id; return c; })
+        .sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+
+      var rows = list.map(function(c){
+        var when = c.createdAt ? new Date(c.createdAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + new Date(c.createdAt).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : '';
+        return '<div class="claim-row">' +
+          '<div class="claim-top">' +
+            '<div><div class="claim-name">' + escapeHtml(c.name || '(no name)') + '</div></div>' +
+            '<div class="claim-code">' + escapeHtml(c.code || '') + '</div>' +
+          '</div>' +
+          '<div class="claim-meta">' +
+            (c.email ? escapeHtml(c.email) + '<br>' : '') +
+            (c.phone ? escapeHtml(c.phone) + '<br>' : '') +
+            when + (c.marketingOptIn ? ' · opted in to marketing' : '') +
+          '</div>' +
+          '<div class="claim-actions">' +
+            '<button data-redeem="' + c._id + '" class="' + (c.redeemed ? 'redeemed-yes' : 'redeemed-no') + '">' + (c.redeemed ? '✓ Redeemed' : 'Mark Redeemed') + '</button>' +
+            '<button data-delclaim="' + c._id + '">Delete</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      view.innerHTML = header + '<div class="claims-list">' + rows + '</div>';
+      document.getElementById('backBtn2').addEventListener('click', renderProgramList);
+
+      view.querySelectorAll('[data-redeem]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = btn.getAttribute('data-redeem');
+          var newVal = !claims[id].redeemed;
+          fbPatch(CLAIMS_PATH + '/' + slug + '/' + id, {redeemed: newVal}).then(function(){
+            claims[id].redeemed = newVal;
+            renderClaims(slug);
+          });
+        });
+      });
+      view.querySelectorAll('[data-delclaim]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = btn.getAttribute('data-delclaim');
+          if (!confirm('Delete this claim permanently?')) return;
+          fbDelete(CLAIMS_PATH + '/' + slug + '/' + id).then(function(){
+            renderClaims(slug);
+            showToast('Claim deleted');
+          });
+        });
+      });
+    }).catch(function(){
+      view.innerHTML = '<div class="empty-note">Could not load claims.</div>';
+    });
+  }
+</script>
+</body>
+</html>

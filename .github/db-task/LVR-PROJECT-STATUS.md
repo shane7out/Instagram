@@ -208,6 +208,55 @@ live verification of every marker after deploy.
 curl -sL -o /tmp/keytechadv.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-keytech-advertisers.sh && bash /tmp/keytechadv.sh
 ```
 
+### NEW — LVR coupon advertising program (2026-10-26)
+Built from a real DM the owner already sent to a restaurant (Vanilla Rice,
+10/16): the pitch is a coupon program advertised through LVR's Instagram
+network — customer clicks a link, enters their info on LVR's own site, gets
+a unique coupon code to redeem in-restaurant. The DM promised: marketing
+consent is never required to claim a coupon, coupon counts/expirations can
+be limited, and both the restaurant and LVR get access to the customer data
+collected through that restaurant's own promotion.
+
+Two new standalone pages, same Firebase project/database as everything
+else, new top-level node `/lvr_coupons` (separate from every restaurant/
+advertiser node):
+
+- **`lvr-coupon.html`** — the customer-facing claim page, no PIN (it's
+  meant to be shared publicly via Instagram Story links). Opened as
+  `?biz=<slug>`, e.g. `lvr-coupon.html?biz=vanilla-rice`. Honest states
+  throughout: missing/not-found/inactive/expired/fully-claimed each show a
+  plain explanation, never a fake success. Shows a real "X of Y left" count
+  when a program has a claim limit — never fabricated. Claiming writes
+  name/email/phone + a generated unique code (e.g. `VAN-7K3P9`) to
+  `/lvr_coupons/claims/<slug>`; the marketing opt-in checkbox is unchecked
+  by default and explicitly optional, matching what was promised in the DM.
+  If the same email or phone claims twice, it re-shows their existing code
+  instead of creating a duplicate.
+- **`lvr-coupons-admin.html`** — PIN-gated (`702953`) tool for the owner:
+  create/edit a coupon program per restaurant (business name, offer text,
+  redemption instructions, optional real photo URL, expiration date, max
+  claims, active toggle), copy each program's claim link, and view/mark-
+  redeemed/delete claims per program.
+
+Both tested with mocked Firebase data via Playwright before shipping (claim
+page: every unavailable state, scarcity count, a full successful claim, the
+dedup-reuse path, and client-side validation; admin tool: PIN gate, the
+program list, create and edit flows, the claims view, mark-redeemed,
+delete) — no JS errors in either.
+
+**Not done yet, deliberately left to the owner**: no program has been
+created for Vanilla Rice (or anyone) yet — the DM's specific numbers (how
+many coupons, what expiration date) were never decided in the conversation,
+so nothing was invented. Once this deploys, the next step is the owner
+opening the admin tool and creating that program himself (business name
+"Vanilla Rice", offer "Free Chicken & Rice Bowl", plus whatever limit/
+expiration he actually wants), then sending the resulting claim link to
+Vanilla Rice.
+
+```
+curl -sL -o /tmp/lvrcoupons.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-lvr-coupons.sh && bash /tmp/lvrcoupons.sh
+```
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
