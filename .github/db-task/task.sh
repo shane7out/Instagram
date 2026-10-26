@@ -1,8 +1,9 @@
 #!/bin/bash
-# Read-only diagnostic: check whether any of the still-pending Mac deploy
-# scripts have actually landed on the live dashboard site yet (kt-crm.html,
-# key-leads.html, key-advertisers.html, and the dashboard-patches bundle's
-# APP_VERSION/markers). Last checked before the Pages-launch work began.
+# Read-only diagnostic: the previous check matched the raw string "223344"
+# in the live dashboard, which could be a coincidence (any ID/number) and
+# not actually Zach's PIN patch. Confirm against the patch's real,
+# distinctive marker (ZACHPIN01/ZACHPIN02) instead before reporting it as
+# deployed.
 set -e
 node <<'NODE'
 const https = require('https');
@@ -17,25 +18,19 @@ function get(url, timeoutMs) {
 }
 
 (async () => {
-  console.log('=== Standalone tool reachability ===');
-  for (const page of ['kt-crm.html', 'key-leads.html', 'key-advertisers.html']) {
-    const r = await get('https://lvr-data-a60c1.web.app/' + page, 15000);
-    console.log(page + ':', r.status || r.error);
-  }
-
-  console.log('\n=== Dashboard APP_VERSION + KEYTECH markers ===');
   const dash = await get('https://lvr-data-a60c1.web.app/', 20000);
   if (dash.error || dash.status !== 200) {
     console.log('dashboard fetch failed:', dash.error || dash.status);
-  } else {
-    const body = dash.body;
-    const vMatch = body.match(/APP_VERSION\s*=\s*['"]?(\d+)/);
-    console.log('APP_VERSION:', vMatch ? vMatch[1] : 'not found');
-    console.log('has KEYTECH-PIN-REDIRECT marker:', body.includes('KEYTECH-PIN-REDIRECT'));
-    console.log('has KEYTECH-FLAG-BTN marker:', body.includes('KEYTECH-FLAG-BTN'));
-    console.log('has rsLoadFirebaseStaging (dashboard-patches bundle):', body.includes('rsLoadFirebaseStaging'));
-    console.log('has igSuggestAccept (dashboard-patches bundle):', body.includes('igSuggestAccept'));
-    console.log('has ZACHPIN/223344 marker:', body.includes('223344'));
+    return;
+  }
+  const body = dash.body;
+  console.log('has ZACHPIN01 marker:', body.includes('ZACHPIN01'));
+  console.log('has ZACHPIN02 marker:', body.includes('ZACHPIN02'));
+  console.log('has "223344" raw string:', body.includes('223344'));
+  // show surrounding context of any raw 223344 match so we know what it actually is
+  const idx = body.indexOf('223344');
+  if (idx !== -1) {
+    console.log('context around first 223344 match:', JSON.stringify(body.slice(Math.max(0, idx - 80), idx + 80)));
   }
 })();
 NODE
