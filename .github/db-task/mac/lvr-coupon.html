@@ -27,8 +27,12 @@
   .photo{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;margin-bottom:16px;}
   .biz-name{font-size:15px;color:var(--ink-dim);font-weight:700;margin-bottom:4px;}
   .offer-title{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:14px;}
-  .scarcity{font-size:12.5px;color:var(--ink-dim);margin-bottom:18px;}
-  .scarcity b{color:var(--ink);}
+  .ticker{margin-bottom:18px;}
+  .ticker-text{font-size:13.5px;color:var(--ink-dim);margin-bottom:6px;}
+  .ticker-text b{color:var(--ink);font-size:16px;}
+  .ticker-bar{height:8px;border-radius:999px;background:var(--bg-2);border:1px solid var(--line);overflow:hidden;}
+  .ticker-fill{height:100%;background:var(--key-blue);border-radius:999px;transition:width .4s ease;}
+  .ticker-fill.low{background:var(--red);}
 
   .field{text-align:left;margin-bottom:12px;}
   .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
@@ -95,6 +99,7 @@
   }
 
   function renderUnavailable(text) {
+    if (tickerInterval) { clearInterval(tickerInterval); tickerInterval = null; }
     cardEl.innerHTML = '<div class="state-note">' + escapeHtml(text) + '</div>';
   }
 
@@ -125,6 +130,7 @@
         return;
       }
       renderForm(program, claims, claimCount);
+      startTicker(slug, program, claimCount);
     }).catch(function(){
       renderUnavailable("Couldn't load this offer right now. Please try again in a moment.");
     });
@@ -159,6 +165,7 @@
   }
 
   function renderSuccess(program, code) {
+    if (tickerInterval) { clearInterval(tickerInterval); tickerInterval = null; }
     cardEl.innerHTML =
       '<div class="offer-title">You\'re in! 🎉</div>' +
       '<div class="code-box">' +
@@ -168,19 +175,51 @@
       '<div class="instructions">' + escapeHtml(program.instructions || ('Show this code at ' + (program.bizName || 'the restaurant') + ' to redeem your ' + (program.offer || 'offer') + '.')) + '</div>';
   }
 
+  var tickerInterval = null;
+
+  function tickerHtml(program, claimCount) {
+    if (!program.maxClaims) return '';
+    var left = Math.max(0, program.maxClaims - claimCount);
+    var pct = Math.min(100, Math.round((claimCount / program.maxClaims) * 100));
+    var low = left <= Math.max(3, Math.round(program.maxClaims * 0.1));
+    return '<div class="ticker" id="ticker">' +
+      '<div class="ticker-text"><b id="tickerLeft">' + left + '</b> of ' + program.maxClaims + ' left</div>' +
+      '<div class="ticker-bar"><div class="ticker-fill' + (low ? ' low' : '') + '" id="tickerFill" style="width:' + pct + '%;"></div></div>' +
+    '</div>';
+  }
+
+  function startTicker(slug, program, claimCount) {
+    if (!program.maxClaims) return;
+    if (tickerInterval) clearInterval(tickerInterval);
+    tickerInterval = setInterval(function(){
+      fbGet(CLAIMS_PATH + encodeURIComponent(slug)).then(function(claims){
+        claims = claims || {};
+        var count = Object.keys(claims).length;
+        if (count >= program.maxClaims) {
+          clearInterval(tickerInterval);
+          renderUnavailable("This offer has been fully claimed — check back for future offers.");
+          return;
+        }
+        var leftEl = document.getElementById('tickerLeft');
+        var fillEl = document.getElementById('tickerFill');
+        if (!leftEl || !fillEl) { clearInterval(tickerInterval); return; }
+        leftEl.textContent = program.maxClaims - count;
+        var pct = Math.min(100, Math.round((count / program.maxClaims) * 100));
+        fillEl.style.width = pct + '%';
+        var low = (program.maxClaims - count) <= Math.max(3, Math.round(program.maxClaims * 0.1));
+        fillEl.className = 'ticker-fill' + (low ? ' low' : '');
+      }).catch(function(){});
+    }, 12000);
+  }
+
   function renderForm(program, claims, claimCount) {
     var existingCodes = Object.keys(claims).map(function(id){ return claims[id] && claims[id].code; }).filter(Boolean);
-
-    var scarcityHtml = '';
-    if (program.maxClaims) {
-      scarcityHtml = '<div class="scarcity"><b>' + (program.maxClaims - claimCount) + '</b> of ' + program.maxClaims + ' left</div>';
-    }
 
     cardEl.innerHTML =
       (program.photoUrl ? '<img class="photo" src="' + escapeHtml(program.photoUrl) + '" alt="">' : '') +
       '<div class="biz-name">' + escapeHtml(program.bizName || '') + '</div>' +
       '<div class="offer-title">' + escapeHtml(program.offer || 'Special Offer') + '</div>' +
-      scarcityHtml +
+      tickerHtml(program, claimCount) +
       '<form id="claimForm">' +
         '<div class="field"><label for="cName">Name</label><input type="text" id="cName" required></div>' +
         '<div class="field"><label for="cEmail">Email</label><input type="email" id="cEmail" required></div>' +
