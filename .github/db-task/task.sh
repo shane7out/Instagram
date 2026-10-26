@@ -1,9 +1,6 @@
 #!/bin/bash
-# Read-only diagnostic: the previous check matched the raw string "223344"
-# in the live dashboard, which could be a coincidence (any ID/number) and
-# not actually Zach's PIN patch. Confirm against the patch's real,
-# distinctive marker (ZACHPIN01/ZACHPIN02) instead before reporting it as
-# deployed.
+# Read-only diagnostic: check whether the new page-view counter has picked
+# up any real (non-diagnostic-test) traffic since it shipped.
 set -e
 node <<'NODE'
 const https = require('https');
@@ -18,19 +15,20 @@ function get(url, timeoutMs) {
 }
 
 (async () => {
-  const dash = await get('https://lvr-data-a60c1.web.app/', 20000);
-  if (dash.error || dash.status !== 200) {
-    console.log('dashboard fetch failed:', dash.error || dash.status);
+  const r = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits.json', 15000);
+  if (r.error || r.status !== 200) {
+    console.log('fetch failed:', r.error || r.status);
     return;
   }
-  const body = dash.body;
-  console.log('has ZACHPIN01 marker:', body.includes('ZACHPIN01'));
-  console.log('has ZACHPIN02 marker:', body.includes('ZACHPIN02'));
-  console.log('has "223344" raw string:', body.includes('223344'));
-  // show surrounding context of any raw 223344 match so we know what it actually is
-  const idx = body.indexOf('223344');
-  if (idx !== -1) {
-    console.log('context around first 223344 match:', JSON.stringify(body.slice(Math.max(0, idx - 80), idx + 80)));
+  const data = JSON.parse(r.body || 'null') || {};
+  let total = 0;
+  for (const page of Object.keys(data)) {
+    if (page === 'diagnostic-test') continue;
+    const hits = data[page] || {};
+    const count = Object.keys(hits).length;
+    total += count;
+    console.log(page + ':', count);
   }
+  console.log('TOTAL real hits:', total);
 })();
 NODE
