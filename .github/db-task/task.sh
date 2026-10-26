@@ -1,11 +1,9 @@
 #!/bin/bash
-# Seed the first real coupon program: Vanilla Rice Hibachi House, 50 free
-# Chicken & Rice Bowls, capped. This mirrors exactly what the admin tool
-# (lvr-coupons-admin.html) would write - same /lvr_coupons/programs node -
-# just done here since Shane already gave the real numbers (50, capped) in
-# conversation rather than needing to re-enter them once the Mac deploy
-# runs. No expiration date was given, so none is set (unlimited time,
-# capped only by count) - easy to add later in the admin tool.
+# Seed the first real points-catalog item: Vanilla Rice Hibachi House, Free
+# Chicken Bowl for 10 points (at $1/point, matching what Shane described).
+# Same /lvr_points node the new admin tool (lvr-points-admin.html) and
+# wallet page (lvr-wallet.html) read from - this mirrors exactly what
+# creating it through the admin tool would write.
 set -e
 node <<'NODE'
 const https = require('https');
@@ -26,24 +24,31 @@ function req(method, url, body, timeoutMs) {
 }
 
 (async () => {
-  const program = {
-    bizName: 'Vanilla Rice Hibachi House',
-    offer: 'Free Chicken & Rice Bowl',
-    instructions: 'Show this code to your server at Vanilla Rice Hibachi House to redeem your free Chicken & Rice Bowl.',
+  const restaurant = { bizName: 'Vanilla Rice Hibachi House', pin: '5190' };
+  const restUrl = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/restaurants/vanilla-rice.json';
+  const r1 = await req('PUT', restUrl, JSON.stringify(restaurant), 15000);
+  console.log('restaurant PUT status:', r1.status || r1.error);
+
+  const item = {
+    itemName: 'Free Chicken Bowl',
+    pointCost: 10,
+    instructions: 'Show this code to your server at Vanilla Rice Hibachi House to redeem your free Chicken Bowl.',
     photoUrl: '',
-    maxClaims: 50,
+    maxRedemptions: null,
     expiresAt: null,
     active: true,
     createdAt: { '.sv': 'timestamp' }
   };
-  const url = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_coupons/programs/vanilla-rice.json';
-  const put = await req('PUT', url, JSON.stringify(program), 15000);
-  console.log('PUT status:', put.status || put.error);
+  const itemUrl = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/catalog/vanilla-rice/bowl1.json';
+  const r2 = await req('PUT', itemUrl, JSON.stringify(item), 15000);
+  console.log('catalog item PUT status:', r2.status || r2.error);
 
-  const read = await req('GET', url, null, 15000);
-  console.log('Read back:', read.body);
+  const readRest = await req('GET', restUrl, null, 15000);
+  const readItem = await req('GET', itemUrl, null, 15000);
+  console.log('restaurant read back:', readRest.body);
+  console.log('item read back:', readItem.body);
 
-  console.log('\nClaim link (works once lvr-coupon.html is deployed):');
-  console.log('  https://lvr-data-a60c1.web.app/lvr-coupon.html?biz=vanilla-rice');
+  console.log('\nRestaurant portal: https://lvr-data-a60c1.web.app/lvr-restaurant-portal.html (PIN 5190)');
+  console.log('To give someone points, use lvr-points-admin.html -> Wallets -> + New Wallet.');
 })();
 NODE

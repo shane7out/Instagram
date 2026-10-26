@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restaurant Portal — Las Vegas Restaurants</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+
+  #gate{max-width:360px;margin:90px auto;text-align:center;padding:0 16px;}
+  #gate h1{font-size:19px;font-weight:800;margin-bottom:6px;}
+  #gate p{font-size:13.5px;color:var(--ink-dim);margin-bottom:20px;}
+  #gate input{
+    width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);font-size:16px;text-align:center;margin-bottom:12px;
+  }
+  #gate button{
+    width:100%;padding:13px 14px;border-radius:10px;border:none;
+    background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  }
+  #gateMsg{min-height:20px;font-size:13.5px;color:var(--red);margin-top:10px;}
+
+  #app{display:none;}
+  #app.visible{display:block;}
+  header{padding:22px 18px 10px;max-width:700px;margin:0 auto;}
+  header h1{font-size:19px;font-weight:800;margin:0 0 4px;}
+  header p{font-size:13px;color:var(--ink-dim);margin:0;}
+
+  .wrap{max-width:700px;margin:0 auto;padding:0 18px 60px;}
+  .stats-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;flex:1;min-width:110px;}
+  .stat .n{font-size:20px;font-weight:800;}
+  .stat .l{font-size:11.5px;color:var(--ink-dim);margin-top:2px;}
+
+  .btn{padding:11px 18px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:16px;}
+  .btn-primary{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-dim);padding:0 10px 8px;border-bottom:1px solid var(--line);}
+  td{padding:11px 10px;border-bottom:1px solid var(--line);font-size:13.5px;}
+  tr:last-child td{border-bottom:none;}
+  .code{font-family:monospace;font-weight:700;color:var(--key-light);}
+  .empty-note{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>Restaurant Portal</h1>
+  <p>Enter your PIN to see redemptions at your restaurant.</p>
+  <input id="pinInput" type="password" inputmode="text" placeholder="PIN" aria-label="PIN" autofocus>
+  <button id="pinBtn">View My Redemptions</button>
+  <div id="gateMsg"></div>
+</div>
+
+<div id="app">
+  <header>
+    <h1 id="bizNameOut"></h1>
+    <p>Everyone who's redeemed a points offer at your restaurant.</p>
+  </header>
+  <div class="wrap">
+    <div class="stats-row" id="statsRow"></div>
+    <button class="btn btn-primary" id="exportBtn">Download CSV</button>
+    <div id="tableWrap"></div>
+  </div>
+</div>
+
+<script>
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var RESTAURANTS_PATH = '/lvr_points/restaurants';
+  var REDEMPTIONS_PATH = '/lvr_points/redemptions/';
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function fbGet(path) { return fetch(DB + path + '.json').then(function(r){ return r.json(); }); }
+
+  var mySlug = null, myBiz = null, myRows = [];
+
+  document.getElementById('pinBtn').addEventListener('click', tryPin);
+  document.getElementById('pinInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') tryPin(); });
+
+  function tryPin() {
+    var val = document.getElementById('pinInput').value.trim();
+    if (!val) return;
+    document.getElementById('gateMsg').textContent = '';
+    fbGet(RESTAURANTS_PATH).then(function(restaurants){
+      restaurants = restaurants || {};
+      var found = null;
+      Object.keys(restaurants).forEach(function(slug){
+        if (found) return;
+        if (restaurants[slug] && restaurants[slug].pin && restaurants[slug].pin === val) {
+          found = slug;
+        }
+      });
+      if (!found) {
+        document.getElementById('gateMsg').textContent = 'Wrong PIN.';
+        return;
+      }
+      mySlug = found;
+      myBiz = restaurants[found].bizName || found;
+      loadRedemptions();
+    }).catch(function(){
+      document.getElementById('gateMsg').textContent = "Couldn't check that right now. Try again.";
+    });
+  }
+
+  function loadRedemptions() {
+    fbGet(REDEMPTIONS_PATH + encodeURIComponent(mySlug)).then(function(data){
+      data = data || {};
+      myRows = Object.keys(data).map(function(id){ return data[id]; }).filter(Boolean);
+      myRows.sort(function(a,b){ return (b.redeemedAt||0) - (a.redeemedAt||0); });
+      render();
+    }).catch(function(){
+      document.getElementById('gateMsg').textContent = "Couldn't load your redemptions right now.";
+    });
+  }
+
+  function render() {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('bizNameOut').textContent = myBiz;
+
+    var totalPoints = myRows.reduce(function(sum, r){ return sum + (r.pointCost || 0); }, 0);
+    document.getElementById('statsRow').innerHTML =
+      '<div class="stat"><div class="n">' + myRows.length + '</div><div class="l">Redemptions</div></div>' +
+      '<div class="stat"><div class="n">' + totalPoints.toLocaleString() + '</div><div class="l">Points redeemed</div></div>';
+
+    var wrap = document.getElementById('tableWrap');
+    if (!myRows.length) {
+      wrap.innerHTML = '<div class="empty-note">No one has redeemed anything here yet.</div>';
+      return;
+    }
+    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Email</th><th>Item</th><th>Code</th><th>When</th></tr></thead><tbody>' +
+      myRows.map(function(r){
+        var when = r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : '';
+        return '<tr><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.email || '') + '</td><td>' + escapeHtml(r.itemName || '') + '</td><td class="code">' + escapeHtml(r.code || '') + '</td><td>' + when + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    if (!myRows.length) return;
+    var cols = ['name', 'email', 'itemName', 'pointCost', 'code', 'redeemedAt'];
+    var esc = function(v){ v = v == null ? '' : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
+    var csv = cols.join(',') + '\n' + myRows.map(function(r){
+      return cols.map(function(c){
+        return esc(c === 'redeemedAt' && r[c] ? new Date(r[c]).toISOString() : r[c]);
+      }).join(',');
+    }).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = (myBiz || 'restaurant').replace(/[^a-z0-9]+/gi, '-') + '-redemptions.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>

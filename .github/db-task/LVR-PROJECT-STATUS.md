@@ -309,6 +309,92 @@ custom `lv_pin` override if the owner ever changes the master PIN.
 curl -sL -o /tmp/keyroom.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-room.sh && bash /tmp/keyroom.sh
 ```
 
+### NEW — LVR Points program: wallets, catalog, redemption, restaurant portal (2026-10-26)
+Direct follow-through on the owner's points-economy idea: "1 point = $1,
+free chicken bowl = 10 points, customer opens their wallet, sees what's
+redeemable, clicks it, points come out of their balance; restaurant owners
+can log in to see who's redeemed what and download the data; I always want
+access to that too." Explicitly **not** blockchain — a points currency
+inside LVR's own database, same pattern as everything else here.
+
+**Wallet login decision (owner picked explicitly, 2026-10-26):** a personal
+link per wallet (`lvr-wallet.html?t=<random token>`), not a typed password
+and not a typed email. Zero new infrastructure (no email-sending service,
+no Firebase Auth SDK), buildable entirely with the existing REST-to-Firebase
+pattern. Tradeoff, told to the owner directly: if someone loses their link
+there's no self-serve recovery — the owner has to look them up in the admin
+tool and resend it. A real verified-login upgrade (email magic link) stays
+possible later if he ever hands over a Firebase Auth web config, but isn't
+needed for this to work today.
+
+New node `/lvr_points` (separate from `/lvr_coupons`, `/key_leads`, every
+restaurant/advertiser node):
+- `wallets/<token>`: `{ name, email, phone, balance }`
+- `grants/<token>/<id>`: history log of every point grant/adjustment
+- `restaurants/<slug>`: `{ bizName, pin }` — the PIN below is for that
+  restaurant's OWN portal login, separate from every other PIN in this
+  project
+- `catalog/<slug>/<itemId>`: `{ itemName, pointCost, instructions, photoUrl,
+  maxRedemptions, expiresAt, active }`
+- `redemptions/<slug>/<id>`: `{ token, email, name, itemId, itemName,
+  pointCost, code, redeemedAt }`
+
+**Four new pages:**
+- **`lvr-wallet.html`** (customer-facing, no PIN — opened via their personal
+  link). Big, simple balance display, a list of everything redeemable
+  platform-wide with its point cost (grayed out if they can't afford it —
+  never hidden, so they can see what they're working toward), a confirm
+  step, then a generated code shown on screen and the balance deducted.
+  Known, accepted limitation (documented in the code, not hidden): plain
+  REST with no server-side transactions means two redemptions fired at the
+  same literal instant from two devices could both read the same starting
+  balance — same honest tradeoff as the rest of this no-backend project,
+  narrowed (not eliminated) by re-fetching the balance fresh right before
+  committing.
+- **`lvr-points-admin.html`** (PIN `702954`, owner only, single-sign-on via
+  the Key Tech Room bypass). Three tabs: **Wallets** (create a new wallet
+  with a starting point grant and get the shareable link immediately,
+  search existing wallets, add/subtract points with a reason logged every
+  time); **Catalog** (create/edit redeemable items per restaurant, set that
+  restaurant's own portal PIN right there, see live redeemed-count per
+  item); **Redemptions** (every redemption across every restaurant, plus a
+  "Download All (CSV)" button — this is the owner's own permanent full
+  visibility the DM promised).
+- **`lvr-restaurant-portal.html`** (PIN-gated per restaurant, using that
+  restaurant's own PIN from the catalog admin — NOT the owner's PIN, and
+  intentionally scoped so a restaurant only ever sees ITS OWN redemptions,
+  never another restaurant's). Shows everyone who redeemed there, plus its
+  own "Download CSV" button — exactly the "restaurant owner can download
+  the database" access the owner described.
+- **`key-room.html`** updated with a new "Points Program" card.
+
+**Seeded for real** via `task.sh`: Vanilla Rice Hibachi House now has a
+restaurant record (portal PIN `5190`) and one real catalog item — Free
+Chicken Bowl, 10 points — in `/lvr_points`. No wallets exist yet; creating
+the first one (who gets how many points) is the owner's call, made through
+`lvr-points-admin.html` once this deploys.
+
+**Honest note on "100 million points":** the system doesn't enforce any
+literal supply cap — there's no shared pool that drains as wallets get
+granted points, each grant is just an independent balance increase. "100
+million" is the owner's framing/vision number, not a mechanic the code
+currently tracks. A running supply-remaining counter is a quick follow-up
+if he wants one, not built by default.
+
+All four new/changed pages tested with mocked Firebase data via Playwright
+before shipping: the wallet page's full redeem flow (balance check,
+confirm, code generation, deduction) and its unaffordable/expired/missing
+states; the admin tool's wallet creation (verifying the real PUT + grant
+log), add-points, catalog item creation (verifying both the catalog AND
+restaurant records get written), and the redemptions list/CSV; the
+restaurant portal's PIN matching and per-restaurant data scoping (confirmed
+one restaurant's PIN never surfaces another's redemptions). No JS errors
+in any of it. Same single-sign-on bypass as every other owner tool, also
+tested.
+
+Already added to `deploy-key-room.sh` (see the single-sign-on section
+above) — one Mac command deploys this along with everything else.
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:

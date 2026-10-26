@@ -34,7 +34,7 @@ LOG=/tmp/keyroomdeploy.txt
 
 cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 
-IDX="index.html"; [ -f "$IDX" ] || IDX="$(ls *.html 2>/dev/null | grep -v key-advertisers | grep -v key-leads | grep -v kt-crm | grep -v key-room | grep -v lvr-coupons | head -1)"
+IDX="index.html"; [ -f "$IDX" ] || IDX="$(ls *.html 2>/dev/null | grep -v key-advertisers | grep -v key-leads | grep -v kt-crm | grep -v key-room | grep -v lvr-coupons | grep -v lvr-wallet | grep -v lvr-points | grep -v lvr-restaurant | head -1)"
 echo "dashboard file: $IDX ($(wc -c < "$IDX") bytes)" >> "$LOG"
 echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 
@@ -42,7 +42,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # 1) standalone tools - download fresh, syntax-check each, skip (don't ship)
 #    any that fail rather than aborting the whole run
 # ---------------------------------------------------------------------------
-FILES="key-room.html key-leads.html kt-crm.html key-advertisers.html lvr-coupons-admin.html"
+FILES="key-room.html key-leads.html kt-crm.html key-advertisers.html lvr-coupons-admin.html lvr-wallet.html lvr-points-admin.html lvr-restaurant-portal.html"
 FAILED=""
 for F in $FILES; do
   curl -sL -o "$F" "$RAWB/$F"

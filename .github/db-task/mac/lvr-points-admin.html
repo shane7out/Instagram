@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LVR — Points</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --green:#3ddc84; --yellow:#f0c239; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  a{color:var(--key-light);}
+
+  #pin-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+  #pin-screen.hidden{display:none;}
+  .pin-logo{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--key-light);text-transform:uppercase;}
+  .pin-sub{font-size:13px;color:var(--ink-dim);margin-bottom:28px;}
+  .pin-dots{display:flex;gap:12px;margin-bottom:26px;}
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:background .15s,border-color .15s;}
+  .pin-dot.filled{background:var(--key-blue);border-color:var(--key-blue);}
+  .pin-dot.error{background:var(--red);border-color:var(--red);}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:230px;}
+  .pin-key{height:58px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;}
+  .pin-key:active{background:var(--line);}
+  .pin-key.empty{background:transparent;border:none;cursor:default;}
+  .pin-msg{color:var(--red);font-size:13px;font-weight:600;margin-top:16px;min-height:18px;}
+
+  #app{display:none;}
+  #app.visible{display:block;}
+  header{position:sticky;top:0;z-index:10;background:rgba(7,17,31,.95);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .brand{font-weight:800;font-size:15px;}
+  .btn{background:transparent;color:var(--ink-dim);border:1px solid var(--line);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;}
+  .btn:active{border-color:var(--key-light);color:var(--key-light);}
+  .btn-primary{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  .tabs{display:flex;gap:8px;padding:14px 18px 0;flex-wrap:wrap;}
+  .tab{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:13px;color:var(--ink-dim);cursor:pointer;white-space:nowrap;}
+  .tab.active{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  #view{padding:18px;max-width:760px;margin:0 auto 60px;}
+  .empty-note{color:var(--ink-dim);text-align:center;padding:40px 10px;font-size:14px;}
+
+  .stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;flex:1;min-width:110px;}
+  .stat .n{font-size:20px;font-weight:800;}
+  .stat .l{font-size:11.5px;color:var(--ink-dim);margin-top:2px;}
+
+  .row-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+  .row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .row-name{font-weight:800;font-size:15px;}
+  .row-sub{font-size:12.5px;color:var(--ink-dim);margin-top:2px;}
+  .row-num{font-size:18px;font-weight:800;color:var(--key-light);}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .row-actions button{font-size:12.5px;font-weight:700;border-radius:8px;padding:7px 11px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);cursor:pointer;}
+  .row-link{font-size:11.5px;margin-top:8px;word-break:break-all;color:var(--key-light);}
+
+  .form-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
+  .field input, .field textarea{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:14px;font-family:inherit;}
+  .field textarea{min-height:56px;resize:vertical;}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+  .checkbox-row label{font-size:13px;color:var(--ink-dim);}
+  .form-actions{display:flex;gap:10px;}
+  .search-box{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;margin-bottom:14px;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--key-blue);color:#fff;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:1000;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .link-reveal{background:var(--bg-2);border:1px dashed var(--key-blue);border-radius:10px;padding:14px;margin-top:10px;font-size:13px;word-break:break-all;}
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-logo">LVR Points</div>
+  <div class="pin-sub">Enter PIN to manage the points program</div>
+  <div class="pin-dots">
+    <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
+    <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+    <button class="pin-key empty"></button><button class="pin-key" data-k="0">0</button><button class="pin-key" data-k="del">&larr;</button>
+  </div>
+  <div class="pin-msg" id="pin-msg"></div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">LVR — POINTS PROGRAM</div>
+    <button class="btn" id="refreshBtn">Refresh</button>
+  </header>
+  <div class="tabs" id="tabs">
+    <span class="tab active" data-v="wallets">Wallets</span>
+    <span class="tab" data-v="catalog">Catalog</span>
+    <span class="tab" data-v="redemptions">Redemptions</span>
+  </div>
+  <div id="view"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var PIN = '702954'; // change any time - edit this line and redeploy
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var WALLETS_PATH = '/lvr_points/wallets';
+  var GRANTS_PATH = '/lvr_points/grants';
+  var CATALOG_PATH = '/lvr_points/catalog';
+  var RESTAURANTS_PATH = '/lvr_points/restaurants';
+  var REDEMPTIONS_PATH = '/lvr_points/redemptions';
+  var WALLET_PAGE_URL = 'https://lvr-data-a60c1.web.app/lvr-wallet.html?t=';
+
+  function _lvOwnerSessionValid(){
+    try {
+      var t = parseInt(localStorage.getItem('lv_owner_session') || '0', 10);
+      return t > 0 && (Date.now() - t) < 24*60*60*1000;
+    } catch(e){ return false; }
+  }
+
+  // ================= PIN LOGIC =================
+  var pinBuf = '';
+  var dots = [document.getElementById('pd0'),document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3'),document.getElementById('pd4'),document.getElementById('pd5')];
+  function renderDots(err){
+    dots.forEach(function(d,i){ d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : ''); });
+  }
+  function enterApp(){
+    document.getElementById('pin-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    loadAll();
+  }
+  function pinSubmit(){
+    if (pinBuf === PIN) {
+      try { sessionStorage.setItem('lvr_points_unlocked', '1'); } catch(e){}
+      enterApp();
+    } else {
+      renderDots(true);
+      document.getElementById('pin-msg').textContent = 'Wrong PIN';
+      setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500);
+    }
+  }
+  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-k');
+      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
+      if (pinBuf.length >= 6) return;
+      pinBuf += k;
+      renderDots(false);
+      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
+    });
+  });
+  try {
+    if (_lvOwnerSessionValid() || sessionStorage.getItem('lvr_points_unlocked') === '1') {
+      try { sessionStorage.setItem('lvr_points_unlocked', '1'); } catch(e){}
+      enterApp();
+    }
+  } catch(e){}
+
+  // ================= HELPERS =================
+  function fbGet(path) { return fetch(DB + path + '.json').then(function(r){ return r.json(); }); }
+  function fbPost(path, body) { return fetch(DB + path + '.json', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  function fbPut(path, body) { return fetch(DB + path + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  function fbPatch(path, body) { return fetch(DB + path + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  function fbDelete(path) { return fetch(DB + path + '.json', { method: 'DELETE' }); }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
+  function slugify(s) { return (s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function genToken() {
+    var bytes = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+  }
+  function downloadCsv(filename, rows) {
+    if (!rows.length) { showToast('Nothing to export'); return; }
+    var cols = Object.keys(rows[0]);
+    var esc = function(v){ v = v == null ? '' : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
+    var csv = cols.map(esc).join(',') + '\n' + rows.map(function(r){ return cols.map(function(c){ return esc(r[c]); }).join(','); }).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  var wallets = {}, catalog = {}, restaurants = {}, redemptions = {};
+  var activeTab = 'wallets';
+  var view = document.getElementById('view');
+
+  document.getElementById('refreshBtn').addEventListener('click', loadAll);
+  document.getElementById('tabs').addEventListener('click', function(e){
+    var tab = e.target.closest('.tab');
+    if (!tab) return;
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    tab.classList.add('active');
+    activeTab = tab.getAttribute('data-v');
+    renderTab();
+  });
+
+  function loadAll() {
+    view.innerHTML = '<div class="empty-note">Loading…</div>';
+    Promise.all([
+      fbGet(WALLETS_PATH), fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH)
+    ]).then(function(r){
+      wallets = r[0] || {}; catalog = r[1] || {}; restaurants = r[2] || {}; redemptions = r[3] || {};
+      renderTab();
+    }).catch(function(){
+      view.innerHTML = '<div class="empty-note">Could not load — check connection.</div>';
+    });
+  }
+
+  function renderTab() {
+    if (activeTab === 'wallets') renderWalletsTab();
+    else if (activeTab === 'catalog') renderCatalogTab();
+    else renderRedemptionsTab();
+  }
+
+  // ========================================================================
+  // WALLETS TAB
+  // ========================================================================
+  function renderWalletsTab() {
+    var tokens = Object.keys(wallets);
+    var totalBalance = tokens.reduce(function(sum, t){ return sum + (wallets[t].balance || 0); }, 0);
+
+    var html =
+      '<div class="stats-row">' +
+        '<div class="stat"><div class="n">' + tokens.length + '</div><div class="l">Wallets</div></div>' +
+        '<div class="stat"><div class="n">' + totalBalance.toLocaleString() + '</div><div class="l">Points outstanding</div></div>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="newWalletBtn" style="margin-bottom:14px;">+ New Wallet</button>' +
+      '<input class="search-box" id="walletSearch" placeholder="Search by name or email…">' +
+      '<div id="walletList"></div>';
+    view.innerHTML = html;
+
+    document.getElementById('newWalletBtn').addEventListener('click', function(){ renderWalletForm(); });
+    document.getElementById('walletSearch').addEventListener('input', function(){ renderWalletList(this.value); });
+    renderWalletList('');
+  }
+
+  function renderWalletList(filter) {
+    var tokens = Object.keys(wallets);
+    filter = (filter || '').toLowerCase();
+    if (filter) {
+      tokens = tokens.filter(function(t){
+        var w = wallets[t];
+        return (w.name || '').toLowerCase().indexOf(filter) !== -1 || (w.email || '').toLowerCase().indexOf(filter) !== -1;
+      });
+    }
+    var listEl = document.getElementById('walletList');
+    if (!tokens.length) { listEl.innerHTML = '<div class="empty-note">No wallets yet.</div>'; return; }
+
+    listEl.innerHTML = tokens.map(function(t){
+      var w = wallets[t];
+      return '<div class="row-card">' +
+        '<div class="row-top">' +
+          '<div><div class="row-name">' + escapeHtml(w.name || w.email || '(no name)') + '</div><div class="row-sub">' + escapeHtml(w.email || '') + '</div></div>' +
+          '<div class="row-num">' + (w.balance || 0) + ' pts</div>' +
+        '</div>' +
+        '<div class="row-link">' + WALLET_PAGE_URL + t + '</div>' +
+        '<div class="row-actions">' +
+          '<button data-act="add-points" data-token="' + t + '">+ Add Points</button>' +
+          '<button data-act="copy" data-token="' + t + '">Copy Link</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    listEl.querySelectorAll('[data-act="copy"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var url = WALLET_PAGE_URL + btn.getAttribute('data-token');
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ showToast('Link copied'); });
+        else showToast(url);
+      });
+    });
+    listEl.querySelectorAll('[data-act="add-points"]').forEach(function(btn){
+      btn.addEventListener('click', function(){ renderAddPoints(btn.getAttribute('data-token')); });
+    });
+  }
+
+  function renderWalletForm() {
+    view.innerHTML =
+      '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
+      '<div class="form-box">' +
+        '<div class="field"><label>Name</label><input type="text" id="fName"></div>' +
+        '<div class="field"><label>Email</label><input type="text" id="fEmail"></div>' +
+        '<div class="field"><label>Phone (optional)</label><input type="text" id="fPhone"></div>' +
+        '<div class="field"><label>Starting points</label><input type="number" id="fAmount" value="100"></div>' +
+        '<div class="field"><label>Reason (for your own records)</label><input type="text" id="fReason" placeholder="e.g. early signup"></div>' +
+        '<div class="form-actions">' +
+          '<button class="btn btn-primary" id="createWalletBtn">Create Wallet</button>' +
+          '<button class="btn" id="cancelBtn">Cancel</button>' +
+        '</div>' +
+        '<div id="walletLinkOut"></div>' +
+      '</div>';
+    document.getElementById('backBtn').addEventListener('click', renderWalletsTab);
+    document.getElementById('cancelBtn').addEventListener('click', renderWalletsTab);
+    document.getElementById('createWalletBtn').addEventListener('click', function(){
+      var name = document.getElementById('fName').value.trim();
+      var email = document.getElementById('fEmail').value.trim();
+      var phone = document.getElementById('fPhone').value.trim();
+      var amount = parseInt(document.getElementById('fAmount').value, 10) || 0;
+      var reason = document.getElementById('fReason').value.trim();
+      if (!name && !email) { showToast('Enter at least a name or email'); return; }
+      var token = genToken();
+      var payload = { name: name, email: email, phone: phone, balance: amount, createdAt: { '.sv': 'timestamp' } };
+      fbPut(WALLETS_PATH + '/' + token, payload).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        wallets[token] = payload;
+        if (amount) fbPost(GRANTS_PATH + '/' + token, { amount: amount, reason: reason || 'initial grant', grantedAt: { '.sv': 'timestamp' } }).catch(function(){});
+        var url = WALLET_PAGE_URL + token;
+        document.getElementById('walletLinkOut').innerHTML =
+          '<div class="link-reveal">Wallet created! Send this link to them:<br><b>' + url + '</b></div>';
+        showToast('Wallet created');
+      }).catch(function(){ showToast('Something went wrong creating this wallet'); });
+    });
+  }
+
+  function renderAddPoints(token) {
+    var w = wallets[token];
+    view.innerHTML =
+      '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
+      '<div class="form-box">' +
+        '<div style="margin-bottom:10px;"><b>' + escapeHtml(w.name || w.email) + '</b> — currently ' + (w.balance || 0) + ' points</div>' +
+        '<div class="field"><label>Points to add (use a negative number to subtract)</label><input type="number" id="fAddAmount" value="10"></div>' +
+        '<div class="field"><label>Reason</label><input type="text" id="fAddReason"></div>' +
+        '<div class="form-actions">' +
+          '<button class="btn btn-primary" id="confirmAddBtn">Save</button>' +
+          '<button class="btn" id="cancelAddBtn">Cancel</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('backBtn').addEventListener('click', renderWalletsTab);
+    document.getElementById('cancelAddBtn').addEventListener('click', renderWalletsTab);
+    document.getElementById('confirmAddBtn').addEventListener('click', function(){
+      var amount = parseInt(document.getElementById('fAddAmount').value, 10) || 0;
+      var reason = document.getElementById('fAddReason').value.trim();
+      fbGet(WALLETS_PATH + '/' + token + '/balance').then(function(fresh){
+        var newBalance = (fresh || 0) + amount;
+        return fbPatch(WALLETS_PATH + '/' + token, { balance: newBalance }).then(function(){ return newBalance; });
+      }).then(function(newBalance){
+        wallets[token].balance = newBalance;
+        fbPost(GRANTS_PATH + '/' + token, { amount: amount, reason: reason || '', grantedAt: { '.sv': 'timestamp' } }).catch(function(){});
+        showToast('Updated');
+        renderWalletsTab();
+      }).catch(function(){ showToast('Something went wrong'); });
+    });
+  }
+
+  // ========================================================================
+  // CATALOG TAB
+  // ========================================================================
+  function renderCatalogTab() {
+    var slugs = Object.keys(catalog);
+    var html = '<button class="btn btn-primary" id="newItemBtn" style="margin-bottom:14px;">+ New Catalog Item</button><div id="catalogList"></div>';
+    view.innerHTML = html;
+    document.getElementById('newItemBtn').addEventListener('click', function(){ renderItemForm(null, null); });
+
+    var listEl = document.getElementById('catalogList');
+    if (!slugs.length) { listEl.innerHTML = '<div class="empty-note">No catalog items yet.</div>'; return; }
+
+    var rows = '';
+    slugs.forEach(function(slug){
+      var items = catalog[slug] || {};
+      var rest = restaurants[slug] || {};
+      Object.keys(items).forEach(function(itemId){
+        var item = items[itemId];
+        var redeemedCount = Object.keys(redemptions[slug] || {}).filter(function(id){ return redemptions[slug][id].itemId === itemId; }).length;
+        rows += '<div class="row-card">' +
+          '<div class="row-top">' +
+            '<div><div class="row-name">' + escapeHtml(item.itemName) + '</div><div class="row-sub">' + escapeHtml(rest.bizName || slug) + ' · ' + (item.active === false ? 'Inactive' : 'Active') + '</div></div>' +
+            '<div class="row-num">' + item.pointCost + ' pts</div>' +
+          '</div>' +
+          '<div class="row-sub">' + redeemedCount + ' redeemed' + (item.maxRedemptions ? ' of ' + item.maxRedemptions : '') + '</div>' +
+          '<div class="row-actions">' +
+            '<button data-act="edit" data-slug="' + escapeHtml(slug) + '" data-item="' + escapeHtml(itemId) + '">Edit</button>' +
+            '<button data-act="delete" data-slug="' + escapeHtml(slug) + '" data-item="' + escapeHtml(itemId) + '">Delete</button>' +
+          '</div>' +
+        '</div>';
+      });
+    });
+    listEl.innerHTML = rows;
+
+    listEl.querySelectorAll('[data-act="edit"]').forEach(function(btn){
+      btn.addEventListener('click', function(){ renderItemForm(btn.getAttribute('data-slug'), btn.getAttribute('data-item')); });
+    });
+    listEl.querySelectorAll('[data-act="delete"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var slug = btn.getAttribute('data-slug'), itemId = btn.getAttribute('data-item');
+        if (!confirm('Delete this catalog item? Past redemptions stay on record.')) return;
+        fbDelete(CATALOG_PATH + '/' + slug + '/' + itemId).then(function(){
+          delete catalog[slug][itemId];
+          renderCatalogTab();
+          showToast('Deleted');
+        });
+      });
+    });
+  }
+
+  function renderItemForm(slug, itemId) {
+    var isEdit = !!(slug && itemId);
+    var item = isEdit ? catalog[slug][itemId] : null;
+    var rest = isEdit ? (restaurants[slug] || {}) : null;
+
+    view.innerHTML =
+      '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
+      '<div class="form-box">' +
+        '<div class="field"><label>Restaurant name</label><input type="text" id="fBizName" value="' + escapeHtml(isEdit ? rest.bizName : '') + '"></div>' +
+        '<div class="field"><label>Restaurant slug (used in links, letters/numbers/dashes)</label><input type="text" id="fSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
+        '<div class="field"><label>Restaurant portal PIN (for them to view/export their own redemptions)</label><input type="text" id="fRestPin" value="' + escapeHtml(isEdit ? (rest.pin || '') : '') + '" placeholder="e.g. 4 digits"></div>' +
+        '<div class="field"><label>Item name</label><input type="text" id="fItemName" value="' + escapeHtml(item ? item.itemName : '') + '"></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Point cost</label><input type="number" id="fPointCost" value="' + (item ? item.pointCost : 10) + '"></div>' +
+          '<div class="field"><label>Max redemptions (blank = unlimited)</label><input type="number" id="fMaxRedemptions" value="' + (item && item.maxRedemptions ? item.maxRedemptions : '') + '"></div>' +
+        '</div>' +
+        '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
+        '<div class="field"><label>Photo URL (optional)</label><input type="text" id="fPhoto" value="' + escapeHtml(item ? item.photoUrl : '') + '"></div>' +
+        '<div class="field"><label>Expires on (blank = never)</label><input type="date" id="fExpires" value="' + (item && item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
+        '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!item || item.active !== false ? ' checked' : '') + '><label for="fActive">Active</label></div>' +
+        '<div class="form-actions">' +
+          '<button class="btn btn-primary" id="saveItemBtn">' + (isEdit ? 'Save Changes' : 'Create Item') + '</button>' +
+          '<button class="btn" id="cancelItemBtn">Cancel</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('backBtn').addEventListener('click', renderCatalogTab);
+    document.getElementById('cancelItemBtn').addEventListener('click', renderCatalogTab);
+    document.getElementById('saveItemBtn').addEventListener('click', function(){
+      var newSlug = isEdit ? slug : slugify(document.getElementById('fSlug').value);
+      var bizName = document.getElementById('fBizName').value.trim();
+      var itemName = document.getElementById('fItemName').value.trim();
+      var pointCost = parseInt(document.getElementById('fPointCost').value, 10);
+      if (!newSlug || !bizName || !itemName || !pointCost) { showToast('Restaurant name, slug, item name, and point cost are required'); return; }
+
+      var expiresVal = document.getElementById('fExpires').value;
+      var maxRedemptionsVal = document.getElementById('fMaxRedemptions').value;
+      var itemPayload = {
+        itemName: itemName,
+        pointCost: pointCost,
+        instructions: document.getElementById('fInstructions').value.trim(),
+        photoUrl: document.getElementById('fPhoto').value.trim(),
+        maxRedemptions: maxRedemptionsVal ? parseInt(maxRedemptionsVal, 10) : null,
+        expiresAt: expiresVal ? new Date(expiresVal + 'T23:59:59').getTime() : null,
+        active: document.getElementById('fActive').checked,
+        createdAt: (item && item.createdAt) ? item.createdAt : { '.sv': 'timestamp' }
+      };
+      var restPayload = { bizName: bizName, pin: document.getElementById('fRestPin').value.trim() };
+
+      var itemPath = isEdit ? (CATALOG_PATH + '/' + slug + '/' + itemId) : (CATALOG_PATH + '/' + newSlug + '/' + genToken().slice(0, 12));
+      Promise.all([
+        fbPut(itemPath, itemPayload),
+        fbPut(RESTAURANTS_PATH + '/' + newSlug, restPayload)
+      ]).then(function(rs){
+        if (!rs[0].ok || !rs[1].ok) throw new Error('save failed');
+        if (!catalog[newSlug]) catalog[newSlug] = {};
+        var key = itemPath.split('/').pop();
+        catalog[newSlug][key] = itemPayload;
+        restaurants[newSlug] = restPayload;
+        renderCatalogTab();
+        showToast(isEdit ? 'Saved' : 'Item created');
+      }).catch(function(){ showToast('Something went wrong saving this'); });
+    });
+  }
+
+  // ========================================================================
+  // REDEMPTIONS TAB
+  // ========================================================================
+  function renderRedemptionsTab() {
+    var slugs = Object.keys(redemptions);
+    var allRows = [];
+    slugs.forEach(function(slug){
+      var items = redemptions[slug] || {};
+      Object.keys(items).forEach(function(id){
+        var r = items[id];
+        allRows.push(Object.assign({ slug: slug }, r));
+      });
+    });
+    allRows.sort(function(a,b){ return (b.redeemedAt||0) - (a.redeemedAt||0); });
+
+    var html = '<div class="stats-row"><div class="stat"><div class="n">' + allRows.length + '</div><div class="l">Total redemptions</div></div></div>' +
+      '<button class="btn btn-primary" id="exportAllBtn" style="margin-bottom:14px;">Download All (CSV)</button>' +
+      '<div id="redemptionList"></div>';
+    view.innerHTML = html;
+
+    document.getElementById('exportAllBtn').addEventListener('click', function(){
+      downloadCsv('lvr-points-redemptions.csv', allRows.map(function(r){
+        return {
+          restaurant: (restaurants[r.slug] || {}).bizName || r.slug,
+          item: r.itemName, points: r.pointCost, code: r.code,
+          name: r.name, email: r.email, redeemedAt: r.redeemedAt ? new Date(r.redeemedAt).toISOString() : ''
+        };
+      }));
+    });
+
+    var listEl = document.getElementById('redemptionList');
+    if (!allRows.length) { listEl.innerHTML = '<div class="empty-note">No redemptions yet.</div>'; return; }
+    listEl.innerHTML = allRows.map(function(r){
+      var when = r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + new Date(r.redeemedAt).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : '';
+      return '<div class="row-card">' +
+        '<div class="row-top">' +
+          '<div><div class="row-name">' + escapeHtml(r.name || r.email || '') + '</div><div class="row-sub">' + escapeHtml((restaurants[r.slug]||{}).bizName || r.slug) + ' — ' + escapeHtml(r.itemName) + '</div></div>' +
+          '<div class="row-num" style="font-size:14px;">' + escapeHtml(r.code) + '</div>' +
+        '</div>' +
+        '<div class="row-sub">' + r.pointCost + ' pts · ' + when + '</div>' +
+      '</div>';
+    }).join('');
+  }
+</script>
+</body>
+</html>
