@@ -181,7 +181,9 @@ function loadData() {
 }
 
 function render(data) {
-  var pages = Object.keys(data);
+  // Only show known real pages - filters out test/junk entries (e.g. a
+  // leftover diagnostic-test key) that aren't an actual site page.
+  var pages = Object.keys(data).filter(function (p) { return PAGE_LABELS.hasOwnProperty(p); });
   var allHits = [];
   var totalCount = 0;
   var last7Count = 0;
