@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Views — Key Technologies</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --good:#3ddc97; --warn:#ffb84d;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:40px 20px 80px;}
+  a{color:var(--key-light);}
+  h1{font-size:clamp(22px,4vw,28px);font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;}
+  .sub{font-size:14px;color:var(--ink-dim);margin:0 0 28px;}
+
+  /* PIN gate */
+  #gate{max-width:360px;margin:80px auto;text-align:center;}
+  #gate h1{font-size:20px;margin-bottom:18px;}
+  #gate input{
+    width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);font-size:16px;text-align:center;
+    letter-spacing:0.2em;margin-bottom:12px;
+  }
+  #gate button{
+    width:100%;padding:13px 14px;border-radius:10px;border:none;
+    background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  }
+  #gate button:hover{background:#0f64b2;}
+  #gateMsg{min-height:20px;font-size:13.5px;color:var(--warn);margin-top:10px;}
+
+  #app{display:none;}
+
+  .stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px;}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 20px;min-width:140px;flex:1;
+  }
+  .stat .n{font-size:26px;font-weight:800;}
+  .stat .l{font-size:12.5px;color:var(--ink-dim);margin-top:2px;}
+
+  table{width:100%;border-collapse:collapse;margin-bottom:36px;}
+  th{
+    text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;
+    color:var(--ink-dim);padding:0 12px 8px;border-bottom:1px solid var(--line);
+  }
+  td{padding:12px;border-bottom:1px solid var(--line);font-size:14.5px;}
+  td.num{font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  .page-name{font-weight:600;}
+
+  h2{font-size:16px;font-weight:700;margin:0 0 14px;}
+  .activity{list-style:none;margin:0;padding:0;}
+  .activity li{
+    display:flex;justify-content:space-between;gap:12px;padding:10px 0;
+    border-bottom:1px solid var(--line);font-size:14px;
+  }
+  .activity li:last-child{border-bottom:none;}
+  .activity .pg{font-weight:600;}
+  .activity .ref{color:var(--ink-dim);font-size:12.5px;}
+  .activity .when{color:var(--ink-dim);font-size:12.5px;white-space:nowrap;}
+
+  .empty{color:var(--ink-dim);font-size:14.5px;padding:20px 0;}
+  .refresh{
+    display:inline-block;margin-bottom:20px;padding:9px 16px;border-radius:9px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink);
+    font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .refresh:hover{border-color:var(--key-blue);}
+  .back{display:inline-block;margin-bottom:24px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink-dim);}
+  .back:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>Enter PIN</h1>
+  <input id="pinInput" type="password" inputmode="numeric" maxlength="12" placeholder="••••••" autofocus>
+  <button id="pinBtn">View Report</button>
+  <div id="gateMsg"></div>
+</div>
+
+<div id="app">
+  <div class="wrap">
+    <a class="back" href="index.html">&larr; Back to Key Technologies</a>
+    <h1>Page Views</h1>
+    <p class="sub">Who's looking at what, across every page on keytechnologies.si.</p>
+    <button class="refresh" id="refreshBtn">Refresh</button>
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <h2>By page</h2>
+    <div id="byPageWrap"></div>
+
+    <h2>Recent activity</h2>
+    <ul class="activity" id="activityList"></ul>
+  </div>
+</div>
+
+<script>
+var PV_PIN = "702951";
+var PV_DB = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews";
+
+var PAGE_LABELS = {
+  "index.html": "Home",
+  "": "Home",
+  "real-estate.html": "Real Estate",
+  "law.html": "Law",
+  "medical-dental.html": "Medical / Dental",
+  "ecommerce.html": "E-commerce",
+  "privacy.html": "Privacy Policy",
+  "terms.html": "Terms of Service"
+};
+
+document.getElementById("pinBtn").addEventListener("click", tryPin);
+document.getElementById("pinInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") tryPin();
+});
+
+function tryPin() {
+  var val = document.getElementById("pinInput").value.trim();
+  if (val === PV_PIN) {
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadData();
+  } else {
+    document.getElementById("gateMsg").textContent = "Wrong PIN.";
+  }
+}
+
+document.getElementById("refreshBtn").addEventListener("click", loadData);
+
+function timeAgo(ts) {
+  var diff = Date.now() - ts;
+  var mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + "m ago";
+  var hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + "h ago";
+  var days = Math.floor(hrs / 24);
+  return days + "d ago";
+}
+
+function refDomain(ref) {
+  if (!ref) return "(direct)";
+  try {
+    var u = new URL(ref);
+    if (u.hostname.indexOf("keytechnologies.si") !== -1) return "(internal link)";
+    return u.hostname.replace(/^www\./, "");
+  } catch (e) {
+    return "(direct)";
+  }
+}
+
+function loadData() {
+  document.getElementById("statsRow").innerHTML = "<div class='empty'>Loading…</div>";
+  document.getElementById("byPageWrap").innerHTML = "";
+  document.getElementById("activityList").innerHTML = "";
+
+  fetch(PV_DB + "/hits.json")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      render(data || {});
+    })
+    .catch(function () {
+      document.getElementById("statsRow").innerHTML = "<div class='empty'>Couldn't load data. Try refreshing.</div>";
+    });
+}
+
+function render(data) {
+  var pages = Object.keys(data);
+  var allHits = [];
+  var totalCount = 0;
+  var last7Count = 0;
+  var cutoff7 = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  var byPage = pages.map(function (page) {
+    var hits = data[page] || {};
+    var records = Object.keys(hits).map(function (id) { return hits[id]; });
+    records.forEach(function (rec) {
+      allHits.push({ page: page, t: rec.t, ref: rec.ref });
+      totalCount++;
+      if (rec.t >= cutoff7) last7Count++;
+    });
+    var last7 = records.filter(function (r) { return r.t >= cutoff7; }).length;
+    var lastT = records.reduce(function (max, r) { return r.t > max ? r.t : max; }, 0);
+    return {
+      page: page,
+      label: PAGE_LABELS[page] || page,
+      total: records.length,
+      last7: last7,
+      lastT: lastT
+    };
+  });
+
+  byPage.sort(function (a, b) { return b.total - a.total; });
+
+  var statsHtml =
+    "<div class='stat'><div class='n'>" + totalCount + "</div><div class='l'>Total views</div></div>" +
+    "<div class='stat'><div class='n'>" + last7Count + "</div><div class='l'>Last 7 days</div></div>" +
+    "<div class='stat'><div class='n'>" + pages.length + "</div><div class='l'>Pages tracked</div></div>";
+  document.getElementById("statsRow").innerHTML = statsHtml;
+
+  if (!byPage.length) {
+    document.getElementById("byPageWrap").innerHTML = "<div class='empty'>No visits recorded yet — check back once the site's had some traffic.</div>";
+  } else {
+    var rows = byPage.map(function (p) {
+      return "<tr><td class='page-name'>" + p.label + "</td>" +
+        "<td class='num'>" + p.total + "</td>" +
+        "<td>" + p.last7 + "</td>" +
+        "<td>" + (p.lastT ? timeAgo(p.lastT) : "—") + "</td></tr>";
+    }).join("");
+    document.getElementById("byPageWrap").innerHTML =
+      "<table><thead><tr><th>Page</th><th>Total</th><th>Last 7 days</th><th>Last viewed</th></tr></thead><tbody>" +
+      rows + "</tbody></table>";
+  }
+
+  allHits.sort(function (a, b) { return b.t - a.t; });
+  var recent = allHits.slice(0, 30);
+  if (!recent.length) {
+    document.getElementById("activityList").innerHTML = "<li class='empty' style='border:none;'>No activity yet.</li>";
+  } else {
+    document.getElementById("activityList").innerHTML = recent.map(function (h) {
+      var label = PAGE_LABELS[h.page] || h.page;
+      return "<li><span class='pg'>" + label + "</span>" +
+        "<span class='ref'>" + refDomain(h.ref) + "</span>" +
+        "<span class='when'>" + timeAgo(h.t) + "</span></li>";
+    }).join("");
+  }
+}
+</script>
+</body>
+</html>

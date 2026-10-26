@@ -10,6 +10,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<script>
+  // Lightweight page-view counter - logs one record per visit to this
+  // site's own database. No cookies, no personal data: just which page,
+  // when, and what page linked here. Viewed at key-pageviews.html (PIN-gated).
+  (function () {
+    try {
+      var page = location.pathname.split("/").pop() || "index.html";
+      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page) + ".json";
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").slice(0, 200), w: window.innerWidth })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+</script>
 <style>
   :root{
     --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
