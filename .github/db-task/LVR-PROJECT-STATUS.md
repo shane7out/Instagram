@@ -2,7 +2,7 @@
 
 Repo: `shane7out/Instagram` (public — never commit real PINs/card numbers)
 Working branch: `claude/master-file-e6ofy0`
-Last updated: 2026-10-24
+Last updated: 2026-10-26
 
 This file exists so a brand-new Claude session can pick up exactly where things
 stand without re-discovering everything from scratch. Paste this whole file in
@@ -876,6 +876,86 @@ Continuing §17's work, same session:
   Source has still not been flipped to "GitHub Actions"). Deals site
   status unchanged from §15 (still 0 fresh listings, needs a dedicated
   debugging session, not worth re-polling every cycle).
+
+---
+
+## 19. Status as of 2026-10-26 — keytechnologies.si is LIVE
+
+**The biggest change since §18: Key Technologies is genuinely live on its own
+domain with a valid HTTPS cert.** This took four separate, sequential
+blockers, each diagnosed live with the owner at his Mac, not guessed:
+
+1. GitHub Pages Settings → Pages → Source flipped to "GitHub Actions" (the
+   owner finally did this manually — no API path exists, confirmed in §15).
+2. **New discovery**: flipping Source wasn't enough — every deploy still
+   failed instantly with zero logs. Root cause: GitHub auto-creates a
+   `github-pages` deployment *environment* that by default only allows
+   deploys from the repo's default branch (`main`) — but this project
+   deploys from `claude/master-file-e6ofy0`. Fixed via Settings →
+   Environments → `github-pages` → Deployment branches and tags → "No
+   restriction."
+3. DNS: `keytechnologies.si` had zero records at Dynadot (parked, not
+   configured). Fixed by switching Dynadot's mode to "Dynadot DNS" and adding
+   4 separate A records (one IP each) pointing at GitHub Pages.
+4. Custom domain + SSL: even with DNS correct, HTTPS failed on a cert
+   hostname mismatch because the "Custom domain" field in Pages settings
+   (separate from the CNAME file already in the repo) had never been set.
+   Owner entered it, GitHub auto-issued a Let's Encrypt cert.
+
+**Full live-site audit run after launch** (via a `task.sh` GH Actions
+diagnostic, since this sandbox can't reach the live domain directly): all 7
+real pages return 200 with correct content, 404 handling works and serves
+the branded `404.html`, robots.txt/sitemap.xml/og-image all reachable,
+canonical tags correct, no mixed content, Firebase CORS confirmed working
+from the live origin, Formspree endpoint confirmed live. Two minor real
+issues found and explained to the owner (not urgent): HTTP doesn't yet
+redirect to HTTPS (likely just needs time post-cert-issuance), and
+`www.keytechnologies.si` isn't configured (owner's call to skip — he doesn't
+market the www form). **Confirmed, not assumed: the free/unauthenticated
+PageSpeed Insights quota the audit tool relies on is genuinely exhausted**
+(direct API test returned a real `rateLimitExceeded` error) — this degrades
+the live audit tool's scoring for real visitors right now, which raises
+`KEY_PAGESPEED_API_KEY` (still empty) from nice-to-have to a real priority.
+
+**New: custom page-view counter + PIN-gated report**, since the owner wanted
+a quick "who's looking at what" view without first setting up Google
+Analytics (GA4 is also scaffolded in, inactive, `KEY_GA_MEASUREMENT_ID` still
+empty, offered as the deeper option later). Every real page now logs a
+lightweight hit (page, timestamp, referrer, screen width — no PII) to a new
+`key_pageviews` Firebase node. `keytechnologies.si/key-pageviews.html`
+(PIN `702951`, not linked in nav) shows total/7-day views per page, last-
+viewed time, and a recent-activity feed. Tested via Playwright (PIN gate,
+rendering, empty state) and verified against a real live round-trip (POST a
+test hit, read it back) via GH Actions — found along the way that this
+Firebase database accepts writes but rejects deletes (401 on a direct
+`DELETE`, unlike the no-rules-at-all LVR nodes in §8) — not expected to
+affect real use since the tracker only ever creates new entries, never
+deletes.
+
+**Site content/credentials work also shipped this stretch** (all live):
+blockchain/crypto and e-commerce/collectibles credentials added to the
+founder bio and `Person` JSON-LD `knowsAbout`; phone number removed
+site-wide in favor of a "Book a Call" CTA; 2 new services (Private LLM
+Setup, Cybersecurity & Network Hardening); a branded `404.html`; an honest
+"Just Launched" banner on all 5 main pages (copy drafted, critiqued, and
+tightened with the owner directly); privacy policy corrected to describe
+the new page-view counter accurately instead of claiming "no analytics."
+
+**Still pending from §3, now MORE actionable since Pages going live removes
+the "Key Technologies pill 404s" blocker**: the dashboard CRM-fixes bundle,
+Zach's PIN, the Key Technologies pill, `kt-crm.html`, and `key-leads.html`
+are all still sitting as tested-but-undeployed Mac scripts — not re-verified
+live since before the Pages work; worth a fresh reachability check next time
+there's a reason to.
+
+**Deals site: still stuck, re-confirmed 2026-10-26.** `fix-deals-harvest.sh`
+(the real root-cause fix from §15/§3) was started by the owner at his Mac but
+has still not posted a completion log, and `cars.json` is unchanged — 0
+entries inside the 30-day freshness window, newest `added` still
+`2026-09-21`. The only diagnostic log present is from the earlier dating-site
+patch run, not a harvest completion. Needs the owner to check that Terminal
+window or re-run the script; not productive to keep re-polling automatically
+until there's a reason to think it moved.
 
 ---
 
