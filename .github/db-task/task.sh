@@ -1,52 +1,49 @@
 #!/bin/bash
-# Read-only diagnostic: verify key-pageviews.html deployed live, fire a
-# real test hit against the key_pageviews Firebase node (same path the
-# site's own tracker script uses), and read it back to confirm the whole
-# loop works end to end.
+# Read-only diagnostic: check whether the Deals site harvest fix
+# (fix-deals-harvest.sh) actually completed - last check found it still
+# stuck. Checks the live cars.json freshness window and looks for the
+# fix's own completion/diag log.
 set -e
 node <<'NODE'
 const https = require('https');
-function req(method, url, body, timeoutMs) {
+function get(url, timeoutMs) {
   return new Promise((resolve) => {
-    const r = new URL(url);
-    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: {} };
-    if (body) { opts.headers['Content-Type'] = 'application/json'; }
-    const request = https.request(opts, res => {
-      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
+    const req = https.get(url, { timeout: timeoutMs || 20000 }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
     });
-    request.on('error', e => resolve({ error: e.message }));
-    request.on('timeout', () => { request.destroy(); resolve({ error: 'timeout' }); });
-    request.setTimeout(timeoutMs || 15000);
-    if (body) request.write(body);
-    request.end();
+    req.on('error', e => resolve({ error: e.message }));
+    req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
   });
 }
 
 (async () => {
-  console.log('=== key-pageviews.html reachability ===');
-  const page = await req('GET', 'https://keytechnologies.si/key-pageviews.html', null, 15000);
-  console.log('status:', page.status || page.error);
-  if (page.body) {
-    console.log('has PIN gate:', page.body.includes('pinInput'));
-    console.log('has report app shell:', page.body.includes('id="app"'));
+  console.log('=== Deals site freshness (cars.json) ===');
+  const r = await get('https://classiccarsforsale-co.web.app/cars.json', 20000);
+  if (r.error || r.status !== 200) {
+    console.log('fetch failed:', r.error || r.status);
+  } else {
+    try {
+      const arr = JSON.parse(r.body);
+      const now = Date.now();
+      const cutoff = now - 30 * 24 * 60 * 60 * 1000;
+      let newest = 0;
+      let fresh = 0;
+      for (const item of arr) {
+        const added = item && item.added ? Date.parse(item.added) : 0;
+        if (added > newest) newest = added;
+        if (added >= cutoff) fresh++;
+      }
+      console.log('total entries:', arr.length);
+      console.log('newest added:', newest ? new Date(newest).toISOString().slice(0,10) : 'none');
+      console.log('fresh (<=30d):', fresh);
+    } catch (e) {
+      console.log('parse failed:', e.message);
+    }
   }
 
-  console.log('\n=== Firing a real test hit (mirrors the tracker script) ===');
-  const testUrl = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/diagnostic-test.json';
-  const postBody = JSON.stringify({ t: Date.now(), ref: 'diagnostic-check', w: 0 });
-  const post = await req('POST', testUrl, postBody, 15000);
-  console.log('POST status:', post.status || post.error, '| body:', post.body);
-
-  console.log('\n=== Reading it back ===');
-  const read = await req('GET', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/diagnostic-test.json', null, 15000);
-  console.log('GET status:', read.status || read.error, '| body:', (read.body || '').slice(0, 300));
-
-  console.log('\n=== Existing real hits so far (from live traffic, if any) ===');
-  const hits = await req('GET', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits.json?shallow=true', null, 15000);
-  console.log('status:', hits.status || hits.error, '| pages with hits:', hits.body);
-
-  console.log('\n=== Cleaning up the diagnostic test entry ===');
-  const del = await req('DELETE', testUrl, null, 15000);
-  console.log('DELETE status:', del.status || del.error);
+  console.log('\n=== _debug/diag.json (last deploy/fix log, if any) ===');
+  const diag = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json', 15000);
+  console.log('status:', diag.status || diag.error);
+  console.log('body (first 1500 chars):', (diag.body || '').slice(0, 1500));
 })();
 NODE
