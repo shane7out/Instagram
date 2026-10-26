@@ -1,54 +1,43 @@
 #!/bin/bash
-# Seed the first real points-catalog item: Vanilla Rice Hibachi House, Free
-# Chicken Bowl for 10 points (at $1/point, matching what Shane described).
-# Same /lvr_points node the new admin tool (lvr-points-admin.html) and
-# wallet page (lvr-wallet.html) read from - this mirrors exactly what
-# creating it through the admin tool would write.
+# Routine check-in diagnostic: Deals site freshness (hasn't been checked in
+# a few cycles) + confirm none of the pending key-room/points Mac deploys
+# have landed yet (expected - just shipped, waiting on Shane).
 set -e
 node <<'NODE'
 const https = require('https');
-function req(method, url, body, timeoutMs) {
+function get(url, timeoutMs) {
   return new Promise((resolve) => {
-    const r = new URL(url);
-    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: {} };
-    if (body) opts.headers['Content-Type'] = 'application/json';
-    const request = https.request(opts, res => {
-      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
+    const req = https.get(url, { timeout: timeoutMs || 15000 }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
     });
-    request.on('error', e => resolve({ error: e.message }));
-    request.on('timeout', () => { request.destroy(); resolve({ error: 'timeout' }); });
-    request.setTimeout(timeoutMs || 15000);
-    if (body) request.write(body);
-    request.end();
+    req.on('error', e => resolve({ error: e.message }));
+    req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
   });
 }
 
 (async () => {
-  const restaurant = { bizName: 'Vanilla Rice Hibachi House', pin: '5190' };
-  const restUrl = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/restaurants/vanilla-rice.json';
-  const r1 = await req('PUT', restUrl, JSON.stringify(restaurant), 15000);
-  console.log('restaurant PUT status:', r1.status || r1.error);
+  console.log('=== Deals site freshness (cars.json) ===');
+  const r = await get('https://classiccarsforsale-co.web.app/cars.json', 20000);
+  if (r.error || r.status !== 200) {
+    console.log('fetch failed:', r.error || r.status);
+  } else {
+    try {
+      const arr = JSON.parse(r.body);
+      const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      let newest = 0, fresh = 0;
+      for (const item of arr) {
+        const added = item && item.added ? Date.parse(item.added) : 0;
+        if (added > newest) newest = added;
+        if (added >= cutoff) fresh++;
+      }
+      console.log('total:', arr.length, '| newest added:', newest ? new Date(newest).toISOString().slice(0,10) : 'none', '| fresh(<=30d):', fresh);
+    } catch (e) { console.log('parse failed:', e.message); }
+  }
 
-  const item = {
-    itemName: 'Free Chicken Bowl',
-    pointCost: 10,
-    instructions: 'Show this code to your server at Vanilla Rice Hibachi House to redeem your free Chicken Bowl.',
-    photoUrl: '',
-    maxRedemptions: null,
-    expiresAt: null,
-    active: true,
-    createdAt: { '.sv': 'timestamp' }
-  };
-  const itemUrl = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/catalog/vanilla-rice/bowl1.json';
-  const r2 = await req('PUT', itemUrl, JSON.stringify(item), 15000);
-  console.log('catalog item PUT status:', r2.status || r2.error);
-
-  const readRest = await req('GET', restUrl, null, 15000);
-  const readItem = await req('GET', itemUrl, null, 15000);
-  console.log('restaurant read back:', readRest.body);
-  console.log('item read back:', readItem.body);
-
-  console.log('\nRestaurant portal: https://lvr-data-a60c1.web.app/lvr-restaurant-portal.html (PIN 5190)');
-  console.log('To give someone points, use lvr-points-admin.html -> Wallets -> + New Wallet.');
+  console.log('\n=== Key Room / Points deploy status (expected: still 404, just shipped) ===');
+  for (const page of ['key-room.html', 'lvr-wallet.html', 'lvr-points-admin.html', 'lvr-restaurant-portal.html']) {
+    const r2 = await get('https://lvr-data-a60c1.web.app/' + page, 15000);
+    console.log(page + ':', r2.status || r2.error);
+  }
 })();
 NODE
