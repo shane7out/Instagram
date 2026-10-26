@@ -1,6 +1,6 @@
 #!/bin/bash
-# Read-only diagnostic: re-check whether Shane has run any pending Mac deploy
-# scripts since the last check-in cycle.
+# Read-only diagnostic: Shane was actively running fix-deals-harvest.sh last
+# we spoke - check whether it actually completed and produced fresh listings.
 set -e
 
 node <<'NODE'
@@ -11,34 +11,33 @@ function get(url) {
   });
 }
 (async () => {
-  for (const path of ['kt-crm.html', 'key-leads.html', 'key-advertisers.html']) {
-    try {
-      const r = await get('https://lvr-data-a60c1.web.app/' + path);
-      console.log('TOOL', path, ':', r.status, '|', r.body.length, 'bytes');
-    } catch (e) { console.log('TOOL', path, 'check failed:', e.message); }
-  }
-  try {
-    const r = await get('https://lvr-data-a60c1.web.app/');
-    console.log('DASHBOARD has KEYTECH-PIN-REDIRECT marker:', r.body.includes('KEYTECH-PIN-REDIRECT-v1'));
-    const vm = r.body.match(/APP_VERSION=(\d+)/);
-    console.log('DASHBOARD APP_VERSION:', vm ? vm[1] : 'not found');
-  } catch (e) { console.log('DASHBOARD check failed:', e.message); }
   try {
     const r = await get('https://classiccarsforsale-co.web.app/cars.json');
     const data = JSON.parse(r.body);
     const entries = Array.isArray(data) ? data : Object.values(data);
-    let newest = '', newestTs = 0;
+    const now = Date.now(), THIRTY = 30*24*60*60*1000;
+    let newest = '', newestTs = 0, fresh = 0;
     for (const e of entries) {
       const a = e.added || e.addedDate || e.date; if (!a) continue;
       const ts = new Date(a).getTime(); if (isNaN(ts)) continue;
       if (ts > newestTs) { newestTs = ts; newest = a; }
+      if (now - ts <= THIRTY) fresh++;
     }
-    console.log('DEALS newest added:', newest);
+    console.log('DEALS: total', entries.length, '| newest added', newest, '| fresh(<=30d)', fresh);
   } catch (e) { console.log('DEALS check failed:', e.message); }
+
   try {
     const r = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json');
-    const body = r.body && r.body !== 'null' ? r.body.slice(-600) : '(empty)';
-    console.log('LATEST DIAG (last 600 chars):', body);
+    const body = r.body && r.body !== 'null' ? r.body.slice(-1800) : '(empty)';
+    console.log('LATEST DIAG LOG (last 1800 chars):');
+    console.log(body);
   } catch (e) { console.log('diag check failed:', e.message); }
+
+  for (const path of ['kt-crm.html', 'key-leads.html', 'key-advertisers.html']) {
+    try {
+      const r = await get('https://lvr-data-a60c1.web.app/' + path);
+      console.log('TOOL', path, ':', r.status);
+    } catch (e) { console.log('TOOL', path, 'check failed:', e.message); }
+  }
 })();
 NODE
