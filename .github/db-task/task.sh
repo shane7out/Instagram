@@ -1,55 +1,52 @@
 #!/bin/bash
-# Read-only diagnostic: run the real, unauthenticated Google PageSpeed
-# Insights API against the live site (same categories the site's own audit
-# tool checks: performance, accessibility, best-practices, seo) to get an
-# honest, real score instead of guessing. Also do the same PHP/WordPress
-# exposure scan the site's security check does.
+# Read-only diagnostic: verify key-pageviews.html deployed live, fire a
+# real test hit against the key_pageviews Firebase node (same path the
+# site's own tracker script uses), and read it back to confirm the whole
+# loop works end to end.
 set -e
 node <<'NODE'
 const https = require('https');
-function get(url, timeoutMs) {
+function req(method, url, body, timeoutMs) {
   return new Promise((resolve) => {
-    const req = https.get(url, { timeout: timeoutMs || 30000 }, r => {
-      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    const r = new URL(url);
+    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: {} };
+    if (body) { opts.headers['Content-Type'] = 'application/json'; }
+    const request = https.request(opts, res => {
+      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
     });
-    req.on('error', e => resolve({ error: e.message }));
-    req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
+    request.on('error', e => resolve({ error: e.message }));
+    request.on('timeout', () => { request.destroy(); resolve({ error: 'timeout' }); });
+    request.setTimeout(timeoutMs || 15000);
+    if (body) request.write(body);
+    request.end();
   });
 }
 
 (async () => {
-  console.log('=== PageSpeed Insights (unauthenticated, mobile) ===');
-  const target = encodeURIComponent('https://keytechnologies.si/');
-  const psiUrl = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + target +
-    '&strategy=mobile&category=performance&category=accessibility&category=best-practices&category=seo';
-  const r = await get(psiUrl, 45000);
-  if (r.error) {
-    console.log('PSI request failed:', r.error);
-  } else if (r.status !== 200) {
-    console.log('PSI HTTP', r.status, '| body (first 500 chars):', r.body.slice(0, 500));
-  } else {
-    try {
-      const data = JSON.parse(r.body);
-      const cats = data.lighthouseResult && data.lighthouseResult.categories;
-      if (!cats) { console.log('No categories in response. Raw (first 500):', r.body.slice(0,500)); }
-      else {
-        for (const key of ['performance','accessibility','best-practices','seo']) {
-          const c = cats[key];
-          if (c) console.log(key + ':', Math.round(c.score * 100));
-        }
-      }
-    } catch (e) {
-      console.log('Parse failed:', e.message, '| body (first 500):', r.body.slice(0, 500));
-    }
+  console.log('=== key-pageviews.html reachability ===');
+  const page = await req('GET', 'https://keytechnologies.si/key-pageviews.html', null, 15000);
+  console.log('status:', page.status || page.error);
+  if (page.body) {
+    console.log('has PIN gate:', page.body.includes('pinInput'));
+    console.log('has report app shell:', page.body.includes('id="app"'));
   }
 
-  console.log('\n=== PHP/WordPress exposure check (same logic as the site security scan) ===');
-  const home = await get('https://keytechnologies.si/', 15000);
-  if (home.error) { console.log('fetch failed:', home.error); }
-  else {
-    const body = home.body || '';
-    const phpSignals = /\.php|wp-content|wp-includes|wp-admin|X-Powered-By.*PHP/i.test(body);
-    console.log('PHP/WordPress signals found in homepage HTML:', phpSignals);
-  }
+  console.log('\n=== Firing a real test hit (mirrors the tracker script) ===');
+  const testUrl = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/diagnostic-test.json';
+  const postBody = JSON.stringify({ t: Date.now(), ref: 'diagnostic-check', w: 0 });
+  const post = await req('POST', testUrl, postBody, 15000);
+  console.log('POST status:', post.status || post.error, '| body:', post.body);
+
+  console.log('\n=== Reading it back ===');
+  const read = await req('GET', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/diagnostic-test.json', null, 15000);
+  console.log('GET status:', read.status || read.error, '| body:', (read.body || '').slice(0, 300));
+
+  console.log('\n=== Existing real hits so far (from live traffic, if any) ===');
+  const hits = await req('GET', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits.json?shallow=true', null, 15000);
+  console.log('status:', hits.status || hits.error, '| pages with hits:', hits.body);
+
+  console.log('\n=== Cleaning up the diagnostic test entry ===');
+  const del = await req('DELETE', testUrl, null, 15000);
+  console.log('DELETE status:', del.status || del.error);
 })();
 NODE
