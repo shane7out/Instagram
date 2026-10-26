@@ -2,7 +2,7 @@
 
 Repo: `shane7out/Instagram` (public — never commit real PINs/card numbers)
 Working branch: `claude/master-file-e6ofy0`
-Last updated: 2026-10-26
+Last updated: 2026-10-26 (correction pass — see §19 and the Zach PIN note in §3)
 
 This file exists so a brand-new Claude session can pick up exactly where things
 stand without re-discovering everything from scratch. Paste this whole file in
@@ -106,19 +106,6 @@ curl -sL -o /tmp/fixdeals.sh https://raw.githubusercontent.com/shane7out/Instagr
 Deals freshness problem specifically — it still correctly installs the agent
 + LaunchAgent plumbing, it just never included the harvest step. No need to
 re-run it first.
-
-### Zach's dashboard access
-Gives Zach his own PIN (223344) as a full co-editor — same access level as
-the existing friend PIN, can see/edit the database and send DMs/emails. Built
-2026-10-03, never deployed.
-
-```
-curl -sL -o /tmp/zachpin.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-add-zach-pin.sh && bash /tmp/zachpin.sh
-```
-
-Known limitation: the dashboard only has two DM pools total (co-editor vs.
-guest), so Zach's activity will be mixed in with whoever else uses that PIN
-tier — there's no separate "Zach" attribution on DMs sent.
 
 ### Key Technologies pill on the dashboard
 Adds a "Key Technologies" link next to the Deals/CC/Badges pills on the PIN
@@ -229,10 +216,16 @@ curl -sL -o /tmp/keytechadv.sh https://raw.githubusercontent.com/shane7out/Insta
 
 Note: `deploy-cc.sh`, `deploy-refresh-ui.sh`, `finish-deals.sh`,
 `refresh-and-pills.sh`, `deploy-crm-fixes.sh`, `build-batman.sh`,
-`fix-batman.sh` also live in `.github/db-task/mac/` but are NOT pending —
-they were already run successfully earlier in the project (CC manager,
-Batman cards on the Deals site, Deals refresh v8, the standalone CRM fix
-that `deploy-dashboard-patches.sh` above now supersedes). Leave them alone.
+`fix-batman.sh`, `deploy-add-zach-pin.sh` also live in
+`.github/db-task/mac/` but are NOT pending — they were already run
+successfully earlier in the project (CC manager, Batman cards on the Deals
+site, Deals refresh v8, the standalone CRM fix that
+`deploy-dashboard-patches.sh` above now supersedes, and Zach's PIN
+223344). **Correction, found 2026-10-26**: this file previously listed
+Zach's PIN as "never deployed" — that was wrong. Confirmed live via the
+dashboard's own markers (`ZACHPIN01`/`ZACHPIN02`, dated 2026-10-07): it was
+actually deployed on 2026-10-07 and has been live this whole time, the doc
+just never got updated to say so. Leave `deploy-add-zach-pin.sh` alone too.
 
 ---
 
@@ -942,11 +935,13 @@ tightened with the owner directly); privacy policy corrected to describe
 the new page-view counter accurately instead of claiming "no analytics."
 
 **Still pending from §3, now MORE actionable since Pages going live removes
-the "Key Technologies pill 404s" blocker**: the dashboard CRM-fixes bundle,
-Zach's PIN, the Key Technologies pill, `kt-crm.html`, and `key-leads.html`
-are all still sitting as tested-but-undeployed Mac scripts — not re-verified
-live since before the Pages work; worth a fresh reachability check next time
-there's a reason to.
+the "Key Technologies pill 404s" blocker**: the Key Technologies pill,
+`kt-crm.html`, `key-leads.html`, and `key-advertisers.html` are all still
+sitting as tested-but-undeployed Mac scripts — **re-verified live 2026-10-26,
+still 404 on all three standalone tools, dashboard still `APP_VERSION 451`**
+(unchanged since the dashboard-patches deploy in §15). Zach's PIN, previously
+listed here as pending, turned out to already be live — see the correction
+in §3.
 
 **Deals site: still stuck, re-confirmed 2026-10-26.** `fix-deals-harvest.sh`
 (the real root-cause fix from §15/§3) was started by the owner at his Mac but
