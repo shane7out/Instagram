@@ -1,12 +1,8 @@
 #!/bin/bash
-# Read-only diagnostic: Shane just saved the 4 A records at Dynadot pointing
-# keytechnologies.si at GitHub Pages - check whether DNS has propagated and
-# whether the live site is actually reachable over the custom domain yet.
+# Read-only diagnostic: Shane just set the custom domain in GitHub Pages
+# settings - check whether the HTTPS certificate has been issued and the
+# site is fully reachable over keytechnologies.si yet.
 set -e
-echo "=== A records (should be the 4 GitHub Pages IPs) ==="
-dig +short keytechnologies.si A || true
-echo ""
-echo "=== HTTP check ==="
 node <<'NODE'
 const https = require('https');
 function get(url) {
@@ -21,6 +17,6 @@ function get(url) {
 (async () => {
   const r = await get('https://keytechnologies.si/');
   if (r.error) { console.log('https://keytechnologies.si/ -> ERROR:', r.error); return; }
-  console.log('https://keytechnologies.si/ -> HTTP', r.status, '| bytes', r.body.length, '| has "KEY TECHNOLOGIES":', r.body.includes('KEY TECHNOLOGIES'));
+  console.log('https://keytechnologies.si/ -> HTTP', r.status, '| bytes', r.body.length, '| has "KEY TECHNOLOGIES":', r.body.includes('KEY TECHNOLOGIES'), '| has launch banner:', r.body.includes('Just Launched'));
 })();
 NODE
