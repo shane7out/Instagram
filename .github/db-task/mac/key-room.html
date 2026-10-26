@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key Tech Room — LVR</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+
+  #pin-screen{
+    position:fixed;inset:0;background:var(--bg);z-index:999;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  }
+  #pin-screen.hidden{display:none;}
+  .pin-logo{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--key-light);text-transform:uppercase;}
+  .pin-sub{font-size:13px;color:var(--ink-dim);margin-bottom:28px;}
+  .pin-dots{display:flex;gap:12px;margin-bottom:26px;}
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:background .15s,border-color .15s;}
+  .pin-dot.filled{background:var(--key-blue);border-color:var(--key-blue);}
+  .pin-dot.error{background:#ff6b6b;border-color:#ff6b6b;}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:230px;}
+  .pin-key{height:58px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;}
+  .pin-key:active{background:var(--line);}
+  .pin-key.empty{background:transparent;border:none;cursor:default;}
+  .pin-msg{color:#ff6b6b;font-size:13px;font-weight:600;margin-top:16px;min-height:18px;}
+
+  #app{display:none;}
+  #app.visible{display:block;}
+  header{padding:28px 20px 10px;text-align:center;}
+  header h1{font-size:20px;font-weight:800;margin:0 0 4px;}
+  header p{font-size:13.5px;color:var(--ink-dim);margin:0;}
+
+  .grid{max-width:640px;margin:24px auto 60px;padding:0 18px;display:grid;gap:14px;}
+  .tool-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;text-decoration:none;
+  }
+  .tool-card:hover{border-color:var(--key-blue);}
+  .tool-name{font-size:16px;font-weight:800;color:var(--ink);}
+  .tool-desc{font-size:13px;color:var(--ink-dim);margin-top:3px;}
+  .tool-note{font-size:11.5px;color:var(--ink-dim);opacity:.75;margin-top:4px;}
+  .tool-arrow{font-size:20px;color:var(--key-light);flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-logo">LVR — Key Tech Room</div>
+  <div class="pin-sub">Enter your master PIN</div>
+  <div class="pin-dots">
+    <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
+    <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+    <button class="pin-key empty"></button><button class="pin-key" data-k="0">0</button><button class="pin-key" data-k="del">&larr;</button>
+  </div>
+  <div class="pin-msg" id="pin-msg"></div>
+</div>
+
+<div id="app">
+  <header>
+    <h1>Key Tech Room</h1>
+    <p>Everything new, in one place.</p>
+  </header>
+  <div class="grid">
+    <a class="tool-card" href="https://keytechnologies.si/" target="_blank" rel="noopener">
+      <div><div class="tool-name">Key Technologies Site</div><div class="tool-desc">The live, public site.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+    <a class="tool-card" href="https://lvr-data-a60c1.web.app/key-leads.html" target="_blank" rel="noopener">
+      <div><div class="tool-name">Leads</div><div class="tool-desc">Every form submission from the site, with status and contact info.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+    <a class="tool-card" href="https://lvr-data-a60c1.web.app/kt-crm.html" target="_blank" rel="noopener">
+      <div><div class="tool-name">Prospect CRM</div><div class="tool-desc">Real estate / medical / law / e-commerce prospect pipeline.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+    <a class="tool-card" href="https://lvr-data-a60c1.web.app/key-advertisers.html" target="_blank" rel="noopener">
+      <div><div class="tool-name">Advertisers</div><div class="tool-desc">Browse the LVR advertiser pool for outreach, flag bad records.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+    <a class="tool-card" href="https://lvr-data-a60c1.web.app/lvr-coupons-admin.html" target="_blank" rel="noopener">
+      <div><div class="tool-name">Coupon Programs</div><div class="tool-desc">Create/manage restaurant coupon offers, view claims.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+    <a class="tool-card" href="https://keytechnologies.si/key-pageviews.html" target="_blank" rel="noopener">
+      <div><div class="tool-name">Page Views</div><div class="tool-desc">Who's looking at what on the site.</div><div class="tool-note">Lives on a different domain — still asks for its own PIN.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+  </div>
+</div>
+
+<script>
+  var OWNER_SESSION_KEY = 'lv_owner_session';
+  var OWNER_SESSION_MAX_AGE = 24 * 60 * 60 * 1000;
+
+  function ownerSessionValid() {
+    try {
+      var t = parseInt(localStorage.getItem(OWNER_SESSION_KEY) || '0', 10);
+      return t > 0 && (Date.now() - t) < OWNER_SESSION_MAX_AGE;
+    } catch (e) { return false; }
+  }
+  function dynPin() {
+    try { return localStorage.getItem('lv_pin') || '137900'; } catch (e) { return '137900'; }
+  }
+  function enterRoom() {
+    document.getElementById('pin-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+  }
+
+  if (ownerSessionValid()) {
+    enterRoom();
+  }
+
+  var pinBuf = '';
+  var dots = [document.getElementById('pd0'),document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3'),document.getElementById('pd4'),document.getElementById('pd5')];
+  function renderDots(err){
+    dots.forEach(function(d,i){
+      d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : '');
+    });
+  }
+  function pinSubmit(){
+    if (pinBuf === dynPin()) {
+      try { localStorage.setItem(OWNER_SESSION_KEY, String(Date.now())); } catch(e){}
+      enterRoom();
+    } else {
+      renderDots(true);
+      document.getElementById('pin-msg').textContent = 'Wrong PIN';
+      setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500);
+    }
+  }
+  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-k');
+      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
+      if (pinBuf.length >= 6) return;
+      pinBuf += k;
+      renderDots(false);
+      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
+    });
+  });
+</script>
+</body>
+</html>

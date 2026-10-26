@@ -257,6 +257,58 @@ Vanilla Rice.
 curl -sL -o /tmp/lvrcoupons.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-lvr-coupons.sh && bash /tmp/lvrcoupons.sh
 ```
 
+### NEW — single-sign-on "Key Tech Room" + consolidated deploy (2026-10-26)
+Owner's own words: "I don't want new passwords. I can't handle new
+passwords." Every new standalone tool this project has shipped
+(kt-crm.html, key-leads.html, key-advertisers.html, lvr-coupons-admin.html)
+had its own separate PIN — four more things to remember on top of the
+master dashboard PIN. This fixes that, without weakening any of them for
+anyone who ISN'T already logged in as the owner.
+
+**How it works**: the moment the OWNER PIN (dynamic, default `137900`)
+succeeds on the main dashboard, a timestamp is written to
+`localStorage['lv_owner_session']` — real browser storage, shared across
+every page on `lvr-data-a60c1.web.app` (not shared with `keytechnologies.si`
+— different domain, browsers never share storage across origins, so
+`key-pageviews.html` still needs its own PIN, noted honestly in the room's
+UI rather than silently broken). Every satellite tool now checks that same
+stamp on load, valid for 24h: if it's fresh, the tool skips its own PIN
+screen and opens straight up; if it's missing or stale, the tool's PIN
+screen works exactly as before — nothing is weakened for anyone who hasn't
+logged in as the owner on that browser (co-editor/friend/guest PINs are
+completely untouched; this bypass only fires for the owner-PIN branch).
+
+**New hub page**, `key-room.html`: a single PIN-gated page (same dynamic-PIN
+fallback, same bypass) listing every tool as a tappable card — the live
+site, Leads, Prospect CRM, Advertisers, Coupon Programs, Page Views.
+Reached via a new "🔑 Key Tech" pill added to the main dashboard header
+(next to the existing Teams pill), so the flow is: log into the dashboard
+once with your master PIN → tap the pill → everything just opens.
+
+**New consolidated deploy script** (`deploy-key-room.sh`) replaces needing
+to run 4 separate deploy commands — it redeploys `key-leads.html`,
+`kt-crm.html`, `key-advertisers.html`, and `lvr-coupons-admin.html` (each
+now with the bypass check added) plus the new `key-room.html`, and patches
+the dashboard (new pill + session stamp) in one pass, same pristine-backup/
+syntax-check/rollback safety as every other dashboard patch. Running the
+older individual deploy scripts (`deploy-key-leads.sh`,
+`deploy-keytech-advertisers.sh`, `deploy-lvr-coupons.sh`) afterward is
+harmless but redundant — they pull the same source files, just without
+patching the dashboard pill.
+
+Patcher (`patch-key-room-pill.js`) tested against a real copy of the live
+dashboard before shipping: both patches apply cleanly against real anchors,
+re-running is a clean no-op (idempotent), full inline-script syntax check
+passed. All 4 satellite tools' bypass logic tested with mocked data via
+Playwright: no session → PIN screen as before; fresh session → skips
+straight to the app; stale (>24h) session → falls back to the PIN screen
+correctly. `key-room.html` itself tested the same way, plus honors a
+custom `lv_pin` override if the owner ever changes the master PIN.
+
+```
+curl -sL -o /tmp/keyroom.sh https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-room.sh && bash /tmp/keyroom.sh
+```
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:

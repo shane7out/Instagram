@@ -278,10 +278,17 @@
       if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
     });
   });
+  function _lvOwnerSessionValid(){
+    try {
+      var t = parseInt(localStorage.getItem('lv_owner_session') || '0', 10);
+      return t > 0 && (Date.now() - t) < 24*60*60*1000;
+    } catch(e){ return false; }
+  }
   try {
-    if (sessionStorage.getItem('kt_crm_unlocked') === '1') {
+    if (_lvOwnerSessionValid() || sessionStorage.getItem('kt_crm_unlocked') === '1') {
       document.getElementById('pin-screen').classList.add('hidden');
       document.getElementById('app').classList.add('visible');
+      try { sessionStorage.setItem('kt_crm_unlocked', '1'); } catch(e){}
       loadProspects();
     }
   } catch(e){}
