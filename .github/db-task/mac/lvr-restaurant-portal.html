@@ -80,6 +80,15 @@
     <div id="lookupOut"></div>
     <button class="btn btn-primary" id="exportBtn">Download CSV</button>
     <div id="tableWrap"></div>
+
+    <div style="margin:34px 0 6px;font-weight:800;font-size:17px;">Receipts verified for your restaurant</div>
+    <p style="font-size:13px;color:var(--ink-dim);margin:0 0 12px;">Every receipt we have approved for you, with the photos we saved, so you can check our numbers. If one looks wrong, flag it and we will look into it.</p>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+      <input type="month" id="rMonth" style="padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;">
+      <button class="btn" id="rCsv" style="margin:0;">Download receipts (CSV)</button>
+    </div>
+    <div class="stats-row" id="rStats"></div>
+    <div id="rWrap"></div>
   </div>
 </div>
 
@@ -119,13 +128,15 @@
       }
       mySlug = found;
       myBiz = restaurants[found].bizName || found;
+      myCommissionPct = Number(restaurants[found].commissionPct) || 0;
       loadRedemptions();
     }).catch(function(){
       document.getElementById('gateMsg').textContent = "Couldn't check that right now. Try again.";
     });
   }
 
-  var myCredit = null;
+  var myCredit = null, myCommissionPct = 0, vRows = [];
+  var rMonthVal = new Date().toISOString().slice(0, 7);
   function loadRedemptions() {
     Promise.all([
       fbGet(REDEMPTIONS_PATH + encodeURIComponent(mySlug)),
@@ -139,10 +150,69 @@
       myRows = Object.keys(data).filter(function(id){ return data[id]; }).map(function(id){ return Object.assign({ _id: id }, data[id]); });
       myRows.sort(function(a,b){ return (b.redeemedAt||0) - (a.redeemedAt||0); });
       render();
+      loadVerified();
     }).catch(function(){
       document.getElementById('gateMsg').textContent = "Couldn't load your redemptions right now.";
     });
   }
+
+  // ---- receipts we verified for this restaurant (read-only, plus a flag)
+  function loadVerified() {
+    fetch(DB + '/lvr_points/receipts.json?orderBy="slug"&equalTo="' + encodeURIComponent(mySlug) + '"').then(function(r){ return r.json(); }).then(function(d){
+      d = d || {};
+      vRows = Object.keys(d).map(function(id){ return Object.assign({ _id: id }, d[id]); }).filter(function(r){ return r && r.status === 'approved'; });
+      document.getElementById('rMonth').value = rMonthVal;
+      renderVerified();
+    }).catch(function(){ document.getElementById('rWrap').innerHTML = '<div class="empty-note">Could not load receipts right now.</div>'; });
+  }
+  function monthRows() {
+    var p = rMonthVal.split('-'), start = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, 1).getTime(), end = new Date(parseInt(p[0], 10), parseInt(p[1], 10), 1).getTime();
+    return vRows.filter(function(r){ var t = r.receiptDate ? new Date(r.receiptDate + 'T12:00:00').getTime() : (r.submittedAt || 0); return t >= start && t < end; })
+      .sort(function(a, b){ return (b.receiptDate || '').localeCompare(a.receiptDate || ''); });
+  }
+  function shortName(n) { var parts = String(n || '').trim().split(/\s+/); return parts[0] ? parts[0] + (parts[1] ? ' ' + parts[1].charAt(0) + '.' : '') : ''; }
+  function renderVerified() {
+    var rows = monthRows(), spend = rows.reduce(function(s, r){ return s + (Number(r.amount) || 0); }, 0);
+    document.getElementById('rStats').innerHTML =
+      '<div class="stat"><div class="n">' + rows.length + '</div><div class="l">Verified receipts</div></div>' +
+      '<div class="stat"><div class="n">$' + spend.toFixed(2) + '</div><div class="l">Verified spend</div></div>' +
+      (myCommissionPct ? '<div class="stat"><div class="n">$' + (spend * myCommissionPct / 100).toFixed(2) + '</div><div class="l">Your ' + myCommissionPct + '% share</div></div>' : '');
+    var w = document.getElementById('rWrap');
+    if (!rows.length) { w.innerHTML = '<div class="empty-note">No verified receipts this month.</div>'; return; }
+    w.innerHTML = '<table><thead><tr><th>Date</th><th>Receipt</th><th>Guest</th><th>Total</th><th></th></tr></thead><tbody>' + rows.map(function(r){
+      return '<tr id="vr-' + r._id + '"><td>' + escapeHtml(r.receiptDate || '') + '</td><td class="code">' + escapeHtml(r.receiptNo || '') + '</td><td>' + escapeHtml(shortName(r.name)) + '</td><td>$' + Number(r.amount || 0).toFixed(2) + '</td>' +
+        '<td style="white-space:nowrap;"><button class="use-btn" data-vph="' + r._id + '">Photos</button> ' + (r.restFlag ? '<span class="used-tag" style="color:#f0c239;">Flagged</span>' : '<button class="use-btn" data-vfl="' + r._id + '">Flag</button>') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+    w.querySelectorAll('[data-vph]').forEach(function(b){ b.addEventListener('click', function(){ showVerifiedPhotos(b.getAttribute('data-vph'), b); }); });
+    w.querySelectorAll('[data-vfl]').forEach(function(b){ b.addEventListener('click', function(){ flagReceipt(b.getAttribute('data-vfl'), b); }); });
+  }
+  function showVerifiedPhotos(id, btn) {
+    btn.textContent = '…';
+    fbGet('/lvr_points/receipt_photos/' + encodeURIComponent(id)).then(function(p){
+      var imgs = p ? [p.wide, p.close, p.data].filter(Boolean) : [];
+      if (!imgs.length) { btn.textContent = 'No photos'; return; }
+      var row = document.getElementById('vr-' + id), tr = document.createElement('tr'), td = document.createElement('td');
+      td.colSpan = 5; td.innerHTML = imgs.map(function(src){ return '<img src="' + src + '" style="max-width:100%;border-radius:10px;margin:6px 0;display:block;">'; }).join('');
+      tr.appendChild(td); row.parentNode.insertBefore(tr, row.nextSibling); btn.remove();
+    }).catch(function(){ btn.textContent = 'Failed'; });
+  }
+  function flagReceipt(id, btn) {
+    var note = prompt('What looks wrong with this receipt? (we will look into it)');
+    if (note === null) return;
+    fetch(DB + '/lvr_points/receipts/' + encodeURIComponent(id) + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ restFlag: { note: String(note).slice(0, 300), at: { '.sv': 'timestamp' } } }) })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); var row = vRows.filter(function(x){ return x._id === id; })[0]; if (row) row.restFlag = { note: note }; renderVerified(); })
+      .catch(function(){ alert("Couldn't flag that right now. Please try again."); });
+  }
+  document.getElementById('rMonth').addEventListener('change', function(){ rMonthVal = this.value || rMonthVal; renderVerified(); });
+  document.getElementById('rCsv').addEventListener('click', function(){
+    var rows = monthRows(); if (!rows.length) return;
+    var cols = ['receipt_date', 'receipt_number', 'guest', 'total_usd'];
+    var esc = function(v){ v = v == null ? '' : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
+    var csv = cols.join(',') + '\n' + rows.map(function(r){ return [r.receiptDate || '', r.receiptNo || '', shortName(r.name), Number(r.amount || 0).toFixed(2)].map(esc).join(','); }).join('\n') + '\n';
+    var url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), a = document.createElement('a');
+    a.href = url; a.download = (myBiz || 'restaurant').replace(/[^a-z0-9]+/gi, '-') + '-verified-receipts-' + rMonthVal + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  });
 
   function render() {
     document.getElementById('gate').style.display = 'none';

@@ -261,6 +261,9 @@
   var directory = {};
   var myReceipts = {};
   var refSettings = { enabled: false, l1Pct: 20, l2Pct: 0 };
+  var appSettings = {};
+  function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
+  function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
 
   function loadWallet() {
     showEmpty('Loading…');
@@ -270,11 +273,12 @@
       fbGet(REDEMPTIONS_PATH.slice(0, -1)),
       fbGet(DIRECTORY_PATH),
       fetch(DB + RECEIPTS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(token) + '"').then(function(r){ return r.json(); }),
-      fbGet('/lvr_points/settings/referral')
+      fbGet('/lvr_points/settings')
     ]).then(function(results){
       directory = results[3] || {};
       myReceipts = results[4] || {};
-      refSettings = Object.assign({ enabled: false, l1Pct: 20, l2Pct: 0 }, results[5] || {});
+      appSettings = results[5] || {};
+      refSettings = Object.assign({ enabled: false, l1Pct: 20, l2Pct: 0 }, appSettings.referral || {});
       var found = results[0] || {};
       var keys = Object.keys(found);
       var catalog = results[1] || {};
@@ -327,6 +331,7 @@
     var items = flattenCatalog(catalog, allRedemptions);
 
     var html =
+      (appSettings.banner ? '<div class="notice" style="background:rgba(240,194,57,.1);border:1px solid rgba(240,194,57,.45);color:#f0c239;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
@@ -340,14 +345,14 @@
       html += '<div class="empty">No offers available right now — check back soon.</div>';
     } else {
       html += '<div class="items">' + items.map(function(item){
-        var afford = (wallet.points || 0) >= item.pointCost;
+        var afford = (wallet.points || 0) >= item.pointCost && !pausedFlag('redemptions');
         return '<div class="item-card" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
           '<div class="item-top">' +
             '<div><div class="item-biz">' + escapeHtml(item.bizName || item.slug) + '</div><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div></div>' +
             '<div class="item-cost">' + item.pointCost + ' pts</div>' +
           '</div>' +
           (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
-          '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (afford ? 'Redeem' : 'Not enough points') + '</button>' +
+          '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pausedFlag('redemptions') ? 'Paused for now' : (afford ? 'Redeem' : 'Not enough points')) + '</button>' +
         '</div>';
       }).join('') + '</div>';
     }
@@ -504,6 +509,7 @@
   function earnPanelHtml() {
     var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); });
     if (!keys.length) return '';
+    if (pausedFlag('receipts')) return '<div class="earn-card"><h2>Earn points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>';
     return '<div class="earn-card" id="earnCard">' +
       '<h2>Earn points</h2>' +
       '<div class="earn-sub">Ate at a participating restaurant? Send us your receipt. Once we verify it, points are added to your balance. <b>Cover your name and card digits</b> before taking the photos.</div>' +
@@ -512,9 +518,12 @@
         return '<option value="' + escapeHtml(k) + '">' + escapeHtml(directory[k].bizName || k) + '</option>';
       }).join('') + '</select>' +
       '<div class="earn-sub" id="eRate" style="margin:6px 0 0;"></div>' +
-      '<label for="ePhotoWide">Photo 1 — the whole receipt, from a little way back</label><input type="file" id="ePhotoWide" accept="image/*" capture="environment">' +
-      '<label for="ePhotoClose">Photo 2 — close-up of the receipt number and the total</label><input type="file" id="ePhotoClose" accept="image/*" capture="environment">' +
+      '<label for="eType">What kind of receipt?</label>' +
+      '<select id="eType"><option value="paper">Paper receipt (take photos)</option><option value="email">Emailed or online receipt (upload screenshots)</option></select>' +
+      '<label for="ePhotoWide" id="eLbl1">Photo 1 — the whole receipt, from a little way back</label><input type="file" id="ePhotoWide" accept="image/*" capture="environment">' +
+      '<label for="ePhotoClose" id="eLbl2">Photo 2 — close-up of the receipt number and the total</label><input type="file" id="ePhotoClose" accept="image/*" capture="environment">' +
       '<label for="eNo">Receipt number (or just the last 3 digits)</label><input type="text" id="eNo" autocomplete="off">' +
+      '<label for="eDate">Date on the receipt</label><input type="date" id="eDate" max="' + new Date().toISOString().slice(0, 10) + '">' +
       '<label for="eAmt">Total paid ($)</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
       '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
       '<div class="earn-msg" id="eMsg"></div>' +
@@ -551,6 +560,13 @@
       el.textContent = (d && d.earnRate) ? ('You earn about ' + d.earnRate + ' point' + (d.earnRate === 1 ? '' : 's') + ' per $1 spent.') : '';
     });
     document.getElementById('eBtn').addEventListener('click', submitReceipt);
+    document.getElementById('eType').addEventListener('change', function(){
+      var email = this.value === 'email';
+      var p1 = document.getElementById('ePhotoWide'), p2 = document.getElementById('ePhotoClose');
+      document.getElementById('eLbl1').textContent = email ? 'Screenshot of the whole receipt email' : 'Photo 1 — the whole receipt, from a little way back';
+      document.getElementById('eLbl2').textContent = email ? 'Optional: a second screenshot (for example the total)' : 'Photo 2 — close-up of the receipt number and the total';
+      if (email) { p1.removeAttribute('capture'); p2.removeAttribute('capture'); } else { p1.setAttribute('capture', 'environment'); p2.setAttribute('capture', 'environment'); }
+    });
   }
 
   function earnMsg(text, cls) {
@@ -564,17 +580,29 @@
     var amt = parseFloat(document.getElementById('eAmt').value);
     var wideFile = document.getElementById('ePhotoWide').files[0];
     var closeFile = document.getElementById('ePhotoClose').files[0];
+    var rType = document.getElementById('eType').value;
+    var rDate = document.getElementById('eDate').value;
+    var lim = limits();
+    if (pausedFlag('receipts')) return earnMsg('Receipt submissions are paused right now.', 'err');
     if (!slug) return earnMsg('Choose the restaurant.', 'err');
-    if (!wideFile || !closeFile) return earnMsg('Please add both photos.', 'err');
+    if (!wideFile || (rType === 'paper' && !closeFile)) return earnMsg(rType === 'paper' ? 'Please add both photos.' : 'Please add a screenshot of the receipt.', 'err');
     if (!no || no.length > 40) return earnMsg('Enter the receipt number (or the last 3 digits).', 'err');
-    if (!(amt > 0) || amt > 5000) return earnMsg('Enter the total you paid.', 'err');
+    if (!rDate) return earnMsg('Enter the date on the receipt.', 'err');
+    var today = new Date().toISOString().slice(0, 10);
+    var oldest = new Date(Date.now() - lim.windowDays * 864e5).toISOString().slice(0, 10);
+    if (rDate > today) return earnMsg('That date is in the future.', 'err');
+    if (rDate < oldest) return earnMsg('Receipts must be from the last ' + lim.windowDays + ' days.', 'err');
+    if (!(amt > 0) || amt > lim.maxAmount) return earnMsg(amt > lim.maxAmount ? 'For receipts over $' + lim.maxAmount + ', please send us a message first.' : 'Enter the total you paid.', 'err');
+    var weekAgo = Date.now() - 7 * 864e5;
+    var recent = Object.keys(myReceipts || {}).filter(function(id){ var x = myReceipts[id]; return x && x.status !== 'rejected' && (x.submittedAt || 0) > weekAgo; }).length;
+    if (recent >= lim.maxPerWeek) return earnMsg('You have reached this week\'s limit of ' + lim.maxPerWeek + ' receipts. Please try again later.', 'err');
     amt = Math.round(amt * 100) / 100;
     var btn = document.getElementById('eBtn');
     btn.disabled = true; earnMsg('Submitting…', '');
 
     Promise.all([
       downscaleImage(wideFile, 1000, 0.65),
-      downscaleImage(closeFile, 1500, 0.72),
+      closeFile ? downscaleImage(closeFile, 1500, 0.72) : Promise.resolve(null),
       fetch(DB + RECEIPTS_PATH + '.json?orderBy="receiptNo"&equalTo="' + encodeURIComponent(no) + '"').then(function(r){ return r.json(); })
     ]).then(function(res){
       var wide = res[0], close = res[1], existing = res[2] || {};
@@ -586,7 +614,7 @@
       var rec = {
         slug: slug, token: token, memberKey: memberKey,
         name: wallet.name || '', phone: wallet.phone || '', instagram: wallet.instagram || '',
-        receiptNo: no, amount: amt,
+        receiptNo: no, amount: amt, receiptDate: rDate, receiptType: rType,
         status: 'pending', submittedAt: { '.sv': 'timestamp' }
       };
       return fbPost(RECEIPTS_PATH, rec).then(function(r){
@@ -634,6 +662,7 @@
   }
 
   function doRedeem(item) {
+    if (pausedFlag('redemptions')) { alert('Redemptions are paused for a moment. Please try again soon.'); loadWallet(); return; }
     Promise.all([
       fbGet(MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points'),
       item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null),

@@ -486,6 +486,37 @@
     }).catch(function(){ return null; });
   }
 
+  // Sign-ups can be paused from the owner's Settings. While paused, the form
+  // is replaced by a "launching soon" waitlist that saves to the same Leads
+  // list as every other form here.
+  var SETTINGS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/lvr_points/settings") + ".json";
+  var LEADS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/key_leads/leads") + ".json";
+  function signupsPaused(){
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "" }; }).catch(function(){ return { paused: false, banner: "" }; });
+  }
+  function showWaitlist(banner){
+    var card = document.getElementById("signup");
+    if (!card) return;
+    card.innerHTML = '<span class="eyebrow">Launching soon</span><h2>Sign-ups are paused for a moment</h2>' +
+      '<p class="form-note">' + (banner ? banner.replace(/</g, "&lt;") : "We are getting ready to welcome new members.") + ' Leave your email and we will let you know the moment it opens.</p>' +
+      '<form id="waitForm" novalidate><div class="field"><label for="w-name">Name</label><input id="w-name" type="text" autocomplete="name"></div>' +
+      '<div class="field"><label for="w-email">Email <span class="req" aria-hidden="true">*</span></label><input id="w-email" type="email" autocomplete="email" required></div>' +
+      '<button class="btn btn-primary" type="submit" id="w-btn">Notify me</button><p class="form-status" id="w-status" role="status"></p></form>';
+    document.getElementById("waitForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      var email = document.getElementById("w-email").value.trim(), st = document.getElementById("w-status");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { st.textContent = "Please enter a valid email."; st.className = "form-status err"; return; }
+      var data = { source: "lvr-rewards-waitlist", name: document.getElementById("w-name").value.trim(), email: email, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
+      document.getElementById("w-btn").disabled = true;
+      fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) }).then(function(r){
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        fetch("https://formspree.io/f/mzeedbyb", { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify(data) }).catch(function(){});
+        st.textContent = "Thanks - you're on the list."; st.className = "form-status ok";
+      }).catch(function(){ st.textContent = "Something went wrong. Please try again."; st.className = "form-status err"; document.getElementById("w-btn").disabled = false; });
+    });
+  }
+  signupsPaused().then(function(r){ if (r.paused) showWaitlist(r.banner); });
+
   var form = document.getElementById("signupForm");
   var status = document.getElementById("signupStatus");
   form.addEventListener("submit", function(e){
@@ -509,7 +540,10 @@
     status.textContent = "Opening your account…";
     status.className = "form-status";
 
-    findReferrer(savedRef(), phone, email).then(function(referrerKey){
+    signupsPaused().then(function(r){
+      if (r.paused) { showWaitlist(r.banner); throw new Error("paused"); }
+      return findReferrer(savedRef(), phone, email);
+    }).then(function(referrerKey){
       var rec = {
         name: name, email: email, phone: phone,
         points: 0, token: token, refCode: genRefCode(), source: "keytechnologies-rewards-signup",

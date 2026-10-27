@@ -104,6 +104,7 @@
     <span class="tab active" data-v="receipts">Receipts</span>
     <span class="tab" data-v="restaurants">Businesses</span>
     <span class="tab" data-v="earnings">Earnings</span>
+    <span class="tab" data-v="audit">Audit</span>
     <span class="tab" data-v="catalog">Catalog</span>
     <span class="tab" data-v="redemptions">Redemptions</span>
     <span class="tab" data-v="settings">Settings</span>
@@ -241,6 +242,7 @@
     if (activeTab === 'receipts') renderReceiptsTab();
     else if (activeTab === 'restaurants') renderRestaurantsTab();
     else if (activeTab === 'earnings') renderEarningsTab();
+    else if (activeTab === 'audit') renderAuditTab();
     else if (activeTab === 'settings') renderSettingsTab();
     else if (activeTab === 'catalog') renderCatalogTab();
     else renderRedemptionsTab();
@@ -277,9 +279,38 @@
         else if (act === 'retry') applyAward(id).then(loadAll);
         else if (act === 'retryref') applyReferrals(id).then(loadAll);
         else if (act === 'photo') showPhoto(id, btn);
-        else if (act === 'delphotos') deletePhotos(id, btn);
       });
     });
+  }
+
+  // ---- things worth a closer look (a hint for you, never an automatic decision)
+  function limitsCfg() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {}); }
+  function riskFlags(r) {
+    var f = [], lim = limitsCfg(), today = new Date().toISOString().slice(0, 10);
+    if (r.amount > lim.maxAmount) f.push('Over the $' + lim.maxAmount + ' limit');
+    if (!r.receiptDate) f.push('No receipt date');
+    else {
+      var sub = r.submittedAt ? new Date(r.submittedAt).toISOString().slice(0, 10) : today;
+      if (r.receiptDate > sub) f.push('Dated after it was sent');
+      else if ((new Date(sub) - new Date(r.receiptDate)) / 864e5 > lim.windowDays) f.push('Older than ' + lim.windowDays + ' days');
+    }
+    var sameDay = Object.keys(receipts).filter(function(k){
+      var o = receipts[k]; return o && o.memberKey === r.memberKey && o.submittedAt && r.submittedAt && Math.abs(o.submittedAt - r.submittedAt) < 864e5;
+    }).length;
+    if (sameDay >= 3) f.push(sameDay + ' receipts from this member in a day');
+    var dup = Object.keys(receipts).some(function(k){
+      var o = receipts[k]; return o && o !== r && o.status !== 'rejected' && o.receiptNo === r.receiptNo && Number(o.amount) === Number(r.amount) && (o.slug !== r.slug || o.memberKey !== r.memberKey);
+    });
+    if (dup) f.push('Same number and amount seen elsewhere');
+    if (r.restFlag) f.push('Restaurant flagged it' + (r.restFlag.note ? ': ' + r.restFlag.note : ''));
+    return f;
+  }
+  function chipsHtml(r) {
+    var f = riskFlags(r);
+    if (!f.length) return '';
+    return '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">' + f.map(function(t){
+      return '<span style="font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(240,194,57,.13);border:1px solid rgba(240,194,57,.45);color:var(--yellow);">' + escapeHtml(t) + '</span>';
+    }).join('') + '</div>';
   }
 
   function receiptCard(id) {
@@ -287,8 +318,8 @@
     var rate = (directory[r.slug] && directory[r.slug].earnRate) || 0;
     var suggested = Math.floor((r.amount || 0) * rate);
     var head = '<div class="row-top"><div><div class="row-name">' + escapeHtml(r.name || '(no name)') + '</div>' +
-      '<div class="row-sub">' + escapeHtml(bizOf(r.slug)) + ' · receipt ' + escapeHtml(r.receiptNo || '') + ' · ' + whenOf(r.submittedAt) + '</div></div>' +
-      '<div class="row-num">' + money(r.amount) + '</div></div>';
+      '<div class="row-sub">' + escapeHtml(bizOf(r.slug)) + ' · receipt ' + escapeHtml(r.receiptNo || '') + ' · ' + (r.receiptDate ? 'dated ' + escapeHtml(r.receiptDate) : 'no date') + ' · ' + (r.receiptType === 'email' ? 'emailed' : 'paper') + ' · sent ' + whenOf(r.submittedAt) + '</div></div>' +
+      '<div class="row-num">' + money(r.amount) + '</div></div>' + chipsHtml(r);
     if (r.status === 'pending') {
       return '<div class="row-card" id="rc-' + id + '">' + head +
         '<div class="row-actions" style="align-items:center;">' +
@@ -309,7 +340,7 @@
     }
     var label = r.status === 'approved' ? ('Approved +' + (r.pointsAwarded||0) + ' pts') : 'Rejected';
     return '<div class="row-card" id="rc-' + id + '">' + head + '<div class="row-sub" style="color:' + (r.status === 'approved' ? 'var(--green)' : 'var(--red)') + ';">' + label + '</div>' +
-      '<div class="row-actions"><button data-act="photo" data-id="' + id + '">View photos</button><button data-act="delphotos" data-id="' + id + '">Delete photos</button></div></div>';
+      '<div class="row-actions"><button data-act="photo" data-id="' + id + '">View photos</button></div></div>';
   }
 
   function showPhoto(id, btn) {
@@ -325,14 +356,6 @@
       });
       btn.remove();
     }).catch(function(){ btn.textContent = 'Photos failed'; });
-  }
-
-  function deletePhotos(id, btn) {
-    if (!confirm('Delete the photos for this receipt? The amount and receipt number stay on record.')) return;
-    fbDelete(PHOTOS_PATH + '/' + id).then(function(r){
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      btn.textContent = 'Photos deleted'; btn.disabled = true;
-    }).catch(function(){ showToast('Could not delete'); });
   }
 
   function approveReceipt(id) {
@@ -428,25 +451,68 @@
   // ========================================================================
   function renderSettingsTab() {
     var c = refConfig();
+    var paused = settings.paused || {};
+    var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
+    function chk(id, on, label) { return '<div class="checkbox-row"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><label for="' + id + '">' + label + '</label></div>'; }
     view.innerHTML =
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Safety switches</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Tick a box to pause that part of the program. Members see a friendly "paused" message, and everything already earned stays safe. (These are honored by the member pages; see the security note in the plan.)</div>' +
+        chk('sPauseSignups', paused.signups, 'Pause new sign-ups (the sign-up pages show a "launching soon" form instead)') +
+        chk('sPauseReceipts', paused.receipts, 'Pause new receipt submissions') +
+        chk('sPauseRedeem', paused.redemptions, 'Pause redemptions (offers show "Paused for now")') +
+        '<div class="field"><label>Message shown at the top of member pages (optional, e.g. "We\'re upgrading - back Monday")</label><input type="text" id="sBanner" value="' + escapeHtml(settings.banner || '') + '"></div>' +
+        '<div class="form-actions"><button class="btn" id="sPauseAll" style="border-color:var(--red);color:var(--red);">Pause everything</button><button class="btn" id="sResumeAll">Resume everything</button></div>' +
+      '</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Receipt limits</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Largest receipt a member can submit ($)</label><input type="number" id="sMaxAmt" min="1" value="' + lim.maxAmount + '"></div>' +
+          '<div class="field"><label>Receipts per member per week</label><input type="number" id="sMaxWeek" min="1" value="' + lim.maxPerWeek + '"></div>' +
+          '<div class="field"><label>Receipt must be within (days)</label><input type="number" id="sWindow" min="1" value="' + lim.windowDays + '"></div>' +
+        '</div></div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
-        '<div class="checkbox-row"><input type="checkbox" id="sRefOn"' + (c.enabled === true ? ' checked' : '') + '><label for="sRefOn">Referral rewards are on (off until your attorney has reviewed them)</label></div>' +
+        chk('sRefOn', c.enabled === true, 'Referral rewards are on (off until your attorney has reviewed them)') +
         '<div class="field-row">' +
           '<div class="field"><label>Level 1: % of the friend\'s points (invited by a member)</label><input type="number" id="sL1" min="0" max="100" step="1" value="' + (c.l1Pct || 0) + '"></div>' +
           '<div class="field"><label>Level 2: % paid up one more step</label><input type="number" id="sL2" min="0" max="100" step="1" value="' + (c.l2Pct || 0) + '"></div>' +
         '</div>' +
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Keep Level 2 at 0 until your attorney confirms multi-level rewards are allowed. The system never goes past two levels.</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Cost check: the restaurant pays you 15% of verified spend. With a 5% earn rate and ' + (c.l1Pct || 0) + '% referral, you give back about ' + (5 + 5 * (c.l1Pct || 0) / 100).toFixed(2) + '% of spend in points (if the friend is referred).</div>' +
-        '<div class="form-actions"><button class="btn btn-primary" id="sSave">Save</button></div></div>';
+      '</div>' +
+      '<div class="form-actions"><button class="btn btn-primary" id="sSave">Save all settings</button></div>';
+
+    function collect() {
+      return {
+        paused: { signups: document.getElementById('sPauseSignups').checked, receipts: document.getElementById('sPauseReceipts').checked, redemptions: document.getElementById('sPauseRedeem').checked },
+        banner: document.getElementById('sBanner').value.trim(),
+        limits: {
+          maxAmount: Math.max(1, parseFloat(document.getElementById('sMaxAmt').value) || 300),
+          maxPerWeek: Math.max(1, parseInt(document.getElementById('sMaxWeek').value, 10) || 5),
+          windowDays: Math.max(1, parseInt(document.getElementById('sWindow').value, 10) || 30)
+        },
+        referral: {
+          enabled: document.getElementById('sRefOn').checked,
+          l1Pct: Math.max(0, Math.min(100, parseFloat(document.getElementById('sL1').value) || 0)),
+          l2Pct: Math.max(0, Math.min(100, parseFloat(document.getElementById('sL2').value) || 0))
+        }
+      };
+    }
+    function saveAll(v) {
+      return Promise.all(Object.keys(v).map(function(k){ return fbPut(SETTINGS_PATH + '/' + k, v[k] === '' ? null : v[k]); })).then(function(rs){
+        if (rs.some(function(r){ return !r.ok; })) throw new Error('save failed');
+        Object.keys(v).forEach(function(k){ settings[k] = v[k]; });
+      });
+    }
     document.getElementById('sSave').addEventListener('click', function(){
-      var l1 = Math.max(0, Math.min(100, parseFloat(document.getElementById('sL1').value) || 0));
-      var l2 = Math.max(0, Math.min(100, parseFloat(document.getElementById('sL2').value) || 0));
-      var payload = { enabled: document.getElementById('sRefOn').checked, l1Pct: l1, l2Pct: l2 };
-      fbPut(SETTINGS_PATH + '/referral', payload).then(function(r){
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        settings.referral = payload; showToast('Saved');
-      }).catch(function(){ showToast('Something went wrong saving'); });
+      saveAll(collect()).then(function(){ showToast('Saved'); }).catch(function(){ showToast('Something went wrong saving'); });
+    });
+    document.getElementById('sPauseAll').addEventListener('click', function(){
+      if (!confirm('Pause sign-ups, receipts and redemptions for everyone?')) return;
+      var v = collect(); v.paused = { signups: true, receipts: true, redemptions: true };
+      saveAll(v).then(function(){ showToast('Everything is paused'); renderSettingsTab(); }).catch(function(){ showToast('Something went wrong'); });
+    });
+    document.getElementById('sResumeAll').addEventListener('click', function(){
+      var v = collect(); v.paused = { signups: false, receipts: false, redemptions: false };
+      saveAll(v).then(function(){ showToast('Everything is running'); renderSettingsTab(); }).catch(function(){ showToast('Something went wrong'); });
     });
   }
 
@@ -605,6 +671,128 @@
     document.getElementById('eMonth').addEventListener('change', function(){ earningsMonth = this.value || earningsMonth; renderEarningsTab(); });
     document.getElementById('ePeriod').addEventListener('change', function(){ earningsAll = this.value === 'all'; renderEarningsTab(); });
     document.getElementById('eCsv').addEventListener('click', function(){ downloadCsv('lvr-commission-' + (earningsAll ? 'all-time' : earningsMonth) + '.csv', rows); });
+  }
+
+  // ========================================================================
+  // AUDIT TAB - receipts are kept permanently; this is where to find them,
+  // check them, and download a copy (spreadsheet + every photo) to keep
+  // outside the database or hand to a restaurant that wants to audit.
+  // ========================================================================
+  var auditF = { slug: 'all', month: new Date().toISOString().slice(0, 7), all: false, status: 'approved', q: '' };
+  function auditRows() {
+    var parts = auditF.month.split('-');
+    var start = auditF.all ? 0 : new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, 1).getTime();
+    var end = auditF.all ? Infinity : new Date(parseInt(parts[0],10), parseInt(parts[1],10), 1).getTime();
+    var q = auditF.q.trim().toLowerCase();
+    return Object.keys(receipts).map(function(id){ return Object.assign({ _id: id }, receipts[id]); }).filter(function(r){
+      if (!r || !r.slug) return false;
+      if (auditF.slug !== 'all' && r.slug !== auditF.slug) return false;
+      if (auditF.status !== 'all' && r.status !== auditF.status) return false;
+      var t = r.receiptDate ? new Date(r.receiptDate + 'T12:00:00').getTime() : (r.submittedAt || 0);
+      if (t < start || t >= end) return false;
+      if (q && ((r.receiptNo || '') + ' ' + (r.name || '')).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    }).sort(function(a, b){ return (b.receiptDate || '').localeCompare(a.receiptDate || '') || (b.submittedAt || 0) - (a.submittedAt || 0); });
+  }
+  function auditCsvRows(rows) {
+    return rows.map(function(r){
+      var pct = (restaurants[r.slug] && restaurants[r.slug].commissionPct) || 0;
+      return {
+        receipt_id: r._id, restaurant: bizOf(r.slug), receipt_date: r.receiptDate || '', receipt_number: r.receiptNo || '',
+        amount_usd: Number(r.amount || 0).toFixed(2), status: r.status, points_awarded: r.pointsAwarded || 0,
+        member: r.name || '', type: r.receiptType || 'paper',
+        submitted_at: r.submittedAt ? new Date(r.submittedAt).toISOString() : '', decided_at: r.decidedAt ? new Date(r.decidedAt).toISOString() : '',
+        commission_pct: pct, commission_usd: r.status === 'approved' ? (Number(r.amount || 0) * pct / 100).toFixed(2) : ''
+      };
+    });
+  }
+  function loadJsZip() {
+    if (window.JSZip) return Promise.resolve(window.JSZip);
+    return new Promise(function(resolve, reject){
+      var sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      sc.onload = function(){ resolve(window.JSZip); };
+      sc.onerror = function(){ reject(new Error('could not load the zip tool')); };
+      document.head.appendChild(sc);
+    });
+  }
+  function csvText(rows) {
+    if (!rows.length) return '';
+    var cols = Object.keys(rows[0]);
+    var esc = function(v){ v = v == null ? '' : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
+    return cols.map(esc).join(',') + '\n' + rows.map(function(r){ return cols.map(function(c){ return esc(r[c]); }).join(','); }).join('\n') + '\n';
+  }
+  function dataUrlToBase64(d) { var i = d.indexOf(','); return i === -1 ? '' : d.slice(i + 1); }
+  function downloadBlob(name, blob) {
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  }
+  function buildPackage(rows, statusEl) {
+    return loadJsZip().then(function(JSZip){
+      var zip = new JSZip(), done = 0;
+      zip.file('receipts.csv', csvText(auditCsvRows(rows)));
+      function one(r) {
+        return fbGet(PHOTOS_PATH + '/' + r._id).then(function(p){
+          var base = (slugify(bizOf(r.slug)) || 'restaurant') + '/' + (r.receiptDate || 'undated') + '_' + String(r.receiptNo || 'x').replace(/[^A-Za-z0-9]/g, '') + '_' + r._id.slice(-5);
+          if (p) {
+            [['wide', p.wide || p.data], ['close', p.close]].forEach(function(pair){
+              if (pair[1]) zip.file(base + '_' + pair[0] + '.jpg', dataUrlToBase64(pair[1]), { base64: true });
+            });
+          }
+        }).catch(function(){}).then(function(){ done++; if (statusEl) statusEl.textContent = 'Preparing ' + done + ' of ' + rows.length + '…'; });
+      }
+      var i = 0;
+      function batch() {
+        if (i >= rows.length) return Promise.resolve();
+        var chunk = rows.slice(i, i + 5); i += 5;
+        return Promise.all(chunk.map(one)).then(batch);
+      }
+      return batch().then(function(){ return zip.generateAsync({ type: 'blob' }); });
+    });
+  }
+
+  function renderAuditTab() {
+    var slugs = {};
+    Object.keys(restaurants).forEach(function(k){ slugs[k] = 1; }); Object.keys(directory).forEach(function(k){ slugs[k] = 1; });
+    var rows = auditRows();
+    var total = rows.reduce(function(s, r){ return s + (Number(r.amount) || 0); }, 0);
+    var sel = 'padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:14px;width:100%;';
+    view.innerHTML =
+      '<div class="form-box"><div class="row-sub" style="margin-bottom:10px;">Every receipt and its photos are kept permanently. Nothing here can be deleted.</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Restaurant</label><select id="aSlug" style="' + sel + '"><option value="all">All</option>' + Object.keys(slugs).map(function(k){ return '<option value="' + escapeHtml(k) + '"' + (auditF.slug === k ? ' selected' : '') + '>' + escapeHtml(bizOf(k)) + '</option>'; }).join('') + '</select></div>' +
+          '<div class="field"><label>Status</label><select id="aStatus" style="' + sel + '"><option value="approved"' + (auditF.status === 'approved' ? ' selected' : '') + '>Approved</option><option value="all"' + (auditF.status === 'all' ? ' selected' : '') + '>All</option><option value="rejected"' + (auditF.status === 'rejected' ? ' selected' : '') + '>Rejected</option><option value="pending"' + (auditF.status === 'pending' ? ' selected' : '') + '>Pending</option></select></div>' +
+        '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Period</label><select id="aPeriod" style="' + sel + '"><option value="month"' + (auditF.all ? '' : ' selected') + '>One month</option><option value="all"' + (auditF.all ? ' selected' : '') + '>All time</option></select></div>' +
+          '<div class="field"><label>Month</label><input type="month" id="aMonth" value="' + auditF.month + '"' + (auditF.all ? ' disabled' : '') + '></div>' +
+        '</div>' +
+        '<div class="field"><label>Search receipt number or member name</label><input type="text" id="aQ" value="' + escapeHtml(auditF.q) + '"></div>' +
+      '</div>' +
+      '<div class="stats-row"><div class="stat"><div class="n">' + rows.length + '</div><div class="l">Receipts</div></div><div class="stat"><div class="n">' + money(total) + '</div><div class="l">Total spend</div></div></div>' +
+      '<div class="form-actions" style="margin-bottom:14px;"><button class="btn btn-primary" id="aPkg">Download package (spreadsheet + photos)</button><button class="btn" id="aCsv">Spreadsheet only</button></div>' +
+      '<div class="row-sub" id="aStatusLine" style="margin-bottom:12px;"></div>' +
+      (rows.length ? rows.slice(0, 200).map(function(r){
+        return '<div class="row-card" id="rc-' + r._id + '"><div class="row-top"><div><div class="row-name">' + escapeHtml(bizOf(r.slug)) + ' · #' + escapeHtml(r.receiptNo || '') + '</div>' +
+          '<div class="row-sub">' + escapeHtml(r.receiptDate || 'no date') + ' · ' + escapeHtml(r.name || '') + ' · ' + escapeHtml(r.status) + (r.pointsAwarded ? ' · +' + r.pointsAwarded + ' pts' : '') + '</div></div><div class="row-num">' + money(r.amount) + '</div></div>' +
+          '<div class="row-actions"><button data-act="photo" data-id="' + r._id + '">View photos</button></div></div>';
+      }).join('') + (rows.length > 200 ? '<div class="empty-note">Showing the newest 200. The download includes all ' + rows.length + '.</div>' : '') : '<div class="empty-note">No receipts match.</div>');
+
+    function again() { auditF.slug = document.getElementById('aSlug').value; auditF.status = document.getElementById('aStatus').value; auditF.all = document.getElementById('aPeriod').value === 'all'; auditF.month = document.getElementById('aMonth').value || auditF.month; auditF.q = document.getElementById('aQ').value; renderAuditTab(); }
+    ['aSlug', 'aStatus', 'aPeriod', 'aMonth'].forEach(function(id){ document.getElementById(id).addEventListener('change', again); });
+    document.getElementById('aQ').addEventListener('change', again);
+    view.querySelectorAll('[data-act="photo"]').forEach(function(b){ b.addEventListener('click', function(){ showPhoto(b.getAttribute('data-id'), b); }); });
+    var label = (auditF.slug === 'all' ? 'all' : slugify(bizOf(auditF.slug))) + '-' + (auditF.all ? 'all-time' : auditF.month);
+    document.getElementById('aCsv').addEventListener('click', function(){ var r = auditRows(); if (!r.length) { showToast('Nothing to export'); return; } downloadBlob('lvr-receipts-' + label + '.csv', new Blob([csvText(auditCsvRows(r))], { type: 'text/csv' })); });
+    document.getElementById('aPkg').addEventListener('click', function(){
+      var r = auditRows(), line = document.getElementById('aStatusLine'), btn = this;
+      if (!r.length) { showToast('Nothing to export'); return; }
+      btn.disabled = true; line.textContent = 'Preparing 0 of ' + r.length + '…';
+      buildPackage(r, line).then(function(blob){ downloadBlob('lvr-receipt-package-' + label + '.zip', blob); line.textContent = 'Done - ' + r.length + ' receipts saved to your downloads.'; })
+        .catch(function(e){ line.textContent = 'Could not build the package: ' + e.message; })
+        .then(function(){ btn.disabled = false; });
+    });
   }
 
   // ========================================================================
