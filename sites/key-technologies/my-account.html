@@ -122,6 +122,9 @@
   .earn-msg.err{color:var(--red);} .earn-msg.ok{color:var(--green);}
   .rcpt-badge{font-size:11px;font-weight:700;text-align:right;}
   .rcpt-badge.pending{color:#f0c239;} .rcpt-badge.approved{color:var(--green);} .rcpt-badge.rejected{color:var(--red);}
+  .notice{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:700;line-height:1.4;}
+  .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
+  .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
   .no-account-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 22px;text-align:center;}
   .no-account-card h1{font-size:20px;font-weight:800;margin:0 0 10px;}
   .no-account-card p{font-size:14.5px;margin-bottom:18px;}
@@ -301,6 +304,8 @@
         var item = bizItems[itemId];
         if (!item || item.active === false) return;
         if (item.expiresAt && Date.now() > item.expiresAt) return;
+        var cr = directory[slug] && directory[slug].creditRemaining;
+        if (typeof cr === 'number' && cr < item.pointCost) return;
         var redeemed = redemptionCount(allRedemptions, slug, itemId);
         if (item.maxRedemptions && redeemed >= item.maxRedemptions) return;
         items.push(Object.assign({ slug: slug, itemId: itemId, _redeemedCount: redeemed }, item));
@@ -313,6 +318,7 @@
     var items = flattenCatalog(catalog, allRedemptions);
 
     var html =
+      noticeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
@@ -376,6 +382,7 @@
 
     contentEl.innerHTML = html;
     bindEarnPanel();
+    startPolling();
 
     contentEl.querySelectorAll('[data-act="redeem"]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -392,6 +399,47 @@
       wallet = null;
       showNoAccount();
     });
+  }
+
+  // ---------- approval notices + auto-refresh ----------
+  var SEEN_KEY = 'lvr_seen_receipts';
+  function loadSeen() { try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}') || {}; } catch (e) { return {}; } }
+  function saveSeen(o) { try { localStorage.setItem(SEEN_KEY, JSON.stringify(o)); } catch (e) {} }
+
+  // One-time banner for each receipt decided in the last 7 days.
+  function noticeHtml() {
+    var seen = loadSeen(), out = '', changed = false, weekAgo = Date.now() - 7 * 24 * 3600 * 1000;
+    Object.keys(myReceipts || {}).forEach(function(id){
+      var r = myReceipts[id];
+      if (!r || seen[id] || (r.status !== 'approved' && r.status !== 'rejected')) return;
+      if ((r.decidedAt || 0) < weekAgo) { seen[id] = 1; changed = true; return; }
+      var biz = (directory[r.slug] && directory[r.slug].bizName) || r.slug;
+      out += r.status === 'approved'
+        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' points!</div>'
+        : '<div class="notice no">Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' could not be approved.</div>';
+      seen[id] = 1; changed = true;
+    });
+    if (changed) saveSeen(seen);
+    return out;
+  }
+
+  // While something is waiting for review, check every 15s (only when the
+  // tab is visible, and for at most 10 minutes) so approval shows up live.
+  var pollTimer = null, pollStarted = 0;
+  function startPolling() {
+    var pending = Object.keys(myReceipts || {}).filter(function(id){ return myReceipts[id] && myReceipts[id].status === 'pending'; });
+    if (!pending.length) { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } return; }
+    if (pollTimer) return;
+    pollStarted = Date.now();
+    pollTimer = setInterval(function(){
+      if (document.hidden) return;
+      if (Date.now() - pollStarted > 10 * 60 * 1000 || !token) { clearInterval(pollTimer); pollTimer = null; return; }
+      fetch(DB + RECEIPTS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(token) + '"').then(function(r){ return r.json(); }).then(function(fresh){
+        fresh = fresh || {};
+        var decided = pending.some(function(id){ return fresh[id] && fresh[id].status !== 'pending'; });
+        if (decided) { clearInterval(pollTimer); pollTimer = null; loadWallet(); }
+      }).catch(function(){});
+    }, 15000);
   }
 
   function earnPanelHtml() {
@@ -529,10 +577,17 @@
   function doRedeem(item) {
     Promise.all([
       fbGet(MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points'),
-      item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null)
+      item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null),
+      fbGet(DIRECTORY_PATH + '/' + encodeURIComponent(item.slug) + '/creditRemaining')
     ]).then(function(results){
       var freshBalance = results[0] || 0;
       var freshRedemptions = results[1];
+      var freshCredit = results[2];
+      if (typeof freshCredit === 'number' && freshCredit < item.pointCost) {
+        alert("Sorry - this offer just ran out.");
+        loadWallet();
+        return;
+      }
       if (freshBalance < item.pointCost) {
         alert("Your balance changed and you no longer have enough points for this.");
         loadWallet();
@@ -566,6 +621,9 @@
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return fbPatch(MEMBERS_PATH + '/' + encodeURIComponent(memberKey), { points: newBalance });
       }).then(function(){
+        if (typeof freshCredit === 'number') {
+          fetch(DB + DIRECTORY_PATH + '/' + encodeURIComponent(item.slug) + '/creditRemaining.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ '.sv': { increment: -item.pointCost } }) }).catch(function(){});
+        }
         wallet.points = newBalance;
         showRedeemSuccess(item, code, newBalance);
       }).catch(function(){

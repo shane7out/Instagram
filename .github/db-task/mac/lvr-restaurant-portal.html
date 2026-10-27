@@ -125,9 +125,17 @@
     });
   }
 
+  var myCredit = null;
   function loadRedemptions() {
-    fbGet(REDEMPTIONS_PATH + encodeURIComponent(mySlug)).then(function(data){
-      data = data || {};
+    Promise.all([
+      fbGet(REDEMPTIONS_PATH + encodeURIComponent(mySlug)),
+      fbGet('/lvr_points/fundings/' + encodeURIComponent(mySlug)),
+      fbGet('/lvr_points/directory/' + encodeURIComponent(mySlug) + '/creditRemaining')
+    ]).then(function(res){
+      var data = res[0] || {};
+      var f = res[1] || {};
+      var funded = Object.keys(f).reduce(function(s, id){ return s + (Number(f[id] && f[id].amount) || 0); }, 0);
+      myCredit = (typeof res[2] === 'number') ? { funded: funded, remaining: res[2] } : null;
       myRows = Object.keys(data).filter(function(id){ return data[id]; }).map(function(id){ return Object.assign({ _id: id }, data[id]); });
       myRows.sort(function(a,b){ return (b.redeemedAt||0) - (a.redeemedAt||0); });
       render();
@@ -145,6 +153,7 @@
     document.getElementById('statsRow').innerHTML =
       '<div class="stat"><div class="n">' + myRows.length + '</div><div class="l">Redemptions</div></div>' +
       '<div class="stat"><div class="n">' + myRows.filter(function(r){ return !r.usedAt; }).length + '</div><div class="l">Not yet used</div></div>' +
+      (myCredit ? '<div class="stat"><div class="n">$' + Number(myCredit.remaining).toLocaleString() + '</div><div class="l">Credit left of $' + Number(myCredit.funded).toLocaleString() + '</div></div>' : '') +
       '<div class="stat"><div class="n">' + totalPoints.toLocaleString() + '</div><div class="l">Points redeemed</div></div>';
 
     var wrap = document.getElementById('tableWrap');

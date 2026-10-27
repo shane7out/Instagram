@@ -120,6 +120,7 @@
   var RESTAURANTS_PATH = '/lvr_points/restaurants';
   var REDEMPTIONS_PATH = '/lvr_points/redemptions';
   var RECEIPTS_PATH = '/lvr_points/receipts';
+  var FUNDINGS_PATH = '/lvr_points/fundings';
   var PHOTOS_PATH = '/lvr_points/receipt_photos';
   var DIRECTORY_PATH = '/lvr_points/directory';
   var MEMBERS_PATH = '/lvr_rewards';
@@ -205,7 +206,7 @@
     URL.revokeObjectURL(url);
   }
 
-  var catalog = {}, restaurants = {}, redemptions = {}, receipts = {}, directory = {};
+  var catalog = {}, restaurants = {}, redemptions = {}, receipts = {}, directory = {}, fundings = {};
   var activeTab = 'receipts';
   var view = document.getElementById('view');
 
@@ -222,9 +223,9 @@
   function loadAll() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
     Promise.all([
-      fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH), fbGet(RECEIPTS_PATH), fbGet(DIRECTORY_PATH)
+      fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH), fbGet(RECEIPTS_PATH), fbGet(DIRECTORY_PATH), fbGet(FUNDINGS_PATH)
     ]).then(function(r){
-      catalog = r[0] || {}; restaurants = r[1] || {}; redemptions = r[2] || {}; receipts = r[3] || {}; directory = r[4] || {};
+      catalog = r[0] || {}; restaurants = r[1] || {}; redemptions = r[2] || {}; receipts = r[3] || {}; directory = r[4] || {}; fundings = r[5] || {};
       var pend = Object.keys(receipts).filter(function(id){ return receipts[id] && (receipts[id].status === 'pending' || (receipts[id].status === 'approved' && receipts[id].pointsApplied === false)); }).length;
       var rt = document.querySelector('.tab[data-v="receipts"]');
       if (rt) rt.textContent = 'Receipts' + (pend ? ' (' + pend + ')' : '');
@@ -376,12 +377,72 @@
       var r = restaurants[slug] || {}, d = directory[slug] || {};
       return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.bizName || d.bizName || slug) + '</div>' +
         '<div class="row-sub">' + (d.active === false ? 'Hidden from members' : 'Shown to members') + ' · ' + catLabel(d.category) + ' · earns ' + (d.earnRate || 0) + ' pts per $1 · your commission ' + (r.commissionPct || 0) + '%</div></div></div>' +
-        '<div class="row-actions"><button data-act="edit-rest" data-slug="' + escapeHtml(slug) + '">Edit</button></div></div>';
+        creditLine(slug) +
+        '<div class="row-actions"><button data-act="edit-rest" data-slug="' + escapeHtml(slug) + '">Edit</button>' +
+        '<button data-act="add-credit" data-slug="' + escapeHtml(slug) + '">+ Add credit</button>' +
+        (typeof d.creditRemaining === 'number' ? '<button data-act="recalc" data-slug="' + escapeHtml(slug) + '">Recalculate</button>' : '') +
+        '</div></div>';
     }).join('') : '<div class="empty-note">No businesses yet. Add one so members can submit receipts for it.</div>';
     view.innerHTML = html;
     document.getElementById('newRestBtn').addEventListener('click', function(){ renderRestForm(null); });
     view.querySelectorAll('[data-act="edit-rest"]').forEach(function(b){
       b.addEventListener('click', function(){ renderRestForm(b.getAttribute('data-slug')); });
+    });
+    view.querySelectorAll('[data-act="add-credit"]').forEach(function(b){
+      b.addEventListener('click', function(){ renderCreditForm(b.getAttribute('data-slug')); });
+    });
+    view.querySelectorAll('[data-act="recalc"]').forEach(function(b){
+      b.addEventListener('click', function(){ recalcCredit(b.getAttribute('data-slug')).then(function(){ showToast('Recalculated'); renderRestaurantsTab(); }); });
+    });
+  }
+
+  // ---------- funding ledger ----------
+  // 1 point = $1. A business 'funds' credit (food it agrees to honor); every
+  // redemption at that business draws it down. creditRemaining on the
+  // directory entry is kept by atomic increments (member app) and can always
+  // be rebuilt from the two logs with Recalculate.
+  function sumFunded(slug) {
+    var f = fundings[slug] || {};
+    return Object.keys(f).reduce(function(s, id){ return s + (Number(f[id] && f[id].amount) || 0); }, 0);
+  }
+  function sumHonored(slug) {
+    var rd = redemptions[slug] || {};
+    return Object.keys(rd).reduce(function(s, id){ return s + (Number(rd[id] && rd[id].pointCost) || 0); }, 0);
+  }
+  function creditLine(slug) {
+    var funded = sumFunded(slug);
+    if (!funded && typeof (directory[slug] || {}).creditRemaining !== 'number') return '';
+    var rem = (directory[slug] || {}).creditRemaining;
+    return '<div class="row-sub" style="margin-top:6px;">Credit: <b>' + money(funded) + '</b> funded · <b>' + money(sumHonored(slug)) + '</b> honored · <b>' +
+      (typeof rem === 'number' ? money(rem) : '-') + '</b> left' + (typeof rem === 'number' && rem <= 0 ? ' <span style="color:var(--red);">(offers paused)</span>' : '') + '</div>';
+  }
+  function recalcCredit(slug) {
+    return Promise.all([ fbGet(FUNDINGS_PATH + '/' + slug), fbGet(REDEMPTIONS_PATH + '/' + slug) ]).then(function(r){
+      fundings[slug] = r[0] || {}; redemptions[slug] = r[1] || {};
+      var remaining = Math.round((sumFunded(slug) - sumHonored(slug)) * 100) / 100;
+      return fbPut(DIRECTORY_PATH + '/' + slug + '/creditRemaining', remaining).then(function(resp){
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        directory[slug] = Object.assign({}, directory[slug] || {}, { creditRemaining: remaining });
+      });
+    });
+  }
+  function renderCreditForm(slug) {
+    view.innerHTML =
+      '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
+      '<div class="form-box"><div style="margin-bottom:10px;"><b>' + escapeHtml(bizOf(slug)) + '</b> - add credit they have agreed to honor</div>' +
+        '<div class="field"><label>Amount in dollars (1 point = $1)</label><input type="number" id="cAmt" min="1" step="1" value="500"></div>' +
+        '<div class="field"><label>Note (for your records, e.g. "gift credit for police dept")</label><input type="text" id="cNote"></div>' +
+        '<div class="form-actions"><button class="btn btn-primary" id="cSave">Add credit</button><button class="btn" id="cCancel">Cancel</button></div></div>';
+    document.getElementById('backBtn').addEventListener('click', renderRestaurantsTab);
+    document.getElementById('cCancel').addEventListener('click', renderRestaurantsTab);
+    document.getElementById('cSave').addEventListener('click', function(){
+      var amt = parseFloat(document.getElementById('cAmt').value);
+      if (!(amt > 0)) { showToast('Enter an amount'); return; }
+      fbPost(FUNDINGS_PATH + '/' + slug, { amount: amt, note: document.getElementById('cNote').value.trim(), at: { '.sv': 'timestamp' } }).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return recalcCredit(slug);
+      }).then(function(){ showToast('Credit added'); renderRestaurantsTab(); })
+        .catch(function(){ showToast('Something went wrong - nothing was added'); });
     });
   }
 
