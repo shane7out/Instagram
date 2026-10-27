@@ -214,5 +214,293 @@
   "author": "Battlesnake1",
   "source": "https://commons.wikimedia.org/wiki/File:Pearl_Milk_Tea_in_Chun_Shui_Tang.jpg",
   "note": "Iced Bubble Tea served at a Chun Shui Tang in Songshan District, Taipei, Taiwan"
+ },
+ "teriyaki-1.jpg": {
+  "term": "teriyaki",
+  "title": "File:Pork teriyaki meal.jpg",
+  "license": "CC0",
+  "author": "GALAXY 2018 A7",
+  "source": "https://commons.wikimedia.org/wiki/File:Pork_teriyaki_meal.jpg",
+  "note": "Brno, Bohunický campus: japonské vepřové teriyaki. https://www.google.com/maps/place/OC+Ca"
+ },
+ "teriyaki-2.jpg": {
+  "term": "teriyaki",
+  "title": "File:Kuře teriyaki 20221011 140542.jpg",
+  "license": "CC0",
+  "author": "01x07x2022000",
+  "source": "https://commons.wikimedia.org/wiki/File:Ku%C5%99e_teriyaki_20221011_140542.jpg",
+  "note": "Kuře teriyaki a opečené brambory. Zakoupeno v Galerii Teplice."
+ },
+ "teriyaki-3.jpg": {
+  "term": "teriyaki",
+  "title": "File:Teriyaki Lachs Gurke Avocado Reis Teller.JPG",
+  "license": "Public domain",
+  "author": "DarkScipio",
+  "source": "https://commons.wikimedia.org/wiki/File:Teriyaki_Lachs_Gurke_Avocado_Reis_Teller.JPG",
+  "note": "Lachs mit Teriyaki-Soße, ungeschältem Reis, Gurke, Avocado"
+ },
+ "sundae-1.jpg": {
+  "term": "ice cream sundae",
+  "title": "File:Butterscotch sundae with chocolate chip ice cream and jimmies - Massachusetts.jpg",
+  "license": "CC0",
+  "author": "Daderot",
+  "source": "https://commons.wikimedia.org/wiki/File:Butterscotch_sundae_with_chocolate_chip_ice_cream_and_jimmies_-_Massachusetts.jpg",
+  "note": "Butterscotch sundae with chocolate chip ice cream and jimmies - Massachusetts, USA."
+ },
+ "sundae-2.jpg": {
+  "term": "ice cream sundae",
+  "title": "File:Ice cream sundae.jpg",
+  "license": "Public domain",
+  "author": "Renee Comet (Photographer)",
+  "source": "https://commons.wikimedia.org/wiki/File:Ice_cream_sundae.jpg",
+  "note": "Title Ice Cream Sundae Description A fountain style glass filled with an ice cream sundae "
+ },
+ "sundae-3.jpg": {
+  "term": "ice cream sundae",
+  "title": "File:Ice cream sundae vertical.jpg",
+  "license": "Public domain",
+  "author": "Renee Comet (Photographer)",
+  "source": "https://commons.wikimedia.org/wiki/File:Ice_cream_sundae_vertical.jpg",
+  "note": "Title Ice Cream Sundae Description A fountain style glass filled with an ice cream sundae "
+ },
+ "brownie-1.jpg": {
+  "term": "brownie dessert",
+  "title": "File:Salted Caramel Blondie - Nine Rolls 2025-05-25.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Salted_Caramel_Blondie_-_Nine_Rolls_2025-05-25.jpg",
+  "note": "Salted Caramel Blondie"
+ },
+ "brownie-2.jpg": {
+  "term": "brownie dessert",
+  "title": "File:Raspberry & matcha blondie - Café W 2025-06-05.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Raspberry_%26_matcha_blondie_-_Caf%C3%A9_W_2025-06-05.jpg",
+  "note": "raspberry &amp; matcha blondie"
+ },
+ "brownie-3.jpg": {
+  "term": "brownie dessert",
+  "title": "File:Peach blondie - ease 2025-08-29.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Peach_blondie_-_ease_2025-08-29.jpg",
+  "note": "peach blondie"
+ },
+ "churros-1.jpg": {
+  "term": "churros",
+  "title": "File:Churros 001.jpg",
+  "license": "CC0",
+  "author": "Ocdp",
+  "source": "https://commons.wikimedia.org/wiki/File:Churros_001.jpg",
+  "note": "一般的なチュロスの参考画像"
+ },
+ "churros-2.jpg": {
+  "term": "churros",
+  "title": "File:Churros bought from food truck at Churchill Square 2023-07-28.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Churros_bought_from_food_truck_at_Churchill_Square_2023-07-28.jpg",
+  "note": "With sugar and cinnamon."
+ },
+ "churros-3.jpg": {
+  "term": "churros",
+  "title": "File:Churros - September 2024 - Sarah Stierch.jpg",
+  "license": "CC0",
+  "author": "Missvain",
+  "source": "https://commons.wikimedia.org/wiki/File:Churros_-_September_2024_-_Sarah_Stierch.jpg",
+  "note": "Churros filled with caramel and vanilla flavoring from the Sonoma Churros truck in Sonoma,"
+ },
+ "garlicbread-1.jpg": {
+  "term": "garlic bread",
+  "title": "File:Garlic Bread Mozzarella - Oregano Pizzeria 2025-05-17.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Garlic_Bread_Mozzarella_-_Oregano_Pizzeria_2025-05-17.jpg",
+  "note": "Description on menu: \"Garlic &amp; rosemary bread made with extra virgin olive oil, topped"
+ },
+ "garlicbread-2.jpg": {
+  "term": "garlic bread",
+  "title": "File:Chicken Schnitzel with chips & peas, garlic bread, tea - IKEA Southampton 2026-03-17.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Chicken_Schnitzel_with_chips_%26_peas,_garlic_bread,_tea_-_IKEA_Southampton_2026-03-17.jpg",
+  "note": "Chicken Schnitzel with chips &amp; peas, garlic bread, tea"
+ },
+ "garlicbread-3.jpg": {
+  "term": "garlic bread",
+  "title": "File:Amethyst hhh garlic bread.jpg",
+  "license": "Public domain",
+  "author": "Amethyst hhh",
+  "source": "https://commons.wikimedia.org/wiki/File:Amethyst_hhh_garlic_bread.jpg",
+  "note": "See told you I was making garlic bread 👍(ignore the stained baking sheet lol)"
+ },
+ "sushi-1.jpg": {
+  "term": "salmon sushi",
+  "title": "File:Salmon Sushi in Singapore.jpg",
+  "license": "CC0",
+  "author": "puffballruns",
+  "source": "https://commons.wikimedia.org/wiki/File:Salmon_Sushi_in_Singapore.jpg",
+  "note": "Salmon sushi in a sushi restaurant in Singapore. 2 pieces."
+ },
+ "sushi-2.jpg": {
+  "term": "salmon sushi",
+  "title": "File:Salmon sushi (20250322).jpg",
+  "license": "CC0",
+  "author": "Fumikas Sagisavas",
+  "source": "https://commons.wikimedia.org/wiki/File:Salmon_sushi_(20250322).jpg",
+  "note": "Salmon sushi"
+ },
+ "sushi-3.jpg": {
+  "term": "salmon sushi",
+  "title": "File:Salmon and Crab Sushi Bake.jpg",
+  "license": "CC0",
+  "author": "TechnoKittyCat",
+  "source": "https://commons.wikimedia.org/wiki/File:Salmon_and_Crab_Sushi_Bake.jpg",
+  "note": "Salmon and Crab Sushi Bake with Seaweed, Green Onion, and Unagi Sauce"
+ },
+ "hibachi-1.jpg": {
+  "term": "hibachi grill",
+  "title": "File:Hibachi LCCN2008660674.jpg",
+  "license": "Public domain",
+  "author": "Eishōsai Chōki, active 1789-1823, artist",
+  "source": "https://commons.wikimedia.org/wiki/File:Hibachi_LCCN2008660674.jpg",
+  "note": "Title: Hibachi Abstract/medium: 1 print : woodcut, color."
+ },
+ "hibachi-2.jpg": {
+  "term": "hibachi grill",
+  "title": "File:Drie jonge vrouwen drinken thee A Cup of Tea or the Company (titel op object), RP-F-2001-7-1570-24.jpg",
+  "license": "CC0",
+  "author": "Rijksmuseum",
+  "source": "https://commons.wikimedia.org/wiki/File:Drie_jonge_vrouwen_drinken_thee_A_Cup_of_Tea_or_the_Company_(titel_op_object),_RP-F-2001-7-1570-24.jpg",
+  "note": "IdentificatieTitel(s): Drie jonge vrouwen drinken thee. A Cup of Tea or the Company (titel"
+ },
+ "hibachi-3.jpg": {
+  "term": "hibachi grill",
+  "title": "File:Vrouw, de handen warmend bij een hibachi 32 moderne types (serietitel) Imayo sanjuniso (serietitel op object), RP-P-2008-245.jpg",
+  "license": "CC0",
+  "author": "Rijksmuseum",
+  "source": "https://commons.wikimedia.org/wiki/File:Vrouw,_de_handen_warmend_bij_een_hibachi_32_moderne_types_(serietitel)_Imayo_sanjuniso_(serietitel_op_object),_RP-P-2008-245.jpg",
+  "note": "IdentificatieTitel(s): Vrouw, de handen warmend bij een hibachi32 moderne types (serietite"
+ },
+ "icedtea-1.jpg": {
+  "term": "iced tea glass",
+  "title": "File:Iced Tea.jpg",
+  "license": "CC0",
+  "author": "Markus Spiske",
+  "source": "https://commons.wikimedia.org/wiki/File:Iced_Tea.jpg",
+  "note": "Image of iced tea with lemon wedge"
+ },
+ "icedtea-2.jpg": {
+  "term": "iced tea glass",
+  "title": "File:Lipton Sweet Tea in Glass.jpg",
+  "license": "CC0",
+  "author": "Lauren Williams",
+  "source": "https://commons.wikimedia.org/wiki/File:Lipton_Sweet_Tea_in_Glass.jpg",
+  "note": "Lipton sweet tea with ice in a clear glass at Amore Italian Ristorante &amp; Bar, Oxford, "
+ },
+ "icedtea-3.jpg": {
+  "term": "iced tea glass",
+  "title": "File:Iced tea.jpg",
+  "license": "Public domain",
+  "author": "Renee Comet (Photographer)",
+  "source": "https://commons.wikimedia.org/wiki/File:Iced_tea.jpg",
+  "note": "Title Iced Tea Description A tall glass of iced tea with a slice of lemon for garnish. Top"
+ },
+ "bbq-1.jpg": {
+  "term": "barbecue ribs",
+  "title": "File:Ribs at Jerry's Nugget Casino in North Las Vegas.jpg",
+  "license": "CC0",
+  "author": "Julianibarra",
+  "source": "https://commons.wikimedia.org/wiki/File:Ribs_at_Jerry%27s_Nugget_Casino_in_North_Las_Vegas.jpg",
+  "note": "Ribs at Jerry's Nugget Casino in North Las Vegas"
+ },
+ "bbq-2.jpg": {
+  "term": "barbecue ribs",
+  "title": "File:Barbecue Ribs in my saucer.jpg",
+  "license": "CC0",
+  "author": "VladimirWorkspace",
+  "source": "https://commons.wikimedia.org/wiki/File:Barbecue_Ribs_in_my_saucer.jpg",
+  "note": "Look at barbecue ribs in saucer"
+ },
+ "bbq-3.jpg": {
+  "term": "barbecue ribs",
+  "title": "File:Spicy Ribs (9532760034).jpg",
+  "license": "CC BY 2.0",
+  "author": "LanguageTeaching",
+  "source": "https://commons.wikimedia.org/wiki/File:Spicy_Ribs_(9532760034).jpg",
+  "note": "Spicy Ribs"
+ },
+ "burger-1.jpg": {
+  "term": "cheeseburger",
+  "title": "File:Plant-based Cheeseburger - Depot Cinema and Restaurant 2025-03-06.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Plant-based_Cheeseburger_-_Depot_Cinema_and_Restaurant_2025-03-06.jpg",
+  "note": "Description on menu: \"miami burger patty, tomato relish, baby gem, sweet pickles, mayo, pi"
+ },
+ "burger-2.jpg": {
+  "term": "cheeseburger",
+  "title": "File:Grilled Cheese Cheeseburger Double - Wendy's 2025-11-21.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Grilled_Cheese_Cheeseburger_Double_-_Wendy%27s_2025-11-21.jpg",
+  "note": "Description on the product webpage: \"Cheeseburgers are great. Grilled Cheese Sandwiches ar"
+ },
+ "burger-3.jpg": {
+  "term": "cheeseburger",
+  "title": "File:Cheeseburger and Fries.jpg",
+  "license": "CC0",
+  "author": "Kurt Kaiser",
+  "source": "https://commons.wikimedia.org/wiki/File:Cheeseburger_and_Fries.jpg",
+  "note": "burger with crinkle cut fries"
+ },
+ "sandwich-1.jpg": {
+  "term": "sandwich deli",
+  "title": "File:Deli sandwiches.jpg",
+  "license": "Public domain",
+  "author": "Daniel Sone (Photographer)",
+  "source": "https://commons.wikimedia.org/wiki/File:Deli_sandwiches.jpg",
+  "note": "Title Deli Sandwiches Description A display of deli sandwiches prepared from a selection o"
+ },
+ "sandwich-2.jpg": {
+  "term": "sandwich deli",
+  "title": "File:Deli Sandwich (Unsplash).jpg",
+  "license": "CC0",
+  "author": "Eaters Collective eaterscollective",
+  "source": "https://commons.wikimedia.org/wiki/File:Deli_Sandwich_(Unsplash).jpg",
+  "note": "Kitson &amp; Co Sandwiches, Toronto, Canada"
+ },
+ "sandwich-3.jpg": {
+  "term": "sandwich deli",
+  "title": "File:Deli Baguette Sandwich (Unsplash).jpg",
+  "license": "CC0",
+  "author": "petradr petradr",
+  "source": "https://commons.wikimedia.org/wiki/File:Deli_Baguette_Sandwich_(Unsplash).jpg",
+  "note": "reggeli%20-%20sonk%C3%A1s%20szendvics"
+ },
+ "pancakes-1.jpg": {
+  "term": "pancakes",
+  "title": "File:Bacon Pancakes - Moksha Caffè 2026-05-03.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Bacon_Pancakes_-_Moksha_Caff%C3%A8_2026-05-03.jpg",
+  "note": "Description on menu: \"Three buttermilk pancakes, Sussex streaky bacon and Canadian maple s"
+ },
+ "pancakes-2.jpg": {
+  "term": "pancakes",
+  "title": "File:Fruity tutty pancakes - The Orchard Cafe 2026-08-07.jpg",
+  "license": "CC0",
+  "author": "Andy Li",
+  "source": "https://commons.wikimedia.org/wiki/File:Fruity_tutty_pancakes_-_The_Orchard_Cafe_2026-08-07.jpg",
+  "note": "Description on menu: \"2 Pancakes topped with Mixed Berries, Banana, cream and Maple Syrup\""
+ },
+ "pancakes-3.jpg": {
+  "term": "pancakes",
+  "title": "File:Foodiesfeed.com pouring-honey-on-pancakes-with-walnuts.jpg",
+  "license": "CC0",
+  "author": "Mae Mu",
+  "source": "https://commons.wikimedia.org/wiki/File:Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg",
+  "note": "Honey poured on american pancakes. Walnuts are on top of the stack of pancakes."
  }
 }
