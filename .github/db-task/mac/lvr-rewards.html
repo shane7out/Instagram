@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LVR Rewards | Las Vegas Restaurants</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0B2361;
+      --bg-dark:     #071A47;
+      --panel:       rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.18);
+      --border-hi:   rgba(255,255,255,0.75);
+      --white:       #FFFFFF;
+      --white-80:    rgba(255,255,255,0.80);
+      --white-55:    rgba(255,255,255,0.55);
+      --white-30:    rgba(255,255,255,0.30);
+      --white-12:    rgba(255,255,255,0.12);
+      --white-06:    rgba(255,255,255,0.06);
+      --sky:         #7EB8FF;
+      --gold:        #FFD600;
+      --error:       #FF7096;
+      --success:     #4ADE80;
+    }
+
+    html { height: 100%; }
+
+    body {
+      min-height: 100%;
+      background: linear-gradient(170deg, #1348C8 0%, #0B2361 45%, #071A47 100%);
+      background-attachment: fixed;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      min-height: 100vh;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      padding: 32px 0 18px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      margin-bottom: 20px;
+    }
+
+    .brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem;
+      letter-spacing: 0.14em;
+      line-height: 1;
+      color: var(--white);
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sky);
+      margin-top: 6px;
+    }
+
+    .rewards-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .chip-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sky);
+    }
+
+    .chip-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    /* ── COMPACT TAGLINE ── */
+    .tagline-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .tagline-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      white-space: nowrap;
+    }
+
+    .tagline-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ── INTRO BLURB ── */
+    .intro-blurb {
+      background: rgba(255,214,0,0.08);
+      border: 1px solid rgba(255,214,0,0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 26px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--white-80);
+      line-height: 1.75;
+    }
+
+    .intro-blurb strong { color: var(--white); font-weight: 700; }
+
+    /* ── FORM ── */
+    .form-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.55rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+
+    .form { display: flex; flex-direction: column; gap: 18px; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+
+    .lbl {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white-80);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .req { color: var(--sky); font-size: 0.66rem; }
+    .opt { color: var(--white-55); font-weight: 500; font-size: 0.63rem; }
+
+    .inp {
+      width: 100%;
+      background: var(--white-12);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 15px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .inp::placeholder { color: var(--white-30); }
+
+    .inp:focus {
+      border-color: var(--border-hi);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.07);
+    }
+
+    .inp.err-field { border-color: var(--error); }
+
+    .ig-row { display: flex; }
+
+    .ig-at {
+      background: var(--white-12);
+      border: 1.5px solid var(--border);
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+      padding: 15px 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+    }
+
+    .ig-row .inp { border-radius: 0 10px 10px 0; }
+
+    .date-selects { display: flex; gap: 8px; }
+
+    .date-selects select {
+      flex: 1;
+      background: var(--white-12);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 400;
+      padding: 15px 8px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      color-scheme: dark;
+    }
+
+    .date-selects select:focus {
+      border-color: var(--border-hi);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.07);
+    }
+
+    .date-selects select option {
+      background: #0B2361;
+      color: #ffffff;
+    }
+
+    .date-selects select.err-field { border-color: var(--error); }
+
+    .err-msg {
+      font-size: 0.64rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--error);
+      display: none;
+      padding-left: 2px;
+    }
+    .err-msg.show { display: block; }
+
+    .sec-div {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 2px 0;
+    }
+    .sec-div::before, .sec-div::after {
+      content: ''; flex: 1; height: 1px; background: var(--white-30);
+    }
+    .sec-div span {
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--white-55);
+      white-space: nowrap;
+    }
+
+    .date-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 420px) { .date-pair { grid-template-columns: 1fr; } }
+
+    /* ── CONSENT CHECKBOXES ── */
+    .consent-block {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .consent-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    .consent-cb {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      margin-top: 2px;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+
+    .consent-text {
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+    }
+
+    .consent-text strong {
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .consent-text .stop-word {
+      font-family: 'Montserrat', monospace;
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-weight: 700;
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+    }
+
+    .consent-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ── BUTTON ── */
+    .submit-wrap { margin-top: 8px; }
+
+    .btn {
+      width: 100%;
+      background: var(--gold);
+      border: none;
+      border-radius: 12px;
+      color: #071A47;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 19px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 6px 28px rgba(255,214,0,0.25);
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(255,214,0,0.35); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-note {
+      font-size: 0.62rem;
+      font-weight: 400;
+      color: var(--white-55);
+      text-align: center;
+      letter-spacing: 0.06em;
+      margin-top: 12px;
+      line-height: 1.8;
+    }
+
+    /* ── SAVE STATUS ── */
+    .save-status {
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+    .save-status.saving {
+      display: block;
+      color: var(--sky);
+      background: rgba(126,184,255,0.1);
+      border: 1px solid rgba(126,184,255,0.25);
+    }
+    .save-status.saved {
+      display: block;
+      color: var(--success);
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.25);
+    }
+    .save-status.save-err {
+      display: block;
+      color: var(--error);
+      background: rgba(255,112,150,0.1);
+      border: 1px solid rgba(255,112,150,0.25);
+    }
+
+    /* ── PERKS GRID ── */
+    .perks-section {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .perks-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .perks {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .perk {
+      background: var(--white-06);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 14px;
+      text-align: center;
+    }
+
+    .perk-icon { font-size: 1.7rem; margin-bottom: 8px; }
+
+    .perk-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 5px;
+    }
+
+    .perk-desc {
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: var(--white-55);
+      line-height: 1.6;
+    }
+
+    /* ── SUCCESS ── */
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 380px;
+      gap: 16px;
+    }
+
+    .success-screen.show {
+      display: flex;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .s-emoji { font-size: 3.5rem; }
+
+    .s-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+    }
+
+    .s-body {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--white-80);
+      line-height: 1.85;
+      max-width: 320px;
+    }
+
+    .s-body strong { color: var(--white); font-weight: 700; }
+
+    .s-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white-12);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 22px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 4px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── PRIVACY NOTICE BOX ── */
+    .privacy-notice {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 28px;
+    }
+
+    .privacy-notice-title {
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--sky);
+      margin-bottom: 12px;
+    }
+
+    .privacy-notice p {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+      margin-bottom: 8px;
+    }
+
+    .privacy-notice p:last-child { margin-bottom: 0; }
+
+    .privacy-notice strong {
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      padding: 24px 0 40px;
+      border-top: 1px solid var(--white-12);
+      margin-top: 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer-line {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--white-30);
+      line-height: 1.9;
+    }
+
+    .footer-email {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--sky);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-transform: none;
+    }
+
+    .footer-email:hover { color: var(--white); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div>
+      <div class="brand-name">LVR</div>
+      <div class="brand-sub">Las Vegas Restaurants</div>
+    </div>
+    <div class="rewards-chip">
+      <span class="chip-label">Member Program</span>
+      <span class="chip-val">Rewards</span>
+    </div>
+  </div>
+
+  <!-- Compact tagline — one line -->
+  <div class="tagline-bar">
+    <span class="tagline-item">Dine</span>
+    <div class="tagline-dot"></div>
+    <span class="tagline-item">Earn</span>
+    <div class="tagline-dot"></div>
+    <span class="tagline-item">Get Rewarded</span>
+    <div class="tagline-dot"></div>
+    <span class="tagline-item" style="color:var(--gold);">VIP Events</span>
+  </div>
+
+  <!-- Intro blurb -->
+  <div class="intro-blurb">
+    Join the <strong>LVR Rewards Program</strong> — Las Vegas's premier dining community.
+    Earn tokens at the city's top restaurants, celebrate your birthday &amp; anniversary in style,
+    and get <strong>exclusive invitations to VIP parties &amp; special events</strong> around Las Vegas.
+  </div>
+
+  <!-- ══ FORM — first thing people see ══ -->
+  <div id="formWrap">
+    <div class="form-heading">Create Your Member Profile</div>
+    <div class="form">
+
+      <div class="field">
+        <div class="lbl">Full Name <span class="req">★ Required</span></div>
+        <input class="inp" type="text" id="fname" placeholder="Your full name" autocomplete="name" />
+        <div class="err-msg" id="fnameErr">Please enter your full name</div>
+      </div>
+
+      <div class="field">
+        <div class="lbl">Phone Number <span class="req">★ Required</span></div>
+        <input class="inp" type="tel" id="phone" placeholder="(702) 000-0000" autocomplete="tel" />
+        <div class="err-msg" id="phoneErr">Please enter a valid 10-digit phone number</div>
+      </div>
+
+      <div class="field">
+        <div class="lbl">Instagram Handle <span class="req">★ Required</span></div>
+        <div class="ig-row">
+          <div class="ig-at">@</div>
+          <input class="inp" type="text" id="instagram" placeholder="yourhandle" autocomplete="off" />
+        </div>
+        <div class="err-msg" id="instagramErr">Please enter your Instagram handle</div>
+      </div>
+
+      <div class="sec-div"><span>Important Dates</span></div>
+
+      <div class="date-pair">
+        <div class="field">
+          <div class="lbl">Birthday <span class="req">★ Required</span></div>
+          <div class="date-selects">
+            <select id="bdMon" aria-label="Birthday month">
+              <option value="">Mon</option>
+              <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+              <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
+              <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
+              <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
+            </select>
+            <select id="bdDay" aria-label="Birthday day">
+              <option value="">Day</option>
+            </select>
+          </div>
+          <div class="err-msg" id="birthdayErr">Birthday is required</div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Anniversary <span class="opt">Optional</span></div>
+          <div class="date-selects">
+            <select id="anMon" aria-label="Anniversary month">
+              <option value="">Mon</option>
+              <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+              <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
+              <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
+              <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
+            </select>
+            <select id="anDay" aria-label="Anniversary day">
+              <option value="">Day</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Consent -->
+      <div class="sec-div"><span>Permissions &amp; Privacy</span></div>
+
+      <div class="consent-block">
+
+        <!-- SMS Consent (TCPA) -->
+        <div class="field" style="gap:6px;">
+          <label class="consent-row" for="consentSms">
+            <input type="checkbox" id="consentSms" class="consent-cb" />
+            <span class="consent-text">
+              <strong>I agree to receive text messages from Las Vegas Restaurants (LVR)</strong>
+              at the phone number I provided. Rewards notifications, VIP event invitations, birthday
+              perks, anniversary perks, and program updates will be sent by text.
+              Message frequency: <strong>no more than 1 message per week.</strong>
+              Msg &amp; data rates may apply. Reply <span class="stop-word">STOP</span> to opt out at any time.
+              Reply <span class="stop-word">HELP</span> for assistance.
+              Consent is not a condition of joining the program.
+            </span>
+          </label>
+          <div class="err-msg" id="consentSmsErr" style="margin-left:30px;">Please agree to receive texts to join the program</div>
+        </div>
+
+        <div class="consent-divider"></div>
+
+        <!-- Privacy Consent -->
+        <div class="field" style="gap:6px;">
+          <label class="consent-row" for="consentPrivacy">
+            <input type="checkbox" id="consentPrivacy" class="consent-cb" />
+            <span class="consent-text">
+              I understand that LVR will collect and use my name, phone number, and Instagram
+              handle solely to operate the LVR Rewards Program.
+              <strong>LVR does not sell, rent, or share my personal information with third parties
+              for marketing purposes.</strong>
+              I may request deletion of my data at any time by messaging
+              <strong>@las_vegas_restaurants</strong> on Instagram.
+            </span>
+          </label>
+          <div class="err-msg" id="consentPrivacyErr" style="margin-left:30px;">Please accept the privacy terms to continue</div>
+        </div>
+
+      </div>
+
+      <!-- Save status indicator -->
+      <div class="save-status" id="saveStatus"></div>
+
+      <div class="submit-wrap">
+        <button class="btn" id="submitBtn" onclick="handleSubmit()">🎟️ &nbsp; Join LVR Rewards &amp; VIP Access</button>
+        <p class="btn-note">
+          Free to join &nbsp;·&nbsp; LVR Tokens redeemable at participating restaurants &nbsp;·&nbsp; No cash value<br>
+          VIP event invitations sent via text &nbsp;·&nbsp; Reply STOP to opt out anytime
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="success-screen" id="successScreen">
+    <div class="s-emoji">🎉</div>
+    <div class="s-title">Welcome, Member!</div>
+    <div class="s-body" id="sBody"></div>
+    <div class="s-badge">⭐ LVR Rewards + VIP Member</div>
+  </div>
+
+  <!-- Perks — below the form -->
+  <div class="perks-section">
+    <div class="perks-heading">What You Get</div>
+    <div class="perks">
+      <div class="perk">
+        <div class="perk-icon">🍽️</div>
+        <div class="perk-title">Dine &amp; Earn</div>
+        <div class="perk-desc">Earn LVR tokens every time you dine at participating Las Vegas restaurants</div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon">🎉</div>
+        <div class="perk-title">VIP Parties &amp; Events</div>
+        <div class="perk-desc">Exclusive invitations to private parties and special events around Las Vegas</div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon">🎂</div>
+        <div class="perk-title">Birthday Perks</div>
+        <div class="perk-desc">Special rewards and surprise perks delivered on your birthday</div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon">💑</div>
+        <div class="perk-title">Anniversary Perks</div>
+        <div class="perk-desc">Celebrate your anniversary with exclusive dining offers and bonuses</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Notice -->
+  <div class="privacy-notice">
+    <div class="privacy-notice-title">🔒 Your Privacy &amp; Your Rights</div>
+    <p><strong>What we collect:</strong> Your name, phone number, Instagram handle, birthday, and anniversary (optional) for the sole purpose of operating the LVR Rewards Program.</p>
+    <p><strong>We never sell your data.</strong> Your information is never sold, rented, or shared with third parties for advertising or marketing purposes.</p>
+    <p><strong>SMS communications:</strong> By joining, you consent to receive no more than 1 promotional or transactional text message per week from Las Vegas Restaurants. Standard message and data rates from your carrier may apply. You may opt out at any time by replying <strong>STOP</strong> to any message. This program complies with the Telephone Consumer Protection Act (TCPA).</p>
+    <p><strong>Data storage:</strong> Your data is stored securely on Google Firebase infrastructure. You may request full deletion of your account data at any time by contacting <strong>@las_vegas_restaurants</strong> on Instagram.</p>
+    <p><strong>No purchase required.</strong> Joining the LVR Rewards Program is free and no purchase is necessary to participate.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-line">Las Vegas Restaurants &nbsp;·&nbsp; LVR Rewards Program</div>
+    <div class="footer-line">@las_vegas_restaurants &nbsp;·&nbsp; Las Vegas, NV</div>
+    <a class="footer-email" href="mailto:shane@lasvegasrestaurants.net">shane@lasvegasrestaurants.net</a>
+    <div class="footer-line">© 2026 Las Vegas Restaurants. All rights reserved.</div>
+  </div>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  // Firebase Realtime Database — REST API (no SDK needed)
+  // ─────────────────────────────────────────────
+  var RTDB_URL    = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards.json';
+  var IG_IDX_BASE = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_instagram_index/';
+
+  // ─────────────────────────────────────────────
+  // UI helpers
+  // ─────────────────────────────────────────────
+  var $   = function(id) { return document.getElementById(id); };
+  var val = function(id) { return $(id).value.trim(); };
+
+  function fillDays(monId, dayId) {
+    var mon    = parseInt($(monId).value);
+    var daySel = $(dayId);
+    var prev   = daySel.value;
+    daySel.innerHTML = '<option value="">Day</option>';
+    if (!mon) return;
+    var days = new Date(2000, mon, 0).getDate();
+    for (var i = 1; i <= days; i++) {
+      var o = document.createElement('option');
+      o.value = i; o.textContent = i;
+      daySel.appendChild(o);
+    }
+    if (prev && parseInt(prev) <= days) daySel.value = prev;
+  }
+
+  $('bdMon').addEventListener('change', function() { fillDays('bdMon', 'bdDay'); });
+  $('anMon').addEventListener('change', function() { fillDays('anMon', 'anDay'); });
+  fillDays('bdMon', 'bdDay');
+  fillDays('anMon', 'anDay');
+
+  function setErr(id, show, elId) {
+    $(id + 'Err').classList.toggle('show', show);
+    var el = $(elId || id);
+    if (el) el.classList.toggle('err-field', show);
+  }
+
+  function setCheckboxErr(id, show) {
+    $(id + 'Err').classList.toggle('show', show);
+  }
+
+  $('fname').addEventListener('input',        function() { setErr('fname', false); });
+  $('phone').addEventListener('input',        function() { setErr('phone', false); });
+  $('instagram').addEventListener('input',    function() { setErr('instagram', false); });
+  $('consentSms').addEventListener('change',  function() { setCheckboxErr('consentSms', false); });
+  $('consentPrivacy').addEventListener('change', function() { setCheckboxErr('consentPrivacy', false); });
+  ['bdMon','bdDay'].forEach(function(id) {
+    $(id).addEventListener('change', function() { setErr('birthday', false, 'bdMon'); });
+  });
+
+  function setSaveStatus(state, msg) {
+    var el = $('saveStatus');
+    el.className = 'save-status ' + state;
+    el.textContent = msg;
+  }
+
+  var MONTHS = ['','January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+
+  // ─────────────────────────────────────────────
+  // Submit — validates, checks duplicate IG handle, then writes to Firebase
+  // ─────────────────────────────────────────────
+  function igToKey(handle) {
+    return handle.toLowerCase().replace(/^@/, '').replace(/\./g, '_');
+  }
+
+  function handleSubmit() {
+    var ok   = true;
+    var name  = val('fname');
+    var phone = val('phone');
+    var ig    = val('instagram').replace(/^@/, '').trim();
+    var bdMon = $('bdMon').value;
+    var bdDay = $('bdDay').value;
+    var anMon = $('anMon').value;
+    var anDay = $('anDay').value;
+    var consentSms     = $('consentSms').checked;
+    var consentPrivacy = $('consentPrivacy').checked;
+
+    if (!name)                                           { setErr('fname', true);                   ok = false; } else setErr('fname', false);
+    if (!phone || phone.replace(/\D/g,'').length < 10)   { setErr('phone', true);                   ok = false; } else setErr('phone', false);
+    if (!ig)                                             { setErr('instagram', true);                ok = false; } else setErr('instagram', false);
+    if (!bdMon || !bdDay)                                { setErr('birthday', true, 'bdMon');        ok = false; } else setErr('birthday', false, 'bdMon');
+    if (!consentSms)                                     { setCheckboxErr('consentSms', true);       ok = false; } else setCheckboxErr('consentSms', false);
+    if (!consentPrivacy)                                 { setCheckboxErr('consentPrivacy', true);   ok = false; } else setCheckboxErr('consentPrivacy', false);
+
+    if (!ok) return;
+
+    var bdStr  = MONTHS[parseInt(bdMon)] + ' ' + bdDay;
+    var anStr  = (anMon && anDay) ? MONTHS[parseInt(anMon)] + ' ' + anDay : null;
+    var nowTs  = Date.now();
+    var btn    = $('submitBtn');
+    btn.disabled = true;
+    setSaveStatus('saving', '⏳  Checking your info…');
+
+    // Step 1: Check for duplicate Instagram handle
+    fetch(IG_IDX_BASE + igToKey(ig) + '.json')
+      .then(function(r) { return r.json(); })
+      .then(function(existing) {
+        if (existing !== null && existing !== false) {
+          btn.disabled = false;
+          $('saveStatus').className = 'save-status';
+          setErr('instagram', true);
+          $('instagramErr').textContent = '@' + ig + ' is already an LVR Rewards member 🎟  Each Instagram can only sign up once.';
+          return;
+        }
+        _doSignup(name, phone, ig, bdStr, anStr, nowTs, btn);
+      })
+      .catch(function() {
+        _doSignup(name, phone, ig, bdStr, anStr, nowTs, btn);
+      });
+  }
+
+  function _doSignup(name, phone, ig, bdStr, anStr, nowTs, btn) {
+    setSaveStatus('saving', '⏳  Saving to database…');
+
+    fetch(RTDB_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:            name,
+        phone:           phone,
+        instagram:       '@' + ig,
+        birthday:        bdStr,
+        anniversary:     anStr || null,
+        joinedAt:        nowTs,
+        source:          'lvr-rewards-form',
+        points:          0,
+        consent_sms:     true,
+        consent_privacy: true,
+        consent_ts:      nowTs
+      })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function() {
+      return fetch(IG_IDX_BASE + igToKey(ig) + '.json', {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    'true'
+      });
+    })
+    .then(function() {
+      setSaveStatus('saved', '✅  You\'re in the LVR Rewards database');
+      $('formWrap').style.display = 'none';
+      $('successScreen').classList.add('show');
+      $('sBody').innerHTML =
+        '<strong>' + esc(name) + '</strong>, you\'re officially an LVR Rewards + VIP member!<br>' +
+        'Start earning tokens at participating Las Vegas restaurants.<br>' +
+        'We\'ll celebrate your birthday on <strong>' + bdStr + '</strong> 🎂<br>' +
+        (anStr ? 'Anniversary on <strong>' + anStr + '</strong> too! 🥂<br>' : '') +
+        'Watch for <strong>VIP party &amp; event invitations</strong> by text! 🎉<br>' +
+        '<br><span style="font-size:0.78em;opacity:0.7;">You\'ll receive program updates by text. Reply STOP anytime to opt out.</span>';
+      setTimeout(function() {
+        ['fname','phone','instagram'].forEach(function(id) { $(id).value = ''; });
+        ['bdMon','bdDay','anMon','anDay'].forEach(function(id) { $(id).value = ''; });
+        $('consentSms').checked = false;
+        $('consentPrivacy').checked = false;
+        $('formWrap').style.display = 'block';
+        $('successScreen').classList.remove('show');
+        btn.disabled = false;
+        $('saveStatus').className = 'save-status';
+        $('saveStatus').textContent = '';
+      }, 6000);
+    })
+    .catch(function(err) {
+      console.error('Database write error:', err);
+      setSaveStatus('save-err', '⚠️  Save failed — check your connection and try again');
+      btn.disabled = false;
+    });
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+</script>
+
+</body>
+</html>
