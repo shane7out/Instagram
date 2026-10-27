@@ -120,6 +120,9 @@
   .items{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
   .item-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
   .rest-group{margin-bottom:22px;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
+  .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:7px 13px;cursor:pointer;}
+  .chip.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
   .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;}
   .rest-name{font-size:19px;font-weight:800;letter-spacing:-.01em;min-width:0;}
   .rest-chip{flex:none;font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:99px;border:1px solid var(--line);color:var(--ink-dim);white-space:nowrap;}
@@ -270,7 +273,7 @@
   var params = new URLSearchParams(location.search);
   // ?demo=15 shows this screen with a pretend member who has 15 points. Nothing is read from or written to the database.
   var DEMO = params.get('demo') !== null;
-  var DEMO_PTS = Math.max(0, parseInt(params.get('demo'), 10) || 15);
+  var DEMO_PTS = Math.max(0, parseInt(params.get('demo'), 10) || 65);
   var contentEl = document.getElementById('content');
 
   // A token in the URL (e.g. a link texted to a new device) always wins and
@@ -423,25 +426,44 @@
   function demoItems() {
     var soon = function (d) { return Date.now() + d * 86400000; };
     var rows = [
-      ['golden', 'Golden Grain Rice House', 'Free Teriyaki Chicken & Rice', 13, 'teriyaki', 50, 38, 40],
-      ['golden', 'Golden Grain Rice House', 'Free Seafood Fried Rice', 16, 'friedrice', 25, 12, 33],
-      ['golden', 'Golden Grain Rice House', 'Free Salmon Sushi Plate', 24, 'sushi', 20, 3, 25],
-      ['sunset', 'Sunset Slice Pizza', 'Free Italian Sandwich', 6, 'sandwich', 40, 26, 28],
-      ['sunset', 'Sunset Slice Pizza', 'Free Hot Fudge Sundae', 8, 'sundae', 30, 2, 20],
-      ['sunset', 'Sunset Slice Pizza', 'Free Gourmet Pizza', 18, 'pizza', 25, 9, 45],
-      ['mesa', 'Mesa Taco Co.', 'Free Churros', 6, 'churros', 60, 41, 30],
-      ['mesa', 'Mesa Taco Co.', 'Free Street Tacos', 9, 'tacos', 30, 17, 30],
-      ['mesa', 'Mesa Taco Co.', 'Free Loaded Nachos', 11, 'nachos', 35, 30, 35],
-      ['neon', 'Neon Noodle Bar', 'Free Crispy Wings', 9, 'wings', 50, 44, 30],
-      ['neon', 'Neon Noodle Bar', 'Free Pan-Fried Gyoza', 7, 'gyoza', 25, 11, 30],
-      ['neon', 'Neon Noodle Bar', 'Free Noodle Soup Bowl', 12, 'ramen', 30, 4, 30]
+      ["r0", "Vanilla Rice's Hibachi House", "Free Chicken Bowl", 13, "teriyaki", 50, 38, 40, "plates"],
+      ["r1", "Poke Heaven", "Free Poke Bowl", 13, "pokebowl", 25, 12, 33, "plates"],
+      ["r2", "TT Terrace (The Tea Terrace)", "Free Scone & Cream", 7, "scones", 30, 22, 28, "sweet"],
+      ["r3", "Pizza Rock", "Free Large Pizza", 15, "pizzapie", 40, 26, 35, "pizza"],
+      ["r4", "Metro Pizza", "Free Pizza Slice", 5, "pizzaslice", 30, 9, 20, "pizza"],
+      ["r5", "Secret Pizza", "Free Pizza Slice", 5, "pizzaslice2", 25, 11, 45, "pizza"],
+      ["r6", "Yellowtail Japanese Restaurant & Lounge", "Free Sashimi Plate", 16, "sashimi", 60, 41, 30, "sushi"],
+      ["r7", "Sushi Roku", "Free Sushi Plate", 14, "sashimi2", 30, 17, 30, "sushi"],
+      ["r8", "Kabuto Edomae Sushi", "Free Sushi Plate", 14, "sushi", 35, 30, 35, "sushi"],
+      ["r9", "Samurai Japanese Steakhouse & Sushi", "Free Gyoza Appetizer", 7, "gyoza", 20, 6, 25, "sushi"],
+      ["r10", "Gordon Ramsay Burger", "Free Burger", 13, "burger3", 50, 44, 30, "burgers"],
+      ["r11", "Burger Bar", "Free Burger & Fries", 14, "burger4", 25, 14, 29, "burgers"],
+      ["r12", "The Parlour Brunch & Late Night Burger Bar", "Free Burger", 12, "burger4", 40, 21, 38, "burgers"],
+      ["r13", "The Beach House", "Free Nachos", 11, "nachos", 30, 4, 22, "apps"],
+      ["r14", "The Irish Spot", "Free Loaded Fries", 8, "fries", 60, 36, 50, "apps"],
+      ["r15", "Peru Chicken", "Free Chicken Wings", 10, "wings", 25, 8, 26, "apps"],
+      ["r16", "AyAyAy! Mexican Cuisine", "Free Taco Plate", 11, "tacos", 35, 19, 31, "plates"],
+      ["r17", "Panevino Italian Grille & Deli Caf\u00e9", "Free Panini", 10, "panini", 30, 3, 24, "plates"],
+      ["r18", "Smoking Pig BBQ Company", "Free Rib Plate", 15, "ribs", 40, 28, 42, "plates"],
+      ["r19", "Doanburi", "Free Rice Bowl", 13, "donburi", 25, 2, 19, "plates"],
+      ["r20", "Lotus of Siam", "Free Pad Thai", 12, "padthai", 50, 33, 27, "plates"],
+      ["r21", "Hash House A Go Go", "Free Egg & Toast Plate", 9, "eggs", 30, 15, 36, "sweet"],
+      ["r22", "Black Mountain Griddle", "Free Pancake Stack", 9, "pancakes", 60, 47, 44, "sweet"],
+      ["r23", "Aspire Coffee House", "Free Pastry", 6, "pastry", 25, 10, 32, "sweet"],
+      ["r24", "MilkCow", "Free Ice Cream", 6, "sundae", 35, 24, 40, "sweet"]
     ];
     return rows.map(function (r, i) {
-      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '' };
+      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '', cat: r[8] };
     });
   }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.chip'); if (!b) return;
+    var cat = b.getAttribute('data-cat');
+    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function (x) { x.classList.toggle('on', x === b); });
+    Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) { g.hidden = !(cat === 'all' || g.getAttribute('data-cat') === cat); });
+  });
   function startDemo() {
-    wallet = { name: 'Demo Player', points: DEMO_PTS, joinedAt: Date.now() - 2 * 86400000 };
+    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 2 * 86400000 };
     memberKey = null; appSettings = {}; myReceipts = {}; directory = {};
     render({}, {});
   }
@@ -451,11 +473,11 @@
 
     var html =
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
-      (DEMO ? '<div class="demo-bar"><b>Demo preview.</b> A pretend member with ' + DEMO_PTS + ' points. Nothing here is real or saved. Try: <a href="?demo=5">5 pts</a><a href="?demo=15">15 pts</a><a href="?demo=20">20 pts</a><a href="?demo=30">30 pts</a></div>' : '') +
+      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a></div>' : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
-        '<div class="balance-main"><div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
+        '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
         '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
         '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
@@ -469,11 +491,13 @@
       var groups = {}, order = [], pts = wallet.points || 0, paused = pausedFlag('redemptions');
       items.forEach(function(it){ if (!groups[it.slug]) { groups[it.slug] = { name: it.bizName || it.slug, items: [] }; order.push(it.slug); } groups[it.slug].items.push(it); });
       order.sort(function(x, y){ return Math.min.apply(null, groups[x].items.map(function(i){ return i.pointCost; })) - Math.min.apply(null, groups[y].items.map(function(i){ return i.pointCost; })); });
+      var CATS = [['all', 'All'], ['pizza', 'Pizza'], ['sushi', 'Sushi'], ['burgers', 'Burgers'], ['apps', 'Appetizers'], ['plates', 'Plates & bowls'], ['sweet', 'Breakfast & sweet']];
+      if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
       html += order.map(function(k){
         var g = groups[k]; g.items.sort(function(x, y){ return x.pointCost - y.pointCost; });
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
         var min = g.items[0].pointCost;
-        return '<div class="rest-group"><div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
+        return '<div class="rest-group" data-cat="' + escapeHtml(g.items[0].cat || '') + '"><div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
           '<div class="items">' + g.items.map(function(item){
             var afford = pts >= item.pointCost && !paused;
