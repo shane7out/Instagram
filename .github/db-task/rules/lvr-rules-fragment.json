@@ -83,10 +83,22 @@
    "chest": {
     ".write": true,
     "waitDays": {
-     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 60"
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 365"
     },
     "bonus": {
      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "prizeMin": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "prizeMax": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "stepDays": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 60"
+    },
+    "repeat": {
+     ".validate": "newData.isBoolean()"
     }
    },
    "decay": {
@@ -126,6 +138,14 @@
     ".write": true,
     ".validate": "newData.isNumber() && newData.val() >= 0"
    }
+  },
+  "chest_log": {
+   "$mk": {
+    "$n": {
+     ".write": "newData.exists() && !data.exists()",
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 50"
+    }
+   }
   }
  },
  "lvr_rewards": {
@@ -136,7 +156,7 @@
    "referredBy"
   ],
   "$k": {
-   ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('chestClaimed').exists() || (newData.child('chestClaimed/at').val() == data.child('chestClaimed/at').val() && newData.child('chestClaimed/amount').val() == data.child('chestClaimed/amount').val())) && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('name').isString() && (newData.child('points').val() == 0 || (root.child('lvr_points/settings/welcome/enabled').val() == true && root.child('lvr_points/settings/welcome/when').val() == 'signup' && newData.child('points').val() == root.child('lvr_points/settings/welcome/amount').val() && newData.child('welcomeGiven/amount').val() == newData.child('points').val()))))",
+   ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('chestState').exists() || (newData.child('chestState/n').val() >= data.child('chestState/n').val() && newData.child('chestState/at').val() >= data.child('chestState/at').val())) && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('name').isString() && (newData.child('points').val() == 0 || (root.child('lvr_points/settings/welcome/enabled').val() == true && root.child('lvr_points/settings/welcome/when').val() == 'signup' && newData.child('points').val() == root.child('lvr_points/settings/welcome/amount').val() && newData.child('welcomeGiven/amount').val() == newData.child('points').val()))))",
    "points": {
     ".validate": "newData.isNumber() && newData.val() >= 0"
    },
@@ -152,8 +172,8 @@
    "refCode": {
     ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 12"
    },
-   "chestClaimed": {
-    ".validate": "newData.hasChildren(['amount','at']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && root.child('lvr_points/settings/chest/bonus').exists() && root.child('lvr_points/settings/chest/waitDays').exists() && newData.child('amount').val() == root.child('lvr_points/settings/chest/bonus').val() && newData.child('at').val() >= newData.parent().child('joinedAt').val() + 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
+   "chestState": {
+    ".validate": "newData.hasChildren(['n','amount','at']) && newData.child('n').isNumber() && newData.child('amount').isNumber() && newData.child('at').isNumber() && newData.child('n').val() == (data.child('n').exists() ? data.child('n').val() + 1 : 1) && (newData.child('n').val() == 1 || root.child('lvr_points/settings/chest/repeat').val() == true) && root.child('lvr_points/settings/chest/prizeMax').val() > 0 && newData.child('amount').val() > 0 && newData.child('amount').val() >= root.child('lvr_points/settings/chest/prizeMin').val() && newData.child('amount').val() <= root.child('lvr_points/settings/chest/prizeMax').val() && newData.child('at').val() >= (data.child('at').exists() ? data.child('at').val() : newData.parent().child('joinedAt').val()) + 86400000 * (root.child('lvr_points/settings/chest/waitDays').val() + root.child('lvr_points/settings/chest/stepDays').val() * (newData.child('n').val() - 1))"
    }
   }
  },

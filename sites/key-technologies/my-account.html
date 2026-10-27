@@ -98,6 +98,10 @@
   @keyframes chestWiggle{0%,60%,100%{transform:rotate(0);}68%{transform:rotate(-5deg);}76%{transform:rotate(5deg);}84%{transform:rotate(-3deg);}92%{transform:rotate(2deg);}}
   @keyframes chestBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
   @keyframes coinPop{0%,100%{transform:translateY(-9px);}50%{transform:translateY(-13px);}}
+  .chest-stage{position:relative;display:inline-block;}
+  .chest-fx{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;overflow:visible;z-index:3;}
+  .cx-bit{position:absolute;left:0;top:0;margin:-6px 0 0 -6px;border-radius:50%;opacity:0;background:radial-gradient(circle at 35% 30%,#fff3b0 0,#ffd54a 45%,#d9930d 100%);border:2px solid #8a5a00;}
+  .cx-coin{position:absolute;left:0;top:-40px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:22px;color:#3a2500;opacity:0;background:radial-gradient(circle at 35% 28%,#fff6c4 0,#ffd54a 42%,#e0a010 100%);border:3px solid #8a5a00;box-shadow:0 0 20px 4px rgba(255,211,92,.6);}
   .chest-big{font-size:26px;font-weight:800;color:var(--ink);margin:2px 0 14px;font-variant-numeric:tabular-nums;}
   .mini-bal{position:fixed;left:0;right:0;top:57px;z-index:40;display:none;justify-content:center;pointer-events:none;}
   .mini-bal.show{display:flex;}
@@ -240,7 +244,7 @@
   <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
-      <span id="chestModalArt" style="display:inline-block;min-height:140px;"></span>
+      <span class="chest-stage"><span id="chestModalArt" style="display:inline-block;min-height:182px;"></span><span id="chestFx" class="chest-fx"></span></span>
       <h3 id="soonTitle">Treasure chest</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg">The treasure chest is almost ready. Come back and check this spot soon.</p>
@@ -274,6 +278,7 @@
   var params = new URLSearchParams(location.search);
   // ?demo=15 shows this screen with a pretend member who has 15 points. Nothing is read from or written to the database.
   var DEMO = params.get('demo') !== null;
+  var DEMO_CHEST = params.get('chest') !== null;
   var DEMO_PTS = Math.max(0, parseInt(params.get('demo'), 10) || 65);
   var contentEl = document.getElementById('content');
 
@@ -493,8 +498,8 @@
     Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) { g.hidden = !(cat === 'all' || g.getAttribute('data-cat') === cat); });
   });
   function startDemo() {
-    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 2 * 86400000 };
-    memberKey = null; appSettings = {}; myReceipts = {}; directory = {};
+    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - (DEMO_CHEST ? 15 : 2) * 86400000 };
+    memberKey = null; appSettings = { chest: { waitDays: 14, stepDays: 5, prizeMin: 1, prizeMax: 2, repeat: true } }; myReceipts = {}; directory = {};
     render({}, {});
   }
 
@@ -503,7 +508,7 @@
 
     var html =
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
-      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a></div>' : '') +
+      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the treasure chest</a></div>' : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
@@ -695,66 +700,111 @@
   }
 
   // ---------- treasure chest ----------
-  // Each member's first chest opens a set number of days after they join
-  // (Settings > Treasure chest). Until the owner sets a bonus above 0 it only
-  // says "coming soon". The claim is recorded on the member before any points
-  // are added, so it can only happen once.
-  function chestCfg() { return Object.assign({ waitDays: 7, bonus: 0 }, (appSettings && appSettings.chest) || {}); }
-  function chestState() {
-    var c = chestCfg();
-    if (wallet && wallet.chestClaimed) return { kind: 'claimed', amount: wallet.chestClaimed.amount };
-    var joined = wallet && Number(wallet.joinedAt);
-    if (!joined) return { kind: 'soon' };
-    var ms = joined + c.waitDays * 86400000 - Date.now();
-    if (ms > 0) return { kind: 'wait', ms: ms };
-    return c.bonus > 0 ? { kind: 'ready', bonus: c.bonus } : { kind: 'soon' };
+  // The chest repeats. The first one opens waitDays after the member joins; each
+  // one after that opens a few days later than the last wait (stepDays more each
+  // time). The prize is a whole number between prizeMin and prizeMax. The claim is
+  // recorded on the member first (the database only accepts the next number, after
+  // the full wait, within the prize range), then the points are added.
+  // Until the owner sets a prize above 0 the chest only says "coming soon".
+  function chestCfg() {
+    var raw = (appSettings && appSettings.chest) || {};
+    var max = raw.prizeMax != null ? Number(raw.prizeMax) : (Number(raw.bonus) || 0);
+    var min = raw.prizeMin != null ? Number(raw.prizeMin) : max;
+    return { waitDays: Number(raw.waitDays) || 7, stepDays: Number(raw.stepDays) || 0, prizeMin: Math.max(1, Math.min(min, max)), prizeMax: max, repeat: raw.repeat === true };
+  }
+  function chestInfo() {
+    var c = chestCfg(), cs = wallet && wallet.chestState, n = cs ? Number(cs.n) || 0 : 0;
+    if (n >= 1 && !c.repeat) return { kind: 'done', amount: cs.amount, n: n };
+    var base = n ? Number(cs.at) : Number(wallet && wallet.joinedAt);
+    if (!base) return { kind: 'soon', n: n };
+    var waitDays = c.waitDays + c.stepDays * n;
+    var ms = base + waitDays * 86400000 - Date.now();
+    if (ms > 0) return { kind: 'wait', ms: ms, n: n + 1, waitDays: waitDays, c: c };
+    return c.prizeMax > 0 ? { kind: 'ready', n: n + 1, c: c } : { kind: 'soon', n: n };
   }
   function fmtLeft(ms) {
     var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
     return { short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
   }
-  var chestJustOpened = false;
+  var chestBusy = false, chestWin = '';
+  function chestCls(k) { return 'chest-svg chest-modal ' + (k === 'ready' ? 'ready' : 'idle'); }
   function tickChest() {
-    var st = chestState(), short = 'Soon', big = '', msg = 'The treasure chest is almost ready. Come back and check this spot soon.', canOpen = false;
-    if (st.kind === 'wait') { var f = fmtLeft(st.ms); short = f.short; big = 'Opens in ' + f.long; msg = 'Your first treasure chest opens when the countdown ends. Come back then!'; }
-    else if (st.kind === 'ready') { short = 'Open!'; big = 'Your chest is ready'; msg = 'Tap below to open it and add ' + st.bonus + ' points to your balance.'; canOpen = true; }
-    else if (st.kind === 'claimed') { short = 'Opened'; big = '+' + st.amount + ' points'; msg = 'You opened your first chest. More treasure is coming soon.'; }
+    var st = chestInfo(), short = 'Soon', big = '', msg = 'The treasure chest is almost ready. Come back and check this spot soon.', canOpen = false;
+    if (st.kind === 'wait') {
+      var f = fmtLeft(st.ms); short = f.short; big = 'Opens in ' + f.long;
+      msg = 'Your treasure chest opens when the countdown ends.' + (st.c.stepDays > 0 && st.n > 1 ? ' Each chest takes ' + st.c.stepDays + ' more days than the last, so keep playing.' : '');
+    } else if (st.kind === 'ready') {
+      short = 'Open!'; big = 'Your chest is ready';
+      msg = 'Tap below to open it. You will win ' + (st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' or ' + st.c.prizeMax) + ' points.'; canOpen = true;
+    } else if (st.kind === 'done') { short = 'Opened'; big = '+' + st.amount + ' points'; msg = 'You opened your chest. More treasure is coming soon.'; }
+    if (chestBusy || chestWin) { big = chestWin || big; canOpen = false; }
     var els = document.querySelectorAll('.chest-count');
     for (var i = 0; i < els.length; i++) els[i].textContent = short;
     var card = document.querySelector('.chest-card');
-    if (card) card.setAttribute('class', 'chest-svg chest-card ' + (st.kind === 'ready' ? 'ready' : (st.kind === 'claimed' ? 'open' : 'idle')));
+    if (card) card.setAttribute('class', 'chest-svg chest-card ' + (st.kind === 'ready' ? 'ready' : 'idle'));
     var art = document.getElementById('chestModalArt');
     if (art) {
-      if (!art.firstChild) art.innerHTML = chestSvg(150, 'chest-modal');
-      var mv = art.firstChild;
-      if (!chestJustOpened) mv.setAttribute('class', 'chest-svg chest-modal ' + (st.kind === 'ready' ? 'ready' : (st.kind === 'claimed' ? 'open' : 'idle')));
+      if (!art.firstChild) art.innerHTML = chestSvg(210, 'chest-modal');
+      if (!chestBusy && !chestWin) art.firstChild.setAttribute('class', chestCls(st.kind));
     }
     var b = document.getElementById('chestBig'); if (b) { b.hidden = !big; b.textContent = big; }
-    var m = document.getElementById('chestMsg'); if (m) m.textContent = msg;
+    var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
     var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
   }
+  // pop + burst animation, then show what was won
+  function playChestOpen(prize, done) {
+    var art = document.getElementById('chestModalArt'), mv = art.firstChild, fx = document.getElementById('chestFx');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    mv.setAttribute('class', 'chest-svg chest-modal');
+    if (!reduce && mv.animate) mv.animate([{ transform: 'translateY(0) scale(1,1)' }, { transform: 'translateY(4px) scale(1.08,.9)', offset: .18 }, { transform: 'translateY(-34px) scale(.94,1.1)', offset: .5 }, { transform: 'translateY(0) scale(1.06,.94)', offset: .78 }, { transform: 'translateY(0) scale(1,1)' }], { duration: 650, easing: 'ease-out' });
+    setTimeout(function () {
+      mv.setAttribute('class', 'chest-svg chest-modal open');
+      if (reduce || !fx.animate) { done(); return; }
+      var i, n = 26;
+      for (i = 0; i < n; i++) {
+        var el = document.createElement('div'); el.className = 'cx-bit'; var s = 9 + Math.random() * 12; el.style.width = el.style.height = s + 'px';
+        fx.appendChild(el);
+        var ang = -Math.PI / 2 + (Math.random() - .5) * 2.3, dist = 70 + Math.random() * 110, dx = Math.cos(ang) * dist, up = Math.sin(ang) * dist;
+        el.animate([{ opacity: 1, transform: 'translate(0,0) scale(.5)' }, { opacity: 1, transform: 'translate(' + dx * .7 + 'px,' + up + 'px) scale(1) rotate(200deg)', offset: .45 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + (up + 120 + Math.random() * 60) + 'px) scale(.8) rotate(400deg)' }], { duration: 1000 + Math.random() * 600, easing: 'cubic-bezier(.3,.6,.5,1)', fill: 'forwards' });
+      }
+      for (i = 0; i < prize; i++) {
+        var c = document.createElement('div'); c.className = 'cx-coin'; c.textContent = '+1'; fx.appendChild(c);
+        c.animate([{ opacity: 0, transform: 'translate(' + ((i - (prize - 1) / 2) * 62 - 28) + 'px,70px) scale(.3) rotateY(0)' }, { opacity: 1, transform: 'translate(' + ((i - (prize - 1) / 2) * 62 - 28) + 'px,-30px) scale(1.12) rotateY(360deg)', offset: .65 }, { opacity: 1, transform: 'translate(' + ((i - (prize - 1) / 2) * 62 - 28) + 'px,-18px) scale(1) rotateY(720deg)' }], { duration: 1000, delay: i * 200, easing: 'ease-out', fill: 'forwards' });
+      }
+      setTimeout(done, 1500);
+    }, reduce ? 0 : 260);
+  }
   function openChest() {
-    var st = chestState(), btn = document.getElementById('chestOpenBtn');
-    if (st.kind !== 'ready' || !memberKey) return;
-    btn.disabled = true;
-    // claim first (the database only accepts it once, after the waiting period), then add the points
-    fetch(DB + '/lvr_rewards/' + memberKey + '/chestClaimed.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: st.bonus, at: { '.sv': 'timestamp' } }) })
-      .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_rewards/' + memberKey + '/points.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ '.sv': { increment: st.bonus } }) }); })
-      .then(function (r) {
-        if (!r.ok) throw new Error('points');
-        wallet.points = (wallet.points || 0) + st.bonus; wallet.chestClaimed = { amount: st.bonus };
-        var n = document.getElementById('balanceNum'); if (n) n.textContent = wallet.points;
-        chestJustOpened = true;
-        var mv = document.querySelector('#chestModalArt .chest-svg'); if (mv) mv.setAttribute('class', 'chest-svg chest-modal open');
+    var st = chestInfo(), btn = document.getElementById('chestOpenBtn');
+    if (st.kind !== 'ready' || chestBusy || (!memberKey && !DEMO)) return;
+    var prize = st.c.prizeMin + Math.floor(Math.random() * (st.c.prizeMax - st.c.prizeMin + 1));
+    chestBusy = true; btn.hidden = true;
+    var finish = function () {
+      var at = Date.now();
+      wallet.points = (wallet.points || 0) + prize; wallet.chestState = { n: st.n, amount: prize, at: at };
+      playChestOpen(prize, function () {
+        chestBusy = false; chestWin = 'You won ' + prize + (prize === 1 ? ' point!' : ' points!');
+        var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
+        var nx = chestInfo();
+        var m = document.getElementById('chestMsg');
+        if (m) m.textContent = nx.kind === 'wait' ? 'Added to your balance. Your next chest opens in ' + nx.waitDays + ' days.' : 'Added to your balance.';
         tickChest();
-      })
-      .catch(function () { btn.disabled = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; });
+      });
+    };
+    if (DEMO) { finish(); return; }
+    var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey);
+    // claim first (the database only accepts the next chest, after the full wait, within the prize range), then add the points
+    fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
+      .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }); })
+      .then(function () { return fetch(DB + '/lvr_rewards/' + mk + '/points.json', { method: 'PUT', headers: H, body: JSON.stringify({ '.sv': { increment: prize } }) }); })
+      .then(function (r) { if (!r.ok) throw new Error('points'); finish(); })
+      .catch(function () { chestBusy = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest(); });
   }
   setInterval(tickChest, 30000);
   (function () {
     var back = document.getElementById('soonBack');
     function open() { tickChest(); back.classList.add('open'); var c = document.getElementById('soonClose'); if (c) c.focus(); }
-    function close() { back.classList.remove('open'); chestJustOpened = false; tickChest(); }
+    function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; var fx = document.getElementById('chestFx'); if (fx) fx.innerHTML = ''; tickChest(); }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
       if (t && t.closest('#giftBtn')) open();

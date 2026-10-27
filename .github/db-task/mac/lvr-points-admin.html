@@ -521,7 +521,8 @@
   function renderSettingsTab() {
     var c = refConfig();
     var welcome = welcomeCfg();
-    var chest = Object.assign({ waitDays: 7, bonus: 0 }, settings.chest || {});
+    var chest = Object.assign({ waitDays: 14, stepDays: 5, prizeMin: 1, prizeMax: 0, repeat: true }, settings.chest || {});
+    if (settings.chest && settings.chest.prizeMax == null && settings.chest.bonus > 0) { chest.prizeMax = settings.chest.bonus; chest.prizeMin = settings.chest.bonus; chest.repeat = false; }
     var decay = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, settings.decay || {});
     var paused = settings.paused || {};
     var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
@@ -549,11 +550,16 @@
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Signing up is easy to abuse with fake accounts. The restaurant\'s credit in the funding ledger is the safety net: once it is used up, offers stop. Keep that credit modest, and use the pause switch if sign-ups look strange.</div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Treasure chest</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a treasure chest with a countdown that starts the day they join. When it ends they can open it once. While the bonus below is 0, the chest just says "coming soon" and gives nothing.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a wooden treasure chest with a countdown that starts the day they join. When it ends they can open it and win a random whole number of points between your minimum and maximum. Then the chest closes and the next countdown starts, each one a set number of days longer than the last (for example 14 days, then 19, then 24). It keeps going until you untick "Keep repeating". While the maximum prize is 0, the chest just says "coming soon" and gives nothing. Every prize is written to a permanent log.</div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Days after joining until the chest opens</label><input type="number" id="sChestDays" min="1" max="60" step="1" value="' + (chest.waitDays || 7) + '"></div>' +
-          '<div class="field"><label>Points inside (0 = off, max 50)</label><input type="number" id="sChestBonus" min="0" max="50" step="1" value="' + (chest.bonus || 0) + '"></div>' +
+          '<div class="field"><label>Days until the first chest opens</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 14) + '"></div>' +
+          '<div class="field"><label>Extra days added each time</label><input type="number" id="sChestStep" min="0" max="60" step="1" value="' + (chest.stepDays == null ? 5 : chest.stepDays) + '"></div>' +
         '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Smallest prize (points)</label><input type="number" id="sChestMin" min="0" max="50" step="1" value="' + (chest.prizeMin == null ? 1 : chest.prizeMin) + '"></div>' +
+          '<div class="field"><label>Biggest prize (points, 0 = off, max 50)</label><input type="number" id="sChestMax" min="0" max="50" step="1" value="' + (chest.prizeMax == null ? 0 : chest.prizeMax) + '"></div>' +
+        '</div>' +
+        chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first chest)') +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Monthly community-fund return</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">On the 1st of each month, this percent of every member\'s unused points goes back to the community fund, so the program keeps running and active members get a fair chance at the offers. It is rounded down to whole points, and brand-new members are exempt until the grace period ends, so their welcome points are not shaved before they can use them. Members see a plain notice about it on their screen. It runs by itself once it is switched on (see the status note below).</div>' +
@@ -589,7 +595,11 @@
           maxPerWeek: Math.max(1, parseInt(document.getElementById('sMaxWeek').value, 10) || 5),
           windowDays: Math.max(1, parseInt(document.getElementById('sWindow').value, 10) || 30)
         },
-        chest: { waitDays: Math.max(1, Math.min(60, parseInt(document.getElementById('sChestDays').value, 10) || 7)), bonus: Math.max(0, Math.min(50, parseInt(document.getElementById('sChestBonus').value, 10) || 0)) },
+        chest: (function(){
+          var mx = Math.max(0, Math.min(50, parseInt(document.getElementById('sChestMax').value, 10) || 0));
+          var mn = Math.max(0, Math.min(mx, parseInt(document.getElementById('sChestMin').value, 10) || 0));
+          return { waitDays: Math.max(1, Math.min(365, parseInt(document.getElementById('sChestDays').value, 10) || 14)), stepDays: Math.max(0, Math.min(60, isNaN(parseInt(document.getElementById('sChestStep').value, 10)) ? 5 : parseInt(document.getElementById('sChestStep').value, 10))), prizeMin: mx > 0 ? Math.max(1, mn) : mn, prizeMax: mx, repeat: document.getElementById('sChestRepeat').checked };
+        })(),
         decay: { enabled: document.getElementById('sDecayOn').checked, percent: Math.max(1, Math.min(50, parseInt(document.getElementById('sDecayPct').value, 10) || 20)), graceDays: Math.max(0, Math.min(365, isNaN(parseInt(document.getElementById('sDecayGrace').value, 10)) ? 30 : parseInt(document.getElementById('sDecayGrace').value, 10))) },
         welcome: {
           enabled: document.getElementById('sWelOn').checked,

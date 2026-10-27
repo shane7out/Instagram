@@ -6,3 +6,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # re-run: use-by rules
 # re-run: monthly return tests
 # re-run: dry-run expectation fixed
+# re-run: repeating chest tests
