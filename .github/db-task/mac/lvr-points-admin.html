@@ -101,10 +101,13 @@
     <button class="btn" id="refreshBtn">Refresh</button>
   </header>
   <div class="tabs" id="tabs">
-    <span class="tab active" data-v="catalog">Catalog</span>
+    <span class="tab active" data-v="receipts">Receipts</span>
+    <span class="tab" data-v="restaurants">Restaurants</span>
+    <span class="tab" data-v="earnings">Earnings</span>
+    <span class="tab" data-v="catalog">Catalog</span>
     <span class="tab" data-v="redemptions">Redemptions</span>
   </div>
-  <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their point balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool only manages what they can redeem and tracks who already has.</div>
+  <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their point balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool handles receipts (approve = points land instantly), restaurants and your commission, what members can redeem, and who already has.</div>
   <div id="view"></div>
 </div>
 
@@ -116,6 +119,10 @@
   var CATALOG_PATH = '/lvr_points/catalog';
   var RESTAURANTS_PATH = '/lvr_points/restaurants';
   var REDEMPTIONS_PATH = '/lvr_points/redemptions';
+  var RECEIPTS_PATH = '/lvr_points/receipts';
+  var PHOTOS_PATH = '/lvr_points/receipt_photos';
+  var DIRECTORY_PATH = '/lvr_points/directory';
+  var MEMBERS_PATH = '/lvr_rewards';
 
   function _lvOwnerSessionValid(){
     try {
@@ -198,8 +205,8 @@
     URL.revokeObjectURL(url);
   }
 
-  var catalog = {}, restaurants = {}, redemptions = {};
-  var activeTab = 'catalog';
+  var catalog = {}, restaurants = {}, redemptions = {}, receipts = {}, directory = {};
+  var activeTab = 'receipts';
   var view = document.getElementById('view');
 
   document.getElementById('refreshBtn').addEventListener('click', loadAll);
@@ -215,9 +222,12 @@
   function loadAll() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
     Promise.all([
-      fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH)
+      fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH), fbGet(RECEIPTS_PATH), fbGet(DIRECTORY_PATH)
     ]).then(function(r){
-      catalog = r[0] || {}; restaurants = r[1] || {}; redemptions = r[2] || {};
+      catalog = r[0] || {}; restaurants = r[1] || {}; redemptions = r[2] || {}; receipts = r[3] || {}; directory = r[4] || {};
+      var pend = Object.keys(receipts).filter(function(id){ return receipts[id] && (receipts[id].status === 'pending' || (receipts[id].status === 'approved' && receipts[id].pointsApplied === false)); }).length;
+      var rt = document.querySelector('.tab[data-v="receipts"]');
+      if (rt) rt.textContent = 'Receipts' + (pend ? ' (' + pend + ')' : '');
       renderTab();
     }).catch(function(){
       view.innerHTML = '<div class="empty-note">Could not load — check connection.</div>';
@@ -225,8 +235,210 @@
   }
 
   function renderTab() {
-    if (activeTab === 'catalog') renderCatalogTab();
+    if (activeTab === 'receipts') renderReceiptsTab();
+    else if (activeTab === 'restaurants') renderRestaurantsTab();
+    else if (activeTab === 'earnings') renderEarningsTab();
+    else if (activeTab === 'catalog') renderCatalogTab();
     else renderRedemptionsTab();
+  }
+
+  // ========================================================================
+  // RECEIPTS TAB - approve = points land in the member's balance
+  // ========================================================================
+  function money(n) { return '$' + Number(n || 0).toFixed(2); }
+  function bizOf(slug) { return (restaurants[slug] && restaurants[slug].bizName) || (directory[slug] && directory[slug].bizName) || slug; }
+  function whenOf(ts) { return ts ? new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + new Date(ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : ''; }
+
+  function renderReceiptsTab() {
+    var ids = Object.keys(receipts).filter(function(id){ return receipts[id]; });
+    ids.sort(function(a,b){ return (receipts[b].submittedAt||0) - (receipts[a].submittedAt||0); });
+    var open = ids.filter(function(id){ var r = receipts[id]; return r.status === 'pending' || (r.status === 'approved' && r.pointsApplied === false); });
+    var done = ids.filter(function(id){ return open.indexOf(id) === -1; }).slice(0, 25);
+
+    var html = '<div class="stats-row">' +
+      '<div class="stat"><div class="n">' + open.length + '</div><div class="l">Waiting for you</div></div>' +
+      '<div class="stat"><div class="n">' + ids.filter(function(id){ return receipts[id].status === 'approved'; }).length + '</div><div class="l">Approved all-time</div></div>' +
+      '</div>';
+    html += open.length ? open.map(receiptCard).join('') : '<div class="empty-note">No receipts waiting. Members submit them from their account page.</div>';
+    if (done.length) html += '<div style="margin:22px 0 10px;font-weight:800;font-size:14px;">Recently handled</div>' + done.map(receiptCard).join('');
+    view.innerHTML = html;
+
+    view.querySelectorAll('[data-act]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.getAttribute('data-id'), act = btn.getAttribute('data-act');
+        if (act === 'approve') approveReceipt(id);
+        else if (act === 'reject') rejectReceipt(id);
+        else if (act === 'retry') applyAward(id).then(loadAll);
+        else if (act === 'photo') showPhoto(id, btn);
+      });
+    });
+  }
+
+  function receiptCard(id) {
+    var r = receipts[id];
+    var rate = (directory[r.slug] && directory[r.slug].earnRate) || 0;
+    var suggested = Math.floor((r.amount || 0) * rate);
+    var head = '<div class="row-top"><div><div class="row-name">' + escapeHtml(r.name || '(no name)') + '</div>' +
+      '<div class="row-sub">' + escapeHtml(bizOf(r.slug)) + ' · receipt ' + escapeHtml(r.receiptNo || '') + ' · ' + whenOf(r.submittedAt) + '</div></div>' +
+      '<div class="row-num">' + money(r.amount) + '</div></div>';
+    if (r.status === 'pending') {
+      return '<div class="row-card" id="rc-' + id + '">' + head +
+        '<div class="row-actions" style="align-items:center;">' +
+          '<button data-act="photo" data-id="' + id + '">View photo</button>' +
+          '<span style="font-size:12.5px;color:var(--ink-dim);">Points:</span>' +
+          '<input type="number" id="pts-' + id + '" value="' + suggested + '" min="0" style="width:84px;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);">' +
+          '<button data-act="approve" data-id="' + id + '" style="background:var(--key-blue);border-color:var(--key-blue);color:#fff;">Approve</button>' +
+          '<button data-act="reject" data-id="' + id + '">Reject</button>' +
+        '</div><div class="row-sub" style="margin-top:6px;">' + (rate ? ('Suggested ' + suggested + ' = ' + money(r.amount) + ' x ' + rate + ' pts per $1') : 'No earn rate set for this restaurant yet - enter points by hand.') + '</div></div>';
+    }
+    if (r.status === 'approved' && r.pointsApplied === false) {
+      return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Approved for ' + (r.pointsAwarded||0) + ' pts but the points did not land. Tap retry (safe - it will not double-award).</div>' +
+        '<div class="row-actions"><button data-act="retry" data-id="' + id + '">Retry award</button></div></div>';
+    }
+    var label = r.status === 'approved' ? ('Approved +' + (r.pointsAwarded||0) + ' pts') : 'Rejected';
+    return '<div class="row-card">' + head + '<div class="row-sub" style="color:' + (r.status === 'approved' ? 'var(--green)' : 'var(--red)') + ';">' + label + '</div></div>';
+  }
+
+  function showPhoto(id, btn) {
+    btn.textContent = 'Loading…';
+    fbGet(PHOTOS_PATH + '/' + id).then(function(p){
+      if (!p || !p.data) { btn.textContent = 'No photo'; return; }
+      var card = document.getElementById('rc-' + id);
+      var img = document.createElement('img');
+      img.src = p.data; img.style.cssText = 'max-width:100%;border-radius:10px;margin-top:10px;';
+      card.appendChild(img);
+      btn.remove();
+    }).catch(function(){ btn.textContent = 'Photo failed'; });
+  }
+
+  function approveReceipt(id) {
+    var pts = parseInt(document.getElementById('pts-' + id).value, 10);
+    if (isNaN(pts) || pts < 0) { showToast('Enter the points to award'); return; }
+    fbGet(RECEIPTS_PATH + '/' + id).then(function(fresh){
+      if (!fresh || fresh.status !== 'pending') { showToast('Already handled'); return loadAll(); }
+      return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'approved', pointsAwarded: pts, pointsApplied: false, decidedAt: { '.sv': 'timestamp' } })
+        .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return applyAward(id); })
+        .then(loadAll);
+    }).catch(function(){ showToast('Something went wrong - nothing was awarded'); });
+  }
+
+  // Idempotent: only ever credits a receipt whose pointsApplied is false,
+  // flips it to true right after, and checks the member's token matches the
+  // one on the receipt before touching their balance.
+  function applyAward(id) {
+    return fbGet(RECEIPTS_PATH + '/' + id).then(function(r){
+      if (!r || r.status !== 'approved' || r.pointsApplied !== false) { showToast('Already applied'); return; }
+      return fbGet(MEMBERS_PATH + '/' + r.memberKey + '/token').then(function(tok){
+        if (!tok || tok !== r.token) throw new Error('member mismatch');
+        var pts = r.pointsAwarded || 0;
+        var credit = pts > 0 ? fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: pts } }) : Promise.resolve({ ok: true });
+        return credit.then(function(resp){
+          if (!resp.ok) throw new Error('credit failed');
+          return fbPatch(RECEIPTS_PATH + '/' + id, { pointsApplied: true });
+        });
+      }).then(function(){ showToast('Approved - points added'); });
+    }).catch(function(){ showToast('Points did not land - use Retry'); });
+  }
+
+  function rejectReceipt(id) {
+    if (!confirm('Reject this receipt? No points will be awarded.')) return;
+    fbGet(RECEIPTS_PATH + '/' + id).then(function(fresh){
+      if (!fresh || fresh.status !== 'pending') { showToast('Already handled'); return loadAll(); }
+      return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'rejected', decidedAt: { '.sv': 'timestamp' } }).then(function(){ showToast('Rejected'); loadAll(); });
+    }).catch(function(){ showToast('Something went wrong'); });
+  }
+
+  // ========================================================================
+  // RESTAURANTS TAB
+  // ========================================================================
+  function renderRestaurantsTab() {
+    var slugs = {};
+    Object.keys(restaurants).forEach(function(k){ slugs[k] = 1; });
+    Object.keys(directory).forEach(function(k){ slugs[k] = 1; });
+    var list = Object.keys(slugs);
+    var html = '<button class="btn btn-primary" id="newRestBtn" style="margin-bottom:14px;">+ New Restaurant</button>';
+    html += list.length ? list.map(function(slug){
+      var r = restaurants[slug] || {}, d = directory[slug] || {};
+      return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.bizName || d.bizName || slug) + '</div>' +
+        '<div class="row-sub">' + (d.active === false ? 'Hidden from members' : 'Shown to members') + ' · earns ' + (d.earnRate || 0) + ' pts per $1 · your commission ' + (r.commissionPct || 0) + '%</div></div></div>' +
+        '<div class="row-actions"><button data-act="edit-rest" data-slug="' + escapeHtml(slug) + '">Edit</button></div></div>';
+    }).join('') : '<div class="empty-note">No restaurants yet. Add one so members can submit receipts for it.</div>';
+    view.innerHTML = html;
+    document.getElementById('newRestBtn').addEventListener('click', function(){ renderRestForm(null); });
+    view.querySelectorAll('[data-act="edit-rest"]').forEach(function(b){
+      b.addEventListener('click', function(){ renderRestForm(b.getAttribute('data-slug')); });
+    });
+  }
+
+  function renderRestForm(slug) {
+    var isEdit = !!slug;
+    var r = isEdit ? (restaurants[slug] || {}) : {}, d = isEdit ? (directory[slug] || {}) : {};
+    view.innerHTML =
+      '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
+      '<div class="form-box">' +
+        '<div class="field"><label>Restaurant name</label><input type="text" id="rName" value="' + escapeHtml(r.bizName || d.bizName || '') + '"></div>' +
+        '<div class="field"><label>Slug (letters/numbers/dashes, cannot change later)</label><input type="text" id="rSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
+        '<div class="field"><label>Restaurant portal PIN (optional - only if they will log in to see/verify redemptions)</label><input type="text" id="rPin" value="' + escapeHtml(r.pin || '') + '"></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Points earned per $1 spent (e.g. 0.05 = 5% back)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 0.05) + '"></div>' +
+          '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : '') + '"></div>' +
+        '</div>' +
+        '<div class="checkbox-row"><input type="checkbox" id="rActive"' + (d.active !== false ? ' checked' : '') + '><label for="rActive">Show to members (they can submit receipts for it)</label></div>' +
+        '<div class="form-actions"><button class="btn btn-primary" id="rSave">' + (isEdit ? 'Save Changes' : 'Add Restaurant') + '</button><button class="btn" id="rCancel">Cancel</button></div>' +
+      '</div>';
+    document.getElementById('backBtn').addEventListener('click', renderRestaurantsTab);
+    document.getElementById('rCancel').addEventListener('click', renderRestaurantsTab);
+    document.getElementById('rSave').addEventListener('click', function(){
+      var name = document.getElementById('rName').value.trim();
+      var newSlug = isEdit ? slug : slugify(document.getElementById('rSlug').value);
+      if (!name || !newSlug) { showToast('Name and slug are required'); return; }
+      if (!isEdit && (restaurants[newSlug] || directory[newSlug])) { showToast('That slug is already used'); return; }
+      var rate = parseFloat(document.getElementById('rRate').value);
+      var comm = parseFloat(document.getElementById('rComm').value);
+      var restPayload = { bizName: name, pin: document.getElementById('rPin').value.trim(), commissionPct: isNaN(comm) ? 0 : comm };
+      var dirPayload = { bizName: name, earnRate: isNaN(rate) ? 0 : rate, active: document.getElementById('rActive').checked };
+      Promise.all([ fbPatch(RESTAURANTS_PATH + '/' + newSlug, restPayload), fbPatch(DIRECTORY_PATH + '/' + newSlug, dirPayload) ]).then(function(rs){
+        if (!rs[0].ok || !rs[1].ok) throw new Error('save failed');
+        restaurants[newSlug] = Object.assign({}, restaurants[newSlug] || {}, restPayload);
+        directory[newSlug] = Object.assign({}, directory[newSlug] || {}, dirPayload);
+        renderRestaurantsTab(); showToast('Saved');
+      }).catch(function(){ showToast('Something went wrong saving this'); });
+    });
+  }
+
+  // ========================================================================
+  // EARNINGS TAB - what each restaurant owes you on verified spend
+  // ========================================================================
+  var earningsMonth = new Date().toISOString().slice(0, 7);
+  function renderEarningsTab() {
+    var parts = earningsMonth.split('-');
+    var start = new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, 1).getTime();
+    var end = new Date(parseInt(parts[0],10), parseInt(parts[1],10), 1).getTime();
+    var by = {};
+    Object.keys(receipts).forEach(function(id){
+      var r = receipts[id];
+      if (!r || r.status !== 'approved') return;
+      var t = r.decidedAt || r.submittedAt || 0;
+      if (t < start || t >= end) return;
+      var b = by[r.slug] || (by[r.slug] = { count: 0, spend: 0 });
+      b.count++; b.spend += (r.amount || 0);
+    });
+    var rows = Object.keys(by).map(function(slug){
+      var pct = (restaurants[slug] && restaurants[slug].commissionPct) || 0;
+      return { restaurant: bizOf(slug), receipts: by[slug].count, verifiedSpend: Math.round(by[slug].spend * 100) / 100, commissionPct: pct, commissionOwed: Math.round(by[slug].spend * pct) / 100 };
+    });
+    var totalOwed = rows.reduce(function(s, r){ return s + r.commissionOwed; }, 0);
+    var totalSpend = rows.reduce(function(s, r){ return s + r.verifiedSpend; }, 0);
+    view.innerHTML =
+      '<div class="field"><label>Month</label><input type="month" id="eMonth" value="' + earningsMonth + '"></div>' +
+      '<div class="stats-row"><div class="stat"><div class="n">' + money(totalOwed) + '</div><div class="l">Commission owed to you</div></div>' +
+      '<div class="stat"><div class="n">' + money(totalSpend) + '</div><div class="l">Verified spend</div></div></div>' +
+      '<button class="btn btn-primary" id="eCsv" style="margin-bottom:14px;">Download statement (CSV)</button>' +
+      (rows.length ? rows.map(function(r){
+        return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.restaurant) + '</div><div class="row-sub">' + r.receipts + ' receipts · ' + money(r.verifiedSpend) + ' verified · ' + r.commissionPct + '%</div></div><div class="row-num">' + money(r.commissionOwed) + '</div></div></div>';
+      }).join('') : '<div class="empty-note">No approved receipts in this month yet.</div>');
+    document.getElementById('eMonth').addEventListener('change', function(){ earningsMonth = this.value || earningsMonth; renderEarningsTab(); });
+    document.getElementById('eCsv').addEventListener('click', function(){ downloadCsv('lvr-commission-' + earningsMonth + '.csv', rows); });
   }
 
   // ========================================================================
@@ -332,13 +544,13 @@
       var itemPath = isEdit ? (CATALOG_PATH + '/' + slug + '/' + itemId) : (CATALOG_PATH + '/' + newSlug + '/' + genToken().slice(0, 12));
       Promise.all([
         fbPut(itemPath, itemPayload),
-        fbPut(RESTAURANTS_PATH + '/' + newSlug, restPayload)
+        fbPatch(RESTAURANTS_PATH + '/' + newSlug, restPayload)
       ]).then(function(rs){
         if (!rs[0].ok || !rs[1].ok) throw new Error('save failed');
         if (!catalog[newSlug]) catalog[newSlug] = {};
         var key = itemPath.split('/').pop();
         catalog[newSlug][key] = itemPayload;
-        restaurants[newSlug] = restPayload;
+        restaurants[newSlug] = Object.assign({}, restaurants[newSlug] || {}, restPayload);
         renderCatalogTab();
         showToast(isEdit ? 'Saved' : 'Item created');
       }).catch(function(){ showToast('Something went wrong saving this'); });

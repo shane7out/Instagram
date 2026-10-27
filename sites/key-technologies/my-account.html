@@ -111,6 +111,16 @@
   .hist-code{font-family:monospace;font-weight:800;font-size:16px;letter-spacing:.06em;color:var(--key-light);text-align:right;}
   .hist-badge{font-size:11px;font-weight:700;margin-top:3px;text-align:right;}
   .hist-badge.ready{color:var(--green);} .hist-badge.used{color:var(--ink-dim);}
+  .earn-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:22px;}
+  .earn-card h2{margin-bottom:4px;}
+  .earn-sub{font-size:12.5px;color:var(--ink-dim);margin-bottom:12px;line-height:1.5;}
+  .earn-card label{display:block;font-size:12px;font-weight:700;color:var(--ink-dim);margin:10px 0 5px;}
+  .earn-card select,.earn-card input[type=text],.earn-card input[type=number]{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:11px 12px;}
+  .earn-card input[type=file]{width:100%;font-size:13px;color:var(--ink-dim);}
+  .earn-msg{font-size:13px;min-height:18px;margin-top:10px;}
+  .earn-msg.err{color:var(--red);} .earn-msg.ok{color:var(--green);}
+  .rcpt-badge{font-size:11px;font-weight:700;text-align:right;}
+  .rcpt-badge.pending{color:#f0c239;} .rcpt-badge.approved{color:var(--green);} .rcpt-badge.rejected{color:var(--red);}
   .no-account-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 22px;text-align:center;}
   .no-account-card h1{font-size:20px;font-weight:800;margin:0 0 10px;}
   .no-account-card p{font-size:14.5px;margin-bottom:18px;}
@@ -156,6 +166,9 @@
   var MEMBERS_PATH = '/lvr_rewards';
   var CATALOG_PATH = '/lvr_points/catalog';
   var REDEMPTIONS_PATH = '/lvr_points/redemptions/';
+  var DIRECTORY_PATH = '/lvr_points/directory';
+  var RECEIPTS_PATH = '/lvr_points/receipts';
+  var PHOTOS_PATH = '/lvr_points/receipt_photos';
   var TOKEN_KEY = 'lvr_wallet_token';
 
   var params = new URLSearchParams(location.search);
@@ -225,14 +238,20 @@
 
   var wallet = null;
   var memberKey = null;
+  var directory = {};
+  var myReceipts = {};
 
   function loadWallet() {
     showEmpty('Loading…');
     Promise.all([
       fbFindByToken(token),
       fbGet(CATALOG_PATH),
-      fbGet(REDEMPTIONS_PATH.slice(0, -1))
+      fbGet(REDEMPTIONS_PATH.slice(0, -1)),
+      fbGet(DIRECTORY_PATH),
+      fetch(DB + RECEIPTS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(token) + '"').then(function(r){ return r.json(); })
     ]).then(function(results){
+      directory = results[3] || {};
+      myReceipts = results[4] || {};
       var found = results[0] || {};
       var keys = Object.keys(found);
       var catalog = results[1] || {};
@@ -287,6 +306,7 @@
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
         '<div class="balance-label">points available</div>' +
       '</div>' +
+      earnPanelHtml() +
       '<h2>Redeem</h2>';
 
     if (!items.length) {
@@ -326,9 +346,24 @@
       }).join('');
     }
 
+    var rIds = Object.keys(myReceipts || {}).filter(function(id){ return myReceipts[id]; });
+    rIds.sort(function(a, b){ return (myReceipts[b].submittedAt || 0) - (myReceipts[a].submittedAt || 0); });
+    if (rIds.length) {
+      html += '<h2 style="margin-top:26px;">My receipts</h2>' + rIds.map(function(id){
+        var r = myReceipts[id];
+        var biz = (directory[r.slug] && directory[r.slug].bizName) || r.slug;
+        var st = r.status || 'pending';
+        var label = st === 'approved' ? ('+' + (r.pointsAwarded || 0) + ' points') : (st === 'rejected' ? 'Not approved' : 'Pending review');
+        return '<div class="hist-row"><div class="hist-main"><div class="hist-item">' + escapeHtml(biz) + ' · $' + Number(r.amount || 0).toFixed(2) + '</div>' +
+          '<div class="hist-sub">Receipt ' + escapeHtml(r.receiptNo || '') + (r.submittedAt ? ' · ' + new Date(r.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '') + '</div></div>' +
+          '<div class="rcpt-badge ' + st + '">' + label + '</div></div>';
+      }).join('');
+    }
+
     html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a></div>';
 
     contentEl.innerHTML = html;
+    bindEarnPanel();
 
     contentEl.querySelectorAll('[data-act="redeem"]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -344,6 +379,101 @@
       token = '';
       wallet = null;
       showNoAccount();
+    });
+  }
+
+  function earnPanelHtml() {
+    var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false; });
+    if (!keys.length) return '';
+    return '<div class="earn-card" id="earnCard">' +
+      '<h2>Earn points</h2>' +
+      '<div class="earn-sub">Ate at a participating restaurant? Enter your receipt. Once we verify it, points are added to your balance.</div>' +
+      '<label for="eRest">Restaurant</label>' +
+      '<select id="eRest"><option value="">Choose…</option>' + keys.map(function(k){
+        return '<option value="' + escapeHtml(k) + '">' + escapeHtml(directory[k].bizName || k) + '</option>';
+      }).join('') + '</select>' +
+      '<div class="earn-sub" id="eRate" style="margin:6px 0 0;"></div>' +
+      '<label for="eNo">Receipt number</label><input type="text" id="eNo" autocomplete="off">' +
+      '<label for="eAmt">Total paid ($)</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
+      '<label for="ePhoto">Photo of receipt (optional)</label><input type="file" id="ePhoto" accept="image/*">' +
+      '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
+      '<div class="earn-msg" id="eMsg"></div>' +
+    '</div>';
+  }
+
+  function downscaleImage(file, maxW, quality) {
+    return new Promise(function(resolve, reject){
+      var fr = new FileReader();
+      fr.onerror = reject;
+      fr.onload = function(){
+        var img = new Image();
+        img.onerror = reject;
+        img.onload = function(){
+          var scale = Math.min(1, maxW / img.width);
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          resolve(c.toDataURL('image/jpeg', quality));
+        };
+        img.src = fr.result;
+      };
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function bindEarnPanel() {
+    var card = document.getElementById('earnCard');
+    if (!card) return;
+    var sel = document.getElementById('eRest');
+    sel.addEventListener('change', function(){
+      var d = directory[sel.value];
+      var el = document.getElementById('eRate');
+      el.textContent = (d && d.earnRate) ? ('You earn about ' + d.earnRate + ' point' + (d.earnRate === 1 ? '' : 's') + ' per $1 spent.') : '';
+    });
+    document.getElementById('eBtn').addEventListener('click', submitReceipt);
+  }
+
+  function earnMsg(text, cls) {
+    var m = document.getElementById('eMsg');
+    if (m) { m.textContent = text; m.className = 'earn-msg ' + (cls || ''); }
+  }
+
+  function submitReceipt() {
+    var slug = document.getElementById('eRest').value;
+    var no = document.getElementById('eNo').value.trim().toUpperCase();
+    var amt = parseFloat(document.getElementById('eAmt').value);
+    var file = document.getElementById('ePhoto').files[0];
+    if (!slug) return earnMsg('Choose the restaurant.', 'err');
+    if (!no || no.length > 40) return earnMsg('Enter the receipt number.', 'err');
+    if (!(amt > 0) || amt > 5000) return earnMsg('Enter the total you paid.', 'err');
+    var btn = document.getElementById('eBtn');
+    btn.disabled = true; earnMsg('Submitting…', '');
+
+    fetch(DB + RECEIPTS_PATH + '.json?orderBy="receiptNo"&equalTo="' + encodeURIComponent(no) + '"').then(function(r){ return r.json(); }).then(function(existing){
+      var dup = Object.keys(existing || {}).some(function(id){
+        var r = existing[id];
+        return r && r.slug === slug && r.status !== 'rejected';
+      });
+      if (dup) { earnMsg('That receipt was already submitted.', 'err'); btn.disabled = false; return null; }
+      var rec = {
+        slug: slug, token: token, memberKey: memberKey,
+        name: wallet.name || '', phone: wallet.phone || '', instagram: wallet.instagram || '',
+        receiptNo: no, amount: Math.round(amt * 100) / 100,
+        status: 'pending', submittedAt: { '.sv': 'timestamp' }
+      };
+      return fbPost(RECEIPTS_PATH, rec).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function(res){
+        var id = res && res.name;
+        if (!file || !id) return;
+        return downscaleImage(file, 900, 0.6).then(function(dataUrl){
+          return fetch(DB + PHOTOS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ data: dataUrl }) });
+        }).catch(function(){});
+      }).then(function(){ loadWallet(); });
+    }).catch(function(){
+      earnMsg("Couldn't submit right now. Please try again.", 'err');
+      btn.disabled = false;
     });
   }
 
