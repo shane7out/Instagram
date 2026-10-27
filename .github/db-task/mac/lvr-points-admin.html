@@ -107,6 +107,7 @@
     <span class="tab" data-v="audit">Audit</span>
     <span class="tab" data-v="catalog">Catalog</span>
     <span class="tab" data-v="redemptions">Redemptions</span>
+    <span class="tab" data-v="bonus">Bonus</span>
     <span class="tab" data-v="settings">Settings</span>
   </div>
   <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their point balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool handles receipts (approve = points land instantly), restaurants and your commission, what members can redeem, and who already has.</div>
@@ -243,6 +244,7 @@
     else if (activeTab === 'restaurants') renderRestaurantsTab();
     else if (activeTab === 'earnings') renderEarningsTab();
     else if (activeTab === 'audit') renderAuditTab();
+    else if (activeTab === 'bonus') renderBonusTab();
     else if (activeTab === 'settings') renderSettingsTab();
     else if (activeTab === 'catalog') renderCatalogTab();
     else renderRedemptionsTab();
@@ -465,9 +467,61 @@
   // ========================================================================
   // SETTINGS TAB
   // ========================================================================
+  // ========================================================================
+  // BONUS: give a member extra points by hand, always with a written reason.
+  // Each gift is saved as its own permanent record (it cannot be edited or
+  // deleted), written BEFORE the points are added so it can never be missing.
+  // ========================================================================
+  var bonusMembers = null, bonusPick = null, bonusLog = {};
+  function renderBonusTab() {
+    view.innerHTML = '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Give bonus points</div>' +
+      '<div class="row-sub" style="margin-bottom:12px;">For things like a video they posted or a special thank-you. Points from receipts are approved on the Receipts tab; use this only for extras. The reason is kept permanently in the record.</div>' +
+      '<div class="field"><label>Find the member (name or Instagram)</label><input type="text" id="bSearch" placeholder="Start typing…" autocomplete="off"></div>' +
+      '<div id="bResults"></div><div id="bForm"></div></div>' +
+      '<div style="margin:22px 0 10px;font-weight:800;font-size:14px;">Recent bonus points</div><div id="bLog"><div class="empty-note">Loading…</div></div>';
+    Promise.all([bonusMembers ? Promise.resolve(bonusMembers) : fbGet(MEMBERS_PATH), fbGet('/lvr_points/bonuses')]).then(function(r){
+      bonusMembers = r[0] || {}; bonusLog = r[1] || {};
+      drawBonusLog();
+    }).catch(function(){ document.getElementById('bLog').innerHTML = '<div class="empty-note">Could not load.</div>'; });
+    document.getElementById('bSearch').addEventListener('input', function(){
+      var q = this.value.trim().toLowerCase(), box = document.getElementById('bResults');
+      bonusPick = null; document.getElementById('bForm').innerHTML = '';
+      if (!bonusMembers || q.length < 2) { box.innerHTML = ''; return; }
+      var hits = Object.keys(bonusMembers).filter(function(k){ var m = bonusMembers[k] || {}; return (String(m.name || '') + ' ' + String(m.instagram || '')).toLowerCase().indexOf(q) > -1; }).slice(0, 8);
+      box.innerHTML = hits.length ? hits.map(function(k){ var m = bonusMembers[k]; return '<div class="row-card" style="cursor:pointer;" data-pick="' + escapeHtml(k) + '"><div class="row-title">' + escapeHtml(m.name || '') + (m.instagram ? ' <span style="color:var(--ink-dim);font-weight:500;">' + escapeHtml(m.instagram) + '</span>' : '') + '</div><div class="row-sub">' + (m.points || 0) + ' points now</div></div>'; }).join('') : '<div class="empty-note">No one found.</div>';
+      box.querySelectorAll('[data-pick]').forEach(function(el){ el.addEventListener('click', function(){ pickBonusMember(el.getAttribute('data-pick')); }); });
+    });
+  }
+  function pickBonusMember(k) {
+    var m = bonusMembers[k]; bonusPick = k;
+    document.getElementById('bResults').innerHTML = '';
+    document.getElementById('bForm').innerHTML = '<div class="row-card"><div class="row-title">' + escapeHtml(m.name || '') + '</div><div class="row-sub">' + (m.points || 0) + ' points now</div></div>' +
+      '<div class="field-row"><div class="field"><label>Points to add (1 to 1000)</label><input type="number" id="bPts" min="1" max="1000" step="1"></div>' +
+      '<div class="field"><label>Reason (kept permanently)</label><input type="text" id="bWhy" maxlength="200" placeholder="e.g. Posted a video about Vanilla Rice"></div></div>' +
+      '<div class="form-actions"><button class="btn btn-primary" id="bGive">Add the points</button></div>';
+    document.getElementById('bGive').addEventListener('click', giveBonus);
+  }
+  function giveBonus() {
+    var k = bonusPick, m = k && bonusMembers[k];
+    var pts = parseInt(document.getElementById('bPts').value, 10), why = document.getElementById('bWhy').value.trim();
+    if (!m || !(pts >= 1 && pts <= 1000)) { showToast('Enter 1 to 1000 points'); return; }
+    if (why.length < 3) { showToast('Please write a short reason'); return; }
+    var btn = document.getElementById('bGive'); btn.disabled = true;
+    var id = genToken().slice(0, 14);
+    fbPut('/lvr_points/bonuses/' + id, { memberKey: k, token: m.token || null, name: m.name || '', points: pts, reason: why, at: { '.sv': 'timestamp' } })
+      .then(function(r){ if (!r.ok) throw new Error('record'); return fbPut(MEMBERS_PATH + '/' + k + '/points', { '.sv': { increment: pts } }); })
+      .then(function(r){ if (!r.ok) throw new Error('points'); m.points = (m.points || 0) + pts; bonusLog[id] = { name: m.name, points: pts, reason: why, at: Date.now() }; showToast('Added ' + pts + ' points to ' + (m.name || 'member')); renderBonusTab(); })
+      .catch(function(){ btn.disabled = false; showToast('Something went wrong - check the Recent list before trying again'); });
+  }
+  function drawBonusLog() {
+    var ids = Object.keys(bonusLog).sort(function(a, b){ return (bonusLog[b].at || 0) - (bonusLog[a].at || 0); }).slice(0, 25);
+    document.getElementById('bLog').innerHTML = ids.length ? ids.map(function(id){ var b = bonusLog[id]; return '<div class="row-card"><div class="row-title">+' + b.points + ' to ' + escapeHtml(b.name || '') + '</div><div class="row-sub">' + escapeHtml(b.reason || '') + ' · ' + (b.at ? new Date(b.at).toLocaleDateString() : '') + '</div></div>'; }).join('') : '<div class="empty-note">No bonus points given yet.</div>';
+  }
+
   function renderSettingsTab() {
     var c = refConfig();
     var welcome = welcomeCfg();
+    var chest = Object.assign({ waitDays: 7, bonus: 0 }, settings.chest || {});
     var paused = settings.paused || {};
     var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
     function chk(id, on, label) { return '<div class="checkbox-row"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><label for="' + id + '">' + label + '</label></div>'; }
@@ -493,9 +547,12 @@
         '<div class="field"><label>Give them</label><select id="sWelWhen"><option value="signup"' + (welcome.when === 'signup' ? ' selected' : '') + '>The moment they sign up</option><option value="receipt"' + (welcome.when !== 'signup' ? ' selected' : '') + '>When their first receipt is approved</option></select></div></div>' +
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Signing up is easy to abuse with fake accounts. The restaurant\'s credit in the funding ledger is the safety net: once it is used up, offers stop. Keep that credit modest, and use the pause switch if sign-ups look strange.</div>' +
       '</div>' +
-      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Treasure chest (preview only)</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Members see a treasure chest on their account page. Right now it only says "coming soon" and gives nothing. If you set a date here, it shows a countdown to that moment. Leave it blank to show just "Soon". Nothing is awarded either way.</div>' +
-        '<div class="field"><label>Countdown target (optional)</label><input type="datetime-local" id="sChestAt" value="' + (settings.chest && settings.chest.opensAt ? new Date(settings.chest.opensAt - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '') + '"></div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Treasure chest</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a treasure chest with a countdown that starts the day they join. When it ends they can open it once. While the bonus below is 0, the chest just says "coming soon" and gives nothing.</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Days after joining until the chest opens</label><input type="number" id="sChestDays" min="1" max="60" step="1" value="' + (chest.waitDays || 7) + '"></div>' +
+          '<div class="field"><label>Points inside (0 = off, max 50)</label><input type="number" id="sChestBonus" min="0" max="50" step="1" value="' + (chest.bonus || 0) + '"></div>' +
+        '</div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
@@ -517,7 +574,7 @@
           maxPerWeek: Math.max(1, parseInt(document.getElementById('sMaxWeek').value, 10) || 5),
           windowDays: Math.max(1, parseInt(document.getElementById('sWindow').value, 10) || 30)
         },
-        chest: (function(){ var v = document.getElementById('sChestAt').value; var ts = v ? new Date(v).getTime() : 0; return ts > 0 ? { opensAt: ts } : ''; })(),
+        chest: { waitDays: Math.max(1, Math.min(60, parseInt(document.getElementById('sChestDays').value, 10) || 7)), bonus: Math.max(0, Math.min(50, parseInt(document.getElementById('sChestBonus').value, 10) || 0)) },
         welcome: {
           enabled: document.getElementById('sWelOn').checked,
           amount: Math.max(1, Math.min(50, parseInt(document.getElementById('sWelAmt').value, 10) || 13)),

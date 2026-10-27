@@ -183,8 +183,9 @@
       <span style="color:#f0c239;display:inline-block;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11V9a8.5 8.5 0 0 1 17 0v2"/><rect x="3" y="11" width="18" height="9" rx="1.5"/><path d="M3 15h18"/><rect x="10.5" y="13" width="3" height="4" rx=".8"/></svg></span>
       <h3 id="soonTitle">Treasure chest</h3>
       <div class="chest-big" id="chestBig" hidden></div>
-      <p>The treasure chest is almost ready. Come back and check this spot soon.</p>
-      <button type="button" class="btn btn-primary" id="soonClose">Got it</button>
+      <p id="chestMsg">The treasure chest is almost ready. Come back and check this spot soon.</p>
+      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Open the chest</button>
+      <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
   </div>
   <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
@@ -497,24 +498,50 @@
     }).catch(function(){});
   }
 
-  // ---------- treasure chest: placeholder only, awards nothing ----------
-  // The owner can set an opening date in Settings; until then it just says "Soon".
-  function chestCountdown() {
-    var at = appSettings && appSettings.chest && Number(appSettings.chest.opensAt);
-    var ms = at ? at - Date.now() : 0;
-    if (!(ms > 0)) return { short: 'Soon', long: '' };
+  // ---------- treasure chest ----------
+  // Each member's first chest opens a set number of days after they join
+  // (Settings > Treasure chest). Until the owner sets a bonus above 0 it only
+  // says "coming soon". The claim is recorded on the member before any points
+  // are added, so it can only happen once.
+  function chestCfg() { return Object.assign({ waitDays: 7, bonus: 0 }, (appSettings && appSettings.chest) || {}); }
+  function chestState() {
+    var c = chestCfg();
+    if (wallet && wallet.chestClaimed) return { kind: 'claimed', amount: wallet.chestClaimed.amount };
+    var joined = wallet && Number(wallet.joinedAt);
+    if (!joined) return { kind: 'soon' };
+    var ms = joined + c.waitDays * 86400000 - Date.now();
+    if (ms > 0) return { kind: 'wait', ms: ms };
+    return c.bonus > 0 ? { kind: 'ready', bonus: c.bonus } : { kind: 'soon' };
+  }
+  function fmtLeft(ms) {
     var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
-    return {
-      short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : m + 'm'),
-      long: 'Opens in ' + (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm'
-    };
+    return { short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
   }
   function tickChest() {
-    var c = chestCountdown();
+    var st = chestState(), short = 'Soon', big = '', msg = 'The treasure chest is almost ready. Come back and check this spot soon.', canOpen = false;
+    if (st.kind === 'wait') { var f = fmtLeft(st.ms); short = f.short; big = 'Opens in ' + f.long; msg = 'Your first treasure chest opens when the countdown ends. Come back then!'; }
+    else if (st.kind === 'ready') { short = 'Open!'; big = 'Your chest is ready'; msg = 'Tap below to open it and add ' + st.bonus + ' points to your balance.'; canOpen = true; }
+    else if (st.kind === 'claimed') { short = 'Opened'; big = '+' + st.amount + ' points'; msg = 'You opened your first chest. More treasure is coming soon.'; }
     var els = document.querySelectorAll('.chest-count');
-    for (var i = 0; i < els.length; i++) els[i].textContent = c.short;
-    var big = document.getElementById('chestBig');
-    if (big) { big.hidden = !c.long; big.textContent = c.long; }
+    for (var i = 0; i < els.length; i++) els[i].textContent = short;
+    var b = document.getElementById('chestBig'); if (b) { b.hidden = !big; b.textContent = big; }
+    var m = document.getElementById('chestMsg'); if (m) m.textContent = msg;
+    var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
+  }
+  function openChest() {
+    var st = chestState(), btn = document.getElementById('chestOpenBtn');
+    if (st.kind !== 'ready' || !memberKey) return;
+    btn.disabled = true;
+    // claim first (the database only accepts it once, after the waiting period), then add the points
+    fetch(DB + '/lvr_rewards/' + memberKey + '/chestClaimed.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: st.bonus, at: { '.sv': 'timestamp' } }) })
+      .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_rewards/' + memberKey + '/points.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ '.sv': { increment: st.bonus } }) }); })
+      .then(function (r) {
+        if (!r.ok) throw new Error('points');
+        wallet.points = (wallet.points || 0) + st.bonus; wallet.chestClaimed = { amount: st.bonus };
+        var n = document.getElementById('balanceNum'); if (n) n.textContent = wallet.points;
+        tickChest();
+      })
+      .catch(function () { btn.disabled = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; });
   }
   setInterval(tickChest, 30000);
   (function () {
@@ -522,8 +549,10 @@
     function open() { tickChest(); back.classList.add('open'); var c = document.getElementById('soonClose'); if (c) c.focus(); }
     function close() { back.classList.remove('open'); }
     document.addEventListener('click', function (e) {
-      if (e.target.closest && e.target.closest('#giftBtn')) open();
-      else if (e.target === back || (e.target.closest && e.target.closest('#soonClose'))) close();
+      var t = e.target.closest ? e.target : null;
+      if (t && t.closest('#giftBtn')) open();
+      else if (t && t.closest('#chestOpenBtn')) openChest();
+      else if (e.target === back || (t && t.closest('#soonClose'))) close();
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   })();

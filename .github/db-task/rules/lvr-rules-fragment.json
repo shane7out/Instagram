@@ -79,6 +79,21 @@
     "when": {
      ".validate": "newData.val() == 'signup' || newData.val() == 'receipt'"
     }
+   },
+   "chest": {
+    ".write": true,
+    "waitDays": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 60"
+    },
+    "bonus": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    }
+   }
+  },
+  "bonuses": {
+   "$id": {
+    ".write": "newData.exists() && !data.exists()",
+    ".validate": "newData.child('memberKey').isString() && newData.child('points').isNumber() && newData.child('points').val() > 0 && newData.child('points').val() <= 1000 && newData.child('reason').isString() && newData.child('reason').val().length >= 3 && newData.child('reason').val().length <= 200"
    }
   }
  },
@@ -90,7 +105,7 @@
    "referredBy"
   ],
   "$k": {
-   ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('name').isString() && (newData.child('points').val() == 0 || (root.child('lvr_points/settings/welcome/enabled').val() == true && root.child('lvr_points/settings/welcome/when').val() == 'signup' && newData.child('points').val() == root.child('lvr_points/settings/welcome/amount').val() && newData.child('welcomeGiven/amount').val() == newData.child('points').val()))))",
+   ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('chestClaimed').exists() || (newData.child('chestClaimed/at').val() == data.child('chestClaimed/at').val() && newData.child('chestClaimed/amount').val() == data.child('chestClaimed/amount').val())) && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('name').isString() && (newData.child('points').val() == 0 || (root.child('lvr_points/settings/welcome/enabled').val() == true && root.child('lvr_points/settings/welcome/when').val() == 'signup' && newData.child('points').val() == root.child('lvr_points/settings/welcome/amount').val() && newData.child('welcomeGiven/amount').val() == newData.child('points').val()))))",
    "points": {
     ".validate": "newData.isNumber() && newData.val() >= 0"
    },
@@ -105,6 +120,9 @@
    },
    "refCode": {
     ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 12"
+   },
+   "chestClaimed": {
+    ".validate": "newData.hasChildren(['amount','at']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && root.child('lvr_points/settings/chest/bonus').exists() && root.child('lvr_points/settings/chest/waitDays').exists() && newData.child('amount').val() == root.child('lvr_points/settings/chest/bonus').val() && newData.child('at').val() >= newData.parent().child('joinedAt').val() + 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
    }
   }
  },
