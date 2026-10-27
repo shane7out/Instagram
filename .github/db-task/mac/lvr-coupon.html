@@ -257,7 +257,7 @@
         return;
       }
 
-      var code = makeCode(slug, existingCodes);
+      var code = program.fixedCode ? String(program.fixedCode) : makeCode(slug, existingCodes);
       var payload = {
         biz: slug,
         name: name,

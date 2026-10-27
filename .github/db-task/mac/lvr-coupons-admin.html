@@ -292,6 +292,7 @@
         '<div class="field"><label>Business name</label><input type="text" id="fBizName" value="' + escapeHtml(p ? p.bizName : '') + '"></div>' +
         '<div class="field"><label>Slug (used in the claim link, letters/numbers/dashes only)</label><input type="text" id="fSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
         '<div class="field"><label>Offer (e.g. "Free Chicken &amp; Rice Bowl")</label><input type="text" id="fOffer" value="' + escapeHtml(p ? p.offer : '') + '"></div>' +
+        '<div class="field"><label>Restaurant\'s code (optional - if the restaurant gave you a code like 55555, type it here and everyone who claims sees that same code. Leave blank to give each person their own unique code.)</label><input type="text" id="fFixedCode" value="' + escapeHtml(p ? (p.fixedCode || '') : '') + '"></div>' +
         '<div class="field"><label>Redemption instructions (shown after they claim)</label><textarea id="fInstructions">' + escapeHtml(p ? p.instructions : '') + '</textarea></div>' +
         '<div class="field"><label>Photo URL (optional, a real photo of the food/offer)</label><input type="text" id="fPhoto" value="' + escapeHtml(p ? p.photoUrl : '') + '"></div>' +
         '<div class="field-row">' +
@@ -324,6 +325,7 @@
       var payload = {
         bizName: bizName,
         offer: offer,
+        fixedCode: document.getElementById('fFixedCode').value.trim() || null,
         instructions: document.getElementById('fInstructions').value.trim(),
         photoUrl: document.getElementById('fPhoto').value.trim(),
         maxClaims: maxClaimsVal ? parseInt(maxClaimsVal, 10) : null,
