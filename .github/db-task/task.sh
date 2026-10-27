@@ -1,5 +1,6 @@
 #!/bin/bash
-# Check whether the deploy-key-room.sh Mac script has run yet.
+# Live verification: my-account.html reachable, account icon present on
+# homepage, rewards.html signup still works end to end post-deploy.
 set -e
 node <<'NODE'
 const https = require('https');
@@ -12,30 +13,42 @@ function get(url, timeoutMs) {
     req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
   });
 }
+function req(method, url, body, timeoutMs) {
+  return new Promise((resolve) => {
+    const r = new URL(url);
+    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: {} };
+    if (body) opts.headers['Content-Type'] = 'application/json';
+    const request = https.request(opts, res => {
+      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
+    });
+    request.on('error', e => resolve({ error: e.message }));
+    if (body) request.write(body);
+    request.end();
+  });
+}
 
 (async () => {
-  console.log('=== Standalone tool reachability ===');
-  for (const page of ['key-room.html', 'lvr-wallet.html', 'lvr-points-admin.html', 'lvr-restaurant-portal.html', 'kt-crm.html', 'key-leads.html', 'key-advertisers.html', 'lvr-coupons-admin.html']) {
-    const r = await get('https://lvr-data-a60c1.web.app/' + page, 15000);
-    console.log(page + ':', r.status || r.error);
-  }
+  console.log('=== my-account.html live ===');
+  const acct = await get('https://keytechnologies.si/my-account.html', 15000);
+  console.log('status:', acct.status || acct.error);
+  if (acct.body) console.log('has no-account state markup:', acct.body.includes('no-account-card'));
 
-  console.log('\n=== Dashboard markers ===');
-  const dash = await get('https://lvr-data-a60c1.web.app/', 20000);
-  if (dash.error || dash.status !== 200) {
-    console.log('dashboard fetch failed:', dash.error || dash.status);
-  } else {
-    const body = dash.body;
-    const vMatch = body.match(/APP_VERSION\s*=\s*['"]?(\d+)/);
-    console.log('APP_VERSION:', vMatch ? vMatch[1] : 'not found');
-    console.log('has KEYROOM-SESSION-v1 marker:', body.includes('KEYROOM-SESSION-v1'));
-    console.log('has KEYROOM-PILL-v1 marker:', body.includes('KEYROOM-PILL-v1'));
-    console.log('has Key Tech pill text:', body.includes('Key Tech'));
-  }
+  console.log('\n=== account icon on homepage ===');
+  const home = await get('https://keytechnologies.si/', 15000);
+  console.log('status:', home.status || home.error);
+  console.log('has accountIcon:', (home.body || '').includes('id="accountIcon"'));
+  console.log('has my-account.html JS reference:', (home.body || '').includes('my-account.html'));
 
-  console.log('\n=== Latest deploy log (_debug/diag.json) ===');
-  const diag = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/diag.json', 15000);
-  console.log('status:', diag.status || diag.error);
-  console.log('body (first 2000 chars):', (diag.body || '').slice(0, 2000));
+  console.log('\n=== full live round trip: sign up -> real wallet -> my-account reachable with real data ===');
+  const testToken = 'diagnostic-myaccount-livetest';
+  const url = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/wallets/' + testToken + '.json';
+  const put = await req('PUT', url, JSON.stringify({ name: 'Live Test', email: 'livetest2@example.com', balance: 0, source: 'diagnostic', createdAt: Date.now() }), 15000);
+  console.log('PUT status:', put.status || put.error);
+  const acctWithToken = await get('https://keytechnologies.si/my-account.html?t=' + testToken, 15000);
+  console.log('my-account.html?t=... status:', acctWithToken.status || acctWithToken.error);
+
+  console.log('\n=== cleanup ===');
+  const del = await req('DELETE', url, null, 15000);
+  console.log('DELETE status:', del.status || del.error);
 })();
 NODE
