@@ -22,7 +22,6 @@
     } catch (e) {}
   })();
 </script>
-<script src="food-art.js" defer></script>
 <style>
   :root{
     --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
@@ -63,6 +62,10 @@
   .dish .name{font-size:clamp(24px,5.4vw,30px);font-weight:800;line-height:1.15;letter-spacing:-.01em;min-width:0;}
   .dish .desc{grid-column:1;color:var(--ink-dim);margin:0;max-width:48ch;min-width:0;}
   .dish .photo{grid-column:1 / -1;width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:10px;border:1px solid var(--line);}
+  .dish .art img{display:block;width:100%;height:100%;object-fit:cover;}
+  .credits{margin:34px 0 0;font-size:13px;color:var(--ink-dim);}
+  .credits summary{cursor:pointer;font-weight:700;}
+  .credits ul{padding-left:18px;margin:8px 0 0;display:grid;gap:4px;}
   .dish .art{grid-column:1 / -1;width:100%;aspect-ratio:4/3;max-height:340px;border-radius:14px;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);background:#111;}
   .rest{margin:34px 0 0;padding:0 0 12px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .rest b{font-size:clamp(22px,5vw,28px);letter-spacing:-.01em;}
@@ -154,19 +157,28 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function get(p) { return fetch(DB + p + ".json").then(function (r) { return r.json(); }); }
 
-  // Demo menu (fictional restaurants, drawn pictures). Opened with menu.html?demo=1
+  var PHOTO_CREDITS = {"teriyaki": {"author": "GALAXY 2018 A7", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Pork_teriyaki_meal.jpg"}, "pokebowl": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Salmon_%26_Tuna_Poke_Bowl_(M)_with_Spicy_Mayo_sauce_-_Kitokito_2025-04-25.jpg"}, "icedtea": {"author": "Renee Comet (Photographer)", "license": "Public domain", "source": "https://commons.wikimedia.org/wiki/File:Iced_tea.jpg"}, "nachos": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:NACHOS_-_Montagues_Tex_Mex_2026-06-03.jpg"}, "pancakes": {"author": "Mae Mu", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg"}, "burger": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Plant-based_Cheeseburger_-_Depot_Cinema_and_Restaurant_2025-03-06.jpg"}, "ribs": {"author": "LanguageTeaching", "license": "CC BY 2.0", "source": "https://commons.wikimedia.org/wiki/File:Spicy_Ribs_(9532760034).jpg"}, "sushi": {"author": "puffballruns", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Salmon_Sushi_in_Singapore.jpg"}, "donburi": {"author": "Ocdp", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Oyakodon_003.jpg"}, "chickenrice": {"author": "DarkScipio", "license": "Public domain", "source": "https://commons.wikimedia.org/wiki/File:Teriyaki_Lachs_Gurke_Avocado_Reis_Teller.JPG"}, "friedrice": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Sambal_Spicy_Seafood_Fried_Rice_-_Ho_Chiak.jpg"}, "pizza": {"author": "Kurt Kaiser", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Pepperoni_pizza_3.jpg"}, "garlic": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Garlic_Bread_Mozzarella_-_Oregano_Pizzeria_2025-05-17.jpg"}, "sundae": {"author": "Renee Comet (Photographer)", "license": "Public domain", "source": "https://commons.wikimedia.org/wiki/File:Ice_cream_sundae.jpg"}, "tacos": {"author": "Kurt Kaiser", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Tacos_in_a_soft_tortilla_2.jpg"}, "nachos2": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Nachos_-_Ed%27s_Easy_Diner_2023-09-01.jpg"}, "churros": {"author": "Ocdp", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Churros_001.jpg"}, "ramen": {"author": "Ocdp", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Ramen_Jump_002.jpg"}, "gyoza": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Chicken_Gyoza_-_Rawlab_Juice_%26_Tea_2025-07-12.jpg"}, "boba": {"author": "Battlesnake1", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Pearl_Milk_Tea_in_Chun_Shui_Tang.jpg"}};
+  var PHOTO_ALT = { teriyaki: "Teriyaki chicken over rice", pokebowl: "Poke bowl", icedtea: "Iced tea with lemon", nachos: "Loaded nachos", pancakes: "Stack of pancakes with syrup", burger: "Cheeseburger with fries", ribs: "Barbecue ribs", sushi: "Salmon nigiri", donburi: "Chicken and egg rice bowl", chickenrice: "Chicken with rice", friedrice: "Seafood fried rice", pizza: "Pepperoni pizza", garlic: "Cheesy garlic bread", sundae: "Ice cream sundae", tacos: "Tacos", nachos2: "Nachos", churros: "Churros", ramen: "Bowl of ramen", gyoza: "Plate of gyoza dumplings", boba: "Pearl milk tea" };
+  var usedPhotos = {};
+  function photo(key) { usedPhotos[key] = 1; return '<img src="img/food/' + key + '.jpg" alt="' + esc(PHOTO_ALT[key] || "Food") + '" loading="lazy" width="800" height="533">'; }
+  function creditsHtml() {
+    var rows = Object.keys(usedPhotos).map(function (k) { var c = PHOTO_CREDITS[k]; if (!c) return ""; return '<li>' + esc(PHOTO_ALT[k]) + ': ' + esc(c.author) + ', ' + esc(c.license) + ', <a href="' + esc(c.source) + '" target="_blank" rel="noopener">Wikimedia Commons</a></li>'; }).join("");
+    return '<details class="credits"><summary>Photo credits</summary><p>Food photos are generic pictures from Wikimedia Commons under free licenses. They are not photos of these restaurants\' own dishes.</p><ul>' + rows + '</ul></details>';
+  }
+
+  // Demo menu (fictional restaurants, generic food photos). Opened with menu.html?demo=1
   var DEMO = [
     { r: "Golden Grain Rice House", tag: "Fast casual · Downtown", items: [
-      { itemName: "Free Chicken Rice Bowl", pointCost: 13, art: "chickenBowl", description: "Grilled teriyaki chicken over steamed rice with broccoli, carrots and sesame. Show your code to your server." },
-      { itemName: "Free Shrimp Fried Rice", pointCost: 16, art: "friedRice", description: "Wok-fried rice with egg, peas and carrots, topped with garlic shrimp and scallions." },
-      { itemName: "Free Teriyaki Salmon Bowl", pointCost: 20, art: "salmonBowl", description: "Glazed salmon over rice with avocado, edamame and crisp nori." } ] },
+      { itemName: "Free Chicken Rice Bowl", pointCost: 13, art: "teriyaki", description: "Grilled teriyaki chicken over steamed rice with broccoli, carrots and sesame. Show your code to your server." },
+      { itemName: "Free Shrimp Fried Rice", pointCost: 16, art: "friedrice", description: "Wok-fried rice with egg, peas and carrots, topped with garlic shrimp and scallions." },
+      { itemName: "Free Teriyaki Salmon Bowl", pointCost: 20, art: "sushi", description: "Glazed salmon over rice with avocado, edamame and crisp nori." } ] },
     { r: "Sunset Slice Pizza", tag: "Dine-in or pickup", items: [
       { itemName: "Free Large Pepperoni Pizza", pointCost: 15, art: "pizza", description: "Hand-stretched crust, mozzarella and cupped pepperoni, finished with fresh basil." },
-      { itemName: "Free Garlic Knots", pointCost: 6, art: "garlicKnots", description: "Six warm knots brushed with garlic butter, served with house marinara." },
+      { itemName: "Free Garlic Knots", pointCost: 6, art: "garlic", description: "Six warm knots brushed with garlic butter, served with house marinara." },
       { itemName: "Free Brownie Sundae", pointCost: 8, art: "sundae", description: "Warm fudge brownie, vanilla ice cream, hot fudge and a cherry." } ] },
     { r: "Mesa Taco Co.", tag: "Happy hour 3 to 6", items: [
       { itemName: "Free Street Taco Trio", pointCost: 9, art: "tacos", description: "Three corn tortilla tacos with seasoned beef, cilantro, onion and lime." },
-      { itemName: "Free Loaded Nachos", pointCost: 11, art: "nachos", description: "Crisp chips under melted cheese, jalapeños, pico de gallo and salsa." },
+      { itemName: "Free Loaded Nachos", pointCost: 11, art: "nachos2", description: "Crisp chips under melted cheese, jalapeños, pico de gallo and salsa." },
       { itemName: "Free Cinnamon Churros", pointCost: 6, art: "churros", description: "Four golden churros rolled in cinnamon sugar with chocolate dipping sauce." } ] },
     { r: "Neon Noodle Bar", tag: "Lunch and late night", items: [
       { itemName: "Free Tonkotsu Ramen Bowl", pointCost: 12, art: "ramen", description: "Rich pork broth, chewy noodles, chashu, soft egg, corn and scallions." },
@@ -176,13 +188,16 @@
   // Real Las Vegas-area restaurants from the owner's LVR list (public business info only), shown
   // with sample offers to demonstrate the program. Opened with menu.html?demo=vegas
   var VEGAS = [
+    { partner: true, n: "Vanilla Rice's Hibachi House", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146", ig: "hibachihouselv", c: "Hibachi", o: { t: "Free Chicken Bowl", p: 10, art: "teriyaki", real: true, d: "Show your code to your server at Vanilla Rice's Hibachi House to redeem your free Chicken Bowl." } },
+    { partner: true, n: "Poke Heaven", a: "4747 S Maryland Pkwy, Las Vegas, NV 89119", ph: "(702) 730-3030", ig: "poke.heaven", c: "Poke bowls", o: { t: "Free Poke Bowl", p: 13, art: "pokebowl" } },
+    { partner: true, n: "TT Terrace (The Tea Terrace)", a: "6830 S Rainbow Blvd #140, Las Vegas, NV 89118", ph: "(702) 931-0562", ig: "ttterrace", c: "Tea room", o: { t: "Free Tea", p: 6, art: "icedtea" } },
     { n: "The Beach House", a: "790 Coronado Center Dr Ste 130, Henderson, NV 89052", ph: "702-837-7900", ig: "thebeachhousevegas", c: "Bar & grill", city: "Henderson, NV", o: { t: "Free Appetizer", p: 11, art: "nachos" } },
-    { n: "Black Mountain Griddle", a: "72 W Horizon Ridge Pkwy, Henderson, NV 89012", ph: "(702) 954-4704", ig: "black_mountain_griddle", c: "Breakfast and brunch", city: "Henderson, NV", o: { t: "Free Sweet Treat", p: 6, art: "churros" } },
-    { n: "The Irish Spot", a: "1350 E Tropicana Ave, Las Vegas, NV", ph: "702-389-3808", ig: "the.irish.spot", c: "Irish pub", o: { t: "Free Appetizer", p: 6, art: "garlicKnots" } },
-    { n: "Smoking Pig BBQ Company", a: "4379 N Las Vegas Blvd, Las Vegas, NV 89115", ph: "(725) 777-3988", ig: "smokingpigbbqlasvegas", c: "BBQ", o: { t: "Free Entrée", p: 14, art: "tacos" } },
-    { n: "Samurai Japanese Steakhouse & Sushi", a: "1199 W Sunset Rd, Henderson, NV 89014", ph: "(702) 898-8179", ig: "samurai_sushiandteppan.nv", c: "Japanese steakhouse and sushi", city: "Henderson, NV", o: { t: "Free Appetizer", p: 7, art: "gyoza" } },
-    { n: "Doanburi", a: "5840 S Rainbow Blvd, Las Vegas, NV 89118", ph: "(702) 915-7453", ig: "doanburi", c: "Japanese rice bowls", o: { t: "Free Rice Bowl", p: 13, art: "salmonBowl" } },
-    { n: "Peru Chicken", a: "2055 E Tropicana Ave Ste 9, Las Vegas, NV 89119", ig: "peruchickenofficial", c: "Peruvian rotisserie chicken", o: { t: "Free Entrée", p: 13, art: "chickenBowl" } }
+    { n: "Black Mountain Griddle", a: "72 W Horizon Ridge Pkwy, Henderson, NV 89012", ph: "(702) 954-4704", ig: "black_mountain_griddle", c: "Breakfast and brunch", city: "Henderson, NV", o: { t: "Free Pancake Stack", p: 9, art: "pancakes" } },
+    { n: "The Irish Spot", a: "1350 E Tropicana Ave, Las Vegas, NV", ph: "702-389-3808", ig: "the.irish.spot", c: "Irish pub", o: { t: "Free Burger", p: 12, art: "burger" } },
+    { n: "Smoking Pig BBQ Company", a: "4379 N Las Vegas Blvd, Las Vegas, NV 89115", ph: "(725) 777-3988", ig: "smokingpigbbqlasvegas", c: "BBQ", o: { t: "Free Rib Plate", p: 15, art: "ribs" } },
+    { n: "Samurai Japanese Steakhouse & Sushi", a: "1199 W Sunset Rd, Henderson, NV 89014", ph: "(702) 898-8179", ig: "samurai_sushiandteppan.nv", c: "Japanese steakhouse and sushi", city: "Henderson, NV", o: { t: "Free Sushi Plate", p: 12, art: "sushi" } },
+    { n: "Doanburi", a: "5840 S Rainbow Blvd, Las Vegas, NV 89118", ph: "(702) 915-7453", ig: "doanburi", c: "Japanese rice bowls", o: { t: "Free Rice Bowl", p: 13, art: "donburi" } },
+    { n: "Peru Chicken", a: "2055 E Tropicana Ave Ste 9, Las Vegas, NV 89119", ig: "peruchickenofficial", c: "Peruvian rotisserie chicken", o: { t: "Free Chicken Plate", p: 13, art: "chickenrice" } }
   ];
   var ICON = {
     pin: '<svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1a73e8"/><path d="M12 5.2a4.6 4.6 0 0 0-4.6 4.6c0 3.3 4.6 8.6 4.6 8.6s4.6-5.3 4.6-8.6A4.6 4.6 0 0 0 12 5.2zm0 6.3a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4z" fill="#fff"/></svg>',
@@ -195,21 +210,23 @@
     g: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M12 5.2a6.8 6.8 0 1 0 6.6 8.4H12v-3h9.7c.1.5.1 1 .1 1.6A9.8 9.8 0 1 1 12 2.2c2.5 0 4.7.9 6.4 2.4l-2.3 2.3A6.7 6.7 0 0 0 12 5.2z" fill="#4285f4"/><path d="M3.6 8.4l2.6 1.9" stroke="#ea4335" stroke-width="3.4" fill="none"/><path d="M5.6 15.8l2.6-1.9" stroke="#34a853" stroke-width="3.4" fill="none"/><path d="M12 21.8c2.5 0 4.6-.8 6.1-2.3l-2.7-2.1" stroke="#34a853" stroke-width="0" fill="none"/></svg>'
   };
   function renderVegas() {
-    $("eyebrow").textContent = "Las Vegas demo";
+    $("eyebrow").textContent = "Las Vegas";
     $("bizName").textContent = "Las Vegas Restaurants";
-    document.title = "Las Vegas Demo Menu — Key Technologies.si";
-    $("lede").textContent = "Real local restaurants with their address, phone, Instagram, Yelp and Google reviews one tap away, each with a sample points offer.";
-    $("sampleBox").innerHTML = '<div class="sample">Demo only. These are real businesses, listed here with public information. The offers shown are examples made up to show how the program works. None of these restaurants has agreed to any offer, and nothing here can be redeemed.</div>';
-    if (window.FoodArt) document.body.insertAdjacentHTML("afterbegin", FoodArt.defs());
-    var html = "";
-    VEGAS.forEach(function (r) {
+    document.title = "Las Vegas Restaurants — Key Technologies.si";
+    $("lede").textContent = "Real local restaurants. Tap an address for the map, a phone number to call, or Instagram, Yelp and Google for more.";
+    $("sampleBox").innerHTML = '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.</div>';
+    var html = "", shownOthers = false;
+    VEGAS.forEach(function (r, idx) {
+      if (idx === 0) html += '<div class="rest"><b>Founding partners</b><span>Joining the program</span></div>';
+      if (!r.partner && !shownOthers) { shownOthers = true; html += '<div class="rest"><b>More Las Vegas favorites</b><span>Listed with public information</span></div>'; }
       var city = r.city || "Las Vegas, NV";
-      var yelp = "https://www.yelp.com/search?find_desc=" + encodeURIComponent(r.n) + "&find_loc=" + encodeURIComponent(city);
-      var goog = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.n + " " + r.a);
+      var yelp = "https://www.yelp.com/search?find_desc=" + encodeURIComponent(r.n.replace(/ \(.*\)$/, "")) + "&find_loc=" + encodeURIComponent(city);
+      var goog = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.n.replace(/ \(.*\)$/, "") + " " + r.a);
       var insta = "https://www.instagram.com/" + encodeURIComponent(r.ig) + "/";
       var tel = r.ph ? "tel:+1" + String(r.ph).replace(/\D/g, "") : "";
       var mail = r.em ? "mailto:" + r.em : "";
-      html += '<section class="vcard"><h3 class="vname">' + esc(r.n) + '<small>' + esc(r.c) + '</small></h3>' +
+      var tag = r.o.real ? '<span class="sampletag" style="color:var(--green);border-color:rgba(61,220,132,.5);">Offer</span>' : '<span class="sampletag">Sample offer</span>';
+      html += '<section class="vcard"><h3 class="vname">' + esc(r.n) + '<small>' + (r.partner ? 'Founding partner · ' : '') + esc(r.c) + '</small></h3>' +
         '<div class="vinfo">' +
           '<a class="vrow" href="' + goog + '" target="_blank" rel="noopener">' + ICON.pin + '<span><span class="vlab">Address · tap for map</span><span class="vval">' + esc(r.a) + '</span></span></a>' +
           (r.ph ? '<a class="vrow" href="' + tel + '">' + ICON.phone + '<span><span class="vlab">Phone · tap to call</span><span class="vval">' + esc(r.ph) + '</span></span></a>' : '') +
@@ -220,12 +237,12 @@
           '<a class="vlink" href="' + yelp + '" target="_blank" rel="noopener">' + ICON.yelp + 'Yelp</a>' +
           '<a class="vlink" href="' + goog + '" target="_blank" rel="noopener">' + ICON.g + 'Google reviews</a>' +
         '</div><p class="vnote">Map, Instagram, Yelp and Google open in a new tab. Close it to come back here.</p>' +
-        '<article class="dish has-pic"><div class="art">' + (window.FoodArt ? FoodArt.svg(r.o.art) : "") + '</div>' +
-          '<div><span class="sampletag">Sample offer</span><div class="name">' + esc(r.o.t) + '</div></div>' +
+        '<article class="dish has-pic"><div class="art">' + photo(r.o.art) + '</div>' +
+          '<div>' + tag + '<div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
-          '<p class="desc">Example only, to show how a points offer looks on this restaurant\'s listing. Picture is an illustration.</p></article></section>';
+          '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p></article></section>';
     });
-    $("menu").innerHTML = html;
+    $("menu").innerHTML = html + creditsHtml();
   }
 
   function renderDemo(settings) {
@@ -233,20 +250,19 @@
     $("bizName").textContent = "Vegas Eats Demo";
     document.title = "Demo Menu — Key Technologies.si";
     $("lede").textContent = "A sample of what a points menu looks like with four restaurants. Tap any item to see how redeeming works.";
-    $("sampleBox").innerHTML = '<div class="sample">Demo only. These restaurants and pictures are made up to show how the program looks. Nothing here can be redeemed.</div>';
-    if (window.FoodArt) document.body.insertAdjacentHTML("afterbegin", FoodArt.defs());
+    $("sampleBox").innerHTML = '<div class="sample">Demo only. These restaurants are made up to show how the program looks, and the food photos are generic. Nothing here can be redeemed.</div>';
     var html = "";
     DEMO.forEach(function (g) {
       html += '<div class="rest"><b>' + esc(g.r) + '</b><span>' + esc(g.tag) + '</span></div>';
       g.items.forEach(function (it) {
-        html += '<article class="dish has-pic"><div class="art">' + (window.FoodArt ? FoodArt.svg(it.art) : "") + '</div>' +
+        html += '<article class="dish has-pic"><div class="art">' + photo(it.art) + '</div>' +
           '<div class="name">' + esc(it.itemName) + '</div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description) + '</p>' +
           '<div class="act"><a class="btn btn-primary" href="rewards.html">Join free to redeem</a></div></article>';
       });
     });
-    $("menu").innerHTML = html;
+    $("menu").innerHTML = html + creditsHtml();
   }
 
   function render(biz, items, sample, settings) {
@@ -290,7 +306,7 @@
   }
 
   var demoMode = new URLSearchParams(location.search).get("demo");
-  if (demoMode) { var go = function () { demoMode === "vegas" ? renderVegas() : renderDemo({}); }; (window.FoodArt ? go() : window.addEventListener("load", go)); return; }
+  if (demoMode) { demoMode === "vegas" ? renderVegas() : renderDemo({}); return; }
   Promise.all([get("/lvr_points/catalog"), get("/lvr_points/directory"), get("/lvr_points/settings")]).then(function (r) {
     var catalog = r[0] || {}, directory = r[1] || {}, settings = r[2] || {};
     var slug = slugWanted && catalog[slugWanted] ? slugWanted : Object.keys(catalog)[0];
