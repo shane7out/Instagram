@@ -77,7 +77,8 @@
   .tally .tbar i{display:block;height:100%;border-radius:99px;background:#3ddc84;}
   .tally.low .tbar i{background:#f0c239;} .tally.out .tbar i{background:#ff8a8a;}
   .tally.unset{color:var(--ink-dim);font-style:italic;}
-  .tally .fine{margin-top:8px;font-size:12px;line-height:1.45;color:var(--ink-dim);font-weight:500;}
+  .tally .fine{display:none;}
+  .fineprint{margin:4px 0 18px;font-size:12px;line-height:1.5;color:var(--ink-dim);}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f6c744;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f6c744;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(246,199,68,.4);}
@@ -118,6 +119,28 @@
   h2{font-size:16px;font-weight:700;margin:0 0 12px;}
   .items{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
   .item-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .rest-group{margin-bottom:22px;}
+  .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;}
+  .rest-name{font-size:19px;font-weight:800;letter-spacing:-.01em;min-width:0;}
+  .rest-chip{flex:none;font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:99px;border:1px solid var(--line);color:var(--ink-dim);white-space:nowrap;}
+  .rest-chip.on{color:#ffe27a;border-color:rgba(246,199,68,.7);background:rgba(246,199,68,.12);box-shadow:0 0 14px rgba(246,199,68,.25);}
+  .item-card.ready{border-color:rgba(246,199,68,.75);box-shadow:0 0 0 1px rgba(246,199,68,.25),0 0 22px rgba(246,199,68,.22);background:linear-gradient(180deg,rgba(246,199,68,.07),var(--card) 55%);}
+  .item-card.locked{opacity:.86;}
+  .item-photo{display:block;width:100%;height:132px;object-fit:cover;border-radius:10px;margin:0 0 12px;}
+  .item-card.locked .item-photo{filter:grayscale(.55) brightness(.8);}
+  .coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff0a8,#f6c744 55%,#b9770e);box-shadow:0 0 8px rgba(246,199,68,.6);vertical-align:-2px;margin-right:5px;}
+  .item-card.ready .item-cost{color:#ffe27a;text-shadow:0 0 10px rgba(246,199,68,.5);}
+  .goal{margin:10px 0 2px;font-size:13px;font-weight:700;}
+  .goal.ok{color:#ffe27a;}
+  .goal.need{color:var(--ink-dim);}
+  .goal .gbar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:6px;overflow:hidden;}
+  .goal .gbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#168fff,#59b5ff);box-shadow:0 0 10px rgba(89,181,255,.6);}
+  .goal.ok .gbar i{background:linear-gradient(90deg,#f6c744,#ffe27a);box-shadow:0 0 10px rgba(246,199,68,.7);}
+  .ready-pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:#241a00;background:linear-gradient(180deg,#ffe27a,#f6c744);border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:2px;}
+  @media (prefers-reduced-motion:no-preference){.item-card.ready .ready-pill{animation:readyPulse 1.8s ease-in-out infinite;}}
+  @keyframes readyPulse{0%,100%{box-shadow:0 0 0 0 rgba(246,199,68,.0);}50%{box-shadow:0 0 12px 2px rgba(246,199,68,.7);}}
+  .demo-bar{background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;color:#b9dcff;}
+  .demo-bar a{color:#fff;font-weight:800;margin-right:10px;}
   .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
   .item-biz{font-size:12.5px;color:var(--ink-dim);font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
   .item-name{font-size:17px;font-weight:800;margin-top:2px;}
@@ -128,6 +151,7 @@
     background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
   }
   .redeem-btn:disabled{background:var(--bg-2);color:var(--ink-dim);cursor:default;}
+  .item-card.ready .redeem-btn{background:linear-gradient(180deg,#ffe27a,#f6c744);color:#241a00;}
   .redeem-btn:not(:disabled):active{background:#0f64b2;}
 
   .empty{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
@@ -209,7 +233,7 @@
 
 <div class="page-wrap">
   <div id="content"><div class="empty">Loading…</div></div>
-  <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small>points</small></span></div>
+  <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
       <span id="chestModalArt" style="display:inline-block;min-height:140px;"></span>
@@ -244,6 +268,9 @@
   function inVertical(slug) { var d = directory && directory[slug]; return ((d && d.category) || 'restaurants') === VERTICAL; }
 
   var params = new URLSearchParams(location.search);
+  // ?demo=15 shows this screen with a pretend member who has 15 points. Nothing is read from or written to the database.
+  var DEMO = params.get('demo') !== null;
+  var DEMO_PTS = Math.max(0, parseInt(params.get('demo'), 10) || 15);
   var contentEl = document.getElementById('content');
 
   // A token in the URL (e.g. a link texted to a new device) always wins and
@@ -357,7 +384,9 @@
     });
   }
 
-  if (!token) {
+  if (DEMO) {
+    startDemo();
+  } else if (!token) {
     showNoAccount();
   } else {
     loadWallet();
@@ -389,17 +418,46 @@
     return items;
   }
 
+
+  function readyCount(items) { var p = wallet.points || 0; return pausedFlag('redemptions') ? 0 : (items || []).filter(function(i){ return p >= i.pointCost; }).length; }
+  function demoItems() {
+    var soon = function (d) { return Date.now() + d * 86400000; };
+    var rows = [
+      ['golden', 'Golden Grain Rice House', 'Free Chicken Rice Bowl', 13, 'teriyaki', 50, 38, 40],
+      ['golden', 'Golden Grain Rice House', 'Free Shrimp Fried Rice', 16, 'friedrice', 25, 12, 33],
+      ['golden', 'Golden Grain Rice House', 'Free Salmon Bowl', 24, 'sushi', 20, 3, 25],
+      ['sunset', 'Sunset Slice Pizza', 'Free Garlic Knots', 6, 'garlic', 40, 26, 28],
+      ['sunset', 'Sunset Slice Pizza', 'Free Brownie Sundae', 8, 'sundae', 30, 2, 20],
+      ['sunset', 'Sunset Slice Pizza', 'Free Large Pepperoni Pizza', 18, 'pizza', 25, 9, 45],
+      ['mesa', 'Mesa Taco Co.', 'Free Cinnamon Churros', 6, 'churros', 60, 41, 30],
+      ['mesa', 'Mesa Taco Co.', 'Free Street Taco Trio', 9, 'tacos', 30, 17, 30],
+      ['mesa', 'Mesa Taco Co.', 'Free Loaded Nachos', 11, 'nachos2', 35, 30, 35],
+      ['neon', 'Neon Noodle Bar', 'Free Brown Sugar Boba Tea', 5, 'boba', 50, 44, 30],
+      ['neon', 'Neon Noodle Bar', 'Free Pan-Fried Gyoza (6)', 7, 'gyoza', 25, 11, 30],
+      ['neon', 'Neon Noodle Bar', 'Free Tonkotsu Ramen Bowl', 12, 'ramen', 30, 4, 30]
+    ];
+    return rows.map(function (r, i) {
+      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '' };
+    });
+  }
+  function startDemo() {
+    wallet = { name: 'Demo Player', points: DEMO_PTS, joinedAt: Date.now() - 2 * 86400000 };
+    memberKey = null; appSettings = {}; myReceipts = {}; directory = {};
+    render({}, {});
+  }
+
   function render(catalog, allRedemptions) {
-    var items = flattenCatalog(catalog, allRedemptions);
+    var items = DEMO ? demoItems() : flattenCatalog(catalog, allRedemptions);
 
     var html =
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,194,57,.1);border:1px solid rgba(240,194,57,.45);color:#f0c239;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
+      (DEMO ? '<div class="demo-bar"><b>Demo preview.</b> A pretend member with ' + DEMO_PTS + ' points. Nothing here is real or saved. Try: <a href="?demo=5">5 pts</a><a href="?demo=15">15 pts</a><a href="?demo=20">20 pts</a><a href="?demo=30">30 pts</a></div>' : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
-        '<div class="balance-label">points available</div></div>' +
+        '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffe27a;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
         '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
       '</div>' +
       earnPanelHtml() +
@@ -408,18 +466,34 @@
     if (!items.length) {
       html += '<div class="empty">No offers available right now — check back soon.</div>';
     } else {
-      html += '<div class="items">' + items.map(function(item){
-        var afford = (wallet.points || 0) >= item.pointCost && !pausedFlag('redemptions');
-        return '<div class="item-card" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
-          '<div class="item-top">' +
-            '<div><div class="item-biz">' + escapeHtml(item.bizName || item.slug) + '</div><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div></div>' +
-            '<div class="item-cost">' + item.pointCost + ' pts</div>' +
-          '</div>' +
-          (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
-          tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
-          '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pausedFlag('redemptions') ? 'Paused for now' : (afford ? 'Redeem' : 'Not enough points')) + '</button>' +
-        '</div>';
-      }).join('') + '</div>';
+      var groups = {}, order = [], pts = wallet.points || 0, paused = pausedFlag('redemptions');
+      items.forEach(function(it){ if (!groups[it.slug]) { groups[it.slug] = { name: it.bizName || it.slug, items: [] }; order.push(it.slug); } groups[it.slug].items.push(it); });
+      order.sort(function(x, y){ return Math.min.apply(null, groups[x].items.map(function(i){ return i.pointCost; })) - Math.min.apply(null, groups[y].items.map(function(i){ return i.pointCost; })); });
+      html += order.map(function(k){
+        var g = groups[k]; g.items.sort(function(x, y){ return x.pointCost - y.pointCost; });
+        var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
+        var min = g.items[0].pointCost;
+        return '<div class="rest-group"><div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
+          '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
+          '<div class="items">' + g.items.map(function(item){
+            var afford = pts >= item.pointCost && !paused;
+            var pic = item.photoUrl || item.photo || '';
+            var goal = afford
+              ? '<div class="goal ok">✓ You can get this now<div class="gbar"><i style="width:100%"></i></div></div>'
+              : '<div class="goal need">🔒 ' + (item.pointCost - pts) + ' more point' + (item.pointCost - pts === 1 ? '' : 's') + ' to unlock · you have ' + pts + ' of ' + item.pointCost + '<div class="gbar"><i style="width:' + Math.min(100, Math.round(100 * pts / item.pointCost)) + '%"></i></div></div>';
+            return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
+              (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
+              '<div class="item-top">' +
+                '<div><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + (afford ? '<span class="ready-pill">READY</span>' : '') + '</div></div>' +
+                '<div class="item-cost"><span class="coin"></span>' + item.pointCost + '</div>' +
+              '</div>' +
+              (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
+              goal +
+              tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
+              '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
+            '</div>';
+          }).join('') + '</div></div>';
+      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
     }
 
     var mine = [];
@@ -463,7 +537,7 @@
 
     contentEl.innerHTML = html;
     bindEarnPanel();
-    bindInvite();
+    if (!DEMO) bindInvite();
     startPolling();
     tickChest();
     bindMini();
@@ -506,6 +580,7 @@
     return attempt(0);
   }
   function inviteCardHtml() {
+    if (DEMO) return '';
     if (!refSettings || refSettings.enabled !== true) return '';
     var extra = refSettings.l2Pct > 0 ? ' and ' + refSettings.l2Pct + '% of what their friends earn' : '';
     return '<div class="invite-card" id="inviteCard"><h2>Invite friends</h2>' +
@@ -643,12 +718,13 @@
   function bindMini() {
     var card = document.querySelector('.balance-card'), num = document.getElementById('balanceNum'), bar = document.getElementById('miniBal'), mn = document.getElementById('miniNum');
     if (!card || !num || !bar || !('IntersectionObserver' in window)) return;
-    mn.textContent = num.textContent;
+    function setMini() { var r = document.querySelectorAll('.item-card.ready').length; mn.textContent = num.textContent; mn.nextSibling.textContent = ' points' + (r ? ' · ' + r + ' ready' : ''); }
+    setMini();
     if (miniObs) miniObs.disconnect();
     miniObs = new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { rootMargin: '-60px 0px 0px 0px' });
     miniObs.observe(card);
     if (balObs) balObs.disconnect();
-    balObs = new MutationObserver(function () { mn.textContent = num.textContent; });
+    balObs = new MutationObserver(function () { setMini(); });
     balObs.observe(num, { childList: true, characterData: true, subtree: true });
   }
 
@@ -694,6 +770,7 @@
   }
 
   function earnPanelHtml() {
+    if (DEMO) return '';
     var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); });
     if (!keys.length) return '';
     if (pausedFlag('receipts')) return '<div class="earn-card"><h2>Earn points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>';
@@ -824,6 +901,12 @@
 
   function showConfirm(item, card) {
     if (card.querySelector('.confirm-box')) return;
+    if (DEMO) {
+      var d = document.createElement('div'); d.className = 'confirm-box';
+      d.innerHTML = '<div><b>Demo only.</b> Nothing was spent. In the real app this takes ' + item.pointCost + ' points and gives you a code to show your server.</div><div class="confirm-row"><button class="confirm-no" data-act="cancel">Close</button></div>';
+      card.appendChild(d); d.querySelector('[data-act="cancel"]').addEventListener('click', function(){ d.remove(); });
+      return;
+    }
     var box = document.createElement('div');
     box.className = 'confirm-box';
     box.innerHTML =
