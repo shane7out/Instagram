@@ -1,0 +1,7 @@
+{
+  "petgame": { "$other": { ".read": false, ".write": false } },
+  "$rest": {
+    ".read": true,
+    ".write": "newData.exists() && (!data.child('customrecords').exists() || newData.child('customrecords').exists()) && (!data.child('staging_approved').exists() || newData.child('staging_approved').exists()) && (!data.child('staging_added').exists() || newData.child('staging_added').exists()) && (!data.child('records').exists() || newData.child('records').exists())"
+  }
+}
