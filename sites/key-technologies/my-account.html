@@ -70,19 +70,19 @@
   .tally{margin:10px 0 2px;font-size:14px;}
   .tally .trow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;}
   .tally .tleft{color:#3ddc84;}
-  .tally .tlow{color:#f0c239;}
+  .tally .tlow{color:#f0a91a;}
   .tally .tout{color:#ff8a8a;}
   .tally .texp{color:var(--ink-dim);font-weight:600;}
   .tally .tbar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:7px;overflow:hidden;}
   .tally .tbar i{display:block;height:100%;border-radius:99px;background:#3ddc84;}
-  .tally.low .tbar i{background:#f0c239;} .tally.out .tbar i{background:#ff8a8a;}
+  .tally.low .tbar i{background:#f0a91a;} .tally.out .tbar i{background:#ff8a8a;}
   .tally.unset{color:var(--ink-dim);font-style:italic;}
   .tally .fine{display:none;}
   .fineprint{margin:4px 0 18px;font-size:12px;line-height:1.5;color:var(--ink-dim);}
-  .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f6c744;}
+  .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f0a91a;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
-  .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f6c744;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(246,199,68,.4);}
-  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 0 10px rgba(246,199,68,.45));}
+  .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f0a91a;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(240,169,26,.4);}
+  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 0 10px rgba(240,169,26,.45));}
   .chest-svg .lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform .7s cubic-bezier(.3,1.5,.5,1);}
   .chest-svg .inner{opacity:0;transition:opacity .5s;}
   .chest-svg .coin{opacity:0;transform:translateY(10px);transition:opacity .4s,transform .7s cubic-bezier(.2,1.4,.4,1);}
@@ -123,22 +123,22 @@
   .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;}
   .rest-name{font-size:19px;font-weight:800;letter-spacing:-.01em;min-width:0;}
   .rest-chip{flex:none;font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:99px;border:1px solid var(--line);color:var(--ink-dim);white-space:nowrap;}
-  .rest-chip.on{color:#ffe27a;border-color:rgba(246,199,68,.7);background:rgba(246,199,68,.12);box-shadow:0 0 14px rgba(246,199,68,.25);}
-  .item-card.ready{border-color:rgba(246,199,68,.75);box-shadow:0 0 0 1px rgba(246,199,68,.25),0 0 22px rgba(246,199,68,.22);background:linear-gradient(180deg,rgba(246,199,68,.07),var(--card) 55%);}
+  .rest-chip.on{color:#ffd35c;border-color:rgba(240,169,26,.7);background:rgba(240,169,26,.12);box-shadow:0 0 14px rgba(240,169,26,.25);}
+  .item-card.ready{border-color:rgba(240,169,26,.75);box-shadow:0 0 0 1px rgba(240,169,26,.25),0 0 22px rgba(240,169,26,.22);background:linear-gradient(180deg,rgba(240,169,26,.07),var(--card) 55%);}
   .item-card.locked{opacity:.86;}
   .item-photo{display:block;width:100%;height:132px;object-fit:cover;border-radius:10px;margin:0 0 12px;}
   .item-card.locked .item-photo{filter:grayscale(.55) brightness(.8);}
-  .coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff0a8,#f6c744 55%,#b9770e);box-shadow:0 0 8px rgba(246,199,68,.6);vertical-align:-2px;margin-right:5px;}
-  .item-card.ready .item-cost{color:#ffe27a;text-shadow:0 0 10px rgba(246,199,68,.5);}
+  .coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,#f0a91a 55%,#b9770e);box-shadow:0 0 8px rgba(240,169,26,.6);vertical-align:-2px;margin-right:5px;}
+  .item-card.ready .item-cost{color:#ffd35c;text-shadow:0 0 10px rgba(240,169,26,.5);}
   .goal{margin:10px 0 2px;font-size:13px;font-weight:700;}
-  .goal.ok{color:#ffe27a;}
+  .goal.ok{color:#ffd35c;}
   .goal.need{color:var(--ink-dim);}
   .goal .gbar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:6px;overflow:hidden;}
   .goal .gbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#168fff,#59b5ff);box-shadow:0 0 10px rgba(89,181,255,.6);}
-  .goal.ok .gbar i{background:linear-gradient(90deg,#f6c744,#ffe27a);box-shadow:0 0 10px rgba(246,199,68,.7);}
-  .ready-pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:#241a00;background:linear-gradient(180deg,#ffe27a,#f6c744);border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:2px;}
+  .goal.ok .gbar i{background:linear-gradient(90deg,#e8a317,#ffd35c);box-shadow:0 0 10px rgba(240,169,26,.7);}
+  .ready-pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:2px;}
   @media (prefers-reduced-motion:no-preference){.item-card.ready .ready-pill{animation:readyPulse 1.8s ease-in-out infinite;}}
-  @keyframes readyPulse{0%,100%{box-shadow:0 0 0 0 rgba(246,199,68,.0);}50%{box-shadow:0 0 12px 2px rgba(246,199,68,.7);}}
+  @keyframes readyPulse{0%,100%{box-shadow:0 0 0 0 rgba(240,169,26,.0);}50%{box-shadow:0 0 12px 2px rgba(240,169,26,.7);}}
   .demo-bar{background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;color:#b9dcff;}
   .demo-bar a{color:#fff;font-weight:800;margin-right:10px;}
   .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
@@ -151,7 +151,7 @@
     background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
   }
   .redeem-btn:disabled{background:var(--bg-2);color:var(--ink-dim);cursor:default;}
-  .item-card.ready .redeem-btn{background:linear-gradient(180deg,#ffe27a,#f6c744);color:#241a00;}
+  .item-card.ready .redeem-btn{background:linear-gradient(180deg,#ffd35c,#e8a317);color:#3a2200;}
   .redeem-btn:not(:disabled):active{background:#0f64b2;}
 
   .empty{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
@@ -189,7 +189,7 @@
   .earn-msg{font-size:13px;min-height:18px;margin-top:10px;}
   .earn-msg.err{color:var(--red);} .earn-msg.ok{color:var(--green);}
   .rcpt-badge{font-size:11px;font-weight:700;text-align:right;}
-  .rcpt-badge.pending{color:#f0c239;} .rcpt-badge.approved{color:var(--green);} .rcpt-badge.rejected{color:var(--red);}
+  .rcpt-badge.pending{color:#f0a91a;} .rcpt-badge.approved{color:var(--green);} .rcpt-badge.rejected{color:var(--red);}
   .notice{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:700;line-height:1.4;}
   .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
   .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
@@ -450,14 +450,14 @@
     var items = DEMO ? demoItems() : flattenCatalog(catalog, allRedemptions);
 
     var html =
-      (appSettings.banner ? '<div class="notice" style="background:rgba(240,194,57,.1);border:1px solid rgba(240,194,57,.45);color:#f0c239;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
+      (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       (DEMO ? '<div class="demo-bar"><b>Demo preview.</b> A pretend member with ' + DEMO_PTS + ' points. Nothing here is real or saved. Try: <a href="?demo=5">5 pts</a><a href="?demo=15">15 pts</a><a href="?demo=20">20 pts</a><a href="?demo=30">30 pts</a></div>' : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
-        '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffe27a;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
+        '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
         '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
       '</div>' +
       earnPanelHtml() +
@@ -614,7 +614,7 @@
       '<path d="M12 50h96v42a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#8a5a00" stroke-width="3" stroke-linejoin="round"/>' +
       '<rect x="22" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/><rect x="87" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/>' +
       '<ellipse class="inner" cx="60" cy="50" rx="44" ry="8" fill="url(#cgGlow)"/>' +
-      '<circle class="coin c1" cx="38" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c2" cx="60" cy="44" r="9" fill="#ffe27a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c3" cx="82" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c4" cx="50" cy="48" r="6" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/>' +
+      '<circle class="coin c1" cx="38" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c2" cx="60" cy="44" r="9" fill="#ffd35c" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c3" cx="82" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c4" cx="50" cy="48" r="6" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/>' +
       '<g class="lid"><path d="M12 50V36a48 30 0 0 1 96 0v14z" fill="url(#cgLid)" stroke="#8a5a00" stroke-width="3" stroke-linejoin="round"/>' +
       '<g clip-path="url(#cgLidClip)"><rect x="22" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/><rect x="87" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/></g>' +
       '<path d="M20 38a42 25 0 0 1 22-20" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round"/></g>' +
@@ -624,7 +624,7 @@
   var CHEST_DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
     '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#d9930d"/></linearGradient>' +
     '<linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#ffcf3f"/><stop offset="1" stop-color="#e8a317"/></linearGradient>' +
-    '<linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f0a914"/><stop offset=".5" stop-color="#ffe27a"/><stop offset="1" stop-color="#e09a0f"/></linearGradient>' +
+    '<linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f0a914"/><stop offset=".5" stop-color="#ffd35c"/><stop offset="1" stop-color="#e09a0f"/></linearGradient>' +
     '<linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient>' +
     '<radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>' +
     '<clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
