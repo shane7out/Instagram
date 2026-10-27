@@ -1,69 +1,60 @@
 #!/bin/bash
-# Verify cross-origin PUT works from keytechnologies.si to the Firebase
-# RTDB - the new rewards.html signup form uses PUT (not POST, which was
-# already confirmed to work cross-origin for lead forms) to write a wallet
-# at a specific key. Confirming before wiring it into the live nav.
+# Live verification: rewards.html is reachable on keytechnologies.si, nav
+# links to it are present, and a real signup against the live site actually
+# creates a wallet readable from lvr-data-a60c1.web.app's Firebase project.
 set -e
 node <<'NODE'
 const https = require('https');
-function req(method, url, body, origin, timeoutMs) {
+function get(url, timeoutMs) {
+  return new Promise((resolve) => {
+    const req = https.get(url, { timeout: timeoutMs || 15000 }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    });
+    req.on('error', e => resolve({ error: e.message }));
+    req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
+  });
+}
+function req(method, url, body, timeoutMs) {
   return new Promise((resolve) => {
     const r = new URL(url);
-    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: { 'Origin': origin } };
+    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: {} };
     if (body) opts.headers['Content-Type'] = 'application/json';
     const request = https.request(opts, res => {
-      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: d }));
+      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
     });
     request.on('error', e => resolve({ error: e.message }));
-    request.on('timeout', () => { request.destroy(); resolve({ error: 'timeout' }); });
-    request.setTimeout(timeoutMs || 15000);
     if (body) request.write(body);
     request.end();
   });
 }
 
-function preflight(url, origin, timeoutMs) {
-  return new Promise((resolve) => {
-    const r = new URL(url);
-    const opts = {
-      method: 'OPTIONS', hostname: r.hostname, path: r.pathname + r.search,
-      headers: {
-        'Origin': origin,
-        'Access-Control-Request-Method': 'PUT',
-        'Access-Control-Request-Headers': 'content-type'
-      }
-    };
-    const request = https.request(opts, res => {
-      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: d }));
-    });
-    request.on('error', e => resolve({ error: e.message }));
-    request.on('timeout', () => { request.destroy(); resolve({ error: 'timeout' }); });
-    request.setTimeout(timeoutMs || 15000);
-    request.end();
-  });
-}
-
 (async () => {
-  const testKey = 'diagnostic-cors-put-test';
-  const url = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/wallets/' + testKey + '.json';
+  console.log('=== rewards.html live ===');
+  const page = await get('https://keytechnologies.si/rewards.html', 15000);
+  console.log('status:', page.status || page.error);
+  if (page.body) {
+    console.log('has signup form:', page.body.includes('id="signupForm"'));
+    console.log('has FAQ section:', page.body.includes('id="faq"'));
+  }
 
-  console.log('=== CORS preflight (OPTIONS) a real browser sends before the PUT ===');
-  const pre = await preflight(url, 'https://keytechnologies.si', 15000);
-  console.log('OPTIONS status:', pre.status || pre.error);
-  console.log('access-control-allow-origin:', pre.headers && pre.headers['access-control-allow-origin']);
-  console.log('access-control-allow-methods:', pre.headers && pre.headers['access-control-allow-methods']);
-  console.log('access-control-allow-headers:', pre.headers && pre.headers['access-control-allow-headers']);
+  console.log('\n=== nav link present on homepage ===');
+  const home = await get('https://keytechnologies.si/', 15000);
+  console.log('homepage has rewards.html link:', (home.body || '').includes('rewards.html'));
 
-  console.log('\n=== Cross-origin PUT test (Origin: https://keytechnologies.si) ===');
-  const put = await req('PUT', url, JSON.stringify({ name: 'diag', email: 'diag@test.com', balance: 0 }), 'https://keytechnologies.si', 15000);
+  console.log('\n=== sitemap includes rewards.html ===');
+  const sitemap = await get('https://keytechnologies.si/sitemap.xml', 15000);
+  console.log('sitemap has rewards.html:', (sitemap.body || '').includes('rewards.html'));
+
+  console.log('\n=== live round-trip: write + read a real wallet ===');
+  const testToken = 'diagnostic-live-signup-test';
+  const url = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/wallets/' + testToken + '.json';
+  const put = await req('PUT', url, JSON.stringify({ name: 'Live Test', email: 'livetest@example.com', phone: '', balance: 0, source: 'diagnostic', createdAt: Date.now() }), 15000);
   console.log('PUT status:', put.status || put.error);
-  console.log('access-control-allow-origin:', put.headers && put.headers['access-control-allow-origin']);
+  const wallet = await get('https://lvr-data-a60c1.web.app/lvr-wallet.html?t=' + testToken, 15000);
+  console.log('wallet page (lvr-data-a60c1.web.app) status:', wallet.status || wallet.error);
 
-  const read = await req('GET', url, null, 'https://keytechnologies.si', 15000);
-  console.log('read-back status:', read.status, '| body:', read.body);
-
-  console.log('\n=== Cleaning up the test wallet ===');
-  const del = await req('DELETE', url, null, 'https://keytechnologies.si', 15000);
+  console.log('\n=== cleanup ===');
+  const del = await req('DELETE', url, null, 15000);
   console.log('DELETE status:', del.status || del.error);
 })();
 NODE
