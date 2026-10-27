@@ -102,7 +102,7 @@
   </header>
   <div class="tabs" id="tabs">
     <span class="tab active" data-v="receipts">Receipts</span>
-    <span class="tab" data-v="restaurants">Restaurants</span>
+    <span class="tab" data-v="restaurants">Businesses</span>
     <span class="tab" data-v="earnings">Earnings</span>
     <span class="tab" data-v="catalog">Catalog</span>
     <span class="tab" data-v="redemptions">Redemptions</span>
@@ -246,6 +246,8 @@
   // RECEIPTS TAB - approve = points land in the member's balance
   // ========================================================================
   function money(n) { return '$' + Number(n || 0).toFixed(2); }
+  var CATEGORIES = [['restaurants','Restaurant'],['fitness','Gym / Fitness'],['memberships','Membership'],['painting','Painting'],['construction','Construction'],['beauty','Beauty / Spa'],['auto','Auto'],['other','Other']];
+  function catLabel(id) { var c = CATEGORIES.filter(function(x){ return x[0] === (id || 'restaurants'); })[0]; return c ? c[1] : id; }
   function bizOf(slug) { return (restaurants[slug] && restaurants[slug].bizName) || (directory[slug] && directory[slug].bizName) || slug; }
   function whenOf(ts) { return ts ? new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + new Date(ts).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : ''; }
 
@@ -356,13 +358,13 @@
     Object.keys(restaurants).forEach(function(k){ slugs[k] = 1; });
     Object.keys(directory).forEach(function(k){ slugs[k] = 1; });
     var list = Object.keys(slugs);
-    var html = '<button class="btn btn-primary" id="newRestBtn" style="margin-bottom:14px;">+ New Restaurant</button>';
+    var html = '<button class="btn btn-primary" id="newRestBtn" style="margin-bottom:14px;">+ New Business</button>';
     html += list.length ? list.map(function(slug){
       var r = restaurants[slug] || {}, d = directory[slug] || {};
       return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.bizName || d.bizName || slug) + '</div>' +
-        '<div class="row-sub">' + (d.active === false ? 'Hidden from members' : 'Shown to members') + ' · earns ' + (d.earnRate || 0) + ' pts per $1 · your commission ' + (r.commissionPct || 0) + '%</div></div></div>' +
+        '<div class="row-sub">' + (d.active === false ? 'Hidden from members' : 'Shown to members') + ' · ' + catLabel(d.category) + ' · earns ' + (d.earnRate || 0) + ' pts per $1 · your commission ' + (r.commissionPct || 0) + '%</div></div></div>' +
         '<div class="row-actions"><button data-act="edit-rest" data-slug="' + escapeHtml(slug) + '">Edit</button></div></div>';
-    }).join('') : '<div class="empty-note">No restaurants yet. Add one so members can submit receipts for it.</div>';
+    }).join('') : '<div class="empty-note">No businesses yet. Add one so members can submit receipts for it.</div>';
     view.innerHTML = html;
     document.getElementById('newRestBtn').addEventListener('click', function(){ renderRestForm(null); });
     view.querySelectorAll('[data-act="edit-rest"]').forEach(function(b){
@@ -376,7 +378,8 @@
     view.innerHTML =
       '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
       '<div class="form-box">' +
-        '<div class="field"><label>Restaurant name</label><input type="text" id="rName" value="' + escapeHtml(r.bizName || d.bizName || '') + '"></div>' +
+        '<div class="field"><label>Category (the member app only shows its own category - LVR shows Restaurants)</label><select id="rCat" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:14px;">' + CATEGORIES.map(function(c){ return '<option value="' + c[0] + '"' + ((d.category || 'restaurants') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div>' +
+        '<div class="field"><label>Business name</label><input type="text" id="rName" value="' + escapeHtml(r.bizName || d.bizName || '') + '"></div>' +
         '<div class="field"><label>Slug (letters/numbers/dashes, cannot change later)</label><input type="text" id="rSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
         '<div class="field"><label>Restaurant portal PIN (optional - only if they will log in to see/verify redemptions)</label><input type="text" id="rPin" value="' + escapeHtml(r.pin || '') + '"></div>' +
         '<div class="field-row">' +
@@ -384,7 +387,7 @@
           '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : '') + '"></div>' +
         '</div>' +
         '<div class="checkbox-row"><input type="checkbox" id="rActive"' + (d.active !== false ? ' checked' : '') + '><label for="rActive">Show to members (they can submit receipts for it)</label></div>' +
-        '<div class="form-actions"><button class="btn btn-primary" id="rSave">' + (isEdit ? 'Save Changes' : 'Add Restaurant') + '</button><button class="btn" id="rCancel">Cancel</button></div>' +
+        '<div class="form-actions"><button class="btn btn-primary" id="rSave">' + (isEdit ? 'Save Changes' : 'Add Business') + '</button><button class="btn" id="rCancel">Cancel</button></div>' +
       '</div>';
     document.getElementById('backBtn').addEventListener('click', renderRestaurantsTab);
     document.getElementById('rCancel').addEventListener('click', renderRestaurantsTab);
@@ -396,7 +399,7 @@
       var rate = parseFloat(document.getElementById('rRate').value);
       var comm = parseFloat(document.getElementById('rComm').value);
       var restPayload = { bizName: name, pin: document.getElementById('rPin').value.trim(), commissionPct: isNaN(comm) ? 0 : comm };
-      var dirPayload = { bizName: name, earnRate: isNaN(rate) ? 0 : rate, active: document.getElementById('rActive').checked };
+      var dirPayload = { bizName: name, category: document.getElementById('rCat').value, earnRate: isNaN(rate) ? 0 : rate, active: document.getElementById('rActive').checked };
       Promise.all([ fbPatch(RESTAURANTS_PATH + '/' + newSlug, restPayload), fbPatch(DIRECTORY_PATH + '/' + newSlug, dirPayload) ]).then(function(rs){
         if (!rs[0].ok || !rs[1].ok) throw new Error('save failed');
         restaurants[newSlug] = Object.assign({}, restaurants[newSlug] || {}, restPayload);

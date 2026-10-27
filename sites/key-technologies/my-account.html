@@ -170,6 +170,12 @@
   var RECEIPTS_PATH = '/lvr_points/receipts';
   var PHOTOS_PATH = '/lvr_points/receipt_photos';
   var TOKEN_KEY = 'lvr_wallet_token';
+  // This app is the LVR (Las Vegas Restaurants) app: it only ever shows
+  // businesses whose directory category is 'restaurants'. A business with
+  // no category is treated as a restaurant. Another vertical would be its
+  // own app with a different VERTICAL value.
+  var VERTICAL = 'restaurants';
+  function inVertical(slug) { var d = directory && directory[slug]; return ((d && d.category) || 'restaurants') === VERTICAL; }
 
   var params = new URLSearchParams(location.search);
   var contentEl = document.getElementById('content');
@@ -284,6 +290,7 @@
   function flattenCatalog(catalog, allRedemptions) {
     var items = [];
     Object.keys(catalog).forEach(function(slug){
+      if (!inVertical(slug)) return;
       var bizItems = catalog[slug] || {};
       Object.keys(bizItems).forEach(function(itemId){
         var item = bizItems[itemId];
@@ -383,7 +390,7 @@
   }
 
   function earnPanelHtml() {
-    var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false; });
+    var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); });
     if (!keys.length) return '';
     return '<div class="earn-card" id="earnCard">' +
       '<h2>Earn points</h2>' +

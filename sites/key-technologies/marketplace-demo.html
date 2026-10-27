@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketplace Demo — Key Technologies.si</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<script>
+  (function () {
+    try {
+      var page = location.pathname.split("/").pop() || "index.html";
+      fetch("https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page) + ".json", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").slice(0, 200), w: window.innerWidth })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --btn-blue:#0f64b2; --green:#3ddc84; --gold:#f0c239; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{overflow-x:hidden;}
+  body{margin:0;background:var(--bg);color:var(--ink);min-height:100vh;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px;}
+
+  .demo-bar{background:#10243a;border-bottom:1px solid var(--line);padding:9px 0;font-size:12.5px;color:var(--ink-dim);}
+  .demo-bar .wrap{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;}
+  .seg button{background:transparent;border:0;color:var(--ink-dim);font:inherit;font-weight:700;padding:6px 13px;cursor:pointer;}
+  .seg button.on{background:var(--key-blue);color:#fff;}
+
+  header.app{padding:22px 0 8px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+  .brand{font-size:24px;font-weight:800;letter-spacing:.01em;}
+  .brand small{display:block;font-size:12.5px;font-weight:600;color:var(--key-light);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;}
+  .bal{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 14px;text-align:right;}
+  .bal b{font-size:22px;color:var(--key-light);display:block;line-height:1.1;}
+  .bal span{font-size:11.5px;color:var(--ink-dim);}
+
+  .search{width:100%;margin:12px 0 4px;padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:15px;}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:none;background:var(--card);border:1px solid var(--line);color:var(--ink-dim);border-radius:999px;padding:8px 15px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .chip.on{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:12px 0 60px;}
+  .offer{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;}
+  .art{height:108px;display:flex;align-items:center;justify-content:center;font-size:46px;position:relative;}
+  .ribbon{position:absolute;top:10px;left:10px;font-size:10.5px;font-weight:800;letter-spacing:.07em;background:rgba(7,17,31,.78);color:var(--gold);border:1px solid rgba(240,194,57,.4);border-radius:6px;padding:2px 7px;}
+  .cat{position:absolute;top:10px;right:10px;font-size:11px;font-weight:700;background:rgba(7,17,31,.78);border-radius:6px;padding:2px 8px;color:var(--ink);}
+  .body{padding:14px 15px 15px;display:flex;flex-direction:column;gap:4px;flex:1;}
+  .biz{font-size:12px;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.03em;}
+  .title{font-size:17.5px;font-weight:800;line-height:1.25;}
+  .tag{font-size:13px;color:var(--ink-dim);}
+  .row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px;gap:10px;}
+  .cost{font-size:18px;font-weight:800;color:var(--key-light);}
+  .cost small{font-size:11.5px;color:var(--ink-dim);font-weight:600;display:block;line-height:1;}
+  .go{background:var(--btn-blue);color:#fff;border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;}
+  .go:disabled{background:var(--bg-2);color:var(--ink-dim);cursor:default;}
+  .none{grid-column:1/-1;text-align:center;color:var(--ink-dim);padding:40px 10px;}
+
+  #ov{display:none;position:fixed;inset:0;background:rgba(7,17,31,.93);z-index:50;align-items:center;justify-content:center;padding:20px;}
+  #ov.show{display:flex;}
+  .ov-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:380px;width:100%;text-align:center;}
+  .code-box{background:var(--bg-2);border:1px dashed var(--key-blue);border-radius:12px;padding:16px;margin:14px 0;}
+  .code-box small{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:700;}
+  .code-box div{font-size:28px;font-weight:800;letter-spacing:.08em;color:var(--key-light);margin-top:4px;}
+  .fine{font-size:12px;color:var(--ink-dim);margin-top:6px;}
+  .foot{text-align:center;font-size:12px;color:var(--ink-dim);padding:0 0 40px;}
+</style>
+</head>
+<body>
+
+<div class="demo-bar" id="demoBar">
+  <div class="wrap">
+    <span><b style="color:var(--gold);">DEMO</b> — every business and offer here is made up.</span>
+    <span class="seg" role="group" aria-label="Preview mode">
+      <button id="modeAll" type="button">Full marketplace</button>
+      <button id="modeLvr" type="button">LVR restaurant app</button>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="app">
+    <div class="brand" id="brand"></div>
+    <div class="bal"><b id="balNum">120</b><span>demo points</span></div>
+  </header>
+  <input class="search" id="q" type="search" placeholder="Search offers…" aria-label="Search offers">
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<div id="ov"><div class="ov-card" id="ovCard"></div></div>
+
+<script>
+(function(){
+  "use strict";
+  // ALL FICTIONAL. Names are invented for demonstration only.
+  var CATS = [
+    { id: "restaurants", label: "Restaurants", icon: "🍽️" },
+    { id: "fitness",     label: "Gyms & Fitness", icon: "💪" },
+    { id: "memberships", label: "Memberships", icon: "🎟️" },
+    { id: "painting",    label: "Painting", icon: "🎨" },
+    { id: "construction",label: "Construction", icon: "🏗️" },
+    { id: "beauty",      label: "Beauty & Spa", icon: "💈" },
+    { id: "auto",        label: "Auto", icon: "🚗" }
+  ];
+  var OFFERS = [
+    { biz:"Desert Rose Bistro",   cat:"restaurants", icon:"🍝", hue:18,  title:"Free pasta entrée with any drink",       tag:"Dinner · Downtown", cost:12, value:"$18 value" },
+    { biz:"Neon Noodle Bar",      cat:"restaurants", icon:"🍜", hue:340, title:"Free ramen bowl",                         tag:"Lunch & late night", cost:10, value:"$14 value" },
+    { biz:"Sunset Slice Pizza",   cat:"restaurants", icon:"🍕", hue:28,  title:"Free large 1-topping pizza",              tag:"Dine-in or pickup", cost:15, value:"$20 value" },
+    { biz:"Golden Grain Rice House", cat:"restaurants", icon:"🍚", hue:44, title:"Free chicken rice bowl",                tag:"Fast casual",       cost:10, value:"$12 value" },
+    { biz:"Mesa Taco Co.",        cat:"restaurants", icon:"🌮", hue:100, title:"Buy 2 tacos, get 2 free",                 tag:"Happy hour",        cost:6,  value:"$9 value" },
+    { biz:"Pinnacle Fitness Club",cat:"fitness",     icon:"🏋️", hue:210, title:"7-day full-access pass",                  tag:"All locations",     cost:20, value:"$35 value" },
+    { biz:"IronWorks Strength Gym",cat:"fitness",    icon:"🥊", hue:0,   title:"Free personal training session",          tag:"First-timers",      cost:30, value:"$60 value" },
+    { biz:"Lotus Yoga Studio",    cat:"fitness",     icon:"🧘", hue:280, title:"5 drop-in yoga classes",                  tag:"Any class",         cost:35, value:"$75 value" },
+    { biz:"Valley Club Memberships", cat:"memberships", icon:"🎟️", hue:190, title:"1 month free on annual plan",           tag:"Member perks",      cost:40, value:"$80 value" },
+    { biz:"Sky Lounge Access",    cat:"memberships", icon:"🥂", hue:260, title:"Priority entry + 2 welcome drinks",       tag:"Weekends",          cost:25, value:"$50 value" },
+    { biz:"Blue Mesa Painting Co.",cat:"painting",   icon:"🖌️", hue:205, title:"$100 off any interior paint job",         tag:"Licensed & insured", cost:60, value:"$100 off" },
+    { biz:"Fresh Coat Pros",      cat:"painting",    icon:"🎨", hue:160, title:"Free color consultation + 1 accent wall", tag:"Residential",       cost:45, value:"$120 value" },
+    { biz:"Summit Builders",      cat:"construction",icon:"🏗️", hue:35,  title:"Free on-site remodel estimate",           tag:"Kitchens & baths",  cost:15, value:"$250 value" },
+    { biz:"Ridgeline Concrete",   cat:"construction",icon:"🧱", hue:220, title:"$200 off a patio or driveway",            tag:"Residential",       cost:80, value:"$200 off" },
+    { biz:"Lucky Cuts Barbershop",cat:"beauty",      icon:"💈", hue:355, title:"Free haircut with beard trim",            tag:"Walk-ins welcome",  cost:20, value:"$40 value" },
+    { biz:"Oasis Day Spa",        cat:"beauty",      icon:"🧖", hue:170, title:"60-min massage, 2-for-1",                 tag:"By appointment",    cost:55, value:"$110 value" },
+    { biz:"QuickLane Auto Care",  cat:"auto",        icon:"🛠️", hue:230, title:"Free oil change",                         tag:"Most vehicles",     cost:25, value:"$45 value" }
+  ];
+
+  var params = new URLSearchParams(location.search);
+  var mode = params.get("app") === "lvr" ? "lvr" : "all";
+  var catFilter = "all", query = "", balance = 120;
+  if (params.get("clean") === "1") document.getElementById("demoBar").style.display = "none";
+
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function catOf(id){ return CATS.filter(function(c){ return c.id === id; })[0] || {}; }
+
+  function visibleOffers(){
+    var q = query.trim().toLowerCase();
+    return OFFERS.filter(function(o){
+      if (mode === "lvr" && o.cat !== "restaurants") return false;
+      if (mode === "all" && catFilter !== "all" && o.cat !== catFilter) return false;
+      if (q && (o.biz + " " + o.title + " " + o.tag).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+  }
+
+  function render(){
+    document.getElementById("modeAll").className = mode === "all" ? "on" : "";
+    document.getElementById("modeLvr").className = mode === "lvr" ? "on" : "";
+    document.getElementById("brand").innerHTML = mode === "lvr"
+      ? 'LVR<small>Las Vegas Restaurants</small>'
+      : 'Marketplace<small>Everything local, one place</small>';
+    document.getElementById("balNum").textContent = balance;
+
+    var chips = document.getElementById("chips");
+    if (mode === "lvr") { chips.style.display = "none"; }
+    else {
+      chips.style.display = "";
+      chips.innerHTML = [{ id:"all", label:"All", icon:"✨" }].concat(CATS).map(function(c){
+        return '<button type="button" class="chip' + (catFilter === c.id ? " on" : "") + '" data-cat="' + c.id + '">' + c.icon + " " + esc(c.label) + "</button>";
+      }).join("");
+      chips.querySelectorAll("[data-cat]").forEach(function(b){
+        b.addEventListener("click", function(){ catFilter = b.getAttribute("data-cat"); render(); });
+      });
+    }
+
+    var list = visibleOffers();
+    document.getElementById("grid").innerHTML = list.length ? list.map(function(o){
+      var i = OFFERS.indexOf(o), afford = balance >= o.cost;
+      return '<div class="offer">' +
+        '<div class="art" style="background:linear-gradient(135deg,hsl(' + o.hue + ',55%,24%),hsl(' + ((o.hue + 40) % 360) + ',55%,14%));">' +
+          '<span class="ribbon">DEMO</span>' +
+          (mode === "all" ? '<span class="cat">' + esc(catOf(o.cat).label) + '</span>' : '') +
+          '<span aria-hidden="true">' + o.icon + '</span></div>' +
+        '<div class="body"><div class="biz">' + esc(o.biz) + '</div><div class="title">' + esc(o.title) + '</div><div class="tag">' + esc(o.tag) + ' · ' + esc(o.value) + '</div>' +
+          '<div class="row"><div class="cost">' + o.cost + ' pts<small>1 pt = $1</small></div>' +
+          '<button type="button" class="go" data-i="' + i + '"' + (afford ? "" : " disabled") + '>' + (afford ? "Redeem" : "Need more points") + '</button></div></div></div>';
+    }).join("") : '<div class="none">No offers match. Try another search.</div>';
+    document.querySelectorAll(".go[data-i]").forEach(function(b){
+      b.addEventListener("click", function(){ redeem(OFFERS[parseInt(b.getAttribute("data-i"), 10)]); });
+    });
+
+    document.getElementById("foot").textContent = mode === "lvr"
+      ? "This is the restaurant-only app: members see restaurants and nothing else."
+      : "Switch to “LVR restaurant app” above to see the focused, restaurant-only version.";
+  }
+
+  function makeCode(){
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", s = "";
+    for (var i = 0; i < 5; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+    return "DEMO-" + s;
+  }
+
+  function redeem(o){
+    if (balance < o.cost) return;
+    balance -= o.cost;
+    document.getElementById("ovCard").innerHTML =
+      '<div style="font-size:22px;font-weight:800;">You\'re in! 🎉</div>' +
+      '<div class="fine" style="margin-top:4px;">' + esc(o.title) + ' · ' + esc(o.biz) + '</div>' +
+      '<div class="code-box"><small>Your redemption code</small><div>' + makeCode() + '</div></div>' +
+      '<div class="fine">Demo only — this code is not real and nothing was saved.</div>' +
+      '<button type="button" class="go" id="ovClose" style="margin-top:16px;width:100%;">Done — ' + balance + ' points left</button>';
+    document.getElementById("ov").className = "show";
+    document.getElementById("ovClose").addEventListener("click", function(){ document.getElementById("ov").className = ""; render(); });
+  }
+
+  document.getElementById("modeAll").addEventListener("click", function(){ mode = "all"; render(); });
+  document.getElementById("modeLvr").addEventListener("click", function(){ mode = "lvr"; render(); });
+  document.getElementById("q").addEventListener("input", function(){ query = this.value; render(); });
+  render();
+})();
+</script>
+</body>
+</html>
