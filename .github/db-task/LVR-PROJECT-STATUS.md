@@ -1311,3 +1311,28 @@ ledger and the `/lvr_points/directory` category field were added the same day.
 ask the owner what they want to work on next rather than re-diagnosing
 everything above from zero — it's all still accurate as of the date at the
 top unless they tell you otherwise.*
+
+### UPDATE 2026-10-27 — safety, welcome bonus, menu, treasure chest (all tested, none involve secrets)
+- **Database rules (evidence protection)**: `rules/lvr-rules-fragment.json`, tested in the Firebase emulator
+  (`rules/run-rules-test.sh`, 104 checks passing). Blocks editing/deleting receipts, photos, redemptions,
+  ledger entries and bonus records, and blocks wiping any list. Installed on the Mac with
+  `mac/deploy-rules.sh` (saves a local backup, merges only the four points sections, verifies, auto-undoes);
+  `mac/undo-rules.sh` restores. NOT yet confirmed installed as of this entry.
+- **Known limit**: balances can still be edited by anyone who knows the database address until the
+  server step (Cloud Functions, needs the Blaze plan) moves point awards server-side.
+- **Page-view counter bug fixed**: Firebase keys cannot contain ".", so trackers now store `index_html`;
+  the report accepts both spellings. Confirmed recording live.
+- **Welcome bonus**: Settings > Welcome bonus (default OFF). Amount (max 50) and timing
+  (at sign-up, or when the first receipt is approved). Sign-up amount is rule-capped to the setting.
+- **Points menu**: `sites/key-technologies/menu.html?b=<slug>` - one long menu from the catalog
+  (catalog items now take optional Menu section + Description).
+- **Treasure chest**: per-member countdown (default 7 days from joining); the first chest gives a fixed
+  bonus set in Settings (default 0 = "coming soon"). Claim is once-only and enforced by the rules.
+  Repeating/random weekly chests are on hold pending an attorney and the server.
+- **Bonus tab** in Points admin: manual points with a permanent reason (`/lvr_points/bonuses`).
+- **Admin tools blank-screen fix**: auto-sign-in path ran before the page was ready; fixed in all five tools.
+- **Owner-requested ideas on hold for attorney/server**: weekly random gift, points for videos
+  (endorsement disclosure), $100 restaurant-funded credit handed out like a gift card, members sending
+  points to each other (a gift link for a free item is the safer alternative), AI receipt reading
+  (needs Blaze + the owner's own Anthropic API key).
+- Hub page (private artifact) lists links and the owner's to-do list.
