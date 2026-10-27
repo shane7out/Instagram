@@ -169,7 +169,7 @@
   try {
     if (_lvOwnerSessionValid() || sessionStorage.getItem('lvr_points_unlocked') === '1') {
       try { sessionStorage.setItem('lvr_points_unlocked', '1'); } catch(e){}
-      enterApp();
+      setTimeout(enterApp, 0); // after the rest of the script has set up its variables
     }
   } catch(e){}
 

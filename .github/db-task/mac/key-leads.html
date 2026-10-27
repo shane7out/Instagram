@@ -221,7 +221,7 @@
       document.getElementById('pin-screen').classList.add('hidden');
       document.getElementById('app').classList.add('visible');
       try { sessionStorage.setItem('key_leads_unlocked', '1'); } catch(e){}
-      loadLeads();
+      setTimeout(loadLeads, 0); // after the rest of the script has set up its variables;
     }
   } catch(e){}
 

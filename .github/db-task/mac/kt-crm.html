@@ -289,7 +289,7 @@
       document.getElementById('pin-screen').classList.add('hidden');
       document.getElementById('app').classList.add('visible');
       try { sessionStorage.setItem('kt_crm_unlocked', '1'); } catch(e){}
-      loadProspects();
+      setTimeout(loadProspects, 0); // after the rest of the script has set up its variables;
     }
   } catch(e){}
 
