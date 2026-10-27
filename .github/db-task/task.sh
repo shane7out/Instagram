@@ -1,7 +1,6 @@
 #!/bin/bash
-# Read the deploy-overlay.js source Shane just sent via the _debug channel,
-# to find out why it only ever uploads index.html + version.json instead of
-# the other standalone tool files.
+# Live-verify keytechnologies.si picked up today's push (my-account.html,
+# rewards.html pointing at /lvr_rewards instead of /lvr_points/wallets).
 set -e
 node <<'NODE'
 const https = require('https');
@@ -13,15 +12,10 @@ function get(url) {
   });
 }
 (async () => {
-  const r = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/_debug/deployoverlay.json');
-  console.log('status:', r.status);
-  if (r.status === 200) {
-    const src = JSON.parse(r.body);
-    console.log('bytes:', src.length);
-    console.log('--- full source ---');
-    console.log(src);
-  } else {
-    console.log('body:', r.body);
-  }
+  const acct = await get('https://keytechnologies.si/my-account.html');
+  console.log('my-account.html: status', acct.status, '| has /lvr_rewards ref:', (acct.body||'').indexOf('/lvr_rewards') !== -1, '| has fbFindByToken:', (acct.body||'').indexOf('fbFindByToken') !== -1);
+
+  const rwd = await get('https://keytechnologies.si/rewards.html');
+  console.log('rewards.html: status', rwd.status, '| posts to /lvr_rewards:', (rwd.body||'').indexOf('LVR_REWARDS_DB_URL') !== -1, '| old wallets ref gone:', (rwd.body||'').indexOf('lvr_points/wallets') === -1);
 })();
 NODE
