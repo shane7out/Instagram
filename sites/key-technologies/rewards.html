@@ -410,7 +410,7 @@
 <script>
 (function(){
   "use strict";
-  var LVR_POINTS_DB_URL = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points";
+  var LVR_REWARDS_DB_URL = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards";
   var ACCOUNT_TOKEN_KEY = "lvr_wallet_token";
 
   var burger = document.getElementById("burgerBtn");
@@ -445,10 +445,12 @@
     }
   })();
 
-  // Self-serve signup: creates a real wallet at 0 points (not a free grant -
-  // Shane decides afterward who actually gets points, via the admin tool).
-  // No password: identity is the wallet link itself (lvr-wallet.html?t=<token>),
-  // same pattern as every other PIN-free page in this project.
+  // Self-serve signup: writes straight into the SAME /lvr_rewards member
+  // list Shane already manages from the dashboard's Rewards CRM (search by
+  // name/phone/instagram, award tokens) - this is not a separate database.
+  // Starts at 0 points (not a free grant - Shane decides who gets points).
+  // No password: identity is the account link itself (my-account.html?t=
+  // <token>), same pattern as every other PIN-free page in this project.
   function genToken(){
     var bytes = new Uint8Array(16);
     (window.crypto || window.msCrypto).getRandomValues(bytes);
@@ -478,13 +480,13 @@
     status.textContent = "Opening your account…";
     status.className = "form-status";
 
-    fetch(LVR_POINTS_DB_URL + "/wallets/" + token + ".json", {
-      method: "PUT",
+    fetch(LVR_REWARDS_DB_URL + ".json", {
+      method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         name: name, email: email, phone: phone,
-        balance: 0, source: "keytechnologies-rewards-signup",
-        createdAt: {".sv": "timestamp"}
+        points: 0, token: token, source: "keytechnologies-rewards-signup",
+        joinedAt: {".sv": "timestamp"}
       })
     }).then(function(r){
       if(!r.ok) throw new Error("HTTP " + r.status);

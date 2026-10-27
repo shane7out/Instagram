@@ -715,6 +715,7 @@
     <div class="s-title">Welcome, Member!</div>
     <div class="s-body" id="sBody"></div>
     <div class="s-badge">⭐ LVR Rewards + VIP Member</div>
+    <div id="sLinkBox" style="margin-top:18px;padding:16px;border:1px dashed var(--sky);border-radius:12px;text-align:left;"></div>
   </div>
 
   <!-- Perks — below the form -->
@@ -770,6 +771,13 @@
   // ─────────────────────────────────────────────
   var RTDB_URL    = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards.json';
   var IG_IDX_BASE = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_instagram_index/';
+  var ACCOUNT_URL = 'https://keytechnologies.si/my-account.html?t=';
+
+  function genToken() {
+    var bytes = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+  }
 
   // ─────────────────────────────────────────────
   // UI helpers
@@ -880,6 +888,7 @@
 
   function _doSignup(name, phone, ig, bdStr, anStr, nowTs, btn) {
     setSaveStatus('saving', '⏳  Saving to database…');
+    var token = genToken();
 
     fetch(RTDB_URL, {
       method:  'POST',
@@ -893,6 +902,7 @@
         joinedAt:        nowTs,
         source:          'lvr-rewards-form',
         points:          0,
+        token:           token,
         consent_sms:     true,
         consent_privacy: true,
         consent_ts:      nowTs
@@ -920,6 +930,19 @@
         (anStr ? 'Anniversary on <strong>' + anStr + '</strong> too! 🥂<br>' : '') +
         'Watch for <strong>VIP party &amp; event invitations</strong> by text! 🎉<br>' +
         '<br><span style="font-size:0.78em;opacity:0.7;">You\'ll receive program updates by text. Reply STOP anytime to opt out.</span>';
+      var acctUrl = ACCOUNT_URL + token;
+      $('sLinkBox').innerHTML =
+        '<div style="font-weight:700;margin-bottom:6px;">Your account link — save this!</div>' +
+        '<div style="font-size:0.85em;opacity:0.85;margin-bottom:10px;">This link is how you check your points and redeem rewards. There\'s no password — just this link.</div>' +
+        '<div style="word-break:break-all;font-size:0.85em;padding:8px;background:rgba(255,255,255,0.07);border-radius:8px;margin-bottom:10px;" id="sLinkText">' + esc(acctUrl) + '</div>' +
+        '<button type="button" id="sLinkCopyBtn" style="padding:10px 16px;border-radius:8px;border:none;background:var(--sky);color:#0B2361;font-weight:700;cursor:pointer;">Copy My Link</button>' +
+        '<span id="sLinkCopyMsg" style="margin-left:10px;font-size:0.85em;"></span>';
+      document.getElementById('sLinkCopyBtn').addEventListener('click', function() {
+        var msg = document.getElementById('sLinkCopyMsg');
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(acctUrl).then(function(){ msg.textContent = 'Copied!'; });
+        } else { msg.textContent = acctUrl; }
+      });
       setTimeout(function() {
         ['fname','phone','instagram'].forEach(function(id) { $(id).value = ''; });
         ['bdMon','bdDay','anMon','anDay'].forEach(function(id) { $(id).value = ''; });
@@ -927,10 +950,11 @@
         $('consentPrivacy').checked = false;
         $('formWrap').style.display = 'block';
         $('successScreen').classList.remove('show');
+        $('sLinkBox').innerHTML = '';
         btn.disabled = false;
         $('saveStatus').className = 'save-status';
         $('saveStatus').textContent = '';
-      }, 6000);
+      }, 45000);
     })
     .catch(function(err) {
       console.error('Database write error:', err);

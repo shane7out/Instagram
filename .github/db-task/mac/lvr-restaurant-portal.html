@@ -141,16 +141,16 @@
       wrap.innerHTML = '<div class="empty-note">No one has redeemed anything here yet.</div>';
       return;
     }
-    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Email</th><th>Item</th><th>Code</th><th>When</th></tr></thead><tbody>' +
+    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Phone</th><th>Item</th><th>Code</th><th>When</th></tr></thead><tbody>' +
       myRows.map(function(r){
         var when = r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : '';
-        return '<tr><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.email || '') + '</td><td>' + escapeHtml(r.itemName || '') + '</td><td class="code">' + escapeHtml(r.code || '') + '</td><td>' + when + '</td></tr>';
+        return '<tr><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.phone || '') + '</td><td>' + escapeHtml(r.itemName || '') + '</td><td class="code">' + escapeHtml(r.code || '') + '</td><td>' + when + '</td></tr>';
       }).join('') + '</tbody></table>';
   }
 
   document.getElementById('exportBtn').addEventListener('click', function(){
     if (!myRows.length) return;
-    var cols = ['name', 'email', 'itemName', 'pointCost', 'code', 'redeemedAt'];
+    var cols = ['name', 'phone', 'itemName', 'pointCost', 'code', 'redeemedAt'];
     var esc = function(v){ v = v == null ? '' : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
     var csv = cols.join(',') + '\n' + myRows.map(function(r){
       return cols.map(function(c){
