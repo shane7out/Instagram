@@ -9,6 +9,17 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    .contact-box{max-width:420px;margin:14px auto 6px;text-align:left;}
+    .contact-box summary{cursor:pointer;text-align:center;font-weight:700;color:var(--sky);list-style:none;padding:10px;border:1px solid var(--border);border-radius:12px;}
+    .contact-box summary::-webkit-details-marker{display:none;}
+    .contact-box form{display:flex;flex-direction:column;gap:10px;margin-top:12px;position:relative;}
+    .c-inp{width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.07);color:var(--white);font:inherit;font-size:15px;}
+    .c-inp::placeholder{color:var(--white-55);}
+    .c-btn{padding:13px;border-radius:10px;border:none;background:var(--sky);color:#0B2361;font:inherit;font-weight:800;font-size:15px;cursor:pointer;}
+    .c-btn:disabled{opacity:.6;cursor:default;}
+    .c-status{min-height:18px;font-size:13.5px;text-align:center;}
+    .c-status.ok{color:var(--success);} .c-status.err{color:var(--error);}
+
     :root {
       --bg:          #0B2361;
       --bg-dark:     #071A47;
@@ -751,7 +762,7 @@
     <p><strong>What we collect:</strong> Your name, phone number, Instagram handle, birthday, and anniversary (optional) for the sole purpose of operating the LVR Rewards Program.</p>
     <p><strong>We never sell your data.</strong> Your information is never sold, rented, or shared with third parties for advertising or marketing purposes.</p>
     <p><strong>SMS communications:</strong> By joining, you consent to receive no more than 1 promotional or transactional text message per week from Las Vegas Restaurants. Standard message and data rates from your carrier may apply. You may opt out at any time by replying <strong>STOP</strong> to any message. This program complies with the Telephone Consumer Protection Act (TCPA).</p>
-    <p><strong>Data storage:</strong> Your data is stored securely on Google Firebase infrastructure. You may request full deletion of your account data at any time by contacting <strong>@las_vegas_restaurants</strong> on Instagram.</p>
+    <p><strong>Data storage:</strong> Your data is stored securely on Google Firebase infrastructure. You may request full deletion of your account data at any time by contacting <strong>@las_vegas_restaurants</strong> on Instagram or by using the message form at the bottom of this page.</p>
     <p><strong>No purchase required.</strong> Joining the LVR Rewards Program is free and no purchase is necessary to participate.</p>
   </div>
 
@@ -759,7 +770,17 @@
   <div class="footer">
     <div class="footer-line">Las Vegas Restaurants &nbsp;·&nbsp; LVR Rewards Program</div>
     <div class="footer-line">@las_vegas_restaurants &nbsp;·&nbsp; Las Vegas, NV</div>
-    <a class="footer-email" href="mailto:shane@lasvegasrestaurants.net">shane@lasvegasrestaurants.net</a>
+    <details class="contact-box" id="contactBox">
+      <summary>Questions? Send us a message</summary>
+      <form id="contactForm" novalidate autocomplete="on">
+        <input class="c-inp" type="text" id="cName" placeholder="Your name (optional)" autocomplete="name" />
+        <input class="c-inp" type="email" id="cEmail" placeholder="Your email" autocomplete="email" />
+        <textarea class="c-inp" id="cMsg" rows="4" placeholder="How can we help?"></textarea>
+        <input type="text" id="cHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+        <button class="c-btn" type="submit" id="cBtn">Send message</button>
+        <div class="c-status" id="cStatus" role="status"></div>
+      </form>
+    </details>
     <div class="footer-line">© 2026 Las Vegas Restaurants. All rights reserved.</div>
     <div class="footer-line">This program was built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a> — we build systems like this for businesses.</div>
   </div>
@@ -967,6 +988,44 @@
   function esc(s) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
+</script>
+
+<script>
+  // Contact form: saves the message to the same Leads list the owner already
+  // uses (so it shows up in the Key Leads tool) and sends an email alert.
+  // The owner's email address is never shown on this page.
+  (function () {
+    var LEADS_URL = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_leads/leads.json';
+    var ALERT_URL = 'https://formspree.io/f/mzeedbyb';
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+    var statusEl = document.getElementById('cStatus');
+    function say(t, cls) { statusEl.textContent = t; statusEl.className = 'c-status ' + (cls || ''); }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (document.getElementById('cHp').value) return;
+      var email = document.getElementById('cEmail').value.trim();
+      var msg = document.getElementById('cMsg').value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say('Please enter a valid email so we can reply.', 'err'); return; }
+      if (!msg) { say('Please write a short message.', 'err'); return; }
+      var data = {
+        source: 'lvr-rewards-contact', name: document.getElementById('cName').value.trim(),
+        email: email, message: msg.slice(0, 2000),
+        createdAt: { '.sv': 'timestamp' }, landingPage: location.pathname
+      };
+      var btn = document.getElementById('cBtn');
+      btn.disabled = true; say('Sending…', '');
+      fetch(LEADS_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          fetch(ALERT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) }).catch(function () {});
+          say('Thanks — we got your message and will reply if we can help.', 'ok');
+          form.reset();
+        })
+        .catch(function () { say('Something went wrong. Please try again in a moment.', 'err'); })
+        .then(function () { btn.disabled = false; });
+    });
+  })();
 </script>
 
 </body>

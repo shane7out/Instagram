@@ -1,38 +1,24 @@
 #!/bin/bash
-# Owner asked to remove the 8 old Rewards members (believed to be demos).
-# One record (Joseph Marron) has a distinct, recent sign-up timestamp unlike the
-# seeded ones, so it is KEPT pending the owner's confirmation. Full records are
-# backed up inside the database first (this repo and its Actions logs are
-# public: no member data is printed or committed). Also removes each deleted
-# member's Instagram duplicate-check entry so the same handle can sign up again.
+# Scan live public pages for the owner's email address (counts only - the
+# address itself is never printed, this repo's logs are public).
 set -e
 node <<'NODE'
 const https = require('https');
-function req(method, url, body) {
-  return new Promise(res => {
-    const u = new URL(url), data = body !== undefined ? JSON.stringify(body) : undefined;
-    const r = https.request(u, { method, headers: data ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) } : {} }, x => { let d = ''; x.on('data', c => d += c); x.on('end', () => res({ s: x.statusCode, b: d })); });
-    r.on('error', e => res({ s: e.message, b: '' })); if (data) r.write(data); r.end();
-  });
-}
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-const KEEP = new Set(['-P1C3jE1yz3Vwzq0-bW4']); // Joseph Marron
-const igKey = h => String(h || '').toLowerCase().replace(/^@/, '').replace(/\./g, '_');
+const get = url => new Promise(res => https.get(url, { timeout: 15000 }, r => { let d=''; r.on('data', c => d += c); r.on('end', () => res({ s: r.statusCode, b: d })); }).on('error', e => res({ s: String(e.message), b: '' })));
+const pages = [
+  'https://lvr-data-a60c1.web.app/', 'https://lvr-data-a60c1.web.app/lvr-rewards.html', 'https://lvr-data-a60c1.web.app/lvr-teams.html',
+  'https://lvr-data-a60c1.web.app/lvr-coupon.html',
+  'https://keytechnologies.si/', 'https://keytechnologies.si/rewards.html', 'https://keytechnologies.si/my-account.html',
+  'https://keytechnologies.si/privacy.html', 'https://keytechnologies.si/terms.html', 'https://keytechnologies.si/law.html',
+  'https://keytechnologies.si/marketplace-demo.html'
+];
 (async () => {
-  const cur = JSON.parse((await req('GET', DB + '/lvr_rewards.json')).b || 'null') || {};
-  const keys = Object.keys(cur);
-  const b = await req('PUT', DB + '/_backup/lvr_rewards_members_2026-10-27.json', cur);
-  console.log('full backup of', keys.length, 'member records, status', b.s);
-  if (b.s !== 200) { console.log('BACKUP FAILED - deleting nothing'); process.exit(1); }
-  let removed = 0, idx = 0;
-  for (const k of keys) {
-    if (KEEP.has(k)) { console.log('  kept 1 record (awaiting owner confirmation)'); continue; }
-    const d = await req('DELETE', DB + '/lvr_rewards/' + encodeURIComponent(k) + '.json');
-    if (d.s === 200) removed++;
-    const ik = igKey(cur[k].instagram);
-    if (ik) { const di = await req('DELETE', DB + '/lvr_instagram_index/' + encodeURIComponent(ik) + '.json'); if (di.s === 200) idx++; }
+  for (const u of pages) {
+    const r = await get(u);
+    const b = r.b || '';
+    const hits = (b.match(/lasvegasrestaurants\.net/gi) || []).length;
+    const mailto = (b.match(/mailto:/gi) || []).length;
+    console.log(u.replace('https://', ''), '| status', r.s, '| owner-domain mentions:', hits, '| mailto links:', mailto);
   }
-  const after = JSON.parse((await req('GET', DB + '/lvr_rewards.json')).b || 'null') || {};
-  console.log('removed', removed, 'members and', idx, 'instagram duplicate-check entries | members remaining:', Object.keys(after).length);
 })();
 NODE

@@ -155,6 +155,7 @@
     <span class="tab" data-v="medical-dental-landing">Medical/Dental</span>
     <span class="tab" data-v="law-landing">Law</span>
     <span class="tab" data-v="ecommerce-landing">E-commerce</span>
+    <span class="tab" data-v="lvr-rewards-contact">LVR Rewards</span>
   </div>
 
   <div id="list"></div>
@@ -175,7 +176,8 @@
     'real-estate-landing': 'Real Estate',
     'medical-dental-landing': 'Medical/Dental',
     'law-landing': 'Law',
-    'ecommerce-landing': 'E-commerce'
+    'ecommerce-landing': 'E-commerce',
+    'lvr-rewards-contact': 'LVR Rewards'
   };
 
   // ================= PIN LOGIC =================
@@ -320,6 +322,7 @@
     var sourceLabel = SOURCE_LABELS[l.source] || l.source || 'Unknown source';
 
     var extraFields = '';
+    if (l.message) extraFields += '<div class="card-field-label">Message</div><div class="card-field-val">' + escapeHtml(l.message) + '</div>';
     if (l.business) extraFields += '<div class="card-field-label">Business</div><div class="card-field-val">' + escapeHtml(l.business) + '</div>';
     if (l.url) extraFields += '<div class="card-field-label">Website</div><div class="card-field-val">' + escapeHtml(l.url) + '</div>';
     if (l.help) extraFields += '<div class="card-field-label">What they need help with</div><div class="card-field-val">' + escapeHtml(l.help) + '</div>';
