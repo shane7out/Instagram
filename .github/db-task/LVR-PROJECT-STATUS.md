@@ -1298,6 +1298,13 @@ specific file is live — always curl the file.
 e.g. 55555) shown to every claimer, capped by `maxClaims`; claim link text on
 the admin card is now tappable. Vanilla Rice program slug is `5555`.
 
+**Naming decision (owner, 2026-10-27):** it is just called "points" - never
+"tokens", "LVR points" or "restaurant points". One balance per member
+(`/lvr_rewards/<key>/points`) that works wherever they are logged in; the
+restaurant-only app (`VERTICAL='restaurants'` in my-account.html) only filters
+which offers are shown, not the balance. Receipts / earn-rate / commission
+ledger and the `/lvr_points/directory` category field were added the same day.
+
 ---
 
 *If you're a new Claude session reading this cold: read this whole file, then

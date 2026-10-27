@@ -138,6 +138,25 @@ applyOnce('/* KEYROOM-MEMBERLINK-FNS-v1 */', function (s) {
   return s.replace(anchor, insert);
 });
 
+// ---------------------------------------------------------------------------
+// 4) Wording: this program is just called "points" (not "tokens") everywhere
+//    a member or the owner reads it. Label-only; no data fields change.
+// ---------------------------------------------------------------------------
+applyOnce('/* KEYROOM-POINTS-LABELS-v1 */', function (s) {
+  var out = s;
+  var pairs = [
+    ["'<div style=\"font-size:11px;font-weight:800;letter-spacing:0.2em;color:#FFD600;text-transform:uppercase;margin-bottom:13px;\">Award Tokens</div>' +",
+     "/* KEYROOM-POINTS-LABELS-v1 */ '<div style=\"font-size:11px;font-weight:800;letter-spacing:0.2em;color:#FFD600;text-transform:uppercase;margin-bottom:13px;\">Award Points</div>' +"],
+    ['text-transform:uppercase;margin-bottom:3px;">Tokens</div>', 'text-transform:uppercase;margin-bottom:3px;">Points</div>'],
+    ['title="Say a number to add tokens"', 'title="Say a number to add points"']
+  ];
+  for (var i = 0; i < pairs.length; i++) {
+    if (out.indexOf(pairs[i][0]) === -1) return s; // all-or-nothing
+    out = out.replace(pairs[i][0], pairs[i][1]);
+  }
+  return out;
+});
+
 if (changed) {
   fs.writeFileSync(FILE, html);
   console.log('WROTE ' + FILE);
