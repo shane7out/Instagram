@@ -102,21 +102,30 @@
   } else {
     Promise.all([
       fbGet(WALLETS_PATH + encodeURIComponent(token)),
-      fbGet(CATALOG_PATH)
+      fbGet(CATALOG_PATH),
+      fbGet(REDEMPTIONS_PATH.slice(0, -1))
     ]).then(function(results){
       wallet = results[0];
       var catalog = results[1] || {};
+      var allRedemptions = results[2] || {};
       if (!wallet) {
         showEmpty("We couldn't find a wallet for this link.");
         return;
       }
-      render(catalog);
+      render(catalog, allRedemptions);
     }).catch(function(){
       showEmpty("Couldn't load your wallet right now. Please try again in a moment.");
     });
   }
 
-  function flattenCatalog(catalog) {
+  function redemptionCount(allRedemptions, slug, itemId) {
+    var slugRedemptions = (allRedemptions && allRedemptions[slug]) || {};
+    return Object.keys(slugRedemptions).filter(function(id){
+      return slugRedemptions[id] && slugRedemptions[id].itemId === itemId;
+    }).length;
+  }
+
+  function flattenCatalog(catalog, allRedemptions) {
     var items = [];
     Object.keys(catalog).forEach(function(slug){
       var bizItems = catalog[slug] || {};
@@ -124,14 +133,16 @@
         var item = bizItems[itemId];
         if (!item || item.active === false) return;
         if (item.expiresAt && Date.now() > item.expiresAt) return;
-        items.push(Object.assign({ slug: slug, itemId: itemId }, item));
+        var redeemed = redemptionCount(allRedemptions, slug, itemId);
+        if (item.maxRedemptions && redeemed >= item.maxRedemptions) return;
+        items.push(Object.assign({ slug: slug, itemId: itemId, _redeemedCount: redeemed }, item));
       });
     });
     return items;
   }
 
-  function render(catalog) {
-    var items = flattenCatalog(catalog);
+  function render(catalog, allRedemptions) {
+    var items = flattenCatalog(catalog, allRedemptions);
 
     var html =
       '<div class="balance-card">' +
@@ -146,10 +157,6 @@
     } else {
       html += '<div class="items">' + items.map(function(item){
         var afford = (wallet.balance || 0) >= item.pointCost;
-        var note = '';
-        if (item.maxRedemptions) {
-          note = item.pointCost + ' points';
-        }
         return '<div class="item-card" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
           '<div class="item-top">' +
             '<div><div class="item-biz">' + escapeHtml(item.bizName || item.slug) + '</div><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div></div>' +
@@ -199,16 +206,31 @@
   }
 
   function doRedeem(item) {
-    // Re-fetch the balance fresh right before committing, to narrow (not
-    // fully eliminate - this is plain REST with no server-side
-    // transactions, same honest limitation as the rest of this project)
-    // the window for a double-spend from two tabs/devices at once.
-    fbGet(WALLETS_PATH + encodeURIComponent(token) + '/balance').then(function(freshBalance){
-      freshBalance = freshBalance || 0;
+    // Re-fetch the balance AND the current redemption count fresh right
+    // before committing, to narrow (not fully eliminate - this is plain
+    // REST with no server-side transactions, same honest limitation as the
+    // rest of this project) the window for a double-spend or an over-cap
+    // redemption from two tabs/devices acting at once.
+    Promise.all([
+      fbGet(WALLETS_PATH + encodeURIComponent(token) + '/balance'),
+      item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null)
+    ]).then(function(results){
+      var freshBalance = results[0] || 0;
+      var freshRedemptions = results[1];
       if (freshBalance < item.pointCost) {
         alert("Your balance changed and you no longer have enough points for this.");
         location.reload();
         return;
+      }
+      if (item.maxRedemptions) {
+        var freshCount = Object.keys(freshRedemptions || {}).filter(function(id){
+          return freshRedemptions[id] && freshRedemptions[id].itemId === item.itemId;
+        }).length;
+        if (freshCount >= item.maxRedemptions) {
+          alert("This offer was just fully claimed by someone else.");
+          location.reload();
+          return;
+        }
       }
       var code = makeCode(item.slug);
       var newBalance = freshBalance - item.pointCost;
