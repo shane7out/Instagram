@@ -404,6 +404,44 @@ a redemption (same narrowed-not-eliminated race window as the balance
 check), so two people can't both grab the last slot. No deploy has
 happened yet, so nothing live was ever affected by this.
 
+### NEW — LVR Rewards landing page on keytechnologies.si + self-serve signup (2026-10-26/27)
+Owner floated routing points-program traffic through keytechnologies.si as
+cross-promotion ("two for one"). Flagged the real tension first rather than
+just building it: the owner explicitly decided weeks earlier (§16) that Key
+Technologies stops targeting restaurants as clients — the people who'd want
+a free bowl of food aren't the real estate/medical/law/e-commerce buyers
+that site is now positioned for, so making a consumer giveaway the front
+page risked undoing that positioning. Owner picked, explicitly, the
+narrower option: a dedicated `rewards.html` page (linked from nav/footer,
+not a homepage takeover) plus self-serve signup defaulting to 0 starting
+points (so a stranger can open an account, but doesn't get real points
+until the owner actually grants them).
+
+`sites/key-technologies/rewards.html` (new, live site, not an internal
+tool — real SEO meta/OG tags, no noindex): explains the points program,
+points people to `@LasVegas_Restaurants` on Instagram as where points
+actually get handed out, and a signup form. Submitting writes a real
+wallet straight to `/lvr_points/wallets/<token>` (balance: 0) via a
+cross-origin PUT from keytechnologies.si to the LVR Firebase project —
+**confirmed live, not assumed**, via a real CORS preflight (OPTIONS) +
+PUT test from a GH Actions runner with `Origin: https://keytechnologies.si`
+before this was ever wired into the real nav. Redirects straight into the
+new wallet (`lvr-wallet.html?t=<token>`) on success. Linked from the
+mobile menu + footer of all 5 main KT pages and added to sitemap.xml — not
+the desktop nav-links row, matching the existing "Industries" link's
+precedent to avoid re-triggering the previously-fixed nav-overlap bug.
+Same design system, same QA pattern as every other page on the site (tag
+balance, JSON-LD parse + exact match against visible FAQ text, inline-
+script syntax check, full Playwright pass including the live signup flow)
+— full site audit + broken-link check re-run clean after wiring it in.
+
+**Practical effect on the points system**: `/lvr_points/wallets` can now
+grow from two sources — the owner creating a wallet directly in
+`lvr-points-admin.html` (any starting balance), or a stranger self-signing
+up through `rewards.html` (always 0 balance). The owner tool's existing
+"Add Points" action is how a self-signed-up wallet actually gets real
+points later — nothing new needed there.
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
