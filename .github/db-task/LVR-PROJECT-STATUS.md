@@ -442,6 +442,83 @@ up through `rewards.html` (always 0 balance). The owner tool's existing
 "Add Points" action is how a self-signed-up wallet actually gets real
 points later — nothing new needed there.
 
+### NEW — Points program "Phase 1": native account page + account icon (2026-10-27)
+Owner's vision for the points program, confirmed in conversation: everything
+lives under the Key Technologies brand, reached via a small account icon
+next to the hamburger menu — not a redirect to a different website. He also
+asked for the bigger "sophisticated" build (games, a receipt-entry prize
+drawing with a spin wheel) and explicitly signed off on taking it slow and
+doing it right, including the legal piece (see below) — this is Phase 1 of
+that, the part with zero legal complexity.
+
+**`sites/key-technologies/my-account.html`** (new): the actual wallet
+experience, now living natively on keytechnologies.si instead of
+redirecting to `lvr-data-a60c1.web.app`. Same tested balance/redeem logic
+as `lvr-wallet.html` (ported, not rewritten, to avoid re-introducing a bug
+already fixed there), wrapped in the site's own header/footer. New:
+**device memory** — arriving with `?t=<token>` stores it to localStorage,
+so a return visit on the same device/browser recognizes the account with
+no link to re-paste. A "paste your link" fallback covers a brand-new
+device that already has an account (e.g., a link texted from another
+phone). A "Not you? Switch account" link clears the stored token for
+shared devices.
+
+**Account icon**: a small circular icon now sits next to the hamburger on
+every main page — deliberately NOT hidden at mobile widths (unlike the
+other header CTAs), since the owner specifically asked for it to be
+visible "up on top" always. Points at `rewards.html` (sign up / have your
+link?) when the device isn't recognized, or straight at `my-account.html`
+when it is.
+
+`rewards.html`'s signup flow now stores the new token to localStorage and
+redirects internally to `my-account.html`, instead of sending new
+sign-ups to a different website right after onboarding them.
+
+Tested with mocked Firebase data via Playwright: every state on
+`my-account.html` (no account / paste-link / direct-token-in-URL /
+reload-persistence / switch-account), the icon's logged-in vs logged-out
+state across all 6 pages, and the full rewards.html signup → internal
+redirect path. Full-site audit and broken-link check re-run clean. Also
+added `my-account.html` to the page-view report's label list up front this
+time (a gap found and fixed on `rewards.html` the cycle before).
+
+### NEW — Prize drawing concept: legal flag raised, Official Rules drafted (2026-10-27)
+Owner's fuller vision, not yet built: a "games" layer on top of points,
+specifically a receipt-number + amount-paid entry mechanic feeding a
+"spin the wheel, 1 of 50 wins" prize drawing, explicitly requested to be
+"not rigged" with "all the code opened up."
+
+**Flagged clearly before writing any code for it**: that mechanic —
+payment proof + chance + prize — is legally a sweepstakes. Most U.S.
+states, Nevada included, require a free, no-purchase alternate entry
+method or it's an unlicensed lottery. The owner's response: "I definitely
+don't want to be an illegal sweepstakes... I want to comply 100% with the
+law." Recommended narrowing eligibility to Nevada residents only, since
+a few states (Florida, New York, Rhode Island) require registering and
+bonding a promotion once prize value crosses certain thresholds — staying
+Nevada-only avoids that entirely and matches the real customer base
+anyway.
+
+**Drafted a starting "Official Rules" document** (owner has it, will send
+to an attorney for sign-off before any real prize goes live) covering: the
+no-purchase-necessary clause, eligibility, how to enter, real odds
+disclosure, prize description, and — the technical piece — a
+**commit-reveal winner-selection design**: before a drawing opens, a
+random winning entry number is generated and its cryptographic hash
+published; after the drawing closes, the real number and the data behind
+it are revealed, and anyone can verify the hash matches, proving the
+winner wasn't picked after the fact. This is what makes "not rigged, code
+opened up" literally true without needing a real backend server to
+enforce it.
+
+**Status: owner has approved the direction and the draft rules, said to
+keep building, explicitly said to take the time needed ("it's going to
+take months... I'm prepared for that").** The actual receipt-entry +
+spin-wheel system itself is NOT built yet — that's the next phase, to be
+built to match whatever the attorney's final rules say once that review
+happens. Nothing about this blocks continuing other points-system work in
+the meantime.
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
