@@ -398,15 +398,16 @@
     if (!keys.length) return '';
     return '<div class="earn-card" id="earnCard">' +
       '<h2>Earn points</h2>' +
-      '<div class="earn-sub">Ate at a participating restaurant? Enter your receipt. Once we verify it, points are added to your balance.</div>' +
+      '<div class="earn-sub">Ate at a participating restaurant? Send us your receipt. Once we verify it, points are added to your balance. <b>Cover your name and card digits</b> before taking the photos.</div>' +
       '<label for="eRest">Restaurant</label>' +
       '<select id="eRest"><option value="">Choose…</option>' + keys.map(function(k){
         return '<option value="' + escapeHtml(k) + '">' + escapeHtml(directory[k].bizName || k) + '</option>';
       }).join('') + '</select>' +
       '<div class="earn-sub" id="eRate" style="margin:6px 0 0;"></div>' +
-      '<label for="eNo">Receipt number</label><input type="text" id="eNo" autocomplete="off">' +
+      '<label for="ePhotoWide">Photo 1 — the whole receipt, from a little way back</label><input type="file" id="ePhotoWide" accept="image/*" capture="environment">' +
+      '<label for="ePhotoClose">Photo 2 — close-up of the receipt number and the total</label><input type="file" id="ePhotoClose" accept="image/*" capture="environment">' +
+      '<label for="eNo">Receipt number (or just the last 3 digits)</label><input type="text" id="eNo" autocomplete="off">' +
       '<label for="eAmt">Total paid ($)</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
-      '<label for="ePhoto">Photo of receipt (optional)</label><input type="file" id="ePhoto" accept="image/*">' +
       '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
       '<div class="earn-msg" id="eMsg"></div>' +
     '</div>';
@@ -453,37 +454,47 @@
     var slug = document.getElementById('eRest').value;
     var no = document.getElementById('eNo').value.trim().toUpperCase();
     var amt = parseFloat(document.getElementById('eAmt').value);
-    var file = document.getElementById('ePhoto').files[0];
+    var wideFile = document.getElementById('ePhotoWide').files[0];
+    var closeFile = document.getElementById('ePhotoClose').files[0];
     if (!slug) return earnMsg('Choose the restaurant.', 'err');
-    if (!no || no.length > 40) return earnMsg('Enter the receipt number.', 'err');
+    if (!wideFile || !closeFile) return earnMsg('Please add both photos.', 'err');
+    if (!no || no.length > 40) return earnMsg('Enter the receipt number (or the last 3 digits).', 'err');
     if (!(amt > 0) || amt > 5000) return earnMsg('Enter the total you paid.', 'err');
+    amt = Math.round(amt * 100) / 100;
     var btn = document.getElementById('eBtn');
     btn.disabled = true; earnMsg('Submitting…', '');
 
-    fetch(DB + RECEIPTS_PATH + '.json?orderBy="receiptNo"&equalTo="' + encodeURIComponent(no) + '"').then(function(r){ return r.json(); }).then(function(existing){
-      var dup = Object.keys(existing || {}).some(function(id){
+    Promise.all([
+      downscaleImage(wideFile, 1000, 0.65),
+      downscaleImage(closeFile, 1500, 0.72),
+      fetch(DB + RECEIPTS_PATH + '.json?orderBy="receiptNo"&equalTo="' + encodeURIComponent(no) + '"').then(function(r){ return r.json(); })
+    ]).then(function(res){
+      var wide = res[0], close = res[1], existing = res[2] || {};
+      var dup = Object.keys(existing).some(function(id){
         var r = existing[id];
-        return r && r.slug === slug && r.status !== 'rejected';
+        return r && r.slug === slug && Number(r.amount) === amt && r.status !== 'rejected';
       });
-      if (dup) { earnMsg('That receipt was already submitted.', 'err'); btn.disabled = false; return null; }
+      if (dup) { earnMsg('That receipt was already submitted. If it is a different receipt, send us a message.', 'err'); btn.disabled = false; return; }
       var rec = {
         slug: slug, token: token, memberKey: memberKey,
         name: wallet.name || '', phone: wallet.phone || '', instagram: wallet.instagram || '',
-        receiptNo: no, amount: Math.round(amt * 100) / 100,
+        receiptNo: no, amount: amt,
         status: 'pending', submittedAt: { '.sv': 'timestamp' }
       };
       return fbPost(RECEIPTS_PATH, rec).then(function(r){
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
-      }).then(function(res){
-        var id = res && res.name;
-        if (!file || !id) return;
-        return downscaleImage(file, 900, 0.6).then(function(dataUrl){
-          return fetch(DB + PHOTOS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ data: dataUrl }) });
-        }).catch(function(){});
+      }).then(function(created){
+        var id = created && created.name;
+        if (!id) throw new Error('no id');
+        return fetch(DB + PHOTOS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ wide: wide, close: close }) })
+          .then(function(r){
+            if (r.ok) return;
+            return fetch(DB + RECEIPTS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'DELETE' }).then(function(){ throw new Error('photo upload failed'); });
+          });
       }).then(function(){ loadWallet(); });
     }).catch(function(){
-      earnMsg("Couldn't submit right now. Please try again.", 'err');
+      earnMsg("Couldn't submit right now. Please check your photos and try again.", 'err');
       btn.disabled = false;
     });
   }

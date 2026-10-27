@@ -272,6 +272,7 @@
         else if (act === 'reject') rejectReceipt(id);
         else if (act === 'retry') applyAward(id).then(loadAll);
         else if (act === 'photo') showPhoto(id, btn);
+        else if (act === 'delphotos') deletePhotos(id, btn);
       });
     });
   }
@@ -286,7 +287,7 @@
     if (r.status === 'pending') {
       return '<div class="row-card" id="rc-' + id + '">' + head +
         '<div class="row-actions" style="align-items:center;">' +
-          '<button data-act="photo" data-id="' + id + '">View photo</button>' +
+          '<button data-act="photo" data-id="' + id + '">View photos</button>' +
           '<span style="font-size:12.5px;color:var(--ink-dim);">Points:</span>' +
           '<input type="number" id="pts-' + id + '" value="' + suggested + '" min="0" style="width:84px;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);">' +
           '<button data-act="approve" data-id="' + id + '" style="background:var(--key-blue);border-color:var(--key-blue);color:#fff;">Approve</button>' +
@@ -298,19 +299,31 @@
         '<div class="row-actions"><button data-act="retry" data-id="' + id + '">Retry award</button></div></div>';
     }
     var label = r.status === 'approved' ? ('Approved +' + (r.pointsAwarded||0) + ' pts') : 'Rejected';
-    return '<div class="row-card">' + head + '<div class="row-sub" style="color:' + (r.status === 'approved' ? 'var(--green)' : 'var(--red)') + ';">' + label + '</div></div>';
+    return '<div class="row-card" id="rc-' + id + '">' + head + '<div class="row-sub" style="color:' + (r.status === 'approved' ? 'var(--green)' : 'var(--red)') + ';">' + label + '</div>' +
+      '<div class="row-actions"><button data-act="photo" data-id="' + id + '">View photos</button><button data-act="delphotos" data-id="' + id + '">Delete photos</button></div></div>';
   }
 
   function showPhoto(id, btn) {
     btn.textContent = 'Loading…';
     fbGet(PHOTOS_PATH + '/' + id).then(function(p){
-      if (!p || !p.data) { btn.textContent = 'No photo'; return; }
+      var imgs = p ? [p.wide, p.close, p.data].filter(Boolean) : [];
+      if (!imgs.length) { btn.textContent = 'No photos'; return; }
       var card = document.getElementById('rc-' + id);
-      var img = document.createElement('img');
-      img.src = p.data; img.style.cssText = 'max-width:100%;border-radius:10px;margin-top:10px;';
-      card.appendChild(img);
+      imgs.forEach(function(src){
+        var img = document.createElement('img');
+        img.src = src; img.style.cssText = 'max-width:100%;border-radius:10px;margin-top:10px;display:block;';
+        card.appendChild(img);
+      });
       btn.remove();
-    }).catch(function(){ btn.textContent = 'Photo failed'; });
+    }).catch(function(){ btn.textContent = 'Photos failed'; });
+  }
+
+  function deletePhotos(id, btn) {
+    if (!confirm('Delete the photos for this receipt? The amount and receipt number stay on record.')) return;
+    fbDelete(PHOTOS_PATH + '/' + id).then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      btn.textContent = 'Photos deleted'; btn.disabled = true;
+    }).catch(function(){ showToast('Could not delete'); });
   }
 
   function approveReceipt(id) {
@@ -384,7 +397,7 @@
         '<div class="field"><label>Restaurant portal PIN (optional - only if they will log in to see/verify redemptions)</label><input type="text" id="rPin" value="' + escapeHtml(r.pin || '') + '"></div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Points earned per $1 spent (e.g. 0.05 = 5% back)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 0.05) + '"></div>' +
-          '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : '') + '"></div>' +
+          '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : 15) + '"></div>' +
         '</div>' +
         '<div class="checkbox-row"><input type="checkbox" id="rActive"' + (d.active !== false ? ' checked' : '') + '><label for="rActive">Show to members (they can submit receipts for it)</label></div>' +
         '<div class="form-actions"><button class="btn btn-primary" id="rSave">' + (isEdit ? 'Save Changes' : 'Add Business') + '</button><button class="btn" id="rCancel">Cancel</button></div>' +
@@ -413,10 +426,11 @@
   // EARNINGS TAB - what each restaurant owes you on verified spend
   // ========================================================================
   var earningsMonth = new Date().toISOString().slice(0, 7);
+  var earningsAll = false;
   function renderEarningsTab() {
     var parts = earningsMonth.split('-');
-    var start = new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, 1).getTime();
-    var end = new Date(parseInt(parts[0],10), parseInt(parts[1],10), 1).getTime();
+    var start = earningsAll ? 0 : new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, 1).getTime();
+    var end = earningsAll ? Infinity : new Date(parseInt(parts[0],10), parseInt(parts[1],10), 1).getTime();
     var by = {};
     Object.keys(receipts).forEach(function(id){
       var r = receipts[id];
@@ -433,7 +447,8 @@
     var totalOwed = rows.reduce(function(s, r){ return s + r.commissionOwed; }, 0);
     var totalSpend = rows.reduce(function(s, r){ return s + r.verifiedSpend; }, 0);
     view.innerHTML =
-      '<div class="field"><label>Month</label><input type="month" id="eMonth" value="' + earningsMonth + '"></div>' +
+      '<div class="field-row"><div class="field"><label>Period</label><select id="ePeriod" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:14px;"><option value="month"' + (earningsAll ? '' : ' selected') + '>One month</option><option value="all"' + (earningsAll ? ' selected' : '') + '>All time (running total)</option></select></div>' +
+      '<div class="field"><label>Month</label><input type="month" id="eMonth" value="' + earningsMonth + '"' + (earningsAll ? ' disabled' : '') + '></div></div>' +
       '<div class="stats-row"><div class="stat"><div class="n">' + money(totalOwed) + '</div><div class="l">Commission owed to you</div></div>' +
       '<div class="stat"><div class="n">' + money(totalSpend) + '</div><div class="l">Verified spend</div></div></div>' +
       '<button class="btn btn-primary" id="eCsv" style="margin-bottom:14px;">Download statement (CSV)</button>' +
@@ -441,7 +456,8 @@
         return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.restaurant) + '</div><div class="row-sub">' + r.receipts + ' receipts · ' + money(r.verifiedSpend) + ' verified · ' + r.commissionPct + '%</div></div><div class="row-num">' + money(r.commissionOwed) + '</div></div></div>';
       }).join('') : '<div class="empty-note">No approved receipts in this month yet.</div>');
     document.getElementById('eMonth').addEventListener('change', function(){ earningsMonth = this.value || earningsMonth; renderEarningsTab(); });
-    document.getElementById('eCsv').addEventListener('click', function(){ downloadCsv('lvr-commission-' + earningsMonth + '.csv', rows); });
+    document.getElementById('ePeriod').addEventListener('change', function(){ earningsAll = this.value === 'all'; renderEarningsTab(); });
+    document.getElementById('eCsv').addEventListener('click', function(){ downloadCsv('lvr-commission-' + (earningsAll ? 'all-time' : earningsMonth) + '.csv', rows); });
   }
 
   // ========================================================================
