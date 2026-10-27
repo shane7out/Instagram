@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Account — LVR Rewards — Key Technologies.si</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<script>
+  (function () {
+    try {
+      var page = location.pathname.split("/").pop() || "index.html";
+      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page) + ".json";
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").slice(0, 200), w: window.innerWidth })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --white:#ffffff; --btn-blue:#0f64b2; --btn-blue-hover:#1272cc; --control-line:#637283;
+    --green:#3ddc84; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{overflow-x:hidden;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);min-height:100vh;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
+    padding:14px 26px;border-radius:9px;cursor:pointer;text-decoration:none;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--btn-blue);color:var(--white);}
+  .btn-primary:hover{background:var(--btn-blue-hover);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
+  .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
+
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .logo svg{display:block;flex:none;filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 11px rgba(22,143,255,.35));}
+  .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
+  .logo-word .logo-si{color:var(--key-light);}
+  @media (max-width:420px){.logo-word{font-size:13.5px;}}
+
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  }
+  .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+
+  .page-wrap{max-width:460px;margin:0 auto;padding:30px 16px 70px;}
+
+  .balance-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 20px;text-align:center;margin-bottom:22px;}
+  .balance-name{font-size:14px;color:var(--ink-dim);margin-bottom:6px;}
+  .balance-num{font-size:52px;font-weight:800;line-height:1;color:var(--key-light);}
+  .balance-label{font-size:13.5px;color:var(--ink-dim);margin-top:6px;}
+
+  h2{font-size:16px;font-weight:700;margin:0 0 12px;}
+  .items{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+  .item-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .item-biz{font-size:12.5px;color:var(--ink-dim);font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
+  .item-name{font-size:17px;font-weight:800;margin-top:2px;}
+  .item-cost{font-size:15px;font-weight:800;color:var(--key-light);white-space:nowrap;}
+  .item-note{font-size:12px;color:var(--ink-dim);margin-top:6px;}
+  .redeem-btn{
+    width:100%;margin-top:12px;padding:12px;border-radius:10px;border:none;
+    background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  }
+  .redeem-btn:disabled{background:var(--bg-2);color:var(--ink-dim);cursor:default;}
+  .redeem-btn:not(:disabled):active{background:#0f64b2;}
+
+  .empty{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
+  .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.7;margin-top:14px;}
+  .footer-note a{color:var(--ink-dim);text-decoration:underline;}
+
+  #redeemOverlay{display:none;position:fixed;inset:0;background:rgba(7,17,31,.92);z-index:999;align-items:center;justify-content:center;padding:20px;}
+  #redeemOverlay.show{display:flex;}
+  .overlay-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 24px;max-width:380px;width:100%;text-align:center;}
+  .code-box{background:var(--bg-2);border:1px dashed var(--key-blue);border-radius:12px;padding:18px;margin:16px 0;}
+  .code-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:700;}
+  .code-value{font-size:28px;font-weight:800;letter-spacing:.08em;color:var(--key-light);margin-top:6px;}
+  .overlay-instructions{font-size:13.5px;color:var(--ink-dim);line-height:1.55;margin-bottom:16px;}
+  .overlay-close{padding:11px 20px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:14px;font-weight:700;cursor:pointer;}
+
+  .confirm-box{background:var(--card);border:1px solid var(--key-blue);border-radius:14px;padding:18px;margin-top:10px;}
+  .confirm-row{display:flex;gap:10px;margin-top:12px;}
+  .confirm-row button{flex:1;padding:11px;border-radius:9px;border:1px solid var(--line);font-size:14px;font-weight:700;cursor:pointer;}
+  .confirm-yes{background:var(--key-blue);color:#fff;border-color:var(--key-blue) !important;}
+  .confirm-no{background:var(--bg-2);color:var(--ink);}
+
+  .no-account-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 22px;text-align:center;}
+  .no-account-card h1{font-size:20px;font-weight:800;margin:0 0 10px;}
+  .no-account-card p{font-size:14.5px;margin-bottom:18px;}
+  .paste-field{display:flex;flex-direction:column;gap:8px;margin-top:20px;text-align:left;}
+  .paste-field label{font-size:12.5px;font-weight:700;color:var(--ink-dim);}
+  .paste-field input{
+    font-family:inherit;font-size:15px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:11px 12px;width:100%;
+  }
+  .paste-field button{margin-top:4px;}
+  .paste-msg{font-size:13px;color:var(--red);min-height:16px;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav-row">
+    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="rewards.html">LVR Rewards</a>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <div id="content"><div class="empty">Loading…</div></div>
+</div>
+
+<div id="redeemOverlay">
+  <div class="overlay-card" id="overlayContent"></div>
+</div>
+
+<script>
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  var WALLETS_PATH = '/lvr_points/wallets/';
+  var CATALOG_PATH = '/lvr_points/catalog';
+  var REDEMPTIONS_PATH = '/lvr_points/redemptions/';
+  var TOKEN_KEY = 'lvr_wallet_token';
+
+  var params = new URLSearchParams(location.search);
+  var contentEl = document.getElementById('content');
+
+  // A token in the URL (e.g. a link texted to a new device) always wins and
+  // gets remembered on this device going forward - the account icon then
+  // recognizes this browser on every future visit, no re-pasting needed.
+  var token = (params.get('t') || '').trim();
+  if (token) {
+    try { localStorage.setItem(TOKEN_KEY, token); } catch (e) {}
+  } else {
+    try { token = (localStorage.getItem(TOKEN_KEY) || '').trim(); } catch (e) {}
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function fbGet(path) { return fetch(DB + path + '.json').then(function(r){ return r.json(); }); }
+  function fbPost(path, body) { return fetch(DB + path + '.json', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  function fbPatch(path, body) { return fetch(DB + path + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+
+  function showEmpty(text) {
+    contentEl.innerHTML = '<div class="empty">' + escapeHtml(text) + '</div>';
+  }
+
+  function extractToken(input) {
+    input = (input || '').trim();
+    if (!input) return '';
+    var m = input.match(/[?&]t=([a-f0-9]+)/i);
+    if (m) return m[1];
+    if (/^[a-f0-9]{16,}$/i.test(input)) return input;
+    return '';
+  }
+
+  function showNoAccount() {
+    contentEl.innerHTML =
+      '<div class="no-account-card">' +
+        '<h1>No account on this device</h1>' +
+        '<p>Open a free account, or if you already have one, paste your account link below.</p>' +
+        '<a class="btn btn-primary" href="rewards.html">Open My Account</a>' +
+        '<div class="paste-field">' +
+          '<label for="pasteInput">Already have a link? Paste it here</label>' +
+          '<input type="text" id="pasteInput" placeholder="https://keytechnologies.si/my-account.html?t=...">' +
+          '<button class="btn btn-ghost" id="pasteBtn">Use This Link</button>' +
+          '<div class="paste-msg" id="pasteMsg"></div>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('pasteBtn').addEventListener('click', function(){
+      var found = extractToken(document.getElementById('pasteInput').value);
+      if (!found) {
+        document.getElementById('pasteMsg').textContent = "Couldn't find an account link in that - paste the whole link.";
+        return;
+      }
+      try { localStorage.setItem(TOKEN_KEY, found); } catch (e) {}
+      token = found;
+      loadWallet();
+    });
+  }
+
+  var wallet = null;
+
+  function loadWallet() {
+    showEmpty('Loading…');
+    Promise.all([
+      fbGet(WALLETS_PATH + encodeURIComponent(token)),
+      fbGet(CATALOG_PATH),
+      fbGet(REDEMPTIONS_PATH.slice(0, -1))
+    ]).then(function(results){
+      wallet = results[0];
+      var catalog = results[1] || {};
+      var allRedemptions = results[2] || {};
+      if (!wallet) {
+        showEmpty("We couldn't find an account for this link.");
+        return;
+      }
+      render(catalog, allRedemptions);
+    }).catch(function(){
+      showEmpty("Couldn't load your account right now. Please try again in a moment.");
+    });
+  }
+
+  if (!token) {
+    showNoAccount();
+  } else {
+    loadWallet();
+  }
+
+  function redemptionCount(allRedemptions, slug, itemId) {
+    var slugRedemptions = (allRedemptions && allRedemptions[slug]) || {};
+    return Object.keys(slugRedemptions).filter(function(id){
+      return slugRedemptions[id] && slugRedemptions[id].itemId === itemId;
+    }).length;
+  }
+
+  function flattenCatalog(catalog, allRedemptions) {
+    var items = [];
+    Object.keys(catalog).forEach(function(slug){
+      var bizItems = catalog[slug] || {};
+      Object.keys(bizItems).forEach(function(itemId){
+        var item = bizItems[itemId];
+        if (!item || item.active === false) return;
+        if (item.expiresAt && Date.now() > item.expiresAt) return;
+        var redeemed = redemptionCount(allRedemptions, slug, itemId);
+        if (item.maxRedemptions && redeemed >= item.maxRedemptions) return;
+        items.push(Object.assign({ slug: slug, itemId: itemId, _redeemedCount: redeemed }, item));
+      });
+    });
+    return items;
+  }
+
+  function render(catalog, allRedemptions) {
+    var items = flattenCatalog(catalog, allRedemptions);
+
+    var html =
+      '<div class="balance-card">' +
+        '<div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
+        '<div class="balance-num" id="balanceNum">' + (wallet.balance || 0) + '</div>' +
+        '<div class="balance-label">points available</div>' +
+      '</div>' +
+      '<h2>Redeem</h2>';
+
+    if (!items.length) {
+      html += '<div class="empty">No offers available right now — check back soon.</div>';
+    } else {
+      html += '<div class="items">' + items.map(function(item){
+        var afford = (wallet.balance || 0) >= item.pointCost;
+        return '<div class="item-card" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
+          '<div class="item-top">' +
+            '<div><div class="item-biz">' + escapeHtml(item.bizName || item.slug) + '</div><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div></div>' +
+            '<div class="item-cost">' + item.pointCost + ' pts</div>' +
+          '</div>' +
+          (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
+          '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (afford ? 'Redeem' : 'Not enough points') + '</button>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a></div>';
+
+    contentEl.innerHTML = html;
+
+    contentEl.querySelectorAll('[data-act="redeem"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var card = btn.closest('.item-card');
+        var item = items.filter(function(i){ return i.slug === card.getAttribute('data-slug') && i.itemId === card.getAttribute('data-item'); })[0];
+        if (item) showConfirm(item, card);
+      });
+    });
+
+    document.getElementById('notYouLink').addEventListener('click', function(e){
+      e.preventDefault();
+      try { localStorage.removeItem(TOKEN_KEY); } catch (err) {}
+      token = '';
+      wallet = null;
+      showNoAccount();
+    });
+  }
+
+  function showConfirm(item, card) {
+    if (card.querySelector('.confirm-box')) return;
+    var box = document.createElement('div');
+    box.className = 'confirm-box';
+    box.innerHTML =
+      '<div>Use <b>' + item.pointCost + ' points</b> for ' + escapeHtml(item.itemName || 'this offer') + ' at ' + escapeHtml(item.bizName || item.slug) + '?</div>' +
+      '<div class="confirm-row">' +
+        '<button class="confirm-no" data-act="cancel">Cancel</button>' +
+        '<button class="confirm-yes" data-act="confirm">Yes, Redeem</button>' +
+      '</div>';
+    card.appendChild(box);
+    box.querySelector('[data-act="cancel"]').addEventListener('click', function(){ box.remove(); });
+    box.querySelector('[data-act="confirm"]').addEventListener('click', function(){
+      box.innerHTML = '<div>Redeeming…</div>';
+      doRedeem(item);
+    });
+  }
+
+  function makeCode(slug) {
+    var prefix = (slug.replace(/[^a-z]/gi, '').slice(0, 3) || 'LVR').toUpperCase();
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var suffix = '';
+    for (var i = 0; i < 5; i++) suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+    return prefix + '-' + suffix;
+  }
+
+  function doRedeem(item) {
+    Promise.all([
+      fbGet(WALLETS_PATH + encodeURIComponent(token) + '/balance'),
+      item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null)
+    ]).then(function(results){
+      var freshBalance = results[0] || 0;
+      var freshRedemptions = results[1];
+      if (freshBalance < item.pointCost) {
+        alert("Your balance changed and you no longer have enough points for this.");
+        loadWallet();
+        return;
+      }
+      if (item.maxRedemptions) {
+        var freshCount = Object.keys(freshRedemptions || {}).filter(function(id){
+          return freshRedemptions[id] && freshRedemptions[id].itemId === item.itemId;
+        }).length;
+        if (freshCount >= item.maxRedemptions) {
+          alert("This offer was just fully claimed by someone else.");
+          loadWallet();
+          return;
+        }
+      }
+      var code = makeCode(item.slug);
+      var newBalance = freshBalance - item.pointCost;
+      var redemption = {
+        token: token,
+        email: wallet.email || '',
+        name: wallet.name || '',
+        itemId: item.itemId,
+        itemName: item.itemName || '',
+        pointCost: item.pointCost,
+        code: code,
+        redeemedAt: { '.sv': 'timestamp' }
+      };
+      fbPost(REDEMPTIONS_PATH + encodeURIComponent(item.slug), redemption).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return fbPatch(WALLETS_PATH + encodeURIComponent(token), { balance: newBalance });
+      }).then(function(){
+        wallet.balance = newBalance;
+        showRedeemSuccess(item, code, newBalance);
+      }).catch(function(){
+        alert("Something went wrong redeeming this. Please try again.");
+        loadWallet();
+      });
+    });
+  }
+
+  function showRedeemSuccess(item, code, newBalance) {
+    document.getElementById('overlayContent').innerHTML =
+      '<div style="font-size:22px;font-weight:800;">You\'re in! 🎉</div>' +
+      '<div class="code-box">' +
+        '<div class="code-label">Your redemption code</div>' +
+        '<div class="code-value">' + escapeHtml(code) + '</div>' +
+      '</div>' +
+      '<div class="overlay-instructions">' + escapeHtml(item.instructions || ('Show this code at ' + (item.bizName || item.slug) + ' to redeem.')) + '</div>' +
+      '<button class="overlay-close" id="overlayCloseBtn">Done — ' + newBalance + ' points left</button>';
+    document.getElementById('redeemOverlay').classList.add('show');
+    document.getElementById('overlayCloseBtn').addEventListener('click', function(){
+      document.getElementById('redeemOverlay').classList.remove('show');
+      loadWallet();
+    });
+  }
+</script>
+</body>
+</html>
