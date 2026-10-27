@@ -260,7 +260,7 @@
   var memberKey = null;
   var directory = {};
   var myReceipts = {};
-  var refSettings = { enabled: true, l1Pct: 20, l2Pct: 0 };
+  var refSettings = { enabled: false, l1Pct: 20, l2Pct: 0 };
 
   function loadWallet() {
     showEmpty('Loading…');
@@ -274,7 +274,7 @@
     ]).then(function(results){
       directory = results[3] || {};
       myReceipts = results[4] || {};
-      refSettings = Object.assign({ enabled: true, l1Pct: 20, l2Pct: 0 }, results[5] || {});
+      refSettings = Object.assign({ enabled: false, l1Pct: 20, l2Pct: 0 }, results[5] || {});
       var found = results[0] || {};
       var keys = Object.keys(found);
       var catalog = results[1] || {};
@@ -434,7 +434,7 @@
     return attempt(0);
   }
   function inviteCardHtml() {
-    if (!refSettings || refSettings.enabled === false) return '';
+    if (!refSettings || refSettings.enabled !== true) return '';
     var extra = refSettings.l2Pct > 0 ? ' and ' + refSettings.l2Pct + '% of what their friends earn' : '';
     return '<div class="invite-card" id="inviteCard"><h2>Invite friends</h2>' +
       '<div class="earn-sub" style="margin-bottom:0;">Share your link. When a friend joins and earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn' + extra + '. It never reduces their points.</div>' +

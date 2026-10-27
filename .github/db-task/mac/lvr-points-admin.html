@@ -384,7 +384,7 @@
   // for signing someone up. Each level pays once per receipt (flags on the
   // receipt), fractions are carried forward so nothing is lost to rounding.
   function refConfig() {
-    return Object.assign({ enabled: true, l1Pct: 20, l2Pct: 0 }, settings.referral || {});
+    return Object.assign({ enabled: false, l1Pct: 20, l2Pct: 0 }, settings.referral || {});
   }
   function payLevel(level, memberKey, receiptId, receipt, cfg) {
     if (level >= 2) return Promise.resolve();
@@ -416,7 +416,7 @@
   function applyReferrals(id) {
     return Promise.all([ fbGet(RECEIPTS_PATH + '/' + id), fbGet(SETTINGS_PATH + '/referral') ]).then(function(res){
       var r = res[0];
-      var cfg = Object.assign({ enabled: true, l1Pct: 20, l2Pct: 0 }, res[1] || {});
+      var cfg = Object.assign({ enabled: false, l1Pct: 20, l2Pct: 0 }, res[1] || {});
       if (!r || r.status !== 'approved' || r.pointsApplied !== true || r.referralDone !== false) return;
       if (!cfg.enabled || !(r.pointsAwarded > 0)) return fbPatch(RECEIPTS_PATH + '/' + id, { referralDone: true });
       return payLevel(0, r.memberKey, id, r, cfg).then(function(){ return fbPatch(RECEIPTS_PATH + '/' + id, { referralDone: true }); });
@@ -431,7 +431,7 @@
     view.innerHTML =
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
-        '<div class="checkbox-row"><input type="checkbox" id="sRefOn"' + (c.enabled !== false ? ' checked' : '') + '><label for="sRefOn">Referral rewards are on</label></div>' +
+        '<div class="checkbox-row"><input type="checkbox" id="sRefOn"' + (c.enabled === true ? ' checked' : '') + '><label for="sRefOn">Referral rewards are on (off until your attorney has reviewed them)</label></div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Level 1: % of the friend\'s points (invited by a member)</label><input type="number" id="sL1" min="0" max="100" step="1" value="' + (c.l1Pct || 0) + '"></div>' +
           '<div class="field"><label>Level 2: % paid up one more step</label><input type="number" id="sL2" min="0" max="100" step="1" value="' + (c.l2Pct || 0) + '"></div>' +
