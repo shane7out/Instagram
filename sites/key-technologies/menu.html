@@ -180,7 +180,7 @@
     var items = Object.keys(catalog[slug] || {}).map(function (id) { return catalog[slug][id]; }).filter(usable).filter(function (it) {
       return !(typeof credit === "number" && credit < it.pointCost);
     });
-    items.sort(function (a, b) { return (a.pointCost || 0) - (b.pointCost || 0); });
+    items.sort(function (a, b) { return (b.pointCost || 0) - (a.pointCost || 0); }); // mains first
     var biz = (directory[slug] && directory[slug].bizName) || (items[0] && items[0].bizName) || slug;
     if (!items.length) { render(biz, [], false, settings); return; }
     render(biz, items, false, settings);
