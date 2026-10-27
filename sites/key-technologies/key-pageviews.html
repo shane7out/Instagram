@@ -128,6 +128,12 @@ var PAGE_LABELS = {
   "marketplace-demo.html": "Marketplace Demo"
 };
 
+// Database keys cannot contain a period, so trackers store "index.html" as
+// "index_html"; accept both spellings here.
+Object.keys(PAGE_LABELS).forEach(function (k) {
+  if (k.indexOf(".") > -1) PAGE_LABELS[k.replace(/\./g, "_")] = PAGE_LABELS[k];
+});
+
 document.getElementById("pinBtn").addEventListener("click", tryPin);
 document.getElementById("pinInput").addEventListener("keydown", function (e) {
   if (e.key === "Enter") tryPin();

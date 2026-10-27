@@ -13,7 +13,7 @@
   (function () {
     try {
       var page = location.pathname.split("/").pop() || "index.html";
-      fetch("https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page) + ".json", {
+      fetch("https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page.replace(/\./g, "_")) + ".json", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").split(/[?#]/)[0].slice(0, 200), w: window.innerWidth })
       }).catch(function () {});

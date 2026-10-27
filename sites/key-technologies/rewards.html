@@ -40,7 +40,7 @@
   (function () {
     try {
       var page = location.pathname.split("/").pop() || "index.html";
-      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page) + ".json";
+      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page.replace(/\./g, "_")) + ".json";
       fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
