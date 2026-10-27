@@ -43,7 +43,7 @@
     ".read": true,
     ".indexOn": ["token", "refCode", "referredBy"],
     "$k": {
-      ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && (!data.child('referredBy').exists() || newData.child('referredBy').val() == data.child('referredBy').val()) && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('points').val() == 0 && newData.child('name').isString()))",
+      ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('points').val() == 0 && newData.child('name').isString()))",
       "points": { ".validate": "newData.isNumber() && newData.val() >= 0" },
       "refBonusTotal": { ".validate": "newData.isNumber() && newData.val() >= 0" },
       "refCarry": { ".validate": "newData.isNumber() && newData.val() >= 0" },

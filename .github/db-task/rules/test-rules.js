@@ -39,7 +39,8 @@ const BIG = 'x'.repeat(100);
   check('points set to text', await call('anon', 'PUT', '/lvr_rewards/K1/points', 'lots'), false);
   check('change a member\'s personal-link token', await call('anon', 'PUT', '/lvr_rewards/K1/token', 'hijackedtokenhijackedtoken'), false);
   check('change an existing refCode', await call('anon', 'PUT', '/lvr_rewards/K1/refCode', 'HACK99'), false);
-  check('change referredBy after the fact', await call('anon', 'PUT', '/lvr_rewards/K1/referredBy', 'K2'), false);
+  check('add or change referredBy after sign-up', await call('anon', 'PUT', '/lvr_rewards/K1/referredBy', 'K2'), false);
+  check('sign-up that names who invited them (allowed at creation only)', await call('anon', 'POST', '/lvr_rewards', { name: 'Friend', points: 0, token: 'tokFriendabcdefabcdefa', referredBy: 'K1' }), true);
   check('give an old member a token (backfill / Generate Link)', await call('anon', 'PUT', '/lvr_rewards/K2/token', 'tokK2abcdefabcdefabcdefab'), true);
   check('lazy refCode for a member without one', await call('anon', 'PATCH', '/lvr_rewards/K2', { refCode: 'K2CODE' }), true);
   check('referral bonus fields', await call('anon', 'PATCH', '/lvr_rewards/K1', { refCarry: 0.4, refBonusTotal: 2 }), true);
@@ -124,7 +125,7 @@ const BIG = 'x'.repeat(100);
   check('other apps: wipe a whole top-level node (already blocked today)', await call('anon', 'DELETE', '/dashboard'), false);
   check('debug area for remote tasks still writable', await call('anon', 'PUT', '/_debug/diag', 'hello'), true);
   check('lead form still writes', await call('anon', 'POST', '/key_leads/leads', { source: 'x', email: 'a@example.com' }), true);
-  check('page-view tracker still writes', await call('anon', 'POST', '/key_pageviews/hits/index.html', { t: 1 }), true);
+  check('page-view tracker still writes (key without a period)', await call('anon', 'POST', '/key_pageviews/hits/index_html', { t: 1 }), true);
   check('pet game stays locked to anonymous visitors (explicit sibling beats the catch-all)', await call('anon', 'PUT', '/petgame/pets/p1', { name: 'x' }), false);
 
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
