@@ -1344,3 +1344,12 @@ top unless they tell you otherwise.*
 - Members see a "Use it or share it" notice with the date and amount; fine print mentions it.
 - Attorney list: monthly return of unused points (disclosure at sign-up, effect on welcome points, where the pool goes).
 - Tested: 124 rules/sweep checks pass on the runner.
+
+## Repeating treasure chest (built 2026-10-27, prizes OFF until you set a max above 0)
+- Settings > Treasure chest: days until first chest (default 14), extra days each time (5), smallest/biggest prize (1 and 2; max 0 = off), "Keep repeating".
+- Waits: 14, 19, 24, 29 ... days; each countdown starts when the member opens the previous chest.
+- Claim is written first to `lvr_rewards/<member>/chestState {n, amount, at}`; rules only accept the next number, after the full wait, with a prize inside your range. Every prize is also logged in `lvr_points/chest_log/<member>/<n>` (cannot be edited).
+- Prize is picked in the member's browser (no server yet), so it is only as strong as the rest of the balance system until Cloud Functions. Rules cap it to your min/max.
+- Wooden pirate-chest art; pop-open animation with coins on the member screen.
+- Attorney list: random prizes (check sweepstakes/chance rules; there is no purchase tied to the chest, but ask).
+- 134 rules/sweep checks pass.
