@@ -106,6 +106,7 @@
     <span class="tab" data-v="earnings">Earnings</span>
     <span class="tab" data-v="catalog">Catalog</span>
     <span class="tab" data-v="redemptions">Redemptions</span>
+    <span class="tab" data-v="settings">Settings</span>
   </div>
   <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their point balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool handles receipts (approve = points land instantly), restaurants and your commission, what members can redeem, and who already has.</div>
   <div id="view"></div>
@@ -121,6 +122,7 @@
   var REDEMPTIONS_PATH = '/lvr_points/redemptions';
   var RECEIPTS_PATH = '/lvr_points/receipts';
   var FUNDINGS_PATH = '/lvr_points/fundings';
+  var SETTINGS_PATH = '/lvr_points/settings';
   var PHOTOS_PATH = '/lvr_points/receipt_photos';
   var DIRECTORY_PATH = '/lvr_points/directory';
   var MEMBERS_PATH = '/lvr_rewards';
@@ -206,7 +208,7 @@
     URL.revokeObjectURL(url);
   }
 
-  var catalog = {}, restaurants = {}, redemptions = {}, receipts = {}, directory = {}, fundings = {};
+  var catalog = {}, restaurants = {}, redemptions = {}, receipts = {}, directory = {}, fundings = {}, settings = {};
   var activeTab = 'receipts';
   var view = document.getElementById('view');
 
@@ -223,10 +225,10 @@
   function loadAll() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
     Promise.all([
-      fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH), fbGet(RECEIPTS_PATH), fbGet(DIRECTORY_PATH), fbGet(FUNDINGS_PATH)
+      fbGet(CATALOG_PATH), fbGet(RESTAURANTS_PATH), fbGet(REDEMPTIONS_PATH), fbGet(RECEIPTS_PATH), fbGet(DIRECTORY_PATH), fbGet(FUNDINGS_PATH), fbGet(SETTINGS_PATH)
     ]).then(function(r){
-      catalog = r[0] || {}; restaurants = r[1] || {}; redemptions = r[2] || {}; receipts = r[3] || {}; directory = r[4] || {}; fundings = r[5] || {};
-      var pend = Object.keys(receipts).filter(function(id){ return receipts[id] && (receipts[id].status === 'pending' || (receipts[id].status === 'approved' && receipts[id].pointsApplied === false)); }).length;
+      catalog = r[0] || {}; restaurants = r[1] || {}; redemptions = r[2] || {}; receipts = r[3] || {}; directory = r[4] || {}; fundings = r[5] || {}; settings = r[6] || {};
+      var pend = Object.keys(receipts).filter(function(id){ return receipts[id] && (receipts[id].status === 'pending' || (receipts[id].status === 'approved' && (receipts[id].pointsApplied === false || receipts[id].referralDone === false))); }).length;
       var rt = document.querySelector('.tab[data-v="receipts"]');
       if (rt) rt.textContent = 'Receipts' + (pend ? ' (' + pend + ')' : '');
       renderTab();
@@ -239,6 +241,7 @@
     if (activeTab === 'receipts') renderReceiptsTab();
     else if (activeTab === 'restaurants') renderRestaurantsTab();
     else if (activeTab === 'earnings') renderEarningsTab();
+    else if (activeTab === 'settings') renderSettingsTab();
     else if (activeTab === 'catalog') renderCatalogTab();
     else renderRedemptionsTab();
   }
@@ -255,7 +258,7 @@
   function renderReceiptsTab() {
     var ids = Object.keys(receipts).filter(function(id){ return receipts[id]; });
     ids.sort(function(a,b){ return (receipts[b].submittedAt||0) - (receipts[a].submittedAt||0); });
-    var open = ids.filter(function(id){ var r = receipts[id]; return r.status === 'pending' || (r.status === 'approved' && r.pointsApplied === false); });
+    var open = ids.filter(function(id){ var r = receipts[id]; return r.status === 'pending' || (r.status === 'approved' && (r.pointsApplied === false || r.referralDone === false)); });
     var done = ids.filter(function(id){ return open.indexOf(id) === -1; }).slice(0, 25);
 
     var html = '<div class="stats-row">' +
@@ -272,6 +275,7 @@
         if (act === 'approve') approveReceipt(id);
         else if (act === 'reject') rejectReceipt(id);
         else if (act === 'retry') applyAward(id).then(loadAll);
+        else if (act === 'retryref') applyReferrals(id).then(loadAll);
         else if (act === 'photo') showPhoto(id, btn);
         else if (act === 'delphotos') deletePhotos(id, btn);
       });
@@ -294,6 +298,10 @@
           '<button data-act="approve" data-id="' + id + '" style="background:var(--key-blue);border-color:var(--key-blue);color:#fff;">Approve</button>' +
           '<button data-act="reject" data-id="' + id + '">Reject</button>' +
         '</div><div class="row-sub" style="margin-top:6px;">' + (rate ? ('Suggested ' + suggested + ' = ' + money(r.amount) + ' x ' + rate + ' pts per $1') : 'No earn rate set for this restaurant yet - enter points by hand.') + '</div></div>';
+    }
+    if (r.status === 'approved' && r.pointsApplied === true && r.referralDone === false) {
+      return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Points landed, but the referral bonus did not finish. Tap retry (safe - each level pays once).</div>' +
+        '<div class="row-actions"><button data-act="retryref" data-id="' + id + '">Retry referral bonus</button></div></div>';
     }
     if (r.status === 'approved' && r.pointsApplied === false) {
       return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Approved for ' + (r.pointsAwarded||0) + ' pts but the points did not land. Tap retry (safe - it will not double-award).</div>' +
@@ -332,7 +340,7 @@
     if (isNaN(pts) || pts < 0) { showToast('Enter the points to award'); return; }
     fbGet(RECEIPTS_PATH + '/' + id).then(function(fresh){
       if (!fresh || fresh.status !== 'pending') { showToast('Already handled'); return loadAll(); }
-      return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'approved', pointsAwarded: pts, pointsApplied: false, decidedAt: { '.sv': 'timestamp' } })
+      return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'approved', pointsAwarded: pts, pointsApplied: false, referralDone: false, decidedAt: { '.sv': 'timestamp' } })
         .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return applyAward(id); })
         .then(loadAll);
     }).catch(function(){ showToast('Something went wrong - nothing was awarded'); });
@@ -352,7 +360,8 @@
           if (!resp.ok) throw new Error('credit failed');
           return fbPatch(RECEIPTS_PATH + '/' + id, { pointsApplied: true });
         });
-      }).then(function(){ showToast('Approved - points added'); });
+      }).then(function(){ return applyReferrals(id).catch(function(){ showToast('Points added - referral bonus will need a retry'); }); })
+        .then(function(){ showToast('Approved - points added'); });
     }).catch(function(){ showToast('Points did not land - use Retry'); });
   }
 
@@ -362,6 +371,83 @@
       if (!fresh || fresh.status !== 'pending') { showToast('Already handled'); return loadAll(); }
       return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'rejected', decidedAt: { '.sv': 'timestamp' } }).then(function(){ showToast('Rejected'); loadAll(); });
     }).catch(function(){ showToast('Something went wrong'); });
+  }
+
+  // ========================================================================
+  // REFERRAL BONUSES
+  // ========================================================================
+  // When a referred member's receipt is approved, the member who invited them
+  // (level 1) earns a percentage of the points the friend was awarded; an
+  // optional level 2 pays the inviter's inviter (off by default, and kept at
+  // 0 until an attorney approves it). Capped at two levels, never reduces the
+  // friend's own points, paid only from verified receipts - nothing is paid
+  // for signing someone up. Each level pays once per receipt (flags on the
+  // receipt), fractions are carried forward so nothing is lost to rounding.
+  function refConfig() {
+    return Object.assign({ enabled: true, l1Pct: 20, l2Pct: 0 }, settings.referral || {});
+  }
+  function payLevel(level, memberKey, receiptId, receipt, cfg) {
+    if (level >= 2) return Promise.resolve();
+    return fbGet(MEMBERS_PATH + '/' + memberKey + '/referredBy').then(function(upKey){
+      if (!upKey) return;
+      var pct = level === 0 ? cfg.l1Pct : cfg.l2Pct;
+      var flag = level === 0 ? 'refL1Done' : 'refL2Done';
+      var next = function(){ return payLevel(level + 1, upKey, receiptId, receipt, cfg); };
+      if (!(pct > 0) || receipt[flag]) return next();
+      return fbGet(MEMBERS_PATH + '/' + upKey).then(function(up){
+        if (!up) return next();
+        var raw = (receipt.pointsAwarded || 0) * pct / 100 + (Number(up.refCarry) || 0);
+        var bonus = Math.floor(raw + 1e-9);
+        var carry = Math.round((raw - bonus) * 1000) / 1000;
+        return fbPatch(MEMBERS_PATH + '/' + upKey, { refCarry: carry }).then(function(){
+          if (!(bonus > 0)) return null;
+          return fbPut(MEMBERS_PATH + '/' + upKey + '/points', { '.sv': { increment: bonus } }).then(function(r){
+            if (!r.ok) throw new Error('bonus credit failed');
+            return fbPut(MEMBERS_PATH + '/' + upKey + '/refBonusTotal', { '.sv': { increment: bonus } });
+          });
+        }).then(function(){
+          var p = {}; p[flag] = true; p[level === 0 ? 'refL1Points' : 'refL2Points'] = bonus;
+          receipt[flag] = true;
+          return fbPatch(RECEIPTS_PATH + '/' + receiptId, p);
+        }).then(next);
+      });
+    });
+  }
+  function applyReferrals(id) {
+    return Promise.all([ fbGet(RECEIPTS_PATH + '/' + id), fbGet(SETTINGS_PATH + '/referral') ]).then(function(res){
+      var r = res[0];
+      var cfg = Object.assign({ enabled: true, l1Pct: 20, l2Pct: 0 }, res[1] || {});
+      if (!r || r.status !== 'approved' || r.pointsApplied !== true || r.referralDone !== false) return;
+      if (!cfg.enabled || !(r.pointsAwarded > 0)) return fbPatch(RECEIPTS_PATH + '/' + id, { referralDone: true });
+      return payLevel(0, r.memberKey, id, r, cfg).then(function(){ return fbPatch(RECEIPTS_PATH + '/' + id, { referralDone: true }); });
+    });
+  }
+
+  // ========================================================================
+  // SETTINGS TAB
+  // ========================================================================
+  function renderSettingsTab() {
+    var c = refConfig();
+    view.innerHTML =
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
+        '<div class="checkbox-row"><input type="checkbox" id="sRefOn"' + (c.enabled !== false ? ' checked' : '') + '><label for="sRefOn">Referral rewards are on</label></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Level 1: % of the friend\'s points (invited by a member)</label><input type="number" id="sL1" min="0" max="100" step="1" value="' + (c.l1Pct || 0) + '"></div>' +
+          '<div class="field"><label>Level 2: % paid up one more step</label><input type="number" id="sL2" min="0" max="100" step="1" value="' + (c.l2Pct || 0) + '"></div>' +
+        '</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Keep Level 2 at 0 until your attorney confirms multi-level rewards are allowed. The system never goes past two levels.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Cost check: the restaurant pays you 15% of verified spend. With a 5% earn rate and ' + (c.l1Pct || 0) + '% referral, you give back about ' + (5 + 5 * (c.l1Pct || 0) / 100).toFixed(2) + '% of spend in points (if the friend is referred).</div>' +
+        '<div class="form-actions"><button class="btn btn-primary" id="sSave">Save</button></div></div>';
+    document.getElementById('sSave').addEventListener('click', function(){
+      var l1 = Math.max(0, Math.min(100, parseFloat(document.getElementById('sL1').value) || 0));
+      var l2 = Math.max(0, Math.min(100, parseFloat(document.getElementById('sL2').value) || 0));
+      var payload = { enabled: document.getElementById('sRefOn').checked, l1Pct: l1, l2Pct: l2 };
+      fbPut(SETTINGS_PATH + '/referral', payload).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        settings.referral = payload; showToast('Saved');
+      }).catch(function(){ showToast('Something went wrong saving'); });
+    });
   }
 
   // ========================================================================
@@ -681,5 +767,6 @@
     }).join('');
   }
 </script>
+<div class="kt-built-by" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
 </body>
 </html>

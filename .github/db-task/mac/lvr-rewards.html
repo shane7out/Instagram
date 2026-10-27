@@ -795,6 +795,31 @@
   var IG_IDX_BASE = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_instagram_index/';
   var ACCOUNT_URL = 'https://keytechnologies.si/my-account.html?t=';
 
+  // Referral: ?ref=ABC123 is remembered for 30 days (same scheme as the Key Technologies page).
+  var REF_KEY = 'lvr_ref', REF_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  try {
+    var _qr = new URLSearchParams(location.search).get('ref');
+    if (_qr) localStorage.setItem(REF_KEY, JSON.stringify({ c: _qr.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12), t: Date.now() }));
+  } catch (e) {}
+  function savedRef() {
+    try { var o = JSON.parse(localStorage.getItem(REF_KEY) || 'null'); if (o && o.c && Date.now() - o.t < 30 * 864e5) return o.c; } catch (e) {}
+    return '';
+  }
+  function genRefCode() {
+    var bytes = new Uint8Array(6); (window.crypto || window.msCrypto).getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function(b){ return REF_CHARS.charAt(b % REF_CHARS.length); }).join('');
+  }
+  function findReferrer(code, phone) {
+    if (!code) return Promise.resolve(null);
+    return fetch(RTDB_URL + '?orderBy="refCode"&equalTo="' + encodeURIComponent(code) + '"').then(function(r){ return r.json(); }).then(function(found){
+      var ks = found ? Object.keys(found) : [];
+      if (!ks.length) return null;
+      var c = found[ks[0]] || {};
+      if (phone && c.phone && String(c.phone).replace(/\D/g, '') === String(phone).replace(/\D/g, '')) return null;
+      return ks[0];
+    }).catch(function(){ return null; });
+  }
+
   function genToken() {
     var bytes = new Uint8Array(16);
     (window.crypto || window.msCrypto).getRandomValues(bytes);
@@ -912,10 +937,8 @@
     setSaveStatus('saving', '⏳  Saving to database…');
     var token = genToken();
 
-    fetch(RTDB_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    findReferrer(savedRef(), phone).then(function(referrerKey) {
+      var rec = {
         name:            name,
         phone:           phone,
         instagram:       '@' + ig,
@@ -925,10 +948,17 @@
         source:          'lvr-rewards-form',
         points:          0,
         token:           token,
+        refCode:         genRefCode(),
         consent_sms:     true,
         consent_privacy: true,
         consent_ts:      nowTs
-      })
+      };
+      if (referrerKey) rec.referredBy = referrerKey;
+      return fetch(RTDB_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rec)
+      });
     })
     .then(function(r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);

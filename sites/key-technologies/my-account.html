@@ -125,6 +125,12 @@
   .notice{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:700;line-height:1.4;}
   .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
   .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
+  .invite-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:26px 0 8px;}
+  .invite-card h2{margin-bottom:4px;}
+  .invite-link{word-break:break-all;font-size:13px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin:10px 0;color:var(--key-light);}
+  .invite-stats{display:flex;gap:10px;margin-top:12px;}
+  .invite-stats div{flex:1;background:var(--bg-2);border-radius:10px;padding:9px 6px;text-align:center;font-size:12px;color:var(--ink-dim);}
+  .invite-stats b{display:block;font-size:19px;color:var(--ink);}
   .no-account-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 22px;text-align:center;}
   .no-account-card h1{font-size:20px;font-weight:800;margin:0 0 10px;}
   .no-account-card p{font-size:14.5px;margin-bottom:18px;}
@@ -254,6 +260,7 @@
   var memberKey = null;
   var directory = {};
   var myReceipts = {};
+  var refSettings = { enabled: true, l1Pct: 20, l2Pct: 0 };
 
   function loadWallet() {
     showEmpty('Loading…');
@@ -262,10 +269,12 @@
       fbGet(CATALOG_PATH),
       fbGet(REDEMPTIONS_PATH.slice(0, -1)),
       fbGet(DIRECTORY_PATH),
-      fetch(DB + RECEIPTS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(token) + '"').then(function(r){ return r.json(); })
+      fetch(DB + RECEIPTS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(token) + '"').then(function(r){ return r.json(); }),
+      fbGet('/lvr_points/settings/referral')
     ]).then(function(results){
       directory = results[3] || {};
       myReceipts = results[4] || {};
+      refSettings = Object.assign({ enabled: true, l1Pct: 20, l2Pct: 0 }, results[5] || {});
       var found = results[0] || {};
       var keys = Object.keys(found);
       var catalog = results[1] || {};
@@ -364,6 +373,8 @@
       }).join('');
     }
 
+    html += inviteCardHtml();
+
     var rIds = Object.keys(myReceipts || {}).filter(function(id){ return myReceipts[id]; });
     rIds.sort(function(a, b){ return (myReceipts[b].submittedAt || 0) - (myReceipts[a].submittedAt || 0); });
     if (rIds.length) {
@@ -382,6 +393,7 @@
 
     contentEl.innerHTML = html;
     bindEarnPanel();
+    bindInvite();
     startPolling();
 
     contentEl.querySelectorAll('[data-act="redeem"]').forEach(function(btn){
@@ -399,6 +411,53 @@
       wallet = null;
       showNoAccount();
     });
+  }
+
+  // ---------- invite friends ----------
+  var REF_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  function genRefCode() {
+    var bytes = new Uint8Array(6); (window.crypto || window.msCrypto).getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function(b){ return REF_CHARS.charAt(b % REF_CHARS.length); }).join('');
+  }
+  function ensureRefCode() {
+    if (wallet && wallet.refCode) return Promise.resolve(wallet.refCode);
+    function attempt(n) {
+      var code = genRefCode();
+      return fetch(DB + MEMBERS_PATH + '.json?orderBy="refCode"&equalTo="' + code + '"').then(function(r){ return r.json(); }).then(function(found){
+        if (found && Object.keys(found).length && n < 5) return attempt(n + 1);
+        return fbPatch(MEMBERS_PATH + '/' + encodeURIComponent(memberKey), { refCode: code }).then(function(r){
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          wallet.refCode = code; return code;
+        });
+      });
+    }
+    return attempt(0);
+  }
+  function inviteCardHtml() {
+    if (!refSettings || refSettings.enabled === false) return '';
+    var extra = refSettings.l2Pct > 0 ? ' and ' + refSettings.l2Pct + '% of what their friends earn' : '';
+    return '<div class="invite-card" id="inviteCard"><h2>Invite friends</h2>' +
+      '<div class="earn-sub" style="margin-bottom:0;">Share your link. When a friend joins and earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn' + extra + '. It never reduces their points.</div>' +
+      '<div class="invite-link" id="inviteLink">Getting your link…</div>' +
+      '<button class="btn btn-primary" id="inviteBtn" style="width:100%;" disabled>Share my link</button>' +
+      '<div class="invite-stats"><div><b id="invFriends">–</b>friends joined</div><div><b id="invBonus">' + (wallet.refBonusTotal || 0) + '</b>bonus points earned</div></div></div>';
+  }
+  function bindInvite() {
+    if (!document.getElementById('inviteCard')) return;
+    ensureRefCode().then(function(code){
+      var url = 'https://keytechnologies.si/rewards.html?ref=' + code;
+      document.getElementById('inviteLink').textContent = url;
+      var btn = document.getElementById('inviteBtn'); btn.disabled = false;
+      btn.addEventListener('click', function(){
+        var text = 'Join LVR Rewards and earn points at Las Vegas restaurants: ' + url;
+        if (navigator.share) { navigator.share({ text: text }).catch(function(){}); }
+        else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Link copied!'; }); }
+        else { btn.textContent = url; }
+      });
+    }).catch(function(){ document.getElementById('inviteLink').textContent = "Couldn't create your link right now."; });
+    fetch(DB + MEMBERS_PATH + '.json?orderBy="referredBy"&equalTo="' + encodeURIComponent(memberKey) + '"&shallow=true').then(function(r){ return r.json(); }).then(function(f){
+      var el = document.getElementById('invFriends'); if (el) el.textContent = f ? Object.keys(f).length : 0;
+    }).catch(function(){});
   }
 
   // ---------- approval notices + auto-refresh ----------
