@@ -63,6 +63,16 @@
   .dish .desc{grid-column:1;color:var(--ink-dim);margin:0;max-width:48ch;min-width:0;}
   .dish .photo{grid-column:1 / -1;width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:10px;border:1px solid var(--line);}
   .dish .art img{display:block;width:100%;height:100%;object-fit:cover;}
+  .tally{margin:10px 0 2px;font-size:14px;}
+  .tally .trow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;}
+  .tally .tleft{color:var(--green);}
+  .tally .tlow{color:var(--gold);}
+  .tally .tout{color:#ff8a8a;}
+  .tally .texp{color:var(--ink-dim);font-weight:600;}
+  .tally .tbar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:7px;overflow:hidden;}
+  .tally .tbar i{display:block;height:100%;border-radius:99px;background:var(--green);}
+  .tally.low .tbar i{background:var(--gold);} .tally.out .tbar i{background:#ff8a8a;}
+  .tally.unset{color:var(--ink-dim);font-style:italic;}
   .credits{margin:34px 0 0;font-size:13px;color:var(--ink-dim);}
   .credits summary{cursor:pointer;font-weight:700;}
   .credits ul{padding-left:18px;margin:8px 0 0;display:grid;gap:4px;}
@@ -132,6 +142,7 @@
       <li><b>Tap Redeem</b> on any item above. Your points come out of your balance and you get a code.</li>
       <li><b>Show the code</b> to your server. That is it.</li>
     </ol>
+    <p style="margin:14px 0 0;font-size:14px;color:var(--ink-dim);">Each offer has a set number available and an end date, shown above. There is no need to hurry. Plan your visit, and please never rush or drive in a hurry to claim one.</p>
   </section>
 
   <div class="footer-note">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
@@ -159,6 +170,18 @@
 
   var PHOTO_CREDITS = {"coffee": {"author": "Peachyeung316", "license": "CC BY-SA 4.0", "source": "https://commons.wikimedia.org/wiki/File:European_style_cappuccino_in_Savour_Cafe.jpg"}, "panini": {"author": "Eaters Collective eaterscollective", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Deli_Sandwich_(Unsplash).jpg"}, "teriyaki": {"author": "GALAXY 2018 A7", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Pork_teriyaki_meal.jpg"}, "pokebowl": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Salmon_%26_Tuna_Poke_Bowl_(M)_with_Spicy_Mayo_sauce_-_Kitokito_2025-04-25.jpg"}, "icedtea": {"author": "Renee Comet (Photographer)", "license": "Public domain", "source": "https://commons.wikimedia.org/wiki/File:Iced_tea.jpg"}, "nachos": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:NACHOS_-_Montagues_Tex_Mex_2026-06-03.jpg"}, "pancakes": {"author": "Mae Mu", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg"}, "burger": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Plant-based_Cheeseburger_-_Depot_Cinema_and_Restaurant_2025-03-06.jpg"}, "ribs": {"author": "LanguageTeaching", "license": "CC BY 2.0", "source": "https://commons.wikimedia.org/wiki/File:Spicy_Ribs_(9532760034).jpg"}, "sushi": {"author": "puffballruns", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Salmon_Sushi_in_Singapore.jpg"}, "donburi": {"author": "Ocdp", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Oyakodon_003.jpg"}, "chickenrice": {"author": "DarkScipio", "license": "Public domain", "source": "https://commons.wikimedia.org/wiki/File:Teriyaki_Lachs_Gurke_Avocado_Reis_Teller.JPG"}, "friedrice": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Sambal_Spicy_Seafood_Fried_Rice_-_Ho_Chiak.jpg"}, "pizza": {"author": "Kurt Kaiser", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Pepperoni_pizza_3.jpg"}, "garlic": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Garlic_Bread_Mozzarella_-_Oregano_Pizzeria_2025-05-17.jpg"}, "sundae": {"author": "Renee Comet (Photographer)", "license": "Public domain", "source": "https://commons.wikimedia.org/wiki/File:Ice_cream_sundae.jpg"}, "tacos": {"author": "Kurt Kaiser", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Tacos_in_a_soft_tortilla_2.jpg"}, "nachos2": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Nachos_-_Ed%27s_Easy_Diner_2023-09-01.jpg"}, "churros": {"author": "Ocdp", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Churros_001.jpg"}, "ramen": {"author": "Ocdp", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Ramen_Jump_002.jpg"}, "gyoza": {"author": "Andy Li", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Chicken_Gyoza_-_Rawlab_Juice_%26_Tea_2025-07-12.jpg"}, "boba": {"author": "Battlesnake1", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Pearl_Milk_Tea_in_Chun_Shui_Tang.jpg"}};
   var PHOTO_ALT = { coffee: "Cappuccino in a white cup", panini: "Deli sandwich", teriyaki: "Teriyaki chicken over rice", pokebowl: "Poke bowl", icedtea: "Iced tea with lemon", nachos: "Loaded nachos", pancakes: "Stack of pancakes with syrup", burger: "Cheeseburger with fries", ribs: "Barbecue ribs", sushi: "Salmon nigiri", donburi: "Chicken and egg rice bowl", chickenrice: "Chicken with rice", friedrice: "Seafood fried rice", pizza: "Pepperoni pizza", garlic: "Cheesy garlic bread", sundae: "Ice cream sundae", tacos: "Tacos", nachos2: "Nachos", churros: "Churros", ramen: "Bowl of ramen", gyoza: "Plate of gyoza dumplings", boba: "Pearl milk tea" };
+  // Availability shown on every offer: how many are left, out of how many, and when it expires.
+  function fmtDay(v) {
+    var d = typeof v === "number" ? new Date(v) : new Date(String(v) + "T12:00:00");
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  }
+  function tallyHtml(max, left, exp) {
+    if (!(max > 0) || !exp) return '<div class="tally unset">Maximum and expiry date not set yet</div>';
+    left = Math.max(0, Math.min(max, left));
+    var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
+    var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + esc(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div></div>';
+  }
   var usedPhotos = {};
   function photo(key) { usedPhotos[key] = 1; return '<img src="img/food/' + key + '.jpg" alt="' + esc(PHOTO_ALT[key] || "Food") + '" loading="lazy" width="800" height="533">'; }
   function creditsHtml() {
@@ -166,6 +189,9 @@
     return '<details class="credits"><summary>Photo credits</summary><p>Food photos are generic pictures from Wikimedia Commons under free licenses. They are not photos of these restaurants\' own dishes.</p><ul>' + rows + '</ul></details>';
   }
 
+  // Made-up availability for the sample offers, so the page shows low stock and sold out too: [max, left, expires]
+  var SAMPLE_TALLY = [[50,38,"2026-12-31"],[25,12,"2026-12-15"],[20,3,"2026-11-30"],[40,26,"2027-01-31"],[30,2,"2026-12-20"],[25,9,"2026-11-30"],[20,1,"2026-11-15"],[60,41,"2027-01-15"],[25,0,"2026-12-31"],[30,17,"2026-12-10"],[40,22,"2026-12-31"],[35,30,"2027-01-31"],[20,6,"2026-12-05"],[50,44,"2027-02-15"],[25,11,"2026-12-31"],[30,4,"2026-11-30"]];
+  function sampleTally(i) { var t = SAMPLE_TALLY[i % SAMPLE_TALLY.length]; return tallyHtml(t[0], t[1], t[2]); }
   // Demo menu (fictional restaurants, generic food photos). Opened with menu.html?demo=1
   var DEMO = [
     { r: "Golden Grain Rice House", tag: "Fast casual · Downtown", items: [
@@ -194,6 +220,8 @@
     { n: "Panevino Italian Grille & Deli Café", a: "246 Via Antonio Ave, Las Vegas, NV 89119", ph: "(702) 222-2400", web: "https://www.panevinolasvegas.com", c: "Italian deli café near the airport", o: { t: "Free Panini", p: 10, art: "panini" } },
     { n: "AyAyAy! Mexican Cuisine", a: "1570 W Horizon Ridge Pkwy Ste 120, Henderson, NV 89012", c: "Mexican", city: "Henderson, NV", o: { t: "Free Taco Plate", p: 11, art: "tacos" } },
     { n: "Aspire Coffee House", a: "10111 W Skye Canyon Park Dr, Las Vegas, NV 89166", ph: "(702) 786-0211", ig: "aspirecoffeehouse", web: "https://aspirecoffeehouse.com", c: "Coffee house", o: { t: "Free Coffee", p: 5, art: "coffee" } },
+    { n: "MilkCow", a: "400 S Rampart Blvd Ste 140, Las Vegas, NV 89145", ph: "(725) 500-6677", web: "https://milkcownv.com", c: "Ice cream and dessert café, Tivoli Village", o: { t: "Free Ice Cream", p: 6, art: "sundae" } },
+    { n: "The Parlour Brunch & Late Night Burger Bar", a: "616 E Carson Ave Ste 140, Las Vegas, NV 89101", ph: "(702) 476-3964", c: "Brunch and burgers, downtown", o: { t: "Free Burger", p: 12, art: "burger" } },
     { n: "The Beach House", a: "790 Coronado Center Dr Ste 130, Henderson, NV 89052", ph: "702-837-7900", ig: "thebeachhousevegas", c: "Bar & grill", city: "Henderson, NV", o: { t: "Free Appetizer", p: 11, art: "nachos" } },
     { n: "Black Mountain Griddle", a: "72 W Horizon Ridge Pkwy, Henderson, NV 89012", ph: "(702) 954-4704", ig: "black_mountain_griddle", c: "Breakfast and brunch", city: "Henderson, NV", o: { t: "Free Pancake Stack", p: 9, art: "pancakes" } },
     { n: "The Irish Spot", a: "1350 E Tropicana Ave, Las Vegas, NV", ph: "702-389-3808", ig: "the.irish.spot", c: "Irish pub", o: { t: "Free Burger", p: 12, art: "burger" } },
@@ -245,9 +273,23 @@
         '<article class="dish has-pic"><div class="art">' + photo(r.o.art) + '</div>' +
           '<div>' + tag + '<div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
-          '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p></article></section>';
+          '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
+          '<div style="grid-column:1 / -1"' + (r.o.real ? ' id="liveTally"' : '') + '>' + (r.o.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(idx)) + '</div></article></section>';
     });
     $("menu").innerHTML = html + creditsHtml();
+    liveVanillaTally();
+  }
+
+  // The Vanilla Rice offer is real, so its tally comes from the live catalog and redemption count.
+  function liveVanillaTally() {
+    var el = $("liveTally"); if (!el) return;
+    Promise.all([get("/lvr_points/catalog/vanilla-rice"), get("/lvr_points/redemptions/vanilla-rice")]).then(function (r) {
+      var cat = r[0] || {}, red = r[1] || {};
+      var id = Object.keys(cat).filter(function (k) { return cat[k] && cat[k].active !== false; })[0];
+      if (!id) { el.innerHTML = '<div class="tally unset">Maximum and expiry date not set yet</div>'; return; }
+      var it = cat[id], used = Object.keys(red).filter(function (k) { return red[k] && red[k].itemId === id; }).length;
+      el.innerHTML = tallyHtml(Number(it.maxRedemptions) || 0, (Number(it.maxRedemptions) || 0) - used, it.expiresAt);
+    }).catch(function () { el.innerHTML = '<div class="tally unset">Availability unavailable right now</div>'; });
   }
 
   function renderDemo(settings) {
@@ -256,7 +298,7 @@
     document.title = "Demo Menu — Key Technologies.si";
     $("lede").textContent = "A sample of what a points menu looks like with four restaurants. Tap any item to see how redeeming works.";
     $("sampleBox").innerHTML = '<div class="sample">Demo only. These restaurants are made up to show how the program looks, and the food photos are generic. Nothing here can be redeemed.</div>';
-    var html = "";
+    var html = "", di = 0;
     DEMO.forEach(function (g) {
       html += '<div class="rest"><b>' + esc(g.r) + '</b><span>' + esc(g.tag) + '</span></div>';
       g.items.forEach(function (it) {
@@ -264,6 +306,7 @@
           '<div class="name">' + esc(it.itemName) + '</div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description) + '</p>' +
+          '<div style="grid-column:1 / -1">' + sampleTally(di++) + '</div>' +
           '<div class="act"><a class="btn btn-primary" href="rewards.html">Join free to redeem</a></div></article>';
       });
     });
@@ -294,6 +337,7 @@
           '<div class="name">' + esc(it.itemName) + '</div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description || it.instructions || "") + '</p>' +
+          '<div style="grid-column:1 / -1">' + (it._id ? tallyHtml(Number(it.maxRedemptions) || 0, (Number(it.maxRedemptions) || 0) - (it._used || 0), it.expiresAt) : "") + '</div>' +
           '<div class="act">' + (hasAccount
               ? '<a class="btn btn-primary" href="my-account.html">Redeem in my account</a>'
               : '<a class="btn btn-primary" href="rewards.html">Join free to redeem</a>') + '</div>' +
@@ -317,13 +361,16 @@
     var slug = slugWanted && catalog[slugWanted] ? slugWanted : Object.keys(catalog)[0];
     if (!slug) { render("Sample Restaurant", SAMPLE, true, settings); return; }
     var credit = directory[slug] && directory[slug].creditRemaining;
-    var items = Object.keys(catalog[slug] || {}).map(function (id) { return catalog[slug][id]; }).filter(usable).filter(function (it) {
+    return get("/lvr_points/redemptions/" + encodeURIComponent(slug)).then(function (red) {
+    red = red || {};
+    var items = Object.keys(catalog[slug] || {}).map(function (id) { var it = catalog[slug][id]; if (it) { it._id = id; it._used = Object.keys(red).filter(function (k) { return red[k] && red[k].itemId === id; }).length; } return it; }).filter(usable).filter(function (it) {
       return !(typeof credit === "number" && credit < it.pointCost);
     });
     items.sort(function (a, b) { return (b.pointCost || 0) - (a.pointCost || 0); }); // mains first
     var biz = (directory[slug] && directory[slug].bizName) || (items[0] && items[0].bizName) || String(slug).split("-").map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(" ");
     if (!items.length) { render(biz, [], false, settings); return; }
     render(biz, items, false, settings);
+    });
   }).catch(function () {
     $("bizName").textContent = "Menu";
     $("menu").innerHTML = '<div class="empty">The menu could not load right now. Please try again in a moment.</div>';

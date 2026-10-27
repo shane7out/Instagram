@@ -910,7 +910,8 @@
             '<div><div class="row-name">' + escapeHtml(item.itemName) + '</div><div class="row-sub">' + escapeHtml(rest.bizName || slug) + ' · ' + (item.active === false ? 'Inactive' : 'Active') + '</div></div>' +
             '<div class="row-num">' + item.pointCost + ' pts</div>' +
           '</div>' +
-          '<div class="row-sub">' + redeemedCount + ' redeemed' + (item.maxRedemptions ? ' of ' + item.maxRedemptions : '') + '</div>' +
+          '<div class="row-sub">' + redeemedCount + ' redeemed' + (item.maxRedemptions ? ' of ' + item.maxRedemptions + ' (' + Math.max(0, item.maxRedemptions - redeemedCount) + ' left)' : '') + (item.expiresAt ? ' · expires ' + new Date(item.expiresAt).toLocaleDateString() : '') + '</div>' +
+          ((!item.maxRedemptions || !item.expiresAt) ? '<div class="row-sub" style="color:var(--red);font-weight:700;">Missing a maximum or an expiry date. Tap Edit and set both; members see them on every offer.</div>' : '') +
           '<div class="row-actions">' +
             '<button data-act="edit" data-slug="' + escapeHtml(slug) + '" data-item="' + escapeHtml(itemId) + '">Edit</button>' +
             '<button data-act="delete" data-slug="' + escapeHtml(slug) + '" data-item="' + escapeHtml(itemId) + '">Delete</button>' +
@@ -950,13 +951,13 @@
         '<div class="field"><label>Item name</label><input type="text" id="fItemName" value="' + escapeHtml(item ? item.itemName : '') + '"></div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Point cost</label><input type="number" id="fPointCost" value="' + (item ? item.pointCost : 10) + '"></div>' +
-          '<div class="field"><label>Max redemptions (blank = unlimited)</label><input type="number" id="fMaxRedemptions" value="' + (item && item.maxRedemptions ? item.maxRedemptions : '') + '"></div>' +
+          '<div class="field"><label>Max redemptions (required)</label><input type="number" id="fMaxRedemptions" value="' + (item && item.maxRedemptions ? item.maxRedemptions : '') + '"></div>' +
         '</div>' +
         '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
         '<div class="field"><label>Menu section (optional, e.g. Bowls, Sides, Drinks)</label><input type="text" id="fSection" value="' + escapeHtml(item ? (item.section || '') : '') + '"></div>' +
         '<div class="field"><label>Description shown on the menu (optional)</label><textarea id="fDesc">' + escapeHtml(item ? (item.description || '') : '') + '</textarea></div>' +
         '<div class="field"><label>Photo URL (optional)</label><input type="text" id="fPhoto" value="' + escapeHtml(item ? item.photoUrl : '') + '"></div>' +
-        '<div class="field"><label>Expires on (blank = never)</label><input type="date" id="fExpires" value="' + (item && item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
+        '<div class="field"><label>Expires on (required)</label><input type="date" id="fExpires" value="' + (item && item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
         '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!item || item.active !== false ? ' checked' : '') + '><label for="fActive">Active</label></div>' +
         '<div class="form-actions">' +
           '<button class="btn btn-primary" id="saveItemBtn">' + (isEdit ? 'Save Changes' : 'Create Item') + '</button>' +
@@ -975,6 +976,7 @@
 
       var expiresVal = document.getElementById('fExpires').value;
       var maxRedemptionsVal = document.getElementById('fMaxRedemptions').value;
+      if (!(parseInt(maxRedemptionsVal, 10) > 0) || !expiresVal) { showToast('Every offer needs a maximum number and an expiry date, shown to everyone'); return; }
       var itemPayload = {
         itemName: itemName,
         bizName: bizName,

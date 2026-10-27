@@ -67,6 +67,16 @@
   .page-wrap{max-width:460px;margin:0 auto;padding:30px 16px 70px;}
 
   [hidden]{display:none!important;}
+  .tally{margin:10px 0 2px;font-size:14px;}
+  .tally .trow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;}
+  .tally .tleft{color:#3ddc84;}
+  .tally .tlow{color:#f0c239;}
+  .tally .tout{color:#ff8a8a;}
+  .tally .texp{color:var(--ink-dim);font-weight:600;}
+  .tally .tbar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:7px;overflow:hidden;}
+  .tally .tbar i{display:block;height:100%;border-radius:99px;background:#3ddc84;}
+  .tally.low .tbar i{background:#f0c239;} .tally.out .tbar i{background:#ff8a8a;}
+  .tally.unset{color:var(--ink-dim);font-style:italic;}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f6c744;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f6c744;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(246,199,68,.4);}
@@ -405,6 +415,7 @@
             '<div class="item-cost">' + item.pointCost + ' pts</div>' +
           '</div>' +
           (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
+          tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
           '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pausedFlag('redemptions') ? 'Paused for now' : (afford ? 'Redeem' : 'Not enough points')) + '</button>' +
         '</div>';
       }).join('') + '</div>';
@@ -542,6 +553,19 @@
     '<radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>' +
     '<clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
   document.body.insertAdjacentHTML('afterbegin', CHEST_DEFS);
+
+  // Availability shown on every offer: how many are left, out of how many, and when it expires.
+  function fmtDay(v) {
+    var d = typeof v === "number" ? new Date(v) : new Date(String(v) + "T12:00:00");
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  }
+  function tallyHtml(max, left, exp) {
+    if (!(max > 0) || !exp) return '<div class="tally unset">Maximum and expiry date not set yet</div>';
+    left = Math.max(0, Math.min(max, left));
+    var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
+    var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div></div>';
+  }
 
   // ---------- treasure chest ----------
   // Each member's first chest opens a set number of days after they join
