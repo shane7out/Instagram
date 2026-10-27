@@ -395,6 +395,15 @@ tested.
 Already added to `deploy-key-room.sh` (see the single-sign-on section
 above) — one Mac command deploys this along with everything else.
 
+**Correction, found during a routine post-ship review (2026-10-27):**
+`maxRedemptions` on a catalog item was stored and shown in the admin tool,
+but `lvr-wallet.html` never actually checked it — a "limited to 50" item
+was unlimited in practice until this fix. Now the wallet hides an item
+once its cap is hit, and re-checks the live count right before committing
+a redemption (same narrowed-not-eliminated race window as the balance
+check), so two people can't both grab the last slot. No deploy has
+happened yet, so nothing live was ever affected by this.
+
 ### Also still pending from earlier (lower priority)
 - `deploy-sites-pill.sh` — adds an "All Sites" pill to the dashboard. Never run.
 - `deploy-st-ritas-pill.sh` — **do not run.** St Rita's Retreat was cancelled:
