@@ -1,63 +1,132 @@
 {
-  "lvr_points": {
-    ".read": true,
-    "receipts": {
-      ".indexOn": ["token", "slug", "receiptNo", "memberKey"],
-      "$id": {
-        ".write": "newData.exists() && (data.exists() ? (newData.child('slug').val() == data.child('slug').val() && newData.child('memberKey').val() == data.child('memberKey').val() && newData.child('token').val() == data.child('token').val() && newData.child('receiptNo').val() == data.child('receiptNo').val() && newData.child('amount').val() == data.child('amount').val() && newData.child('receiptDate').val() == data.child('receiptDate').val() && newData.child('submittedAt').val() == data.child('submittedAt').val() && (data.child('status').val() == 'pending' || newData.child('status').val() == data.child('status').val()) && (!data.child('pointsAwarded').exists() || newData.child('pointsAwarded').val() == data.child('pointsAwarded').val()) && (!data.child('decidedAt').exists() || newData.child('decidedAt').val() == data.child('decidedAt').val())) : (newData.child('status').val() == 'pending' && !newData.child('pointsAwarded').exists() && !newData.child('pointsApplied').exists() && !newData.child('referralDone').exists() && !newData.child('decidedAt').exists() && !newData.child('restFlag').exists()))",
-        ".validate": "newData.hasChildren(['slug', 'memberKey', 'token', 'receiptNo', 'amount', 'status', 'submittedAt']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 5000 && newData.child('receiptNo').isString() && newData.child('receiptNo').val().length <= 40 && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected')"
-      }
-    },
-    "receipt_photos": {
-      "$id": {
-        ".write": "newData.exists() && !data.exists()",
-        ".validate": "newData.child('wide').exists() || newData.child('data').exists()",
-        "wide": { ".validate": "newData.isString() && newData.val().length < 2500000" },
-        "close": { ".validate": "newData.isString() && newData.val().length < 2500000" },
-        "data": { ".validate": "newData.isString() && newData.val().length < 2500000" },
-        "$other": { ".validate": false }
-      }
-    },
-    "redemptions": {
-      "$slug": {
-        "$id": {
-          ".write": "newData.exists() && (data.exists() ? (newData.child('token').val() == data.child('token').val() && newData.child('itemId').val() == data.child('itemId').val() && newData.child('pointCost').val() == data.child('pointCost').val() && newData.child('code').val() == data.child('code').val() && newData.child('redeemedAt').val() == data.child('redeemedAt').val() && (!data.child('usedAt').exists() || newData.child('usedAt').val() == data.child('usedAt').val())) : !newData.child('usedAt').exists())",
-          ".validate": "newData.hasChildren(['token', 'itemId', 'pointCost', 'code']) && newData.child('pointCost').isNumber() && newData.child('pointCost').val() > 0 && newData.child('pointCost').val() <= 100000"
-        }
-      }
-    },
-    "fundings": {
-      "$slug": {
-        "$id": {
-          ".write": "newData.exists() && !data.exists()",
-          ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0"
-        }
-      }
-    },
-    "catalog": { "$slug": { "$itemId": { ".write": true } } },
-    "restaurants": { "$slug": { ".write": true } },
-    "directory": { "$slug": { ".write": true } },
-    "settings": { "$key": { ".write": true } }
+ "lvr_points": {
+  ".read": true,
+  "receipts": {
+   ".indexOn": [
+    "token",
+    "slug",
+    "receiptNo",
+    "memberKey"
+   ],
+   "$id": {
+    ".write": "newData.exists() && (data.exists() ? (newData.child('slug').val() == data.child('slug').val() && newData.child('memberKey').val() == data.child('memberKey').val() && newData.child('token').val() == data.child('token').val() && newData.child('receiptNo').val() == data.child('receiptNo').val() && newData.child('amount').val() == data.child('amount').val() && newData.child('receiptDate').val() == data.child('receiptDate').val() && newData.child('submittedAt').val() == data.child('submittedAt').val() && (data.child('status').val() == 'pending' || newData.child('status').val() == data.child('status').val()) && (!data.child('pointsAwarded').exists() || newData.child('pointsAwarded').val() == data.child('pointsAwarded').val()) && (!data.child('decidedAt').exists() || newData.child('decidedAt').val() == data.child('decidedAt').val())) : (newData.child('status').val() == 'pending' && !newData.child('pointsAwarded').exists() && !newData.child('pointsApplied').exists() && !newData.child('referralDone').exists() && !newData.child('decidedAt').exists() && !newData.child('restFlag').exists()))",
+    ".validate": "newData.hasChildren(['slug', 'memberKey', 'token', 'receiptNo', 'amount', 'status', 'submittedAt']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 5000 && newData.child('receiptNo').isString() && newData.child('receiptNo').val().length <= 40 && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected')"
+   }
   },
-  "lvr_rewards": {
-    ".read": true,
-    ".indexOn": ["token", "refCode", "referredBy"],
-    "$k": {
-      ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('points').val() == 0 && newData.child('name').isString()))",
-      "points": { ".validate": "newData.isNumber() && newData.val() >= 0" },
-      "refBonusTotal": { ".validate": "newData.isNumber() && newData.val() >= 0" },
-      "refCarry": { ".validate": "newData.isNumber() && newData.val() >= 0" },
-      "token": { ".validate": "newData.isString() && newData.val().length >= 16 && newData.val().length <= 64" },
-      "refCode": { ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 12" }
+  "receipt_photos": {
+   "$id": {
+    ".write": "newData.exists() && !data.exists()",
+    ".validate": "newData.child('wide').exists() || newData.child('data').exists()",
+    "wide": {
+     ".validate": "newData.isString() && newData.val().length < 2500000"
+    },
+    "close": {
+     ".validate": "newData.isString() && newData.val().length < 2500000"
+    },
+    "data": {
+     ".validate": "newData.isString() && newData.val().length < 2500000"
+    },
+    "$other": {
+     ".validate": false
     }
+   }
   },
-  "lvr_instagram_index": {
-    ".read": true,
-    "$k": { ".write": true }
+  "redemptions": {
+   "$slug": {
+    "$id": {
+     ".write": "newData.exists() && (data.exists() ? (newData.child('token').val() == data.child('token').val() && newData.child('itemId').val() == data.child('itemId').val() && newData.child('pointCost').val() == data.child('pointCost').val() && newData.child('code').val() == data.child('code').val() && newData.child('redeemedAt').val() == data.child('redeemedAt').val() && (!data.child('usedAt').exists() || newData.child('usedAt').val() == data.child('usedAt').val())) : !newData.child('usedAt').exists())",
+     ".validate": "newData.hasChildren(['token', 'itemId', 'pointCost', 'code']) && newData.child('pointCost').isNumber() && newData.child('pointCost').val() > 0 && newData.child('pointCost').val() <= 100000"
+    }
+   }
   },
-  "lvr_coupons": {
-    ".read": true,
-    "programs": { "$slug": { ".write": true } },
-    "claims": { "$slug": { "$id": { ".write": true } } }
+  "fundings": {
+   "$slug": {
+    "$id": {
+     ".write": "newData.exists() && !data.exists()",
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0"
+    }
+   }
+  },
+  "catalog": {
+   "$slug": {
+    "$itemId": {
+     ".write": true
+    }
+   }
+  },
+  "restaurants": {
+   "$slug": {
+    ".write": true
+   }
+  },
+  "directory": {
+   "$slug": {
+    ".write": true
+   }
+  },
+  "settings": {
+   "$key": {
+    ".write": true
+   },
+   "welcome": {
+    ".write": true,
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "amount": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
+    },
+    "when": {
+     ".validate": "newData.val() == 'signup' || newData.val() == 'receipt'"
+    }
+   }
   }
+ },
+ "lvr_rewards": {
+  ".read": true,
+  ".indexOn": [
+   "token",
+   "refCode",
+   "referredBy"
+  ],
+  "$k": {
+   ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('name').isString() && (newData.child('points').val() == 0 || (root.child('lvr_points/settings/welcome/enabled').val() == true && root.child('lvr_points/settings/welcome/when').val() == 'signup' && newData.child('points').val() == root.child('lvr_points/settings/welcome/amount').val() && newData.child('welcomeGiven/amount').val() == newData.child('points').val()))))",
+   "points": {
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   },
+   "refBonusTotal": {
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   },
+   "refCarry": {
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   },
+   "token": {
+    ".validate": "newData.isString() && newData.val().length >= 16 && newData.val().length <= 64"
+   },
+   "refCode": {
+    ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 12"
+   }
+  }
+ },
+ "lvr_instagram_index": {
+  ".read": true,
+  "$k": {
+   ".write": true
+  }
+ },
+ "lvr_coupons": {
+  ".read": true,
+  "programs": {
+   "$slug": {
+    ".write": true
+   }
+  },
+  "claims": {
+   "$slug": {
+    "$id": {
+     ".write": true
+    }
+   }
+  }
+ }
 }

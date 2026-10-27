@@ -392,10 +392,10 @@
   // points) lands. Claim-first: the member is marked as having received it
   // before the points are added, so a hiccup can never pay it twice. The
   // receipt records what was added, so it shows in the audit trail.
-  function welcomeCfg() { return Object.assign({ enabled: false, amount: 12 }, settings.welcome || {}); }
+  function welcomeCfg() { return Object.assign({ enabled: false, amount: 13, when: 'receipt' }, settings.welcome || {}); }
   function applyWelcome(id, r, pts) {
     var w = welcomeCfg();
-    if (w.enabled !== true || !(w.amount > 0) || !(pts > 0)) return Promise.resolve();
+    if (w.enabled !== true || w.when === 'signup' || !(w.amount > 0) || !(pts > 0)) return Promise.resolve();
     return fbGet(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven').then(function(given){
       if (given) return;
       return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven', { amount: w.amount, receiptId: id, at: { '.sv': 'timestamp' } })
@@ -489,7 +489,9 @@
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Welcome bonus</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">Free starting points for a new member. They are added once, when the member\'s FIRST receipt is approved, so a real purchase always comes first. Members see "welcome points are waiting" until then. Offers are funded by the participating restaurants through the credit ledger.</div>' +
         chk('sWelOn', welcome.enabled === true, 'Welcome bonus is on') +
-        '<div class="field-row"><div class="field"><label>Welcome points</label><input type="number" id="sWelAmt" min="1" max="50" step="1" value="' + (welcome.amount || 12) + '"></div></div>' +
+        '<div class="field-row"><div class="field"><label>Welcome points (about the price of the free item, e.g. 13)</label><input type="number" id="sWelAmt" min="1" max="50" step="1" value="' + (welcome.amount || 13) + '"></div>' +
+        '<div class="field"><label>Give them</label><select id="sWelWhen"><option value="signup"' + (welcome.when === 'signup' ? ' selected' : '') + '>The moment they sign up</option><option value="receipt"' + (welcome.when !== 'signup' ? ' selected' : '') + '>When their first receipt is approved</option></select></div></div>' +
+        '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Signing up is easy to abuse with fake accounts. The restaurant\'s credit in the funding ledger is the safety net: once it is used up, offers stop. Keep that credit modest, and use the pause switch if sign-ups look strange.</div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
@@ -513,7 +515,8 @@
         },
         welcome: {
           enabled: document.getElementById('sWelOn').checked,
-          amount: Math.max(1, Math.min(50, parseInt(document.getElementById('sWelAmt').value, 10) || 12))
+          amount: Math.max(1, Math.min(50, parseInt(document.getElementById('sWelAmt').value, 10) || 13)),
+          when: document.getElementById('sWelWhen').value === 'signup' ? 'signup' : 'receipt'
         },
         referral: {
           enabled: document.getElementById('sRefOn').checked,
@@ -888,6 +891,8 @@
           '<div class="field"><label>Max redemptions (blank = unlimited)</label><input type="number" id="fMaxRedemptions" value="' + (item && item.maxRedemptions ? item.maxRedemptions : '') + '"></div>' +
         '</div>' +
         '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
+        '<div class="field"><label>Menu section (optional, e.g. Bowls, Sides, Drinks)</label><input type="text" id="fSection" value="' + escapeHtml(item ? (item.section || '') : '') + '"></div>' +
+        '<div class="field"><label>Description shown on the menu (optional)</label><textarea id="fDesc">' + escapeHtml(item ? (item.description || '') : '') + '</textarea></div>' +
         '<div class="field"><label>Photo URL (optional)</label><input type="text" id="fPhoto" value="' + escapeHtml(item ? item.photoUrl : '') + '"></div>' +
         '<div class="field"><label>Expires on (blank = never)</label><input type="date" id="fExpires" value="' + (item && item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
         '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!item || item.active !== false ? ' checked' : '') + '><label for="fActive">Active</label></div>' +
@@ -914,6 +919,8 @@
         pointCost: pointCost,
         instructions: document.getElementById('fInstructions').value.trim(),
         photoUrl: document.getElementById('fPhoto').value.trim(),
+        section: document.getElementById('fSection').value.trim(),
+        description: document.getElementById('fDesc').value.trim(),
         maxRedemptions: maxRedemptionsVal ? parseInt(maxRedemptionsVal, 10) : null,
         expiresAt: expiresVal ? new Date(expiresVal + 'T23:59:59').getTime() : null,
         active: document.getElementById('fActive').checked,

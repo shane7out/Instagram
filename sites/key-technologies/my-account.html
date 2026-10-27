@@ -263,10 +263,10 @@
   var refSettings = { enabled: false, l1Pct: 20, l2Pct: 0 };
   var appSettings = {};
   // Welcome bonus: set by the owner in Settings; credited when the first receipt is approved.
-  function welcomeCfg() { return Object.assign({ enabled: false, amount: 12 }, appSettings.welcome || {}); }
+  function welcomeCfg() { return Object.assign({ enabled: false, amount: 13, when: 'receipt' }, appSettings.welcome || {}); }
   function welcomeHtml() {
     var w = welcomeCfg();
-    if (w.enabled !== true || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
+    if (w.enabled !== true || w.when === 'signup' || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
     return '<div class="notice" style="background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome points are waiting for you. They are added automatically when your first receipt is approved.</div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }

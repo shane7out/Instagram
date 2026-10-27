@@ -492,7 +492,7 @@
   var SETTINGS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/lvr_points/settings") + ".json";
   var LEADS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/key_leads/leads") + ".json";
   function signupsPaused(){
-    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "" }; }).catch(function(){ return { paused: false, banner: "" }; });
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null }; });
   }
   function showWaitlist(banner){
     var card = document.getElementById("signup");
@@ -540,8 +540,10 @@
     status.textContent = "Opening your account…";
     status.className = "form-status";
 
+    var welcomeCfg = null;
     signupsPaused().then(function(r){
       if (r.paused) { showWaitlist(r.banner); throw new Error("paused"); }
+      welcomeCfg = r.welcome;
       return findReferrer(savedRef(), phone, email);
     }).then(function(referrerKey){
       var rec = {
@@ -550,6 +552,11 @@
         joinedAt: {".sv": "timestamp"}
       };
       if (referrerKey) rec.referredBy = referrerKey;
+      // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
+      if (welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
+        rec.points = welcomeCfg.amount;
+        rec.welcomeGiven = { amount: welcomeCfg.amount, via: "signup", at: {".sv": "timestamp"} };
+      }
       return fetch(LVR_REWARDS_DB_URL + ".json", {
         method: "POST",
         headers: {"Content-Type": "application/json"},

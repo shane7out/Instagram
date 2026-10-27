@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu — Points Rewards — Key Technologies.si</title>
+<meta name="referrer" content="same-origin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<script>
+  (function () {
+    try {
+      var page = location.pathname.split("/").pop() || "index.html";
+      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page.replace(/\./g, "_")) + ".json";
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").split(/[?#]/)[0].slice(0, 200), w: window.innerWidth })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --btn-blue:#0f64b2; --btn-blue-hover:#1272cc; --control-line:#637283;
+    --green:#3ddc84; --gold:#f0c239;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{overflow-x:hidden;}
+  body{margin:0;background:var(--bg);color:var(--ink);min-height:100vh;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--key-light);}
+  .wrap{max-width:720px;margin:0 auto;padding-inline:20px;}
+  header{border-bottom:1px solid var(--line);}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;max-width:1120px;margin:0 auto;padding-inline:20px;}
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;white-space:nowrap;}
+  .logo-word span{color:var(--key-light);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:15px;font-weight:700;padding:13px 22px;border-radius:9px;text-decoration:none;border:1px solid transparent;cursor:pointer;}
+  .btn-primary{background:var(--btn-blue);color:#fff;}
+  .btn-primary:hover{background:var(--btn-blue-hover);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
+  .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
+
+  .hero{padding:44px 0 10px;}
+  .eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--key-light);}
+  h1{font-size:clamp(34px,8vw,52px);line-height:1.05;margin:8px 0 12px;letter-spacing:-.02em;text-wrap:balance;}
+  .lede{color:var(--ink-dim);margin:0;max-width:52ch;}
+  .welcome{margin:22px 0 0;background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);border-radius:14px;padding:16px 18px;color:#b9dcff;font-weight:600;}
+  .welcome strong{color:#fff;}
+  .sample{margin:16px 0 0;font-size:14px;color:var(--gold);border:1px dashed var(--gold);border-radius:10px;padding:10px 14px;}
+
+  section.menu{padding:30px 0 10px;}
+  .menu h2{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin:0;padding:0 0 12px;border-bottom:1px solid var(--line);}
+  .dish{display:grid;grid-template-columns:1fr auto;gap:6px 22px;padding:26px 0;border-bottom:1px solid var(--line);align-items:start;}
+  .dish .name{font-size:clamp(24px,5.4vw,30px);font-weight:800;line-height:1.15;letter-spacing:-.01em;min-width:0;}
+  .dish .desc{grid-column:1;color:var(--ink-dim);margin:0;max-width:48ch;min-width:0;}
+  .dish .photo{grid-column:1 / -1;width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:10px;border:1px solid var(--line);}
+  .cost{grid-column:2;grid-row:1;text-align:right;white-space:nowrap;}
+  .cost b{display:block;font-size:clamp(30px,7vw,40px);line-height:1;font-weight:800;color:var(--key-light);font-variant-numeric:tabular-nums;}
+  .cost small{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);font-weight:700;}
+  .dish .act{grid-column:1 / -1;margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .tag{font-size:12.5px;font-weight:700;color:var(--green);border:1px solid rgba(61,220,132,.45);border-radius:99px;padding:3px 10px;}
+  .empty{padding:36px 0;color:var(--ink-dim);}
+  .how{padding:30px 0 6px;}
+  .how h2{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin:0 0 12px;}
+  .how ol{margin:0;padding-left:22px;color:var(--ink-dim);display:grid;gap:8px;}
+  .how li b{color:var(--ink);}
+  .footer-note{margin:44px 0 34px;text-align:center;font-size:14px;color:var(--ink-dim);}
+  .footer-note a{color:var(--ink-dim);}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav-row">
+    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true"><circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/><rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/><rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/><rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/></svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span>.SI</span></span>
+    </a>
+    <a class="btn btn-ghost" href="rewards.html" id="navJoin">Join free</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="eyebrow" id="eyebrow">Points menu</div>
+    <h1 id="bizName">Loading the menu…</h1>
+    <p class="lede" id="lede">Specials you can claim with points. Show the code to your server and enjoy.</p>
+    <div id="welcomeBox"></div>
+    <div id="sampleBox"></div>
+  </div>
+
+  <section class="menu" id="menu" aria-live="polite"></section>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <ol>
+      <li><b>Join free.</b> It takes a minute and you get your own account link.</li>
+      <li><b>Earn points</b> by sending in your receipt from a participating restaurant.</li>
+      <li><b>Tap Redeem</b> on any item above. Your points come out of your balance and you get a code.</li>
+      <li><b>Show the code</b> to your server. That is it.</li>
+    </ol>
+  </section>
+
+  <div class="footer-note">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+</main>
+
+<script>
+(function () {
+  var DB = "https://lvr-data-a60c1-default-rtdb.firebaseio.com";
+  var TOKEN_KEY = "lvr_wallet_token";
+  var slugWanted = (new URLSearchParams(location.search).get("b") || "").trim();
+  var hasAccount = false;
+  try { hasAccount = !!localStorage.getItem(TOKEN_KEY); } catch (e) {}
+
+  // Shown only when the live catalog is empty, clearly marked as examples.
+  var SAMPLE = [
+    { itemName: "Free Chicken Bowl", pointCost: 13, instructions: "Grilled chicken over hibachi rice with vegetables and your choice of sauce. Show your code to your server.", section: "Bowls" },
+    { itemName: "Free Shrimp Bowl", pointCost: 16, instructions: "Garlic butter shrimp over hibachi rice with vegetables.", section: "Bowls" },
+    { itemName: "Free Fried Rice Side", pointCost: 5, instructions: "Add a side of fried rice to any order.", section: "Sides" },
+    { itemName: "Free Drink With Any Entrée", pointCost: 4, instructions: "Any fountain drink with your entrée.", section: "Extras" }
+  ];
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function get(p) { return fetch(DB + p + ".json").then(function (r) { return r.json(); }); }
+
+  function render(biz, items, sample, settings) {
+    $("bizName").textContent = biz;
+    document.title = biz + " — Menu — Key Technologies.si";
+    var w = settings && settings.welcome;
+    if (w && w.enabled === true && w.amount > 0 && !hasAccount) {
+      $("welcomeBox").innerHTML = '<div class="welcome">New members start with <strong>' + esc(w.amount) + ' points</strong>' +
+        (w.when === "receipt" ? ", added when your first receipt is approved." : ", added the moment you join.") + '</div>';
+    }
+    if (sample) $("sampleBox").innerHTML = '<div class="sample">These are example items to show how a menu looks. Real specials appear here as soon as a restaurant adds them.</div>';
+    var sections = {}, order = [];
+    items.forEach(function (it) {
+      var s = it.section || "Specials";
+      if (!sections[s]) { sections[s] = []; order.push(s); }
+      sections[s].push(it);
+    });
+    var html = "";
+    order.forEach(function (s) {
+      html += '<h2>' + esc(s) + '</h2>';
+      sections[s].forEach(function (it) {
+        var left = it.maxRedemptions ? '<span class="tag">Limited</span>' : "";
+        html += '<article class="dish">' +
+          (it.photoUrl ? '<img class="photo" src="' + esc(it.photoUrl) + '" alt="" loading="lazy">' : '') +
+          '<div class="name">' + esc(it.itemName) + '</div>' +
+          '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
+          '<p class="desc">' + esc(it.description || it.instructions || "") + '</p>' +
+          '<div class="act">' + (hasAccount
+              ? '<a class="btn btn-primary" href="my-account.html">Redeem in my account</a>'
+              : '<a class="btn btn-primary" href="rewards.html">Join free to redeem</a>') + left + '</div>' +
+        '</article>';
+      });
+    });
+    $("menu").innerHTML = html || '<div class="empty">No specials right now. Check back soon.</div>';
+    if (hasAccount) $("navJoin").textContent = "My account", $("navJoin").setAttribute("href", "my-account.html");
+  }
+
+  function usable(it) {
+    if (!it || it.active === false) return false;
+    if (it.expiresAt && Date.now() > it.expiresAt) return false;
+    return true;
+  }
+
+  Promise.all([get("/lvr_points/catalog"), get("/lvr_points/directory"), get("/lvr_points/settings")]).then(function (r) {
+    var catalog = r[0] || {}, directory = r[1] || {}, settings = r[2] || {};
+    var slug = slugWanted && catalog[slugWanted] ? slugWanted : Object.keys(catalog)[0];
+    if (!slug) { render("Sample Restaurant", SAMPLE, true, settings); return; }
+    var credit = directory[slug] && directory[slug].creditRemaining;
+    var items = Object.keys(catalog[slug] || {}).map(function (id) { return catalog[slug][id]; }).filter(usable).filter(function (it) {
+      return !(typeof credit === "number" && credit < it.pointCost);
+    });
+    items.sort(function (a, b) { return (a.pointCost || 0) - (b.pointCost || 0); });
+    var biz = (directory[slug] && directory[slug].bizName) || (items[0] && items[0].bizName) || slug;
+    if (!items.length) { render(biz, [], false, settings); return; }
+    render(biz, items, false, settings);
+  }).catch(function () {
+    $("bizName").textContent = "Menu";
+    $("menu").innerHTML = '<div class="empty">The menu could not load right now. Please try again in a moment.</div>';
+  });
+})();
+</script>
+</body>
+</html>

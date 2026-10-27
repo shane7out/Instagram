@@ -824,7 +824,7 @@
   // short notice points people to the message box at the bottom of the page.
   var SETTINGS_URL = RTDB_URL.replace('/lvr_rewards.json', '/lvr_points/settings.json');
   function signupsPaused() {
-    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || '' }; }).catch(function(){ return { paused: false, banner: '' }; });
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || '', welcome: (st && st.welcome) || null }; }).catch(function(){ return { paused: false, banner: '', welcome: null }; });
   }
   function applyPause(r) {
     var wrap = document.getElementById('formWrap');
@@ -955,8 +955,10 @@
     setSaveStatus('saving', '⏳  Saving to database…');
     var token = genToken();
 
+    var welcomeCfg = null;
     signupsPaused().then(function(r) {
       if (r.paused) { applyPause(r); btn.disabled = false; $('saveStatus').className = 'save-status'; throw new Error('paused'); }
+      welcomeCfg = r.welcome;
       return findReferrer(savedRef(), phone);
     }).then(function(referrerKey) {
       var rec = {
@@ -975,6 +977,11 @@
         consent_ts:      nowTs
       };
       if (referrerKey) rec.referredBy = referrerKey;
+      // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
+      if (welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === 'signup' && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
+        rec.points = welcomeCfg.amount;
+        rec.welcomeGiven = { amount: welcomeCfg.amount, via: 'signup', at: { '.sv': 'timestamp' } };
+      }
       return fetch(RTDB_URL, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },

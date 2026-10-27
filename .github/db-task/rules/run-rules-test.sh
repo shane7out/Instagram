@@ -1,6 +1,6 @@
 #!/bin/bash
 # Test the LVR evidence-protection rules in the Firebase Realtime Database
-# (re-run: welcome-bonus rule checks)
+
 # emulator (nothing touches the real database).
 set -e
 ROOT="$PWD"
