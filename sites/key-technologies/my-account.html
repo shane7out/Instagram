@@ -82,7 +82,7 @@
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f0a91a;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f0a91a;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(240,169,26,.4);}
-  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 0 10px rgba(240,169,26,.45));}
+  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));}
   .chest-svg .lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform .7s cubic-bezier(.3,1.5,.5,1);}
   .chest-svg .inner{opacity:0;transition:opacity .5s;}
   .chest-svg .coin{opacity:0;transform:translateY(10px);transition:opacity .4s,transform .7s cubic-bezier(.2,1.4,.4,1);}
@@ -379,7 +379,7 @@
       var ks = Object.keys(decayLast).sort(), k = ks[ks.length - 1], r = decayLast[k];
       if (r && r.amount) last = '<div style="margin-top:6px;opacity:.85;">Last return (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' points went to the community fund.</div>';
     }
-    return '<div class="notice" style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:#ffd35c;font-size:13.5px;"><b>Use it or share it.</b> To keep this program running for everyone, ' + d.percent + '% of unused points return to the community fund on the 1st of each month, so other members get a chance at the offers too. ' + line + last + '</div>';
+    return '<div class="notice" style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:#ffd35c;font-size:13.5px;"><b>House rule of the game.</b> On the 1st of each month, ' + d.percent + '% of unused points go back to the community fund that keeps this program running for everyone. Go eat real food at your favorite restaurants, earn points, and spend them. ' + line + last + '</div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -666,24 +666,19 @@
   // Cartoon gold treasure chest (shared gradients live in one hidden <svg> so every copy can use them)
   function chestSvg(size, cls) {
     return '<svg class="chest-svg ' + (cls || '') + '" width="' + size + '" height="' + Math.round(size * 104 / 120) + '" viewBox="0 0 120 104" aria-hidden="true">' +
-      '<ellipse cx="60" cy="99" rx="46" ry="4.5" fill="rgba(0,0,0,.35)"/>' +
-      '<path d="M12 50h96v42a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#8a5a00" stroke-width="3" stroke-linejoin="round"/>' +
-      '<rect x="22" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/><rect x="87" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/>' +
+      '<ellipse cx="60" cy="99" rx="46" ry="4.5" fill="rgba(0,0,0,.4)"/>' +
+      '<path d="M12 50h96v42a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#2e1a0a" stroke-width="3" stroke-linejoin="round"/>' +
+      '<g stroke="#2a1608" stroke-opacity=".55" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M13 63h94"/><path d="M13 76h94"/><path d="M13 88h94"/><path d="M40 56q4 2 9 0M66 69q5 2 11 0M44 82q4-2 9 0M96 58q3 2 8 0M38 93q5 2 10 0" stroke-width="1.1" stroke-opacity=".45"/></g>' +
+      '<rect x="22" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/><rect x="87" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/>' +
+      '<g fill="#b8c0ca" stroke="#14171b" stroke-width=".8"><circle cx="27.5" cy="57" r="1.7"/><circle cx="27.5" cy="70" r="1.7"/><circle cx="27.5" cy="83" r="1.7"/><circle cx="27.5" cy="94" r="1.7"/><circle cx="92.5" cy="57" r="1.7"/><circle cx="92.5" cy="70" r="1.7"/><circle cx="92.5" cy="83" r="1.7"/><circle cx="92.5" cy="94" r="1.7"/></g>' +
       '<ellipse class="inner" cx="60" cy="50" rx="44" ry="8" fill="url(#cgGlow)"/>' +
       '<circle class="coin c1" cx="38" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c2" cx="60" cy="44" r="9" fill="#ffd35c" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c3" cx="82" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c4" cx="50" cy="48" r="6" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/>' +
-      '<g class="lid"><path d="M12 50V36a48 30 0 0 1 96 0v14z" fill="url(#cgLid)" stroke="#8a5a00" stroke-width="3" stroke-linejoin="round"/>' +
-      '<g clip-path="url(#cgLidClip)"><rect x="22" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/><rect x="87" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/></g>' +
-      '<path d="M20 38a42 25 0 0 1 22-20" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round"/></g>' +
-      '<rect x="50" y="42" width="20" height="23" rx="4.5" fill="url(#cgLock)" stroke="#8a5a00" stroke-width="2.6"/><circle cx="60" cy="52" r="3.3" fill="#6b4300"/><rect x="58.8" y="53" width="2.4" height="7" rx="1.2" fill="#6b4300"/>' +
+      '<g class="lid"><path d="M12 50V36a48 30 0 0 1 96 0v14z" fill="url(#cgLid)" stroke="#2e1a0a" stroke-width="3" stroke-linejoin="round"/><g clip-path="url(#cgLidClip)"><path d="M12 43Q60 20 108 43M12 32Q60 -4 108 32" fill="none" stroke="#2a1608" stroke-opacity=".5" stroke-width="1.6"/><rect x="22" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/><rect x="87" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/><g fill="#b8c0ca" stroke="#14171b" stroke-width=".8"><circle cx="27.5" cy="44" r="1.7"/><circle cx="27.5" cy="30" r="1.7"/><circle cx="92.5" cy="44" r="1.7"/><circle cx="92.5" cy="30" r="1.7"/></g></g><path d="M19 38a43 26 0 0 1 22-20" fill="none" stroke="rgba(255,225,170,.5)" stroke-width="3.5" stroke-linecap="round"/></g>' +
+      '<rect x="49" y="41" width="22" height="25" rx="4.5" fill="url(#cgLock)" stroke="#6b4300" stroke-width="2.6"/><circle cx="60" cy="52" r="3.4" fill="#3a2500"/><rect x="58.7" y="53" width="2.6" height="8" rx="1.3" fill="#3a2500"/>' +
       '</svg>';
   }
   var CHEST_DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
-    '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#d9930d"/></linearGradient>' +
-    '<linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#ffcf3f"/><stop offset="1" stop-color="#e8a317"/></linearGradient>' +
-    '<linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f0a914"/><stop offset=".5" stop-color="#ffd35c"/><stop offset="1" stop-color="#e09a0f"/></linearGradient>' +
-    '<linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient>' +
-    '<radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>' +
-    '<clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
+    '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6234"/><stop offset="1" stop-color="#5c3517"/></linearGradient><linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b87a45"/><stop offset=".6" stop-color="#8a5529"/><stop offset="1" stop-color="#6a4020"/></linearGradient><linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3c4249"/><stop offset=".45" stop-color="#7d8793"/><stop offset="1" stop-color="#383d44"/></linearGradient><linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient><radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient><clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
   document.body.insertAdjacentHTML('afterbegin', CHEST_DEFS);
 
   // Availability shown on every offer: how many are left, out of how many, and when it expires.

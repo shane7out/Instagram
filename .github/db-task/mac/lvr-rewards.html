@@ -704,6 +704,22 @@
           <div class="err-msg" id="consentPrivacyErr" style="margin-left:30px;">Please accept the privacy terms to continue</div>
         </div>
 
+        <div class="consent-divider"></div>
+
+        <!-- Game rules (monthly community-fund return) -->
+        <div class="field" style="gap:6px;">
+          <label class="consent-row" for="consentRules">
+            <input type="checkbox" id="consentRules" class="consent-cb" />
+            <span class="consent-text">
+              <strong>I'm in.</strong> I understand this is a game that rewards eating at local restaurants.
+              Points have no cash value. Points are used when I claim an offer and are never refunded.
+              Each month, a percent of unused points (currently 20%) goes back to the
+              <strong>community fund</strong> that keeps the program running for everyone.
+            </span>
+          </label>
+          <div class="err-msg" id="consentRulesErr" style="margin-left:30px;">Please agree to the game rules to join</div>
+        </div>
+
       </div>
 
       <!-- Save status indicator -->
@@ -885,6 +901,7 @@
   $('instagram').addEventListener('input',    function() { setErr('instagram', false); });
   $('consentSms').addEventListener('change',  function() { setCheckboxErr('consentSms', false); });
   $('consentPrivacy').addEventListener('change', function() { setCheckboxErr('consentPrivacy', false); });
+  $('consentRules').addEventListener('change', function() { setCheckboxErr('consentRules', false); });
   ['bdMon','bdDay'].forEach(function(id) {
     $(id).addEventListener('change', function() { setErr('birthday', false, 'bdMon'); });
   });
@@ -916,6 +933,7 @@
     var anDay = $('anDay').value;
     var consentSms     = $('consentSms').checked;
     var consentPrivacy = $('consentPrivacy').checked;
+    var consentRules   = $('consentRules').checked;
 
     if (!name)                                           { setErr('fname', true);                   ok = false; } else setErr('fname', false);
     if (!phone || phone.replace(/\D/g,'').length < 10)   { setErr('phone', true);                   ok = false; } else setErr('phone', false);
@@ -923,6 +941,7 @@
     if (!bdMon || !bdDay)                                { setErr('birthday', true, 'bdMon');        ok = false; } else setErr('birthday', false, 'bdMon');
     if (!consentSms)                                     { setCheckboxErr('consentSms', true);       ok = false; } else setCheckboxErr('consentSms', false);
     if (!consentPrivacy)                                 { setCheckboxErr('consentPrivacy', true);   ok = false; } else setCheckboxErr('consentPrivacy', false);
+    if (!consentRules)                                   { setCheckboxErr('consentRules', true);     ok = false; } else setCheckboxErr('consentRules', false);
 
     if (!ok) return;
 
@@ -974,7 +993,9 @@
         refCode:         genRefCode(),
         consent_sms:     true,
         consent_privacy: true,
-        consent_ts:      nowTs
+        consent_ts:      nowTs,
+        consent_rules:   true,
+        consent_rules_ts: nowTs
       };
       if (referrerKey) rec.referredBy = referrerKey;
       // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
