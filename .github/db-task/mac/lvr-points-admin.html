@@ -522,6 +522,7 @@
     var c = refConfig();
     var welcome = welcomeCfg();
     var chest = Object.assign({ waitDays: 7, bonus: 0 }, settings.chest || {});
+    var decay = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, settings.decay || {});
     var paused = settings.paused || {};
     var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
     function chk(id, on, label) { return '<div class="checkbox-row"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><label for="' + id + '">' + label + '</label></div>'; }
@@ -554,6 +555,15 @@
           '<div class="field"><label>Points inside (0 = off, max 50)</label><input type="number" id="sChestBonus" min="0" max="50" step="1" value="' + (chest.bonus || 0) + '"></div>' +
         '</div>' +
       '</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Monthly community-fund return</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">On the 1st of each month, this percent of every member\'s unused points goes back to the community fund, so the program keeps running and active members get a fair chance at the offers. It is rounded down to whole points, and brand-new members are exempt until the grace period ends, so their welcome points are not shaved before they can use them. Members see a plain notice about it on their screen. It runs by itself once it is switched on (see the status note below).</div>' +
+        chk('sDecayOn', decay.enabled === true, 'Monthly return is on (leave off until your attorney has reviewed it)') +
+        '<div class="field-row">' +
+          '<div class="field"><label>Percent returned each month (1 to 50)</label><input type="number" id="sDecayPct" min="1" max="50" step="1" value="' + (decay.percent || 20) + '"></div>' +
+          '<div class="field"><label>Grace period for new members (days)</label><input type="number" id="sDecayGrace" min="0" max="365" step="1" value="' + (decay.graceDays == null ? 30 : decay.graceDays) + '"></div>' +
+        '</div>' +
+        '<div class="row-sub" id="decayStatus" style="margin-top:6px;">Community fund: loading…</div>' +
+      '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
         chk('sRefOn', c.enabled === true, 'Referral rewards are on (off until your attorney has reviewed them)') +
@@ -565,6 +575,11 @@
       '</div>' +
       '<div class="form-actions"><button class="btn btn-primary" id="sSave">Save all settings</button></div>';
 
+    Promise.all([fbGet('/lvr_points/pool/total'), fbGet('/lvr_points/decay_runs')]).then(function(res){
+      var runs = res[1] || {}, ks = Object.keys(runs).sort(), last = ks.length ? runs[ks[ks.length - 1]] : null;
+      var el = document.getElementById('decayStatus'); if (!el) return;
+      el.textContent = 'Community fund so far: ' + (res[0] || 0) + ' points. ' + (last ? 'Last return: ' + ks[ks.length - 1] + ', ' + last.points + ' points from ' + last.members + ' members.' : 'No monthly return has run yet.');
+    }).catch(function(){});
     function collect() {
       return {
         paused: { signups: document.getElementById('sPauseSignups').checked, receipts: document.getElementById('sPauseReceipts').checked, redemptions: document.getElementById('sPauseRedeem').checked },
@@ -575,6 +590,7 @@
           windowDays: Math.max(1, parseInt(document.getElementById('sWindow').value, 10) || 30)
         },
         chest: { waitDays: Math.max(1, Math.min(60, parseInt(document.getElementById('sChestDays').value, 10) || 7)), bonus: Math.max(0, Math.min(50, parseInt(document.getElementById('sChestBonus').value, 10) || 0)) },
+        decay: { enabled: document.getElementById('sDecayOn').checked, percent: Math.max(1, Math.min(50, parseInt(document.getElementById('sDecayPct').value, 10) || 20)), graceDays: Math.max(0, Math.min(365, isNaN(parseInt(document.getElementById('sDecayGrace').value, 10)) ? 30 : parseInt(document.getElementById('sDecayGrace').value, 10))) },
         welcome: {
           enabled: document.getElementById('sWelOn').checked,
           amount: Math.max(1, Math.min(50, parseInt(document.getElementById('sWelAmt').value, 10) || 13)),

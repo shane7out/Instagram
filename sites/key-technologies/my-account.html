@@ -355,6 +355,32 @@
     if (w.enabled !== true || w.when === 'signup' || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
     return '<div class="notice" style="background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome points are waiting for you. They are added automatically when your first receipt is approved.</div>';
   }
+  var decayLast = null;
+  function decayCfg() {
+    var d = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, appSettings.decay || {});
+    if (DEMO) d.enabled = true;
+    return d;
+  }
+  function decayHtml() {
+    var d = decayCfg();
+    if (d.enabled !== true) return '';
+    var pts = (wallet && wallet.points) || 0;
+    var now = new Date(), next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    var nextLabel = next.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+    var joined = (wallet && wallet.joinedAt) || 0;
+    var inGrace = joined && next.getTime() < joined + d.graceDays * 86400000;
+    var take = Math.floor(pts * d.percent / 100);
+    var line;
+    if (inGrace) line = 'You are new, so your points are safe for your first ' + d.graceDays + ' days. Enjoy them.';
+    else if (take >= 1) line = 'On ' + nextLabel + ', about <b>' + take + ' of your ' + pts + ' points</b> will go back to the community fund. Use points on an offer before then and they are yours.';
+    else line = 'Nothing is due on ' + nextLabel + '.';
+    var last = '';
+    if (decayLast) {
+      var ks = Object.keys(decayLast).sort(), k = ks[ks.length - 1], r = decayLast[k];
+      if (r && r.amount) last = '<div style="margin-top:6px;opacity:.85;">Last return (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' points went to the community fund.</div>';
+    }
+    return '<div class="notice" style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:#ffd35c;font-size:13.5px;"><b>Use it or share it.</b> To keep this program running for everyone, ' + d.percent + '% of unused points return to the community fund on the 1st of each month, so other members get a chance at the offers too. ' + line + last + '</div>';
+  }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
 
@@ -382,7 +408,10 @@
       }
       memberKey = keys[0];
       wallet = found[memberKey];
-      render(catalog, allRedemptions);
+      return fbGet('/lvr_points/decay_by_member/' + encodeURIComponent(memberKey)).catch(function(){ return null; }).then(function(dl){
+        decayLast = dl;
+        render(catalog, allRedemptions);
+      });
     }).catch(function(){
       showEmpty("Couldn't load your account right now. Please try again in a moment.");
     });
@@ -483,6 +512,7 @@
         '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
         '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
       '</div>' +
+      decayHtml() +
       earnPanelHtml() +
       '<h2>Redeem</h2>';
 
@@ -519,7 +549,7 @@
               '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
             '</div>';
           }).join('') + '</div></div>';
-      }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
+      }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
     }
 
     var mine = [];
@@ -666,7 +696,7 @@
     left = Math.max(0, Math.min(max, left));
     var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
     var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------

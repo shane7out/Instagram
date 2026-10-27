@@ -9,6 +9,7 @@ rm -rf "$WORK"; mkdir -p "$WORK"; cd "$WORK"
 cp "$ROOT/.github/db-task/rules/lvr-rules-fragment.json" .
 cp "$ROOT/.github/db-task/rules/test-extra-rules.json" .
 cp "$ROOT/.github/db-task/rules/test-rules.js" .
+cp "$ROOT/.github/db-task/decay/monthly-decay.js" .
 
 # Assemble a full ruleset: the fragment + the live catch-all ($rest, copied
 # exactly) + a stand-in for the pet game's locked-down node.

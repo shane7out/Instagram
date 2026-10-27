@@ -88,12 +88,43 @@
     "bonus": {
      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
     }
+   },
+   "decay": {
+    ".write": true,
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "percent": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
+    },
+    "graceDays": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 365"
+    }
    }
   },
   "bonuses": {
    "$id": {
     ".write": "newData.exists() && !data.exists()",
     ".validate": "newData.child('memberKey').isString() && newData.child('points').isNumber() && newData.child('points').val() > 0 && newData.child('points').val() <= 1000 && newData.child('reason').isString() && newData.child('reason').val().length >= 3 && newData.child('reason').val().length <= 200"
+   }
+  },
+  "decay_by_member": {
+   "$mk": {
+    "$run": {
+     ".write": "newData.exists() && !data.exists()",
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('before').isNumber() && newData.child('percent').isNumber()"
+    }
+   }
+  },
+  "decay_runs": {
+   "$run": {
+    ".write": "newData.exists() && !data.exists()"
+   }
+  },
+  "pool": {
+   "total": {
+    ".write": true,
+    ".validate": "newData.isNumber() && newData.val() >= 0"
    }
   }
  },

@@ -154,6 +154,52 @@ const BIG = 'x'.repeat(100);
   check('duplicate-check entry for a new sign-up', await call('anon', 'PUT', '/lvr_instagram_index/someone', true), true);
   check('wipe the instagram index', await call('anon', 'DELETE', '/lvr_instagram_index'), false);
 
+  // ---------- monthly community-fund return
+  check('save decay settings', await call('anon', 'PUT', '/lvr_points/settings/decay', { enabled: true, percent: 20, graceDays: 30 }), true);
+  check('decay percent over 50 rejected', await call('anon', 'PUT', '/lvr_points/settings/decay/percent', 90), false);
+  check('decay percent 0 rejected', await call('anon', 'PUT', '/lvr_points/settings/decay/percent', 0), false);
+  check('decay grace days negative rejected', await call('anon', 'PUT', '/lvr_points/settings/decay/graceDays', -1), false);
+  check('record a monthly return', await call('anon', 'PUT', '/lvr_points/decay_by_member/ZZ/2026-11', { amount: 3, before: 17, after: 14, percent: 20, at: TS }), true);
+  check('overwrite a monthly return record', await call('anon', 'PUT', '/lvr_points/decay_by_member/ZZ/2026-11', { amount: 9, before: 17, after: 8, percent: 20, at: TS }), false);
+  check('delete a monthly return record', await call('anon', 'DELETE', '/lvr_points/decay_by_member/ZZ/2026-11'), false);
+  check('pool total goes up', await call('anon', 'PUT', '/lvr_points/pool/total', { '.sv': { increment: 3 } }), true);
+  check('pool total negative rejected', await call('anon', 'PUT', '/lvr_points/pool/total', -4), false);
+
+  // end-to-end: run the real monthly script against the emulator
+  const { spawnSync } = require('child_process');
+  const seed = async () => {
+    await call('admin', 'PUT', '/lvr_rewards', {
+      OLD1: { name: 'Old One', points: 100, token: 'tokOld1abcdefabcdefabc', joinedAt: Date.now() - 90 * 86400000 },
+      OLD2: { name: 'Old Two', points: 17, token: 'tokOld2abcdefabcdefabc', joinedAt: Date.now() - 60 * 86400000 },
+      NEW1: { name: 'Brand New', points: 13, token: 'tokNew1abcdefabcdefabc', joinedAt: Date.now() - 3 * 86400000 },
+      LOW1: { name: 'Few', points: 4, token: 'tokLow1abcdefabcdefabc', joinedAt: Date.now() - 90 * 86400000 },
+      LEG1: { name: 'Legacy', points: 10 }
+    });
+    await call('admin', 'PUT', '/lvr_points/decay_by_member', null);
+    await call('admin', 'PUT', '/lvr_points/decay_runs', null);
+    await call('admin', 'PUT', '/lvr_points/pool', null);
+  };
+  const sweep = (extra) => { const r = spawnSync('node', [path.join(__dirname, 'monthly-decay.js')], { env: Object.assign({}, process.env, { DB_URL: BASE, DB_NS: NS, RUN_KEY: '2026-11' }, extra), encoding: 'utf8' }); return r.stdout + r.stderr; };
+  const bal = async k => JSON.parse((await call('admin', 'GET', '/lvr_rewards/' + k + '/points')).t);
+  await seed();
+  let o = sweep({ DRY_RUN: '1' });
+  check('sweep dry run changes nothing', { s: (await bal('OLD1')) === 100 && /WOULD return 22 points from 3 members/.test(o) ? 200 : 500, t: o }, true);
+  o = sweep({});
+  check('sweep takes 20% rounded down (100 -> 80)', { s: (await bal('OLD1')) === 80 ? 200 : 500, t: o }, true);
+  check('sweep: 17 -> 14', { s: (await bal('OLD2')) === 14 ? 200 : 500, t: o }, true);
+  check('sweep: brand-new member untouched (grace period)', { s: (await bal('NEW1')) === 13 ? 200 : 500, t: o }, true);
+  check('sweep: 4 points is under 1 whole point, untouched', { s: (await bal('LOW1')) === 4 ? 200 : 500, t: o }, true);
+  check('sweep: member with no join date is treated as long-standing (10 -> 8)', { s: (await bal('LEG1')) === 8 ? 200 : 500, t: o }, true);
+  const pool = JSON.parse((await call('admin', 'GET', '/lvr_points/pool/total')).t);
+  check('pool total equals what was taken (20+3+2 = 25)', { s: pool === 25 ? 200 : 500, t: String(pool) }, true);
+  o = sweep({});
+  check('running it again the same month takes nothing more', { s: (await bal('OLD1')) === 80 && (await bal('OLD2')) === 14 ? 200 : 500, t: o }, true);
+  await call('admin', 'PUT', '/lvr_points/settings/decay/enabled', false);
+  await seed();
+  o = sweep({});
+  check('switched off in Settings: nothing is taken', { s: (await bal('OLD1')) === 100 ? 200 : 500, t: o }, true);
+  await call('admin', 'PUT', '/lvr_points/settings/decay/enabled', true);
+
   // ---------- everything else behaves exactly as before
   check('other apps: write a nested value (dashboard)', await call('anon', 'PUT', '/dashboard/abc', { x: 1 }), true);
   check('other apps: read (dashboard)', await call('anon', 'GET', '/dashboard'), true);
