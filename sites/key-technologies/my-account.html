@@ -66,18 +66,38 @@
 
   .page-wrap{max-width:460px;margin:0 auto;padding:30px 16px 70px;}
 
-  .gift-btn{position:absolute;top:12px;right:12px;min-height:44px;border-radius:99px;border:1px solid rgba(240,194,57,.55);background:rgba(240,194,57,.1);color:#f0c239;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;padding:0 14px 0 12px;font:inherit;font-size:13px;font-weight:800;letter-spacing:.02em;font-variant-numeric:tabular-nums;}
+  [hidden]{display:none!important;}
+  .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f6c744;}
+  .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
+  .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f6c744;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(246,199,68,.4);}
+  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 0 10px rgba(246,199,68,.45));}
+  .chest-svg .lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform .7s cubic-bezier(.3,1.5,.5,1);}
+  .chest-svg .inner{opacity:0;transition:opacity .5s;}
+  .chest-svg .coin{opacity:0;transform:translateY(10px);transition:opacity .4s,transform .7s cubic-bezier(.2,1.4,.4,1);}
+  .chest-svg.open .lid{transform:rotate(-34deg);}
+  .chest-svg.open .inner{opacity:1;}
+  .chest-svg.open .coin{opacity:1;transform:translateY(-9px);}
+  .chest-svg.open .coin.c2{transition-delay:.08s;} .chest-svg.open .coin.c3{transition-delay:.16s;} .chest-svg.open .coin.c4{transition-delay:.24s;}
+  @media (prefers-reduced-motion:no-preference){
+    .chest-svg.ready{animation:chestWiggle 1.8s ease-in-out infinite;}
+    .chest-svg.idle{animation:chestBob 3.4s ease-in-out infinite;}
+    .chest-svg.open .coin{animation:coinPop 2.4s ease-in-out .8s infinite;}
+  }
+  @keyframes chestWiggle{0%,60%,100%{transform:rotate(0);}68%{transform:rotate(-5deg);}76%{transform:rotate(5deg);}84%{transform:rotate(-3deg);}92%{transform:rotate(2deg);}}
+  @keyframes chestBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+  @keyframes coinPop{0%,100%{transform:translateY(-9px);}50%{transform:translateY(-13px);}}
   .chest-big{font-size:26px;font-weight:800;color:var(--ink);margin:2px 0 14px;font-variant-numeric:tabular-nums;}
-  .gift-btn:hover{background:rgba(240,194,57,.2);}
-  .gift-btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
-  @media (prefers-reduced-motion:no-preference){.gift-btn{animation:giftPulse 2.8s ease-in-out infinite;}}
-  @keyframes giftPulse{0%,100%{box-shadow:0 0 0 0 rgba(240,194,57,.0);}50%{box-shadow:0 0 14px 2px rgba(240,194,57,.45);}}
+  .mini-bal{position:fixed;left:0;right:0;top:57px;z-index:40;display:none;justify-content:center;pointer-events:none;}
+  .mini-bal.show{display:flex;}
+  .mini-bal span{background:rgba(12,26,43,.94);border:1px solid var(--line);border-radius:99px;padding:6px 16px;font-weight:800;color:var(--key-light);box-shadow:0 4px 18px rgba(0,0,0,.4);text-shadow:0 0 12px rgba(89,181,255,.6);}
+  .mini-bal small{font-weight:600;color:var(--ink-dim);font-size:13px;text-shadow:none;margin-left:4px;}
   .soon-back{position:fixed;inset:0;background:rgba(3,8,16,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
   .soon-back.open{display:flex;}
   .soon-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
-  .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 20px;text-align:center;margin-bottom:22px;}
+  .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;}
+  .balance-main{min-width:0;}
   .balance-name{font-size:14px;color:var(--ink-dim);margin-bottom:6px;}
   .balance-num{font-size:52px;font-weight:800;line-height:1;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.65),0 0 32px rgba(22,143,255,.45);}
   @media (prefers-reduced-motion:no-preference){.balance-num{animation:balGlow 3.2s ease-in-out infinite;}}
@@ -178,9 +198,10 @@
 
 <div class="page-wrap">
   <div id="content"><div class="empty">Loading…</div></div>
+  <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small>points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
-      <span style="color:#f0c239;display:inline-block;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11V9a8.5 8.5 0 0 1 17 0v2"/><rect x="3" y="11" width="18" height="9" rx="1.5"/><path d="M3 15h18"/><rect x="10.5" y="13" width="3" height="4" rx=".8"/></svg></span>
+      <span id="chestModalArt" style="display:inline-block;min-height:140px;"></span>
       <h3 id="soonTitle">Treasure chest</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg">The treasure chest is almost ready. Come back and check this spot soon.</p>
@@ -365,10 +386,10 @@
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
-        '<button type="button" class="gift-btn" id="giftBtn" aria-label="Treasure chest (coming soon)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11V9a8.5 8.5 0 0 1 17 0v2"/><rect x="3" y="11" width="18" height="9" rx="1.5"/><path d="M3 15h18"/><rect x="10.5" y="13" width="3" height="4" rx=".8"/></svg><span class="chest-count">Soon</span></button>' +
-        '<div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
+        '<div class="balance-main"><div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
-        '<div class="balance-label">points available</div>' +
+        '<div class="balance-label">points available</div></div>' +
+        '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
       '</div>' +
       earnPanelHtml() +
       '<h2>Redeem</h2>';
@@ -433,6 +454,7 @@
     bindInvite();
     startPolling();
     tickChest();
+    bindMini();
 
     contentEl.querySelectorAll('[data-act="redeem"]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -498,6 +520,29 @@
     }).catch(function(){});
   }
 
+  // Cartoon gold treasure chest (shared gradients live in one hidden <svg> so every copy can use them)
+  function chestSvg(size, cls) {
+    return '<svg class="chest-svg ' + (cls || '') + '" width="' + size + '" height="' + Math.round(size * 104 / 120) + '" viewBox="0 0 120 104" aria-hidden="true">' +
+      '<ellipse cx="60" cy="99" rx="46" ry="4.5" fill="rgba(0,0,0,.35)"/>' +
+      '<path d="M12 50h96v42a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#8a5a00" stroke-width="3" stroke-linejoin="round"/>' +
+      '<rect x="22" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/><rect x="87" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/>' +
+      '<ellipse class="inner" cx="60" cy="50" rx="44" ry="8" fill="url(#cgGlow)"/>' +
+      '<circle class="coin c1" cx="38" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c2" cx="60" cy="44" r="9" fill="#ffe27a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c3" cx="82" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c4" cx="50" cy="48" r="6" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/>' +
+      '<g class="lid"><path d="M12 50V36a48 30 0 0 1 96 0v14z" fill="url(#cgLid)" stroke="#8a5a00" stroke-width="3" stroke-linejoin="round"/>' +
+      '<g clip-path="url(#cgLidClip)"><rect x="22" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/><rect x="87" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#8a5a00" stroke-width="2"/></g>' +
+      '<path d="M20 38a42 25 0 0 1 22-20" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round"/></g>' +
+      '<rect x="50" y="42" width="20" height="23" rx="4.5" fill="url(#cgLock)" stroke="#8a5a00" stroke-width="2.6"/><circle cx="60" cy="52" r="3.3" fill="#6b4300"/><rect x="58.8" y="53" width="2.4" height="7" rx="1.2" fill="#6b4300"/>' +
+      '</svg>';
+  }
+  var CHEST_DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
+    '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#d9930d"/></linearGradient>' +
+    '<linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#ffcf3f"/><stop offset="1" stop-color="#e8a317"/></linearGradient>' +
+    '<linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f0a914"/><stop offset=".5" stop-color="#ffe27a"/><stop offset="1" stop-color="#e09a0f"/></linearGradient>' +
+    '<linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient>' +
+    '<radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>' +
+    '<clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
+  document.body.insertAdjacentHTML('afterbegin', CHEST_DEFS);
+
   // ---------- treasure chest ----------
   // Each member's first chest opens a set number of days after they join
   // (Settings > Treasure chest). Until the owner sets a bonus above 0 it only
@@ -517,6 +562,7 @@
     var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
     return { short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
   }
+  var chestJustOpened = false;
   function tickChest() {
     var st = chestState(), short = 'Soon', big = '', msg = 'The treasure chest is almost ready. Come back and check this spot soon.', canOpen = false;
     if (st.kind === 'wait') { var f = fmtLeft(st.ms); short = f.short; big = 'Opens in ' + f.long; msg = 'Your first treasure chest opens when the countdown ends. Come back then!'; }
@@ -524,6 +570,14 @@
     else if (st.kind === 'claimed') { short = 'Opened'; big = '+' + st.amount + ' points'; msg = 'You opened your first chest. More treasure is coming soon.'; }
     var els = document.querySelectorAll('.chest-count');
     for (var i = 0; i < els.length; i++) els[i].textContent = short;
+    var card = document.querySelector('.chest-card');
+    if (card) card.setAttribute('class', 'chest-svg chest-card ' + (st.kind === 'ready' ? 'ready' : (st.kind === 'claimed' ? 'open' : 'idle')));
+    var art = document.getElementById('chestModalArt');
+    if (art) {
+      if (!art.firstChild) art.innerHTML = chestSvg(150, 'chest-modal');
+      var mv = art.firstChild;
+      if (!chestJustOpened) mv.setAttribute('class', 'chest-svg chest-modal ' + (st.kind === 'ready' ? 'ready' : (st.kind === 'claimed' ? 'open' : 'idle')));
+    }
     var b = document.getElementById('chestBig'); if (b) { b.hidden = !big; b.textContent = big; }
     var m = document.getElementById('chestMsg'); if (m) m.textContent = msg;
     var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
@@ -539,6 +593,8 @@
         if (!r.ok) throw new Error('points');
         wallet.points = (wallet.points || 0) + st.bonus; wallet.chestClaimed = { amount: st.bonus };
         var n = document.getElementById('balanceNum'); if (n) n.textContent = wallet.points;
+        chestJustOpened = true;
+        var mv = document.querySelector('#chestModalArt .chest-svg'); if (mv) mv.setAttribute('class', 'chest-svg chest-modal open');
         tickChest();
       })
       .catch(function () { btn.disabled = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; });
@@ -547,7 +603,7 @@
   (function () {
     var back = document.getElementById('soonBack');
     function open() { tickChest(); back.classList.add('open'); var c = document.getElementById('soonClose'); if (c) c.focus(); }
-    function close() { back.classList.remove('open'); }
+    function close() { back.classList.remove('open'); chestJustOpened = false; tickChest(); }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
       if (t && t.closest('#giftBtn')) open();
@@ -556,6 +612,20 @@
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   })();
+
+  // Slim balance bar that appears at the top while the big card is scrolled out of view
+  var miniObs = null, balObs = null;
+  function bindMini() {
+    var card = document.querySelector('.balance-card'), num = document.getElementById('balanceNum'), bar = document.getElementById('miniBal'), mn = document.getElementById('miniNum');
+    if (!card || !num || !bar || !('IntersectionObserver' in window)) return;
+    mn.textContent = num.textContent;
+    if (miniObs) miniObs.disconnect();
+    miniObs = new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { rootMargin: '-60px 0px 0px 0px' });
+    miniObs.observe(card);
+    if (balObs) balObs.disconnect();
+    balObs = new MutationObserver(function () { mn.textContent = num.textContent; });
+    balObs.observe(num, { childList: true, characterData: true, subtree: true });
+  }
 
   // ---------- approval notices + auto-refresh ----------
   var SEEN_KEY = 'lvr_seen_receipts';
