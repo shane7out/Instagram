@@ -70,12 +70,16 @@ fi
 
 # ---------------------------------------------------------------------------
 # deploy + verify (same deployer the dashboard patches already use)
+# Always pull the latest deploy-overlay.js and tell it which files to ship
+# (fixed 2026-10-27 - it used to silently overlay ONLY index.html+
+# version.json no matter what else was in the folder, so this and every
+# other standalone tool was never actually going live).
 # ---------------------------------------------------------------------------
-DEP="$(ls deploy-overlay.js 2>/dev/null | head -1)"
-[ -z "$DEP" ] && DEP="$(ls *overlay*.js deploy*.js 2>/dev/null | head -1)"
+curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+DEP="deploy-overlay.js"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"
-  node "$DEP" >> "$LOG" 2>&1
+  OVERLAY_FILES="lvr-coupon.html lvr-coupons-admin.html" node "$DEP" >> "$LOG" 2>&1
 else
   echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"
 fi

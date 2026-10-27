@@ -130,12 +130,16 @@ NODE
 
 # ---------------------------------------------------------------------------
 # 5) deploy + verify
+#    Always pull the latest deploy-overlay.js fresh (it used to only ever
+#    overlay index.html+version.json - fixed 2026-10-27 to overlay any file
+#    named in OVERLAY_FILES too) so a stale local copy can't silently drop
+#    the standalone tool files again.
 # ---------------------------------------------------------------------------
-DEP="$(ls deploy-overlay.js 2>/dev/null | head -1)"
-[ -z "$DEP" ] && DEP="$(ls *overlay*.js deploy*.js 2>/dev/null | head -1)"
+curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+DEP="deploy-overlay.js"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"
-  node "$DEP" >> "$LOG" 2>&1
+  OVERLAY_FILES="$FILES" node "$DEP" >> "$LOG" 2>&1
 else
   echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"
 fi

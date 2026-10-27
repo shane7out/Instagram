@@ -123,8 +123,9 @@ NODE
 # ---------------------------------------------------------------------------
 # 5) deploy + verify
 # ---------------------------------------------------------------------------
-DEP="$(ls deploy-overlay.js 2>/dev/null | head -1)"
-[ -z "$DEP" ] && DEP="$(ls *overlay*.js deploy*.js 2>/dev/null | head -1)"
+curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+DEP="deploy-overlay.js"
+export OVERLAY_FILES="key-advertisers.html"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"
   node "$DEP" >> "$LOG" 2>&1
