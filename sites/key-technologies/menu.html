@@ -101,6 +101,7 @@
   .vlink svg{flex:none;display:block;width:20px;height:20px;}
   .vnote{font-size:13px;color:var(--ink-dim);margin:6px 0 0;}
   .vcard .dish{border-bottom:0;padding:18px 0 4px;}
+  .pickup{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#bcd6ee;border:1px solid rgba(188,214,238,.45);border-radius:99px;padding:2px 9px;margin:0 6px 6px 0;}
   .sampletag{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(240,194,57,.5);border-radius:99px;padding:2px 9px;margin-bottom:6px;}
   .cost{grid-column:2;grid-row:1;text-align:right;white-space:nowrap;}
   .dish.has-pic .cost{grid-row:2;}
@@ -185,7 +186,7 @@
     left = Math.max(0, Math.min(max, left));
     var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
     var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + esc(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + esc(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
   var usedPhotos = {};
   function photo(key) { usedPhotos[key] = 1; return '<img src="img/food/' + key + '.jpg" alt="' + esc(PHOTO_ALT[key] || "Food") + '" loading="lazy" width="800" height="533">'; }
@@ -199,8 +200,10 @@
   function sampleTally(i) { var t = SAMPLE_TALLY[i % SAMPLE_TALLY.length]; return tallyHtml(t[0], t[1], t[2]); }
   // Demo menu (fictional restaurants, generic food photos). Opened with menu.html?demo=1
   var DEMO = [
+    { r: "Vanilla Rice's Hibachi House", tag: "Founding partner · Hibachi", items: [
+      { itemName: "Free Chicken Bowl", pointCost: 13, art: "teriyaki", real: true, description: "Pickup only, not valid for delivery. Show your code to your server at Vanilla Rice's Hibachi House to redeem your free Chicken Bowl." } ] },
     { r: "Golden Grain Rice House", tag: "Fast casual · Downtown", items: [
-      { itemName: "Free Teriyaki Chicken & Rice", pointCost: 13, art: "teriyaki", description: "Sliced teriyaki chicken over steamed rice with a side of crisp vegetables. Show your code to your server." },
+      { itemName: "Free Chicken & Egg Rice Bowl", pointCost: 13, art: "donburi", description: "Chicken and egg over steamed rice, finished with fresh herbs. Show your code to your server." },
       { itemName: "Free Seafood Fried Rice", pointCost: 16, art: "friedrice", description: "Wok-fried rice with shrimp, vegetables and a squeeze of lemon." },
       { itemName: "Free Salmon Sushi Plate", pointCost: 20, art: "sushi", description: "Fresh salmon nigiri over seasoned rice." } ] },
     { r: "Sunset Slice Pizza", tag: "Dine-in or pickup", items: [
@@ -219,7 +222,7 @@
   // Real Las Vegas-area restaurants from the owner's LVR list (public business info only), shown
   // with sample offers to demonstrate the program. Opened with menu.html?demo=vegas
   var VEGAS = [
-    { partner: true, cat: "plates", n: "Vanilla Rice's Hibachi House", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146", locs: [{ l: "Charleston location", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146" }, { l: "Flamingo location (carry-out)", a: "3654 E Flamingo Rd Ste 12, Las Vegas, NV 89121" }], ig: "hibachihouselv", c: "Hibachi", o: { t: "Free Chicken Bowl", p: 13, art: "teriyaki", real: true, d: "Show your code to your server at Vanilla Rice's Hibachi House to redeem your free Chicken Bowl." } },
+    { partner: true, cat: "plates", n: "Vanilla Rice's Hibachi House", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146", locs: [{ l: "Charleston location", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146" }, { l: "Flamingo location (carry-out)", a: "3654 E Flamingo Rd Ste 12, Las Vegas, NV 89121" }], ig: "hibachihouselv", c: "Hibachi", o: { t: "Free Chicken Bowl", p: 13, art: "teriyaki", real: true, d: "Pickup only, not valid for delivery. Show your code to your server at Vanilla Rice's Hibachi House to redeem your free Chicken Bowl." } },
     { partner: true, cat: "plates", n: "Poke Heaven", a: "4747 S Maryland Pkwy, Las Vegas, NV 89119", ph: "(702) 730-3030", ig: "poke.heaven", c: "Poke bowls", o: { t: "Free Poke Bowl", p: 13, art: "pokebowl" } },
     { partner: true, cat: "sweet", n: "TT Terrace (The Tea Terrace)", a: "6830 S Rainbow Blvd #140, Las Vegas, NV 89118", ph: "(702) 931-0562", ig: "ttterrace", c: "Tea room", o: { t: "Free Scone & Cream", p: 7, art: "scones" } },
     { cat: "pizza", n: "Pizza Rock", a: "201 N 3rd St, Las Vegas, NV 89101", ph: "(702) 385-0838", c: "Pizza, downtown", o: { t: "Free Large Pizza", p: 15, art: "pizzapie" } },
@@ -290,7 +293,7 @@
           '<a class="vlink" href="' + goog + '" target="_blank" rel="noopener">' + ICON.g + 'Google</a>' +
         '</div><p class="vnote">Links open in a new tab. Close it to come back here.</p>' +
         '<article class="dish has-pic"><div class="art">' + photo(r.o.art) + '</div>' +
-          '<div>' + tag + '<div class="name">' + esc(r.o.t) + '</div></div>' +
+          '<div>' + tag + '<span class="pickup">Pickup only</span><div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
           '<div style="grid-column:1 / -1"' + (r.o.real ? ' id="liveTally"' : '') + '>' + (r.o.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(idx)) + '</div></article></section>');
@@ -327,21 +330,22 @@
     $("eyebrow").textContent = "Demo menu";
     $("bizName").textContent = "Vegas Eats Demo";
     document.title = "Demo Menu — Key Technologies.si";
-    $("lede").textContent = "A sample of what a points menu looks like with four restaurants. Tap any item to see how redeeming works.";
-    $("sampleBox").innerHTML = '<div class="sample">Demo only. These restaurants are made up to show how the program looks, and the food photos are generic. Nothing here can be redeemed.</div>';
+    $("lede").textContent = "A sample of what a points menu looks like with five restaurants. Tap any item to see how redeeming works.";
+    $("sampleBox").innerHTML = '<div class="sample">Demo only. Apart from Vanilla Rice's Hibachi House, these restaurants are made up to show how the program looks, and the food photos are generic. Nothing here can be redeemed.</div>';
     var html = "", di = 0;
     DEMO.forEach(function (g) {
       html += '<div class="rest"><b>' + esc(g.r) + '</b><span>' + esc(g.tag) + '</span></div>';
       g.items.forEach(function (it) {
         html += '<article class="dish has-pic"><div class="art">' + photo(it.art) + '</div>' +
-          '<div class="name">' + esc(it.itemName) + '</div>' +
+          '<div><span class="pickup">Pickup only</span><div class="name">' + esc(it.itemName) + '</div></div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description) + '</p>' +
-          '<div style="grid-column:1 / -1">' + sampleTally(di++) + '</div>' +
+          '<div style="grid-column:1 / -1"' + (it.real ? ' id="liveTally"' : '') + '>' + (it.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(di++)) + '</div>' +
           '<div class="act"><a class="btn btn-primary" href="rewards.html">Join free to redeem</a></div></article>';
       });
     });
     $("menu").innerHTML = html + creditsHtml();
+    liveVanillaTally();
   }
 
   function render(biz, items, sample, settings) {
@@ -365,7 +369,7 @@
       sections[s].forEach(function (it) {
         html += '<article class="dish' + (it.photoUrl ? ' has-pic' : '') + '">' +
           (it.photoUrl ? '<img class="photo" src="' + esc(it.photoUrl) + '" alt="" loading="lazy">' : '') +
-          '<div class="name">' + esc(it.itemName) + '</div>' +
+          '<div><span class="pickup">Pickup only</span><div class="name">' + esc(it.itemName) + '</div></div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description || it.instructions || "") + '</p>' +
           '<div style="grid-column:1 / -1">' + (it._id ? tallyHtml(Number(it.maxRedemptions) || 0, (Number(it.maxRedemptions) || 0) - (it._used || 0), it.expiresAt) : "") + '</div>' +

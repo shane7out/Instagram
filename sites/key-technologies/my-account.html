@@ -133,6 +133,7 @@
   .item-card.locked .item-photo{filter:grayscale(.55) brightness(.8);}
   .coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,#f0a91a 55%,#b9770e);box-shadow:0 0 8px rgba(240,169,26,.6);vertical-align:-2px;margin-right:5px;}
   .item-card.ready .item-cost{color:#ffd35c;text-shadow:0 0 10px rgba(240,169,26,.5);}
+  .pickup{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#bcd6ee;border:1px solid rgba(188,214,238,.45);border-radius:99px;padding:2px 9px;margin:0 6px 6px 0;}
   .goal{margin:10px 0 2px;font-size:13px;font-weight:700;}
   .goal.ok{color:#ffd35c;}
   .goal.need{color:var(--ink-dim);}
@@ -453,7 +454,7 @@
       ["r24", "MilkCow", "Free Ice Cream", 6, "sundae", 35, 24, 40, "sweet"]
     ];
     return rows.map(function (r, i) {
-      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '', cat: r[8] };
+      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '', cat: r[8], rank: i < 3 ? i : 99 };
     });
   }
   document.addEventListener('click', function (e) {
@@ -490,7 +491,8 @@
     } else {
       var groups = {}, order = [], pts = wallet.points || 0, paused = pausedFlag('redemptions');
       items.forEach(function(it){ if (!groups[it.slug]) { groups[it.slug] = { name: it.bizName || it.slug, items: [] }; order.push(it.slug); } groups[it.slug].items.push(it); });
-      order.sort(function(x, y){ return Math.min.apply(null, groups[x].items.map(function(i){ return i.pointCost; })) - Math.min.apply(null, groups[y].items.map(function(i){ return i.pointCost; })); });
+      var rank = function(k){ var r = groups[k].items[0].rank; return typeof r === 'number' ? r : 99; };
+      order.sort(function(x, y){ return (rank(x) - rank(y)) || (Math.min.apply(null, groups[x].items.map(function(i){ return i.pointCost; })) - Math.min.apply(null, groups[y].items.map(function(i){ return i.pointCost; }))); });
       var CATS = [['all', 'All'], ['pizza', 'Pizza'], ['sushi', 'Sushi'], ['burgers', 'Burgers'], ['apps', 'Appetizers'], ['plates', 'Plates & bowls'], ['sweet', 'Breakfast & sweet']];
       if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
       html += order.map(function(k){
@@ -508,7 +510,7 @@
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + (afford ? '<span class="ready-pill">READY</span>' : '') + '</div></div>' +
+                '<div><span class="pickup">Pickup only</span><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + (afford ? '<span class="ready-pill">READY</span>' : '') + '</div></div>' +
                 '<div class="item-cost"><span class="coin"></span>' + item.pointCost + '</div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
@@ -517,7 +519,7 @@
               '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
             '</div>';
           }).join('') + '</div></div>';
-      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
+      }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
     }
 
     var mine = [];
@@ -664,7 +666,7 @@
     left = Math.max(0, Math.min(max, left));
     var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
     var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------
