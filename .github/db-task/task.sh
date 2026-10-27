@@ -1,65 +1,75 @@
 #!/bin/bash
-# Follow-up: (1) get the rest of lvr-rewards.html to see if it's signup-only
-# or also shows an existing member their own points (answers Shane's "I'm
-# gonna also need a demo for them to see what they see" question).
-# (2) sanity-check the live hosting manifest to understand why
-# deploy-key-room.sh's live-check showed 404 for all 8 standalone tool pages
-# right after a "successful" deploy.
+# Reconcile the two rewards/points systems per Shane's direction ("the
+# reward system and point system are the same thing"): /lvr_rewards is the
+# canonical member store going forward (8 real members, real points). This
+# backfills a personal-link `token` on every existing member (none have one
+# today - the admin CRM only ever looked members up by search, never by a
+# shareable link) and pulls the live lvr-rewards.html signup page's FULL
+# source into the repo so it can be edited here (it currently only exists
+# on the live Firebase Hosting bucket, not tracked anywhere).
 set -e
 node <<'NODE'
 const https = require('https');
-function get(url, timeoutMs) {
+function req(method, url, body) {
   return new Promise((resolve) => {
-    const req = https.get(url, { timeout: timeoutMs || 15000 }, r => {
-      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, body: d }));
+    const u = new URL(url);
+    const data = body ? JSON.stringify(body) : undefined;
+    const opts = { method, headers: data ? {'Content-Type':'application/json','Content-Length':Buffer.byteLength(data)} : {} };
+    const r = https.request(u, opts, (res) => {
+      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
     });
-    req.on('error', e => resolve({ error: e.message }));
-    req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
+    r.on('error', e => resolve({ error: e.message }));
+    if (data) r.write(data);
+    r.end();
   });
 }
 
+function randToken() {
+  return require('crypto').randomBytes(16).toString('hex');
+}
+
 (async () => {
-  const page = await get('https://lvr-data-a60c1.web.app/lvr-rewards.html', 15000);
-  const body = page.body || '';
-  console.log('=== lvr-rewards.html full fetch ===');
-  console.log('status:', page.status, 'bytes:', body.length);
+  console.log('=== fetch /lvr_rewards ===');
+  const cur = await req('GET', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards.json');
+  if (cur.status !== 200) { console.log('FAILED to fetch lvr_rewards:', cur.status, cur.error); process.exit(1); }
+  const members = JSON.parse(cur.body) || {};
+  const keys = Object.keys(members);
+  console.log('members found:', keys.length);
 
-  console.log('\n=== signals: signup-only vs. also a "view my points" mode ===');
-  const signals = ['lookup', 'Lookup', 'My Points', 'my-points', 'Check my', 'phone number to', 'existing member', 'already signed up', 'view your', 'Welcome back', 'search', 'Search'];
-  for (const s of signals) {
-    const n = (body.match(new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
-    if (n) console.log(`  "${s}": ${n} occurrence(s)`);
+  console.log('\n=== backfilling token field where missing ===');
+  for (const key of keys) {
+    const m = members[key];
+    if (m.token) { console.log(key, '(' + m.name + ')', 'already has a token — skipping'); continue; }
+    const token = randToken();
+    const r = await req('PATCH', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards/' + encodeURIComponent(key) + '.json', { token: token });
+    console.log(key, '(' + m.name + ')', '-> token ' + token, 'status', r.status);
   }
 
-  // print the JS logic block(s) so we can see the actual flow, not just CSS
-  const scripts = [...body.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m => m[1]);
-  console.log('\n=== script blocks found:', scripts.length, '===');
-  scripts.forEach((s, i) => {
-    console.log(`\n--- script ${i} (${s.length} chars) ---`);
-    console.log(s.slice(0, 4000));
+  console.log('\n=== verify ===');
+  const after = await req('GET', 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards.json');
+  const amembers = JSON.parse(after.body) || {};
+  Object.keys(amembers).forEach(k => {
+    console.log(k, amembers[k].name, '- has token:', !!amembers[k].token);
   });
-
-  // also grab the visible form fields / headings from the HTML body (not just <style>)
-  const bodyTagMatch = body.match(/<body[^>]*>([\s\S]*)<\/body>/);
-  if (bodyTagMatch) {
-    const htmlOnly = bodyTagMatch[1].replace(/<script[\s\S]*?<\/script>/g, '');
-    console.log('\n=== body HTML (scripts stripped), first 4000 chars ===');
-    console.log(htmlOnly.slice(0, 4000));
-  }
-
-  console.log('\n\n=== hosting manifest check: are the 8 standalone tool files actually hosted? ===');
-  // Firebase Hosting doesn't expose a public manifest list endpoint normally,
-  // so just re-check live status + content-length for each, plus whether
-  // Firebase is serving a SPA fallback (200 for literally anything) vs a
-  // real 404.
-  const files = ['key-room.html','key-leads.html','kt-crm.html','key-advertisers.html','lvr-coupons-admin.html','lvr-wallet.html','lvr-points-admin.html','lvr-restaurant-portal.html','lvr-coupon.html','rewards.html'];
-  for (const f of files) {
-    const r = await get(`https://lvr-data-a60c1.web.app/${f}`, 15000);
-    console.log(`${f}: status ${r.status || r.error}, bytes ${r.body ? r.body.length : 0}`);
-  }
-  // also a known-never-existed filename, to see what a TRUE 404 looks like
-  // on this host vs. what the real files return
-  const bogus = await get('https://lvr-data-a60c1.web.app/this-file-does-not-exist-xyz123.html', 15000);
-  console.log(`[control] bogus filename: status ${bogus.status || bogus.error}, bytes ${bogus.body ? bogus.body.length : 0}`);
 })();
 NODE
+
+echo ""
+echo "=== fetching full lvr-rewards.html source into the repo ==="
+mkdir -p .github/db-task/mac
+curl -sL -o .github/db-task/mac/lvr-rewards.html https://lvr-data-a60c1.web.app/lvr-rewards.html
+echo "saved: $(wc -c < .github/db-task/mac/lvr-rewards.html) bytes"
+
+git config user.name "claude-remote-hands"
+git config user.email "noreply@anthropic.com"
+git add .github/db-task/mac/lvr-rewards.html
+if git diff --cached --quiet; then
+  echo "no changes to commit (file already matches)"
+else
+  git commit -m "Pull live lvr-rewards.html source into the repo for editing
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01C24s48QBeAMLS2iDpVHsTf"
+  git push origin HEAD:claude/master-file-e6ofy0
+  echo "pushed"
+fi
