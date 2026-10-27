@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Account — LVR Rewards — Key Technologies.si</title>
 <meta name="robots" content="noindex">
+<meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
@@ -17,7 +18,7 @@
       fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").slice(0, 200), w: window.innerWidth })
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").split(/[?#]/)[0].slice(0, 200), w: window.innerWidth })
       }).catch(function () {});
     } catch (e) {}
   })();
@@ -186,6 +187,9 @@
   var token = (params.get('t') || '').trim();
   if (token) {
     try { localStorage.setItem(TOKEN_KEY, token); } catch (e) {}
+    // Take the secret out of the address bar/history right away so it is
+    // never sent along as a referrer or caught in a screenshot.
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
   } else {
     try { token = (localStorage.getItem(TOKEN_KEY) || '').trim(); } catch (e) {}
   }
