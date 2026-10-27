@@ -1263,6 +1263,41 @@ patch run, not a harvest completion. Needs the owner to check that Terminal
 window or re-run the script; not productive to keep re-polling automatically
 until there's a reason to think it moved.
 
+### NEW 2026-10-27 — Rewards/points reconciled into ONE system; deploy bug found and fixed
+
+**Discovered:** a pre-existing LVR Rewards system already lives on the dashboard
+(`openRewardsCRM()` → Firebase `/lvr_rewards`, 8 real members with real point
+balances; public signup form `lvr-rewards.html`, hosted on Firebase only, now
+tracked in the repo at `.github/db-task/mac/lvr-rewards.html`). The owner's
+direction: "the reward system and the point system are the same thing."
+**`/lvr_rewards` is now THE member store.** Members gained a personal-link
+`token` field (all 8 backfilled; both signup forms now generate one). The
+member wallet (`keytechnologies.si/my-account.html?t=<token>`) reads/writes
+`/lvr_rewards` (balance field = `points`). `/lvr_points/wallets` and
+`/lvr_points/grants` are retired (never held real data). Still used from
+`/lvr_points`: `catalog`, `restaurants`, `redemptions` (genuinely new:
+what members can redeem, restaurant PINs, redemption log).
+`lvr-wallet.html` is now just a redirect to `my-account.html`.
+Dashboard Rewards CRM got a "Member Link" box (Copy Their Link) per member via
+`patch-key-room-pill.js` (markers `KEYROOM-MEMBERLINK-v1`/`-FNS-v1`).
+Redemption records now carry name/phone/instagram/bizName (not email) and a
+`usedAt` timestamp the restaurant portal sets via "Mark used" / code lookup;
+members see their past codes ("My codes") with Ready/Used badges.
+
+**Deploy bug (root cause of every standalone tool 404ing, incl. older
+leads/CRM/advertisers/coupons):** the Mac's `deploy-overlay.js` was a one-off
+hardcoded to overlay ONLY `index.html` + `version.json`; every `deploy-*.sh`
+downloaded/syntax-checked its tool file, reported success, and the deployer
+silently ignored it. Fixed: `.github/db-task/mac/deploy-overlay.js` now takes
+an `OVERLAY_FILES` env var and every `deploy-*.sh` re-pulls it fresh and sets
+it. **Verified live 2026-10-27 10:xx: all standalone tools 200, dashboard
+`APP_VERSION 453`.** Lesson: a deploy script's own "RELEASED" is not proof a
+specific file is live — always curl the file.
+
+**Coupons:** programs can now carry a `fixedCode` (restaurant-supplied code,
+e.g. 55555) shown to every claimer, capped by `maxClaims`; claim link text on
+the admin card is now tappable. Vanilla Rice program slug is `5555`.
+
 ---
 
 *If you're a new Claude session reading this cold: read this whole file, then

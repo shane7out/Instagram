@@ -104,6 +104,13 @@
   .confirm-yes{background:var(--key-blue);color:#fff;border-color:var(--key-blue) !important;}
   .confirm-no{background:var(--bg-2);color:var(--ink);}
 
+  .hist-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .hist-main{min-width:0;}
+  .hist-item{font-weight:800;font-size:14.5px;}
+  .hist-sub{font-size:12px;color:var(--ink-dim);margin-top:2px;}
+  .hist-code{font-family:monospace;font-weight:800;font-size:16px;letter-spacing:.06em;color:var(--key-light);text-align:right;}
+  .hist-badge{font-size:11px;font-weight:700;margin-top:3px;text-align:right;}
+  .hist-badge.ready{color:var(--green);} .hist-badge.used{color:var(--ink-dim);}
   .no-account-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 22px;text-align:center;}
   .no-account-card h1{font-size:20px;font-weight:800;margin:0 0 10px;}
   .no-account-card p{font-size:14.5px;margin-bottom:18px;}
@@ -298,6 +305,27 @@
       }).join('') + '</div>';
     }
 
+    var mine = [];
+    Object.keys(allRedemptions || {}).forEach(function(slug){
+      var byId = allRedemptions[slug] || {};
+      Object.keys(byId).forEach(function(id){
+        var r = byId[id];
+        if (r && r.token === token) mine.push(Object.assign({ slug: slug }, r));
+      });
+    });
+    mine.sort(function(a, b){ return (b.redeemedAt || 0) - (a.redeemedAt || 0); });
+    if (mine.length) {
+      html += '<h2 style="margin-top:26px;">My codes</h2>' + mine.map(function(r){
+        var when = r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+        return '<div class="hist-row">' +
+          '<div class="hist-main"><div class="hist-item">' + escapeHtml(r.itemName || 'Offer') + '</div>' +
+          '<div class="hist-sub">' + escapeHtml(r.bizName || r.slug) + (when ? ' · ' + when : '') + '</div></div>' +
+          '<div><div class="hist-code">' + escapeHtml(r.code || '') + '</div>' +
+          (r.usedAt ? '<div class="hist-badge used">Used</div>' : '<div class="hist-badge ready">Ready to use</div>') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
     html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a></div>';
 
     contentEl.innerHTML = html;
@@ -376,6 +404,7 @@
         name: wallet.name || '',
         itemId: item.itemId,
         itemName: item.itemName || '',
+        bizName: item.bizName || '',
         pointCost: item.pointCost,
         code: code,
         redeemedAt: { '.sv': 'timestamp' }

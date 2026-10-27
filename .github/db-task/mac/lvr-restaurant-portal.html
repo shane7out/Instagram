@@ -49,6 +49,14 @@
   tr:last-child td{border-bottom:none;}
   .code{font-family:monospace;font-weight:700;color:var(--key-light);}
   .empty-note{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
+  .lookup{display:flex;gap:8px;margin:4px 0 8px;}
+  .lookup input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;text-transform:uppercase;letter-spacing:.06em;}
+  .lookup button{padding:12px 18px;border-radius:10px;border:none;background:var(--key-blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
+  #lookupOut{margin-bottom:18px;font-size:14px;}
+  .lk-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .lk-ok{border-color:#3ddc84;} .lk-bad{border-color:var(--red);}
+  .used-tag{color:#3ddc84;font-weight:700;font-size:12.5px;}
+  .use-btn{padding:6px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:12.5px;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -68,6 +76,8 @@
   </header>
   <div class="wrap">
     <div class="stats-row" id="statsRow"></div>
+    <div class="lookup"><input id="lookupInput" placeholder="Customer's code, e.g. VAN-7K2QX" aria-label="Customer code"><button id="lookupBtn">Check Code</button></div>
+    <div id="lookupOut"></div>
     <button class="btn btn-primary" id="exportBtn">Download CSV</button>
     <div id="tableWrap"></div>
   </div>
@@ -118,7 +128,7 @@
   function loadRedemptions() {
     fbGet(REDEMPTIONS_PATH + encodeURIComponent(mySlug)).then(function(data){
       data = data || {};
-      myRows = Object.keys(data).map(function(id){ return data[id]; }).filter(Boolean);
+      myRows = Object.keys(data).filter(function(id){ return data[id]; }).map(function(id){ return Object.assign({ _id: id }, data[id]); });
       myRows.sort(function(a,b){ return (b.redeemedAt||0) - (a.redeemedAt||0); });
       render();
     }).catch(function(){
@@ -134,6 +144,7 @@
     var totalPoints = myRows.reduce(function(sum, r){ return sum + (r.pointCost || 0); }, 0);
     document.getElementById('statsRow').innerHTML =
       '<div class="stat"><div class="n">' + myRows.length + '</div><div class="l">Redemptions</div></div>' +
+      '<div class="stat"><div class="n">' + myRows.filter(function(r){ return !r.usedAt; }).length + '</div><div class="l">Not yet used</div></div>' +
       '<div class="stat"><div class="n">' + totalPoints.toLocaleString() + '</div><div class="l">Points redeemed</div></div>';
 
     var wrap = document.getElementById('tableWrap');
@@ -141,20 +152,59 @@
       wrap.innerHTML = '<div class="empty-note">No one has redeemed anything here yet.</div>';
       return;
     }
-    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Phone</th><th>Item</th><th>Code</th><th>When</th></tr></thead><tbody>' +
+    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Phone</th><th>Item</th><th>Code</th><th>When</th><th>Status</th></tr></thead><tbody>' +
       myRows.map(function(r){
         var when = r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : '';
-        return '<tr><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.phone || '') + '</td><td>' + escapeHtml(r.itemName || '') + '</td><td class="code">' + escapeHtml(r.code || '') + '</td><td>' + when + '</td></tr>';
+        return '<tr><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.phone || '') + '</td><td>' + escapeHtml(r.itemName || '') + '</td><td class="code">' + escapeHtml(r.code || '') + '</td><td>' + when + '</td><td>' + statusCell(r) + '</td></tr>';
       }).join('') + '</tbody></table>';
+    wrap.querySelectorAll('[data-use]').forEach(function(b){
+      b.addEventListener('click', function(){ markUsed(b.getAttribute('data-use')); });
+    });
   }
+
+  function statusCell(r) {
+    if (r.usedAt) return '<span class="used-tag">Used ' + new Date(r.usedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + '</span>';
+    return '<button class="use-btn" data-use="' + escapeHtml(r._id) + '">Mark used</button>';
+  }
+
+  function markUsed(id) {
+    var row = myRows.filter(function(r){ return r._id === id; })[0];
+    if (!row || row.usedAt) return;
+    fetch(DB + REDEMPTIONS_PATH + encodeURIComponent(mySlug) + '/' + encodeURIComponent(id) + '.json', {
+      method: 'PATCH', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ usedAt: { '.sv': 'timestamp' } })
+    }).then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      row.usedAt = Date.now();
+      render();
+      showLookup(document.getElementById('lookupInput').value);
+    }).catch(function(){ alert("Couldn't mark that as used. Check your connection and try again."); });
+  }
+
+  function showLookup(raw) {
+    var out = document.getElementById('lookupOut');
+    var code = (raw || '').trim().toUpperCase();
+    if (!code) { out.innerHTML = ''; return; }
+    var row = myRows.filter(function(r){ return (r.code || '').toUpperCase() === code; })[0];
+    if (!row) { out.innerHTML = '<div class="lk-box lk-bad">No redemption with that code at ' + escapeHtml(myBiz) + '.</div>'; return; }
+    if (row.usedAt) {
+      out.innerHTML = '<div class="lk-box lk-bad"><b>Already used</b> on ' + new Date(row.usedAt).toLocaleString() + '. Do not honor it again.</div>';
+      return;
+    }
+    out.innerHTML = '<div class="lk-box lk-ok"><b>Valid</b> — ' + escapeHtml(row.itemName || 'offer') + ' for ' + escapeHtml(row.name || 'customer') +
+      '<div style="margin-top:10px;"><button class="use-btn" id="lkUseBtn">Mark used</button></div></div>';
+    document.getElementById('lkUseBtn').addEventListener('click', function(){ markUsed(row._id); });
+  }
+  document.getElementById('lookupBtn').addEventListener('click', function(){ showLookup(document.getElementById('lookupInput').value); });
+  document.getElementById('lookupInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') showLookup(this.value); });
 
   document.getElementById('exportBtn').addEventListener('click', function(){
     if (!myRows.length) return;
-    var cols = ['name', 'phone', 'itemName', 'pointCost', 'code', 'redeemedAt'];
+    var cols = ['name', 'phone', 'itemName', 'pointCost', 'code', 'redeemedAt', 'usedAt'];
     var esc = function(v){ v = v == null ? '' : String(v); return '"' + v.replace(/"/g, '""') + '"'; };
     var csv = cols.join(',') + '\n' + myRows.map(function(r){
       return cols.map(function(c){
-        return esc(c === 'redeemedAt' && r[c] ? new Date(r[c]).toISOString() : r[c]);
+        return esc((c === 'redeemedAt' || c === 'usedAt') && r[c] ? new Date(r[c]).toISOString() : r[c]);
       }).join(',');
     }).join('\n');
     var blob = new Blob([csv], { type: 'text/csv' });
