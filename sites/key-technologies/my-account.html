@@ -937,6 +937,7 @@
     box.className = 'confirm-box';
     box.innerHTML =
       '<div>Use <b>' + item.pointCost + ' points</b> for ' + escapeHtml(item.itemName || 'this offer') + ' at ' + escapeHtml(item.bizName || item.slug) + '?</div>' +
+      '<div style="margin-top:8px;font-size:13px;font-weight:700;">Pickup only. Not valid for delivery.</div>' +
       '<div style="margin-top:8px;font-size:13px;color:#ffb4b4;font-weight:600;">No refunds. Your points are used right away. If you do not use this code by ' + (item.expiresAt ? escapeHtml(new Date(item.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) : 'the offer end date') + ', it expires and the points are not returned.</div>' +
       '<div class="confirm-row">' +
         '<button class="confirm-no" data-act="cancel">Cancel</button>' +
@@ -1027,6 +1028,7 @@
         '<div class="code-value">' + escapeHtml(code) + '</div>' +
       '</div>' +
       '<div class="overlay-instructions">' + escapeHtml(item.instructions || ('Show this code at ' + (item.bizName || item.slug) + ' to redeem.')) + '</div>' +
+      '<div class="overlay-instructions" style="font-weight:700;">Pickup only. Not valid for delivery.</div>' +
       '<button class="overlay-close" id="overlayCloseBtn">Done — ' + newBalance + ' points left</button>';
     document.getElementById('redeemOverlay').classList.add('show');
     document.getElementById('overlayCloseBtn').addEventListener('click', function(){
