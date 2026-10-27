@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LVR Rewards — Free Food at Real Vegas Restaurants — Key Technologies.si</title>
+<meta name="description" content="LVR Rewards: earn points, redeem them for free food at real Las Vegas restaurants. No password, no app — just a link that's yours. Brought to you by Las Vegas Restaurants, a Key Technologies sister project.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LVR Rewards — Free Food at Real Vegas Restaurants">
+<meta property="og:description" content="Earn points, redeem them for free food at real Las Vegas restaurants. No password, no app needed.">
+<meta property="og:url" content="https://keytechnologies.si/rewards.html">
+<meta property="og:image" content="https://keytechnologies.si/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://keytechnologies.si/og-image.png">
+<meta name="theme-color" content="#07111f">
+<link rel="canonical" href="https://keytechnologies.si/rewards.html">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<script>
+  // Google Analytics (GA4) - not turned on yet. See index.html for setup.
+  var KEY_GA_MEASUREMENT_ID = "";
+  if (KEY_GA_MEASUREMENT_ID) {
+    var gaScript = document.createElement("script");
+    gaScript.async = true;
+    gaScript.src = "https://www.googletagmanager.com/gtag/js?id=" + KEY_GA_MEASUREMENT_ID;
+    document.head.appendChild(gaScript);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag("js", new Date());
+    gtag("config", KEY_GA_MEASUREMENT_ID);
+  }
+</script>
+<script>
+  // Lightweight page-view counter - same as every other page on this site.
+  (function () {
+    try {
+      var page = location.pathname.split("/").pop() || "index.html";
+      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page) + ".json";
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").slice(0, 200), w: window.innerWidth })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --white:#ffffff; --btn-blue:#0f64b2; --btn-blue-hover:#1272cc; --control-line:#637283;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:72px;overflow-x:hidden;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px;}
+  h1,h2,h3{line-height:1.18;letter-spacing:-0.01em;text-wrap:balance;margin:0;}
+  h2{font-size:clamp(26px,4vw,36px);font-weight:800;}
+  h3{font-size:19px;font-weight:700;}
+  p{margin:0;color:var(--ink-dim);text-wrap:pretty;}
+  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--key-light);}
+  .eyebrow-mark{display:inline-flex;align-items:center;gap:6px;}
+  .eyebrow-mark svg{flex:none;}
+  section{padding-block:56px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .section-head{max-width:640px;margin-bottom:30px;}
+  .section-head p{margin-top:10px;font-size:16.5px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
+    padding:14px 26px;border-radius:9px;cursor:pointer;text-decoration:none;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--btn-blue);color:var(--white);}
+  .btn-primary:hover{background:var(--btn-blue-hover);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
+  .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
+  .btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+  .btn:disabled{opacity:.6;cursor:default;}
+
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .logo svg{display:block;flex:none;filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 11px rgba(22,143,255,.35));}
+  .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
+  .logo-word .logo-si{color:var(--key-light);}
+  @media (max-width:420px){.logo-word{font-size:13.5px;}}
+
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  }
+  .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;}
+  .nav-links{display:flex;align-items:center;gap:22px;list-style:none;margin:0;padding:0;}
+  .nav-links a{color:var(--ink-dim);text-decoration:none;font-size:14.5px;font-weight:600;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+  .burger{
+    display:none;width:40px;height:40px;border-radius:8px;border:1px solid var(--control-line);
+    background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  }
+  .burger span{display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s;}
+  .burger[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg);}
+  .burger[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg);}
+  .mobile-menu{
+    display:none;position:fixed;inset:56px 0 0 0;z-index:49;background:var(--bg);border-top:1px solid var(--line);
+    padding:18px 20px 28px;overflow-y:auto;
+  }
+  .mobile-menu.open{display:block;}
+  .mobile-menu ul{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:2px;}
+  .mobile-menu a{display:block;padding:14px 4px;color:var(--ink);text-decoration:none;font-size:17px;font-weight:600;border-bottom:1px solid var(--line);}
+  @media (max-width:860px){
+    .nav-links, .nav-cta .btn-ghost{display:none;}
+    .burger{display:flex;}
+  }
+
+  .hero{padding-block:52px 40px;border-top:none;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .hero h1{font-size:clamp(32px,5vw,52px);font-weight:800;}
+  .hero h1 .accent{color:var(--key-light);}
+  .hero-sub{margin-top:18px;font-size:19px;max-width:54ch;}
+  .hero-ctas{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;}
+  .hero-ctas .btn{flex:1 1 200px;}
+
+  .lead-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;}
+  .lead-card h2{font-size:20px;}
+  .lead-card .eyebrow{display:block;margin-bottom:6px;}
+  form{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:13px;font-weight:600;color:var(--ink-dim);}
+  input{
+    font-family:inherit;font-size:16px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:12px 13px;width:100%;
+  }
+  input:focus{outline:2px solid var(--key-blue);outline-offset:1px;}
+  .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
+  .req{color:#ff8a7a;margin-left:2px;}
+  .form-status{font-size:14px;margin-top:4px;min-height:18px;}
+  .form-status.ok{color:var(--key-light);}
+  .form-status.err{color:#ff8a7a;}
+
+  .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
+  @media (max-width:800px){.step-grid{grid-template-columns:1fr;}}
+  .step-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px;}
+  .step-num{font-size:13px;font-weight:800;color:var(--key-light);letter-spacing:.08em;}
+  .step-card h3{font-size:17px;}
+  .step-card p{font-size:15px;}
+
+  details{border:1px solid var(--line);border-radius:12px;padding:4px 18px;background:var(--card);margin-bottom:10px;}
+  summary{padding:16px 0;font-weight:700;font-size:16px;cursor:pointer;list-style:none;position:relative;padding-right:26px;}
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:'+';position:absolute;right:0;top:14px;color:var(--key-light);font-size:20px;font-weight:400;transition:transform .2s;}
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{padding-bottom:16px;font-size:15px;}
+
+  .cta-band{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;padding-block:48px;}
+  .cta-band h2{margin-bottom:10px;}
+  .cta-band p{max-width:52ch;margin:0 auto 22px;font-size:16.5px;}
+
+  footer{padding-block:40px;text-align:center;}
+  footer .logo{justify-content:center;margin-bottom:14px;}
+  .foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:16px 0;list-style:none;padding:0;}
+  .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
+  .foot-links a:hover{color:var(--ink);}
+  .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
+
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:100;}
+  .skip-link:focus{left:0;}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap nav-row">
+    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#signup">Get Your Account</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="index.html">Key Technologies</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="index.html">Key Technologies</a>
+      <button class="burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#signup">Get Your Account</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="index.html">&larr; Back to Key Technologies</a></li>
+  </ul>
+  <a class="btn btn-primary" style="width:100%" href="#signup">Open My Account</a>
+</div>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>LVR Rewards</p>
+        <h1 style="margin-top:14px;">Free food at real Vegas restaurants. <span class="accent">No password.</span></h1>
+        <p class="hero-sub">LVR Rewards is a points program from Las Vegas Restaurants — open an account, see what's
+          redeemable, and use your points at real participating restaurants. No app to download, no password to
+          remember. Just a link that's yours.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#signup">Open My Account</a>
+          <a class="btn btn-ghost" href="#how">See How It Works</a>
+        </div>
+      </div>
+
+      <div class="lead-card" id="signup">
+        <span class="eyebrow">Open Your Account</span>
+        <h2>Takes about 10 seconds</h2>
+        <form id="signupForm" novalidate>
+          <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required.</p>
+          <div class="field">
+            <label for="r-name">Name <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="r-email">Email <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="r-phone">Phone (optional)</label>
+            <input id="r-phone" name="phone" type="tel" autocomplete="tel">
+          </div>
+          <button class="btn btn-primary" type="submit" id="signupBtn">Open My Account</button>
+          <p class="form-status" id="signupStatus" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wrap" id="how">
+    <div class="section-head">
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>How It Works</span>
+      <h2>Three steps, no app, no password</h2>
+    </div>
+    <div class="step-grid">
+      <article class="step-card">
+        <span class="step-num">STEP 1</span>
+        <h3>Get your points</h3>
+        <p>Follow <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a>
+          on Instagram — that's where points drops get announced first.</p>
+      </article>
+      <article class="step-card">
+        <span class="step-num">STEP 2</span>
+        <h3>Open your wallet</h3>
+        <p>Your account link is your wallet — bookmark it. It shows your balance and everything you can redeem
+          right now, at a glance.</p>
+      </article>
+      <article class="step-card">
+        <span class="step-num">STEP 3</span>
+        <h3>Redeem at the restaurant</h3>
+        <p>Tap an offer, confirm, and a code pops up on your phone. Show it to your server to redeem — that simple.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wrap" id="faq">
+    <div class="section-head">
+      <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+
+    <details>
+      <summary>Do I get points just for signing up?</summary>
+      <p>Not automatically — opening an account reserves your spot, but points get handed out to real engaged
+        followers, mainly through @LasVegas_Restaurants on Instagram. Open your account first so you're ready
+        when points go out.</p>
+    </details>
+    <details>
+      <summary>Is there really no password?</summary>
+      <p>Correct — your account link is your login. No username, no password to forget. Bookmark it or save it
+        wherever you keep links you don't want to lose — if you lose it, reach out and we'll help you find your
+        account again.</p>
+    </details>
+    <details>
+      <summary>What can I redeem points for?</summary>
+      <p>Real offers at real Las Vegas restaurants — your wallet shows everything currently available and how
+        many points each one costs. New restaurants get added over time.</p>
+    </details>
+    <details>
+      <summary>What happens to my information?</summary>
+      <p>Your name, email and phone are used to run your account and to let the specific restaurant you redeem at
+        see that you redeemed — it's not sold or handed to unrelated businesses. LVR Rewards is run by Las Vegas
+        Restaurants, a project from the same team as Key Technologies, on its own system — separate from Key
+        Technologies' own client work.</p>
+    </details>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>Open your account</h2>
+      <p>Takes about 10 seconds — no password, nothing to download.</p>
+      <a class="btn btn-primary" href="#signup">Open My Account</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+    <ul class="foot-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#signup">Open My Account</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="index.html">Key Technologies</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="foot-fine">LVR Rewards is run by Las Vegas Restaurants, a sister project to Key Technologies.</p>
+    <p class="foot-fine">&copy; <span id="year"></span> Key Technologies. All rights reserved.</p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I get points just for signing up?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not automatically - opening an account reserves your spot, but points get handed out to real engaged followers, mainly through @LasVegas_Restaurants on Instagram. Open your account first so you're ready when points go out."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there really no password?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Correct - your account link is your login. No username, no password to forget. Bookmark it or save it wherever you keep links you don't want to lose - if you lose it, reach out and we'll help you find your account again."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What can I redeem points for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Real offers at real Las Vegas restaurants - your wallet shows everything currently available and how many points each one costs. New restaurants get added over time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to my information?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your name, email and phone are used to run your account and to let the specific restaurant you redeem at see that you redeemed - it's not sold or handed to unrelated businesses. LVR Rewards is run by Las Vegas Restaurants, a project from the same team as Key Technologies, on its own system - separate from Key Technologies' own client work."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var LVR_POINTS_DB_URL = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points";
+  var WALLET_PAGE_URL = "https://lvr-data-a60c1.web.app/lvr-wallet.html?t=";
+
+  var burger = document.getElementById("burgerBtn");
+  var menu = document.getElementById("mobileMenu");
+  function closeMenu(){
+    menu.classList.remove("open");
+    burger.setAttribute("aria-expanded","false");
+    burger.setAttribute("aria-label","Open menu");
+  }
+  function openMenu(){
+    menu.classList.add("open");
+    burger.setAttribute("aria-expanded","true");
+    burger.setAttribute("aria-label","Close menu");
+  }
+  burger.addEventListener("click", function(){
+    if(menu.classList.contains("open")) closeMenu(); else openMenu();
+  });
+  menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeMenu); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeMenu(); });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Self-serve signup: creates a real wallet at 0 points (not a free grant -
+  // Shane decides afterward who actually gets points, via the admin tool).
+  // No password: identity is the wallet link itself (lvr-wallet.html?t=<token>),
+  // same pattern as every other PIN-free page in this project.
+  function genToken(){
+    var bytes = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2, "0"); }).join("");
+  }
+
+  var form = document.getElementById("signupForm");
+  var status = document.getElementById("signupStatus");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var required = form.querySelectorAll("[required]");
+    for(var i=0;i<required.length;i++){
+      if(!required[i].value.trim()){
+        required[i].focus();
+        status.textContent = "Please fill in all required fields.";
+        status.className = "form-status err";
+        return;
+      }
+    }
+
+    var name = document.getElementById("r-name").value.trim();
+    var email = document.getElementById("r-email").value.trim();
+    var phone = document.getElementById("r-phone").value.trim();
+    var token = genToken();
+    var btn = document.getElementById("signupBtn");
+    btn.disabled = true;
+    status.textContent = "Opening your account…";
+    status.className = "form-status";
+
+    fetch(LVR_POINTS_DB_URL + "/wallets/" + token + ".json", {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        name: name, email: email, phone: phone,
+        balance: 0, source: "keytechnologies-rewards-signup",
+        createdAt: {".sv": "timestamp"}
+      })
+    }).then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      status.textContent = "Account open — taking you to your wallet…";
+      status.className = "form-status ok";
+      location.href = WALLET_PAGE_URL + token;
+    }).catch(function(){
+      status.textContent = "Something went wrong opening your account. Please try again.";
+      status.className = "form-status err";
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>
