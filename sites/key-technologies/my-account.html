@@ -126,7 +126,7 @@
   .rest-chip.on{color:#ffd35c;border-color:rgba(240,169,26,.7);background:rgba(240,169,26,.12);box-shadow:0 0 14px rgba(240,169,26,.25);}
   .item-card.ready{border-color:rgba(240,169,26,.75);box-shadow:0 0 0 1px rgba(240,169,26,.25),0 0 22px rgba(240,169,26,.22);background:linear-gradient(180deg,rgba(240,169,26,.07),var(--card) 55%);}
   .item-card.locked{opacity:.86;}
-  .item-photo{display:block;width:100%;height:132px;object-fit:cover;border-radius:10px;margin:0 0 12px;}
+  .item-photo{display:block;width:100%;aspect-ratio:16/10;height:auto;object-fit:cover;border-radius:12px;margin:0 0 12px;}
   .item-card.locked .item-photo{filter:grayscale(.55) brightness(.8);}
   .coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,#f0a91a 55%,#b9770e);box-shadow:0 0 8px rgba(240,169,26,.6);vertical-align:-2px;margin-right:5px;}
   .item-card.ready .item-cost{color:#ffd35c;text-shadow:0 0 10px rgba(240,169,26,.5);}
@@ -423,18 +423,18 @@
   function demoItems() {
     var soon = function (d) { return Date.now() + d * 86400000; };
     var rows = [
-      ['golden', 'Golden Grain Rice House', 'Free Chicken Rice Bowl', 13, 'teriyaki', 50, 38, 40],
-      ['golden', 'Golden Grain Rice House', 'Free Shrimp Fried Rice', 16, 'friedrice', 25, 12, 33],
-      ['golden', 'Golden Grain Rice House', 'Free Salmon Bowl', 24, 'sushi', 20, 3, 25],
-      ['sunset', 'Sunset Slice Pizza', 'Free Garlic Knots', 6, 'garlic', 40, 26, 28],
-      ['sunset', 'Sunset Slice Pizza', 'Free Brownie Sundae', 8, 'sundae', 30, 2, 20],
-      ['sunset', 'Sunset Slice Pizza', 'Free Large Pepperoni Pizza', 18, 'pizza', 25, 9, 45],
-      ['mesa', 'Mesa Taco Co.', 'Free Cinnamon Churros', 6, 'churros', 60, 41, 30],
-      ['mesa', 'Mesa Taco Co.', 'Free Street Taco Trio', 9, 'tacos', 30, 17, 30],
-      ['mesa', 'Mesa Taco Co.', 'Free Loaded Nachos', 11, 'nachos2', 35, 30, 35],
-      ['neon', 'Neon Noodle Bar', 'Free Brown Sugar Boba Tea', 5, 'boba', 50, 44, 30],
-      ['neon', 'Neon Noodle Bar', 'Free Pan-Fried Gyoza (6)', 7, 'gyoza', 25, 11, 30],
-      ['neon', 'Neon Noodle Bar', 'Free Tonkotsu Ramen Bowl', 12, 'ramen', 30, 4, 30]
+      ['golden', 'Golden Grain Rice House', 'Free Teriyaki Chicken & Rice', 13, 'teriyaki', 50, 38, 40],
+      ['golden', 'Golden Grain Rice House', 'Free Seafood Fried Rice', 16, 'friedrice', 25, 12, 33],
+      ['golden', 'Golden Grain Rice House', 'Free Salmon Sushi Plate', 24, 'sushi', 20, 3, 25],
+      ['sunset', 'Sunset Slice Pizza', 'Free Italian Sandwich', 6, 'sandwich', 40, 26, 28],
+      ['sunset', 'Sunset Slice Pizza', 'Free Hot Fudge Sundae', 8, 'sundae', 30, 2, 20],
+      ['sunset', 'Sunset Slice Pizza', 'Free Gourmet Pizza', 18, 'pizza', 25, 9, 45],
+      ['mesa', 'Mesa Taco Co.', 'Free Churros', 6, 'churros', 60, 41, 30],
+      ['mesa', 'Mesa Taco Co.', 'Free Street Tacos', 9, 'tacos', 30, 17, 30],
+      ['mesa', 'Mesa Taco Co.', 'Free Loaded Nachos', 11, 'nachos', 35, 30, 35],
+      ['neon', 'Neon Noodle Bar', 'Free Pearl Milk Tea', 5, 'boba', 50, 44, 30],
+      ['neon', 'Neon Noodle Bar', 'Free Pan-Fried Gyoza', 7, 'gyoza', 25, 11, 30],
+      ['neon', 'Neon Noodle Bar', 'Free Noodle Soup Bowl', 12, 'ramen', 30, 4, 30]
     ];
     return rows.map(function (r, i) {
       return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '' };
