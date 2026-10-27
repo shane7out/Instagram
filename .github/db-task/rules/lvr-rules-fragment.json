@@ -88,6 +88,22 @@
     "bonus": {
      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
     }
+   },
+   "quest": {
+    ".write": true,
+    "finishBonus": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "stops": {
+     "$i": {
+      "bonus": {
+       ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+      },
+      "slug": {
+       ".validate": "newData.isString() && newData.val().length <= 60"
+      }
+     }
+    }
    }
   },
   "bonuses": {
@@ -123,6 +139,13 @@
    },
    "chestClaimed": {
     ".validate": "newData.hasChildren(['amount','at']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && root.child('lvr_points/settings/chest/bonus').exists() && root.child('lvr_points/settings/chest/waitDays').exists() && newData.child('amount').val() == root.child('lvr_points/settings/chest/bonus').val() && newData.child('at').val() >= newData.parent().child('joinedAt').val() + 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
+   },
+   "questStops": {
+    "$slug": {
+     "bonus": {
+      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+     }
+    }
    }
   }
  },

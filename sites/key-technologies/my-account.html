@@ -67,6 +67,17 @@
   .page-wrap{max-width:460px;margin:0 auto;padding:30px 16px 70px;}
 
   [hidden]{display:none!important;}
+  .quest{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;margin-bottom:22px;}
+  .quest h2{margin:0 0 4px;}
+  .quest .q-sub{font-size:14px;color:var(--ink-dim);margin:0 0 12px;}
+  .q-list{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:8px;}
+  .q-stop{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;}
+  .q-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--control-line);display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#07111f;}
+  .q-stop.done{border-color:rgba(246,199,68,.6);background:rgba(246,199,68,.07);}
+  .q-stop.done .q-dot{background:#f6c744;border-color:#f6c744;}
+  .q-name{font-weight:700;min-width:0;}
+  .q-pts{font-weight:800;color:var(--key-light);font-variant-numeric:tabular-nums;}
+  .q-safe{font-size:13px;color:var(--ink-dim);margin:0 0 12px;}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f6c744;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f6c744;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(246,199,68,.4);}
@@ -391,6 +402,7 @@
         '<div class="balance-label">points available</div></div>' +
         '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
       '</div>' +
+      questHtml() +
       earnPanelHtml() +
       '<h2>Redeem</h2>';
 
@@ -543,6 +555,38 @@
     '<clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
   document.body.insertAdjacentHTML('afterbegin', CHEST_DEFS);
 
+  // ---------- optional restaurant quest ----------
+  // Members choose to play. Each participating restaurant is a stop; when the owner
+  // approves a receipt from a stop, that stop's bonus is added (once). Any order, no deadline.
+  function questCfg() { return Object.assign({ enabled: false, stops: [], finishBonus: 0 }, (appSettings && appSettings.quest) || {}); }
+  function questHtml() {
+    var q = questCfg();
+    var stops = (q.stops || []).filter(function (x) { return x && x.slug; });
+    if (q.enabled !== true || !stops.length || !wallet) return '';
+    var got = wallet.questStops || {}, started = !!wallet.quest, n = 0;
+    var rows = stops.map(function (x) {
+      var ok = !!got[x.slug]; if (ok) n++;
+      var nm = (directory[x.slug] && directory[x.slug].bizName) || x.slug;
+      return '<li class="q-stop' + (ok ? ' done' : '') + '"><span class="q-dot">' + (ok ? '✓' : '') + '</span><span class="q-name">' + escapeHtml(nm) + '</span><span class="q-pts">+' + (Number(x.bonus) || 0) + '</span></li>';
+    }).join('');
+    var fin = Number(q.finishBonus) || 0;
+    var head = '<h2>Restaurant Quest <span style="font-weight:600;color:var(--ink-dim);font-size:13px;">optional</span></h2>';
+    if (!started) {
+      return '<div class="quest">' + head + '<p class="q-sub">Play if you like. Visit these places and earn bonus points at each one' + (fin ? ', plus ' + fin + ' more when you finish all of them' : '') + '.</p><ul class="q-list">' + rows + '</ul>' +
+        '<p class="q-safe">Any order, no deadline, nothing runs out. Only go when it is already part of your plans, and please never rush or drive in a hurry.</p>' +
+        '<button type="button" class="btn btn-primary" id="questStart" style="width:100%;">Start the quest</button></div>';
+    }
+    var finished = n >= stops.length;
+    return '<div class="quest">' + head + '<p class="q-sub">' + (finished ? 'Quest complete! ' + (wallet.questDone && wallet.questDone.bonus ? '+' + wallet.questDone.bonus + ' finish bonus added.' : '') : n + ' of ' + stops.length + ' visited. Send in your receipt after each visit.') + '</p><ul class="q-list">' + rows + '</ul>' +
+      (finished ? '' : '<p class="q-safe">Any order, no deadline. Never rush to get there.</p>') + '</div>';
+  }
+  function startQuest() {
+    var b = document.getElementById('questStart'); if (!memberKey || !b) return; b.disabled = true;
+    fetch(DB + '/lvr_rewards/' + memberKey + '/quest.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ at: { '.sv': 'timestamp' } }) })
+      .then(function (r) { if (!r.ok) throw new Error('x'); wallet.quest = { at: Date.now() }; var q = document.querySelector('.quest'); if (q) q.outerHTML = questHtml(); })
+      .catch(function () { b.disabled = false; });
+  }
+
   // ---------- treasure chest ----------
   // Each member's first chest opens a set number of days after they join
   // (Settings > Treasure chest). Until the owner sets a bonus above 0 it only
@@ -608,6 +652,7 @@
       var t = e.target.closest ? e.target : null;
       if (t && t.closest('#giftBtn')) open();
       else if (t && t.closest('#chestOpenBtn')) openChest();
+      else if (t && t.closest('#questStart')) startQuest();
       else if (e.target === back || (t && t.closest('#soonClose'))) close();
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
@@ -641,7 +686,7 @@
       if ((r.decidedAt || 0) < weekAgo) { seen[id] = 1; changed = true; return; }
       var biz = (directory[r.slug] && directory[r.slug].bizName) || r.slug;
       out += r.status === 'approved'
-        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' points!' + (r.welcomeAwarded ? ' Plus ' + r.welcomeAwarded + ' welcome points 🎁' : '') + '</div>'
+        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' points!' + (r.welcomeAwarded ? ' Plus ' + r.welcomeAwarded + ' welcome points 🎁' : '') + (r.questAwarded ? ' Plus ' + r.questAwarded + ' quest points ⭐' : '') + '</div>'
         : '<div class="notice no">Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' could not be approved.</div>';
       seen[id] = 1; changed = true;
     });

@@ -150,7 +150,6 @@
     order.forEach(function (s) {
       html += '<h2>' + esc(s) + '</h2>';
       sections[s].forEach(function (it) {
-        var left = it.maxRedemptions ? '<span class="tag">Limited</span>' : "";
         html += '<article class="dish">' +
           (it.photoUrl ? '<img class="photo" src="' + esc(it.photoUrl) + '" alt="" loading="lazy">' : '') +
           '<div class="name">' + esc(it.itemName) + '</div>' +
@@ -158,7 +157,7 @@
           '<p class="desc">' + esc(it.description || it.instructions || "") + '</p>' +
           '<div class="act">' + (hasAccount
               ? '<a class="btn btn-primary" href="my-account.html">Redeem in my account</a>'
-              : '<a class="btn btn-primary" href="rewards.html">Join free to redeem</a>') + left + '</div>' +
+              : '<a class="btn btn-primary" href="rewards.html">Join free to redeem</a>') + '</div>' +
         '</article>';
       });
     });

@@ -384,7 +384,8 @@
         return credit.then(function(resp){
           if (!resp.ok) throw new Error('credit failed');
           return fbPatch(RECEIPTS_PATH + '/' + id, { pointsApplied: true });
-        }).then(function(){ return applyWelcome(id, r, pts).catch(function(){ showToast('Points added - welcome bonus did not land (see Audit notes)'); }); });
+        }).then(function(){ return applyWelcome(id, r, pts).catch(function(){ showToast('Points added - welcome bonus did not land (see Audit notes)'); }); })
+          .then(function(){ return applyQuest(id, r, pts).catch(function(){ showToast('Points added - quest bonus did not land'); }); });
       }).then(function(){ return applyReferrals(id).catch(function(){ showToast('Points added - referral bonus will need a retry'); }); })
         .then(function(){ showToast('Approved - points added'); });
     }).catch(function(){ showToast('Points did not land - use Retry'); });
@@ -403,6 +404,35 @@
       return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven', { amount: w.amount, receiptId: id, at: { '.sv': 'timestamp' } })
         .then(function(c){ if (!c.ok) throw new Error('claim failed'); return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: w.amount } }); })
         .then(function(c){ if (!c.ok) throw new Error('credit failed'); return fbPatch(RECEIPTS_PATH + '/' + id, { welcomeAwarded: w.amount }); });
+    });
+  }
+
+  // Optional restaurant quest: when a receipt from one of the quest's restaurants is approved
+  // for a member who joined the quest, add that stop's bonus once (claim-first), and the finish
+  // bonus when the last stop is done. Any order, no deadline.
+  function questCfg() { return Object.assign({ enabled: false, stops: [], finishBonus: 0 }, settings.quest || {}); }
+  function applyQuest(id, r, pts) {
+    var q = questCfg(), stops = (q.stops || []).filter(function(s){ return s && s.slug; });
+    if (q.enabled !== true || !(pts > 0)) return Promise.resolve();
+    var stop = stops.filter(function(s){ return s.slug === r.slug; })[0];
+    if (!stop) return Promise.resolve();
+    return fbGet(MEMBERS_PATH + '/' + r.memberKey).then(function(m){
+      if (!m || !m.quest) return;
+      var have = m.questStops || {};
+      if (have[r.slug]) return;
+      var add = Math.max(0, Number(stop.bonus) || 0), total = add;
+      return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/questStops/' + r.slug, { bonus: add, receiptId: id, at: { '.sv': 'timestamp' } })
+        .then(function(c){ if (!c.ok) throw new Error('claim'); return add > 0 ? fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: add } }) : { ok: true }; })
+        .then(function(c){
+          if (!c.ok) throw new Error('credit');
+          var allDone = stops.every(function(s){ return s.slug === r.slug || have[s.slug]; });
+          var fin = Math.max(0, Number(q.finishBonus) || 0);
+          if (!allDone || m.questDone) return null;
+          total += fin;
+          return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/questDone', { bonus: fin, at: { '.sv': 'timestamp' } })
+            .then(function(d){ if (!d.ok) throw new Error('done'); return fin > 0 ? fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: fin } }) : { ok: true }; });
+        })
+        .then(function(){ return fbPatch(RECEIPTS_PATH + '/' + id, { questAwarded: total }); });
     });
   }
 
@@ -522,6 +552,15 @@
     var c = refConfig();
     var welcome = welcomeCfg();
     var chest = Object.assign({ waitDays: 7, bonus: 0 }, settings.chest || {});
+    var quest = questCfg();
+    var dirKeys = Object.keys(directory || {});
+    var questRows = '';
+    for (var qi = 0; qi < 6; qi++) {
+      var st = (quest.stops || [])[qi] || {};
+      questRows += '<div class="field-row"><div class="field"><label>Stop ' + (qi + 1) + ' restaurant</label><select class="qSlug"><option value="">(none)</option>' +
+        dirKeys.map(function(k){ return '<option value="' + escapeHtml(k) + '"' + (st.slug === k ? ' selected' : '') + '>' + escapeHtml((directory[k] && directory[k].bizName) || k) + '</option>'; }).join('') +
+        '</select></div><div class="field"><label>Bonus points</label><input type="number" class="qBonus" min="0" max="50" step="1" value="' + (st.bonus || 0) + '"></div></div>';
+    }
     var paused = settings.paused || {};
     var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
     function chk(id, on, label) { return '<div class="checkbox-row"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><label for="' + id + '">' + label + '</label></div>'; }
@@ -554,6 +593,12 @@
           '<div class="field"><label>Points inside (0 = off, max 50)</label><input type="number" id="sChestBonus" min="0" max="50" step="1" value="' + (chest.bonus || 0) + '"></div>' +
         '</div>' +
       '</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurant quest (optional for members)</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Members choose to play. Each restaurant below is a stop; when you approve a receipt from it, that stop\'s bonus points are added once. Any order, no deadline, nothing limited, so nobody is pushed to rush. Use up to 6 stops; leave a stop blank to skip it.</div>' +
+        chk('sQuestOn', quest.enabled === true, 'The quest is on (members see it on their account page)') +
+        questRows +
+        '<div class="field"><label>Finish bonus (points when every stop is done)</label><input type="number" id="sQuestFin" min="0" max="50" step="1" value="' + (quest.finishBonus || 0) + '"></div>' +
+      '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
         chk('sRefOn', c.enabled === true, 'Referral rewards are on (off until your attorney has reviewed them)') +
@@ -574,6 +619,11 @@
           maxPerWeek: Math.max(1, parseInt(document.getElementById('sMaxWeek').value, 10) || 5),
           windowDays: Math.max(1, parseInt(document.getElementById('sWindow').value, 10) || 30)
         },
+        quest: (function(){
+          var slugs = document.querySelectorAll('.qSlug'), bonuses = document.querySelectorAll('.qBonus'), stops = [];
+          for (var i = 0; i < slugs.length; i++) if (slugs[i].value) stops.push({ slug: slugs[i].value, bonus: Math.max(0, Math.min(50, parseInt(bonuses[i].value, 10) || 0)) });
+          return { enabled: document.getElementById('sQuestOn').checked, stops: stops, finishBonus: Math.max(0, Math.min(50, parseInt(document.getElementById('sQuestFin').value, 10) || 0)) };
+        })(),
         chest: { waitDays: Math.max(1, Math.min(60, parseInt(document.getElementById('sChestDays').value, 10) || 7)), bonus: Math.max(0, Math.min(50, parseInt(document.getElementById('sChestBonus').value, 10) || 0)) },
         welcome: {
           enabled: document.getElementById('sWelOn').checked,
