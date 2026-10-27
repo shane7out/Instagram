@@ -77,6 +77,7 @@
   .tally .tbar i{display:block;height:100%;border-radius:99px;background:#3ddc84;}
   .tally.low .tbar i{background:#f0c239;} .tally.out .tbar i{background:#ff8a8a;}
   .tally.unset{color:var(--ink-dim);font-style:italic;}
+  .tally .fine{margin-top:8px;font-size:12px;line-height:1.45;color:var(--ink-dim);font-weight:500;}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f6c744;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f6c744;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(246,199,68,.4);}
@@ -564,7 +565,7 @@
     left = Math.max(0, Math.min(max, left));
     var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
     var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div></div>';
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">One per customer. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. Good through the date shown while the offer lasts. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------

@@ -951,13 +951,13 @@
         '<div class="field"><label>Item name</label><input type="text" id="fItemName" value="' + escapeHtml(item ? item.itemName : '') + '"></div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Point cost</label><input type="number" id="fPointCost" value="' + (item ? item.pointCost : 10) + '"></div>' +
-          '<div class="field"><label>Max redemptions (required)</label><input type="number" id="fMaxRedemptions" value="' + (item && item.maxRedemptions ? item.maxRedemptions : '') + '"></div>' +
+          '<div class="field"><label>Max redemptions (required)</label><input type="number" id="fMaxRedemptions" min="1" value="' + (item && item.maxRedemptions ? item.maxRedemptions : 50) + '"></div>' +
         '</div>' +
         '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
         '<div class="field"><label>Menu section (optional, e.g. Bowls, Sides, Drinks)</label><input type="text" id="fSection" value="' + escapeHtml(item ? (item.section || '') : '') + '"></div>' +
         '<div class="field"><label>Description shown on the menu (optional)</label><textarea id="fDesc">' + escapeHtml(item ? (item.description || '') : '') + '</textarea></div>' +
         '<div class="field"><label>Photo URL (optional)</label><input type="text" id="fPhoto" value="' + escapeHtml(item ? item.photoUrl : '') + '"></div>' +
-        '<div class="field"><label>Expires on (required)</label><input type="date" id="fExpires" value="' + (item && item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
+        '<div class="field"><label>Expires on (required; most offers 30 days, featured offers 60)</label><input type="date" id="fExpires" value="' + (item && item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0,10) : new Date(Date.now() + 30 * 86400000).toISOString().slice(0,10)) + '"></div>' +
         '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!item || item.active !== false ? ' checked' : '') + '><label for="fActive">Active</label></div>' +
         '<div class="form-actions">' +
           '<button class="btn btn-primary" id="saveItemBtn">' + (isEdit ? 'Save Changes' : 'Create Item') + '</button>' +
