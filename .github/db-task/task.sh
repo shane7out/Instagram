@@ -22,7 +22,6 @@ npx firebase emulators:exec --only database --project demo-lvr "node test-rules.
 CODE=$?
 grep -E "^(PASS|FAIL)|passed|Error|rules" out.txt | head -150
 echo "exit code: $CODE"
-exit 0
 
 # ---- live check: what does the page-view log actually contain?
 node <<'NODE'
