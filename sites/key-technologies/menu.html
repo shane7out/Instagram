@@ -22,6 +22,7 @@
     } catch (e) {}
   })();
 </script>
+<script src="food-art.js" defer></script>
 <style>
   :root{
     --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
@@ -62,7 +63,13 @@
   .dish .name{font-size:clamp(24px,5.4vw,30px);font-weight:800;line-height:1.15;letter-spacing:-.01em;min-width:0;}
   .dish .desc{grid-column:1;color:var(--ink-dim);margin:0;max-width:48ch;min-width:0;}
   .dish .photo{grid-column:1 / -1;width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:10px;border:1px solid var(--line);}
+  .dish .art{grid-column:1 / -1;width:100%;aspect-ratio:4/3;max-height:340px;border-radius:14px;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);background:#111;}
+  .rest{margin:34px 0 0;padding:0 0 12px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .rest b{font-size:clamp(22px,5vw,28px);letter-spacing:-.01em;}
+  .rest span{font-size:13px;color:var(--ink-dim);font-weight:600;}
+  .rest:first-child{margin-top:8px;}
   .cost{grid-column:2;grid-row:1;text-align:right;white-space:nowrap;}
+  .dish.has-pic .cost{grid-row:2;}
   .cost b{display:block;font-size:clamp(30px,7vw,40px);line-height:1;font-weight:800;color:var(--key-light);font-variant-numeric:tabular-nums;}
   .cost small{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);font-weight:700;}
   .dish .act{grid-column:1 / -1;margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
@@ -131,6 +138,46 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function get(p) { return fetch(DB + p + ".json").then(function (r) { return r.json(); }); }
 
+  // Demo menu (fictional restaurants, drawn pictures). Opened with menu.html?demo=1
+  var DEMO = [
+    { r: "Golden Grain Rice House", tag: "Fast casual · Downtown", items: [
+      { itemName: "Free Chicken Rice Bowl", pointCost: 13, art: "chickenBowl", description: "Grilled teriyaki chicken over steamed rice with broccoli, carrots and sesame. Show your code to your server." },
+      { itemName: "Free Shrimp Fried Rice", pointCost: 16, art: "friedRice", description: "Wok-fried rice with egg, peas and carrots, topped with garlic shrimp and scallions." },
+      { itemName: "Free Teriyaki Salmon Bowl", pointCost: 20, art: "salmonBowl", description: "Glazed salmon over rice with avocado, edamame and crisp nori." } ] },
+    { r: "Sunset Slice Pizza", tag: "Dine-in or pickup", items: [
+      { itemName: "Free Large Pepperoni Pizza", pointCost: 15, art: "pizza", description: "Hand-stretched crust, mozzarella and cupped pepperoni, finished with fresh basil." },
+      { itemName: "Free Garlic Knots", pointCost: 6, art: "garlicKnots", description: "Six warm knots brushed with garlic butter, served with house marinara." },
+      { itemName: "Free Brownie Sundae", pointCost: 8, art: "sundae", description: "Warm fudge brownie, vanilla ice cream, hot fudge and a cherry." } ] },
+    { r: "Mesa Taco Co.", tag: "Happy hour 3 to 6", items: [
+      { itemName: "Free Street Taco Trio", pointCost: 9, art: "tacos", description: "Three corn tortilla tacos with seasoned beef, cilantro, onion and lime." },
+      { itemName: "Free Loaded Nachos", pointCost: 11, art: "nachos", description: "Crisp chips under melted cheese, jalapeños, pico de gallo and salsa." },
+      { itemName: "Free Cinnamon Churros", pointCost: 6, art: "churros", description: "Four golden churros rolled in cinnamon sugar with chocolate dipping sauce." } ] },
+    { r: "Neon Noodle Bar", tag: "Lunch and late night", items: [
+      { itemName: "Free Tonkotsu Ramen Bowl", pointCost: 12, art: "ramen", description: "Rich pork broth, chewy noodles, chashu, soft egg, corn and scallions." },
+      { itemName: "Free Pan-Fried Gyoza (6)", pointCost: 7, art: "gyoza", description: "Crisp-bottomed pork dumplings with soy dipping sauce." },
+      { itemName: "Free Brown Sugar Boba Tea", pointCost: 5, art: "boba", description: "Creamy milk tea with fresh brown sugar tapioca pearls." } ] }
+  ];
+  function renderDemo(settings) {
+    $("eyebrow").textContent = "Demo menu";
+    $("bizName").textContent = "Vegas Eats Demo";
+    document.title = "Demo Menu — Key Technologies.si";
+    $("lede").textContent = "A sample of what a points menu looks like with four restaurants. Tap any item to see how redeeming works.";
+    $("sampleBox").innerHTML = '<div class="sample">Demo only. These restaurants and pictures are made up to show how the program looks. Nothing here can be redeemed.</div>';
+    if (window.FoodArt) document.body.insertAdjacentHTML("afterbegin", FoodArt.defs());
+    var html = "";
+    DEMO.forEach(function (g) {
+      html += '<div class="rest"><b>' + esc(g.r) + '</b><span>' + esc(g.tag) + '</span></div>';
+      g.items.forEach(function (it) {
+        html += '<article class="dish has-pic"><div class="art">' + (window.FoodArt ? FoodArt.svg(it.art) : "") + '</div>' +
+          '<div class="name">' + esc(it.itemName) + '</div>' +
+          '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
+          '<p class="desc">' + esc(it.description) + '</p>' +
+          '<div class="act"><a class="btn btn-primary" href="rewards.html">Join free to redeem</a></div></article>';
+      });
+    });
+    $("menu").innerHTML = html;
+  }
+
   function render(biz, items, sample, settings) {
     $("bizName").textContent = biz;
     document.title = biz + " — Menu — Key Technologies.si";
@@ -150,7 +197,7 @@
     order.forEach(function (s) {
       html += '<h2>' + esc(s) + '</h2>';
       sections[s].forEach(function (it) {
-        html += '<article class="dish">' +
+        html += '<article class="dish' + (it.photoUrl ? ' has-pic' : '') + '">' +
           (it.photoUrl ? '<img class="photo" src="' + esc(it.photoUrl) + '" alt="" loading="lazy">' : '') +
           '<div class="name">' + esc(it.itemName) + '</div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
@@ -171,6 +218,7 @@
     return true;
   }
 
+  if (new URLSearchParams(location.search).get("demo")) { var go = function () { renderDemo({}); }; (window.FoodArt ? go() : window.addEventListener("load", go)); return; }
   Promise.all([get("/lvr_points/catalog"), get("/lvr_points/directory"), get("/lvr_points/settings")]).then(function (r) {
     var catalog = r[0] || {}, directory = r[1] || {}, settings = r[2] || {};
     var slug = slugWanted && catalog[slugWanted] ? slugWanted : Object.keys(catalog)[0];
@@ -180,7 +228,7 @@
       return !(typeof credit === "number" && credit < it.pointCost);
     });
     items.sort(function (a, b) { return (b.pointCost || 0) - (a.pointCost || 0); }); // mains first
-    var biz = (directory[slug] && directory[slug].bizName) || (items[0] && items[0].bizName) || slug;
+    var biz = (directory[slug] && directory[slug].bizName) || (items[0] && items[0].bizName) || String(slug).split("-").map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(" ");
     if (!items.length) { render(biz, [], false, settings); return; }
     render(biz, items, false, settings);
   }).catch(function () {
