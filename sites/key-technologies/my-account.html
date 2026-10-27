@@ -262,6 +262,13 @@
   var myReceipts = {};
   var refSettings = { enabled: false, l1Pct: 20, l2Pct: 0 };
   var appSettings = {};
+  // Welcome bonus: set by the owner in Settings; credited when the first receipt is approved.
+  function welcomeCfg() { return Object.assign({ enabled: false, amount: 12 }, appSettings.welcome || {}); }
+  function welcomeHtml() {
+    var w = welcomeCfg();
+    if (w.enabled !== true || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
+    return '<div class="notice" style="background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome points are waiting for you. They are added automatically when your first receipt is approved.</div>';
+  }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
 
@@ -333,6 +340,7 @@
     var html =
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,194,57,.1);border:1px solid rgba(240,194,57,.45);color:#f0c239;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
+      welcomeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-name">' + escapeHtml(wallet.name || wallet.email || '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
@@ -479,7 +487,7 @@
       if ((r.decidedAt || 0) < weekAgo) { seen[id] = 1; changed = true; return; }
       var biz = (directory[r.slug] && directory[r.slug].bizName) || r.slug;
       out += r.status === 'approved'
-        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' points!</div>'
+        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' points!' + (r.welcomeAwarded ? ' Plus ' + r.welcomeAwarded + ' welcome points 🎁' : '') + '</div>'
         : '<div class="notice no">Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' could not be approved.</div>';
       seen[id] = 1; changed = true;
     });

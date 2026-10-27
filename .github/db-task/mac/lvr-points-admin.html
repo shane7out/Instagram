@@ -382,10 +382,26 @@
         return credit.then(function(resp){
           if (!resp.ok) throw new Error('credit failed');
           return fbPatch(RECEIPTS_PATH + '/' + id, { pointsApplied: true });
-        });
+        }).then(function(){ return applyWelcome(id, r, pts).catch(function(){ showToast('Points added - welcome bonus did not land (see Audit notes)'); }); });
       }).then(function(){ return applyReferrals(id).catch(function(){ showToast('Points added - referral bonus will need a retry'); }); })
         .then(function(){ showToast('Approved - points added'); });
     }).catch(function(){ showToast('Points did not land - use Retry'); });
+  }
+
+  // Welcome bonus: once per member, when their FIRST approved receipt (with
+  // points) lands. Claim-first: the member is marked as having received it
+  // before the points are added, so a hiccup can never pay it twice. The
+  // receipt records what was added, so it shows in the audit trail.
+  function welcomeCfg() { return Object.assign({ enabled: false, amount: 12 }, settings.welcome || {}); }
+  function applyWelcome(id, r, pts) {
+    var w = welcomeCfg();
+    if (w.enabled !== true || !(w.amount > 0) || !(pts > 0)) return Promise.resolve();
+    return fbGet(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven').then(function(given){
+      if (given) return;
+      return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven', { amount: w.amount, receiptId: id, at: { '.sv': 'timestamp' } })
+        .then(function(c){ if (!c.ok) throw new Error('claim failed'); return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: w.amount } }); })
+        .then(function(c){ if (!c.ok) throw new Error('credit failed'); return fbPatch(RECEIPTS_PATH + '/' + id, { welcomeAwarded: w.amount }); });
+    });
   }
 
   function rejectReceipt(id) {
@@ -451,6 +467,7 @@
   // ========================================================================
   function renderSettingsTab() {
     var c = refConfig();
+    var welcome = welcomeCfg();
     var paused = settings.paused || {};
     var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
     function chk(id, on, label) { return '<div class="checkbox-row"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><label for="' + id + '">' + label + '</label></div>'; }
@@ -469,6 +486,11 @@
           '<div class="field"><label>Receipts per member per week</label><input type="number" id="sMaxWeek" min="1" value="' + lim.maxPerWeek + '"></div>' +
           '<div class="field"><label>Receipt must be within (days)</label><input type="number" id="sWindow" min="1" value="' + lim.windowDays + '"></div>' +
         '</div></div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Welcome bonus</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Free starting points for a new member. They are added once, when the member\'s FIRST receipt is approved, so a real purchase always comes first. Members see "welcome points are waiting" until then. Offers are funded by the participating restaurants through the credit ledger.</div>' +
+        chk('sWelOn', welcome.enabled === true, 'Welcome bonus is on') +
+        '<div class="field-row"><div class="field"><label>Welcome points</label><input type="number" id="sWelAmt" min="1" max="50" step="1" value="' + (welcome.amount || 12) + '"></div></div>' +
+      '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
         chk('sRefOn', c.enabled === true, 'Referral rewards are on (off until your attorney has reviewed them)') +
@@ -488,6 +510,10 @@
           maxAmount: Math.max(1, parseFloat(document.getElementById('sMaxAmt').value) || 300),
           maxPerWeek: Math.max(1, parseInt(document.getElementById('sMaxWeek').value, 10) || 5),
           windowDays: Math.max(1, parseInt(document.getElementById('sWindow').value, 10) || 30)
+        },
+        welcome: {
+          enabled: document.getElementById('sWelOn').checked,
+          amount: Math.max(1, Math.min(50, parseInt(document.getElementById('sWelAmt').value, 10) || 12))
         },
         referral: {
           enabled: document.getElementById('sRefOn').checked,
