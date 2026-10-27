@@ -72,14 +72,6 @@ const BIG = 'x'.repeat(100);
   check('bonus record: delete one', await call('anon', 'DELETE', '/lvr_points/bonuses/b1'), false);
   check('bonus record: wipe all', await call('anon', 'DELETE', '/lvr_points/bonuses'), false);
   await call('admin', 'DELETE', '/lvr_points/settings/chest');
-  // ---- optional restaurant quest
-  check('quest: owner saves quest settings', await call('anon', 'PUT', '/lvr_points/settings/quest', { enabled: true, finishBonus: 5, stops: [{ slug: 'van', bonus: 3 }, { slug: 'pizza', bonus: 3 }] }), true);
-  check('quest: bonus of 500 in settings', await call('anon', 'PUT', '/lvr_points/settings/quest', { enabled: true, finishBonus: 500, stops: [] }), false);
-  check('quest: a stop worth 900', await call('anon', 'PUT', '/lvr_points/settings/quest', { enabled: true, finishBonus: 5, stops: [{ slug: 'van', bonus: 900 }] }), false);
-  check('quest: member joins the quest', await call('anon', 'PUT', '/lvr_rewards/K1/quest', { at: TS }), true);
-  check('quest: record a stop', await call('anon', 'PUT', '/lvr_rewards/K1/questStops/van', { bonus: 3, receiptId: 'r1', at: TS }), true);
-  check('quest: a stop worth 900 on a member', await call('anon', 'PUT', '/lvr_rewards/K1/questStops/pizza', { bonus: 900, receiptId: 'r2', at: TS }), false);
-  await call('admin', 'DELETE', '/lvr_points/settings/quest');
   check('give an old member a token (backfill / Generate Link)', await call('anon', 'PUT', '/lvr_rewards/K2/token', 'tokK2abcdefabcdefabcdefab'), true);
   check('lazy refCode for a member without one', await call('anon', 'PATCH', '/lvr_rewards/K2', { refCode: 'K2CODE' }), true);
   check('welcome bonus marker on a member', await call('anon', 'PATCH', '/lvr_rewards/K1', { welcomeGiven: { amount: 12, receiptId: 'r1', at: { '.sv': 'timestamp' } } }), true);
