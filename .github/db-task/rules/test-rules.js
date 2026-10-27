@@ -183,7 +183,7 @@ const BIG = 'x'.repeat(100);
   const bal = async k => JSON.parse((await call('admin', 'GET', '/lvr_rewards/' + k + '/points')).t);
   await seed();
   let o = sweep({ DRY_RUN: '1' });
-  check('sweep dry run changes nothing', { s: (await bal('OLD1')) === 100 && /WOULD return 22 points from 3 members/.test(o) ? 200 : 500, t: o }, true);
+  check('sweep dry run changes nothing', { s: (await bal('OLD1')) === 100 && /WOULD return 25 points from 3 members/.test(o) ? 200 : 500, t: o }, true);
   o = sweep({});
   check('sweep takes 20% rounded down (100 -> 80)', { s: (await bal('OLD1')) === 80 ? 200 : 500, t: o }, true);
   check('sweep: 17 -> 14', { s: (await bal('OLD2')) === 14 ? 200 : 500, t: o }, true);
