@@ -126,6 +126,8 @@ const BIG = 'x'.repeat(100);
   check('restaurant marks a code used', await call('anon', 'PATCH', '/lvr_points/redemptions/van/' + redId, { usedAt: TS }), true);
   check('un-use / change usedAt', await call('anon', 'PATCH', '/lvr_points/redemptions/van/' + redId, { usedAt: 5 }), false);
   check('change a redemption code', await call('anon', 'PATCH', '/lvr_points/redemptions/van/' + redId, { code: 'FREE-ALL' }), false);
+  check('redemption with a use-by date', await call('anon', 'POST', '/lvr_points/redemptions/van', Object.assign({}, red, { code: 'VAN-USEBY1', useBy: Date.now() + 86400000 })), true);
+  check('extend a code\'s use-by date', await call('anon', 'PATCH', '/lvr_points/redemptions/van/' + redId, { useBy: 9999999999999 }), false);
   check('change a redemption cost', await call('anon', 'PATCH', '/lvr_points/redemptions/van/' + redId, { pointCost: 1 }), false);
   check('delete a redemption', await call('anon', 'DELETE', '/lvr_points/redemptions/van/' + redId), false);
   check('wipe all redemptions', await call('anon', 'DELETE', '/lvr_points/redemptions'), false);

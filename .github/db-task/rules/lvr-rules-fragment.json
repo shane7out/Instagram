@@ -34,7 +34,7 @@
   "redemptions": {
    "$slug": {
     "$id": {
-     ".write": "newData.exists() && (data.exists() ? (newData.child('token').val() == data.child('token').val() && newData.child('itemId').val() == data.child('itemId').val() && newData.child('pointCost').val() == data.child('pointCost').val() && newData.child('code').val() == data.child('code').val() && newData.child('redeemedAt').val() == data.child('redeemedAt').val() && (!data.child('usedAt').exists() || newData.child('usedAt').val() == data.child('usedAt').val())) : !newData.child('usedAt').exists())",
+     ".write": "newData.exists() && (data.exists() ? (newData.child('token').val() == data.child('token').val() && newData.child('itemId').val() == data.child('itemId').val() && newData.child('pointCost').val() == data.child('pointCost').val() && newData.child('code').val() == data.child('code').val() && newData.child('redeemedAt').val() == data.child('redeemedAt').val() && newData.child('useBy').val() == data.child('useBy').val() && (!data.child('usedAt').exists() || newData.child('usedAt').val() == data.child('usedAt').val())) : !newData.child('usedAt').exists())",
      ".validate": "newData.hasChildren(['token', 'itemId', 'pointCost', 'code']) && newData.child('pointCost').isNumber() && newData.child('pointCost').val() > 0 && newData.child('pointCost').val() <= 100000"
     }
    }

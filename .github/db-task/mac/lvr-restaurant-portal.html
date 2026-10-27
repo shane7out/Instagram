@@ -243,6 +243,7 @@
 
   function statusCell(r) {
     if (r.usedAt) return '<span class="used-tag">Used ' + new Date(r.usedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + '</span>';
+    if (r.useBy && Date.now() > r.useBy) return '<span class="used-tag" style="color:#ff8a8a;">Expired</span>';
     return '<button class="use-btn" data-use="' + escapeHtml(r._id) + '">Mark used</button>';
   }
 
@@ -268,6 +269,10 @@
     if (!row) { out.innerHTML = '<div class="lk-box lk-bad">No redemption with that code at ' + escapeHtml(myBiz) + '.</div>'; return; }
     if (row.usedAt) {
       out.innerHTML = '<div class="lk-box lk-bad"><b>Already used</b> on ' + new Date(row.usedAt).toLocaleString() + '. Do not honor it again.</div>';
+      return;
+    }
+    if (row.useBy && Date.now() > row.useBy) {
+      out.innerHTML = '<div class="lk-box lk-bad"><b>Expired</b> on ' + new Date(row.useBy).toLocaleDateString() + '. Do not honor it. The customer\'s points were already used and are not refunded.</div>';
       return;
     }
     out.innerHTML = '<div class="lk-box lk-ok"><b>Valid</b> — ' + escapeHtml(row.itemName || 'offer') + ' for ' + escapeHtml(row.name || 'customer') +

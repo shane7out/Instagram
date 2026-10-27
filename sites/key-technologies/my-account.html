@@ -436,9 +436,9 @@
         var when = r.redeemedAt ? new Date(r.redeemedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
         return '<div class="hist-row">' +
           '<div class="hist-main"><div class="hist-item">' + escapeHtml(r.itemName || 'Offer') + '</div>' +
-          '<div class="hist-sub">' + escapeHtml(r.bizName || r.slug) + (when ? ' · ' + when : '') + '</div></div>' +
+          '<div class="hist-sub">' + escapeHtml(r.bizName || r.slug) + (when ? ' · ' + when : '') + (r.useBy && !r.usedAt ? ' · use by ' + new Date(r.useBy).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '') + '</div></div>' +
           '<div><div class="hist-code">' + escapeHtml(r.code || '') + '</div>' +
-          (r.usedAt ? '<div class="hist-badge used">Used</div>' : '<div class="hist-badge ready">Ready to use</div>') + '</div>' +
+          (r.usedAt ? '<div class="hist-badge used">Used</div>' : (r.useBy && Date.now() > r.useBy ? '<div class="hist-badge" style="background:rgba(255,107,107,.15);color:#ff8a8a;">Expired · no refund</div>' : '<div class="hist-badge ready">Ready to use</div>')) + '</div>' +
         '</div>';
       }).join('');
     }
@@ -565,7 +565,7 @@
     left = Math.max(0, Math.min(max, left));
     var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
     var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">One per customer. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. Good through the date shown while the offer lasts. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------
@@ -828,6 +828,7 @@
     box.className = 'confirm-box';
     box.innerHTML =
       '<div>Use <b>' + item.pointCost + ' points</b> for ' + escapeHtml(item.itemName || 'this offer') + ' at ' + escapeHtml(item.bizName || item.slug) + '?</div>' +
+      '<div style="margin-top:8px;font-size:13px;color:#ffb4b4;font-weight:600;">No refunds. Your points are used right away. If you do not use this code by ' + (item.expiresAt ? escapeHtml(new Date(item.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) : 'the offer end date') + ', it expires and the points are not returned.</div>' +
       '<div class="confirm-row">' +
         '<button class="confirm-no" data-act="cancel">Cancel</button>' +
         '<button class="confirm-yes" data-act="confirm">Yes, Redeem</button>' +
@@ -890,6 +891,7 @@
         bizName: item.bizName || '',
         pointCost: item.pointCost,
         code: code,
+        useBy: item.expiresAt || null,
         redeemedAt: { '.sv': 'timestamp' }
       };
       fbPost(REDEMPTIONS_PATH + encodeURIComponent(item.slug), redemption).then(function(r){
