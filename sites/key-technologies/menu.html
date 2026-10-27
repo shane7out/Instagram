@@ -170,20 +170,17 @@
   // Real Las Vegas-area restaurants from the owner's LVR list (public business info only), shown
   // with sample offers to demonstrate the program. Opened with menu.html?demo=vegas
   var VEGAS = [
-    { n: "Peru Chicken", a: "2055 E Tropicana Ave, Las Vegas, NV", ig: "peruchickenofficial", c: "Peruvian chicken", o: { t: "Free Entrée", p: 13, art: "chickenBowl", d: "A sample offer showing how a free entrée would look on the menu." } },
-    { n: "Noodle King", a: "6820 W Sahara Ave, Ste 7, Las Vegas, NV 89146", ig: "noodlekinglv", c: "Noodles", o: { t: "Free Entrée", p: 12, art: "ramen", d: "A sample offer showing how a free noodle bowl would look." } },
-    { n: "Lester's Deli Las Vegas", a: "1590 W Horizon Ridge Pkwy, Henderson, NV", ig: "lestersdelivegas", c: "Deli", city: "Henderson, NV", o: { t: "Free Dessert", p: 8, art: "sundae", d: "A sample offer showing how a free dessert would look." } },
-    { n: "The Beach House", a: "790 Coronado Center Dr Ste 130, Henderson, NV 89052", ig: "thebeachhousevegas", c: "Bar & grill", city: "Henderson, NV", o: { t: "Free Appetizer", p: 11, art: "nachos", d: "A sample offer showing how a free appetizer would look." } },
-    { n: "Smoking Pig BBQ Company", a: "4379 N Las Vegas Blvd, Las Vegas, NV", ig: "smokingpigbbqlasvegas", c: "BBQ", o: { t: "Free Entrée", p: 14, art: "tacos", d: "A sample offer showing how a free entrée would look." } },
-    { n: "Black Mountain Griddle", a: "72 W Horizon Ridge Pkwy, Henderson, NV 89012", ig: "black_mountain_griddle", c: "Breakfast and brunch", city: "Henderson, NV", o: { t: "Free Sweet Treat", p: 6, art: "churros", d: "A sample offer showing how a free treat would look." } },
-    { n: "The Irish Spot", a: "1350 E Tropicana Ave, Las Vegas, NV", ig: "the.irish.spot", c: "Pub", o: { t: "Free Appetizer", p: 6, art: "garlicKnots", d: "A sample offer showing how a free appetizer would look." } },
-    { n: "Sourdough & Co", a: "883 E. Lake Mead Pkwy., Ste. 135, Henderson, NV", ig: "sourdoughcadence", c: "Cafe and bakery", city: "Henderson, NV", o: { t: "Free Entrée", p: 15, art: "pizza", d: "A sample offer showing how a free entrée would look." } },
-    { n: "Yu by Sijie", a: "400 S Rampart Blvd, Suite 190, Las Vegas, NV", ig: "yubysijie", c: "Restaurant", o: { t: "Free Entrée", p: 16, art: "friedRice", d: "A sample offer showing how a free entrée would look." } },
-    { n: "Finney's Crafthouse", a: "Downtown Summerlin, Las Vegas, NV", ig: "finneyscrafthouse", c: "Craft kitchen and bar", o: { t: "Free Appetizer", p: 7, art: "gyoza", d: "A sample offer showing how a free appetizer would look." } },
-    { n: "Wagyu Factory", a: "Boca Park, Las Vegas, NV", ig: "wagyu.factory", c: "Wagyu", o: { t: "Free Entrée", p: 20, art: "salmonBowl", d: "A sample offer showing how a free entrée would look." } },
-    { n: "Royale Frites", a: "Chinatown, Las Vegas, NV", ig: "royale_frites", c: "Fries and sides", o: { t: "Free Drink", p: 5, art: "boba", d: "A sample offer showing how a free drink would look." } }
+    { n: "The Beach House", a: "790 Coronado Center Dr Ste 130, Henderson, NV 89052", ph: "702-837-7900", ig: "thebeachhousevegas", c: "Bar & grill", city: "Henderson, NV", o: { t: "Free Appetizer", p: 11, art: "nachos" } },
+    { n: "Black Mountain Griddle", a: "72 W Horizon Ridge Pkwy, Henderson, NV 89012", ph: "(702) 954-4704", ig: "black_mountain_griddle", c: "Breakfast and brunch", city: "Henderson, NV", o: { t: "Free Sweet Treat", p: 6, art: "churros" } },
+    { n: "The Irish Spot", a: "1350 E Tropicana Ave, Las Vegas, NV", ph: "702-389-3808", ig: "the.irish.spot", c: "Irish pub", o: { t: "Free Appetizer", p: 6, art: "garlicKnots" } },
+    { n: "Smoking Pig BBQ Company", a: "4379 N Las Vegas Blvd, Las Vegas, NV 89115", ph: "(725) 777-3988", ig: "smokingpigbbqlasvegas", c: "BBQ", o: { t: "Free Entrée", p: 14, art: "tacos" } },
+    { n: "Samurai Japanese Steakhouse & Sushi", a: "1199 W Sunset Rd, Henderson, NV 89014", ph: "(702) 898-8179", ig: "samurai_sushiandteppan.nv", c: "Japanese steakhouse and sushi", city: "Henderson, NV", o: { t: "Free Appetizer", p: 7, art: "gyoza" } },
+    { n: "Doanburi", a: "5840 S Rainbow Blvd, Las Vegas, NV 89118", ph: "(702) 915-7453", ig: "doanburi", c: "Japanese rice bowls", o: { t: "Free Rice Bowl", p: 13, art: "salmonBowl" } },
+    { n: "Peru Chicken", a: "2055 E Tropicana Ave Ste 9, Las Vegas, NV 89119", ig: "peruchickenofficial", c: "Peruvian rotisserie chicken", o: { t: "Free Entrée", p: 13, art: "chickenBowl" } }
   ];
   var ICON = {
+    call: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#2e9e5b"/><path d="M8.2 6.6c.4-.4 1-.4 1.4 0l1.3 1.8c.3.4.2.9-.1 1.2l-.8.7c.7 1.4 1.7 2.4 3.1 3.1l.7-.8c.3-.3.8-.4 1.2-.1l1.8 1.3c.4.3.5.9.1 1.4l-.8.9c-.5.5-1.3.7-2 .5-4-1.2-6.7-3.9-7.9-7.9-.2-.7 0-1.5.5-2z" fill="#fff"/></svg>',
+    dir: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1a73e8"/><path d="M12 5.2a4.6 4.6 0 0 0-4.6 4.6c0 3.3 4.6 8.6 4.6 8.6s4.6-5.3 4.6-8.6A4.6 4.6 0 0 0 12 5.2zm0 6.3a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4z" fill="#fff"/></svg>',
     ig: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="igG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".6" stop-color="#d62976"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#igG)"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.4" fill="#fff"/></svg>',
     yelp: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#d32323"/><path d="M12 4.6l1.6 4.6 4.7.1-3.8 2.8 1.4 4.6-3.9-2.8-3.9 2.8 1.4-4.6-3.8-2.8 4.7-.1z" fill="#fff"/></svg>',
     g: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M12 5.2a6.8 6.8 0 1 0 6.6 8.4H12v-3h9.7c.1.5.1 1 .1 1.6A9.8 9.8 0 1 1 12 2.2c2.5 0 4.7.9 6.4 2.4l-2.3 2.3A6.7 6.7 0 0 0 12 5.2z" fill="#4285f4"/><path d="M3.6 8.4l2.6 1.9" stroke="#ea4335" stroke-width="3.4" fill="none"/><path d="M5.6 15.8l2.6-1.9" stroke="#34a853" stroke-width="3.4" fill="none"/><path d="M12 21.8c2.5 0 4.6-.8 6.1-2.3l-2.7-2.1" stroke="#34a853" stroke-width="0" fill="none"/></svg>'
@@ -192,7 +189,7 @@
     $("eyebrow").textContent = "Las Vegas demo";
     $("bizName").textContent = "Las Vegas Restaurants";
     document.title = "Las Vegas Demo Menu — Key Technologies.si";
-    $("lede").textContent = "Twelve real local restaurants with their Instagram, Yelp and Google reviews one tap away, each with a sample points offer.";
+    $("lede").textContent = "Real local restaurants with their address, phone, Instagram, Yelp and Google reviews one tap away, each with a sample points offer.";
     $("sampleBox").innerHTML = '<div class="sample">Demo only. These are real businesses, listed here with public information. The offers shown are examples made up to show how the program works. None of these restaurants has agreed to any offer, and nothing here can be redeemed.</div>';
     if (window.FoodArt) document.body.insertAdjacentHTML("afterbegin", FoodArt.defs());
     var html = "";
@@ -201,16 +198,21 @@
       var yelp = "https://www.yelp.com/search?find_desc=" + encodeURIComponent(r.n) + "&find_loc=" + encodeURIComponent(city);
       var goog = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.n + " " + r.a);
       var insta = "https://www.instagram.com/" + encodeURIComponent(r.ig) + "/";
-      html += '<section class="vcard"><h3>' + esc(r.n) + '</h3><p class="vmeta">' + esc(r.c) + ' · ' + esc(r.a) + '</p>' +
+      var dirs = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(r.n + " " + r.a);
+      var tel = r.ph ? "tel:+1" + String(r.ph).replace(/\D/g, "") : "";
+      html += '<section class="vcard"><h3>' + esc(r.n) + '</h3><p class="vmeta">' + esc(r.c) + '</p>' +
+        '<p class="vmeta">' + esc(r.a) + (r.ph ? ' · <a href="' + tel + '" style="color:inherit;">' + esc(r.ph) + '</a>' : '') + '</p>' +
         '<div class="vlinks">' +
+          (r.ph ? '<a class="vlink" href="' + tel + '">' + ICON.call + 'Call</a>' : '') +
+          '<a class="vlink" href="' + dirs + '" target="_blank" rel="noopener">' + ICON.dir + 'Directions</a>' +
           '<a class="vlink" href="' + insta + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>' +
           '<a class="vlink" href="' + yelp + '" target="_blank" rel="noopener">' + ICON.yelp + 'Yelp</a>' +
           '<a class="vlink" href="' + goog + '" target="_blank" rel="noopener">' + ICON.g + 'Google reviews</a>' +
-        '</div><p class="vnote">Opens in a new tab. Close it to come back here.</p>' +
+        '</div><p class="vnote">Links open in a new tab. Close it to come back here.</p>' +
         '<article class="dish has-pic"><div class="art">' + (window.FoodArt ? FoodArt.svg(r.o.art) : "") + '</div>' +
           '<div><span class="sampletag">Sample offer</span><div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
-          '<p class="desc">' + esc(r.o.d) + '</p></article></section>';
+          '<p class="desc">Example only, to show how a points offer looks on this restaurant\'s listing. Picture is an illustration.</p></article></section>';
     });
     $("menu").innerHTML = html;
   }
