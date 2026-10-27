@@ -1,6 +1,8 @@
 #!/bin/bash
-# Live verification: my-account.html reachable, account icon present on
-# homepage, rewards.html signup still works end to end post-deploy.
+# Investigate the pre-existing LVR Rewards system (lvr_rewards node,
+# lvr-rewards.html) that Shane just revealed exists already, separate from
+# the new /lvr_points system built this session. Need to understand it
+# before building anything else.
 set -e
 node <<'NODE'
 const https = require('https');
@@ -13,42 +15,20 @@ function get(url, timeoutMs) {
     req.on('timeout', () => { req.destroy(); resolve({ error: 'timeout' }); });
   });
 }
-function req(method, url, body, timeoutMs) {
-  return new Promise((resolve) => {
-    const r = new URL(url);
-    const opts = { method, hostname: r.hostname, path: r.pathname + r.search, headers: {} };
-    if (body) opts.headers['Content-Type'] = 'application/json';
-    const request = https.request(opts, res => {
-      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve({ status: res.statusCode, body: d }));
-    });
-    request.on('error', e => resolve({ error: e.message }));
-    if (body) request.write(body);
-    request.end();
-  });
-}
 
 (async () => {
-  console.log('=== my-account.html live ===');
-  const acct = await get('https://keytechnologies.si/my-account.html', 15000);
-  console.log('status:', acct.status || acct.error);
-  if (acct.body) console.log('has no-account state markup:', acct.body.includes('no-account-card'));
+  console.log('=== lvr-rewards.html live ===');
+  const page = await get('https://lvr-data-a60c1.web.app/lvr-rewards.html', 15000);
+  console.log('status:', page.status || page.error);
+  console.log('bytes:', page.body ? page.body.length : 0);
+  if (page.body) {
+    console.log('--- first 3000 chars ---');
+    console.log(page.body.slice(0, 3000));
+  }
 
-  console.log('\n=== account icon on homepage ===');
-  const home = await get('https://keytechnologies.si/', 15000);
-  console.log('status:', home.status || home.error);
-  console.log('has accountIcon:', (home.body || '').includes('id="accountIcon"'));
-  console.log('has my-account.html JS reference:', (home.body || '').includes('my-account.html'));
-
-  console.log('\n=== full live round trip: sign up -> real wallet -> my-account reachable with real data ===');
-  const testToken = 'diagnostic-myaccount-livetest';
-  const url = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/wallets/' + testToken + '.json';
-  const put = await req('PUT', url, JSON.stringify({ name: 'Live Test', email: 'livetest2@example.com', balance: 0, source: 'diagnostic', createdAt: Date.now() }), 15000);
-  console.log('PUT status:', put.status || put.error);
-  const acctWithToken = await get('https://keytechnologies.si/my-account.html?t=' + testToken, 15000);
-  console.log('my-account.html?t=... status:', acctWithToken.status || acctWithToken.error);
-
-  console.log('\n=== cleanup ===');
-  const del = await req('DELETE', url, null, 15000);
-  console.log('DELETE status:', del.status || del.error);
+  console.log('\n=== lvr_rewards data (real members) ===');
+  const data = await get('https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_rewards.json', 15000);
+  console.log('status:', data.status || data.error);
+  console.log('body (first 2000 chars):', (data.body || '').slice(0, 2000));
 })();
 NODE
