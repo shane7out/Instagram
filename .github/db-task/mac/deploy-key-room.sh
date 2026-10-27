@@ -42,7 +42,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # 1) standalone tools - download fresh, syntax-check each, skip (don't ship)
 #    any that fail rather than aborting the whole run
 # ---------------------------------------------------------------------------
-FILES="key-room.html key-leads.html kt-crm.html key-advertisers.html lvr-coupons-admin.html lvr-wallet.html lvr-points-admin.html lvr-restaurant-portal.html lvr-rewards.html"
+FILES="key-room.html key-leads.html kt-crm.html key-advertisers.html lvr-coupons-admin.html lvr-wallet.html lvr-points-admin.html lvr-restaurant-portal.html lvr-rewards.html lvr-coupon.html"
 FAILED=""
 for F in $FILES; do
   curl -sL -o "$F" "$RAWB/$F"

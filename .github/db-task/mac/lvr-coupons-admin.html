@@ -248,7 +248,7 @@
           (p.maxClaims ? 'Max ' + p.maxClaims + ' claims' : 'Unlimited claims') +
           (p.expiresAt ? ' · expires ' + new Date(p.expiresAt).toLocaleDateString() : '') +
         '</div>' +
-        '<div class="pc-link">' + CLAIM_PAGE_URL + escapeHtml(slug) + '</div>' +
+        '<div class="pc-link"><a href="' + CLAIM_PAGE_URL + encodeURIComponent(slug) + '" target="_blank" rel="noopener" style="color:inherit;">' + CLAIM_PAGE_URL + escapeHtml(slug) + '</a></div>' +
         '<div class="pc-actions">' +
           '<button data-act="claims" data-slug="' + escapeHtml(slug) + '">View Claims</button>' +
           '<button data-act="edit" data-slug="' + escapeHtml(slug) + '">Edit</button>' +
