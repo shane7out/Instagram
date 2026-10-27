@@ -1336,3 +1336,11 @@ top unless they tell you otherwise.*
   points to each other (a gift link for a free item is the safer alternative), AI receipt reading
   (needs Blaze + the owner's own Anthropic API key).
 - Hub page (private artifact) lists links and the owner's to-do list.
+
+## Monthly community-fund return (built 2026-10-27, OFF by default)
+- Settings tab: on/off, percent (default 20, max 50), grace days for new members (default 30). Rounded down to whole points.
+- `.github/db-task/decay/monthly-decay.js` does the work; each member's return is claimed with a create-only record first (`lvr_points/decay_by_member/<member>/<YYYY-MM>`), so a rerun never charges twice. Total goes to `lvr_points/pool/total`; run summary in `lvr_points/decay_runs`.
+- `.github/workflows/lvr-monthly-decay.yml` runs it on the 1st-3rd of each month, but GitHub only runs scheduled workflows from `main`. It must be on main before it is automatic. Manual run with dry_run=1 shows what would happen.
+- Members see a "Use it or share it" notice with the date and amount; fine print mentions it.
+- Attorney list: monthly return of unused points (disclosure at sign-up, effect on welcome points, where the pool goes).
+- Tested: 124 rules/sweep checks pass on the runner.
