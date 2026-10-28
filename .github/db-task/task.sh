@@ -12,3 +12,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # re-run: commission write rule fixed
 # restored
 # restored
+# re-run: 10-day bonus with 48-hour claim window

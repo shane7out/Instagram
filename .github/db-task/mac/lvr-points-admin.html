@@ -580,7 +580,7 @@
   function renderSettingsTab() {
     var c = refConfig();
     var welcome = welcomeCfg();
-    var chest = Object.assign({ waitDays: 14, stepDays: 5, prizeMin: 1, prizeMax: 0, repeat: true }, settings.chest || {});
+    var chest = Object.assign({ waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 0, repeat: true }, settings.chest || {});
     if (settings.chest && settings.chest.prizeMax == null && settings.chest.bonus > 0) { chest.prizeMax = settings.chest.bonus; chest.prizeMin = settings.chest.bonus; chest.repeat = false; }
     var decay = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, settings.decay || {});
     var paused = settings.paused || {};
@@ -609,16 +609,16 @@
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Signing up is easy to abuse with fake accounts. The restaurant\'s credit in the funding ledger is the safety net: once it is used up, offers stop. Keep that credit modest, and use the pause switch if sign-ups look strange.</div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Member bonus</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a plain "Bonus in N days" number that starts counting the day they join. When it ends they can collect a random whole number of points between your minimum and maximum. Then the next countdown starts, each one a set number of days longer than the last (for example 14 days, then 19, then 24). It keeps going until you untick "Keep repeating". While the biggest prize is 0, members see no bonus at all and nothing is given. Every prize is written to a permanent log.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a plain "Bonus in N days" number that starts counting the day they join. When it ends the bonus is ready: they log in and collect a random whole number of points between your minimum and maximum. They have a set number of hours to claim it (48 by default). If they miss that window, it goes back to a full wait. After a claim the next countdown starts. It keeps going until you untick "Keep repeating". While the biggest prize is 0, members see no bonus at all and nothing is given. Every prize is written to a permanent log.</div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Days until the first chest opens</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 14) + '"></div>' +
-          '<div class="field"><label>Extra days added each time</label><input type="number" id="sChestStep" min="0" max="60" step="1" value="' + (chest.stepDays == null ? 5 : chest.stepDays) + '"></div>' +
+          '<div class="field"><label>Days between bonuses (10 = a bonus every 10 days)</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 10) + '"></div>' +
+          '<div class="field"><label>Hours to claim it once ready (48 = two days)</label><input type="number" id="sChestHours" min="1" max="720" step="1" value="' + (chest.claimHours || 48) + '"></div>' +
         '</div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Smallest prize (points)</label><input type="number" id="sChestMin" min="0" max="50" step="1" value="' + (chest.prizeMin == null ? 1 : chest.prizeMin) + '"></div>' +
           '<div class="field"><label>Biggest bonus (points, 0 = no bonus at all, max 50)</label><input type="number" id="sChestMax" min="0" max="50" step="1" value="' + (chest.prizeMax == null ? 0 : chest.prizeMax) + '"></div>' +
         '</div>' +
-        chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first chest)') +
+        chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first bonus)') +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurant commission</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">What each restaurant owes you, as a percent of the verified amount members paid there. A business can have its own percent (Restaurants tab > Edit); any business without one uses this default. The Earnings tab adds it up per restaurant per month and downloads a statement.</div>' +
@@ -661,7 +661,7 @@
         chest: (function(){
           var mx = Math.max(0, Math.min(50, parseInt(document.getElementById('sChestMax').value, 10) || 0));
           var mn = Math.max(0, Math.min(mx, parseInt(document.getElementById('sChestMin').value, 10) || 0));
-          return { waitDays: Math.max(1, Math.min(365, parseInt(document.getElementById('sChestDays').value, 10) || 14)), stepDays: Math.max(0, Math.min(60, isNaN(parseInt(document.getElementById('sChestStep').value, 10)) ? 5 : parseInt(document.getElementById('sChestStep').value, 10))), prizeMin: mx > 0 ? Math.max(1, mn) : mn, prizeMax: mx, repeat: document.getElementById('sChestRepeat').checked };
+          return { waitDays: Math.max(1, Math.min(365, parseInt(document.getElementById('sChestDays').value, 10) || 10)), claimHours: Math.max(1, Math.min(720, parseInt(document.getElementById('sChestHours').value, 10) || 48)), prizeMin: mx > 0 ? Math.max(1, mn) : mn, prizeMax: mx, repeat: document.getElementById('sChestRepeat').checked };
         })(),
         defaultCommissionPct: Math.max(0, Math.min(100, parseFloat(document.getElementById('sCommDefault').value) || 0)),
         decay: { enabled: document.getElementById('sDecayOn').checked, percent: Math.max(1, Math.min(50, parseInt(document.getElementById('sDecayPct').value, 10) || 20)), graceDays: Math.max(0, Math.min(365, isNaN(parseInt(document.getElementById('sDecayGrace').value, 10)) ? 30 : parseInt(document.getElementById('sDecayGrace').value, 10))) },
