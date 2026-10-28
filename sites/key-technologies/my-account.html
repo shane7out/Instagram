@@ -184,7 +184,9 @@
   .rest-group.has-ready{border-color:rgba(240,169,26,.65);box-shadow:0 10px 24px rgba(0,0,0,.4),0 0 22px rgba(240,169,26,.18);}
   .rest-group .rest-head{padding:0 4px;}
   .rest-group .items{margin-bottom:0;}
-  .rest-group .item-card{background:rgba(255,255,255,.035);}
+  .rest-group .item-card,.rest-group .item-card.ready,.rest-group .item-card.locked{background:none;border:0;border-radius:0;box-shadow:none;padding:2px 4px 4px;opacity:1;}
+  .rest-group .item-card + .item-card{border-top:1px solid rgba(255,255,255,.1);margin-top:10px;padding-top:16px;}
+  .rest-group .items{gap:0;}
   .rest-photo{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;margin:0 0 14px;}
   .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
@@ -691,7 +693,6 @@
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
           contactHtml(first.contact, g.name) +
-          '<div class="earn-line">Earn more here: upload your receipt after you eat. The free ' + escapeHtml(String(first.itemName || 'offer').replace(/^Free /i, '')) + ' does not count, but everything else you order does.</div>' +
           '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
             var pic = SHOW_PHOTOS && idx !== 0 ? (item.photoUrl || item.photo || '') : '';
@@ -709,7 +710,7 @@
               tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
               '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
               '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button></div>' +
-              '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest.</div>' +
+              '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>' +
             '</div>';
           }).join('') + '</div></div>';
       }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
