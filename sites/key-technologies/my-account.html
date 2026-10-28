@@ -195,6 +195,8 @@
   .vlink{display:inline-flex;align-items:center;gap:7px;min-height:38px;border:1px solid var(--control-line);border-radius:99px;padding:5px 13px 5px 9px;color:var(--ink);text-decoration:none;font-weight:700;font-size:13.5px;white-space:nowrap;background:rgba(255,255,255,.03);}
   .vlink:hover{border-color:var(--key-blue);color:var(--key-light);}
   .vlink svg{flex:none;display:block;width:20px;height:20px;}
+  .earn-line{margin:0 0 12px;padding:9px 12px;border-radius:10px;background:rgba(240,169,26,.08);border:1px dashed rgba(240,169,26,.45);font-size:13.5px;line-height:1.45;color:var(--ink);}
+  .earn-eg{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.04);font-size:13.5px;line-height:1.5;color:var(--ink);}
   .rest-chip{flex:none;font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:99px;border:1px solid var(--line);color:var(--ink-dim);white-space:nowrap;}
   .rest-chip.on{color:#ffd35c;border-color:rgba(240,169,26,.7);background:rgba(240,169,26,.12);box-shadow:0 0 14px rgba(240,169,26,.25);}
   .item-card.ready{border-color:rgba(240,169,26,.75);box-shadow:0 0 0 1px rgba(240,169,26,.25),0 0 22px rgba(240,169,26,.22);background:linear-gradient(180deg,rgba(240,169,26,.07),var(--card) 55%);}
@@ -469,7 +471,7 @@
     var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' or ' + c.prizeMax) : '';
     var waits = [0, 1, 2].map(function (n) { return c.waitDays + c.stepDays * n; }).join(', ');
     var rules = [
-      ['Eat out', 'Visit LVR partner restaurants, send in your receipt, and earn points. Go eat real food.'],
+      ['Eat out', 'Visit LVR partner restaurants, upload your receipt, and earn points on everything you pay for. A free offer you redeemed with points does not earn points. Go eat real food.'],
       ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
       ['The first of the month', 'On the 1st of every month, ' + d.percent + '% of your unused points go back to the community fund that keeps this game running for everyone. Use your points before the 1st and they are yours.' + (d.graceDays > 0 ? ' New players are safe for their first ' + d.graceDays + ' days.' : '')],
       ['Your bonus', prize ? 'When the countdown ends, collect ' + prize + ' bonus points. Each wait is ' + (c.stepDays > 0 ? c.stepDays + ' days longer than the last (' + waits + ' days and on)' : c.waitDays + ' days') + '.' : 'A bonus for active members is coming soon.'],
@@ -669,6 +671,7 @@
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
           contactHtml(first.contact, g.name) +
+          '<div class="earn-line">Earn more here: upload your receipt after you eat. The free ' + escapeHtml(String(first.itemName || 'offer').replace(/^Free /i, '')) + ' does not count, but everything else you order does.</div>' +
           '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
             var pic = idx === 0 ? '' : (item.photoUrl || item.photo || '');
@@ -971,14 +974,19 @@
     }, 15000);
   }
 
+  function earnRule() { return 'Everything you order and pay for earns points. <b>The free offer itself does not count</b>: if you redeemed a free chicken bowl, leave that out and count only what else you paid for.'; }
   function earnPanelHtml() {
-    if (DEMO) return '';
+    if (DEMO) return '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
+      '<div class="earn-sub">Eat at any participating restaurant, then upload your receipt. ' + earnRule() + '</div>' +
+      '<div class="earn-eg"><b>Example.</b> You use 13 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
+      '<div class="earn-sub" style="margin-top:10px;">We check every receipt before points are added. <b>Cover your name and card digits</b> before taking the photo.</div>' +
+      '<button type="button" class="btn btn-primary" style="width:100%;margin-top:10px;" disabled>Upload a receipt (not active in this preview)</button></div>';
     var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); });
     if (!keys.length) return '';
     if (pausedFlag('receipts')) return '<div class="earn-card"><h2>Earn points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>';
     return '<div class="earn-card" id="earnCard">' +
       '<h2>Earn points</h2>' +
-      '<div class="earn-sub">Ate at a participating restaurant? Send us your receipt. Once we verify it, points are added to your balance. <b>Cover your name and card digits</b> before taking the photos.</div>' +
+      '<div class="earn-sub">Ate at a participating restaurant? Upload your receipt. ' + earnRule() + ' Once we verify it, points are added to your balance. <b>Cover your name and card digits</b> before taking the photos.</div>' +
       '<label for="eRest">Restaurant</label>' +
       '<select id="eRest"><option value="">Choose…</option>' + keys.map(function(k){
         return '<option value="' + escapeHtml(k) + '">' + escapeHtml(directory[k].bizName || k) + '</option>';
@@ -990,7 +998,7 @@
       '<label for="ePhotoClose" id="eLbl2">Photo 2 — close-up of the receipt number and the total</label><input type="file" id="ePhotoClose" accept="image/*" capture="environment">' +
       '<label for="eNo">Receipt number (or just the last 3 digits)</label><input type="text" id="eNo" autocomplete="off">' +
       '<label for="eDate">Date on the receipt</label><input type="date" id="eDate" max="' + new Date().toISOString().slice(0, 10) + '">' +
-      '<label for="eAmt">Total paid ($)</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
+      '<label for="eAmt">Total you paid ($), not counting any free offer you redeemed</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
       '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
       '<div class="earn-msg" id="eMsg"></div>' +
     '</div>';
