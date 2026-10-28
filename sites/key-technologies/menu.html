@@ -197,8 +197,10 @@
     return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
   var usedPhotos = {};
-  function photo(key) { usedPhotos[key] = 1; return '<img src="img/food/' + key + '.jpg" alt="' + esc(PHOTO_ALT[key] || "Food") + '" loading="lazy" width="800" height="533">'; }
+  var SHOW_PHOTOS = false;   // food photos are switched off for now; set to true to bring them back
+  function photo(key) { if (!SHOW_PHOTOS) return ''; usedPhotos[key] = 1; return '<img src="img/food/' + key + '.jpg" alt="' + esc(PHOTO_ALT[key] || "Food") + '" loading="lazy" width="800" height="533">'; }
   function creditsHtml() {
+    if (!Object.keys(usedPhotos).length) return '';
     var rows = Object.keys(usedPhotos).map(function (k) { var c = PHOTO_CREDITS[k]; if (!c) return ""; return '<li>' + esc(PHOTO_ALT[k]) + ': ' + esc(c.author) + ', ' + esc(c.license) + ', <a href="' + esc(c.source) + '" target="_blank" rel="noopener">Wikimedia Commons</a></li>'; }).join("");
     return '<details class="credits"><summary>Photo credits</summary><p>Food photos are generic pictures from Wikimedia Commons under free licenses. They are not photos of these restaurants\' own dishes.</p><ul>' + rows + '</ul></details>';
   }
@@ -311,7 +313,7 @@
           '<a class="vlink" href="' + yelp + '" target="_blank" rel="noopener">' + ICON.yelp + 'Yelp</a>' +
           '<a class="vlink" href="' + goog + '" target="_blank" rel="noopener">' + ICON.g + 'Google</a>' +
         '</div><p class="vnote">Links open in a new tab. Close it to come back here.</p>' +
-        '<article class="dish has-pic"><div class="art">' + photo(r.o.art) + '</div>' +
+        '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(r.o.art) + '</div>' : '') +
           '<div>' + tag + '<span class="pickup">Pickup only</span><div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
@@ -361,7 +363,7 @@
     DEMO.forEach(function (g) {
       html += '<div class="rest"><b>' + esc(g.r) + '</b><span>' + esc(g.tag) + '</span></div>';
       g.items.forEach(function (it) {
-        html += '<article class="dish has-pic"><div class="art">' + photo(it.art) + '</div>' +
+        html += '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(it.art) + '</div>' : '') +
           '<div><span class="pickup">Pickup only</span><div class="name">' + esc(it.itemName) + '</div></div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description) + '</p>' +
