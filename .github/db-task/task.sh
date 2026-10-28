@@ -1,15 +1,14 @@
 #!/bin/bash
 # Fetch FOOD-only candidate photos (Public Domain / CC0, large, mostly professional Unsplash uploads on Wikimedia Commons).
-mkdir -p sites/key-technologies/img/food-candidates16
+mkdir -p sites/key-technologies/img/food-candidates17
 node <<'NODE'
 const fs = require('fs');
-const OUT = 'sites/key-technologies/img/food-candidates16';
+const OUT = 'sites/key-technologies/img/food-candidates17';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const UA = { headers: { 'User-Agent': 'KeyTechnologiesDemo/1.0 (contact via keytechnologies.si)' } };
 const TERMS = {
-  lasA: ['lasagna bolognese', 'lasagna Unsplash', 'lasagne dish', 'baked lasagna cheese'], lasB: ['lasagna restaurant plate', 'lasagna al forno', 'lasagna slice'],
-  burA: ['burger Unsplash', 'cheeseburger Unsplash', 'hamburger Unsplash', 'gourmet burger close up'], burB: ['burger fries wooden board', 'bacon cheeseburger Unsplash', 'double cheeseburger'],
-  bbqA: ['brisket Unsplash', 'smoked brisket', 'bbq brisket slices', 'barbecue Unsplash'], bbqB: ['bbq ribs Unsplash', 'barbecue ribs plate', 'pulled pork', 'smoked ribs'], bbqC: ['bbq platter', 'barbecue meat platter', 'smokehouse platter', 'bbq plate']
+  lasC: ['lasagna', 'lasagna Wikimedia', 'lasagne bolognese plate', 'lasagna served', 'lasagna with salad'], lasD: ['lasagne', 'italian lasagna', 'meat lasagna', 'cheese lasagna slice'],
+  bbqD: ['smoked brisket plate', 'texas brisket', 'barbecue brisket Unsplash', 'brisket sandwich'], bbqE: ['pulled pork sandwich', 'barbecue ribs rack', 'baby back ribs', 'smoked chicken bbq'], bbqF: ['barbecue dinner plate', 'bbq pork ribs plate', 'ribs and coleslaw', 'bbq combo plate']
 };
 const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 120);
 (async () => {
@@ -32,9 +31,9 @@ const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').
     for (const c of cand) { try { await sleep(900); const r = await fetch(c.ii.thumburl, UA); if (!r.ok) continue; n++; const f = slug + '-' + n + '.jpg'; fs.writeFileSync(OUT + '/' + f, Buffer.from(await r.arrayBuffer())); credits[f] = { license: c.lic, author: c.artist, source: c.ii.descriptionurl, title: c.title }; } catch (e) {} }
     console.log(slug + ': ' + n + ' saved');
   }
-  fs.writeFileSync(OUT + '/credits18.json', JSON.stringify(credits, null, 1));
+  fs.writeFileSync(OUT + '/credits19.json', JSON.stringify(credits, null, 1));
 })();
 NODE
 git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
-git add sites/key-technologies/img/food-candidates16
-git commit -m "Lasagna, burger and BBQ candidate photos, round fifteen" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
+git add sites/key-technologies/img/food-candidates17
+git commit -m "Lasagna and BBQ candidate photos, round sixteen" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
