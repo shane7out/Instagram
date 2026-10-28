@@ -889,8 +889,9 @@
     } else if (st.kind === 'ready') {
       var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + (st.c.prizeMax - st.c.prizeMin === 1 ? ' or ' : ' to ') + st.c.prizeMax;
       var cl = fmtLeft(st.ms);
-      tile = '<span class="rw-lab">Bonus ready</span><span class="rw-go">Tap to collect</span><span class="rw-unit">closes in ' + cl.short + '</span>';
-      art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div>';
+      var hl = Math.floor(st.ms / 3600000), hn = hl >= 1 ? hl : Math.max(Math.floor(st.ms / 60000), 1), hu = hl >= 1 ? (hl === 1 ? 'hour left' : 'hours left') : 'min left';
+      tile = '<span class="rw-lab">Collect in</span><span class="rw-num">' + hn + '</span><span class="rw-unit">' + hu + '</span><span class="rw-go">Tap to collect</span>';
+      art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div><div class="bn-unit" style="margin-top:8px;font-weight:800;color:#ffd35c;">' + cl.long + ' left to collect</div>';
       msg = 'Your bonus is ready. Tap below to add ' + amt + ' points to your balance. You have ' + cl.long + ' left to collect it, or it goes back to a ' + st.c.waitDays + '-day wait.'; canOpen = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
