@@ -8,7 +8,7 @@
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Cinzel:wght@700&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
 <script>
   (function () {
@@ -82,14 +82,15 @@
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f0a91a;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f0a91a;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(240,169,26,.4);}
-  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));}
-  .chest-svg .lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform .7s cubic-bezier(.3,1.5,.5,1);}
-  .chest-svg .inner{opacity:0;transition:opacity .5s;}
-  .chest-svg .coin{opacity:0;transform:translateY(10px);transition:opacity .4s,transform .7s cubic-bezier(.2,1.4,.4,1);}
-  .chest-svg.open .lid{transform:rotate(-34deg);}
+  .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 0 12px rgba(240,169,26,.35)) drop-shadow(0 4px 8px rgba(0,0,0,.5));}
+  .chest-svg .lid{transform-box:fill-box;transform-origin:50% 0%;transition:transform .5s cubic-bezier(.5,0,.8,.4),opacity .25s .3s;}
+  .chest-svg .lidback{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.12);opacity:0;transition:transform .65s cubic-bezier(.3,1.55,.5,1) .25s,opacity .2s .25s;}
+  .chest-svg .inner{opacity:0;transition:opacity .4s .2s;}
+  .chest-svg .coin{opacity:0;transform:translateY(14px);transition:opacity .35s .35s,transform .7s cubic-bezier(.2,1.5,.4,1) .35s;}
+  .chest-svg.open .lid{transform:scaleY(.03);opacity:0;}
+  .chest-svg.open .lidback{transform:scaleY(1);opacity:1;}
   .chest-svg.open .inner{opacity:1;}
-  .chest-svg.open .coin{opacity:1;transform:translateY(-9px);}
-  .chest-svg.open .coin.c2{transition-delay:.08s;} .chest-svg.open .coin.c3{transition-delay:.16s;} .chest-svg.open .coin.c4{transition-delay:.24s;}
+  .chest-svg.open .coin{opacity:1;transform:translateY(-8px);}
   @media (prefers-reduced-motion:no-preference){
     .chest-svg.ready{animation:chestWiggle 1.8s ease-in-out infinite;}
     .chest-svg.idle{animation:chestBob 3.4s ease-in-out infinite;}
@@ -98,6 +99,32 @@
   @keyframes chestWiggle{0%,60%,100%{transform:rotate(0);}68%{transform:rotate(-5deg);}76%{transform:rotate(5deg);}84%{transform:rotate(-3deg);}92%{transform:rotate(2deg);}}
   @keyframes chestBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
   @keyframes coinPop{0%,100%{transform:translateY(-9px);}50%{transform:translateY(-13px);}}
+  .month-card{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.38);border-radius:14px;padding:14px 16px;margin:0 0 14px;}
+  .month-card.urgent{background:rgba(255,120,70,.1);border-color:rgba(255,140,90,.65);}
+  .mc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .mc-title{font-weight:800;font-size:15.5px;color:#ffd35c;}
+  .urgent .mc-title{color:#ffb089;}
+  .mc-days{font-size:13.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums;} .mc-days b{font-size:20px;color:var(--ink);}
+  .mc-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);margin:9px 0 10px;overflow:hidden;}
+  .mc-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffd35c,#f0a91a);}
+  .urgent .mc-bar i{background:linear-gradient(90deg,#ffb089,#ff6b3d);}
+  .mc-text{font-size:14px;line-height:1.5;color:var(--ink);} .mc-last{margin-top:6px;font-size:13px;color:var(--ink-dim);}
+  .mc-scroll{margin-top:10px;font:inherit;font-size:13.5px;font-weight:700;color:#ffd35c;background:transparent;border:1px solid rgba(255,211,92,.5);border-radius:99px;padding:7px 14px;cursor:pointer;}
+  .mc-scroll:focus-visible,.sc-close:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+  .scroll-back{position:fixed;inset:0;background:rgba(3,8,16,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;overflow-y:auto;}
+  .scroll-back.open{display:flex;}
+  .scroll{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:stretch;margin:auto;}
+  .sc-rod{height:20px;border-radius:12px;background:linear-gradient(180deg,#a8743b,#6a4220 55%,#4a2c12);box-shadow:0 3px 6px rgba(0,0,0,.45);position:relative;z-index:2;}
+  .sc-rod::before,.sc-rod::after{content:"";position:absolute;top:-3px;width:14px;height:26px;border-radius:8px;background:linear-gradient(180deg,#ffe58a,#c98a0a);}
+  .sc-rod::before{left:-6px;} .sc-rod::after{right:-6px;}
+  .sc-paper{margin:-2px 10px;background:linear-gradient(90deg,rgba(120,80,30,.22),transparent 8%,transparent 92%,rgba(120,80,30,.22)),linear-gradient(180deg,#f6e7bd,#ead29a);color:#3b2410;padding:20px 20px 14px;clip-path:inset(0 0 0 0);}
+  .scroll-back.open .sc-paper{animation:unroll 1s cubic-bezier(.3,.8,.3,1);}
+  @keyframes unroll{from{clip-path:inset(0 0 100% 0);}to{clip-path:inset(0 0 0 0);}}
+  .sc-body h3{margin:0 0 12px;text-align:center;font-family:Cinzel,Georgia,"Times New Roman",serif;font-size:21px;line-height:1.2;color:#5a3410;}
+  .sc-rule{font-family:Georgia,"Times New Roman",serif;font-size:14.5px;line-height:1.5;margin:0 0 10px;} .sc-rule b{color:#7a4414;}
+  .sc-sign{margin-top:12px;text-align:center;font-family:Cinzel,Georgia,serif;font-size:13px;letter-spacing:.04em;color:#7a4414;}
+  .sc-close{margin-top:14px;align-self:center;font:inherit;font-weight:800;font-size:15px;padding:11px 28px;border-radius:10px;border:1px solid #637283;background:var(--card);color:var(--ink);cursor:pointer;}
+  @media (prefers-reduced-motion:reduce){.scroll-back.open .sc-paper{animation:none;}}
   .chest-stage{position:relative;display:inline-block;}
   .chest-fx{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;overflow:visible;z-index:3;}
   .cx-bit{position:absolute;left:0;top:0;margin:-6px 0 0 -6px;border-radius:50%;opacity:0;background:radial-gradient(circle at 35% 30%,#fff3b0 0,#ffd54a 45%,#d9930d 100%);border:2px solid #8a5a00;}
@@ -245,14 +272,19 @@
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
       <span class="chest-stage"><span id="chestModalArt" style="display:inline-block;min-height:182px;"></span><span id="chestFx" class="chest-fx"></span></span>
-      <h3 id="soonTitle">Treasure chest</h3>
+      <h3 id="soonTitle">LVR Treasure Chest</h3>
       <div class="chest-big" id="chestBig" hidden></div>
-      <p id="chestMsg">The treasure chest is almost ready. Come back and check this spot soon.</p>
+      <p id="chestMsg">The LVR Treasure Chest is almost ready. Come back and check this spot soon.</p>
       <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Open the chest</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
   </div>
   <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+</div>
+
+<div class="scroll-back" id="scrollBack" role="dialog" aria-modal="true" aria-label="The LVR Treasure Game rules">
+  <div class="scroll"><div class="sc-rod"></div><div class="sc-paper" id="scrollPaper"></div><div class="sc-rod"></div>
+    <button type="button" class="sc-close" id="scrollClose">Got it</button></div>
 </div>
 
 <div id="redeemOverlay">
@@ -366,25 +398,46 @@
     if (DEMO) d.enabled = true;
     return d;
   }
-  function decayHtml() {
+  function monthBarHtml() {
     var d = decayCfg();
     if (d.enabled !== true) return '';
-    var pts = (wallet && wallet.points) || 0;
-    var now = new Date(), next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    var pts = (wallet && wallet.points) || 0, now = new Date();
+    var next = new Date(now.getFullYear(), now.getMonth() + 1, 1), start = new Date(now.getFullYear(), now.getMonth(), 1);
+    var daysLeft = Math.max(1, Math.ceil((next - now) / 86400000)), span = Math.round((next - start) / 86400000);
+    var fill = Math.max(4, Math.min(100, Math.round(100 * (span - daysLeft) / span)));
     var nextLabel = next.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
     var joined = (wallet && wallet.joinedAt) || 0;
     var inGrace = joined && next.getTime() < joined + d.graceDays * 86400000;
-    var take = Math.floor(pts * d.percent / 100);
-    var line;
-    if (inGrace) line = 'You are new, so your points are safe for your first ' + d.graceDays + ' days. Enjoy them.';
-    else if (take >= 1) line = 'On ' + nextLabel + ', about <b>' + take + ' of your ' + pts + ' points</b> will go back to the community fund. Use points on an offer before then and they are yours.';
-    else line = 'Nothing is due on ' + nextLabel + '.';
+    var take = Math.floor(pts * d.percent / 100), line;
+    if (inGrace) line = 'On the 1st of every month, ' + d.percent + '% of unused points go back to the community fund. You are new, so your first ' + d.graceDays + ' days are safe.';
+    else if (take >= 1) line = 'On ' + nextLabel + ', ' + d.percent + '% of your unused points go back to the community fund. That is about <b>' + take + ' of your ' + pts + ' points</b>. Spend them on a free offer before then and they stay yours.';
+    else line = 'On the 1st of every month, ' + d.percent + '% of unused points go back to the community fund. Nothing is due on your balance right now.';
     var last = '';
     if (decayLast) {
       var ks = Object.keys(decayLast).sort(), k = ks[ks.length - 1], r = decayLast[k];
-      if (r && r.amount) last = '<div style="margin-top:6px;opacity:.85;">Last return (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' points went to the community fund.</div>';
+      if (r && r.amount) last = '<div class="mc-last">Last return (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' points went to the community fund.</div>';
     }
-    return '<div class="notice" style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:#ffd35c;font-size:13.5px;"><b>House rule of the game.</b> On the 1st of each month, ' + d.percent + '% of unused points go back to the community fund that keeps this program running for everyone. Go eat real food at your favorite restaurants, earn points, and spend them. ' + line + last + '</div>';
+    return '<div class="month-card' + (daysLeft <= 5 ? ' urgent' : '') + '">' +
+      '<div class="mc-top"><span class="mc-title">Spend before the 1st</span><span class="mc-days"><b>' + daysLeft + '</b> day' + (daysLeft === 1 ? '' : 's') + ' left</span></div>' +
+      '<div class="mc-bar"><i style="width:' + fill + '%"></i></div>' +
+      '<div class="mc-text">' + line + '</div>' + last +
+      '<button type="button" class="mc-scroll" id="scrollBtn">Read the game scroll</button></div>';
+  }
+  function scrollHtml() {
+    var d = decayCfg(), c = chestCfg();
+    var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' or ' + c.prizeMax) : '';
+    var waits = [0, 1, 2].map(function (n) { return c.waitDays + c.stepDays * n; }).join(', ');
+    var rules = [
+      ['Eat out', 'Visit LVR partner restaurants, send in your receipt, and earn points. Go eat real food.'],
+      ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
+      ['The first of the month', 'On the 1st of every month, ' + d.percent + '% of your unused points go back to the community fund that keeps this game running for everyone. Use your points before the 1st and they are yours.' + (d.graceDays > 0 ? ' New players are safe for their first ' + d.graceDays + ' days.' : '')],
+      ['The LVR Treasure Chest', prize ? 'When the countdown ends, open the chest and win ' + prize + ' points. Each wait is ' + (c.stepDays > 0 ? c.stepDays + ' days longer than the last (' + waits + ' days and on)' : c.waitDays + ' days') + '. Keep playing.' : 'A chest of bonus points is coming soon.'],
+      ['Fair play', 'Points have no cash value and cannot be sold or transferred. Points are used when you claim an offer and are never refunded. A code expires on the date shown.']
+    ];
+    var num = ['I', 'II', 'III', 'IV', 'V'];
+    return '<div class="sc-body"><h3>The LVR Treasure Game</h3>' + rules.map(function (r, i) {
+      return '<div class="sc-rule"><b>' + num[i] + '. ' + escapeHtml(r[0]) + '.</b> ' + escapeHtml(r[1]) + '</div>';
+    }).join('') + '<div class="sc-sign">Go eat real food. Earn points. Win treasure.</div></div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -498,7 +551,8 @@
     Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) { g.hidden = !(cat === 'all' || g.getAttribute('data-cat') === cat); });
   });
   function startDemo() {
-    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - (DEMO_CHEST ? 15 : 2) * 86400000 };
+    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
+    if (!DEMO_CHEST) wallet.chestState = { n: 1, amount: 2, at: Date.now() - 2 * 86400000 };
     memberKey = null; appSettings = { chest: { waitDays: 14, stepDays: 5, prizeMin: 1, prizeMax: 2, repeat: true } }; myReceipts = {}; directory = {};
     render({}, {});
   }
@@ -508,16 +562,16 @@
 
     var html =
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
-      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the treasure chest</a></div>' : '') +
+      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the LVR Treasure Chest</a></div>' : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
         '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
-        '<button type="button" class="chest-hit" id="giftBtn" aria-label="Treasure chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
+        '<button type="button" class="chest-hit" id="giftBtn" aria-label="LVR Treasure Chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
       '</div>' +
-      decayHtml() +
+      monthBarHtml() +
       earnPanelHtml() +
       '<h2>Redeem</h2>';
 
@@ -670,20 +724,23 @@
 
   // Cartoon gold treasure chest (shared gradients live in one hidden <svg> so every copy can use them)
   function chestSvg(size, cls) {
-    return '<svg class="chest-svg ' + (cls || '') + '" width="' + size + '" height="' + Math.round(size * 104 / 120) + '" viewBox="0 0 120 104" aria-hidden="true">' +
-      '<ellipse cx="60" cy="99" rx="46" ry="4.5" fill="rgba(0,0,0,.4)"/>' +
-      '<path d="M12 50h96v42a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#2e1a0a" stroke-width="3" stroke-linejoin="round"/>' +
-      '<g stroke="#2a1608" stroke-opacity=".55" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M13 63h94"/><path d="M13 76h94"/><path d="M13 88h94"/><path d="M40 56q4 2 9 0M66 69q5 2 11 0M44 82q4-2 9 0M96 58q3 2 8 0M38 93q5 2 10 0" stroke-width="1.1" stroke-opacity=".45"/></g>' +
-      '<rect x="22" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/><rect x="87" y="50" width="11" height="50" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/>' +
-      '<g fill="#b8c0ca" stroke="#14171b" stroke-width=".8"><circle cx="27.5" cy="57" r="1.7"/><circle cx="27.5" cy="70" r="1.7"/><circle cx="27.5" cy="83" r="1.7"/><circle cx="27.5" cy="94" r="1.7"/><circle cx="92.5" cy="57" r="1.7"/><circle cx="92.5" cy="70" r="1.7"/><circle cx="92.5" cy="83" r="1.7"/><circle cx="92.5" cy="94" r="1.7"/></g>' +
-      '<ellipse class="inner" cx="60" cy="50" rx="44" ry="8" fill="url(#cgGlow)"/>' +
-      '<circle class="coin c1" cx="38" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c2" cx="60" cy="44" r="9" fill="#ffd35c" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c3" cx="82" cy="47" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.4"/><circle class="coin c4" cx="50" cy="48" r="6" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/>' +
-      '<g class="lid"><path d="M12 50V36a48 30 0 0 1 96 0v14z" fill="url(#cgLid)" stroke="#2e1a0a" stroke-width="3" stroke-linejoin="round"/><g clip-path="url(#cgLidClip)"><path d="M12 43Q60 20 108 43M12 32Q60 -4 108 32" fill="none" stroke="#2a1608" stroke-opacity=".5" stroke-width="1.6"/><rect x="22" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/><rect x="87" y="0" width="11" height="52" fill="url(#cgBand)" stroke="#14171b" stroke-width="2"/><g fill="#b8c0ca" stroke="#14171b" stroke-width=".8"><circle cx="27.5" cy="44" r="1.7"/><circle cx="27.5" cy="30" r="1.7"/><circle cx="92.5" cy="44" r="1.7"/><circle cx="92.5" cy="30" r="1.7"/></g></g><path d="M19 38a43 26 0 0 1 22-20" fill="none" stroke="rgba(255,225,170,.5)" stroke-width="3.5" stroke-linecap="round"/></g>' +
-      '<rect x="49" y="41" width="22" height="25" rx="4.5" fill="url(#cgLock)" stroke="#6b4300" stroke-width="2.6"/><circle cx="60" cy="52" r="3.4" fill="#3a2500"/><rect x="58.7" y="53" width="2.6" height="8" rx="1.3" fill="#3a2500"/>' +
+    return '<svg class="chest-svg ' + (cls || '') + '" width="' + size + '" height="' + Math.round(size * 110 / 120) + '" viewBox="0 0 120 110" aria-hidden="true">' +
+      '<ellipse cx="60" cy="105" rx="49" ry="4.5" fill="rgba(0,0,0,.4)"/>' +
+      '<g class="lidback"><path d="M13 62V34a47 30 0 0 1 94 0v28z" fill="url(#cgInner)" stroke="#2a1608" stroke-width="3" stroke-linejoin="round"/><path d="M20 60V35a40 24 0 0 1 80 0v25" fill="none" stroke="url(#cgBand)" stroke-width="3.2"/><path d="M60 8v52M38 13v47M82 13v47" stroke="rgba(255,211,92,.22)" stroke-width="1.4"/><circle cx="60" cy="9" r="3" fill="#ffd35c" stroke="#8a5a00" stroke-width="1.2"/></g>' +
+      '<path d="M10 60h100v38a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#2a1608" stroke-width="3" stroke-linejoin="round"/>' +
+      '<g stroke="#1e0f05" stroke-opacity=".55" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M12 76h96"/><path d="M12 90h96"/></g>' +
+      '<rect x="20" y="60" width="12" height="46" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/><rect x="88" y="60" width="12" height="46" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/>' +
+      '<rect x="10" y="60" width="100" height="7" fill="url(#cgBandH)" stroke="#6b4300" stroke-width="1.8"/>' +
+      '<path d="M10 98a8 8 0 0 0 8 8h14v-13H10z M110 98a8 8 0 0 1-8 8H88v-13h22z" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.6"/>' +
+      '<g fill="#fff3b0" stroke="#8a5a00" stroke-width=".8"><circle cx="26" cy="74" r="1.8"/><circle cx="26" cy="88" r="1.8"/><circle cx="94" cy="74" r="1.8"/><circle cx="94" cy="88" r="1.8"/></g>' +
+      '<ellipse class="inner" cx="60" cy="63" rx="46" ry="9" fill="url(#cgGlow)"/>' +
+      '<g class="coin c1"><circle cx="34" cy="58" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.2"/><circle cx="34" cy="58" r="4.6" fill="none" stroke="#c98a0a" stroke-width="1.3"/></g><g class="coin c2"><circle cx="60" cy="52" r="9.5" fill="#ffd35c" stroke="#8a5a00" stroke-width="2.2"/><circle cx="60" cy="52" r="5.5" fill="none" stroke="#c98a0a" stroke-width="1.3"/></g><g class="coin c3"><circle cx="86" cy="58" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.2"/><circle cx="86" cy="58" r="4.6" fill="none" stroke="#c98a0a" stroke-width="1.3"/></g><g class="coin c4"><circle cx="47" cy="59" r="6.5" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/></g><g class="coin c5"><circle cx="73" cy="59" r="6.5" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/></g><g class="coin c6"><path d="M60 40l6 6-6 8-6-8z" fill="url(#cgRuby)" stroke="#5a0a14" stroke-width="1.6" stroke-linejoin="round"/></g>' +
+      '<rect x="49" y="64" width="22" height="26" rx="4.5" fill="url(#cgLock)" stroke="#6b4300" stroke-width="2.4"/><circle cx="60" cy="73" r="4.6" fill="url(#cgRuby)" stroke="#5a0a14" stroke-width="1.5"/><circle cx="58.6" cy="71.6" r="1.3" fill="rgba(255,255,255,.8)"/><rect x="58.7" y="79" width="2.6" height="7" rx="1.3" fill="#3a2500"/>' +
+      '<g class="lid"><path d="M10 62V44a50 34 0 0 1 100 0v18z" fill="url(#cgLid)" stroke="#2a1608" stroke-width="3" stroke-linejoin="round"/><g clip-path="url(#cgLidClip)"><path d="M10 50Q60 24 110 50M10 38Q60 2 110 38" fill="none" stroke="#1e0f05" stroke-opacity=".45" stroke-width="1.5"/><rect x="20" y="0" width="12" height="64" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/><rect x="88" y="0" width="12" height="64" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/><rect x="10" y="55" width="100" height="8" fill="url(#cgBandH)" stroke="#6b4300" stroke-width="1.8"/><g fill="#fff3b0" stroke="#8a5a00" stroke-width=".8"><circle cx="26" cy="46" r="1.8"/><circle cx="26" cy="32" r="1.8"/><circle cx="94" cy="46" r="1.8"/><circle cx="94" cy="32" r="1.8"/></g></g><path d="M18 44a44 28 0 0 1 24-22" fill="none" stroke="rgba(255,235,190,.55)" stroke-width="3.5" stroke-linecap="round"/><rect x="51" y="52" width="18" height="17" rx="3.5" fill="url(#cgLock)" stroke="#6b4300" stroke-width="2.2"/><circle cx="60" cy="59" r="2.8" fill="#3a2500"/><rect x="58.9" y="60" width="2.2" height="6" rx="1.1" fill="#3a2500"/></g>' +
       '</svg>';
   }
   var CHEST_DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
-    '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6234"/><stop offset="1" stop-color="#5c3517"/></linearGradient><linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b87a45"/><stop offset=".6" stop-color="#8a5529"/><stop offset="1" stop-color="#6a4020"/></linearGradient><linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3c4249"/><stop offset=".45" stop-color="#7d8793"/><stop offset="1" stop-color="#383d44"/></linearGradient><linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient><radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient><clipPath id="cgLidClip"><path d="M12 50V36a48 30 0 0 1 96 0v14z"/></clipPath></defs></svg>';
+    '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4222"/><stop offset="1" stop-color="#3f200e"/></linearGradient><linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5a30"/><stop offset=".6" stop-color="#74401f"/><stop offset="1" stop-color="#55300f"/></linearGradient><linearGradient id="cgInner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a1e28"/><stop offset="1" stop-color="#3a0a10"/></linearGradient><linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c98a0a"/><stop offset=".45" stop-color="#fff0a8"/><stop offset="1" stop-color="#d9930d"/></linearGradient><linearGradient id="cgBandH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#f0b321"/><stop offset="1" stop-color="#b87a08"/></linearGradient><linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient><radialGradient id="cgRuby" cx=".35" cy=".3"><stop offset="0" stop-color="#ff8a95"/><stop offset=".55" stop-color="#d4162b"/><stop offset="1" stop-color="#7a0818"/></radialGradient><radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient><clipPath id="cgLidClip"><path d="M10 62V44a50 34 0 0 1 100 0v18z"/></clipPath></defs></svg>';
   document.body.insertAdjacentHTML('afterbegin', CHEST_DEFS);
 
   // Availability shown on every offer: how many are left, out of how many, and when it expires.
@@ -729,10 +786,10 @@
   var chestBusy = false, chestWin = '';
   function chestCls(k) { return 'chest-svg chest-modal ' + (k === 'ready' ? 'ready' : 'idle'); }
   function tickChest() {
-    var st = chestInfo(), short = 'Soon', big = '', msg = 'The treasure chest is almost ready. Come back and check this spot soon.', canOpen = false;
+    var st = chestInfo(), short = 'Soon', big = '', msg = 'The LVR Treasure Chest is almost ready. Come back and check this spot soon.', canOpen = false;
     if (st.kind === 'wait') {
       var f = fmtLeft(st.ms); short = f.short; big = 'Opens in ' + f.long;
-      msg = 'Your treasure chest opens when the countdown ends.' + (st.c.stepDays > 0 && st.n > 1 ? ' Each chest takes ' + st.c.stepDays + ' more days than the last, so keep playing.' : '');
+      msg = 'Your LVR Treasure Chest opens when the countdown ends.' + (st.c.stepDays > 0 && st.n > 1 ? ' Each chest takes ' + st.c.stepDays + ' more days than the last, so keep playing.' : '');
     } else if (st.kind === 'ready') {
       short = 'Open!'; big = 'Your chest is ready';
       msg = 'Tap below to open it. You will win ' + (st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' or ' + st.c.prizeMax) + ' points.'; canOpen = true;
@@ -807,11 +864,13 @@
     function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; var fx = document.getElementById('chestFx'); if (fx) fx.innerHTML = ''; tickChest(); }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
-      if (t && t.closest('#giftBtn')) open();
+      if (t && t.closest('#scrollBtn')) { document.getElementById('scrollPaper').innerHTML = scrollHtml(); document.getElementById('scrollBack').classList.add('open'); var sc = document.getElementById('scrollClose'); if (sc) sc.focus(); }
+      else if (e.target === document.getElementById('scrollBack') || (t && t.closest('#scrollClose'))) document.getElementById('scrollBack').classList.remove('open');
+      else if (t && t.closest('#giftBtn')) open();
       else if (t && t.closest('#chestOpenBtn')) openChest();
       else if (e.target === back || (t && t.closest('#soonClose'))) close();
     });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { document.getElementById('scrollBack').classList.remove('open'); close(); } });
   })();
 
   // Slim balance bar that appears at the top while the big card is scrolled out of view
