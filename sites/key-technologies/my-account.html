@@ -81,7 +81,10 @@
   .fineprint{margin:4px 0 18px;font-size:12px;line-height:1.5;color:var(--ink-dim);}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f0a91a;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
-  .chest-cap{font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#f0a91a;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(240,169,26,.4);}
+  .chest-cap{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.1;color:#ffd35c;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(240,169,26,.45);}
+  .cc-lab{font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--ink-dim);text-shadow:none;}
+  .cc-big{font-size:27px;font-weight:800;white-space:nowrap;} .cc-big small{font-size:14px;font-weight:700;margin:0 6px 0 3px;color:#ffe9a8;}
+  .cc-big.go{font-size:25px;color:#fff;background:linear-gradient(180deg,#ffd35c,#e8a317);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
   .chest-svg{display:block;overflow:visible;filter:drop-shadow(0 0 12px rgba(240,169,26,.35)) drop-shadow(0 4px 8px rgba(0,0,0,.5));}
   .chest-svg .lid{transform-box:fill-box;transform-origin:50% 0%;transition:transform .5s cubic-bezier(.5,0,.8,.4),opacity .25s .3s;}
   .chest-svg .lidback{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.12);opacity:0;transition:transform .65s cubic-bezier(.3,1.55,.5,1) .25s,opacity .2s .25s;}
@@ -99,17 +102,18 @@
   @keyframes chestWiggle{0%,60%,100%{transform:rotate(0);}68%{transform:rotate(-5deg);}76%{transform:rotate(5deg);}84%{transform:rotate(-3deg);}92%{transform:rotate(2deg);}}
   @keyframes chestBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
   @keyframes coinPop{0%,100%{transform:translateY(-9px);}50%{transform:translateY(-13px);}}
-  .month-card{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.38);border-radius:14px;padding:14px 16px;margin:0 0 14px;}
+  .month-card{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.38);border-radius:14px;padding:12px 14px;margin:0 0 12px;}
   .month-card.urgent{background:rgba(255,120,70,.1);border-color:rgba(255,140,90,.65);}
   .mc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
   .mc-title{font-weight:800;font-size:15.5px;color:#ffd35c;}
   .urgent .mc-title{color:#ffb089;}
   .mc-days{font-size:13.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums;} .mc-days b{font-size:20px;color:var(--ink);}
-  .mc-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);margin:9px 0 10px;overflow:hidden;}
+  .mc-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.1);margin:8px 0 8px;overflow:hidden;}
   .mc-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffd35c,#f0a91a);}
   .urgent .mc-bar i{background:linear-gradient(90deg,#ffb089,#ff6b3d);}
-  .mc-text{font-size:14px;line-height:1.5;color:var(--ink);} .mc-last{margin-top:6px;font-size:13px;color:var(--ink-dim);}
-  .mc-scroll{margin-top:10px;font:inherit;font-size:13.5px;font-weight:700;color:#ffd35c;background:transparent;border:1px solid rgba(255,211,92,.5);border-radius:99px;padding:7px 14px;cursor:pointer;}
+  .mc-text{font-size:13.5px;line-height:1.45;color:var(--ink);} .mc-last{margin-top:6px;font-size:13px;color:var(--ink-dim);}
+  .mc-scroll{margin-top:8px;font:inherit;font-size:13px;font-weight:700;color:#ffd35c;background:transparent;border:1px solid rgba(255,211,92,.5);border-radius:99px;padding:5px 12px;cursor:pointer;}
+  .nav-row .btn{white-space:nowrap;padding:10px 16px;font-size:14px;}
   .mc-scroll:focus-visible,.sc-close:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
   .scroll-back{position:fixed;inset:0;background:rgba(3,8,16,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;overflow-y:auto;}
   .scroll-back.open{display:flex;}
@@ -139,10 +143,10 @@
   .soon-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
-  .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;}
+  .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:center;}
   .balance-main{min-width:0;}
   .balance-name{font-size:14px;color:var(--ink-dim);margin-bottom:6px;}
-  .balance-num{font-size:52px;font-weight:800;line-height:1;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.65),0 0 32px rgba(22,143,255,.45);}
+  .balance-num{font-size:58px;font-weight:800;line-height:1;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.65),0 0 32px rgba(22,143,255,.45);}
   @media (prefers-reduced-motion:no-preference){.balance-num{animation:balGlow 3.2s ease-in-out infinite;}}
   @keyframes balGlow{0%,100%{text-shadow:0 0 10px rgba(89,181,255,.55),0 0 26px rgba(22,143,255,.35);}50%{text-shadow:0 0 16px rgba(89,181,255,.9),0 0 42px rgba(22,143,255,.6);}}
   .balance-label{font-size:13.5px;color:var(--ink-dim);margin-top:6px;}
@@ -150,12 +154,15 @@
   h2{font-size:16px;font-weight:700;margin:0 0 12px;}
   .items{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
   .item-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
-  .rest-group{margin-bottom:22px;}
+  .rest-group{margin:0 0 34px;}
+  .rest-group::after{content:"";display:block;height:3px;margin:40px 14% 0;border-radius:3px;background:linear-gradient(90deg,transparent,#f0a91a 30%,#ffd35c 50%,#f0a91a 70%,transparent);opacity:.8;}
+  .rest-photo{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;margin:0 0 14px;border:1px solid var(--line);}
+  .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
   .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:7px 13px;cursor:pointer;}
   .chip.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
-  .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;}
-  .rest-name{font-size:19px;font-weight:800;letter-spacing:-.01em;min-width:0;}
+  .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap;}
+  .rest-name{font-size:25px;line-height:1.2;font-weight:800;letter-spacing:-.01em;min-width:0;}
   .rest-chip{flex:none;font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:99px;border:1px solid var(--line);color:var(--ink-dim);white-space:nowrap;}
   .rest-chip.on{color:#ffd35c;border-color:rgba(240,169,26,.7);background:rgba(240,169,26,.12);box-shadow:0 0 14px rgba(240,169,26,.25);}
   .item-card.ready{border-color:rgba(240,169,26,.75);box-shadow:0 0 0 1px rgba(240,169,26,.25),0 0 22px rgba(240,169,26,.22);background:linear-gradient(180deg,rgba(240,169,26,.07),var(--card) 55%);}
@@ -409,9 +416,9 @@
     var joined = (wallet && wallet.joinedAt) || 0;
     var inGrace = joined && next.getTime() < joined + d.graceDays * 86400000;
     var take = Math.floor(pts * d.percent / 100), line;
-    if (inGrace) line = 'On the 1st of every month, ' + d.percent + '% of unused points go back to the community fund. You are new, so your first ' + d.graceDays + ' days are safe.';
-    else if (take >= 1) line = 'On ' + nextLabel + ', ' + d.percent + '% of your unused points go back to the community fund. That is about <b>' + take + ' of your ' + pts + ' points</b>. Spend them on a free offer before then and they stay yours.';
-    else line = 'On the 1st of every month, ' + d.percent + '% of unused points go back to the community fund. Nothing is due on your balance right now.';
+    if (inGrace) line = 'Every 1st, ' + d.percent + '% of unused points go back to the community fund. You are new, so your first ' + d.graceDays + ' days are safe.';
+    else if (take >= 1) line = 'On ' + nextLabel + ', ' + d.percent + '% of unused points (about <b>' + take + ' of your ' + pts + '</b>) go back to the community fund. Spend them on an offer first and they stay yours.';
+    else line = 'Every 1st, ' + d.percent + '% of unused points go back to the community fund. Nothing is due on your balance right now.';
     var last = '';
     if (decayLast) {
       var ks = Object.keys(decayLast).sort(), k = ks[ks.length - 1], r = decayLast[k];
@@ -581,16 +588,16 @@
 
     var html =
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
-      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the LVR Treasure Chest</a></div>' : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
         '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
-        '<button type="button" class="chest-hit" id="giftBtn" aria-label="LVR Treasure Chest">' + chestSvg(96, 'idle chest-card') + '<span class="chest-cap chest-count">Soon</span></button>' +
+        '<button type="button" class="chest-hit" id="giftBtn" aria-label="LVR Treasure Chest">' + chestSvg(112, 'idle chest-card') + '<span class="chest-cap chest-count"><span class="cc-lab">LVR Treasure Chest</span><span class="cc-big">Soon</span></span></button>' +
       '</div>' +
       monthBarHtml() +
+      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the LVR Treasure Chest</a></div>' : '') +
       earnPanelHtml() +
       '<h2>Redeem</h2>';
 
@@ -607,11 +614,14 @@
         var g = groups[k]; g.items.sort(function(x, y){ return x.pointCost - y.pointCost; });
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
         var min = g.items[0].pointCost;
-        return '<div class="rest-group" data-cat="' + escapeHtml(g.items[0].cat || '') + '"><div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
+        var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
+        return '<div class="rest-group" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
+          (firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
+          '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
-          '<div class="items">' + g.items.map(function(item){
+          '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
-            var pic = item.photoUrl || item.photo || '';
+            var pic = idx === 0 ? '' : (item.photoUrl || item.photo || '');
             var goal = afford
               ? '<div class="goal ok">✓ You can get this now<div class="gbar"><i style="width:100%"></i></div></div>'
               : '<div class="goal need">🔒 ' + (item.pointCost - pts) + ' more point' + (item.pointCost - pts === 1 ? '' : 's') + ' to unlock · you have ' + pts + ' of ' + item.pointCost + '<div class="gbar"><i style="width:' + Math.min(100, Math.round(100 * pts / item.pointCost)) + '%"></i></div></div>';
@@ -800,22 +810,22 @@
   }
   function fmtLeft(ms) {
     var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
-    return { short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
+    return { big: d > 0 ? d + '<small>day' + (d === 1 ? '' : 's') + '</small>' + h + '<small>hr' + (h === 1 ? '' : 's') + '</small>' : (h > 0 ? h + '<small>hr' + (h === 1 ? '' : 's') + '</small>' + m + '<small>min</small>' : Math.max(m, 1) + '<small>min</small>'), short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
   }
   var chestBusy = false, chestWin = '';
   function chestCls(k) { return 'chest-svg chest-modal ' + (k === 'ready' ? 'ready' : 'idle'); }
   function tickChest() {
-    var st = chestInfo(), short = 'Soon', big = '', msg = 'The LVR Treasure Chest is almost ready. Come back and check this spot soon.', canOpen = false;
+    var st = chestInfo(), short = '<span class="cc-lab">LVR Treasure Chest</span><span class="cc-big">Coming soon</span>', big = '', msg = 'The LVR Treasure Chest is almost ready. Come back and check this spot soon.', canOpen = false;
     if (st.kind === 'wait') {
-      var f = fmtLeft(st.ms); short = f.short; big = 'Opens in ' + f.long;
+      var f = fmtLeft(st.ms); short = '<span class="cc-lab">Chest opens in</span><span class="cc-big">' + f.big + '</span>'; big = 'Opens in ' + f.long;
       msg = 'Your LVR Treasure Chest opens when the countdown ends.' + (st.c.stepDays > 0 && st.n > 1 ? ' Each chest takes ' + st.c.stepDays + ' more days than the last, so keep playing.' : '');
     } else if (st.kind === 'ready') {
-      short = 'Open!'; big = 'Your chest is ready';
+      short = '<span class="cc-lab">Your chest is ready</span><span class="cc-big go">TAP TO OPEN</span>'; big = 'Your chest is ready';
       msg = 'Tap below to open it. You will win ' + (st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' or ' + st.c.prizeMax) + ' points.'; canOpen = true;
-    } else if (st.kind === 'done') { short = 'Opened'; big = '+' + st.amount + ' points'; msg = 'You opened your chest. More treasure is coming soon.'; }
+    } else if (st.kind === 'done') { short = '<span class="cc-lab">LVR Treasure Chest</span><span class="cc-big">Opened</span>'; big = '+' + st.amount + ' points'; msg = 'You opened your chest. More treasure is coming soon.'; }
     if (chestBusy || chestWin) { big = chestWin || big; canOpen = false; }
     var els = document.querySelectorAll('.chest-count');
-    for (var i = 0; i < els.length; i++) els[i].textContent = short;
+    for (var i = 0; i < els.length; i++) els[i].innerHTML = short;
     var card = document.querySelector('.chest-card');
     if (card) card.setAttribute('class', 'chest-svg chest-card ' + (st.kind === 'ready' ? 'ready' : 'idle'));
     var art = document.getElementById('chestModalArt');
