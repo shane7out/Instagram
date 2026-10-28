@@ -233,7 +233,7 @@
   .item-note{font-size:12px;color:var(--ink-dim);margin-top:6px;}
   .redeem-btn{
     width:100%;margin-top:12px;padding:12px;border-radius:10px;border:none;
-    background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+    background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;line-height:1.2;
   }
   .act-row{display:flex;gap:10px;align-items:stretch;margin-top:12px;} .act-row .redeem-btn{margin-top:0;flex:1.15;width:auto;}
   .rcpt-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px 10px;border-radius:10px;border:1.5px dashed rgba(240,169,26,.75);background:rgba(240,169,26,.08);color:#ffd35c;font:inherit;cursor:pointer;line-height:1.15;}
@@ -707,7 +707,7 @@
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
               tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
-              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
+              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : 'Redeem ' + item.pointCost + ' Reward Point' + (Number(item.pointCost) === 1 ? '' : 's')) + '</button>' +
               '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button></div>' +
               '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>' +
             '</div>';
