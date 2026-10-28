@@ -1,18 +1,16 @@
 #!/bin/bash
 # Fetch FOOD-only candidate photos (Public Domain / CC0, large, mostly professional Unsplash uploads on Wikimedia Commons).
-mkdir -p sites/key-technologies/img/food-candidates2
+mkdir -p sites/key-technologies/img/food-candidates3
 node <<'NODE'
 const fs = require('fs');
-const OUT = 'sites/key-technologies/img/food-candidates2';
+const OUT = 'sites/key-technologies/img/food-candidates3';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const UA = { headers: { 'User-Agent': 'KeyTechnologiesDemo/1.0 (contact via keytechnologies.si)' } };
 const TERMS = {
-  lasagna: ['lasagna Unsplash', 'lasagna'], pasta: ['spaghetti Unsplash', 'fettuccine Unsplash', 'pasta Unsplash'],
-  minipizza: ['personal pizza Unsplash', 'margherita pizza Unsplash', 'pizza Unsplash'], pizzaslice: ['pizza slice Unsplash', 'slice of pizza Unsplash'],
-  thaicurry: ['green curry Unsplash', 'thai curry', 'thai food Unsplash'], tomyum: ['tom yum soup', 'thai soup Unsplash'], mangorice: ['mango sticky rice'], thaifried: ['thai fried rice', 'pineapple fried rice'],
-  burrito: ['burrito Unsplash', 'burrito'], enchiladas: ['enchiladas Unsplash', 'enchiladas'], quesadilla: ['quesadilla Unsplash', 'quesadilla'], guac: ['guacamole Unsplash', 'guacamole chips'],
-  sushiroll: ['sushi roll Unsplash', 'sushi rolls Unsplash'], steak: ['steak Unsplash', 'grilled steak'], dimsum: ['dim sum Unsplash', 'dumplings Unsplash'], calamari: ['calamari Unsplash', 'fried calamari'],
-  shrimp: ['shrimp Unsplash', 'garlic shrimp'], bruschetta: ['bruschetta Unsplash'], salad: ['salad Unsplash'], cheeseburger: ['cheeseburger Unsplash', 'burger and fries Unsplash']
+  sushiroll2: ['maki rolls Unsplash', 'sushi platter Unsplash', 'california roll', 'sushi rolls plate'], nigiri: ['salmon nigiri Unsplash', 'nigiri sushi Unsplash'],
+  pepperoni: ['pepperoni pizza Unsplash', 'pepperoni pizza slice', 'cheese pizza slice'], margherita: ['margherita pizza', 'neapolitan pizza Unsplash', 'wood fired pizza'],
+  tacos2: ['street tacos Unsplash', 'tacos al pastor', 'fish tacos'], fajitas: ['fajitas Unsplash', 'carne asada', 'chicken burrito'], meatballs: ['spaghetti and meatballs', 'meatballs Unsplash'],
+  ravioli: ['ravioli Unsplash', 'ravioli'], gnocchi: ['gnocchi Unsplash'], burger2: ['smash burger', 'cheeseburger fries'], hotdog: ['hot dog Unsplash'], friedchicken: ['fried chicken Unsplash', 'chicken sandwich Unsplash']
 };
 const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 120);
 (async () => {
@@ -35,9 +33,9 @@ const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').
     for (const c of cand) { try { await sleep(900); const r = await fetch(c.ii.thumburl, UA); if (!r.ok) continue; n++; const f = slug + '-' + n + '.jpg'; fs.writeFileSync(OUT + '/' + f, Buffer.from(await r.arrayBuffer())); credits[f] = { license: c.lic, author: c.artist, source: c.ii.descriptionurl, title: c.title }; } catch (e) {} }
     console.log(slug + ': ' + n + ' saved');
   }
-  fs.writeFileSync(OUT + '/credits4.json', JSON.stringify(credits, null, 1));
+  fs.writeFileSync(OUT + '/credits5.json', JSON.stringify(credits, null, 1));
 })();
 NODE
 git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
-git add sites/key-technologies/img/food-candidates2
-git commit -m "More food candidate photos (Thai, Mexican, Italian, pizza, burgers, sushi)" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
+git add sites/key-technologies/img/food-candidates3
+git commit -m "More food candidate photos, round two" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
