@@ -182,6 +182,7 @@
   .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
   .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:7px 13px;cursor:pointer;}
+  .filter-note{font-size:13px;color:var(--ink-dim);margin:-6px 0 18px;} #filterNote{font-weight:700;color:var(--ink);}
   .chip.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
   .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap;}
   .rest-name{font-size:25px;line-height:1.2;font-weight:800;letter-spacing:-.01em;min-width:0;}
@@ -615,9 +616,17 @@
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('.chip'); if (!b) return;
-    var cat = b.getAttribute('data-cat');
-    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function (x) { x.classList.toggle('on', x === b); });
-    Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) { g.hidden = !(cat === 'all' || g.getAttribute('data-cat') === cat); });
+    var chips = Array.prototype.slice.call(document.querySelectorAll('.chip')), cat = b.getAttribute('data-cat');
+    if (cat === 'all') chips.forEach(function (x) { x.classList.toggle('on', x === b); });
+    else {
+      b.classList.toggle('on');
+      chips.forEach(function (x) { if (x.getAttribute('data-cat') === 'all') x.classList.remove('on'); });
+      if (!chips.some(function (x) { return x.classList.contains('on'); })) chips.forEach(function (x) { if (x.getAttribute('data-cat') === 'all') x.classList.add('on'); });
+    }
+    var sel = chips.filter(function (x) { return x.classList.contains('on'); }).map(function (x) { return x.getAttribute('data-cat'); }), all = sel.indexOf('all') >= 0, shown = 0;
+    chips.forEach(function (x) { x.setAttribute('aria-pressed', x.classList.contains('on') ? 'true' : 'false'); });
+    Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) { var show = all || sel.indexOf(g.getAttribute('data-cat')) >= 0; g.hidden = !show; if (show) shown++; });
+    var note = document.getElementById('filterNote'); if (note) note.textContent = 'Showing ' + shown + ' restaurant' + (shown === 1 ? '' : 's');
   });
   function startDemo() {
     wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
@@ -652,7 +661,7 @@
       var rank = function(k){ var r = groups[k].items[0].rank; return typeof r === 'number' ? r : 99; };
       order.sort(function(x, y){ return (rank(x) - rank(y)) || (Math.min.apply(null, groups[x].items.map(function(i){ return i.pointCost; })) - Math.min.apply(null, groups[y].items.map(function(i){ return i.pointCost; }))); });
       var CATS = [['all', 'All'], ['pizza', 'Pizza'], ['italian', 'Italian & pasta'], ['sushi', 'Sushi'], ['burgers', 'Burgers'], ['thai', 'Thai'], ['mexican', 'Mexican'], ['bbq', 'BBQ'], ['apps', 'Appetizers'], ['plates', 'Plates & bowls'], ['sweet', 'Breakfast & sweet']];
-      if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+      if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + '<div class="filter-note">Tap more than one to see them together. <span id="filterNote"></span></div>';
       html += order.map(function(k){
         var g = groups[k]; g.items.sort(function(x, y){ return x.pointCost - y.pointCost; });
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;

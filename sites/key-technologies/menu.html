@@ -323,12 +323,18 @@
     $("menu").innerHTML = parts.map(function (g) { return '<div class="grp"><div class="rest"><b>' + esc(g.title) + '</b><span>' + esc(g.sub) + '</span></div>' + g.cards.join("") + '</div>'; }).join("") + '<div class="empty" id="noMatch" hidden>No restaurants in this group yet.</div>' + creditsHtml();
     $("chips").addEventListener("click", function (e) {
       var b = e.target.closest && e.target.closest(".chip"); if (!b) return;
-      var cat = b.getAttribute("data-cat");
-      Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (x) { x.classList.toggle("on", x === b); });
+      var chips = Array.prototype.slice.call(document.querySelectorAll(".chip")), cat = b.getAttribute("data-cat");
+      if (cat === "all") chips.forEach(function (x) { x.classList.toggle("on", x === b); });
+      else {
+        b.classList.toggle("on");
+        chips.forEach(function (x) { if (x.getAttribute("data-cat") === "all") x.classList.remove("on"); });
+        if (!chips.some(function (x) { return x.classList.contains("on"); })) chips.forEach(function (x) { if (x.getAttribute("data-cat") === "all") x.classList.add("on"); });
+      }
+      var sel = chips.filter(function (x) { return x.classList.contains("on"); }).map(function (x) { return x.getAttribute("data-cat"); }), all = sel.indexOf("all") >= 0;
       var any = false;
       Array.prototype.forEach.call(document.querySelectorAll(".grp"), function (g) {
         var vis = 0;
-        Array.prototype.forEach.call(g.querySelectorAll(".vcard"), function (c) { var show = cat === "all" || c.getAttribute("data-cat") === cat; c.hidden = !show; if (show) vis++; });
+        Array.prototype.forEach.call(g.querySelectorAll(".vcard"), function (c) { var show = all || sel.indexOf(c.getAttribute("data-cat")) >= 0; c.hidden = !show; if (show) vis++; });
         g.hidden = !vis; if (vis) any = true;
       });
       $("noMatch").hidden = any;
