@@ -287,7 +287,7 @@
     $("bizName").textContent = "Las Vegas Restaurants";
     document.title = "Las Vegas Restaurants — Key Technologies.si";
     $("lede").textContent = "Real local restaurants serving pizza, pasta, sushi, burgers, Thai, Mexican and more. Tap an address for the map, a phone number to call, or Instagram, Yelp and Google for more.";
-    $("sampleBox").innerHTML = '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.</div>' +
+    $("sampleBox").innerHTML = '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.<div style="margin-top:12px;"><a class="btn btn-primary" href="my-account.html?demo=65">See what a member sees: points, treasure chest and offers</a></div></div>' +
       '<div class="chips" id="chips">' + CATS.map(function (c, k) { return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join("") + '</div>';
     var parts = [], cur = null;
     function open(title, sub) { cur = { title: title, sub: sub, cards: [] }; parts.push(cur); }
