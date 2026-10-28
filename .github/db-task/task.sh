@@ -1,16 +1,15 @@
 #!/bin/bash
 # Fetch FOOD-only candidate photos (Public Domain / CC0, large, mostly professional Unsplash uploads on Wikimedia Commons).
-mkdir -p sites/key-technologies/img/food-candidates5
+mkdir -p sites/key-technologies/img/food-candidates6
 node <<'NODE'
 const fs = require('fs');
-const OUT = 'sites/key-technologies/img/food-candidates5';
+const OUT = 'sites/key-technologies/img/food-candidates6';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const UA = { headers: { 'User-Agent': 'KeyTechnologiesDemo/1.0 (contact via keytechnologies.si)' } };
 const TERMS = {
-  gburger: ['gourmet burger Unsplash', 'burger plate restaurant', 'burger on a plate'], gburger2: ['cheeseburger plate Unsplash', 'hamburger restaurant plate'],
-  pslice: ['pizza slice plate Unsplash', 'slice of pizza on a plate', 'margherita pizza slice'], pwhole: ['neapolitan pizza Unsplash', 'pizza on a plate Unsplash', 'pizza restaurant Unsplash'], pnice: ['pepperoni pizza Unsplash', 'gourmet pizza Unsplash'],
-  ramen2: ['ramen bowl Unsplash', 'ramen Unsplash'], nachos2: ['nachos plate', 'nachos Unsplash'], wings2: ['chicken wings plate Unsplash', 'buffalo wings plate'], tacos3: ['tacos plate Unsplash', 'tacos on a plate', 'fish tacos plate'],
-  fries2: ['loaded fries Unsplash', 'fries plate Unsplash'], sashimi3: ['sashimi plate Unsplash', 'sashimi platter'], dessert2: ['dessert plate Unsplash', 'croissant Unsplash', 'tiramisu'], sand2: ['sandwich plate Unsplash', 'club sandwich Unsplash'], steak2: ['steak dinner Unsplash', 'ribeye steak plate']
+  burgerA: ['burger Unsplash', 'double cheeseburger Unsplash', 'burger and fries Unsplash'], burgerB: ['bacon cheeseburger', 'gourmet cheeseburger', 'burger close up'], chickenburger: ['chicken sandwich Unsplash', 'fried chicken sandwich'],
+  pizzaA: ['pizza Unsplash', 'pizza closeup Unsplash', 'pizza margherita Unsplash'], pizzaB: ['pepperoni pizza', 'pizza slice close up', 'slice of pepperoni pizza Unsplash'], pizzaC: ['pizza on wooden board', 'wood fired pizza Unsplash', 'pizza napoletana'],
+  sushiD: ['sushi platter Unsplash', 'sushi set Unsplash', 'nigiri sushi Unsplash'], sushiE: ['maki Unsplash', 'salmon roll Unsplash', 'sushi bar Unsplash'], wingsA: ['chicken wings Unsplash', 'buffalo wings'], ramenB: ['ramen Unsplash bowl noodles', 'tonkotsu ramen']
 };
 const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 120);
 (async () => {
@@ -33,9 +32,9 @@ const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').
     for (const c of cand) { try { await sleep(900); const r = await fetch(c.ii.thumburl, UA); if (!r.ok) continue; n++; const f = slug + '-' + n + '.jpg'; fs.writeFileSync(OUT + '/' + f, Buffer.from(await r.arrayBuffer())); credits[f] = { license: c.lic, author: c.artist, source: c.ii.descriptionurl, title: c.title }; } catch (e) {} }
     console.log(slug + ': ' + n + ' saved');
   }
-  fs.writeFileSync(OUT + '/credits7.json', JSON.stringify(credits, null, 1));
+  fs.writeFileSync(OUT + '/credits8.json', JSON.stringify(credits, null, 1));
 })();
 NODE
 git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
-git add sites/key-technologies/img/food-candidates5
-git commit -m "Upscale food candidate photos, round four" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
+git add sites/key-technologies/img/food-candidates6
+git commit -m "Upscale food candidate photos, round five" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
