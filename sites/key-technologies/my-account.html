@@ -528,17 +528,16 @@
       ["r1", "Poke Heaven", "Free Poke Bowl", 13, "pokebowl", 25, 12, 33, "plates"],
       ["r2", "TT Terrace (The Tea Terrace)", "Free Scone & Cream", 7, "scones", 30, 22, 28, "sweet"],
       ["r3", "Pizza Rock", "Free Personal Pizza", 12, "minipizza", 40, 26, 35, "pizza"],
-      ["r4", "Metro Pizza", "Free Pizza Slice", 5, "slice", 30, 9, 20, "pizza"],
-      ["r6", "Yellowtail Japanese Restaurant & Lounge", "Free Sashimi Plate", 16, "sashimi", 60, 41, 30, "sushi"],
-      ["r7", "Sushi Roku", "Free Sushi Plate", 14, "sashimi2", 30, 17, 30, "sushi"],
-      ["r8", "Kabuto Edomae Sushi", "Free Sushi Plate", 14, "sushi", 35, 30, 35, "sushi"],
+      ["r4", "Metro Pizza", "Free Personal Pizza", 12, "pizzac", 30, 9, 20, "pizza"],
+      ["r6", "Yellowtail Japanese Restaurant & Lounge", "Free Sashimi Plate", 16, "sushi3", 60, 41, 30, "sushi"],
+      ["r7", "Sushi Roku", "Free Sushi Plate", 14, "sushi", 30, 17, 30, "sushi"],
+      ["r8", "Kabuto Edomae Sushi", "Free Sushi Plate", 14, "sashimi2", 35, 30, 35, "sushi"],
       ["r9", "Samurai Japanese Steakhouse & Sushi", "Free Gyoza Appetizer", 7, "gyoza", 20, 6, 25, "sushi"],
       ["r10", "Gordon Ramsay Burger", "Free Burger", 13, "burger3", 50, 44, 30, "burgers"],
-      ["r11", "Burger Bar", "Free Burger & Fries", 14, "burger4", 25, 14, 29, "burgers"],
-      ["r12", "The Parlour Brunch & Late Night Burger Bar", "Free Burger", 12, "burger4", 40, 21, 38, "burgers"],
+      ["r11", "Burger Bar", "Free Burger", 14, "burger8", 25, 14, 29, "burgers"],
       ["r13", "The Beach House", "Free Nachos", 11, "nachos", 30, 4, 22, "apps"],
       ["r14", "The Irish Spot", "Free Loaded Fries", 8, "fries", 60, 36, 50, "apps"],
-      ["r15", "Peru Chicken", "Free Chicken Wings", 10, "wings", 25, 8, 26, "apps"],
+      ["r15", "Peru Chicken", "Free Chicken Sandwich", 10, "chickensandwich", 25, 8, 26, "apps"],
       ["r16", "AyAyAy! Mexican Cuisine", "Free Burrito", 11, "burrito", 35, 19, 31, "mexican"],
       ["r17", "Panevino Italian Grille & Deli Caf\u00e9", "Free Panini", 10, "panini", 30, 3, 24, "italian"],
       ["r18", "Smoking Pig BBQ Company", "Free Rib Plate", 15, "ribs", 40, 28, 42, "plates"],
@@ -561,12 +560,9 @@
       ["r35", "Tacos El Gordo", "Free Street Tacos", 9, "tacos2", 50, 31, 30, "mexican"],
       ["r36", "Lindo Michoacán", "Free Enchilada Plate", 13, "enchiladas", 40, 25, 40, "mexican"],
       ["r37", "Border Grill", "Free Chips & Guacamole", 7, "guac", 30, 16, 29, "mexican"],
-      ["r38", "Holsteins", "Free Burger", 13, "burger6", 40, 22, 35, "burgers"],
-      ["r39", "Fukuburger", "Free Burger & Fries", 12, "burger5", 35, 26, 31, "burgers"],
-      ["r40", "Stay Tuned Burgers", "Free Smash Burger", 11, "burger7", 30, 7, 24, "burgers"],
       ["r41", "Kura Revolving Sushi Bar", "Free Sushi Plate", 12, "sushi1", 40, 28, 33, "sushi"],
-      ["r42", "Sushi Neko", "Free Sushi Roll Plate", 11, "sushi2", 25, 13, 27, "sushi"],
-      ["r43", "ITs Sushi", "Free Sushi Plate", 12, "sushi3", 35, 20, 36, "sushi"]
+      ["r42", "Sushi Neko", "Free Sushi Roll Plate", 11, "sushi2", 25, 13, 27, "sushi"],,
+      ["r99", "Gordon Ramsay Steak", "Free Steak Plate", 16, "steak", 30, 19, 34, "plates"]
     ];
     return rows.map(function (r, i) {
       return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '', cat: r[8], rank: i < 3 ? i : 99 };
