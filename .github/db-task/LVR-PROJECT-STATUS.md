@@ -1353,3 +1353,11 @@ top unless they tell you otherwise.*
 - Wooden pirate-chest art; pop-open animation with coins on the member screen.
 - Attorney list: random prizes (check sweepstakes/chance rules; there is no purchase tied to the chest, but ask).
 - 134 rules/sweep checks pass.
+
+## Demo and member-screen state (2026-10-28)
+- Member screen: points top-left, big chest countdown, "spend before the 1st" bar, game scroll, each restaurant in its own box (food photo first, then name), claimed/urgency meter on every offer ("28 of 30 claimed", Going fast, Only N left, days until it ends).
+- Every offer is pickup only (card tag, fine print, redeem confirm, code screen, restaurant lookup).
+- Las Vegas demo: 39 real restaurants (Thai, Mexican, Italian, pizza, sushi, burgers, steak, breakfast, sweets). Secret Pizza removed. Photo rule: plated food only; no drinks, paper plates, napkins, straws, cups or takeout boxes.
+- Sign-up forms (KT and LVR) now require the "I'm in" game-rules checkbox; consent saved as consent_rules / consent_rules_ts.
+- Still waiting on Shane: run the Mac go-live command (rules + tools incl. chest, monthly return, agreement checkbox), then verify-live; enter Vanilla Rice credit before turning on the welcome bonus; attorney review of monthly return, random chest prizes, no-refund rule.
+- Monthly-return schedule file is on this branch only; GitHub runs scheduled jobs only from main, so put it on main only after attorney sign-off.
