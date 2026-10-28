@@ -27,12 +27,16 @@ function addrs(html) {
 (async () => {
   for (const n of NAMES) {
     console.log('\n=== ' + n.name);
-    const q = (n.q || n.name) + ' Las Vegas NV official website';
-    let s = await get('https://html.duckduckgo.com/html/?q=' + encodeURIComponent(q));
-    let urls = resultUrls(s.text);
-    if (!urls.length) { s = await get('https://www.bing.com/search?q=' + encodeURIComponent(q)); urls = resultUrls(s.text); console.log('  (bing fallback, status ' + s.status + ')'); }
-    const sites = []; for (const u of urls) { try { const h = new URL(u); if (!BAD.test(h.hostname) && !sites.some(x => x.host === h.hostname)) sites.push({ host: h.hostname, url: u }); } catch (e) {} if (sites.length >= 2) break; }
-    if (n.web) sites.unshift({ host: new URL(n.web).hostname, url: n.web });
+    const sites = [];
+    let s = { status: 'skipped' };
+    if (n.web) sites.push({ host: new URL(n.web).hostname, url: n.web });
+    else {
+      await new Promise(r => setTimeout(r, 9000));
+      const q = (n.q || n.name) + ' Las Vegas NV official website';
+      s = await get('https://html.duckduckgo.com/html/?q=' + encodeURIComponent(q));
+      let urls = resultUrls(s.text);
+      for (const u of urls) { try { const h = new URL(u); if (!BAD.test(h.hostname) && !sites.some(x => x.host === h.hostname)) sites.push({ host: h.hostname, url: u }); } catch (e) {} if (sites.length >= 2) break; }
+    }
     if (!sites.length) { console.log('  no site found (search status ' + s.status + ')'); continue; }
     for (const site of sites.slice(0, 2)) {
       const home = await get(site.url);
