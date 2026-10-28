@@ -561,6 +561,10 @@
         '</div>' +
         chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first chest)') +
       '</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurant commission</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">What each restaurant owes you, as a percent of the verified amount members paid there. A business can have its own percent (Restaurants tab > Edit); any business without one uses this default. The Earnings tab adds it up per restaurant per month and downloads a statement.</div>' +
+        '<div class="field"><label>Default commission % (agreed with the restaurants)</label><input type="number" id="sCommDefault" min="0" max="100" step="0.5" value="' + (settings.defaultCommissionPct != null ? settings.defaultCommissionPct : 20) + '"></div>' +
+      '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Monthly community-fund return</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">On the 1st of each month, this percent of every member\'s unused points goes back to the community fund, so the program keeps running and active members get a fair chance at the offers. It is rounded down to whole points, and brand-new members are exempt until the grace period ends, so their welcome points are not shaved before they can use them. Members see a plain notice about it on their screen. It runs by itself once it is switched on (see the status note below).</div>' +
         chk('sDecayOn', decay.enabled === true, 'Monthly return is on (leave off until your attorney has reviewed it)') +
@@ -600,6 +604,7 @@
           var mn = Math.max(0, Math.min(mx, parseInt(document.getElementById('sChestMin').value, 10) || 0));
           return { waitDays: Math.max(1, Math.min(365, parseInt(document.getElementById('sChestDays').value, 10) || 14)), stepDays: Math.max(0, Math.min(60, isNaN(parseInt(document.getElementById('sChestStep').value, 10)) ? 5 : parseInt(document.getElementById('sChestStep').value, 10))), prizeMin: mx > 0 ? Math.max(1, mn) : mn, prizeMax: mx, repeat: document.getElementById('sChestRepeat').checked };
         })(),
+        defaultCommissionPct: Math.max(0, Math.min(100, parseFloat(document.getElementById('sCommDefault').value) || 0)),
         decay: { enabled: document.getElementById('sDecayOn').checked, percent: Math.max(1, Math.min(50, parseInt(document.getElementById('sDecayPct').value, 10) || 20)), graceDays: Math.max(0, Math.min(365, isNaN(parseInt(document.getElementById('sDecayGrace').value, 10)) ? 30 : parseInt(document.getElementById('sDecayGrace').value, 10))) },
         welcome: {
           enabled: document.getElementById('sWelOn').checked,
@@ -645,7 +650,7 @@
     html += list.length ? list.map(function(slug){
       var r = restaurants[slug] || {}, d = directory[slug] || {};
       return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.bizName || d.bizName || slug) + '</div>' +
-        '<div class="row-sub">' + (d.active === false ? 'Hidden from members' : 'Shown to members') + ' · ' + catLabel(d.category) + ' · earns ' + (d.earnRate || 0) + ' pts per $1 · your commission ' + (r.commissionPct || 0) + '%</div></div></div>' +
+        '<div class="row-sub">' + (d.active === false ? 'Hidden from members' : 'Shown to members') + ' · ' + catLabel(d.category) + ' · earns ' + (d.earnRate || 0) + ' pts per $1 · your commission ' + commissionFor(slug) + '%</div></div></div>' +
         creditLine(slug) +
         '<div class="row-actions"><button data-act="edit-rest" data-slug="' + escapeHtml(slug) + '">Edit</button>' +
         '<button data-act="add-credit" data-slug="' + escapeHtml(slug) + '">+ Add credit</button>' +
@@ -727,7 +732,7 @@
         '<div class="field"><label>Restaurant portal PIN (optional - only if they will log in to see/verify redemptions)</label><input type="text" id="rPin" value="' + escapeHtml(r.pin || '') + '"></div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Points earned per $1 spent (e.g. 0.05 = 5% back)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 0.05) + '"></div>' +
-          '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : 15) + '"></div>' +
+          '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : commissionFor(slug || '')) + '"></div>' +
         '</div>' +
         '<div class="checkbox-row"><input type="checkbox" id="rActive"' + (d.active !== false ? ' checked' : '') + '><label for="rActive">Show to members (they can submit receipts for it)</label></div>' +
         '<div class="form-actions"><button class="btn btn-primary" id="rSave">' + (isEdit ? 'Save Changes' : 'Add Business') + '</button><button class="btn" id="rCancel">Cancel</button></div>' +
@@ -757,6 +762,13 @@
   // ========================================================================
   var earningsMonth = new Date().toISOString().slice(0, 7);
   var earningsAll = false;
+  // The agreed commission. A business with its own % uses that; otherwise the default in Settings (20 unless you change it).
+  function commissionFor(slug) {
+    var r = restaurants[slug];
+    if (r && r.commissionPct != null && r.commissionPct !== '') return Number(r.commissionPct) || 0;
+    var d = settings && settings.defaultCommissionPct;
+    return d != null ? Number(d) : 20;
+  }
   function renderEarningsTab() {
     var parts = earningsMonth.split('-');
     var start = earningsAll ? 0 : new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, 1).getTime();
@@ -771,7 +783,7 @@
       b.count++; b.spend += (r.amount || 0);
     });
     var rows = Object.keys(by).map(function(slug){
-      var pct = (restaurants[slug] && restaurants[slug].commissionPct) || 0;
+      var pct = commissionFor(slug);
       return { restaurant: bizOf(slug), receipts: by[slug].count, verifiedSpend: Math.round(by[slug].spend * 100) / 100, commissionPct: pct, commissionOwed: Math.round(by[slug].spend * pct) / 100 };
     });
     var totalOwed = rows.reduce(function(s, r){ return s + r.commissionOwed; }, 0);
@@ -781,6 +793,7 @@
       '<div class="field"><label>Month</label><input type="month" id="eMonth" value="' + earningsMonth + '"' + (earningsAll ? ' disabled' : '') + '></div></div>' +
       '<div class="stats-row"><div class="stat"><div class="n">' + money(totalOwed) + '</div><div class="l">Commission owed to you</div></div>' +
       '<div class="stat"><div class="n">' + money(totalSpend) + '</div><div class="l">Verified spend</div></div></div>' +
+      '<div class="row-sub" style="margin-bottom:12px;">What each restaurant owes you = the verified amount members paid there &times; your commission. Members enter what they paid <b>not counting the free offer</b>, so a free bowl adds nothing. You can approve or reject each receipt in the Receipts tab before it counts here.</div>' +
       '<button class="btn btn-primary" id="eCsv" style="margin-bottom:14px;">Download statement (CSV)</button>' +
       (rows.length ? rows.map(function(r){
         return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r.restaurant) + '</div><div class="row-sub">' + r.receipts + ' receipts · ' + money(r.verifiedSpend) + ' verified · ' + r.commissionPct + '%</div></div><div class="row-num">' + money(r.commissionOwed) + '</div></div></div>';
@@ -813,7 +826,7 @@
   }
   function auditCsvRows(rows) {
     return rows.map(function(r){
-      var pct = (restaurants[r.slug] && restaurants[r.slug].commissionPct) || 0;
+      var pct = commissionFor(r.slug);
       return {
         receipt_id: r._id, restaurant: bizOf(r.slug), receipt_date: r.receiptDate || '', receipt_number: r.receiptNo || '',
         amount_usd: Number(r.amount || 0).toFixed(2), status: r.status, points_awarded: r.pointsAwarded || 0,

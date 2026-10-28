@@ -219,6 +219,10 @@ const BIG = 'x'.repeat(100);
   check('switched off in Settings: nothing is taken', { s: (await bal('OLD1')) === 100 ? 200 : 500, t: o }, true);
   await call('admin', 'PUT', '/lvr_points/settings/decay/enabled', true);
 
+  check('settings: default commission 20%', await call('anon', 'PUT', '/lvr_points/settings/defaultCommissionPct', 20), true);
+  check('settings: default commission 250% rejected', await call('anon', 'PUT', '/lvr_points/settings/defaultCommissionPct', 250), false);
+  check('settings: default commission as text rejected', await call('anon', 'PUT', '/lvr_points/settings/defaultCommissionPct', 'lots'), false);
+
   // ---------- everything else behaves exactly as before
   check('other apps: write a nested value (dashboard)', await call('anon', 'PUT', '/dashboard/abc', { x: 1 }), true);
   check('other apps: read (dashboard)', await call('anon', 'GET', '/dashboard'), true);

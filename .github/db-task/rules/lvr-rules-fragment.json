@@ -112,6 +112,9 @@
     "graceDays": {
      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 365"
     }
+   },
+   "defaultCommissionPct": {
+    ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
    }
   },
   "bonuses": {

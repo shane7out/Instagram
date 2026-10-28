@@ -8,3 +8,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # re-run: dry-run expectation fixed
 # re-run: repeating chest tests
 # restored
+# re-run: default commission rule

@@ -226,6 +226,15 @@
     width:100%;margin-top:12px;padding:12px;border-radius:10px;border:none;
     background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
   }
+  .act-row{display:flex;gap:10px;align-items:stretch;margin-top:12px;} .act-row .redeem-btn{margin-top:0;flex:1.15;width:auto;}
+  .rcpt-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px 10px;border-radius:10px;border:1.5px dashed rgba(240,169,26,.75);background:rgba(240,169,26,.08);color:#ffd35c;font:inherit;cursor:pointer;line-height:1.15;}
+  .rcpt-btn b{font-size:15px;} .rcpt-btn small{font-size:12px;color:var(--ink-dim);} .rcpt-btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+  .act-hint{margin-top:8px;font-size:12.5px;color:var(--ink-dim);line-height:1.45;}
+  .rcpt-back{position:fixed;inset:0;background:rgba(3,8,16,.8);display:none;align-items:flex-start;justify-content:center;padding:16px;z-index:70;overflow-y:auto;}
+  .rcpt-back.open{display:flex;}
+  .rcpt-box{position:relative;width:100%;max-width:420px;margin:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px 22px;}
+  .rcpt-box .btn{display:flex;} .rcpt-x{position:absolute;top:8px;right:10px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.08);color:var(--ink);font-size:26px;line-height:1;cursor:pointer;}
+  .rcpt-box h2{margin:0 0 6px;padding-right:44px;}
   .redeem-btn:disabled{background:var(--bg-2);color:var(--ink-dim);cursor:default;}
   .item-card.ready .redeem-btn{background:linear-gradient(180deg,#ffd35c,#e8a317);color:#3a2200;}
   .redeem-btn:not(:disabled):active{background:#0f64b2;}
@@ -259,9 +268,10 @@
   .earn-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:22px;}
   .earn-card h2{margin-bottom:4px;}
   .earn-sub{font-size:12.5px;color:var(--ink-dim);margin-bottom:12px;line-height:1.5;}
-  .earn-card label{display:block;font-size:12px;font-weight:700;color:var(--ink-dim);margin:10px 0 5px;}
-  .earn-card select,.earn-card input[type=text],.earn-card input[type=number]{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:11px 12px;}
-  .earn-card input[type=file]{width:100%;font-size:13px;color:var(--ink-dim);}
+  .earn-card label,.rcpt-box label{display:block;font-size:12px;font-weight:700;color:var(--ink-dim);margin:10px 0 5px;}
+  .earn-card select,.earn-card input[type=text],.earn-card input[type=number],.rcpt-box select,.rcpt-box input[type=text],.rcpt-box input[type=number],.rcpt-box input[type=date]{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:11px 12px;}
+  .earn-card input[type=file],.rcpt-box input[type=file]{width:100%;font-size:13px;color:var(--ink-dim);}
+  .rcpt-box .earn-sub{font-size:13px;}
   .earn-msg{font-size:13px;min-height:18px;margin-top:10px;}
   .earn-msg.err{color:var(--red);} .earn-msg.ok{color:var(--green);}
   .rcpt-badge{font-size:11px;font-weight:700;text-align:right;}
@@ -687,7 +697,9 @@
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
               tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
-              '<button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
+              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (afford ? 'Redeem' : 'Locked')) + '</button>' +
+              '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button></div>' +
+              '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest.</div>' +
             '</div>';
           }).join('') + '</div></div>';
       }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
@@ -975,22 +987,20 @@
   }
 
   function earnRule() { return 'Everything you order and pay for earns points. <b>The free offer itself does not count</b>: if you redeemed a free chicken bowl, leave that out and count only what else you paid for.'; }
+  function earnRestaurants() {
+    if (DEMO) { var seen = {}, out = []; demoItems().forEach(function (it) { if (!seen[it.slug]) { seen[it.slug] = 1; out.push([it.slug, it.bizName]); } }); return out; }
+    return Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); }).map(function (k) { return [k, directory[k].bizName || k]; });
+  }
   function earnPanelHtml() {
-    if (DEMO) return '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
-      '<div class="earn-sub">Eat at any participating restaurant, then upload your receipt. ' + earnRule() + '</div>' +
-      '<div class="earn-eg"><b>Example.</b> You use 13 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
-      '<div class="earn-sub" style="margin-top:10px;">We check every receipt before points are added. <b>Cover your name and card digits</b> before taking the photo.</div>' +
-      '<button type="button" class="btn btn-primary" style="width:100%;margin-top:10px;" disabled>Upload a receipt (not active in this preview)</button></div>';
-    var keys = Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); });
-    if (!keys.length) return '';
-    if (pausedFlag('receipts')) return '<div class="earn-card"><h2>Earn points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>';
-    return '<div class="earn-card" id="earnCard">' +
-      '<h2>Earn points</h2>' +
-      '<div class="earn-sub">Ate at a participating restaurant? Upload your receipt. ' + earnRule() + ' Once we verify it, points are added to your balance. <b>Cover your name and card digits</b> before taking the photos.</div>' +
+    var rests = earnRestaurants();
+    if (!rests.length) return '';
+    if (!DEMO && pausedFlag('receipts')) return '<div class="earn-card"><h2>Earn more points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>';
+    var form = '<div class="rcpt-box" id="earnCard" role="document">' +
+      '<button type="button" class="rcpt-x" data-act="closereceipt" aria-label="Close">×</button>' +
+      '<h2>Add a receipt</h2>' +
+      '<div class="earn-sub">Upload your receipt to earn points. ' + earnRule() + ' <b>Cover your name and card digits</b> before taking the photos.</div>' +
       '<label for="eRest">Restaurant</label>' +
-      '<select id="eRest"><option value="">Choose…</option>' + keys.map(function(k){
-        return '<option value="' + escapeHtml(k) + '">' + escapeHtml(directory[k].bizName || k) + '</option>';
-      }).join('') + '</select>' +
+      '<select id="eRest"><option value="">Choose…</option>' + rests.map(function (r) { return '<option value="' + escapeHtml(r[0]) + '">' + escapeHtml(r[1]) + '</option>'; }).join('') + '</select>' +
       '<div class="earn-sub" id="eRate" style="margin:6px 0 0;"></div>' +
       '<label for="eType">What kind of receipt?</label>' +
       '<select id="eType"><option value="paper">Paper receipt (take photos)</option><option value="email">Emailed or online receipt (upload screenshots)</option></select>' +
@@ -1000,9 +1010,22 @@
       '<label for="eDate">Date on the receipt</label><input type="date" id="eDate" max="' + new Date().toISOString().slice(0, 10) + '">' +
       '<label for="eAmt">Total you paid ($), not counting any free offer you redeemed</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
       '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
-      '<div class="earn-msg" id="eMsg"></div>' +
-    '</div>';
+      '<div class="earn-msg" id="eMsg"></div></div>';
+    return '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
+      '<div class="earn-sub">Eat at any participating restaurant, then add your receipt. ' + earnRule() + '</div>' +
+      '<div class="earn-eg"><b>Example.</b> You use 13 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
+      '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:12px;">Add a receipt</button></div>' +
+      '<div class="rcpt-back" id="rcptBack">' + form + '</div>';
   }
+  function openReceipt(slug) {
+    var back = document.getElementById('rcptBack'); if (!back) return;
+    var sel = document.getElementById('eRest');
+    if (sel) { sel.value = slug || ''; if (sel.dispatchEvent) sel.dispatchEvent(new Event('change')); }
+    earnMsg('', '');
+    back.classList.add('open'); document.body.style.overflow = 'hidden';
+    var first = back.querySelector('select'); if (first && !slug) first.focus();
+  }
+  function closeReceipt() { var back = document.getElementById('rcptBack'); if (back) back.classList.remove('open'); document.body.style.overflow = ''; }
 
   function downscaleImage(file, maxW, quality) {
     return new Promise(function(resolve, reject){
@@ -1033,7 +1056,18 @@
       var el = document.getElementById('eRate');
       el.textContent = (d && d.earnRate) ? ('You earn about ' + d.earnRate + ' point' + (d.earnRate === 1 ? '' : 's') + ' per $1 spent.') : '';
     });
-    document.getElementById('eBtn').addEventListener('click', submitReceipt);
+    document.getElementById('eBtn').addEventListener('click', function () {
+      if (DEMO) { earnMsg('Preview only: in the real app this sends your receipt for checking, and points are added once it is approved. Nothing was sent.', 'ok'); return; }
+      submitReceipt();
+    });
+    if (!window.__rcptBound) { window.__rcptBound = true;
+    document.addEventListener('click', function (e) {
+      var tgt = e.target.closest ? e.target.closest('[data-act="addreceipt"],[data-act="closereceipt"]') : null;
+      if (tgt) { if (tgt.getAttribute('data-act') === 'closereceipt') closeReceipt(); else openReceipt(tgt.getAttribute('data-slug') || ''); return; }
+      if (e.target && e.target.id === 'rcptBack') closeReceipt();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeReceipt(); });
+    }
     document.getElementById('eType').addEventListener('change', function(){
       var email = this.value === 'email';
       var p1 = document.getElementById('ePhotoWide'), p2 = document.getElementById('ePhotoClose');
