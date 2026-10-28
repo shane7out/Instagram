@@ -549,15 +549,15 @@
         '<div class="field"><label>Give them</label><select id="sWelWhen"><option value="signup"' + (welcome.when === 'signup' ? ' selected' : '') + '>The moment they sign up</option><option value="receipt"' + (welcome.when !== 'signup' ? ' selected' : '') + '>When their first receipt is approved</option></select></div></div>' +
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Signing up is easy to abuse with fake accounts. The restaurant\'s credit in the funding ledger is the safety net: once it is used up, offers stop. Keep that credit modest, and use the pause switch if sign-ups look strange.</div>' +
       '</div>' +
-      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">LVR Treasure Chest</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Each member sees the gold-trimmed LVR Treasure Chest with a countdown that starts the day they join. When it ends they can open it and win a random whole number of points between your minimum and maximum. Then the chest closes and the next countdown starts, each one a set number of days longer than the last (for example 14 days, then 19, then 24). It keeps going until you untick "Keep repeating". While the maximum prize is 0, the chest just says "coming soon" and gives nothing. Every prize is written to a permanent log.</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Member bonus</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a plain "Bonus in N days" number that starts counting the day they join. When it ends they can collect a random whole number of points between your minimum and maximum. Then the next countdown starts, each one a set number of days longer than the last (for example 14 days, then 19, then 24). It keeps going until you untick "Keep repeating". While the biggest prize is 0, members see no bonus at all and nothing is given. Every prize is written to a permanent log.</div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Days until the first chest opens</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 14) + '"></div>' +
           '<div class="field"><label>Extra days added each time</label><input type="number" id="sChestStep" min="0" max="60" step="1" value="' + (chest.stepDays == null ? 5 : chest.stepDays) + '"></div>' +
         '</div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Smallest prize (points)</label><input type="number" id="sChestMin" min="0" max="50" step="1" value="' + (chest.prizeMin == null ? 1 : chest.prizeMin) + '"></div>' +
-          '<div class="field"><label>Biggest prize (points, 0 = off, max 50)</label><input type="number" id="sChestMax" min="0" max="50" step="1" value="' + (chest.prizeMax == null ? 0 : chest.prizeMax) + '"></div>' +
+          '<div class="field"><label>Biggest bonus (points, 0 = no bonus at all, max 50)</label><input type="number" id="sChestMax" min="0" max="50" step="1" value="' + (chest.prizeMax == null ? 0 : chest.prizeMax) + '"></div>' +
         '</div>' +
         chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first chest)') +
       '</div>' +

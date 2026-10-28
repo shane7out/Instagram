@@ -133,6 +133,20 @@
   .sc-sign{margin-top:12px;text-align:center;font-family:Cinzel,Georgia,serif;font-size:13px;letter-spacing:.04em;color:#7a4414;}
   .sc-close{margin-top:14px;align-self:center;font:inherit;font-weight:800;font-size:15px;padding:11px 28px;border-radius:10px;border:1px solid #637283;background:var(--card);color:var(--ink);cursor:pointer;}
   @media (prefers-reduced-motion:reduce){.scroll-back.open .sc-paper{animation:none;}}
+  .reward-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:112px;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);color:var(--ink);font:inherit;cursor:pointer;text-align:center;}
+  .reward-tile[hidden]{display:none;}
+  .reward-tile .chest-count{display:flex;flex-direction:column;align-items:center;gap:0;}
+  .rw-lab{font-size:13.5px;font-weight:700;color:var(--ink-dim);}
+  .rw-num{font-size:46px;font-weight:800;line-height:1.05;color:#ffd35c;font-variant-numeric:tabular-nums;}
+  .rw-unit{font-size:15px;font-weight:700;color:var(--ink);}
+  .rw-go{font-size:17px;font-weight:800;color:#ffd35c;padding:6px 0 2px;}
+  .reward-tile.ready{border-color:rgba(240,169,26,.7);background:rgba(240,169,26,.08);}
+  .reward-tile:focus-visible{outline:2px solid var(--key-light);outline-offset:3px;}
+  .bn-art{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:4px 0 8px;}
+  .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
+  .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
+  .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
+  @keyframes bnPop{from{transform:scale(.6);opacity:0;}to{transform:none;opacity:1;}}
   .chest-stage{position:relative;display:inline-block;}
   .chest-fx{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;overflow:visible;z-index:3;}
   .cx-bit{position:absolute;left:0;top:0;margin:-6px 0 0 -6px;border-radius:50%;opacity:0;background:radial-gradient(circle at 35% 30%,#fff3b0 0,#ffd54a 45%,#d9930d 100%);border:2px solid #8a5a00;}
@@ -147,6 +161,7 @@
   .soon-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
+  .balance-card.solo{grid-template-columns:minmax(0,1fr);}
   .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:center;}
   .balance-main{min-width:0;}
   .balance-name{font-size:14px;color:var(--ink-dim);margin-bottom:6px;}
@@ -294,18 +309,18 @@
   <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
-      <span class="chest-stage"><span id="chestModalArt" style="display:inline-block;min-height:182px;"></span><span id="chestFx" class="chest-fx"></span></span>
-      <h3 id="soonTitle">LVR Treasure Chest</h3>
+      <div id="chestModalArt" class="bn-art"></div>
+      <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
-      <p id="chestMsg">The LVR Treasure Chest is almost ready. Come back and check this spot soon.</p>
-      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Open the chest</button>
+      <p id="chestMsg">Your bonus is almost ready. Come back and check this spot soon.</p>
+      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Collect my bonus</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
   </div>
   <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </div>
 
-<div class="scroll-back" id="scrollBack" role="dialog" aria-modal="true" aria-label="The LVR Treasure Game rules">
+<div class="scroll-back" id="scrollBack" role="dialog" aria-modal="true" aria-label="How LVR Points work">
   <div class="scroll"><div class="sc-rod"></div><div class="sc-paper" id="scrollPaper"></div><div class="sc-rod"></div>
     <button type="button" class="sc-close" id="scrollClose">Got it</button></div>
 </div>
@@ -446,7 +461,7 @@
       '<div class="mc-top"><span class="mc-title">Spend before the 1st</span><span class="mc-days"><b>' + daysLeft + '</b> day' + (daysLeft === 1 ? '' : 's') + ' left</span></div>' +
       '<div class="mc-bar"><i style="width:' + fill + '%"></i></div>' +
       '<div class="mc-text">' + line + '</div>' + last +
-      '<button type="button" class="mc-scroll" id="scrollBtn">Read the game scroll</button></div>';
+      '<button type="button" class="mc-scroll" id="scrollBtn">Read the rules</button></div>';
   }
   function scrollHtml() {
     var d = decayCfg(), c = chestCfg();
@@ -456,13 +471,13 @@
       ['Eat out', 'Visit LVR partner restaurants, send in your receipt, and earn points. Go eat real food.'],
       ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
       ['The first of the month', 'On the 1st of every month, ' + d.percent + '% of your unused points go back to the community fund that keeps this game running for everyone. Use your points before the 1st and they are yours.' + (d.graceDays > 0 ? ' New players are safe for their first ' + d.graceDays + ' days.' : '')],
-      ['The LVR Treasure Chest', prize ? 'When the countdown ends, open the chest and win ' + prize + ' points. Each wait is ' + (c.stepDays > 0 ? c.stepDays + ' days longer than the last (' + waits + ' days and on)' : c.waitDays + ' days') + '. Keep playing.' : 'A chest of bonus points is coming soon.'],
+      ['Your bonus', prize ? 'When the countdown ends, collect ' + prize + ' bonus points. Each wait is ' + (c.stepDays > 0 ? c.stepDays + ' days longer than the last (' + waits + ' days and on)' : c.waitDays + ' days') + '.' : 'A bonus for active members is coming soon.'],
       ['Fair play', 'Points have no cash value and cannot be sold or transferred. Points are used when you claim an offer and are never refunded. A code expires on the date shown.']
     ];
     var num = ['I', 'II', 'III', 'IV', 'V'];
-    return '<div class="sc-body"><h3>The LVR Treasure Game</h3>' + rules.map(function (r, i) {
+    return '<div class="sc-body"><h3>How LVR Points Work</h3>' + rules.map(function (r, i) {
       return '<div class="sc-rule"><b>' + num[i] + '. ' + escapeHtml(r[0]) + '.</b> ' + escapeHtml(r[1]) + '</div>';
-    }).join('') + '<div class="sc-sign">Go eat real food. Earn points. Win treasure.</div></div>';
+    }).join('') + '<div class="sc-sign">Go eat real food. Earn points.</div></div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -622,10 +637,10 @@
         '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
         '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
-        '<button type="button" class="chest-hit" id="giftBtn" aria-label="LVR Treasure Chest">' + chestSvg(112, 'idle chest-card') + '<span class="chest-cap chest-count"><span class="cc-lab">LVR Treasure Chest</span><span class="cc-big">Soon</span></span></button>' +
+        '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       monthBarHtml() +
-      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the LVR Treasure Chest</a></div>' : '') +
+      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>' : '') +
       earnPanelHtml() +
       '<h2>Redeem</h2>';
 
@@ -780,26 +795,6 @@
     }).catch(function(){});
   }
 
-  // Cartoon gold treasure chest (shared gradients live in one hidden <svg> so every copy can use them)
-  function chestSvg(size, cls) {
-    return '<svg class="chest-svg ' + (cls || '') + '" width="' + size + '" height="' + Math.round(size * 110 / 120) + '" viewBox="0 0 120 110" aria-hidden="true">' +
-      '<ellipse cx="60" cy="105" rx="49" ry="4.5" fill="rgba(0,0,0,.4)"/>' +
-      '<g class="lidback"><path d="M13 62V34a47 30 0 0 1 94 0v28z" fill="url(#cgInner)" stroke="#2a1608" stroke-width="3" stroke-linejoin="round"/><path d="M20 60V35a40 24 0 0 1 80 0v25" fill="none" stroke="url(#cgBand)" stroke-width="3.2"/><path d="M60 8v52M38 13v47M82 13v47" stroke="rgba(255,211,92,.22)" stroke-width="1.4"/><circle cx="60" cy="9" r="3" fill="#ffd35c" stroke="#8a5a00" stroke-width="1.2"/></g>' +
-      '<path d="M10 60h100v38a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#cgBody)" stroke="#2a1608" stroke-width="3" stroke-linejoin="round"/>' +
-      '<g stroke="#1e0f05" stroke-opacity=".55" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M12 76h96"/><path d="M12 90h96"/></g>' +
-      '<rect x="20" y="60" width="12" height="46" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/><rect x="88" y="60" width="12" height="46" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/>' +
-      '<rect x="10" y="60" width="100" height="7" fill="url(#cgBandH)" stroke="#6b4300" stroke-width="1.8"/>' +
-      '<path d="M10 98a8 8 0 0 0 8 8h14v-13H10z M110 98a8 8 0 0 1-8 8H88v-13h22z" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.6"/>' +
-      '<g fill="#fff3b0" stroke="#8a5a00" stroke-width=".8"><circle cx="26" cy="74" r="1.8"/><circle cx="26" cy="88" r="1.8"/><circle cx="94" cy="74" r="1.8"/><circle cx="94" cy="88" r="1.8"/></g>' +
-      '<ellipse class="inner" cx="60" cy="63" rx="46" ry="9" fill="url(#cgGlow)"/>' +
-      '<g class="coin c1"><circle cx="34" cy="58" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.2"/><circle cx="34" cy="58" r="4.6" fill="none" stroke="#c98a0a" stroke-width="1.3"/></g><g class="coin c2"><circle cx="60" cy="52" r="9.5" fill="#ffd35c" stroke="#8a5a00" stroke-width="2.2"/><circle cx="60" cy="52" r="5.5" fill="none" stroke="#c98a0a" stroke-width="1.3"/></g><g class="coin c3"><circle cx="86" cy="58" r="8" fill="#ffd54a" stroke="#8a5a00" stroke-width="2.2"/><circle cx="86" cy="58" r="4.6" fill="none" stroke="#c98a0a" stroke-width="1.3"/></g><g class="coin c4"><circle cx="47" cy="59" r="6.5" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/></g><g class="coin c5"><circle cx="73" cy="59" r="6.5" fill="#ffc933" stroke="#8a5a00" stroke-width="2"/></g><g class="coin c6"><path d="M60 40l6 6-6 8-6-8z" fill="url(#cgRuby)" stroke="#5a0a14" stroke-width="1.6" stroke-linejoin="round"/></g>' +
-      '<rect x="49" y="64" width="22" height="26" rx="4.5" fill="url(#cgLock)" stroke="#6b4300" stroke-width="2.4"/><circle cx="60" cy="73" r="4.6" fill="url(#cgRuby)" stroke="#5a0a14" stroke-width="1.5"/><circle cx="58.6" cy="71.6" r="1.3" fill="rgba(255,255,255,.8)"/><rect x="58.7" y="79" width="2.6" height="7" rx="1.3" fill="#3a2500"/>' +
-      '<g class="lid"><path d="M10 62V44a50 34 0 0 1 100 0v18z" fill="url(#cgLid)" stroke="#2a1608" stroke-width="3" stroke-linejoin="round"/><g clip-path="url(#cgLidClip)"><path d="M10 50Q60 24 110 50M10 38Q60 2 110 38" fill="none" stroke="#1e0f05" stroke-opacity=".45" stroke-width="1.5"/><rect x="20" y="0" width="12" height="64" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/><rect x="88" y="0" width="12" height="64" fill="url(#cgBand)" stroke="#6b4300" stroke-width="1.8"/><rect x="10" y="55" width="100" height="8" fill="url(#cgBandH)" stroke="#6b4300" stroke-width="1.8"/><g fill="#fff3b0" stroke="#8a5a00" stroke-width=".8"><circle cx="26" cy="46" r="1.8"/><circle cx="26" cy="32" r="1.8"/><circle cx="94" cy="46" r="1.8"/><circle cx="94" cy="32" r="1.8"/></g></g><path d="M18 44a44 28 0 0 1 24-22" fill="none" stroke="rgba(255,235,190,.55)" stroke-width="3.5" stroke-linecap="round"/><rect x="51" y="52" width="18" height="17" rx="3.5" fill="url(#cgLock)" stroke="#6b4300" stroke-width="2.2"/><circle cx="60" cy="59" r="2.8" fill="#3a2500"/><rect x="58.9" y="60" width="2.2" height="6" rx="1.1" fill="#3a2500"/></g>' +
-      '</svg>';
-  }
-  var CHEST_DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
-    '<linearGradient id="cgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4222"/><stop offset="1" stop-color="#3f200e"/></linearGradient><linearGradient id="cgLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5a30"/><stop offset=".6" stop-color="#74401f"/><stop offset="1" stop-color="#55300f"/></linearGradient><linearGradient id="cgInner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a1e28"/><stop offset="1" stop-color="#3a0a10"/></linearGradient><linearGradient id="cgBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c98a0a"/><stop offset=".45" stop-color="#fff0a8"/><stop offset="1" stop-color="#d9930d"/></linearGradient><linearGradient id="cgBandH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#f0b321"/><stop offset="1" stop-color="#b87a08"/></linearGradient><linearGradient id="cgLock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#f2b319"/></linearGradient><radialGradient id="cgRuby" cx=".35" cy=".3"><stop offset="0" stop-color="#ff8a95"/><stop offset=".55" stop-color="#d4162b"/><stop offset="1" stop-color="#7a0818"/></radialGradient><radialGradient id="cgGlow"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient><clipPath id="cgLidClip"><path d="M10 62V44a50 34 0 0 1 100 0v18z"/></clipPath></defs></svg>';
-  document.body.insertAdjacentHTML('afterbegin', CHEST_DEFS);
 
   // Availability shown on every offer: how many are left, out of how many, and when it expires.
   function fmtDay(v) {
@@ -846,52 +841,34 @@
     return { big: d > 0 ? d + '<small>day' + (d === 1 ? '' : 's') + '</small>' + h + '<small>hr' + (h === 1 ? '' : 's') + '</small>' : (h > 0 ? h + '<small>hr' + (h === 1 ? '' : 's') + '</small>' + m + '<small>min</small>' : Math.max(m, 1) + '<small>min</small>'), short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
   }
   var chestBusy = false, chestWin = '';
-  function chestCls(k) { return 'chest-svg chest-modal ' + (k === 'ready' ? 'ready' : 'idle'); }
+  function tileNum(ms) {
+    var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
+    if (d >= 1) return { n: d, u: d === 1 ? 'day' : 'days' };
+    if (h >= 1) return { n: h, u: h === 1 ? 'hour' : 'hours' };
+    return { n: Math.max(m, 1), u: 'min' };
+  }
   function tickChest() {
-    var st = chestInfo(), short = '<span class="cc-lab">LVR Treasure Chest</span><span class="cc-big">Coming soon</span>', big = '', msg = 'The LVR Treasure Chest is almost ready. Come back and check this spot soon.', canOpen = false;
+    var st = chestInfo(), tile = '', art = '', big = '', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
     if (st.kind === 'wait') {
-      var f = fmtLeft(st.ms); short = '<span class="cc-lab">Chest opens in</span><span class="cc-big">' + f.big + '</span>'; big = 'Opens in ' + f.long;
-      msg = 'Your LVR Treasure Chest opens when the countdown ends.' + (st.c.stepDays > 0 && st.n > 1 ? ' Each chest takes ' + st.c.stepDays + ' more days than the last, so keep playing.' : '');
+      var f = tileNum(st.ms);
+      tile = '<span class="rw-lab">Bonus in</span><span class="rw-num">' + f.n + '</span><span class="rw-unit">' + f.u + '</span>';
+      art = '<div class="bn-num">' + f.n + '</div><div class="bn-unit">' + f.u + ' to go</div>';
+      msg = 'Your bonus points arrive when the countdown ends.' + (st.c.stepDays > 0 && st.n > 1 ? ' Each wait is ' + st.c.stepDays + ' days longer than the last.' : '');
     } else if (st.kind === 'ready') {
-      short = '<span class="cc-lab">Your chest is ready</span><span class="cc-big go">TAP TO OPEN</span>'; big = 'Your chest is ready';
-      msg = 'Tap below to open it. You will win ' + (st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' or ' + st.c.prizeMax) + ' points.'; canOpen = true;
-    } else if (st.kind === 'done') { short = '<span class="cc-lab">LVR Treasure Chest</span><span class="cc-big">Opened</span>'; big = '+' + st.amount + ' points'; msg = 'You opened your chest. More treasure is coming soon.'; }
-    if (chestBusy || chestWin) { big = chestWin || big; canOpen = false; }
-    var els = document.querySelectorAll('.chest-count');
-    for (var i = 0; i < els.length; i++) els[i].innerHTML = short;
-    var card = document.querySelector('.chest-card');
-    if (card) card.setAttribute('class', 'chest-svg chest-card ' + (st.kind === 'ready' ? 'ready' : 'idle'));
-    var art = document.getElementById('chestModalArt');
-    if (art) {
-      if (!art.firstChild) art.innerHTML = chestSvg(210, 'chest-modal');
-      if (!chestBusy && !chestWin) art.firstChild.setAttribute('class', chestCls(st.kind));
-    }
-    var b = document.getElementById('chestBig'); if (b) { b.hidden = !big; b.textContent = big; }
+      var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' or ' + st.c.prizeMax;
+      tile = '<span class="rw-lab">Bonus ready</span><span class="rw-go">Tap to collect</span>';
+      art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div>';
+      msg = 'Your bonus is ready. Tap below to add ' + amt + ' points to your balance.'; canOpen = true;
+    } else { show = false; }
+    if (chestBusy) canOpen = false;
+    if (chestWin) { art = '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">added to your balance</div>'; canOpen = false; }
+    var btn = document.getElementById('giftBtn');
+    if (btn) { btn.hidden = !show; btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
+    var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
+    var a = document.getElementById('chestModalArt'); if (a && art) a.innerHTML = art;
+    var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
     var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
-  }
-  // pop + burst animation, then show what was won
-  function playChestOpen(prize, done) {
-    var art = document.getElementById('chestModalArt'), mv = art.firstChild, fx = document.getElementById('chestFx');
-    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    mv.setAttribute('class', 'chest-svg chest-modal');
-    if (!reduce && mv.animate) mv.animate([{ transform: 'translateY(0) scale(1,1)' }, { transform: 'translateY(4px) scale(1.08,.9)', offset: .18 }, { transform: 'translateY(-34px) scale(.94,1.1)', offset: .5 }, { transform: 'translateY(0) scale(1.06,.94)', offset: .78 }, { transform: 'translateY(0) scale(1,1)' }], { duration: 650, easing: 'ease-out' });
-    setTimeout(function () {
-      mv.setAttribute('class', 'chest-svg chest-modal open');
-      if (reduce || !fx.animate) { done(); return; }
-      var i, n = 26;
-      for (i = 0; i < n; i++) {
-        var el = document.createElement('div'); el.className = 'cx-bit'; var s = 9 + Math.random() * 12; el.style.width = el.style.height = s + 'px';
-        fx.appendChild(el);
-        var ang = -Math.PI / 2 + (Math.random() - .5) * 2.3, dist = 70 + Math.random() * 110, dx = Math.cos(ang) * dist, up = Math.sin(ang) * dist;
-        el.animate([{ opacity: 1, transform: 'translate(0,0) scale(.5)' }, { opacity: 1, transform: 'translate(' + dx * .7 + 'px,' + up + 'px) scale(1) rotate(200deg)', offset: .45 }, { opacity: 0, transform: 'translate(' + dx + 'px,' + (up + 120 + Math.random() * 60) + 'px) scale(.8) rotate(400deg)' }], { duration: 1000 + Math.random() * 600, easing: 'cubic-bezier(.3,.6,.5,1)', fill: 'forwards' });
-      }
-      for (i = 0; i < prize; i++) {
-        var c = document.createElement('div'); c.className = 'cx-coin'; c.textContent = '+1'; fx.appendChild(c);
-        c.animate([{ opacity: 0, transform: 'translate(' + ((i - (prize - 1) / 2) * 62 - 28) + 'px,70px) scale(.3) rotateY(0)' }, { opacity: 1, transform: 'translate(' + ((i - (prize - 1) / 2) * 62 - 28) + 'px,-30px) scale(1.12) rotateY(360deg)', offset: .65 }, { opacity: 1, transform: 'translate(' + ((i - (prize - 1) / 2) * 62 - 28) + 'px,-18px) scale(1) rotateY(720deg)' }], { duration: 1000, delay: i * 200, easing: 'ease-out', fill: 'forwards' });
-      }
-      setTimeout(done, 1500);
-    }, reduce ? 0 : 260);
   }
   function openChest() {
     var st = chestInfo(), btn = document.getElementById('chestOpenBtn');
@@ -901,18 +878,15 @@
     var finish = function () {
       var at = Date.now();
       wallet.points = (wallet.points || 0) + prize; wallet.chestState = { n: st.n, amount: prize, at: at };
-      playChestOpen(prize, function () {
-        chestBusy = false; chestWin = 'You won ' + prize + (prize === 1 ? ' point!' : ' points!');
-        var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
-        var nx = chestInfo();
-        var m = document.getElementById('chestMsg');
-        if (m) m.textContent = nx.kind === 'wait' ? 'Added to your balance. Your next chest opens in ' + nx.waitDays + ' days.' : 'Added to your balance.';
-        tickChest();
-      });
+      chestBusy = false; chestWin = { n: '+' + prize };
+      var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
+      var nx = chestInfo(), m = document.getElementById('chestMsg');
+      if (m) m.textContent = nx.kind === 'wait' ? 'Your next bonus arrives in ' + nx.waitDays + ' days.' : 'Thank you for being a member.';
+      tickChest();
     };
     if (DEMO) { finish(); return; }
     var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey);
-    // claim first (the database only accepts the next chest, after the full wait, within the prize range), then add the points
+    // claim first (the database only accepts the next bonus, after the full wait, within the allowed range), then add the points
     fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
       .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }); })
       .then(function () { return fetch(DB + '/lvr_rewards/' + mk + '/points.json', { method: 'PUT', headers: H, body: JSON.stringify({ '.sv': { increment: prize } }) }); })
@@ -923,7 +897,7 @@
   (function () {
     var back = document.getElementById('soonBack');
     function open() { tickChest(); back.classList.add('open'); var c = document.getElementById('soonClose'); if (c) c.focus(); }
-    function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; var fx = document.getElementById('chestFx'); if (fx) fx.innerHTML = ''; tickChest(); }
+    function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; tickChest(); }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
       if (t && t.closest('#scrollBtn')) { document.getElementById('scrollPaper').innerHTML = scrollHtml(); document.getElementById('scrollBack').classList.add('open'); var sc = document.getElementById('scrollClose'); if (sc) sc.focus(); }
