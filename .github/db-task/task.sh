@@ -1,16 +1,14 @@
 #!/bin/bash
 # Fetch FOOD-only candidate photos (Public Domain / CC0, large, mostly professional Unsplash uploads on Wikimedia Commons).
-mkdir -p sites/key-technologies/img/food-candidates3
+mkdir -p sites/key-technologies/img/food-candidates4
 node <<'NODE'
 const fs = require('fs');
-const OUT = 'sites/key-technologies/img/food-candidates3';
+const OUT = 'sites/key-technologies/img/food-candidates4';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const UA = { headers: { 'User-Agent': 'KeyTechnologiesDemo/1.0 (contact via keytechnologies.si)' } };
 const TERMS = {
-  sushiroll2: ['maki rolls Unsplash', 'sushi platter Unsplash', 'california roll', 'sushi rolls plate'], nigiri: ['salmon nigiri Unsplash', 'nigiri sushi Unsplash'],
-  pepperoni: ['pepperoni pizza Unsplash', 'pepperoni pizza slice', 'cheese pizza slice'], margherita: ['margherita pizza', 'neapolitan pizza Unsplash', 'wood fired pizza'],
-  tacos2: ['street tacos Unsplash', 'tacos al pastor', 'fish tacos'], fajitas: ['fajitas Unsplash', 'carne asada', 'chicken burrito'], meatballs: ['spaghetti and meatballs', 'meatballs Unsplash'],
-  ravioli: ['ravioli Unsplash', 'ravioli'], gnocchi: ['gnocchi Unsplash'], burger2: ['smash burger', 'cheeseburger fries'], hotdog: ['hot dog Unsplash'], friedchicken: ['fried chicken Unsplash', 'chicken sandwich Unsplash']
+  sushiA: ['sushi Unsplash', 'sushi rolls Unsplash set', 'maki sushi Unsplash'], sushiB: ['salmon sushi Unsplash', 'nigiri Unsplash', 'sushi platter'], sushiC: ['uramaki', 'dragon roll', 'rainbow roll sushi', 'california rolls'],
+  carbonara: ['carbonara Unsplash', 'spaghetti bolognese Unsplash', 'spaghetti Unsplash'], parm: ['chicken parmesan', 'eggplant parmesan']
 };
 const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 120);
 (async () => {
@@ -33,9 +31,9 @@ const strip = s => String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').
     for (const c of cand) { try { await sleep(900); const r = await fetch(c.ii.thumburl, UA); if (!r.ok) continue; n++; const f = slug + '-' + n + '.jpg'; fs.writeFileSync(OUT + '/' + f, Buffer.from(await r.arrayBuffer())); credits[f] = { license: c.lic, author: c.artist, source: c.ii.descriptionurl, title: c.title }; } catch (e) {} }
     console.log(slug + ': ' + n + ' saved');
   }
-  fs.writeFileSync(OUT + '/credits5.json', JSON.stringify(credits, null, 1));
+  fs.writeFileSync(OUT + '/credits6.json', JSON.stringify(credits, null, 1));
 })();
 NODE
 git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
-git add sites/key-technologies/img/food-candidates3
-git commit -m "More food candidate photos, round two" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
+git add sites/key-technologies/img/food-candidates4
+git commit -m "Sushi and pasta candidate photos, round three" -q && git push -q origin HEAD:claude/master-file-e6ofy0 && echo "committed and pushed"
