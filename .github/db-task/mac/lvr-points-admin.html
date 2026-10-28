@@ -109,6 +109,7 @@
     <span class="tab" data-v="redemptions">Redemptions</span>
     <span class="tab" data-v="bonus">Bonus</span>
     <span class="tab" data-v="settings">Settings</span>
+    <span class="tab" data-v="cleanup" style="border-color:rgba(255,107,107,.6);color:#ff9a9a;">Clean up</span>
   </div>
   <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their point balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool handles receipts (approve = points land instantly), restaurants and your commission, what members can redeem, and who already has.</div>
   <div id="view"></div>
@@ -239,6 +240,63 @@
     });
   }
 
+  // ========================================================================
+  // CLEAN UP TAB (temporary) - delete test / fake members one at a time or in a batch.
+  // Deleting a member is permanent. It also frees their Instagram handle so it can sign up again.
+  // Remove this tab when you no longer need it.
+  // ========================================================================
+  var cleanupMembers = null;
+  function renderCleanupTab() {
+    view.innerHTML = '<div class="empty-note">Loading members…</div>';
+    fbGet(MEMBERS_PATH).then(function(m){
+      cleanupMembers = m || {};
+      drawCleanup('');
+    }).catch(function(){ view.innerHTML = '<div class="empty-note">Could not load members — check connection.</div>'; });
+  }
+  function drawCleanup(msg) {
+    var keys = Object.keys(cleanupMembers);
+    keys.sort(function(a, b){ return (cleanupMembers[b].joinedAt || 0) - (cleanupMembers[a].joinedAt || 0); });
+    view.innerHTML =
+      '<div class="form-box" style="border-color:rgba(255,107,107,.6);"><div style="font-weight:800;margin-bottom:6px;color:#ff9a9a;">Clean up test members (temporary)</div>' +
+      '<div class="row-sub" style="margin-bottom:10px;">Tick the people who are NOT real, then delete them. This is permanent: their account, points and personal link stop working, and their Instagram handle is freed. Real members are never touched unless you tick them. There are <b>' + keys.length + '</b> members.</div>' +
+      (msg ? '<div class="row-sub" style="color:var(--green);margin-bottom:8px;">' + escapeHtml(msg) + '</div>' : '') +
+      '<div id="cuList">' + (keys.length ? keys.map(function(k){
+        var r = cleanupMembers[k] || {};
+        return '<label class="row-card" style="display:flex;gap:12px;align-items:center;cursor:pointer;margin-bottom:8px;">' +
+          '<input type="checkbox" class="cuChk" data-k="' + escapeHtml(k) + '" style="width:22px;height:22px;flex:none;">' +
+          '<span style="min-width:0;"><span class="row-name" style="display:block;">' + escapeHtml(r.name || '(no name)') + '</span>' +
+          '<span class="row-sub" style="display:block;">' + escapeHtml(r.instagram ? String(r.instagram) : 'no Instagram') + ' · ' + escapeHtml(r.phone || r.email || 'no contact') + ' · ' + (r.points || 0) + ' points · joined ' + (r.joinedAt ? new Date(r.joinedAt).toLocaleDateString() : 'n/a') + (r.source ? ' · ' + escapeHtml(r.source) : '') + '</span></span></label>';
+      }).join('') : '<div class="empty-note">No members.</div>') + '</div>' +
+      '<div class="form-actions" id="cuActs"><button class="btn" id="cuAll">Tick everyone</button><button class="btn" id="cuNone">Untick all</button><button class="btn" id="cuDel" style="border-color:var(--red);color:var(--red);" disabled>Delete ticked (0)</button></div>' +
+      '<div id="cuConfirm"></div></div>';
+    var chks = function(){ return Array.prototype.slice.call(document.querySelectorAll('.cuChk')); };
+    var sel = function(){ return chks().filter(function(c){ return c.checked; }); };
+    function upd(){ var n = sel().length, b = document.getElementById('cuDel'); b.textContent = 'Delete ticked (' + n + ')'; b.disabled = n === 0; document.getElementById('cuConfirm').innerHTML = ''; }
+    chks().forEach(function(c){ c.addEventListener('change', upd); });
+    document.getElementById('cuAll').addEventListener('click', function(){ chks().forEach(function(c){ c.checked = true; }); upd(); });
+    document.getElementById('cuNone').addEventListener('click', function(){ chks().forEach(function(c){ c.checked = false; }); upd(); });
+    document.getElementById('cuDel').addEventListener('click', function(){
+      var n = sel().length; if (!n) return;
+      var box = document.getElementById('cuConfirm');
+      box.innerHTML = '<div class="row-card" style="border-color:var(--red);margin-top:12px;"><div style="font-weight:800;color:#ff9a9a;">Delete ' + n + ' member' + (n === 1 ? '' : 's') + ' permanently?</div><div class="row-sub" style="margin:6px 0 10px;">This cannot be undone.</div><div class="form-actions"><button class="btn" id="cuNo">No, go back</button><button class="btn" id="cuYes" style="border-color:var(--red);color:var(--red);">Yes, delete them</button></div></div>';
+      document.getElementById('cuNo').addEventListener('click', function(){ box.innerHTML = ''; });
+      document.getElementById('cuYes').addEventListener('click', function(){
+        var ks = sel().map(function(c){ return c.getAttribute('data-k'); });
+        document.getElementById('cuYes').disabled = true;
+        Promise.all(ks.map(function(k){
+          var r = cleanupMembers[k] || {};
+          var igKey = r.instagram ? String(r.instagram).toLowerCase().replace(/^@/, '').replace(/\./g, '_') : '';
+          return fbDelete(MEMBERS_PATH + '/' + encodeURIComponent(k)).then(function(res){
+            if (!res.ok) throw new Error('delete failed');
+            delete cleanupMembers[k];
+            return igKey ? fbDelete('/lvr_instagram_index/' + encodeURIComponent(igKey)).catch(function(){}) : null;
+          });
+        })).then(function(){ drawCleanup('Deleted ' + ks.length + '.'); })
+          .catch(function(){ showToast('Some could not be deleted. Reload and check.'); renderCleanupTab(); });
+      });
+    });
+  }
+
   function renderTab() {
     if (activeTab === 'receipts') renderReceiptsTab();
     else if (activeTab === 'restaurants') renderRestaurantsTab();
@@ -246,6 +304,7 @@
     else if (activeTab === 'audit') renderAuditTab();
     else if (activeTab === 'bonus') renderBonusTab();
     else if (activeTab === 'settings') renderSettingsTab();
+    else if (activeTab === 'cleanup') renderCleanupTab();
     else if (activeTab === 'catalog') renderCatalogTab();
     else renderRedemptionsTab();
   }
