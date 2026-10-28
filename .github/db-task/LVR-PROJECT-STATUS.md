@@ -1361,3 +1361,8 @@ top unless they tell you otherwise.*
 - Sign-up forms (KT and LVR) now require the "I'm in" game-rules checkbox; consent saved as consent_rules / consent_rules_ts.
 - Still waiting on Shane: run the Mac go-live command (rules + tools incl. chest, monthly return, agreement checkbox), then verify-live; enter Vanilla Rice credit before turning on the welcome bonus; attorney review of monthly return, random chest prizes, no-refund rule.
 - Monthly-return schedule file is on this branch only; GitHub runs scheduled jobs only from main, so put it on main only after attorney sign-off.
+
+## Member bonus is now a fixed cycle (2026-10-28)
+- Ready every 10 days (Settings > Member bonus > "Days between bonuses"), open for 48 hours ("Hours to claim it"). Not claimed in time = the 10-day wait starts over (worked out from the clock, nothing to write).
+- The database rules enforce the 48-hour window too (`chestState` rule uses the cycle modulo). Extra-days-each-time (`stepDays`) is gone. 140 rules checks pass.
+- Needs `go-live.sh` to put the new rules and the Settings screen live. Prizes stay OFF (max 0) until you set one.
