@@ -34,7 +34,7 @@
   *{box-sizing:border-box;}
   html{overflow-x:hidden;}
   body{
-    margin:0;background:var(--bg);color:var(--ink);min-height:100vh;
+    margin:0;background:radial-gradient(130% 55% at 50% 0%,#0f2038 0%,#0a1628 46%,#07111f 100%) fixed,var(--bg);color:var(--ink);min-height:100vh;
     font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
     font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
   }
@@ -59,8 +59,9 @@
 
   header{
     position:sticky;top:0;z-index:50;
-    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    background:#0d1d33;border-bottom:0;
   }
+  header::after{content:"";position:absolute;left:0;right:0;top:100%;height:18px;background:linear-gradient(180deg,#0d1d33,rgba(13,29,51,0));pointer-events:none;}
   .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;}
   .nav-cta{display:flex;align-items:center;gap:14px;}
 
@@ -161,6 +162,12 @@
   .soon-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
+  .top-panel{background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:22px;padding:6px 16px 4px;margin:0 0 30px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+  .top-panel .balance-card,.top-panel .month-card,.top-panel .demo-bar,.top-panel .earn-card{background:none;border:0;border-radius:0;box-shadow:none;margin:0;padding:18px 2px;}
+  .top-panel .balance-card{padding-top:16px;}
+  .top-panel .month-card,.top-panel .demo-bar,.top-panel .earn-card{border-top:1px solid rgba(255,255,255,.1);}
+  .top-panel .month-card.urgent{background:none;} .top-panel .month-card.urgent .mc-title{color:#ffb089;}
+  .top-panel .reward-tile{background:rgba(255,255,255,.05);}
   .balance-card.solo{grid-template-columns:minmax(0,1fr);}
   .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:center;}
   .balance-main{min-width:0;}
@@ -652,6 +659,7 @@
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
       welcomeHtml() +
+      '<div class="top-panel">' +
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
@@ -661,6 +669,7 @@
       monthBarHtml() +
       (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>' : '') +
       earnPanelHtml() +
+      '</div>' +
       '<h2>Redeem</h2>';
 
     if (!items.length) {
