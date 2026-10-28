@@ -154,9 +154,12 @@
   h2{font-size:16px;font-weight:700;margin:0 0 12px;}
   .items{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
   .item-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
-  .rest-group{margin:0 0 34px;}
-  .rest-group::after{content:"";display:block;height:3px;margin:40px 14% 0;border-radius:3px;background:linear-gradient(90deg,transparent,#f0a91a 30%,#ffd35c 50%,#f0a91a 70%,transparent);opacity:.8;}
-  .rest-photo{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;margin:0 0 14px;border:1px solid var(--line);}
+  .rest-group{margin:0 0 30px;padding:12px 12px 14px;background:#0e1f33;border:1.5px solid #2c4864;border-radius:22px;box-shadow:0 10px 24px rgba(0,0,0,.4);}
+  .rest-group.has-ready{border-color:rgba(240,169,26,.65);box-shadow:0 10px 24px rgba(0,0,0,.4),0 0 22px rgba(240,169,26,.18);}
+  .rest-group .rest-head{padding:0 4px;}
+  .rest-group .items{margin-bottom:0;}
+  .rest-group .item-card{background:rgba(255,255,255,.035);}
+  .rest-photo{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:14px;margin:0 0 14px;}
   .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
   .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:7px 13px;cursor:pointer;}
@@ -615,7 +618,7 @@
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
         var min = g.items[0].pointCost;
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
-        return '<div class="rest-group" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
+        return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
           (firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
