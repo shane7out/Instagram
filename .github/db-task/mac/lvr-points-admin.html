@@ -580,7 +580,7 @@
   function renderSettingsTab() {
     var c = refConfig();
     var welcome = welcomeCfg();
-    var chest = Object.assign({ waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 0, repeat: true }, settings.chest || {});
+    var chest = Object.assign({ waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 7, repeat: true }, settings.chest || {});
     if (settings.chest && settings.chest.prizeMax == null && settings.chest.bonus > 0) { chest.prizeMax = settings.chest.bonus; chest.prizeMin = settings.chest.bonus; chest.repeat = false; }
     var decay = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, settings.decay || {});
     var paused = settings.paused || {};

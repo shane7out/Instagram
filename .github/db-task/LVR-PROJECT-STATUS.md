@@ -1345,7 +1345,7 @@ top unless they tell you otherwise.*
 - Attorney list: monthly return of unused points (disclosure at sign-up, effect on welcome points, where the pool goes).
 - Tested: 124 rules/sweep checks pass on the runner.
 
-## Repeating treasure chest (built 2026-10-27, prizes OFF until you set a max above 0)
+## Repeating treasure chest (built 2026-10-27, prizes OFF until you set a max above 0 (Settings now pre-fills 1 to 7; saving Settings turns it on))
 - Settings > Treasure chest: days until first chest (default 14), extra days each time (5), smallest/biggest prize (1 and 2; max 0 = off), "Keep repeating".
 - Waits: 14, 19, 24, 29 ... days; each countdown starts when the member opens the previous chest.
 - Claim is written first to `lvr_rewards/<member>/chestState {n, amount, at}`; rules only accept the next number, after the full wait, with a prize inside your range. Every prize is also logged in `lvr_points/chest_log/<member>/<n>` (cannot be edited).
@@ -1366,3 +1366,4 @@ top unless they tell you otherwise.*
 - Ready every 10 days (Settings > Member bonus > "Days between bonuses"), open for 48 hours ("Hours to claim it"). Not claimed in time = the 10-day wait starts over (worked out from the clock, nothing to write).
 - The database rules enforce the 48-hour window too (`chestState` rule uses the cycle modulo). Extra-days-each-time (`stepDays`) is gone. 140 rules checks pass.
 - Needs `go-live.sh` to put the new rules and the Settings screen live. Prizes stay OFF (max 0) until you set one.
+- Prize range for now: a random whole number from 1 to 7 (each claim picks one).

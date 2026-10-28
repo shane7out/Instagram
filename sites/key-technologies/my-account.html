@@ -488,12 +488,12 @@
   }
   function scrollHtml() {
     var d = decayCfg(), c = chestCfg();
-    var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' or ' + c.prizeMax) : '';
+    var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : ' to ') + c.prizeMax) : '';
     var rules = [
       ['Eat out', 'Visit LVR partner restaurants, upload your receipt, and earn points on everything you pay for. A free offer you redeemed with points does not earn points. Go eat real food.'],
       ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
       ['The first of the month', 'On the 1st of every month, ' + d.percent + '% of your unused points go back to the community fund that keeps this game running for everyone. Use your points before the 1st and they are yours.' + (d.graceDays > 0 ? ' New players are safe for their first ' + d.graceDays + ' days.' : '')],
-      ['Your bonus', prize ? 'Every ' + c.waitDays + ' days a bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.' : 'A bonus for active members is coming soon.'],
+      ['Your bonus', prize ? 'Every ' + c.waitDays + ' days a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.' : 'A bonus for active members is coming soon.'],
       ['Fair play', 'Points have no cash value and cannot be sold or transferred. Points are used when you claim an offer and are never refunded. A code expires on the date shown.']
     ];
     var num = ['I', 'II', 'III', 'IV', 'V'];
@@ -649,7 +649,7 @@
   function startDemo() {
     wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
     wallet.chestState = DEMO_CHEST ? { n: 1, amount: 2, at: Date.now() - 10 * 86400000 - 6 * 3600000 } : { n: 1, amount: 2, at: Date.now() - 2 * 86400000 };
-    memberKey = null; appSettings = { chest: { waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 2, repeat: true } }; myReceipts = {}; directory = {};
+    memberKey = null; appSettings = { chest: { waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 7, repeat: true } }; myReceipts = {}; directory = {};
     render({}, {});
   }
 
@@ -887,7 +887,7 @@
       art = '<div class="bn-num">' + f.n + '</div><div class="bn-unit">' + f.u + ' to go</div>';
       msg = (st.missed ? 'The last bonus window closed, so the wait started over. ' : '') + 'Log in when the countdown ends and collect your bonus. You will have ' + st.c.claimHours + ' hours to claim it, or the ' + st.c.waitDays + '-day wait starts again.';
     } else if (st.kind === 'ready') {
-      var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' or ' + st.c.prizeMax;
+      var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + (st.c.prizeMax - st.c.prizeMin === 1 ? ' or ' : ' to ') + st.c.prizeMax;
       var cl = fmtLeft(st.ms);
       tile = '<span class="rw-lab">Bonus ready</span><span class="rw-go">Tap to collect</span><span class="rw-unit">closes in ' + cl.short + '</span>';
       art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div>';
