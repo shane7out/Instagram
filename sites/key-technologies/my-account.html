@@ -67,16 +67,20 @@
   .page-wrap{max-width:460px;margin:0 auto;padding:30px 16px 70px;}
 
   [hidden]{display:none!important;}
-  .tally{margin:10px 0 2px;font-size:14px;}
-  .tally .trow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;}
-  .tally .tleft{color:#3ddc84;}
-  .tally .tlow{color:#f0a91a;}
-  .tally .tout{color:#ff8a8a;}
-  .tally .texp{color:var(--ink-dim);font-weight:600;}
-  .tally .tbar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:7px;overflow:hidden;}
-  .tally .tbar i{display:block;height:100%;border-radius:99px;background:#3ddc84;}
-  .tally.low .tbar i{background:#f0a91a;} .tally.out .tbar i{background:#ff8a8a;}
-  .tally.unset{color:var(--ink-dim);font-style:italic;}
+  .tally{margin:12px 0 4px;font-size:15px;padding:12px 14px;border-radius:12px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.35);}
+  .tally .trow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .tally .tused{font-weight:700;color:var(--ink);} .tally .tused b{font-size:24px;color:#3ddc84;font-weight:800;font-variant-numeric:tabular-nums;}
+  .tally .tflag{font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:rgba(61,220,132,.16);color:#3ddc84;}
+  .tally .tbar{height:12px;border-radius:99px;background:rgba(255,255,255,.12);margin:9px 0 8px;overflow:hidden;}
+  .tally .tbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3ddc84,#2fb86c);}
+  .tally .texp{display:block;color:var(--ink-dim);font-weight:600;font-size:13.5px;} .tally .texp b{color:var(--ink);}
+  .tally.hot{background:rgba(240,169,26,.08);border-color:rgba(240,169,26,.55);} .tally.hot .tused b{color:#ffd35c;} .tally.hot .tflag{background:rgba(240,169,26,.2);color:#ffd35c;} .tally.hot .tbar i{background:linear-gradient(90deg,#ffd35c,#f0a91a);}
+  .tally.low{background:rgba(255,107,107,.09);border-color:rgba(255,107,107,.65);} .tally.low .tused b{color:#ff8a8a;} .tally.low .tflag{background:rgba(255,107,107,.2);color:#ff9a9a;} .tally.low .tbar i{background:linear-gradient(90deg,#ff9a6b,#ff5d5d);}
+  .tally.out{background:rgba(255,255,255,.04);border-color:var(--line);} .tally.out .tused b{color:#ff8a8a;} .tally.out .tflag{background:rgba(255,107,107,.2);color:#ff9a9a;} .tally.out .tbar i{background:#ff8a8a;}
+  .tally .texp.soon b{color:#ffb089;}
+  @media (prefers-reduced-motion:no-preference){.tally.low .tflag{animation:tflagPulse 1.4s ease-in-out infinite;}}
+  @keyframes tflagPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+  .tally.unset{color:var(--ink-dim);font-style:italic;background:transparent;border-style:dashed;}
   .tally .fine{display:none;}
   .fineprint{margin:4px 0 18px;font-size:12px;line-height:1.5;color:var(--ink-dim);}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f0a91a;}
@@ -525,44 +529,44 @@
     var soon = function (d) { return Date.now() + d * 86400000; };
     var rows = [
       ["r0", "Vanilla Rice's Hibachi House", "Free Chicken Bowl", 13, "teriyaki", 50, 38, 40, "plates"],
-      ["r1", "Poke Heaven", "Free Poke Bowl", 13, "pokebowl", 25, 12, 33, "plates"],
-      ["r2", "TT Terrace (The Tea Terrace)", "Free Scone & Cream", 7, "scones", 30, 22, 28, "sweet"],
-      ["r3", "Pizza Rock", "Free Personal Pizza", 12, "minipizza", 40, 26, 35, "pizza"],
-      ["r4", "Metro Pizza", "Free Personal Pizza", 12, "pizzac", 30, 9, 20, "pizza"],
-      ["r6", "Yellowtail Japanese Restaurant & Lounge", "Free Sashimi Plate", 16, "sushi3", 60, 41, 30, "sushi"],
-      ["r7", "Sushi Roku", "Free Sushi Plate", 14, "sushi", 30, 17, 30, "sushi"],
-      ["r8", "Kabuto Edomae Sushi", "Free Sushi Plate", 14, "sashimi2", 35, 30, 35, "sushi"],
-      ["r9", "Samurai Japanese Steakhouse & Sushi", "Free Gyoza Appetizer", 7, "gyoza", 20, 6, 25, "sushi"],
-      ["r10", "Gordon Ramsay Burger", "Free Burger", 13, "burger3", 50, 44, 30, "burgers"],
-      ["r11", "Burger Bar", "Free Burger", 14, "burger8", 25, 14, 29, "burgers"],
-      ["r13", "The Beach House", "Free Nachos", 11, "nachos", 30, 4, 22, "apps"],
-      ["r14", "The Irish Spot", "Free Loaded Fries", 8, "fries", 60, 36, 50, "apps"],
-      ["r15", "Peru Chicken", "Free Chicken Sandwich", 10, "chickensandwich", 25, 8, 26, "apps"],
-      ["r16", "AyAyAy! Mexican Cuisine", "Free Burrito", 11, "burrito", 35, 19, 31, "mexican"],
-      ["r17", "Panevino Italian Grille & Deli Caf\u00e9", "Free Panini", 10, "panini", 30, 3, 24, "italian"],
-      ["r18", "Smoking Pig BBQ Company", "Free Rib Plate", 15, "ribs", 40, 28, 42, "plates"],
-      ["r19", "Doanburi", "Free Rice Bowl", 13, "donburi", 25, 2, 19, "plates"],
-      ["r20", "Lotus of Siam", "Free Pad Thai", 12, "padthai", 50, 33, 27, "thai"],
-      ["r21", "Hash House A Go Go", "Free Egg & Toast Plate", 9, "eggs", 30, 15, 36, "sweet"],
-      ["r22", "Black Mountain Griddle", "Free Pancake Stack", 9, "pancakes", 60, 47, 44, "sweet"],
-      ["r23", "Aspire Coffee House", "Free Pastry", 6, "pastry", 25, 10, 32, "sweet"],
-      ["r24", "MilkCow", "Free Ice Cream", 6, "sundae", 35, 24, 40, "sweet"],
-      ["r25", "Grotto Ristorante", "Free Lasagna", 14, "lasagna", 40, 27, 34, "italian"],
-      ["r26", "Ferraro's Ristorante", "Free Lasagna", 15, "lasagna2", 30, 18, 41, "italian"],
-      ["r27", "Nora's Italian Cuisine", "Free Ravioli", 13, "ravioli", 35, 21, 28, "italian"],
-      ["r28", "Maggiano's Little Italy", "Free Chicken Parmesan", 14, "parm", 35, 24, 33, "italian"],
-      ["r29", "Carmine's", "Free Fried Calamari", 10, "calamari", 30, 12, 30, "italian"],
-      ["r30", "Settebello Pizzeria Napoletana", "Free Personal Pizza", 12, "pizza", 40, 29, 45, "pizza"],
-      ["r31", "Komol Thai Restaurant", "Free Tom Yum Soup", 11, "tomyum", 30, 17, 32, "thai"],
-      ["r32", "Archi's Thai Kitchen", "Free Red Curry", 13, "thaicurry", 35, 23, 37, "thai"],
+      ["r1", "Poke Heaven", "Free Poke Bowl", 13, "pokebowl", 25, 5, 12, "plates"],
+      ["r2", "TT Terrace (The Tea Terrace)", "Free Scone & Cream", 7, "scones", 30, 2, 5, "sweet"],
+      ["r3", "Pizza Rock", "Free Personal Pizza", 12, "minipizza", 40, 16, 21, "pizza"],
+      ["r4", "Metro Pizza", "Free Personal Pizza", 12, "pizzac", 30, 4, 8, "pizza"],
+      ["r6", "Yellowtail Japanese Restaurant & Lounge", "Free Sashimi Plate", 16, "sushi3", 60, 39, 40, "sushi"],
+      ["r7", "Sushi Roku", "Free Sushi Plate", 14, "sushi", 30, 2, 3, "sushi"],
+      ["r8", "Kabuto Edomae Sushi", "Free Sushi Plate", 14, "sashimi2", 35, 10, 26, "sushi"],
+      ["r9", "Samurai Japanese Steakhouse & Sushi", "Free Gyoza Appetizer", 7, "gyoza", 20, 11, 30, "sushi"],
+      ["r10", "Gordon Ramsay Burger", "Free Burger", 13, "burger3", 50, 10, 12, "burgers"],
+      ["r11", "Burger Bar", "Free Burger", 14, "burger8", 25, 2, 5, "burgers"],
+      ["r13", "The Beach House", "Free Nachos", 11, "nachos", 30, 12, 21, "apps"],
+      ["r14", "The Irish Spot", "Free Loaded Fries", 8, "fries", 60, 7, 8, "apps"],
+      ["r15", "Peru Chicken", "Free Chicken Sandwich", 10, "chickensandwich", 25, 16, 40, "apps"],
+      ["r16", "AyAyAy! Mexican Cuisine", "Free Burrito", 11, "burrito", 35, 2, 3, "mexican"],
+      ["r17", "Panevino Italian Grille & Deli Caf\u00e9", "Free Panini", 10, "panini", 30, 9, 26, "italian"],
+      ["r18", "Smoking Pig BBQ Company", "Free Rib Plate", 15, "ribs", 40, 22, 30, "plates"],
+      ["r19", "Doanburi", "Free Rice Bowl", 13, "donburi", 25, 5, 12, "plates"],
+      ["r20", "Lotus of Siam", "Free Pad Thai", 12, "padthai", 50, 3, 5, "thai"],
+      ["r21", "Hash House A Go Go", "Free Egg & Toast Plate", 9, "eggs", 30, 12, 21, "sweet"],
+      ["r22", "Black Mountain Griddle", "Free Pancake Stack", 9, "pancakes", 60, 7, 8, "sweet"],
+      ["r23", "Aspire Coffee House", "Free Pastry", 6, "pastry", 25, 16, 40, "sweet"],
+      ["r24", "MilkCow", "Free Ice Cream", 6, "sundae", 35, 2, 3, "sweet"],
+      ["r25", "Grotto Ristorante", "Free Lasagna", 14, "lasagna", 40, 12, 26, "italian"],
+      ["r26", "Ferraro's Ristorante", "Free Lasagna", 15, "lasagna2", 30, 16, 30, "italian"],
+      ["r27", "Nora's Italian Cuisine", "Free Ravioli", 13, "ravioli", 35, 7, 12, "italian"],
+      ["r28", "Maggiano's Little Italy", "Free Chicken Parmesan", 14, "parm", 35, 2, 5, "italian"],
+      ["r29", "Carmine's", "Free Fried Calamari", 10, "calamari", 30, 12, 21, "italian"],
+      ["r30", "Settebello Pizzeria Napoletana", "Free Personal Pizza", 12, "pizza", 40, 5, 8, "pizza"],
+      ["r31", "Komol Thai Restaurant", "Free Tom Yum Soup", 11, "tomyum", 30, 20, 40, "thai"],
+      ["r32", "Archi's Thai Kitchen", "Free Red Curry", 13, "thaicurry", 35, 2, 3, "thai"],
       ["r33", "Archi's Thai Cafe", "Free Thai Fried Rice", 12, "thaifried", 30, 9, 26, "thai"],
-      ["r34", "Archi's Thai Bistro", "Free Mango Sticky Rice", 7, "mangorice", 25, 14, 33, "thai"],
-      ["r35", "Tacos El Gordo", "Free Street Tacos", 9, "tacos2", 50, 31, 30, "mexican"],
-      ["r36", "Lindo Michoacán", "Free Enchilada Plate", 13, "enchiladas", 40, 25, 40, "mexican"],
-      ["r37", "Border Grill", "Free Chips & Guacamole", 7, "guac", 30, 16, 29, "mexican"],
-      ["r41", "Kura Revolving Sushi Bar", "Free Sushi Plate", 12, "sushi1", 40, 28, 33, "sushi"],
-      ["r42", "Sushi Neko", "Free Sushi Roll Plate", 11, "sushi2", 25, 13, 27, "sushi"],,
-      ["r99", "Gordon Ramsay Steak", "Free Steak Plate", 16, "steak", 30, 19, 34, "plates"]
+      ["r34", "Archi's Thai Bistro", "Free Mango Sticky Rice", 7, "mangorice", 25, 14, 30, "thai"],
+      ["r35", "Tacos El Gordo", "Free Street Tacos", 9, "tacos2", 50, 10, 12, "mexican"],
+      ["r36", "Lindo Michoacán", "Free Enchilada Plate", 13, "enchiladas", 40, 3, 5, "mexican"],
+      ["r37", "Border Grill", "Free Chips & Guacamole", 7, "guac", 30, 12, 21, "mexican"],
+      ["r41", "Kura Revolving Sushi Bar", "Free Sushi Plate", 12, "sushi1", 40, 5, 8, "sushi"],
+      ["r42", "Sushi Neko", "Free Sushi Roll Plate", 11, "sushi2", 25, 16, 40, "sushi"],,
+      ["r99", "Gordon Ramsay Steak", "Free Steak Plate", 16, "steak", 30, 2, 3, "plates"]
     ];
     return rows.map(function (r, i) {
       return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: '', cat: r[8], rank: i < 3 ? i : 99 };
@@ -778,9 +782,13 @@
   function tallyHtml(max, left, exp) {
     if (!(max > 0) || !exp) return '<div class="tally unset">Maximum and expiry date not set yet</div>';
     left = Math.max(0, Math.min(max, left));
-    var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
-    var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + escapeHtml(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    var used = max - left, pct = Math.round(100 * used / max);
+    var cls = left <= 0 ? ' out' : (left <= 3 ? ' low' : (pct >= 70 ? ' hot' : ''));
+    var flag = left <= 0 ? 'All claimed' : (left <= 3 ? 'Only ' + left + ' left!' : (pct >= 70 ? 'Going fast' : left + ' left'));
+    var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
+    var days = Math.ceil((t - Date.now()) / 86400000);
+    var endTxt = left <= 0 ? 'Was good until <b>' + escapeHtml(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + escapeHtml(fmtDay(exp)));
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------

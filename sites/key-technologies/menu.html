@@ -63,16 +63,20 @@
   .dish .desc{grid-column:1;color:var(--ink-dim);margin:0;max-width:48ch;min-width:0;}
   .dish .photo{grid-column:1 / -1;width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:10px;border:1px solid var(--line);}
   .dish .art img{display:block;width:100%;height:100%;object-fit:cover;}
-  .tally{margin:10px 0 2px;font-size:14px;}
-  .tally .trow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;}
-  .tally .tleft{color:var(--green);}
-  .tally .tlow{color:var(--gold);}
-  .tally .tout{color:#ff8a8a;}
-  .tally .texp{color:var(--ink-dim);font-weight:600;}
-  .tally .tbar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:7px;overflow:hidden;}
-  .tally .tbar i{display:block;height:100%;border-radius:99px;background:var(--green);}
-  .tally.low .tbar i{background:var(--gold);} .tally.out .tbar i{background:#ff8a8a;}
-  .tally.unset{color:var(--ink-dim);font-style:italic;}
+  .tally{margin:12px 0 4px;font-size:15px;padding:12px 14px;border-radius:12px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.35);}
+  .tally .trow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .tally .tused{font-weight:700;color:var(--ink);} .tally .tused b{font-size:24px;color:#3ddc84;font-weight:800;font-variant-numeric:tabular-nums;}
+  .tally .tflag{font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:rgba(61,220,132,.16);color:#3ddc84;}
+  .tally .tbar{height:12px;border-radius:99px;background:rgba(255,255,255,.12);margin:9px 0 8px;overflow:hidden;}
+  .tally .tbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3ddc84,#2fb86c);}
+  .tally .texp{display:block;color:var(--ink-dim);font-weight:600;font-size:13.5px;} .tally .texp b{color:var(--ink);}
+  .tally.hot{background:rgba(240,169,26,.08);border-color:rgba(240,169,26,.55);} .tally.hot .tused b{color:#ffd35c;} .tally.hot .tflag{background:rgba(240,169,26,.2);color:#ffd35c;} .tally.hot .tbar i{background:linear-gradient(90deg,#ffd35c,#f0a91a);}
+  .tally.low{background:rgba(255,107,107,.09);border-color:rgba(255,107,107,.65);} .tally.low .tused b{color:#ff8a8a;} .tally.low .tflag{background:rgba(255,107,107,.2);color:#ff9a9a;} .tally.low .tbar i{background:linear-gradient(90deg,#ff9a6b,#ff5d5d);}
+  .tally.out{background:rgba(255,255,255,.04);border-color:var(--line);} .tally.out .tused b{color:#ff8a8a;} .tally.out .tflag{background:rgba(255,107,107,.2);color:#ff9a9a;} .tally.out .tbar i{background:#ff8a8a;}
+  .tally .texp.soon b{color:#ffb089;}
+  @media (prefers-reduced-motion:no-preference){.tally.low .tflag{animation:tflagPulse 1.4s ease-in-out infinite;}}
+  @keyframes tflagPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+  .tally.unset{color:var(--ink-dim);font-style:italic;background:transparent;border-style:dashed;}
   .tally .fine{margin-top:8px;font-size:12px;line-height:1.45;color:var(--ink-dim);font-weight:500;}
   .credits{margin:34px 0 0;font-size:13px;color:var(--ink-dim);}
   .credits summary{cursor:pointer;font-weight:700;}
@@ -184,9 +188,13 @@
   function tallyHtml(max, left, exp) {
     if (!(max > 0) || !exp) return '<div class="tally unset">Maximum and expiry date not set yet</div>';
     left = Math.max(0, Math.min(max, left));
-    var cls = left <= 0 ? " out" : (left <= 3 ? " low" : "");
-    var txt = left <= 0 ? '<span class="tout">Sold out</span>' : (left <= 3 ? '<span class="tlow">Only ' + left + ' left</span>' : '<span class="tleft">' + left + ' of ' + max + ' left</span>');
-    return '<div class="tally' + cls + '"><div class="trow">' + txt + '<span class="texp">' + (left <= 0 ? "Was good until " : "Expires ") + esc(fmtDay(exp)) + '</span></div><div class="tbar"><i style="width:' + Math.round(100 * left / max) + '%"></i></div><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    var used = max - left, pct = Math.round(100 * used / max);
+    var cls = left <= 0 ? ' out' : (left <= 3 ? ' low' : (pct >= 70 ? ' hot' : ''));
+    var flag = left <= 0 ? 'All claimed' : (left <= 3 ? 'Only ' + left + ' left!' : (pct >= 70 ? 'Going fast' : left + ' left'));
+    var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
+    var days = Math.ceil((t - Date.now()) / 86400000);
+    var endTxt = left <= 0 ? 'Was good until <b>' + esc(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + esc(fmtDay(exp)));
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Each month, a set percent of unused points returns to the community fund. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
   var usedPhotos = {};
   function photo(key) { usedPhotos[key] = 1; return '<img src="img/food/' + key + '.jpg" alt="' + esc(PHOTO_ALT[key] || "Food") + '" loading="lazy" width="800" height="533">'; }
@@ -196,7 +204,7 @@
   }
 
   // Made-up availability for the sample offers, so the page shows low stock and sold out too: [max, left, expires]
-  var SAMPLE_TALLY = [[50,38,"2026-12-31"],[25,12,"2026-12-15"],[20,3,"2026-11-30"],[40,26,"2027-01-31"],[30,2,"2026-12-20"],[25,9,"2026-11-30"],[20,1,"2026-11-15"],[60,41,"2027-01-15"],[25,0,"2026-12-31"],[30,17,"2026-12-10"],[40,22,"2026-12-31"],[35,30,"2027-01-31"],[20,6,"2026-12-05"],[50,44,"2027-02-15"],[25,11,"2026-12-31"],[30,4,"2026-11-30"]];
+  var SAMPLE_TALLY = [[50,38,"2026-12-26"],[25,12,"2026-11-30"],[20,2,"2026-11-03"],[40,26,"2026-12-10"],[30,3,"2026-11-08"],[25,5,"2026-11-12"],[20,1,"2026-11-02"],[60,41,"2026-12-15"],[25,0,"2026-12-31"],[30,17,"2026-11-20"],[40,6,"2026-11-05"],[35,30,"2026-12-31"],[20,2,"2026-11-09"],[50,44,"2026-12-20"],[25,11,"2026-11-15"],[30,4,"2026-11-30"]];
   function sampleTally(i) { var t = SAMPLE_TALLY[i % SAMPLE_TALLY.length]; return tallyHtml(t[0], t[1], t[2]); }
   // Demo menu (fictional restaurants, generic food photos). Opened with menu.html?demo=1
   var DEMO = [
