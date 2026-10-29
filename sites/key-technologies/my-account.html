@@ -136,6 +136,7 @@
   .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
   .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
   .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
+  .fair-box summary{cursor:pointer;font-weight:700;color:var(--ink);list-style:none;} .fair-box summary::-webkit-details-marker{display:none;} .fair-box[open] summary{margin-bottom:6px;}
   .fair-box{font-size:13.5px;line-height:1.45;color:var(--ink-dim);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 12px;text-align:left;} .fair-box b{color:var(--ink);}
   .wheel-wrap{position:relative;width:244px;height:256px;margin:0 auto 6px;}
   .wheel-ptr{position:absolute;left:50%;top:0;transform:translateX(-50%);transform-origin:50% 4px;width:30px;height:38px;z-index:2;background:linear-gradient(180deg,#fff2b8,#ffd35c 45%,#d98f0a);clip-path:polygon(50% 100%,0 22%,18% 0,82% 0,100% 22%);filter:drop-shadow(0 3px 3px rgba(0,0,0,.6));}
@@ -160,7 +161,7 @@
   .cx-bit{position:absolute;left:0;top:0;margin:-6px 0 0 -6px;border-radius:50%;opacity:0;background:radial-gradient(circle at 35% 30%,#fff3b0 0,#ffd54a 45%,#d9930d 100%);border:2px solid #8a5a00;}
   .cx-coin{position:absolute;left:0;top:-40px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:22px;color:#3a2500;opacity:0;background:radial-gradient(circle at 35% 28%,#fff6c4 0,#ffd54a 42%,#e0a010 100%);border:3px solid #8a5a00;box-shadow:0 0 20px 4px rgba(255,211,92,.6);}
   .chest-big{font-size:26px;font-weight:800;color:var(--ink);margin:2px 0 14px;font-variant-numeric:tabular-nums;}
-  .mini-bal{position:fixed;left:0;right:0;top:57px;z-index:40;display:none;justify-content:center;background:rgba(10,22,38,.96);border-bottom:1px solid var(--line);padding:5px 0;}
+  .mini-bal{position:fixed;left:0;right:0;top:57px;z-index:40;display:none;justify-content:center;background:#0a1626;border-bottom:1px solid var(--line);padding:5px 0;}
   .mini-bal.show{display:flex;}
   .mini-bal span{font-weight:800;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.6);}
   .mini-bal small{font-weight:600;color:var(--ink-dim);font-size:13px;text-shadow:none;margin-left:4px;}
@@ -320,7 +321,7 @@
 
   .empty{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
   .footer-note{text-align:center;font-size:13px;color:var(--ink-dim);opacity:.85;margin-top:14px;}
-  .footer-note a{color:var(--ink-dim);text-decoration:underline;display:inline-block;padding:10px 4px;}
+  .footer-note a{color:var(--ink-dim);text-decoration:underline;position:relative;} .footer-note a::after{content:"";position:absolute;inset:-12px -6px;}
 
   #redeemOverlay{display:none;position:fixed;inset:0;background:rgba(7,17,31,.92);z-index:999;align-items:center;justify-content:center;padding:20px;}
   #redeemOverlay.show{display:flex;}
@@ -387,14 +388,14 @@
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
   .demo-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px;}
   .demo-ctl-tag{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:5px 11px;}
-  .demo-ctl button{font:inherit;font-weight:800;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:9px 13px;min-height:40px;cursor:pointer;}
+  .demo-ctl{gap:6px;} .demo-ctl button{font:inherit;font-weight:800;font-size:13px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:9px 11px;min-height:40px;cursor:pointer;}
   .demo-ctl button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
   #demoWatchRes{flex-basis:100%;font-size:14px;font-weight:700;color:#7be3a6;min-height:18px;}
   .own-tools{width:100%;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
   .own-tools button,.own-tools a{font:inherit;font-weight:800;font-size:14px;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border:0;border-radius:99px;padding:9px 14px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
   .own-tools a{background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--control-line,#4a6580);}
   .prac-tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:4px 12px;margin-bottom:10px;}
-  .pt-note{font-size:14px;line-height:1.45;color:var(--ink);background:rgba(255,211,92,.08);border:1px solid rgba(255,211,92,.4);border-radius:12px;padding:11px 13px;margin:0 0 16px;} .pt-note b{color:#ffd35c;}
+  .pt-note{font-size:13.5px;line-height:1.5;color:var(--ink-dim);background:rgba(255,211,92,.06);border:1px solid rgba(255,211,92,.22);border-left:4px solid #ffd35c;border-radius:12px;padding:11px 14px;margin:0 0 18px;} .pt-note b{color:#ffd35c;}
   .own-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 4px;}
   .own-foot button{font:inherit;font-weight:800;font-size:14.5px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:11px 18px;min-height:44px;cursor:pointer;}
   .own-foot button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
@@ -439,7 +440,7 @@
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
-      <div class="fair-box" id="fairBox" hidden><b>🔒 Fair and random.</b> The winning number is picked by a random number generator that is built into your phone's web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can't see it, choose it or change it. We have no control over it.</div>
+      <details class="fair-box" id="fairBox" hidden><summary>🔒 Fair and random · tap to see how</summary>The winning number is picked by a random number generator that is built into your phone's web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can't see it, choose it or change it. We have no control over it.</details>
       <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Spin the wheel</button>
       <button type="button" class="btn btn-ghost" id="demoSpinBtn" hidden style="margin-bottom:10px;">Preview the spin (demo only)</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
@@ -786,8 +787,8 @@
     var k = chestInfo().kind;
     return '<div class="demo-ctl"><span class="demo-ctl-tag">Demo</span>' +
       '<button type="button" data-dview="wait" aria-pressed="' + (k === 'wait') + '" class="' + (k === 'wait' ? 'on' : '') + '">Waiting</button>' +
-      '<button type="button" data-dview="ready" aria-pressed="' + (k === 'ready') + '" class="' + (k === 'ready' ? 'on' : '') + '">Ready to spin</button>' +
-      '<button type="button" id="demoWatch">▶ Watch the wheel spin</button>' +
+      '<button type="button" data-dview="ready" aria-pressed="' + (k === 'ready') + '" class="' + (k === 'ready' ? 'on' : '') + '">Ready</button>' +
+      '<button type="button" id="demoWatch">▶ Watch spin</button>' +
       '<div id="demoWatchRes" role="status"></div></div>';
   }
   var demoWatchBusy = false;
@@ -1442,7 +1443,7 @@
       tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Spin within</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to spin</span></span>';
       art = wheelHtml(st.c.prizeMin, st.c.prizeMax) + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:2px;font-weight:800;color:#ffd35c;">left to spin</div>';
       title = 'Spin for ' + amt + ' FREE points';
-      msg = 'You have ' + cl.long + ' left to spin. After that the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
+      msg = 'Spin before the clock runs out. After that the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
       fair = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
@@ -1466,6 +1467,7 @@
     chestBusy = true; btn.hidden = true;
     var wheel = document.getElementById('wheelRot'), mEl = document.getElementById('chestMsg');
     var cb = document.getElementById('soonClose'); if (cb) cb.hidden = true;
+    var fbx = document.getElementById('fairBox'); if (fbx) fbx.hidden = true;
     if (wheel) wheel.classList.add('wob');
     if (mEl) mEl.textContent = 'Spinning…';
     var finish = function () {
@@ -1902,7 +1904,7 @@
 <script>window.HNAV_HOME="index.html";</script>
 <!--HNAV-START-->
 <style id="hnav-css">
-  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:rgba(7,17,31,.86);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:none;}
+  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#07111f;pointer-events:none;}
   #hnav .hn-btn{pointer-events:auto;position:relative;width:26px;height:26px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#d6e6f7;display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
   #hnav .hn-btn::before{content:"";position:absolute;inset:-9px;}
   #hnav .hn-btn:hover{background:rgba(89,181,255,.22);border-color:#59b5ff;color:#fff;}
