@@ -394,6 +394,7 @@
   .own-tools button,.own-tools a{font:inherit;font-weight:800;font-size:14px;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border:0;border-radius:99px;padding:9px 14px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
   .own-tools a{background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--control-line,#4a6580);}
   .prac-tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:4px 12px;margin-bottom:10px;}
+  .pt-note{font-size:14px;line-height:1.45;color:var(--ink);background:rgba(255,211,92,.08);border:1px solid rgba(255,211,92,.4);border-radius:12px;padding:11px 13px;margin:0 0 16px;} .pt-note b{color:#ffd35c;}
   .own-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 4px;}
   .own-foot button{font:inherit;font-weight:800;font-size:14.5px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:11px 18px;min-height:44px;cursor:pointer;}
   .own-foot button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
@@ -563,10 +564,10 @@
     var rules = [
       ['Free to join, free to use', free],
       ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed with points does not count toward your spend.'],
-      ['Use your points', 'Trade points for free items at participating restaurants. Try a restaurant you have not been to yet.'],
+      ['Use your points', '1 point = $1 toward a free offer at a participating restaurant. That is the only thing points can be used for. Try a restaurant you have not been to yet.'],
       ['Spin for free points', prize ? 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
-      ['Fair play', 'Points have no cash value, cannot be sold, and are never refunded once used. A code expires on the date shown.']
+      ['Fair play', 'Points can only be used for free offers at participating restaurants. They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown.']
     ];
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
@@ -598,6 +599,7 @@
     var b = document.createElement('div'); b.className = 'own-back';
     b.innerHTML = '<div class="own-box" role="dialog" aria-modal="true">' + html + '</div>';
     document.body.appendChild(b);
+    (function () { var box = b.firstChild, h = box.querySelector('h3'); if (h) { h.id = h.id || ('dlgT' + Math.floor(Math.random() * 1e9)); box.setAttribute('aria-labelledby', h.id); } else { box.setAttribute('aria-label', 'Dialog'); } })();
     var opener = document.activeElement;
     var api = { el: b, close: function () { if (b.parentNode) { b.parentNode.removeChild(b); try { if (opener && opener.focus && document.body.contains(opener)) opener.focus(); } catch (e) {} } } };
     b.addEventListener('click', function (e) { if (e.target === b) api.close(); });
@@ -876,7 +878,8 @@
     var qa = [
       ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
       ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed does not count toward your spend.'],
-      ['What can I do with my points?', 'Trade them for free food at participating restaurants. It is one of each offer per person.'],
+      ['What is a point worth?', '1 point = $1 toward a free offer at a participating restaurant.'],
+      ['What can I do with my points?', 'Trade them for free food at participating restaurants. That is the only thing points can be used for. They cannot be used for anything else or exchanged for cash. It is one of each offer per person.'],
       ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
       ['Can I give my free offer to a friend?', 'Yes, to one friend. Points themselves cannot be sold or transferred.'],
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
@@ -1144,6 +1147,7 @@
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       '</div>' +
+      '<div class="pt-note"><b>1 point = $1</b> toward a free offer at a participating restaurant. Points can only be used for those offers. They cannot be used for anything else or exchanged for cash.</div>' +
       '<h2>Redeem</h2>';
 
     if (!items.length) {
@@ -1196,7 +1200,7 @@
               (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
             '</div>';
           }).join('') + '</div>' + contactHtml(first.contact, g.name) + '</div>';
-      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
+      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Points cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
     }
 
     var mine = [];
@@ -1332,7 +1336,7 @@
     var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
     var days = Math.ceil((t - Date.now()) / 86400000);
     var endTxt = left <= 0 ? 'Was good until <b>' + escapeHtml(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + escapeHtml(fmtDay(exp)));
-    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Points cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------
