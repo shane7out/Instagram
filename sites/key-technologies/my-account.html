@@ -792,6 +792,14 @@
     }).length;
   }
 
+  // Find the address / phone / Instagram on file for a restaurant, by its name or its web-address slug.
+  function normName(x) { return String(x || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function lookupContact(name, slug) {
+    if (CONTACT[name]) return CONTACT[name];
+    var nn = normName(name), ns = normName(slug), keys = Object.keys(CONTACT), hits = [];
+    keys.forEach(function (k) { var nk = normName(k); if (nk === nn || (ns.length >= 5 && nk.indexOf(ns) === 0)) hits.push(k); });
+    return hits.length === 1 ? CONTACT[hits[0]] : null;
+  }
   function flattenCatalog(catalog, allRedemptions) {
     var items = [];
     Object.keys(catalog).forEach(function(slug){
@@ -805,7 +813,8 @@
         if (typeof cr === 'number' && cr < item.pointCost) return;
         var redeemed = redemptionCount(allRedemptions, slug, itemId);
         if (item.maxRedemptions && redeemed >= item.maxRedemptions) return;
-        items.push(Object.assign({ slug: slug, itemId: itemId, _redeemedCount: redeemed }, item));
+        var dn = (directory[slug] && directory[slug].bizName) || '';
+        items.push(Object.assign({ slug: slug, itemId: itemId, _redeemedCount: redeemed, bizName: dn || slug, contact: lookupContact(dn || item.bizName || slug, slug) }, item));
       });
     });
     return items;
