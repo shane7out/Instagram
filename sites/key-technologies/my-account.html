@@ -146,7 +146,7 @@
   .wheel-wrap.mini .wheel-ptr{width:16px;height:21px;transform-origin:50% 2px;}
   .wheel-wrap.mini .wheel-rot{left:4px;top:11px;width:96px;height:96px;box-shadow:0 3px 10px rgba(0,0,0,.5),0 0 14px rgba(240,169,26,.3);}
   .wheel-wrap.mini .wheel-rot .bulb{display:none;}
-  @media (prefers-reduced-motion:no-preference){.wheel-wrap.idle .wheel-rot{animation:idleSpin 28s linear infinite;} .reward-tile.ready .wheel-wrap.idle .wheel-rot{animation-duration:9s;} .wheel-wrap.idle .wheel-ptr{animation:ptrIdle 2.4s ease-in-out infinite;}}
+  @media (prefers-reduced-motion:no-preference){.wheel-wrap.idle .wheel-rot{animation:idleSpin 9s linear infinite;} .reward-tile.ready .wheel-wrap.idle .wheel-rot{animation-duration:3.2s;} .wheel-wrap.idle .wheel-ptr{animation:ptrIdle 2.4s ease-in-out infinite;}}
   @keyframes idleSpin{to{transform:rotate(360deg);}}
   @keyframes ptrIdle{0%,100%{transform:translateX(-50%) rotate(0);}50%{transform:translateX(-50%) rotate(-5deg);}}
   .wheel-rot.wob{animation:wheelWob .35s ease-in-out infinite alternate;}
@@ -385,6 +385,11 @@
   .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
   .own-box p{margin:0 0 16px;color:#c3d2e3;}
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
+  .demo-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px;}
+  .demo-ctl-tag{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:5px 11px;}
+  .demo-ctl button{font:inherit;font-weight:800;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:9px 13px;min-height:40px;cursor:pointer;}
+  .demo-ctl button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
+  #demoWatchRes{flex-basis:100%;font-size:14px;font-weight:700;color:#7be3a6;min-height:18px;}
   .own-tools{width:100%;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
   .own-tools button,.own-tools a{font:inherit;font-weight:800;font-size:14px;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border:0;border-radius:99px;padding:9px 14px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
   .own-tools a{background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--control-line,#4a6580);}
@@ -774,6 +779,40 @@
   })();
 
   // ---------- Reward Points menu (top right) ----------
+  // Demo-only controls so the two bonus states and a real spin can be shown on demand
+  function demoCtlHtml() {
+    var k = chestInfo().kind;
+    return '<div class="demo-ctl"><span class="demo-ctl-tag">Demo</span>' +
+      '<button type="button" data-dview="wait" aria-pressed="' + (k === 'wait') + '" class="' + (k === 'wait' ? 'on' : '') + '">Waiting</button>' +
+      '<button type="button" data-dview="ready" aria-pressed="' + (k === 'ready') + '" class="' + (k === 'ready' ? 'on' : '') + '">Ready to spin</button>' +
+      '<button type="button" id="demoWatch">▶ Watch the wheel spin</button>' +
+      '<div id="demoWatchRes" role="status"></div></div>';
+  }
+  var demoWatchBusy = false;
+  function demoWatchSpin() {
+    var w = document.getElementById('tileWheel'), res = document.getElementById('demoWatchRes'); if (!w || demoWatchBusy) return;
+    var c = chestCfg(), N = c.prizeMax - c.prizeMin + 1, prize = c.prizeMin + secureInt(N), seg = 360 / N;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, wrap = w.parentNode;
+    var show = function () { if (res) res.textContent = 'Landed on ' + prize + ' → +' + prize + ' FREE points (demo, nothing saved)'; };
+    if (reduce) { show(); return; }
+    demoWatchBusy = true; if (res) res.textContent = '';
+    wrap.classList.remove('idle'); wrap.classList.add('go'); w.style.animation = 'none'; w.style.transition = 'none'; w.style.transform = 'rotate(0deg)'; void w.offsetWidth;
+    w.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
+    w.style.transform = 'rotate(' + (360 * 6 - (prize - c.prizeMin + 0.5) * seg + (secureInt(70) / 100 - 0.35) * seg) + 'deg)';
+    setTimeout(function () {
+      wrap.classList.remove('go'); show();
+      setTimeout(function () { w.style.transition = 'none'; w.style.transform = ''; w.style.animation = ''; wrap.classList.add('idle'); demoWatchBusy = false; }, 3500);
+    }, 5300);
+  }
+  document.addEventListener('click', function (e) {
+    var v = e.target.closest && e.target.closest('[data-dview]');
+    if (v && DEMO) {
+      if (v.getAttribute('data-dview') === 'ready') { var c0 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c0.waitDays * 86400000 - 6 * 3600000 }; }
+      else { delete wallet.chestState; wallet.joinedAt = Date.now() - 17 * 60000; }
+      ownRerender(); return;
+    }
+    if (e.target.closest && e.target.closest('#demoWatch') && DEMO) demoWatchSpin();
+  });
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
 
   // ---------- Prize ladder (shown only when the owner switches it on; always on in the preview) ----------
@@ -1077,7 +1116,7 @@
     applyFilters();
   });
   function startDemo() {
-    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 17 * 60000 };
+    wallet = { name: 'Lisa Walker', instagram: '@lisawalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 17 * 60000 };
     // default demo = a brand-new member (full wait ahead); ?chest shows the "ready to collect" state
     if (DEMO_CHEST) wallet.chestState = { n: 1, amount: 2, at: Date.now() - 7 * 86400000 - 6 * 3600000 };
     memberKey = null; appSettings = { chest: { waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10, repeat: true } }; myReceipts = {}; directory = {};
@@ -1094,6 +1133,7 @@
     var html =
       (OWNER ? ownerBarHtml(removedNames) + (DEMO ? demoBarHtml() : '') : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
+      (DEMO ? demoCtlHtml() : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="top-panel">' +
@@ -1199,6 +1239,7 @@
     html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a></div>';
 
     earnPanelHtml();
+    lastTileKey = '';
     contentEl.innerHTML = html + earnParts.modal;
     applyFilters();
     syncOwnerFoot();
