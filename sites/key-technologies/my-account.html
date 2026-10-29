@@ -135,6 +135,12 @@
   .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
   .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
   .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
+  .wheel-wrap{position:relative;width:224px;height:236px;margin:0 auto 6px;}
+  .wheel-ptr{position:absolute;left:50%;top:0;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:24px solid #ffd35c;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55));z-index:2;}
+  .wheel-rot{position:absolute;left:6px;top:14px;width:212px;height:212px;border-radius:50%;box-shadow:0 0 0 4px #ffd35c,0 0 22px rgba(240,169,26,.45);}
+  .wheel-rot.wob{animation:wheelWob .35s ease-in-out infinite alternate;}
+  @keyframes wheelWob{from{transform:rotate(-3deg);}to{transform:rotate(3deg);}}
+  .wheel-rot svg{display:block;width:100%;height:100%;}
   @keyframes bnPop{from{transform:scale(.6);opacity:0;}to{transform:none;opacity:1;}}
   .chest-stage{position:relative;display:inline-block;}
   .chest-fx{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;overflow:visible;z-index:3;}
@@ -411,7 +417,7 @@
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg">Your bonus is almost ready. Come back and check this spot soon.</p>
-      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Collect my bonus</button>
+      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Spin the wheel</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
   </div>
@@ -530,12 +536,12 @@
   function rulesHtml() {
     var c = chestCfg(), w = welcomeCfg();
     var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : ' to ') + c.prizeMax) : '';
-    var free = 'Reward Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points when you sign up' + (prize ? ', plus a free bonus every ' + hrs(c.waitDays) + ' hours' : '') + '. ' : (prize ? 'You get a free bonus every ' + hrs(c.waitDays) + ' hours. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
+    var free = 'Reward Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points when you sign up' + (prize ? ', plus a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + hrs(c.waitDays) + ' hours. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
     var rules = [
       ['Free to join, free to use', free],
       ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed with points does not count toward your spend.'],
       ['Use your points', 'Trade points for free items at participating restaurants. Try a restaurant you have not been to yet.'],
-      ['Collect your bonus', prize ? 'Every ' + hrs(c.waitDays) + ' hours a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + hrs(c.waitDays) + '-hour wait.' : 'A bonus for active members is coming soon.'],
+      ['Spin for free points', prize ? 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and nobody can change it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
       ['Fair play', 'Points have no cash value, cannot be sold, and are never refunded once used. A code expires on the date shown.']
     ];
@@ -775,7 +781,7 @@
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
     var qa = [
-      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
+      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
       ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed does not count toward your spend.'],
       ['What can I do with my points?', 'Trade them for free food at participating restaurants. It is one of each offer per person.'],
       ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
@@ -784,7 +790,7 @@
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
-    if (prize) qa.push(['What is the bonus?', 'Every ' + hrs(c.waitDays) + ' hours a random bonus of ' + prize + ' points is ready for you. Open the bonus tile at the top and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + hrs(c.waitDays) + '-hour wait.']);
+    if (prize) qa.push(['What is the bonus spin?', 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free points. The number is random and nobody can change it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.']);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
   }
@@ -799,7 +805,7 @@
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
 
     return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl.</p></div></div>' +
-      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Bonus points</b><p>Every ' + hrs(c.waitDays) + ' hours, collect a random ' + prize + ' bonus points. You have ' + c.claimHours + ' hours to claim it.</p></div></div>' : '') +
+      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Free bonus spin</b><p>Every ' + hrs(c.waitDays) + ' hours, spin the wheel for ' + prize + ' free points. You have ' + c.claimHours + ' hours to spin it.</p></div></div>' : '') +
       '<div class="prz-row"><span class="ic" aria-hidden="true">➕</span><div><b>More offers coming</b><p>New offers are added as more restaurants join. Check the Redeem list.</p></div></div></div>';
   }
   function contactUsHtml() {
@@ -1262,6 +1268,25 @@
   }
   var chestBusy = false, chestWin = '';
   function hrs(d) { return Math.round(d * 24); }
+  function secureInt(n) {
+    // unbiased random whole number from 0 to n-1, from the browser's secure random source
+    var c = window.crypto || window.msCrypto;
+    if (!c || !c.getRandomValues) return Math.floor(Math.random() * n);
+    var lim = Math.floor(4294967296 / n) * n, a = new Uint32Array(1);
+    do { c.getRandomValues(a); } while (a[0] >= lim);
+    return a[0] % n;
+  }
+  function wheelHtml(min, max) {
+    var N = max - min + 1, seg = 360 / N, R = 106, cols = ['#ffd35c', '#1b6fd1', '#e8a317', '#0f4c91'], tx = ['#3a2200', '#ffffff', '#3a2200', '#ffffff'], out = '';
+    function pt(a) { var r = (a - 90) * Math.PI / 180; return [(R + R * Math.cos(r)).toFixed(2), (R + R * Math.sin(r)).toFixed(2)]; }
+    for (var i = 0; i < N; i++) {
+      var a0 = i * seg, a1 = (i + 1) * seg, p0 = pt(a0), p1 = pt(a1), k = i % 2 + (i === N - 1 && N % 2 ? 2 : 0), c = a0 + seg / 2;
+      out += '<path d="M' + R + ',' + R + ' L' + p0[0] + ',' + p0[1] + ' A' + R + ',' + R + ' 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + p1[0] + ',' + p1[1] + ' Z" fill="' + cols[k] + '" stroke="#0b1b30" stroke-width="1.5"/>';
+      if (N <= 20) out += '<text x="' + R + '" y="' + (R - R * 0.74) + '" transform="rotate(' + c + ' ' + R + ' ' + R + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (N > 12 ? 13 : 20) + '" font-weight="800" fill="' + tx[k] + '">' + (min + i) + '</text>';
+    }
+    out += '<circle cx="' + R + '" cy="' + R + '" r="17" fill="#0b1b30" stroke="#ffd35c" stroke-width="3"/><text x="' + R + '" y="' + R + '" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="800" fill="#ffd35c">SPIN</text>';
+    return '<div class="wheel-wrap"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="wheelRot" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * R) + ' ' + (2 * R) + '" aria-hidden="true">' + out + '</svg></div></div>';
+  }
   function clockParts(ms) {
     var t = Math.max(0, Math.ceil(ms / 1000));
     return [Math.floor(t / 86400), Math.floor(t % 86400 / 3600), Math.floor(t % 3600 / 60), t % 60];
@@ -1292,25 +1317,28 @@
   setInterval(tickClocks, 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) tickClocks(); });
   function tickChest() {
-    var st = chestInfo(), tile = '', art = '', big = '', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
+    var st = chestInfo(), tile = '', art = '', big = '', title = 'Your free bonus spin', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
     if (st.kind === 'wait') {
       var range = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' to ' + st.c.prizeMax;
-      tile = '<span class="rw-lab">🎁 Bonus in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">Win ' + range + ' points</span></span>';
-      art = clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your bonus</div>';
-      msg = (st.missed ? 'The last bonus window closed, so the wait started over. ' : '') + 'Come back when the countdown ends and collect your bonus. You will have ' + st.c.claimHours + ' hours to claim it, or the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
+      tile = '<span class="rw-lab">🎁 Free spin in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">' + range + ' FREE points</span></span>';
+      art = clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your free bonus spin</div>';
+      title = 'Your free bonus spin';
+      msg = (st.missed ? 'The last spin window closed, so the wait started over. ' : '') + 'When the countdown ends, a wheel appears. Spin it to win ' + range + ' free points. The number is random and nobody can change it. You will have ' + st.c.claimHours + ' hours to spin, or the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
     } else if (st.kind === 'ready') {
       var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + (st.c.prizeMax - st.c.prizeMin === 1 ? ' or ' : ' to ') + st.c.prizeMax;
       var cl = fmtLeft(st.ms);
-      tile = '<span class="rw-lab">🎁 Collect in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to collect</span></span>';
-      art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div><div class="bn-unit" style="margin-top:8px;font-weight:800;color:#ffd35c;">' + cl.long + ' left to collect</div>';
-      msg = 'Your bonus is ready. Tap below to add ' + amt + ' points to your balance. You have ' + cl.long + ' left to collect it, or it goes back to a ' + hrs(st.c.waitDays) + '-hour wait.'; canOpen = true;
+      tile = '<span class="rw-lab">🎁 Spin within</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to spin</span></span>';
+      art = wheelHtml(st.c.prizeMin, st.c.prizeMax) + '<div class="bn-unit" style="margin-top:2px;font-weight:800;color:#ffd35c;">' + cl.long + ' left to spin</div>';
+      title = 'Spin for ' + amt + ' FREE points';
+      msg = 'The wheel picks a random number and nobody can change it. You have ' + cl.long + ' left to spin. After that the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
-    if (chestWin) { art = '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">added to your balance</div>'; canOpen = false; }
+    if (chestWin) { art = '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">FREE points added to your balance</div>'; title = 'You won!'; canOpen = false; }
     var btn = document.getElementById('giftBtn');
-    if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your bonus is ready. Tap to collect.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
+    if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your free bonus spin is ready. Tap to spin.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
     var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
-    var a = document.getElementById('chestModalArt'); if (a && art) a.innerHTML = art;
+    var a = document.getElementById('chestModalArt'); if (a && art && !chestBusy) a.innerHTML = art;
+    var tt = document.getElementById('soonTitle'); if (tt && !chestBusy) tt.textContent = title;
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
     var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
@@ -1318,25 +1346,40 @@
   function openChest() {
     var st = chestInfo(), btn = document.getElementById('chestOpenBtn');
     if (st.kind !== 'ready' || chestBusy || (!memberKey && !DEMO)) return;
-    var prize = st.c.prizeMin + Math.floor(Math.random() * (st.c.prizeMax - st.c.prizeMin + 1));
+    // the number is drawn from the browser's secure random source; the owner has no say in it
+    var prize = st.c.prizeMin + secureInt(st.c.prizeMax - st.c.prizeMin + 1);
     chestBusy = true; btn.hidden = true;
+    var wheel = document.getElementById('wheelRot'), mEl = document.getElementById('chestMsg');
+    if (wheel) wheel.classList.add('wob');
+    if (mEl) mEl.textContent = 'Spinning…';
     var finish = function () {
       var at = Date.now();
       wallet.points = (wallet.points || 0) + prize; wallet.chestState = { n: st.n, amount: prize, at: at };
       chestBusy = false; chestWin = { n: '+' + prize };
       var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
       var nx = chestInfo(), m = document.getElementById('chestMsg');
-      if (m) m.textContent = nx.kind === 'wait' ? 'Your next bonus arrives in ' + hrs(nx.waitDays) + ' hours.' : 'Thank you for being a member.';
+      if (m) m.textContent = nx.kind === 'wait' ? 'Your next free bonus spin arrives in ' + hrs(nx.waitDays) + ' hours.' : 'Thank you for being a member.';
       tickChest();
     };
-    if (DEMO) { finish(); return; }
+    var spin = function () {
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wheel || reduce) { finish(); return; }
+      var N = st.c.prizeMax - st.c.prizeMin + 1, seg = 360 / N, center = (prize - st.c.prizeMin + 0.5) * seg;
+      var jitter = (secureInt(70) / 100 - 0.35) * seg, deg = 360 * 6 - center + jitter;
+      wheel.classList.remove('wob');
+      wheel.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
+      void wheel.offsetWidth;
+      wheel.style.transform = 'rotate(' + deg + 'deg)';
+      setTimeout(finish, 5400);
+    };
+    if (DEMO) { setTimeout(spin, 500); return; }
     var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey);
-    // claim first (the database only accepts the next bonus, after the full wait, within the allowed range), then add the points
+    // claim first (the database only accepts the next spin, after the full wait and inside the claim window, within the allowed range), then add the points, then spin the wheel to the number
     fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
       .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }); })
       .then(function () { return fetch(DB + '/lvr_rewards/' + mk + '/points.json', { method: 'PUT', headers: H, body: JSON.stringify({ '.sv': { increment: prize } }) }); })
-      .then(function (r) { if (!r.ok) throw new Error('points'); finish(); })
-      .catch(function () { chestBusy = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest(); });
+      .then(function (r) { if (!r.ok) throw new Error('points'); spin(); })
+      .catch(function () { chestBusy = false; if (wheel) wheel.classList.remove('wob'); document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest(); });
   }
   setInterval(tickChest, 30000);
   (function () {
