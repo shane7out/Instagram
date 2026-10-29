@@ -1413,3 +1413,7 @@ top unless they tell you otherwise.*
 ## Rules popup + Key Tech shortcuts (2026-10-29)
 - The parchment scroll is gone. LVR Points > How LVR Points Work is now a clean numbered card (Eat out / Spend your points / Collect your bonus / Fair play + the example).
 - **Key Tech shortcuts:** (1) the dashboard's PIN-screen **Key** pill (it pointed at the old demo link) now opens the Key Tech room and is labeled "Key Tech" (patch-key-pill-to-room.js, marker KEYPILL03, run by deploy-key-room.sh; harmless if the pill is not found). (2) In Owner mode on the customer pages, tapping the Key Technologies name at the top opens the Key Tech room instead of the public site.
+
+## Back / Forward arrows (2026-10-29)
+- Slim glass bar with two tiny arrows pinned top-left on the customer pages (my-account, menu, rewards) and every owner tool (Key room, Leads, CRM, Advertisers, Coupons admin, Points admin, Invoices, Restaurant portal, Rewards, Coupon, Wallet). Back goes to the previous page (or to the Key Tech room when a tool was opened in a fresh tab); Forward lights up only when there is a page to go forward to (Chromium; other browsers keep it on). Key room cards now open in the same tab so Back always returns to the room. Inside a preview frame the arrows show but are switched off.
+- Source: `.github/db-task/nav/hnav.snippet.html`; re-apply to all pages with `python3 .github/db-task/nav/apply-hnav.py` (safe to re-run). Not added to the public marketing pages or the main dashboard (live file patched by scripts).

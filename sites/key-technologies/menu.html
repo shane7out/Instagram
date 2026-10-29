@@ -544,5 +544,49 @@
   });
 })();
 </script>
+<script>window.HNAV_HOME="index.html";</script>
+<!--HNAV-START-->
+<style id="hnav-css">
+  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:rgba(7,17,31,.86);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:none;}
+  #hnav .hn-btn{pointer-events:auto;position:relative;width:26px;height:26px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#d6e6f7;display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
+  #hnav .hn-btn::before{content:"";position:absolute;inset:-9px;}
+  #hnav .hn-btn:hover{background:rgba(89,181,255,.22);border-color:#59b5ff;color:#fff;}
+  #hnav .hn-btn:active{transform:scale(.92);}
+  #hnav .hn-btn:focus-visible{outline:2px solid #59b5ff;outline-offset:2px;}
+  #hnav .hn-btn:disabled{opacity:.3;cursor:default;pointer-events:none;}
+  #hnav svg{display:block;}
+  body.hnav-on{padding-top:34px !important;}
+  body.hnav-on header{top:34px !important;}
+  body.hnav-on .vname{top:34px !important;}
+  body.hnav-on .mini-bal{top:91px !important;}
+  body.hnav-on .mobile-menu{inset:90px 0 0 0 !important;}
+  @media print{#hnav{display:none !important;} body.hnav-on{padding-top:0 !important;}}
+</style>
+<script>
+(function () {
+  // Slim Back / Forward arrows pinned to the top-left of the page. Inside a preview frame they are shown
+  // but switched off (going "back" there would move the page that contains the preview).
+  var framed = false; try { framed = window.top !== window.self; } catch (e) { framed = true; }
+  if (document.getElementById('hnav')) return;
+  var HOME = window.HNAV_HOME || '';
+  function arrow(d) { return '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; }
+  function mk(label, d) { var b = document.createElement('button'); b.type = 'button'; b.className = 'hn-btn'; b.setAttribute('aria-label', label); b.title = label; b.innerHTML = arrow(d); return b; }
+  var bar = document.createElement('div'); bar.id = 'hnav'; bar.setAttribute('role', 'navigation'); bar.setAttribute('aria-label', 'Back and forward');
+  var back = mk('Go back', 'M15 5l-7 7 7 7'), fwd = mk('Go forward', 'M9 5l7 7-7 7');
+  bar.appendChild(back); bar.appendChild(fwd);
+  function update() {
+    if (framed) { back.disabled = true; fwd.disabled = true; return; }
+    back.disabled = !(history.length > 1 || HOME);
+    var cf = (window.navigation && typeof window.navigation.canGoForward === 'boolean') ? window.navigation.canGoForward : null;
+    fwd.disabled = cf === false;
+  }
+  back.addEventListener('click', function () { if (history.length > 1) history.back(); else if (HOME) location.href = HOME; });
+  fwd.addEventListener('click', function () { history.forward(); });
+  document.body.insertBefore(bar, document.body.firstChild);
+  document.body.classList.add('hnav-on');
+  window.addEventListener('pageshow', update); update();
+})();
+</script>
+<!--HNAV-END-->
 </body>
 </html>
