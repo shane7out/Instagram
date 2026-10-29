@@ -1,15 +1,8 @@
 #!/bin/bash
-# Re-run the rules simulator (nothing touches the real database).
-bash .github/db-task/rules/run-rules-test.sh
-# re-run: chest + bonus rules
-# re-run: quest removed
-# re-run: use-by rules
-# re-run: monthly return tests
-# re-run: dry-run expectation fixed
-# re-run: repeating chest tests
-# restored
-# re-run: default commission rule
-# re-run: commission write rule fixed
-# restored
-# restored
-# re-run: 10-day bonus with 48-hour claim window
+# Read-only live check after go-live (prints only counts and status codes).
+H=https://lvr-data-a60c1.web.app
+chk() { f="$1"; shift; code=$(curl -s -o /tmp/p.html -w '%{http_code}' "$H/$f"); out="$f [$code]"; for n in "$@"; do c=$(grep -c -- "$n" /tmp/p.html); out="$out | $n=$c"; done; echo "$out"; }
+chk key-room.html pausePanel bd-points loadSwitches lvr-invoice.html "Customer's Screen" "Las Vegas Restaurant List" "Customer Sign-up"
+chk lvr-invoice.html "var PIN = '137900'" "Print / Save as PDF" iCsv
+chk lvr-points-admin.html "var PIN = '137900'" renderShowcaseTab
+echo "pause flags now:"; curl -s https://lvr-data-a60c1-default-rtdb.firebaseio.com/lvr_points/settings/paused.json; echo
