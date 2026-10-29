@@ -8,7 +8,7 @@
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Cinzel:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
 <script>
   (function () {
@@ -51,12 +51,13 @@
   .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
   .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
 
-  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);min-height:40px;}
   .logo svg{display:block;flex:none;filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 11px rgba(22,143,255,.35));}
   .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
   .logo-word .logo-si{color:var(--key-light);}
   @media (max-width:420px){.logo-word{font-size:13.5px;}}
-  @media (max-width:430px){.nav-row{padding-inline:14px;} .nav-row .btn.lr-toggle{padding:8px 10px;font-size:13px;}}
+  @media (max-width:430px){.nav-row{padding-inline:14px;} .nav-row .btn.lr-toggle{padding:10px 10px;font-size:13px;min-height:40px;}}
   @media (max-width:380px){.logo{gap:7px;} .logo svg{width:26px;height:auto;} .logo-word{font-size:12.5px;letter-spacing:0;}}
   @media (max-width:340px){.logo svg{display:none;}}
 
@@ -152,9 +153,9 @@
   .cx-bit{position:absolute;left:0;top:0;margin:-6px 0 0 -6px;border-radius:50%;opacity:0;background:radial-gradient(circle at 35% 30%,#fff3b0 0,#ffd54a 45%,#d9930d 100%);border:2px solid #8a5a00;}
   .cx-coin{position:absolute;left:0;top:-40px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:22px;color:#3a2500;opacity:0;background:radial-gradient(circle at 35% 28%,#fff6c4 0,#ffd54a 42%,#e0a010 100%);border:3px solid #8a5a00;box-shadow:0 0 20px 4px rgba(255,211,92,.6);}
   .chest-big{font-size:26px;font-weight:800;color:var(--ink);margin:2px 0 14px;font-variant-numeric:tabular-nums;}
-  .mini-bal{position:fixed;left:0;right:0;top:57px;z-index:40;display:none;justify-content:center;pointer-events:none;}
+  .mini-bal{position:fixed;left:0;right:0;top:57px;z-index:40;display:none;justify-content:center;background:rgba(10,22,38,.96);border-bottom:1px solid var(--line);padding:5px 0;}
   .mini-bal.show{display:flex;}
-  .mini-bal span{background:rgba(12,26,43,.94);border:1px solid var(--line);border-radius:99px;padding:6px 16px;font-weight:800;color:var(--key-light);box-shadow:0 4px 18px rgba(0,0,0,.4);text-shadow:0 0 12px rgba(89,181,255,.6);}
+  .mini-bal span{font-weight:800;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.6);}
   .mini-bal small{font-weight:600;color:var(--ink-dim);font-size:13px;text-shadow:none;margin-left:4px;}
   .soon-back{position:fixed;inset:0;background:rgba(3,8,16,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
   .soon-back.open{display:flex;}
@@ -210,7 +211,7 @@
   .clk{display:flex;justify-content:center;align-items:flex-start;gap:1px;font-variant-numeric:tabular-nums;}
   .clk .seg{display:flex;flex-direction:column;align-items:center;min-width:34px;}
   .clk .seg b{font-size:25px;line-height:1.05;font-weight:800;color:#ffd35c;letter-spacing:-.01em;}
-  .clk .seg i{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim);margin-top:1px;}
+  .clk .seg i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim);margin-top:1px;}
   .clk .sep{font-size:20px;line-height:1.3;font-weight:800;color:rgba(255,211,92,.5);}
   .clk .seg.sec b{color:#fff4cf;}
   .clk.big .seg b{font-size:34px;} .clk.big .seg{min-width:56px;} .clk.big .sep{font-size:30px;}
@@ -220,7 +221,7 @@
   .rw-foot{display:flex;flex-direction:column;align-items:center;}
   .rw-unit{margin-top:1px;font-size:12.5px;font-weight:700;color:var(--ink);}
   .rw-go{font-size:14px;font-weight:800;color:#ffd35c;padding:2px 0 0;}
-  @media (max-width:400px){.balance-card{column-gap:8px;} .reward-tile{padding:10px 7px 9px;} .clk .seg{min-width:30px;} .clk .seg b{font-size:22px;} .clk .seg i{font-size:10px;letter-spacing:.03em;} .clk .sep{font-size:17px;}}
+  @media (max-width:400px){.balance-card{column-gap:8px;} .reward-tile{padding:10px 7px 9px;} .clk .seg{min-width:30px;} .clk .seg b{font-size:22px;} .clk .seg i{font-size:11px;letter-spacing:.02em;} .clk .sep{font-size:17px;}}
   @media (max-width:345px){
     .balance-card{grid-template-columns:minmax(0,1fr);}
     .reward-tile{grid-column:1;grid-row:4;margin-top:14px;width:100%;}
@@ -249,7 +250,7 @@
   .rest-photo{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;margin:0 0 14px;}
   .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
-  .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:7px 13px;cursor:pointer;}
+  .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:10px 14px;min-height:40px;cursor:pointer;}
   .svc-seg{display:flex;gap:0;margin:0 0 12px;border:1.5px solid var(--control-line);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.04);}
   .svc-seg button{flex:1;font:inherit;font-weight:800;font-size:15px;color:var(--ink);background:transparent;border:0;padding:12px 6px;cursor:pointer;min-height:46px;}
   .svc-seg button + button{border-left:1px solid var(--control-line);}
@@ -314,7 +315,7 @@
 
   .empty{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
   .footer-note{text-align:center;font-size:13px;color:var(--ink-dim);opacity:.85;margin-top:14px;}
-  .footer-note a{color:var(--ink-dim);text-decoration:underline;}
+  .footer-note a{color:var(--ink-dim);text-decoration:underline;display:inline-block;padding:10px 4px;}
 
   #redeemOverlay{display:none;position:fixed;inset:0;background:rgba(7,17,31,.92);z-index:999;align-items:center;justify-content:center;padding:20px;}
   #redeemOverlay.show{display:flex;}
@@ -417,7 +418,8 @@
   </div>
 </header>
 
-<div class="page-wrap">
+<main class="page-wrap" id="main">
+  <h1 class="sr-only">Your Reward Points</h1>
   <div id="content"><div class="empty">Loading…</div></div>
   <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
@@ -425,7 +427,7 @@
       <div id="chestModalArt" class="bn-art"></div>
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
-      <p id="chestMsg">Your bonus is almost ready. Come back and check this spot soon.</p>
+      <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
       <div class="fair-box" id="fairBox" hidden><b>🔒 Fair and random.</b> The winning number is picked by a random number generator that is built into your phone's web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can't see it, choose it or change it. We have no control over it.</div>
       <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Spin the wheel</button>
       <button type="button" class="btn btn-ghost" id="demoSpinBtn" hidden style="margin-bottom:10px;">Preview the spin (demo only)</button>
@@ -434,7 +436,7 @@
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
   <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
-</div>
+</main>
 
 <div id="redeemOverlay">
   <div class="overlay-card" id="overlayContent"></div>
@@ -586,10 +588,24 @@
     var b = document.createElement('div'); b.className = 'own-back';
     b.innerHTML = '<div class="own-box" role="dialog" aria-modal="true">' + html + '</div>';
     document.body.appendChild(b);
-    var api = { el: b, close: function () { if (b.parentNode) b.parentNode.removeChild(b); } };
+    var opener = document.activeElement;
+    var api = { el: b, close: function () { if (b.parentNode) { b.parentNode.removeChild(b); try { if (opener && opener.focus && document.body.contains(opener)) opener.focus(); } catch (e) {} } } };
     b.addEventListener('click', function (e) { if (e.target === b) api.close(); });
+    var f0 = b.querySelector('button,select,input'); if (f0) { try { f0.focus(); } catch (e) {} }
     return api;
   }
+  // keep Tab inside whichever dialog is open
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var own = document.querySelectorAll('.own-back'), dlg = own.length ? own[own.length - 1].querySelector('.own-box') : document.querySelector('.soon-back.open .soon-box');
+    if (!dlg) return;
+    var f = Array.prototype.filter.call(dlg.querySelectorAll('button,select,input,a[href]'), function (x) { return !x.disabled && !x.hidden && x.offsetParent !== null; });
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1], a = document.activeElement;
+    if (!dlg.contains(a)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && a === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+  });
   function sha256hex(s) {
     if (!window.crypto || !crypto.subtle) return Promise.resolve('');
     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); });
@@ -974,6 +990,7 @@
 
 
   function readyCount(items) { var p = wallet.points || 0; return pausedFlag('redemptions') ? 0 : (items || []).filter(function(i){ return p >= i.pointCost; }).length; }
+  var igN = 0;
   function contactHtml(c, name) {
     if (!c) return '';
     var base = String(name || '').replace(/ \(.*\)$/, ''), city = c.city || 'Las Vegas, NV';
@@ -983,7 +1000,7 @@
     }).join('');
     if (c.ph) rows += '<a class="vrow" href="tel:+1' + String(c.ph).replace(/\D/g, '') + '">' + CICON.phone + '<span><span class="vlab">Phone · tap to call</span><span class="vval">' + escapeHtml(c.ph) + '</span></span></a>';
     var links = '';
-    if (c.ig) links += '<a class="vlink" target="_blank" rel="noopener" href="https://www.instagram.com/' + encodeURIComponent(c.ig) + '/">' + CICON.ig + 'Instagram</a>';
+    if (c.ig) links += '<a class="vlink" target="_blank" rel="noopener" href="https://www.instagram.com/' + encodeURIComponent(c.ig) + '/">' + CICON.ig.replace(/igG/g, 'igG' + (igN++)) + 'Instagram</a>';
     if (c.web) links += '<a class="vlink" target="_blank" rel="noopener" href="' + escapeHtml(c.web) + '">' + CICON.web + 'Website</a>';
     links += '<a class="vlink" target="_blank" rel="noopener" href="https://www.yelp.com/search?find_desc=' + encodeURIComponent(base) + '&find_loc=' + encodeURIComponent(city) + '">' + CICON.yelp + 'Yelp</a>';
     links += '<a class="vlink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(base + ' ' + c.a) + '">' + CICON.g + 'Google</a>';
@@ -1337,14 +1354,15 @@
   function clockHtml(ms) {
     var p = clockParts(ms), L = ['days', 'hrs', 'min', 'sec'];
     return '<span class="clk" aria-hidden="true" data-end="' + (Date.now() + ms) + '">' + p.map(function (v, k) {
-      return (k ? '<span class="sep">:</span>' : '') + '<span class="seg' + (k === 3 ? ' sec' : '') + '"><b>' + pad2(v) + '</b><i>' + L[k] + '</i></span>';
+      return (k ? '<span class="sep">:</span>' : '') + '<span class="seg' + (k === 3 ? ' sec' : '') + '"><b>' + pad2(v) + '</b><i>' + (k === 0 && v === 1 ? 'day' : L[k]) + '</i></span>';
     }).join('') + '</span>';
   }
   var clkFlip = 0, clkBusy = false;
   function tickClocks() {
     var els = document.querySelectorAll('.clk[data-end]'), expired = false;
     Array.prototype.forEach.call(els, function (el) {
-      var left = Number(el.getAttribute('data-end')) - Date.now(), p = clockParts(left), bs = el.querySelectorAll('b');
+      var left = Number(el.getAttribute('data-end')) - Date.now(), p = clockParts(left), bs = el.querySelectorAll('b'), ls = el.querySelectorAll('i');
+      if (ls[0]) { var dl = p[0] === 1 ? 'day' : 'days'; if (ls[0].textContent !== dl) ls[0].textContent = dl; }
       if (left <= 0) expired = true;
       for (var k = 0; k < 4; k++) {
         var t = pad2(p[k]);
@@ -1376,7 +1394,7 @@
       fair = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
-    if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">FREE points added to your balance</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : 'You won!'; canOpen = false; }
+    if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (chestWin.pending ? 'FREE points won' : 'FREE points added to your balance') + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : 'You won!'; canOpen = false; }
     var btn = document.getElementById('giftBtn');
     if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your free bonus spin is ready. Tap to spin.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
     var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
@@ -1419,19 +1437,60 @@
       setTimeout(function () { if (wheel.parentNode) wheel.parentNode.classList.remove('go'); finish(); }, 5400);
     };
     if (DEMO) { setTimeout(spin, 500); return; }
-    var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey);
-    // claim first (the database only accepts the next spin, after the full wait and inside the claim window, within the allowed range), then add the points, then spin the wheel to the number
+    var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey), claimed = false;
+    var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+    // adding the points is retried a few times; once the spin is recorded it must never be lost
+    var credit = function (tries) {
+      return fetch(DB + '/lvr_rewards/' + mk + '/points.json', { method: 'PUT', headers: H, body: JSON.stringify({ '.sv': { increment: prize } }) })
+        .then(function (r) { if (r.ok) return r; if (tries > 1) return wait(900).then(function () { return credit(tries - 1); }); return r; })
+        .catch(function (e) { if (tries > 1) return wait(900).then(function () { return credit(tries - 1); }); throw e; });
+    };
+    // claim first (the database only accepts the next spin, after the full wait and inside the claim window, within the allowed range), then log it, then add the points, then spin the wheel to the number
     fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
-      .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }); })
-      .then(function () { return prize > 0 ? fetch(DB + '/lvr_rewards/' + mk + '/points.json', { method: 'PUT', headers: H, body: JSON.stringify({ '.sv': { increment: prize } }) }) : { ok: true }; })
-      .then(function (r) { if (!r.ok) throw new Error('points'); spin(); })
-      .catch(function () { chestBusy = false; var cb3 = document.getElementById('soonClose'); if (cb3) cb3.hidden = false; if (wheel) wheel.classList.remove('wob'); document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest(); });
+      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }).catch(function () { return null; }); })
+      .then(function () { return credit(3); })
+      .then(function (r) { if (!r || !r.ok) throw new Error('points'); spin(); })
+      .catch(function () {
+        var cb3 = document.getElementById('soonClose'); if (cb3) cb3.hidden = false;
+        if (wheel) wheel.classList.remove('wob');
+        if (claimed) {
+          // the spin is recorded but the points did not go through: remember it and add them as soon as we can
+          try { localStorage.setItem('lvrPendingCredit', JSON.stringify({ mk: mk, n: st.n, prize: prize })); } catch (e) {}
+          wallet.chestState = { n: st.n, amount: prize, at: Date.now() };
+          chestBusy = false; chestWin = { n: '+' + prize, pending: true };
+          var m2 = document.getElementById('chestMsg'); if (m2) m2.textContent = 'Your spin counted. We could not add the points just yet. They will be added automatically in a moment, and nothing is lost.';
+          tickChest(); setTimeout(flushPending, 4000);
+        } else {
+          chestBusy = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest();
+        }
+      });
+  }
+  var pendingBusy = false;
+  function flushPending() {
+    if (pendingBusy || DEMO || !memberKey) return;
+    var pc = null; try { pc = JSON.parse(localStorage.getItem('lvrPendingCredit') || 'null'); } catch (e) {}
+    if (!pc || pc.mk !== encodeURIComponent(memberKey) || !(pc.prize > 0)) return;
+    pendingBusy = true;
+    fetch(DB + '/lvr_rewards/' + pc.mk + '/points.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ '.sv': { increment: pc.prize } }) })
+      .then(function (r) {
+        pendingBusy = false;
+        if (!r.ok) return;
+        try { localStorage.removeItem('lvrPendingCredit'); } catch (e) {}
+        wallet.points = (wallet.points || 0) + pc.prize;
+        var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
+        var m3 = document.getElementById('chestMsg'); if (m3 && chestWin && chestWin.pending) m3.textContent = 'Your ' + pc.prize + ' free point' + (pc.prize === 1 ? ' was' : 's were') + ' added. Your next free bonus spin arrives in ' + hrs(chestCfg().waitDays) + ' hours.';
+        chestWin = chestWin && chestWin.pending ? { n: '+' + pc.prize } : chestWin; tickChest();
+      })
+      .catch(function () { pendingBusy = false; });
   }
   setInterval(tickChest, 30000);
+  setInterval(flushPending, 20000);
+  setTimeout(flushPending, 2500);
   (function () {
     var back = document.getElementById('soonBack');
-    function open() { tickChest(); back.classList.add('open'); var c = document.getElementById('soonClose'); if (c) c.focus(); }
-    function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; tickChest(); }
+    var lastFocus = null;
+    function open() { lastFocus = document.activeElement; tickChest(); back.classList.add('open'); var c = document.getElementById('chestOpenBtn'); if (!c || c.hidden) c = document.getElementById('soonClose'); if (c) c.focus(); }
+    function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; tickChest(); try { if (lastFocus && lastFocus.focus) lastFocus.focus(); } catch (e) {} }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
       if (t && t.closest('#giftBtn')) open();
