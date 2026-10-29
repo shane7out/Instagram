@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Account — LVR Rewards — Key Technologies.si</title>
+<title>My Account — Reward Points — Key Technologies.si</title>
 <meta name="robots" content="noindex">
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,7 +56,8 @@
   .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
   .logo-word .logo-si{color:var(--key-light);}
   @media (max-width:420px){.logo-word{font-size:13.5px;}}
-  @media (max-width:380px){.nav-row{padding-inline:14px;} .logo{gap:7px;} .logo-word{font-size:13px;letter-spacing:0;} .nav-row .btn.lr-toggle{padding:9px 11px;font-size:13.5px;}}
+  @media (max-width:430px){.nav-row{padding-inline:14px;} .nav-row .btn.lr-toggle{padding:8px 10px;font-size:13px;}}
+  @media (max-width:380px){.logo{gap:7px;} .logo svg{width:26px;height:auto;} .logo-word{font-size:12.5px;letter-spacing:0;}}
   @media (max-width:340px){.logo svg{display:none;}}
 
   header{
@@ -351,7 +352,7 @@
     </a>
     <div class="nav-cta">
       <div class="lr-wrap">
-        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Points <span aria-hidden="true">&#9662;</span></button>
+        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">Reward Points <span aria-hidden="true">&#9662;</span></button>
         <div class="lr-menu" id="lrMenu" hidden></div>
       </div>
     </div>
@@ -488,7 +489,7 @@
     var rules = [
       ['Eat out', 'Visit LVR partner restaurants, upload your receipt, and earn points on everything you pay for. A free offer you redeemed with points does not earn points.'],
       ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
-      ['Collect your bonus', prize ? 'Every ' + c.waitDays + ' days a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.' : 'A bonus for active members is coming soon.'],
+      ['Collect your bonus', prize ? 'Every ' + hrs(c.waitDays) + ' hours a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + hrs(c.waitDays) + '-hour wait.' : 'A bonus for active members is coming soon.'],
       ['Fair play', 'Points have no cash value and cannot be sold or transferred. Points are used when you claim an offer and are never refunded. A code expires on the date shown.']
     ];
     return '<ol class="steps">' + rules.map(function (x, i) {
@@ -604,7 +605,7 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mn.hidden) { setOpen(false); tg.focus(); } });
   })();
 
-  // ---------- LVR Points menu (top right) ----------
+  // ---------- Reward Points menu (top right) ----------
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
 
   // ---------- Prize ladder (shown only when the owner switches it on; always on in the preview) ----------
@@ -648,7 +649,7 @@
     var recPaused = !DEMO && pausedFlag('receipts');
     var rows = [
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
-      ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
+      ['rules', '📜', 'How Reward Points Work', 'The simple rules', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
       ['prizes', '🎁', 'Prizes', ladderCfg().enabled ? 'See what you can win' : 'What your points get you', ''],
       ['contact', '💬', 'Contact us', 'Message us on Instagram', '']
@@ -662,7 +663,7 @@
     d.el.querySelector('#ownOk').addEventListener('click', d.close);
     return d;
   }
-  function openRules() { infoModal('How LVR Points Work', rulesHtml()); }
+  function openRules() { infoModal('How Reward Points Work', rulesHtml()); }
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
     var qa = [
@@ -672,7 +673,7 @@
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
-    if (prize) qa.push(['What is the bonus?', 'Every ' + c.waitDays + ' days a random bonus of ' + prize + ' points is ready for you. Open the bonus tile at the top and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.']);
+    if (prize) qa.push(['What is the bonus?', 'Every ' + hrs(c.waitDays) + ' hours a random bonus of ' + prize + ' points is ready for you. Open the bonus tile at the top and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + hrs(c.waitDays) + '-hour wait.']);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
   }
@@ -687,7 +688,7 @@
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
 
     return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl. Pickup only.</p></div></div>' +
-      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Bonus points</b><p>Every ' + c.waitDays + ' days, collect a random ' + prize + ' bonus points. You have ' + c.claimHours + ' hours to claim it.</p></div></div>' : '') +
+      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Bonus points</b><p>Every ' + hrs(c.waitDays) + ' hours, collect a random ' + prize + ' bonus points. You have ' + c.claimHours + ' hours to claim it.</p></div></div>' : '') +
       '<div class="prz-row"><span class="ic" aria-hidden="true">➕</span><div><b>More offers coming</b><p>New offers are added as more restaurants join. Check the Redeem list.</p></div></div></div>';
   }
   function contactUsHtml() {
@@ -1019,7 +1020,7 @@
       document.getElementById('inviteLink').textContent = url;
       var btn = document.getElementById('inviteBtn'); btn.disabled = false;
       btn.addEventListener('click', function(){
-        var text = 'Join LVR Rewards and earn points at Las Vegas restaurants: ' + url;
+        var text = 'Join LVR Reward Points and earn points at Las Vegas restaurants: ' + url;
         if (navigator.share) { navigator.share({ text: text }).catch(function(){}); }
         else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Link copied!'; }); }
         else { btn.textContent = url; }
@@ -1077,11 +1078,12 @@
     return { big: d > 0 ? d + '<small>day' + (d === 1 ? '' : 's') + '</small>' + h + '<small>hr' + (h === 1 ? '' : 's') + '</small>' : (h > 0 ? h + '<small>hr' + (h === 1 ? '' : 's') + '</small>' + m + '<small>min</small>' : Math.max(m, 1) + '<small>min</small>'), short: d > 0 ? d + 'd ' + h + 'h' : (h > 0 ? h + 'h ' + m + 'm' : Math.max(m, 1) + 'm'), long: (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm' };
   }
   var chestBusy = false, chestWin = '';
+  function hrs(d) { return Math.round(d * 24); }
   function tileNum(ms) {
-    var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
-    if (d >= 1) return { n: d, u: d === 1 ? 'day' : 'days' };
-    if (h >= 1) return { n: h, u: h === 1 ? 'hour' : 'hours' };
-    return { n: Math.max(m, 1), u: 'min' };
+    // always hours (240 hours, not 10 days); only the last hour is shown in minutes
+    var h = ms / 3600000;
+    if (h > 1) { var n = Math.ceil(h); return { n: n, u: n === 1 ? 'hour' : 'hours' }; }
+    return { n: Math.max(Math.ceil(ms / 60000), 1), u: 'min' };
   }
   function tickChest() {
     var st = chestInfo(), tile = '', art = '', big = '', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
@@ -1089,14 +1091,14 @@
       var f = tileNum(st.ms);
       tile = '<span class="rw-lab">Bonus in</span><span class="rw-num">' + f.n + '</span><span class="rw-unit">' + f.u + '</span>';
       art = '<div class="bn-num">' + f.n + '</div><div class="bn-unit">' + f.u + ' to go</div>';
-      msg = (st.missed ? 'The last bonus window closed, so the wait started over. ' : '') + 'Log in when the countdown ends and collect your bonus. You will have ' + st.c.claimHours + ' hours to claim it, or the ' + st.c.waitDays + '-day wait starts again.';
+      msg = (st.missed ? 'The last bonus window closed, so the wait started over. ' : '') + 'Log in when the countdown ends and collect your bonus. You will have ' + st.c.claimHours + ' hours to claim it, or the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
     } else if (st.kind === 'ready') {
       var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + (st.c.prizeMax - st.c.prizeMin === 1 ? ' or ' : ' to ') + st.c.prizeMax;
       var cl = fmtLeft(st.ms);
       var hl = Math.floor(st.ms / 3600000), hn = hl >= 1 ? hl : Math.max(Math.floor(st.ms / 60000), 1), hu = hl >= 1 ? (hl === 1 ? 'hour left' : 'hours left') : 'min left';
       tile = '<span class="rw-lab">Collect in</span><span class="rw-num">' + hn + '</span><span class="rw-unit">' + hu + '</span><span class="rw-go">Tap to collect</span>';
       art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div><div class="bn-unit" style="margin-top:8px;font-weight:800;color:#ffd35c;">' + cl.long + ' left to collect</div>';
-      msg = 'Your bonus is ready. Tap below to add ' + amt + ' points to your balance. You have ' + cl.long + ' left to collect it, or it goes back to a ' + st.c.waitDays + '-day wait.'; canOpen = true;
+      msg = 'Your bonus is ready. Tap below to add ' + amt + ' points to your balance. You have ' + cl.long + ' left to collect it, or it goes back to a ' + hrs(st.c.waitDays) + '-hour wait.'; canOpen = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
     if (chestWin) { art = '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">added to your balance</div>'; canOpen = false; }
@@ -1119,7 +1121,7 @@
       chestBusy = false; chestWin = { n: '+' + prize };
       var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
       var nx = chestInfo(), m = document.getElementById('chestMsg');
-      if (m) m.textContent = nx.kind === 'wait' ? 'Your next bonus arrives in ' + nx.waitDays + ' days.' : 'Thank you for being a member.';
+      if (m) m.textContent = nx.kind === 'wait' ? 'Your next bonus arrives in ' + hrs(nx.waitDays) + ' hours.' : 'Thank you for being a member.';
       tickChest();
     };
     if (DEMO) { finish(); return; }

@@ -1417,3 +1417,7 @@ top unless they tell you otherwise.*
 ## Back / Forward arrows (2026-10-29)
 - Slim glass bar with two tiny arrows pinned top-left on the customer pages (my-account, menu, rewards) and every owner tool (Key room, Leads, CRM, Advertisers, Coupons admin, Points admin, Invoices, Restaurant portal, Rewards, Coupon, Wallet). Back goes to the previous page (or to the Key Tech room when a tool was opened in a fresh tab); Forward lights up only when there is a page to go forward to (Chromium; other browsers keep it on). Key room cards now open in the same tab so Back always returns to the room. Inside a preview frame the arrows show but are switched off.
 - Source: `.github/db-task/nav/hnav.snippet.html`; re-apply to all pages with `python3 .github/db-task/nav/apply-hnav.py` (safe to re-run). Not added to the public marketing pages or the main dashboard (live file patched by scripts).
+
+## Name + hours (2026-10-29)
+- Program is now called **Reward Points** on the customer pages (header button, menu, rules title, page titles; sign-up page says "LVR Reward Points"). Buttons already read "Redeem N Reward Points".
+- The bonus countdown is shown in **hours only** (a new member sees "Bonus in 240 hours" the moment they sign up; the last hour shows minutes). Rules, Q&A, prizes and messages say "240 hours" instead of "10 days". The setting is still stored in days (Points admin > Settings > Days between bonuses).
