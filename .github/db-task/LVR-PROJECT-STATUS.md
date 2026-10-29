@@ -1397,3 +1397,4 @@ top unless they tell you otherwise.*
 **Still open (needs the Blaze / Cloud Functions step)**
 - `lvr_points` and `lvr_rewards` are readable by anyone who knows the database address. That includes member names, phones, Instagram handles, each member's personal link token (anyone with a token can open that member's screen), receipt photos, and restaurant portal PINs. Only 3 test members exist today, but this must be fixed before real members join. It cannot be closed with rules alone because the member screen finds members by token without signing in.
 - Anyone can still edit points balances directly (same cause).
+- Removed restaurants no longer stay faded in the list: owner mode now shows exactly the customer view, with a separate "N removed - tap to restore" list at the top. Points admin > Restaurants shows Shown and Removed as two lists.

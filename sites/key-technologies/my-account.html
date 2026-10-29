@@ -549,9 +549,10 @@
       });
     });
   }
-  function ownerBarHtml() {
-    var n = Object.keys(hiddenMap()).length;
-    return '<div class="own-bar"><span><b>Owner mode.</b> Tap Remove on any restaurant you do not want. ' + n + ' removed so far.</span><button type="button" id="ownDone">Done</button></div>';
+  function ownerBarHtml(removed) {
+    removed = removed || [];
+    var list = removed.length ? '<details style="width:100%;margin-top:4px;"><summary style="cursor:pointer;font-weight:800;">' + removed.length + ' removed · tap to restore</summary><div style="margin-top:8px;display:grid;gap:6px;">' + removed.map(function (n) { return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>' + escapeHtml(n) + '</span><button type="button" class="own-btn restore" data-own="restore" data-name="' + escapeHtml(n) + '">Restore</button></div>'; }).join('') + '</div></details>' : '';
+    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list + '</div>';
   }
   function bindOwner(root) {
     Array.prototype.forEach.call(root.querySelectorAll('[data-own]'), function (b) {
@@ -721,10 +722,12 @@
   function render(catalog, allRedemptions) {
     lastCat = catalog; lastRed = allRedemptions;
     var items = DEMO ? demoItems() : flattenCatalog(catalog, allRedemptions);
-    items = items.filter(function(i){ return OWNER || !isHidden(i.bizName || i.slug); });
+    var removedNames = [], seenRemoved = {};
+    items.forEach(function(i){ var n = i.bizName || i.slug; if (isHidden(n) && !seenRemoved[n]) { seenRemoved[n] = 1; removedNames.push(n); } });
+    items = items.filter(function(i){ return !isHidden(i.bizName || i.slug); });
 
     var html =
-      (OWNER ? ownerBarHtml() : '') +
+      (OWNER ? ownerBarHtml(removedNames) : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
       welcomeHtml() +
@@ -755,7 +758,7 @@
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
         var min = g.items[0].pointCost;
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
-        return '<div class="rest-group' + (ready ? ' has-ready' : '') + (isHidden(g.name) ? ' is-removed' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
+        return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
           (SHOW_PHOTOS && firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           ownerBtnHtml(g.name) + '</div>' +

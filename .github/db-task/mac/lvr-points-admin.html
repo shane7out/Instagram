@@ -737,13 +737,17 @@
       '<div class="row-sub" style="margin-bottom:10px;"><b>' + (SHOWCASE.length - removed) + '</b> shown · <b>' + removed + '</b> removed. Remove hides a restaurant from members and visitors right away. Nothing is erased, and Restore brings it back. (Restaurants in the points program keep their money records permanently; to hide one of those use Businesses &gt; Edit.)</div>' +
       '<input type="text" id="showQ" placeholder="Search restaurants…" value="' + escapeHtml(showFilter) + '" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:15px;box-sizing:border-box;">' +
       (removed ? '<div style="margin-top:10px;"><button class="btn" id="showRestoreAll">Restore all ' + removed + '</button></div>' : '') + '</div>';
-    var rows = SHOWCASE.filter(function(r){ return !q || r[0].toLowerCase().indexOf(q) >= 0 || r[1].toLowerCase().indexOf(q) >= 0; });
-    html += rows.length ? rows.map(function(r){
-      var gone = !!showHidden[showSlug(r[0])];
-      return '<div class="row-card"' + (gone ? ' style="opacity:.55;"' : '') + '><div class="row-top"><div><div class="row-name">' + escapeHtml(r[0]) + '</div>' +
-        '<div class="row-sub">' + (r[2] ? 'Founding partner · ' : '') + escapeHtml(r[1]) + ' · ' + escapeHtml(r[3]) + ' · ' + (gone ? '<b style="color:var(--red);">Removed</b>' : 'Shown') + '</div></div></div>' +
+    var match = function(r){ return !q || r[0].toLowerCase().indexOf(q) >= 0 || r[1].toLowerCase().indexOf(q) >= 0; };
+    var card = function(r, gone){
+      return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(r[0]) + '</div>' +
+        '<div class="row-sub">' + (r[2] ? 'Founding partner · ' : '') + escapeHtml(r[1]) + ' · ' + escapeHtml(r[3]) + '</div></div></div>' +
         '<div class="row-actions"><button data-act="' + (gone ? 'show-restore' : 'show-remove') + '" data-name="' + escapeHtml(r[0]) + '"' + (gone ? '' : ' style="border-color:var(--red);color:#ff9a9a;"') + '>' + (gone ? 'Restore' : 'Remove') + '</button></div></div>';
-    }).join('') : '<div class="empty-note">No restaurant matches that search.</div>';
+    };
+    var shownRows = SHOWCASE.filter(function(r){ return !showHidden[showSlug(r[0])] && match(r); });
+    var goneRows = SHOWCASE.filter(function(r){ return showHidden[showSlug(r[0])] && match(r); });
+    html += '<div style="font-weight:800;margin:14px 2px 8px;">Shown to customers (' + shownRows.length + ')</div>';
+    html += shownRows.length ? shownRows.map(function(r){ return card(r, false); }).join('') : '<div class="empty-note">No restaurant matches that search.</div>';
+    if (goneRows.length) html += '<div style="font-weight:800;margin:22px 2px 8px;color:#ff9a9a;">Removed - customers cannot see these (' + goneRows.length + ')</div>' + goneRows.map(function(r){ return card(r, true); }).join('');
     view.innerHTML = html;
     var qi = document.getElementById('showQ');
     qi.addEventListener('input', function(){ showFilter = qi.value; var pos = qi.selectionStart; drawShowcase(); var n = document.getElementById('showQ'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} });
