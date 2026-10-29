@@ -463,7 +463,7 @@
   var refSettings = { enabled: false, l1Pct: 20, l2Pct: 0 };
   var appSettings = {};
   // Welcome bonus: set by the owner in Settings; credited when the first receipt is approved.
-  function welcomeCfg() { return Object.assign({ enabled: false, amount: 13, when: 'receipt' }, appSettings.welcome || {}); }
+  function welcomeCfg() { return Object.assign({ enabled: false, amount: 21, when: 'receipt' }, appSettings.welcome || {}); }
   function welcomeHtml() {
     var w = welcomeCfg();
     if (w.enabled !== true || w.when === 'signup' || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
@@ -657,7 +657,7 @@
   function demoItems() {
     var soon = function (d) { return Date.now() + d * 86400000; };
     var rows = [
-      ["r0", "Vanilla Rice's Hibachi House", "Free Chicken Bowl", 13, "hibachi", 50, 38, 40, "plates", "Grilled teriyaki chicken over rice."],
+      ["r0", "Vanilla Rice's Hibachi House", "Free Chicken Bowl", 20, "hibachi", 50, 38, 40, "plates", "Grilled teriyaki chicken over rice."],
       ["r1", "Poke Heaven", "Free Poke Bowl", 13, "pokebowl", 25, 5, 12, "plates"],
       ["r2", "The Tea Terrace", "Free Afternoon Tea Treats", 13, "teatier", 30, 2, 5, "sweet", "Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your points."],
       ["r3", "Pizza Rock", "Free Personal Pizza", 12, "minipizza", 40, 16, 21, "pizza"],
@@ -1098,7 +1098,7 @@
       '<div class="earn-msg" id="eMsg"></div></div>';
     return '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
       '<div class="earn-sub">Eat at any participating restaurant, then add your receipt. ' + earnRule() + '</div>' +
-      '<div class="earn-eg"><b>Example.</b> You use 13 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
+      '<div class="earn-eg"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
       '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:12px;">Add a receipt</button></div>' +
       '<div class="rcpt-back" id="rcptBack">' + form + '</div>';
   }
