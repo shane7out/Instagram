@@ -82,6 +82,10 @@ if [ "$RC" != "0" ]; then
   echo "==== stopped ===="; cat "$LOG"; exit 1
 fi
 
+curl -sL -o /tmp/patch-key-pill-to-room.js "$RAWB/patch-key-pill-to-room.js"
+node /tmp/patch-key-pill-to-room.js "$IDX" >> "$LOG" 2>&1
+echo "   patch-key-pill-to-room.js exit: $?" >> "$LOG"
+
 # ---------------------------------------------------------------------------
 # 3) sanity: every inline script in the patched dashboard must still parse
 # ---------------------------------------------------------------------------

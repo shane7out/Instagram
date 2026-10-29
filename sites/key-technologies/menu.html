@@ -360,8 +360,13 @@
   function ownerBarHtml(removed) {
     removed = removed || [];
     var list = removed.length ? '<details style="width:100%;margin-top:4px;"><summary style="cursor:pointer;font-weight:800;">' + removed.length + ' removed · tap to restore</summary><div style="margin-top:8px;display:grid;gap:6px;">' + removed.map(function (n) { return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>' + esc(n) + '</span><button type="button" class="own-btn restore" data-own="restore" data-name="' + esc(n) + '">Restore</button></div>'; }).join('') + '</div></details>' : '';
-    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list + '</div>';
+    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want. Tap the Key Technologies name at the top to open your Key Tech room.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list + '</div>';
   }
+  // In owner mode the Key Technologies name at the top opens your Key Tech room instead of the public site.
+  var KEY_ROOM_URL = 'https://lvr-data-a60c1.web.app/key-room.html';
+  Array.prototype.forEach.call(document.querySelectorAll('.logo'), function (l) {
+    l.addEventListener('click', function (e) { if (OWNER) { e.preventDefault(); location.href = KEY_ROOM_URL; } });
+  });
   function bindOwner(root) {
     Array.prototype.forEach.call(root.querySelectorAll('[data-own]'), function (b) {
       b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); ownerConfirm(b.getAttribute('data-name'), b.getAttribute('data-own') === 'remove'); });

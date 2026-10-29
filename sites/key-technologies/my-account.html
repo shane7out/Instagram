@@ -119,23 +119,7 @@
   .mc-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffd35c,#f0a91a);}
   .urgent .mc-bar i{background:linear-gradient(90deg,#ffb089,#ff6b3d);}
   .mc-text{font-size:13.5px;line-height:1.45;color:var(--ink);} .mc-last{margin-top:6px;font-size:13px;color:var(--ink-dim);}
-  .mc-scroll{margin-top:8px;font:inherit;font-size:14px;font-weight:700;color:#ffd35c;background:transparent;border:1px solid rgba(255,211,92,.5);border-radius:99px;padding:10px 16px;min-height:44px;cursor:pointer;}
   .nav-row .btn{white-space:nowrap;padding:10px 16px;font-size:14px;}
-  .mc-scroll:focus-visible,.sc-close:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
-  .scroll-back{position:fixed;inset:0;background:rgba(3,8,16,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;overflow-y:auto;}
-  .scroll-back.open{display:flex;}
-  .scroll{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:stretch;margin:auto;}
-  .sc-rod{height:20px;border-radius:12px;background:linear-gradient(180deg,#a8743b,#6a4220 55%,#4a2c12);box-shadow:0 3px 6px rgba(0,0,0,.45);position:relative;z-index:2;}
-  .sc-rod::before,.sc-rod::after{content:"";position:absolute;top:-3px;width:14px;height:26px;border-radius:8px;background:linear-gradient(180deg,#ffe58a,#c98a0a);}
-  .sc-rod::before{left:-6px;} .sc-rod::after{right:-6px;}
-  .sc-paper{margin:-2px 10px;background:linear-gradient(90deg,rgba(120,80,30,.22),transparent 8%,transparent 92%,rgba(120,80,30,.22)),linear-gradient(180deg,#f6e7bd,#ead29a);color:#3b2410;padding:20px 20px 14px;clip-path:inset(0 0 0 0);}
-  .scroll-back.open .sc-paper{animation:unroll 1s cubic-bezier(.3,.8,.3,1);}
-  @keyframes unroll{from{clip-path:inset(0 0 100% 0);}to{clip-path:inset(0 0 0 0);}}
-  .sc-body h3{margin:0 0 12px;text-align:center;font-family:Cinzel,Georgia,"Times New Roman",serif;font-size:21px;line-height:1.2;color:#5a3410;}
-  .sc-rule{font-family:Georgia,"Times New Roman",serif;font-size:14.5px;line-height:1.5;margin:0 0 10px;} .sc-rule b{color:#7a4414;}
-  .sc-sign{margin-top:12px;text-align:center;font-family:Cinzel,Georgia,serif;font-size:13px;letter-spacing:.04em;color:#7a4414;}
-  .sc-close{margin-top:14px;align-self:center;font:inherit;font-weight:800;font-size:15px;padding:11px 28px;border-radius:10px;border:1px solid #637283;background:var(--card);color:var(--ink);cursor:pointer;}
-  @media (prefers-reduced-motion:reduce){.scroll-back.open .sc-paper{animation:none;}}
   .reward-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:112px;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);color:var(--ink);font:inherit;cursor:pointer;text-align:center;}
   .reward-tile[hidden]{display:none;}
   .reward-tile .chest-count{display:flex;flex-direction:column;align-items:center;gap:0;}
@@ -175,6 +159,10 @@
   .lad-item{display:flex;gap:12px;align-items:center;padding:11px 12px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.06);font-size:16px;font-weight:700;line-height:1.3;}
   .lad-item .ic{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(240,169,26,.15);font-size:19px;}
   .lr-menu[hidden]{display:none;}
+  .steps{list-style:none;margin:0 0 14px;padding:0;} .steps li{display:flex;gap:12px;align-items:flex-start;margin:0 0 15px;}
+  .steps .n{flex:none;width:32px;height:32px;border-radius:50%;background:#0f67c2;color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;}
+  .steps b{display:block;font-size:17px;line-height:1.3;} .steps p{margin:3px 0 0 !important;color:#c3d2e3;font-size:15px;line-height:1.5;}
+  .rule-eg{background:rgba(255,255,255,.06);border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5;color:#c3d2e3;} .rule-eg b{color:#eef4fb;}
   .lr-menu{padding:8px 10px 10px;}
   .lr-list{display:grid;gap:8px;}
   .lr-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:11px 12px;color:var(--ink);font:inherit;cursor:pointer;min-height:58px;}
@@ -386,11 +374,6 @@
   <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </div>
 
-<div class="scroll-back" id="scrollBack" role="dialog" aria-modal="true" aria-label="How LVR Points work">
-  <div class="scroll"><div class="sc-rod"></div><div class="sc-paper" id="scrollPaper"></div><div class="sc-rod"></div>
-    <button type="button" class="sc-close" id="scrollClose">Got it</button></div>
-</div>
-
 <div id="redeemOverlay">
   <div class="overlay-card" id="overlayContent"></div>
 </div>
@@ -499,22 +482,19 @@
     if (w.enabled !== true || w.when === 'signup' || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
     return '<div class="notice" style="background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome points are waiting for you. They are added automatically when your first receipt is approved.</div>';
   }
-  function monthBarHtml() {
-    return '<div class="month-card"><button type="button" class="mc-scroll" id="scrollBtn">How LVR Points Work</button></div>';
-  }
-  function scrollHtml() {
+  function rulesHtml() {
     var c = chestCfg();
     var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : ' to ') + c.prizeMax) : '';
     var rules = [
-      ['Eat out', 'Visit LVR partner restaurants, upload your receipt, and earn points on everything you pay for. A free offer you redeemed with points does not earn points. Go eat real food.'],
+      ['Eat out', 'Visit LVR partner restaurants, upload your receipt, and earn points on everything you pay for. A free offer you redeemed with points does not earn points.'],
       ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
-      ['Your bonus', prize ? 'Every ' + c.waitDays + ' days a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.' : 'A bonus for active members is coming soon.'],
+      ['Collect your bonus', prize ? 'Every ' + c.waitDays + ' days a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.' : 'A bonus for active members is coming soon.'],
       ['Fair play', 'Points have no cash value and cannot be sold or transferred. Points are used when you claim an offer and are never refunded. A code expires on the date shown.']
     ];
-    var num = ['I', 'II', 'III', 'IV', 'V'];
-    return '<div class="sc-body"><h3>How LVR Points Work</h3>' + rules.map(function (r, i) {
-      return '<div class="sc-rule"><b>' + num[i] + '. ' + escapeHtml(r[0]) + '.</b> ' + escapeHtml(r[1]) + '</div>';
-    }).join('') + '<div class="sc-rule"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div><div class="sc-sign">Go eat real food. Earn points.</div></div>';
+    return '<ol class="steps">' + rules.map(function (x, i) {
+      return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
+    }).join('') + '</ol>' +
+      '<div class="rule-eg"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -582,8 +562,13 @@
   function ownerBarHtml(removed) {
     removed = removed || [];
     var list = removed.length ? '<details style="width:100%;margin-top:4px;"><summary style="cursor:pointer;font-weight:800;">' + removed.length + ' removed · tap to restore</summary><div style="margin-top:8px;display:grid;gap:6px;">' + removed.map(function (n) { return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>' + escapeHtml(n) + '</span><button type="button" class="own-btn restore" data-own="restore" data-name="' + escapeHtml(n) + '">Restore</button></div>'; }).join('') + '</div></details>' : '';
-    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list + '</div>';
+    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want. Tap the Key Technologies name at the top to open your Key Tech room.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list + '</div>';
   }
+  // In owner mode the Key Technologies name at the top opens your Key Tech room instead of the public site.
+  var KEY_ROOM_URL = 'https://lvr-data-a60c1.web.app/key-room.html';
+  Array.prototype.forEach.call(document.querySelectorAll('.logo'), function (l) {
+    l.addEventListener('click', function (e) { if (OWNER) { e.preventDefault(); location.href = KEY_ROOM_URL; } });
+  });
   function bindOwner(root) {
     Array.prototype.forEach.call(root.querySelectorAll('[data-own]'), function (b) {
       b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); ownerConfirm(b.getAttribute('data-name'), b.getAttribute('data-own') === 'remove'); });
@@ -612,7 +597,7 @@
       var t = e.target.closest ? e.target : null;
       var it = t && t.closest('.lr-item');
       if (it) { setOpen(false); lrAction(it.getAttribute('data-lr')); return; }
-      if (t && t.closest('#scrollBtn, [data-act="addreceipt"]')) { setOpen(false); return; }
+      if (t && t.closest('[data-act="addreceipt"]')) { setOpen(false); return; }
       if (t && (t.closest('#lrMenu') || t.closest('#lrToggle'))) return;
       setOpen(false);
     });
@@ -677,7 +662,7 @@
     d.el.querySelector('#ownOk').addEventListener('click', d.close);
     return d;
   }
-  function openRules() { document.getElementById('scrollPaper').innerHTML = scrollHtml(); document.getElementById('scrollBack').classList.add('open'); var sc = document.getElementById('scrollClose'); if (sc) sc.focus(); }
+  function openRules() { infoModal('How LVR Points Work', rulesHtml()); }
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
     var qa = [
@@ -1153,13 +1138,11 @@
     function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; tickChest(); }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
-      if (t && t.closest('#scrollBtn')) { document.getElementById('scrollPaper').innerHTML = scrollHtml(); document.getElementById('scrollBack').classList.add('open'); var sc = document.getElementById('scrollClose'); if (sc) sc.focus(); }
-      else if (e.target === document.getElementById('scrollBack') || (t && t.closest('#scrollClose'))) document.getElementById('scrollBack').classList.remove('open');
-      else if (t && t.closest('#giftBtn')) open();
+      if (t && t.closest('#giftBtn')) open();
       else if (t && t.closest('#chestOpenBtn')) openChest();
       else if (e.target === back || (t && t.closest('#soonClose'))) close();
     });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { document.getElementById('scrollBack').classList.remove('open'); close(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   })();
 
   // Slim balance bar that appears at the top while the big card is scrolled out of view
