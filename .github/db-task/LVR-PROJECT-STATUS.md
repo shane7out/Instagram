@@ -1387,3 +1387,13 @@ top unless they tell you otherwise.*
 - **Points program switches panel** at the top of the room: shows sign-ups / receipt uploads / redeeming as Running or Paused and has one Pause everything / Resume everything button (writes `lvr_points/settings/paused`, the same flags as Points admin > Settings).
 - **Restaurant Invoices** (`lvr-invoice.html`, in `deploy-key-room.sh` FILES): pick a restaurant + month; adds up receipts approved that month, applies the restaurant's commission (or the default), prints / saves as PDF, CSV of receipts. No member names are shown. Pay-to text is remembered in the browser.
 - All need `go-live.sh` (Mac-hosted).
+
+## Full review (2026-10-29): what was fixed, and the one big thing left
+**Fixed**
+- Redeeming could in theory spend the same points twice (two quick taps / two devices). Now the points are taken first with a server-side subtraction the database refuses to take below zero; the code is recorded second; if recording fails the points are given back. Tested with a mock database (race: 1 code, 0 points left; failed record: points restored).
+- Error messages in the redeem flow are in-page dialogs, not browser alerts.
+- Member screen: paused state no longer says "-7 more points to unlock"; offers without a max/expiry no longer show the internal "not set yet" note; a bad link now offers Open My Account / paste your link.
+- Accessibility sweep (axe, WCAG A/AA): all blue and red buttons in the member page and every owner tool were below contrast; darkened. Small text on the member screen raised to 13-14px; tap targets enlarged. 0 violations on all six pages checked at 360px wide.
+**Still open (needs the Blaze / Cloud Functions step)**
+- `lvr_points` and `lvr_rewards` are readable by anyone who knows the database address. That includes member names, phones, Instagram handles, each member's personal link token (anyone with a token can open that member's screen), receipt photos, and restaurant portal PINs. Only 3 test members exist today, but this must be fixed before real members join. It cannot be closed with rules alone because the member screen finds members by token without signing in.
+- Anyone can still edit points balances directly (same cause).

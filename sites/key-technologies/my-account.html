@@ -71,7 +71,7 @@
   .tally{margin:12px 0 4px;font-size:15px;padding:12px 14px;border-radius:12px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.35);}
   .tally .trow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
   .tally .tused{font-weight:700;color:var(--ink);} .tally .tused b{font-size:24px;color:#3ddc84;font-weight:800;font-variant-numeric:tabular-nums;}
-  .tally .tflag{font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:rgba(61,220,132,.16);color:#3ddc84;}
+  .tally .tflag{font-size:13.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:rgba(61,220,132,.16);color:#3ddc84;}
   .tally .tbar{height:12px;border-radius:99px;background:rgba(255,255,255,.12);margin:9px 0 8px;overflow:hidden;}
   .tally .tbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3ddc84,#2fb86c);}
   .tally .texp{display:block;color:var(--ink-dim);font-weight:600;font-size:13.5px;} .tally .texp b{color:var(--ink);}
@@ -83,7 +83,7 @@
   @keyframes tflagPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
   .tally.unset{color:var(--ink-dim);font-style:italic;background:transparent;border-style:dashed;}
   .tally .fine{display:none;}
-  .fineprint{margin:4px 0 18px;font-size:12px;line-height:1.5;color:var(--ink-dim);}
+  .fineprint{margin:4px 0 18px;font-size:13.5px;line-height:1.5;color:var(--ink-dim);}
   .chest-hit{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:#f0a91a;}
   .chest-hit:focus-visible{outline:2px solid var(--key-light);outline-offset:4px;border-radius:12px;}
   .chest-cap{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.1;color:#ffd35c;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(240,169,26,.45);}
@@ -117,7 +117,7 @@
   .mc-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffd35c,#f0a91a);}
   .urgent .mc-bar i{background:linear-gradient(90deg,#ffb089,#ff6b3d);}
   .mc-text{font-size:13.5px;line-height:1.45;color:var(--ink);} .mc-last{margin-top:6px;font-size:13px;color:var(--ink-dim);}
-  .mc-scroll{margin-top:8px;font:inherit;font-size:13px;font-weight:700;color:#ffd35c;background:transparent;border:1px solid rgba(255,211,92,.5);border-radius:99px;padding:5px 12px;cursor:pointer;}
+  .mc-scroll{margin-top:8px;font:inherit;font-size:14px;font-weight:700;color:#ffd35c;background:transparent;border:1px solid rgba(255,211,92,.5);border-radius:99px;padding:10px 16px;min-height:44px;cursor:pointer;}
   .nav-row .btn{white-space:nowrap;padding:10px 16px;font-size:14px;}
   .mc-scroll:focus-visible,.sc-close:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
   .scroll-back{position:fixed;inset:0;background:rgba(3,8,16,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;overflow-y:auto;}
@@ -198,7 +198,7 @@
   .vinfo{display:grid;gap:8px;margin:14px 0 10px;}
   .vrow{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:center;min-height:50px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);color:var(--ink);text-decoration:none;}
   .vrow:hover{border-color:var(--key-blue);}
-  .vrow .vlab{display:block;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);}
+  .vrow .vlab{display:block;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);}
   .vrow .vval{display:block;font-size:16px;font-weight:600;line-height:1.3;color:var(--ink);overflow-wrap:anywhere;}
   .vlinks{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;}
   .vlink{display:inline-flex;align-items:center;gap:7px;min-height:38px;border:1px solid var(--control-line);border-radius:99px;padding:5px 13px 5px 9px;color:var(--ink);text-decoration:none;font-weight:700;font-size:13.5px;white-space:nowrap;background:rgba(255,255,255,.03);}
@@ -214,7 +214,7 @@
   .item-card.locked .item-photo{filter:grayscale(.55) brightness(.8);}
   .coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,#f0a91a 55%,#b9770e);box-shadow:0 0 8px rgba(240,169,26,.6);vertical-align:-2px;margin-right:5px;}
   .item-card.ready .item-cost{color:#ffd35c;text-shadow:0 0 10px rgba(240,169,26,.5);}
-  .pickup{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#bcd6ee;border:1px solid rgba(188,214,238,.45);border-radius:99px;padding:2px 9px;margin:0 6px 6px 0;}
+  .pickup{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#bcd6ee;border:1px solid rgba(188,214,238,.45);border-radius:99px;padding:2px 9px;margin:0 6px 6px 0;}
   .goal{margin:10px 0 2px;font-size:13px;font-weight:700;}
   .goal.ok{color:#ffd35c;}
   .goal.need{color:var(--ink-dim);}
@@ -230,15 +230,15 @@
   .item-biz{font-size:12.5px;color:var(--ink-dim);font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
   .item-name{font-size:17px;font-weight:800;margin-top:2px;}
   .item-cost{font-size:15px;font-weight:800;color:var(--key-light);white-space:nowrap;}
-  .item-note{font-size:12px;color:var(--ink-dim);margin-top:6px;}
+  .item-note{font-size:14px;color:var(--ink-dim);margin-top:6px;}
   .redeem-btn{
     width:100%;margin-top:12px;padding:12px;border-radius:10px;border:none;
-    background:var(--key-blue);color:#fff;font-size:15px;font-weight:700;cursor:pointer;line-height:1.2;
+    background:#0f67c2;color:#fff;font-size:15px;font-weight:700;cursor:pointer;line-height:1.2;
   }
   .act-row{display:flex;gap:10px;align-items:stretch;margin-top:12px;} .act-row .redeem-btn{margin-top:0;flex:1.15;width:auto;}
   .rcpt-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px 10px;border-radius:10px;border:1.5px dashed rgba(240,169,26,.75);background:rgba(240,169,26,.08);color:#ffd35c;font:inherit;cursor:pointer;line-height:1.15;}
-  .rcpt-btn b{font-size:15px;} .rcpt-btn small{font-size:12px;color:var(--ink-dim);} .rcpt-btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
-  .act-hint{margin-top:8px;font-size:12.5px;color:var(--ink-dim);line-height:1.45;}
+  .rcpt-btn b{font-size:15px;} .rcpt-btn small{font-size:13px;color:var(--ink-dim);} .rcpt-btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+  .act-hint{margin-top:8px;font-size:14px;color:var(--ink-dim);line-height:1.45;}
   .rcpt-back{position:fixed;inset:0;background:rgba(3,8,16,.8);display:none;align-items:flex-start;justify-content:center;padding:16px;z-index:70;overflow-y:auto;}
   .rcpt-back.open{display:flex;}
   .rcpt-box{position:relative;width:100%;max-width:420px;margin:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px 22px;}
@@ -249,7 +249,7 @@
   .redeem-btn:not(:disabled):active{background:#0f64b2;}
 
   .empty{color:var(--ink-dim);text-align:center;padding:30px 10px;font-size:14px;}
-  .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.7;margin-top:14px;}
+  .footer-note{text-align:center;font-size:13px;color:var(--ink-dim);opacity:.85;margin-top:14px;}
   .footer-note a{color:var(--ink-dim);text-decoration:underline;}
 
   #redeemOverlay{display:none;position:fixed;inset:0;background:rgba(7,17,31,.92);z-index:999;align-items:center;justify-content:center;padding:20px;}
@@ -264,7 +264,7 @@
   .confirm-box{background:var(--card);border:1px solid var(--key-blue);border-radius:14px;padding:18px;margin-top:10px;}
   .confirm-row{display:flex;gap:10px;margin-top:12px;}
   .confirm-row button{flex:1;padding:11px;border-radius:9px;border:1px solid var(--line);font-size:14px;font-weight:700;cursor:pointer;}
-  .confirm-yes{background:var(--key-blue);color:#fff;border-color:var(--key-blue) !important;}
+  .confirm-yes{background:#0f67c2;color:#fff;border-color:var(--key-blue) !important;}
   .confirm-no{background:var(--bg-2);color:var(--ink);}
 
   .hist-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
@@ -317,8 +317,8 @@
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
   .own-row{display:flex;gap:10px;}
   .own-row button{flex:1;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:12px;border:0;cursor:pointer;}
-  .own-yes{background:#e5484d;color:#fff;} .own-ok{background:#1478d6;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
-  .own-link{font-size:11.5px;opacity:.55;}
+  .own-yes{background:#c93a3f;color:#fff;} .own-ok{background:#1478d6;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
+  .own-link{font-size:13px;opacity:.85;}
 </style>
 </head>
 <body>
@@ -431,11 +431,11 @@
     return '';
   }
 
-  function showNoAccount() {
+  function showNoAccount(head, msg) {
     contentEl.innerHTML =
       '<div class="no-account-card">' +
-        '<h1>No account on this device</h1>' +
-        '<p>Open a free account, or if you already have one, paste your account link below.</p>' +
+        '<h1>' + escapeHtml(head || 'No account on this device') + '</h1>' +
+        '<p>' + escapeHtml(msg || 'Open a free account, or if you already have one, paste your account link below.') + '</p>' +
         '<a class="btn btn-primary" href="rewards.html">Open My Account</a>' +
         '<div class="paste-field">' +
           '<label for="pasteInput">Already have a link? Paste it here</label>' +
@@ -569,6 +569,7 @@
   }
   var lastCat = {}, lastRed = {};
   function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
+  function noteDialog(t) { var d = ownDialog('<h3>One moment</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
   function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
 
   function loadWallet() {
@@ -590,7 +591,7 @@
       var catalog = results[1] || {};
       var allRedemptions = results[2] || {};
       if (!keys.length) {
-        showEmpty("We couldn't find an account for this link.");
+        showNoAccount("We couldn't find that account", "The link may be cut off or out of date. Paste your full account link below, or open a free account.");
         return;
       }
       memberKey = keys[0];
@@ -761,7 +762,9 @@
           '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
             var pic = SHOW_PHOTOS && idx !== 0 ? (item.photoUrl || item.photo || '') : '';
-            var goal = afford
+            var goal = (!afford && paused && pts >= item.pointCost)
+              ? '<div class="goal need">⏸ Redeeming is paused for a moment. Your points are safe.</div>'
+              : afford
               ? '<div class="goal ok">✓ You can get this now<div class="gbar"><i style="width:100%"></i></div></div>'
               : '<div class="goal need">🔒 ' + (item.pointCost - pts) + ' more point' + (item.pointCost - pts === 1 ? '' : 's') + ' to unlock · you have ' + pts + ' of ' + item.pointCost + '<div class="gbar"><i style="width:' + Math.min(100, Math.round(100 * pts / item.pointCost)) + '%"></i></div></div>';
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
@@ -899,7 +902,7 @@
     return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
   }
   function tallyHtml(max, left, exp) {
-    if (!(max > 0) || !exp) return '<div class="tally unset">Maximum and expiry date not set yet</div>';
+    if (!(max > 0) || !exp) return '';
     left = Math.max(0, Math.min(max, left));
     var used = max - left, pct = Math.round(100 * used / max);
     var cls = left <= 0 ? ' out' : (left <= 3 ? ' low' : (pct >= 70 ? ' hot' : ''));
@@ -1257,7 +1260,7 @@
   }
 
   function doRedeem(item) {
-    if (pausedFlag('redemptions')) { alert('Redemptions are paused for a moment. Please try again soon.'); loadWallet(); return; }
+    if (pausedFlag('redemptions')) { noteDialog('Redemptions are paused for a moment. Please try again soon.'); loadWallet(); return; }
     Promise.all([
       fbGet(MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points'),
       item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null),
@@ -1267,12 +1270,12 @@
       var freshRedemptions = results[1];
       var freshCredit = results[2];
       if (typeof freshCredit === 'number' && freshCredit < item.pointCost) {
-        alert("Sorry - this offer just ran out.");
+        noteDialog("Sorry, this offer just ran out.");
         loadWallet();
         return;
       }
       if (freshBalance < item.pointCost) {
-        alert("Your balance changed and you no longer have enough points for this.");
+        noteDialog("Your balance changed and you no longer have enough points for this.");
         loadWallet();
         return;
       }
@@ -1281,7 +1284,7 @@
           return freshRedemptions[id] && freshRedemptions[id].itemId === item.itemId;
         }).length;
         if (freshCount >= item.maxRedemptions) {
-          alert("This offer was just fully claimed by someone else.");
+          noteDialog("This offer was just fully claimed by someone else.");
           loadWallet();
           return;
         }
@@ -1301,19 +1304,30 @@
         useBy: item.expiresAt || null,
         redeemedAt: { '.sv': 'timestamp' }
       };
-      fbPost(REDEMPTIONS_PATH + encodeURIComponent(item.slug), redemption).then(function(r){
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return fbPatch(MEMBERS_PATH + '/' + encodeURIComponent(memberKey), { points: newBalance });
-      }).then(function(){
-        if (typeof freshCredit === 'number') {
+      // Take the points first with a server-side subtraction (the database refuses to go below zero, so two
+      // quick taps or two devices can never spend the same points twice), then record the code. If recording
+      // fails, the points are given back.
+      var pointsUrl = DB + MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points.json';
+      var change = function(n){ return fetch(pointsUrl, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ '.sv': { increment: n } }) }); };
+      return change(-item.pointCost).then(function(taken){
+        if (!taken.ok) { noteDialog('Your balance changed, so we could not use the points. Nothing was spent.'); loadWallet(); return; }
+        return fbPost(REDEMPTIONS_PATH + encodeURIComponent(item.slug), redemption).then(function(r){
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          if (typeof freshCredit === 'number') {
           fetch(DB + DIRECTORY_PATH + '/' + encodeURIComponent(item.slug) + '/creditRemaining.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ '.sv': { increment: -item.pointCost } }) }).catch(function(){});
-        }
-        wallet.points = newBalance;
-        showRedeemSuccess(item, code, newBalance);
-      }).catch(function(){
-        alert("Something went wrong redeeming this. Please try again.");
-        loadWallet();
+          }
+          wallet.points = newBalance;
+          showRedeemSuccess(item, code, newBalance);
+        }).catch(function(){
+          return change(item.pointCost).catch(function(){}).then(function(){
+            noteDialog('Something went wrong, so your points were not used. Please try again.');
+            loadWallet();
+          });
+        });
       });
+    }).catch(function(){
+      noteDialog('Something went wrong. Please try again in a moment.');
+      loadWallet();
     });
   }
 
