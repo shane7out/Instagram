@@ -148,6 +148,25 @@
     document.getElementById('pin-screen').classList.add('hidden');
     document.getElementById('app').classList.add('visible');
     loadAll();
+    startReceiptWatch();
+  }
+  // Every minute (and when you come back to this tab) check for new receipts so you never have to remember to refresh:
+  // the Receipts tab shows how many are waiting, and a message pops up when a new one arrives.
+  var lastPending = null;
+  function checkReceipts() {
+    if (document.hidden) return;
+    fetch(DB + RECEIPTS_PATH + '.json').then(function (r) { return r.json(); }).then(function (rc) {
+      rc = rc || {};
+      var n = Object.keys(rc).filter(function (k) { return rc[k] && rc[k].status === 'pending'; }).length;
+      var tab = document.querySelector('.tab[data-v="receipts"]'); if (tab) tab.textContent = 'Receipts' + (n ? ' (' + n + ')' : '');
+      if (lastPending !== null && n > lastPending) showToast('New receipt waiting. Tap Refresh to see it.');
+      lastPending = n;
+    }).catch(function () {});
+  }
+  function startReceiptWatch() {
+    checkReceipts();
+    setInterval(checkReceipts, 60000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) checkReceipts(); });
   }
   function pinSubmit(){
     if (pinBuf === PIN) {

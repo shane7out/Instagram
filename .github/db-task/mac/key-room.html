@@ -61,7 +61,7 @@
   .sw-row:last-of-type{border-bottom:0;}
   .sw-on{color:#3ddc84;font-weight:800;} .sw-off{color:#ff6b6b;font-weight:800;}
   .big-btn{width:100%;margin-top:12px;padding:14px;border-radius:12px;border:0;font-size:16px;font-weight:800;cursor:pointer;color:#fff;}
-  .big-btn.pause{background:#c93a3f;} .big-btn.resume{background:#1f9d57;} .big-btn:disabled{opacity:.6;cursor:default;}
+  .big-btn.pause{background:#c93a3f;} .big-btn.resume{background:#17773f;} .big-btn:disabled{opacity:.6;cursor:default;}
 </style>
 </head>
 <body>
@@ -87,6 +87,10 @@
     <h1>Key Tech Room</h1>
     <p>Everything new, in one place.</p>
   </header>
+  <div class="panel" id="statusPanel">
+    <div class="panel-title">Right now</div>
+    <div id="stRows"><div class="sw-row"><span>Checking…</span></div></div>
+  </div>
   <div class="panel" id="pausePanel">
     <div class="panel-title">Points program switches</div>
     <div class="panel-sub">One button to stop the program if anything looks wrong. Members see "paused for a moment" and their points stay safe.</div>
@@ -161,7 +165,36 @@
     document.getElementById('app').classList.add('visible');
     loadBadges();
     loadSwitches();
+    loadStatus();
   }
+
+  // ---- "Right now" strip: members, receipts waiting, and how each partner's offer is doing ----
+  function stRow(label, value, warn) { return '<div class="sw-row"><span>' + label + '</span><span class="' + (warn ? 'sw-off' : '') + '" style="font-weight:800;">' + value + '</span></div>'; }
+  function loadStatus() {
+    function get(p) { return fetch(DB + p + '.json').then(function (r) { return r.json(); }).catch(function () { return null; }); }
+    Promise.all([get('/lvr_rewards'), get('/lvr_points/receipts'), get('/lvr_points/catalog'), get('/lvr_points/redemptions'), get('/lvr_points/directory')]).then(function (r) {
+      var members = r[0] || {}, receipts = r[1] || {}, catalog = r[2] || {}, red = r[3] || {}, dir = r[4] || {};
+      var ids = Object.keys(members), day = Date.now() - 86400000;
+      var fresh = ids.filter(function (k) { return members[k] && Number(members[k].joinedAt) > day; }).length;
+      var pending = Object.keys(receipts).filter(function (k) { return receipts[k] && receipts[k].status === 'pending'; }).length;
+      var rows = stRow('Members', ids.length + (fresh ? ' (' + fresh + ' new today)' : '')) + stRow('Receipts waiting for you', String(pending), pending > 0);
+      Object.keys(catalog).forEach(function (slug) {
+        Object.keys(catalog[slug] || {}).forEach(function (id) {
+          var it = catalog[slug][id]; if (!it || it.active === false) return;
+          var claimed = Object.keys(red[slug] || {}).filter(function (k) { return red[slug][k] && red[slug][k].itemId === id; }).length;
+          var max = Number(it.maxRedemptions) || 0, credit = dir[slug] && dir[slug].creditRemaining;
+          var left = max ? Math.max(0, max - claimed) : null;
+          var low = (left !== null && left <= 5) || (typeof credit === 'number' && credit < (Number(it.pointCost) || 0));
+          var name = (dir[slug] && dir[slug].bizName) || it.bizName || slug;
+          var ends = it.expiresAt ? ' · ends ' + new Date(it.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+          rows += stRow(name + ': ' + (it.itemName || 'offer'), claimed + (max ? ' of ' + max : '') + ' claimed' + (typeof credit === 'number' ? ' · $' + credit + ' credit left' : '') + ends, low);
+        });
+      });
+      document.getElementById('stRows').innerHTML = rows;
+    });
+  }
+  setInterval(function () { if (!document.hidden && document.getElementById('app').classList.contains('visible')) { loadBadges(); loadSwitches(); loadStatus(); } }, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && document.getElementById('app').classList.contains('visible')) { loadBadges(); loadSwitches(); loadStatus(); } });
 
   // ---- counters on the cards ----
   function setBadge(id, n, word) {

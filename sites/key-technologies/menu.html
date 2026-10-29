@@ -307,10 +307,28 @@
   function restSlug(n) { return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
   function hiddenMap() { return Object.assign({}, localHidden, hiddenCfg); }
   function isHidden(n) { return !!hiddenMap()[restSlug(n)]; }
-  function loadHidden() {
-    var t = new Promise(function (res) { setTimeout(function () { res(null); }, 2500); });
-    return Promise.race([fetch(DB + '/lvr_points/settings/hiddenRestaurants.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }), t]).then(function (h) { (hiddenCfg = h || {}); });
+  function loadHidden(keepOnFail) {
+    var FAIL = { __failed: true };
+    var t = new Promise(function (res) { setTimeout(function () { res(FAIL); }, 2500); });
+    return Promise.race([fetch(DB + '/lvr_points/settings/hiddenRestaurants.json').then(function (r) { return r.ok ? r.json() : FAIL; }).catch(function () { return FAIL; }), t]).then(function (h) {
+      if (h && h.__failed) { if (!keepOnFail) hiddenCfg = {}; return; }
+      hiddenCfg = h || {};
+    });
   }
+  // Keep an open page up to date: every minute, and when the visitor comes back to the app, re-check the list
+  // of removed restaurants and redraw if it changed.
+  var hiddenSig = '';
+  function hiddenTick() {
+    if (document.hidden || new URLSearchParams(location.search).get("demo") !== "vegas") return;
+    loadHidden(true).then(function () {
+      var sg = JSON.stringify(hiddenCfg);
+      if (sg === hiddenSig || document.querySelector('.own-back')) return;
+      hiddenSig = sg; var y = window.scrollY; renderVegas(); window.scrollTo(0, y);
+    });
+  }
+  setInterval(hiddenTick, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) hiddenTick(); });
+
   function ownDialog(html) {
     var b = document.createElement('div'); b.className = 'own-back';
     b.innerHTML = '<div class="own-box" role="dialog" aria-modal="true">' + html + '</div>';
@@ -522,7 +540,7 @@
   }
 
   var demoMode = new URLSearchParams(location.search).get("demo");
-  if (demoMode) { if (demoMode === "vegas") loadHidden().then(renderVegas); else renderDemo({}); return; }
+  if (demoMode) { if (demoMode === "vegas") loadHidden().then(function () { hiddenSig = JSON.stringify(hiddenCfg); renderVegas(); }); else renderDemo({}); return; }
   Promise.all([get("/lvr_points/catalog"), get("/lvr_points/directory"), get("/lvr_points/settings")]).then(function (r) {
     var catalog = r[0] || {}, directory = r[1] || {}, settings = r[2] || {};
     var slug = slugWanted && catalog[slugWanted] ? slugWanted : Object.keys(catalog)[0];

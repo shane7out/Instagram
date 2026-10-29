@@ -1427,3 +1427,9 @@ top unless they tell you otherwise.*
 - Both sign-up forms' "I'm in" box now says the person is 18 or older and that no purchase is necessary. Vanilla Rice earn rate set to 0.5 (was 1); Points admin default for new businesses is 0.5.
 - **Not enforced (owner to decide):** "use points at a restaurant you haven't used yet" is wording only. Enforcing it would block anyone who spent at Vanilla Rice from redeeming while Vanilla Rice is the only partner.
 - **Attorney list adds:** "no purchase necessary" wording and the free ways to get points; earning 1 point per $2 spent; 18+ and ID check; one free offer may be given to a friend; the prize ladder at this earn rate (a $50 gift card at 50 points = $100 of spending; commission on $100 is $20).
+
+## Always up to date, no more refreshing (2026-10-29)
+- **Customer pages stay current:** an open page re-checks every minute (and when the person comes back to the app) for anything you changed: removed restaurants, pause switches, offers, credit, their balance. It redraws in place unless they are in the middle of something (receipt form, popup, menu open). The Las Vegas list does the same for removed restaurants.
+- **Key room "Right now" strip** (members and new today, receipts waiting, and per partner: claimed of max, credit left, end date; flags low stock/credit) and the counters/switches refresh every minute.
+- **Points admin** checks for new receipts every minute: the Receipts tab shows "(N)" and a message pops up when a new one arrives.
+- **Go-live no longer hits GitHub's stale copy:** the Mac scripts add a fresh `?cb=` to every download, so there is no "wait 5 minutes" step. Use the command with `?$(date +%s)` after go-live.sh.

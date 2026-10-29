@@ -513,9 +513,13 @@
   function restSlug(n) { return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
   function hiddenMap() { return Object.assign({}, localHidden, ((appSettings && appSettings.hiddenRestaurants) || {})); }
   function isHidden(n) { return !!hiddenMap()[restSlug(n)]; }
-  function loadHidden() {
-    var t = new Promise(function (res) { setTimeout(function () { res(null); }, 2500); });
-    return Promise.race([fetch(DB + '/lvr_points/settings/hiddenRestaurants.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }), t]).then(function (h) { (appSettings.hiddenRestaurants = h || {}); });
+  function loadHidden(keepOnFail) {
+    var FAIL = { __failed: true };
+    var t = new Promise(function (res) { setTimeout(function () { res(FAIL); }, 2500); });
+    return Promise.race([fetch(DB + '/lvr_points/settings/hiddenRestaurants.json').then(function (r) { return r.ok ? r.json() : FAIL; }).catch(function () { return FAIL; }), t]).then(function (h) {
+      if (h && h.__failed) { if (!keepOnFail) appSettings.hiddenRestaurants = {}; return; }
+      appSettings.hiddenRestaurants = h || {};
+    });
   }
   function ownDialog(html) {
     var b = document.createElement('div'); b.className = 'own-back';
@@ -708,6 +712,36 @@
     else if (kind === 'prizes') { var pd = infoModal('Prizes', prizesHtml()); bindLadder(pd); }
     else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
   }
+  // ---------- keep an open page up to date ----------
+  // Every minute (and whenever the member comes back to the app) quietly check for changes you made as the owner:
+  // removed restaurants, paused switches, offers, credit, balance. If something changed and the member is not in
+  // the middle of something (a form, a popup), the page refreshes in place.
+  var liveSig = '', hiddenSig = '';
+  function liveBusy() {
+    var a = document.activeElement, mn = document.getElementById('lrMenu');
+    return !!document.querySelector('.own-back') || !!document.querySelector('#rcptBack.open') || !!document.querySelector('#redeemOverlay.show') || !!document.querySelector('#soonBack.open') ||
+      (mn && !mn.hidden) || (a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName));
+  }
+  function liveRefresh() {
+    if (!memberKey || !token) return;
+    Promise.all([fbFindByToken(token), fbGet(CATALOG_PATH), fbGet(REDEMPTIONS_PATH.slice(0, -1)), fbGet(DIRECTORY_PATH), fbGet('/lvr_points/settings')]).then(function (r) {
+      var found = (r[0] || {})[memberKey]; if (!found) return;
+      var sig = JSON.stringify([r[1] || {}, r[2] || {}, r[3] || {}, r[4] || {}, found.points]);
+      if (sig === liveSig || liveBusy()) return;
+      directory = r[3] || {}; appSettings = r[4] || {}; wallet = found; liveSig = sig;
+      var y = window.scrollY; render(r[1] || {}, r[2] || {}); window.scrollTo(0, y);
+    }).catch(function () {});
+  }
+  function hiddenRefresh() {
+    loadHidden(true).then(function () {
+      var s = JSON.stringify(hiddenMap());
+      if (s === hiddenSig || liveBusy()) return;
+      hiddenSig = s; ownRerender();
+    });
+  }
+  function liveTick() { if (document.hidden) return; if (DEMO) hiddenRefresh(); else liveRefresh(); }
+  setInterval(liveTick, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) liveTick(); });
   function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
   function noteDialog(t) { var d = ownDialog('<h3>One moment</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
   function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
@@ -736,6 +770,7 @@
       }
       memberKey = keys[0];
       wallet = found[memberKey];
+      liveSig = JSON.stringify([catalog || {}, allRedemptions || {}, directory || {}, appSettings || {}, wallet.points]);
       render(catalog, allRedemptions);
     }).catch(function(){
       showEmpty("Couldn't load your account right now. Please try again in a moment.");
@@ -855,7 +890,7 @@
     wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
     wallet.chestState = DEMO_CHEST ? { n: 1, amount: 2, at: Date.now() - 10 * 86400000 - 6 * 3600000 } : { n: 1, amount: 2, at: Date.now() - 2 * 86400000 };
     memberKey = null; appSettings = { chest: { waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 7, repeat: true } }; myReceipts = {}; directory = {};
-    loadHidden().then(function () { render({}, {}); });
+    loadHidden().then(function () { hiddenSig = JSON.stringify(hiddenMap()); render({}, {}); });
   }
 
   function render(catalog, allRedemptions) {

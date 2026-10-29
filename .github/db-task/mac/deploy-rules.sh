@@ -17,7 +17,7 @@ node <<'NODE'
 const { execSync } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-const FRAG = 'https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/rules/lvr-rules-fragment.json';
+const FRAG = 'https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/rules/lvr-rules-fragment.json?cb=' + Date.now();
 const SECTIONS = ['lvr_points', 'lvr_rewards', 'lvr_instagram_index', 'lvr_coupons'];
 const mask = s => String(s).replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL]');
 const out = [];
