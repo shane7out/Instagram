@@ -188,22 +188,32 @@
   .top-panel .reward-tile{background:rgba(255,255,255,.05);}
   .balance-card.solo{grid-template-columns:minmax(0,1fr);}
   .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:center;}
-  /* the balance and the bonus tile share three rows (label / big number / unit) so the two numbers sit on one line at one size */
-  .balance-card{grid-template-rows:auto auto auto;row-gap:0;align-items:start;}
+  /* balance on top, the bonus clock as a full-width strip under it */
+  .balance-card{grid-template-columns:minmax(0,1fr);row-gap:0;align-items:start;}
   .balance-main{display:contents;}
   .balance-name{grid-column:1;grid-row:1;align-self:end;}
   .balance-num{grid-column:1;grid-row:2;}
   .balance-label{grid-column:1;grid-row:3;}
-  .reward-tile{grid-column:2;grid-row:1 / span 3;display:grid;grid-template-rows:subgrid;row-gap:0;justify-items:center;align-self:stretch;}
-  .reward-tile .chest-count{display:contents;}
-  .rw-lab{grid-row:1;align-self:end;padding-bottom:6px;}
-  .rw-num{grid-row:2;}
-  .rw-foot{grid-row:3;align-self:start;}
+  .reward-tile{grid-column:1;grid-row:4;margin-top:16px;width:100%;gap:6px;padding:14px 10px 12px;}
+  .rw-lab{font-size:14px;letter-spacing:.04em;}
+  .clk{display:flex;justify-content:center;align-items:flex-start;gap:2px;font-variant-numeric:tabular-nums;}
+  .clk .seg{display:flex;flex-direction:column;align-items:center;min-width:62px;}
+  .clk .seg b{font-size:40px;line-height:1.05;font-weight:800;color:#ffd35c;letter-spacing:-.01em;}
+  .clk .seg i{font-style:normal;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);margin-top:1px;}
+  .clk .sep{font-size:34px;line-height:1.15;font-weight:800;color:rgba(255,211,92,.55);}
+  .clk .seg.sec b{color:#fff4cf;}
+  .clk.big .seg b{font-size:34px;} .clk.big .seg{min-width:56px;}
+  @media (prefers-reduced-motion:no-preference){.clk .seg.sec b.t0{animation:secA .9s ease-out;} .clk .seg.sec b.t1{animation:secB .9s ease-out;}}
+  @keyframes secA{0%{transform:translateY(-6px);opacity:.35;}100%{transform:none;opacity:1;}}
+  @keyframes secB{0%{transform:translateY(-6px);opacity:.35;}100%{transform:none;opacity:1;}}
+  .rw-foot{display:flex;flex-direction:column;align-items:center;}
+  .rw-unit{margin-top:2px;font-size:14.5px;}
+  @media (max-width:360px){.clk .seg{min-width:54px;} .clk .seg b{font-size:34px;}}
   .balance-name{font-size:14px;color:var(--ink-dim);margin-bottom:6px;}
   .balance-num{font-size:58px;font-weight:800;line-height:1;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.65),0 0 32px rgba(22,143,255,.45);}
   @media (prefers-reduced-motion:no-preference){.balance-num{animation:balGlow 3.2s ease-in-out infinite;}}
   @keyframes balGlow{0%,100%{text-shadow:0 0 10px rgba(89,181,255,.55),0 0 26px rgba(22,143,255,.35);}50%{text-shadow:0 0 16px rgba(89,181,255,.9),0 0 42px rgba(22,143,255,.6);}}
-  .balance-label{font-size:13.5px;color:var(--ink-dim);margin-top:6px;} .rw-unit{margin-top:6px;}
+  .balance-label{font-size:13.5px;color:var(--ink-dim);margin-top:6px;}
 
   h2{font-size:16px;font-weight:700;margin:0 0 12px;}
   .items{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
@@ -1000,9 +1010,10 @@
     applyFilters();
   });
   function startDemo() {
-    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
-    wallet.chestState = DEMO_CHEST ? { n: 1, amount: 2, at: Date.now() - 10 * 86400000 - 6 * 3600000 } : { n: 1, amount: 2, at: Date.now() - 2 * 86400000 };
-    memberKey = null; appSettings = { chest: { waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 7, repeat: true } }; myReceipts = {}; directory = {};
+    wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 17 * 60000 };
+    // default demo = a brand-new member (full wait ahead); ?chest shows the "ready to collect" state
+    if (DEMO_CHEST) wallet.chestState = { n: 1, amount: 2, at: Date.now() - 7 * 86400000 - 6 * 3600000 };
+    memberKey = null; appSettings = { chest: { waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10, repeat: true } }; myReceipts = {}; directory = {};
     loadHidden().then(function () { hiddenSig = JSON.stringify(hiddenMap()); render({}, {}); });
   }
 
@@ -1228,7 +1239,7 @@
     var raw = (appSettings && appSettings.chest) || {};
     var max = raw.prizeMax != null ? Number(raw.prizeMax) : (Number(raw.bonus) || 0);
     var min = raw.prizeMin != null ? Number(raw.prizeMin) : max;
-    return { waitDays: Number(raw.waitDays) || 10, claimHours: Number(raw.claimHours) || 48, prizeMin: Math.max(1, Math.min(min, max)), prizeMax: max, repeat: raw.repeat === true };
+    return { waitDays: Number(raw.waitDays) || 7, claimHours: Number(raw.claimHours) || 48, prizeMin: Math.max(1, Math.min(min, max)), prizeMax: max, repeat: raw.repeat === true };
   }
   function chestInfo() {
     var c = chestCfg(), cs = wallet && wallet.chestState, n = cs ? Number(cs.n) || 0 : 0;
@@ -1246,31 +1257,53 @@
   }
   var chestBusy = false, chestWin = '';
   function hrs(d) { return Math.round(d * 24); }
-  function tileNum(ms) {
-    // always hours (240 hours, not 10 days); only the last hour is shown in minutes
-    var h = ms / 3600000;
-    if (h > 1) { var n = Math.ceil(h); return { n: n, u: n === 1 ? 'hour' : 'hours' }; }
-    return { n: Math.max(Math.ceil(ms / 60000), 1), u: 'min' };
+  function clockParts(ms) {
+    var t = Math.max(0, Math.ceil(ms / 1000));
+    return [Math.floor(t / 86400), Math.floor(t % 86400 / 3600), Math.floor(t % 3600 / 60), t % 60];
   }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function clockHtml(ms) {
+    var p = clockParts(ms), L = ['days', 'hrs', 'min', 'sec'];
+    return '<span class="clk" aria-hidden="true" data-end="' + (Date.now() + ms) + '">' + p.map(function (v, k) {
+      return (k ? '<span class="sep">:</span>' : '') + '<span class="seg' + (k === 3 ? ' sec' : '') + '"><b>' + pad2(v) + '</b><i>' + L[k] + '</i></span>';
+    }).join('') + '</span>';
+  }
+  var clkFlip = 0, clkBusy = false;
+  function tickClocks() {
+    var els = document.querySelectorAll('.clk[data-end]'), expired = false;
+    Array.prototype.forEach.call(els, function (el) {
+      var left = Number(el.getAttribute('data-end')) - Date.now(), p = clockParts(left), bs = el.querySelectorAll('b');
+      if (left <= 0) expired = true;
+      for (var k = 0; k < 4; k++) {
+        var t = pad2(p[k]);
+        if (bs[k] && bs[k].textContent !== t) {
+          bs[k].textContent = t;
+          if (k === 3) { bs[k].className = 't' + (clkFlip = 1 - clkFlip); }
+        }
+      }
+    });
+    if (expired && !clkBusy) { clkBusy = true; setTimeout(function () { clkBusy = false; }, 1500); tickChest(); }
+  }
+  setInterval(tickClocks, 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) tickClocks(); });
   function tickChest() {
     var st = chestInfo(), tile = '', art = '', big = '', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
     if (st.kind === 'wait') {
-      var f = tileNum(st.ms);
-      tile = '<span class="rw-lab">Bonus in</span><span class="rw-num' + (String(f.n).length > 3 ? ' long' : '') + '">' + f.n + '</span><span class="rw-foot"><span class="rw-unit">' + f.u + '</span></span>';
-      art = '<div class="bn-num">' + f.n + '</div><div class="bn-unit">' + f.u + ' to go</div>';
+      var range = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + ' to ' + st.c.prizeMax;
+      tile = '<span class="rw-lab">🎁 Bonus in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">Log in then to win ' + range + ' points</span></span>';
+      art = clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your bonus</div>';
       msg = (st.missed ? 'The last bonus window closed, so the wait started over. ' : '') + 'Log in when the countdown ends and collect your bonus. You will have ' + st.c.claimHours + ' hours to claim it, or the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
     } else if (st.kind === 'ready') {
       var amt = st.c.prizeMin === st.c.prizeMax ? st.c.prizeMax : st.c.prizeMin + (st.c.prizeMax - st.c.prizeMin === 1 ? ' or ' : ' to ') + st.c.prizeMax;
       var cl = fmtLeft(st.ms);
-      var hl = Math.floor(st.ms / 3600000), hn = hl >= 1 ? hl : Math.max(Math.floor(st.ms / 60000), 1), hu = hl >= 1 ? (hl === 1 ? 'hour left' : 'hours left') : 'min left';
-      tile = '<span class="rw-lab">Collect in</span><span class="rw-num' + (String(hn).length > 3 ? ' long' : '') + '">' + hn + '</span><span class="rw-foot"><span class="rw-unit">' + hu + '</span><span class="rw-go">Tap to collect</span></span>';
+      tile = '<span class="rw-lab">🎁 Collect in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to collect</span></span>';
       art = '<div class="bn-num ready">+' + amt + '</div><div class="bn-unit">points waiting</div><div class="bn-unit" style="margin-top:8px;font-weight:800;color:#ffd35c;">' + cl.long + ' left to collect</div>';
       msg = 'Your bonus is ready. Tap below to add ' + amt + ' points to your balance. You have ' + cl.long + ' left to collect it, or it goes back to a ' + hrs(st.c.waitDays) + '-hour wait.'; canOpen = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
     if (chestWin) { art = '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">added to your balance</div>'; canOpen = false; }
     var btn = document.getElementById('giftBtn');
-    if (btn) { btn.hidden = !show; btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
+    if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your bonus is ready. Tap to collect.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
     var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
     var a = document.getElementById('chestModalArt'); if (a && art) a.innerHTML = art;
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }

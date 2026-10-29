@@ -1,16 +1,6 @@
 #!/bin/bash
-# Re-run the rules simulator (nothing touches the real database).
-bash .github/db-task/rules/run-rules-test.sh
-# re-run: chest + bonus rules
-# re-run: quest removed
-# re-run: use-by rules
-# re-run: monthly return tests
-# re-run: dry-run expectation fixed
-# re-run: repeating chest tests
-# restored
-# re-run: default commission rule
-# re-run: commission write rule fixed
-# restored
-# restored
-# re-run: 10-day bonus with 48-hour claim window
-# restored
+# one-time: bonus every 7 days, random 1 to 10 points (48 hour claim window unchanged)
+DB=https://lvr-data-a60c1-default-rtdb.firebaseio.com
+echo "BEFORE:"; curl -s "$DB/lvr_points/settings/chest.json"; echo
+curl -s -X PATCH -H 'Content-Type: application/json' -d '{"waitDays":7,"prizeMin":1,"prizeMax":10,"claimHours":48,"repeat":true}' "$DB/lvr_points/settings/chest.json"; echo
+echo "AFTER:"; curl -s "$DB/lvr_points/settings/chest.json"; echo

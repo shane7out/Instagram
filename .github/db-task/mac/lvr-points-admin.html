@@ -601,7 +601,7 @@
   function renderSettingsTab() {
     var c = refConfig();
     var welcome = welcomeCfg();
-    var chest = Object.assign({ waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 7, repeat: true }, settings.chest || {});
+    var chest = Object.assign({ waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10, repeat: true }, settings.chest || {});
     if (settings.chest && settings.chest.prizeMax == null && settings.chest.bonus > 0) { chest.prizeMax = settings.chest.bonus; chest.prizeMin = settings.chest.bonus; chest.repeat = false; }
     var paused = settings.paused || {};
     var lim = Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, settings.limits || {});
@@ -631,7 +631,7 @@
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Member bonus</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">Each member sees a plain "Bonus in N days" number that starts counting the day they join. When it ends the bonus is ready: they log in and collect a random whole number of points between your minimum and maximum. They have a set number of hours to claim it (48 by default). If they miss that window, it goes back to a full wait. After a claim the next countdown starts. It keeps going until you untick "Keep repeating". While the biggest prize is 0, members see no bonus at all and nothing is given. Every prize is written to a permanent log.</div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Days between bonuses (10 = a bonus every 10 days)</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 10) + '"></div>' +
+          '<div class="field"><label>Days between bonuses (7 = a bonus every 7 days)</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 7) + '"></div>' +
           '<div class="field"><label>Hours to claim it once ready (48 = two days)</label><input type="number" id="sChestHours" min="1" max="720" step="1" value="' + (chest.claimHours || 48) + '"></div>' +
         '</div>' +
         '<div class="field-row">' +
