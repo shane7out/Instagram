@@ -136,12 +136,14 @@
   .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
   .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
   .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
-  .fair-box summary{cursor:pointer;font-weight:700;color:var(--ink);list-style:none;} .fair-box summary::-webkit-details-marker{display:none;} .fair-box[open] summary{margin-bottom:6px;}
+  .linkbtn{font:inherit;font-size:13.5px;font-weight:800;color:var(--key-light);background:none;border:0;padding:8px 0;min-height:36px;cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px;} .linkbtn.snd{color:var(--ink-dim);text-decoration:none;}
+  .fair-box{display:flex;flex-wrap:wrap;gap:2px 14px;align-items:center;justify-content:space-between;} .fair-box span{flex-basis:100%;}
+  .tr-intro{background:rgba(255,211,92,.08);border:1px solid rgba(255,211,92,.3);border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:15px;} .tr-intro b{color:#ffd35c;}
+  .tr-sec{border:1px solid #2c4864;border-radius:12px;margin:0 0 8px;background:rgba(255,255,255,.03);} .tr-sec summary{cursor:pointer;font-weight:800;padding:13px 14px;list-style:none;display:flex;justify-content:space-between;gap:10px;min-height:44px;} .tr-sec summary::-webkit-details-marker{display:none;} .tr-sec summary::after{content:'+';color:#ffd35c;font-size:20px;line-height:1;} .tr-sec[open] summary::after{content:'−';} .tr-sec .tr-body{padding:0 14px 13px;font-size:14.5px;line-height:1.55;color:#c4d4e6;}
+  .tr-bars{display:grid;gap:5px;margin:10px 0 4px;} .tr-bar{display:grid;grid-template-columns:22px 1fr 44px;gap:8px;align-items:center;font-size:13px;font-variant-numeric:tabular-nums;} .tr-bar i{display:block;height:12px;border-radius:99px;background:linear-gradient(90deg,#ffd35c,#e8a317);}
   .fair-box{font-size:13.5px;line-height:1.45;color:var(--ink-dim);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 12px;text-align:left;} .fair-box b{color:var(--ink);}
   .wheel-wrap{position:relative;width:244px;height:256px;margin:0 auto 6px;}
-  .wheel-ptr{position:absolute;left:50%;top:0;transform:translateX(-50%);transform-origin:50% 4px;width:30px;height:38px;z-index:2;background:linear-gradient(180deg,#fff2b8,#ffd35c 45%,#d98f0a);clip-path:polygon(50% 100%,0 22%,18% 0,82% 0,100% 22%);filter:drop-shadow(0 3px 3px rgba(0,0,0,.6));}
-  .wheel-wrap.go .wheel-ptr{animation:ptrFlick .11s ease-in-out infinite alternate;}
-  @keyframes ptrFlick{from{transform:translateX(-50%) rotate(-14deg);}to{transform:translateX(-50%) rotate(10deg);}}
+  .wheel-ptr{position:absolute;left:50%;top:-2px;transform:translateX(-50%);transform-origin:50% 5px;width:26px;height:44px;z-index:2;background:radial-gradient(circle at 50% 7px,#fff 0 3.2px,#9aa7b8 3.6px,transparent 4.4px),linear-gradient(180deg,#ff6b70 0,#d4132f 55%,#8c0a1f);clip-path:polygon(50% 100%,6% 34%,20% 0,80% 0,94% 34%);filter:drop-shadow(0 3px 3px rgba(0,0,0,.65));}
   .wheel-rot{position:absolute;left:8px;top:20px;width:228px;height:228px;border-radius:50%;box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 26px rgba(240,169,26,.35);}
   .wheel-wrap.mini{width:104px;height:112px;margin:0 auto;}
   .wheel-wrap.mini .wheel-ptr{width:16px;height:21px;transform-origin:50% 2px;}
@@ -440,7 +442,7 @@
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
-      <details class="fair-box" id="fairBox" hidden><summary>🔒 Fair and random · tap to see how</summary>The winning number is picked by a random number generator that is built into your phone's web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can't see it, choose it or change it. We have no control over it.</details>
+      <div class="fair-box" id="fairBox" hidden><span>🔒 The number is picked by your phone's own random number generator. <b>We have no control over it.</b></span><button type="button" class="linkbtn" data-fair>How the spin works ›</button><button type="button" class="linkbtn snd" id="sndBtn" aria-pressed="false">🔇 Sound off</button></div>
       <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Spin the wheel</button>
       <button type="button" class="btn btn-ghost" id="demoSpinBtn" hidden style="margin-bottom:10px;">Preview the spin (demo only)</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
@@ -684,7 +686,7 @@
   });
   // Practice spin: the owner can spin the wheel as many times as they like to show it off. Nothing is saved and no points move.
   function practiceSpin() {
-    var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, cur = 0, busy = false;
+    var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, cur = 0, practiceFrom = 0, busy = false;
     var d = ownDialog('<div style="text-align:center;"><span class="prac-tag">Practice spin · no points are added</span><h3 style="margin:0 0 4px;">Spin for ' + prizeRange({ prizeMin: min, prizeMax: max }) + ' FREE points</h3>' + wheelHtml(min, max, 'pracWheel') + '<div id="pracRes" role="status" style="min-height:44px;font-size:26px;font-weight:800;color:#7be3a6;margin:2px 0 10px;"></div><p style="font-size:12.5px;line-height:1.4;color:#9fb3c8;margin:0 0 10px;">Real spins use the random number generator built into the member’s browser. We have no control over the result.</p><div class="own-row"><button class="own-no" id="pracClose">Close</button><button class="own-ok" id="pracGo">Spin the wheel</button></div></div>');
     var wheel = d.el.querySelector('#pracWheel'), res = d.el.querySelector('#pracRes'), go = d.el.querySelector('#pracGo');
     d.el.querySelector('#pracClose').addEventListener('click', function () { if (!busy) d.close(); });
@@ -696,10 +698,7 @@
       var done = function () { res.textContent = prize === 0 ? '0 · better luck next time' : '+' + prize + ' FREE points'; busy = false; go.disabled = false; go.textContent = 'Spin again'; };
       if (reduce) { done(); return; }
       cur = cur + 360 * 6 + ((((F - cur) % 360) + 360) % 360);
-      wheel.parentNode.classList.add('go');
-      wheel.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
-      wheel.style.transform = 'rotate(' + cur + 'deg)';
-      setTimeout(function () { wheel.parentNode.classList.remove('go'); done(); }, 5300);
+      spinWheel(wheel, practiceFrom, cur, 6200, N, done); practiceFrom = cur;
     });
   }
   function bindOwner(root) {
@@ -791,6 +790,12 @@
       '<button type="button" id="demoWatch">▶ Watch spin</button>' +
       '<div id="demoWatchRes" role="status"></div></div>';
   }
+  function syncSnd() { var b = document.getElementById('sndBtn'); if (!b) return; b.textContent = soundOn ? '🔊 Sound on' : '🔇 Sound off'; b.setAttribute('aria-pressed', soundOn ? 'true' : 'false'); }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target : null; if (!t) return;
+    if (t.closest('[data-fair]')) { fairnessModal(); return; }
+    if (t.closest('#sndBtn')) { soundOn = !soundOn; try { localStorage.setItem('lvrSound', soundOn ? '1' : '0'); } catch (x) {} syncSnd(); if (soundOn) clack(1); }
+  });
   var demoWatchBusy = false;
   function demoWatchSpin() {
     var w = document.getElementById('tileWheel'), res = document.getElementById('demoWatchRes'); if (!w || demoWatchBusy) return;
@@ -799,13 +804,11 @@
     var show = function () { if (res) res.textContent = 'Landed on ' + prize + ' → +' + prize + ' FREE points (demo, nothing saved)'; };
     if (reduce) { show(); return; }
     demoWatchBusy = true; if (res) res.textContent = '';
-    wrap.classList.remove('idle'); wrap.classList.add('go'); w.style.animation = 'none'; w.style.transition = 'none'; w.style.transform = 'rotate(0deg)'; void w.offsetWidth;
-    w.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
-    w.style.transform = 'rotate(' + (360 * 6 - (prize - c.prizeMin + 0.5) * seg + (secureInt(70) / 100 - 0.35) * seg) + 'deg)';
-    setTimeout(function () {
-      wrap.classList.remove('go'); show();
+    wrap.classList.remove('idle');
+    spinWheel(w, 0, 360 * 6 - (prize - c.prizeMin + 0.5) * seg + (secureInt(70) / 100 - 0.35) * seg, 6200, N, function () {
+      show();
       setTimeout(function () { w.style.transition = 'none'; w.style.transform = ''; w.style.animation = ''; wrap.classList.add('idle'); demoWatchBusy = false; }, 3500);
-    }, 5300);
+    });
   }
   document.addEventListener('click', function (e) {
     var v = e.target.closest && e.target.closest('[data-dview]');
@@ -861,6 +864,7 @@
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
       ['rules', '📜', 'How Reward Points Work', 'The simple rules', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
+      ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''],
       ['prizes', '🎁', 'Prizes', ladderCfg().enabled ? 'See what you can win' : 'What your points get you', ''],
       ['contact', '💬', 'Contact us', 'Message us on Instagram', '']
     ];
@@ -871,6 +875,30 @@
   function infoModal(title, body) {
     var d = ownDialog('<h3>' + escapeHtml(title) + '</h3>' + body + '<div class="own-row" style="margin-top:14px;"><button class="own-ok" id="ownOk">Got it</button></div>');
     d.el.querySelector('#ownOk').addEventListener('click', d.close);
+    return d;
+  }
+  // The full "why we have no control" page, reachable from the spin screen, the menu and the Q&A
+  var IG_LINK = 'https://instagram.com/lasvegas_restaurants';
+  function fairnessModal() {
+    var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, N = max - min + 1, pct = Math.round(1000 / N) / 10, avg = (min + max) / 2;
+    var sec = function (q, body, open) { return '<details class="tr-sec"' + (open ? ' open' : '') + '><summary>' + q + '</summary><div class="tr-body">' + body + '</div></details>'; };
+    var html = '<div class="tr-intro"><b>The short answer:</b> we have no control over the number. Not the owner, not Reward Points, not the restaurants. Here is exactly why.</div>' +
+      sec('Who picks the number?', 'Your phone does, at the moment you tap Spin. The number comes from your web browser\u2019s built-in random number generator (it is called <i>Web Crypto</i>). It is a public, open web standard that Chrome, Safari, Firefox and Edge all include, and it is the same kind of random generator browsers rely on for security. We did not write it and we cannot reach into it.', true) +
+      sec('Does every number have the same chance?', 'Yes. The wheel has ' + N + ' slots, ' + min + ' to ' + max + '. Each slot has the same chance: 1 in ' + N + ' (' + pct + '%). The pick is made with a method that removes the tiny bias some random methods have, so no number is favored. If you land on 5, you get 5. If you land on ' + max + ', you get ' + max + '. Over many spins the average is ' + avg + ' points.') +
+      sec('Can anyone change my number?', 'No. There is no setting, button or admin screen that picks or changes a person\u2019s number. The only thing we set is the range for everybody (' + min + ' to ' + max + '), and you can see it on the wheel. The spinning wheel is only a picture of the number your phone already picked.') +
+      sec('Do you see the result before I spin?', 'No. The number is created on your phone when you tap Spin. It is sent to us only afterwards, so your points can be recorded.') +
+      sec('What gets recorded?', 'Each spin is saved with its date, time and number, and the app cannot edit a saved spin. The database accepts one spin per cycle, only inside your ' + c.claimHours + '-hour window, and only a number inside the range on the wheel.') +
+      sec('Test it yourself', 'Run 10,000 test spins on your own phone and see how even the results are. Test spins are not saved and do not give points.<br><button type="button" class="own-ok" id="trTest" style="margin-top:10px;width:100%;padding:12px;border:0;border-radius:12px;font:inherit;font-weight:800;color:#fff;background:#0f67c2;cursor:pointer;">Run 10,000 test spins</button><div id="trOut" role="status" style="margin-top:8px;"></div>') +
+      sec('An honest note', 'A website can\u2019t prove to you what its own code does. That is why we use the browser\u2019s standard generator, show every number\u2019s chance, record every spin and let you test it. If a spin ever looks wrong to you, message us and we will look at the record with you.') +
+      sec('Is there a catch?', 'No purchase is necessary. You get one free spin every ' + hrs(c.waitDays) + ' hours. Points are worth $1 toward free offers at participating restaurants, and cannot be exchanged for cash.');
+    var d = infoModal('How the spin works', html + '<p style="margin:12px 0 0;font-size:14px;">Questions? <a href="' + IG_LINK + '" target="_blank" rel="noopener" style="color:#59b5ff;">Message us on Instagram</a></p>');
+    var go = d.el.querySelector('#trTest');
+    go.addEventListener('click', function () {
+      var cnt = {}, i, k; for (k = min; k <= max; k++) cnt[k] = 0;
+      for (i = 0; i < 10000; i++) cnt[min + secureInt(N)]++;
+      var big = 0; for (k = min; k <= max; k++) big = Math.max(big, cnt[k]);
+      d.el.querySelector('#trOut').innerHTML = '<div style="font-size:13px;color:#c4d4e6;">You would expect about ' + Math.round(10000 / N) + ' of each. Yours:</div><div class="tr-bars">' + Object.keys(cnt).map(function (n) { return '<div class="tr-bar"><b>' + n + '</b><i style="width:' + Math.round(cnt[n] / big * 100) + '%"></i><span>' + cnt[n] + '</span></div>'; }).join('') + '</div>';
+    });
     return d;
   }
   function openRules() { infoModal('How Reward Points Work', rulesHtml()); }
@@ -887,7 +915,7 @@
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
-    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point.']);
+    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
     if (prize) qa.push(['What is the bonus spin?', 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.']);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
@@ -914,6 +942,7 @@
     if (kind === 'add') { if (!DEMO && pausedFlag('receipts')) infoModal('Receipts are paused', '<p>Receipt submissions are paused for a moment. Please check back soon. Your points are safe.</p>'); else openReceipt(''); }
     else if (kind === 'rules') openRules();
     else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
+    else if (kind === 'fair') fairnessModal();
     else if (kind === 'prizes') { var pd = infoModal('Prizes', prizesHtml()); bindLadder(pd); }
     else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
   }
@@ -1380,6 +1409,38 @@
     do { c.getRandomValues(a); } while (a[0] >= lim);
     return a[0] % n;
   }
+  // Spin engine: the wheel is turned by the script (not a CSS transition) so the flapper can click past each peg the way a TV-show wheel does.
+  var soundOn = false; try { soundOn = localStorage.getItem('lvrSound') === '1'; } catch (e) {}
+  var actx = null;
+  function clack(v) {
+    if (!soundOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+      o.type = 'square'; o.frequency.value = 1100 + Math.random() * 300; g.gain.setValueAtTime(0.045 * Math.max(0.35, v), t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.05);
+    } catch (e) {}
+  }
+  function spinWheel(wheel, from, to, ms, N, done) {
+    var ptr = wheel.parentNode.querySelector('.wheel-ptr'), seg = 360 / N, t0 = null, prev = from, prevTs = null, lastIdx = Math.floor(from / seg);
+    wheel.style.animation = 'none'; wheel.style.transition = 'none';
+    function ease(t) { return 1 - Math.pow(1 - t, 3.6); }
+    function frame(ts) {
+      if (t0 === null) { t0 = ts; prevTs = ts; }
+      var t = Math.min(1, (ts - t0) / ms), ang = from + (to - from) * ease(t);
+      wheel.style.transform = 'rotate(' + ang + 'deg)';
+      var idx = Math.floor(ang / seg);
+      if (idx !== lastIdx) {
+        var dt = Math.max(1, ts - prevTs), pegsPerSec = Math.abs(ang - prev) / seg / (dt / 1000), dur = Math.max(70, Math.min(260, 700 / Math.max(1, pegsPerSec)));
+        if (ptr && ptr.animate && pegsPerSec < 16) ptr.animate([{ transform: 'translateX(-50%) rotate(0deg)' }, { transform: 'translateX(-50%) rotate(' + (-18 - Math.min(10, 40 / Math.max(2, pegsPerSec))) + 'deg)', offset: 0.3 }, { transform: 'translateX(-50%) rotate(0deg)' }], { duration: dur, easing: 'ease-out' });
+        clack(Math.min(1, 12 / Math.max(3, pegsPerSec)));
+        lastIdx = idx;
+      }
+      prev = ang; prevTs = ts;
+      if (t < 1) requestAnimationFrame(frame); else done && done();
+    }
+    requestAnimationFrame(frame);
+  }
   function wheelHtml(min, max, id, cls) {
     var mini = cls && cls.indexOf('mini') >= 0;
     // classic carnival / game-show wheel: lit rim, bright segments, glossy hub, flicking pointer
@@ -1387,15 +1448,17 @@
     var cols = ['#c8102e', '#ffd35c', '#1b5fc1', '#0f7a45', '#6a2fb5'], tx = ['#ffffff', '#3a2200', '#ffffff', '#ffffff', '#ffffff'];
     function pt(a, r) { var t = (a - 90) * Math.PI / 180; return [(C + r * Math.cos(t)).toFixed(2), (C + r * Math.sin(t)).toFixed(2)]; }
     out += '<defs><radialGradient id="wGloss" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="wHub" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#fff2b8"/><stop offset=".6" stop-color="#ffd35c"/><stop offset="1" stop-color="#b9780a"/></radialGradient></defs>';
-    out += '<circle cx="' + C + '" cy="' + C + '" r="119" fill="#1a2f4d" stroke="#ffd35c" stroke-width="3"/><circle cx="' + C + '" cy="' + C + '" r="103" fill="none" stroke="#0b1b30" stroke-width="3"/>';
-    for (var b = 0; b < 24; b++) { var bp = pt(b * 15, 111); out += '<circle class="bulb' + (b % 2 ? ' b1' : ' b0') + '" cx="' + bp[0] + '" cy="' + bp[1] + '" r="4.2" fill="' + (b % 2 ? '#fff4c2' : '#ffb21f') + '"/>'; }
+    out += '<defs><linearGradient id="wRim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".45" stop-color="#e6a91d"/><stop offset="1" stop-color="#8a5a06"/></linearGradient><radialGradient id="wPeg" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#9ba7b8"/></radialGradient></defs>';
+    out += '<circle cx="' + C + '" cy="' + C + '" r="119" fill="url(#wRim)" stroke="#5a3a04" stroke-width="1.5"/><circle cx="' + C + '" cy="' + C + '" r="108" fill="#0f1c31" stroke="#5a3a04" stroke-width="1.5"/>';
+    for (var b = 0; b < 24; b++) { var bp = pt(b * 15 + 7.5, 113.5); out += '<circle class="bulb' + (b % 2 ? ' b1' : ' b0') + '" cx="' + bp[0] + '" cy="' + bp[1] + '" r="3.4" fill="' + (b % 2 ? '#fffbe0' : '#ff9d1c') + '"/>'; }
     for (var k = 0; k < N; k++) {
       var a0 = k * seg, a1 = (k + 1) * seg, p0 = pt(a0, R), p1 = pt(a1, R), ci = (min <= 0 ? k + 4 : k) % 5, mid = a0 + seg / 2, zero = (min + k) === 0;
       out += '<path d="M' + C + ',' + C + ' L' + p0[0] + ',' + p0[1] + ' A' + R + ',' + R + ' 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + p1[0] + ',' + p1[1] + ' Z" fill="' + (zero ? '#26364d' : cols[ci]) + '" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>';
       if (N <= 20) out += '<text x="' + C + '" y="' + (C - R * 0.7) + '" transform="rotate(' + mid + ' ' + C + ' ' + C + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (mini ? 36 : (N > 12 ? 14 : 26)) + '" font-weight="800" fill="' + (zero ? '#ffffff' : tx[ci]) + '"' + (ci === 1 && !zero ? '' : ' stroke="#000" stroke-opacity=".35" stroke-width=".6"') + '>' + (min + k) + '</text>';
     }
+    for (var g = 0; g < N; g++) { var pg = pt(g * seg, 104); out += '<circle cx="' + pg[0] + '" cy="' + pg[1] + '" r="3.6" fill="url(#wPeg)" stroke="#4a5568" stroke-width=".8"/>'; }
     out += '<circle cx="' + C + '" cy="' + C + '" r="' + R + '" fill="url(#wGloss)"/>';
-    out += '<circle cx="' + C + '" cy="' + C + '" r="21" fill="url(#wHub)" stroke="#7a4a05" stroke-width="2.5"/>' + (mini ? '' : '<text x="' + C + '" y="' + C + '" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="900" fill="#3a2200">SPIN</text>');
+    out += '<circle cx="' + C + '" cy="' + C + '" r="21" fill="url(#wHub)" stroke="#7a4a05" stroke-width="2.5"/><circle cx="' + C + '" cy="' + C + '" r="26" fill="none" stroke="#e6a91d" stroke-width="2"/>' + (mini ? '' : '<text x="' + C + '" y="' + C + '" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="900" fill="#3a2200">SPIN</text>');
     return '<div class="wheel-wrap' + (cls ? ' ' + cls : '') + '"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="' + (id || 'wheelRot') + '" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * C) + ' ' + (2 * C) + '" aria-hidden="true">' + out + '</svg></div></div>';
   }
   function clockParts(ms) {
@@ -1455,7 +1518,7 @@
     var tt = document.getElementById('soonTitle'); if (tt && !chestBusy) tt.textContent = title;
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
-    var fb = document.getElementById('fairBox'); if (fb) fb.hidden = !(fair && !chestBusy && !chestWin);
+    var fb = document.getElementById('fairBox'); if (fb) fb.hidden = !(fair && !chestBusy && !chestWin); syncSnd();
     var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
     var ds = document.getElementById('demoSpinBtn'); if (ds) ds.hidden = !(DEMO && st.kind === 'wait' && !chestBusy && !chestWin);
   }
@@ -1484,11 +1547,8 @@
       if (!wheel || reduce) { finish(); return; }
       var N = st.c.prizeMax - st.c.prizeMin + 1, seg = 360 / N, center = (prize - st.c.prizeMin + 0.5) * seg;
       var jitter = (secureInt(70) / 100 - 0.35) * seg, deg = 360 * 6 - center + jitter;
-      wheel.classList.remove('wob'); if (wheel.parentNode) wheel.parentNode.classList.add('go');
-      wheel.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
-      void wheel.offsetWidth;
-      wheel.style.transform = 'rotate(' + deg + 'deg)';
-      setTimeout(function () { if (wheel.parentNode) wheel.parentNode.classList.remove('go'); finish(); }, 5400);
+      wheel.classList.remove('wob');
+      spinWheel(wheel, 0, deg, 6200, N, finish);
     };
     if (DEMO) { setTimeout(spin, 500); return; }
     var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey), claimed = false;
