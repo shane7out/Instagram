@@ -82,7 +82,7 @@
   .tally.out{background:rgba(255,255,255,.04);border-color:var(--line);} .tally.out .tused b{color:#ff8a8a;} .tally.out .tflag{background:rgba(255,107,107,.2);color:#ff9a9a;} .tally.out .tbar i{background:#ff8a8a;}
   .tally .texp.soon b{color:#ffb089;}
   @media (prefers-reduced-motion:no-preference){.tally.low .tflag{animation:tflagPulse 1.4s ease-in-out infinite;}}
-  @keyframes tflagPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+  @keyframes tflagPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,138,138,0);}50%{box-shadow:0 0 10px 2px rgba(255,138,138,.55);}}
   .tally.unset{color:var(--ink-dim);font-style:italic;background:transparent;border-style:dashed;}
   .tally .fine{display:none;}
   .fineprint{margin:4px 0 18px;font-size:13.5px;line-height:1.5;color:var(--ink-dim);}
@@ -168,6 +168,18 @@
   .lr-wrap{position:relative;}
   .lr-menu{position:absolute;right:0;top:calc(100% + 10px);width:min(92vw,430px);max-height:78vh;overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:18px;padding:4px 16px 12px;box-shadow:0 22px 54px rgba(0,0,0,.65);z-index:70;}
   .lr-menu[hidden]{display:none;}
+  .lr-menu{padding:8px 10px 10px;}
+  .lr-list{display:grid;gap:8px;}
+  .lr-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:11px 12px;color:var(--ink);font:inherit;cursor:pointer;min-height:58px;}
+  .lr-item:hover,.lr-item:focus-visible{background:rgba(255,255,255,.09);border-color:rgba(89,181,255,.6);outline:none;}
+  .lr-item .ic,.prz-row .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(240,169,26,.15);font-size:20px;}
+  .lr-item .tx{min-width:0;} .lr-item .tx b{display:block;font-size:16px;line-height:1.25;} .lr-item .tx small{display:block;color:var(--ink-dim);font-size:13.5px;line-height:1.3;margin-top:1px;}
+  .lr-item .chev{margin-left:auto;color:var(--ink-dim);font-size:24px;line-height:1;}
+  .lr-item.primary{background:linear-gradient(180deg,#1a7fe0,#0f67c2);border-color:#3b97f2;} .lr-item.primary .ic{background:rgba(255,255,255,.2);} .lr-item.primary .tx small,.lr-item.primary .chev{color:#e0efff;}
+  .own-box{max-height:86vh;overflow-y:auto;}
+  .faq details{border-top:1px solid rgba(255,255,255,.1);padding:11px 0;} .faq details:last-child{border-bottom:1px solid rgba(255,255,255,.1);}
+  .faq summary{cursor:pointer;font-weight:800;font-size:16px;line-height:1.35;} .faq details p{margin:8px 0 0 !important;color:#c3d2e3;font-size:15px;}
+  .prz-row{display:flex;gap:12px;align-items:flex-start;margin:0 0 14px;} .prz-row b{display:block;font-size:16px;margin-bottom:2px;} .prz-row p{margin:0 !important;font-size:14.5px;}
   .lr-menu .month-card,.lr-menu .demo-bar,.lr-menu .earn-card{background:none;border:0;border-radius:0;box-shadow:none;margin:0;padding:16px 2px;}
   .lr-menu .month-card{padding-top:14px;} .lr-menu .demo-bar,.lr-menu .earn-card{border-top:1px solid rgba(255,255,255,.1);}
   .lr-menu .lr-foot{border-top:1px solid rgba(255,255,255,.1);padding:12px 2px 2px;font-size:14px;}
@@ -495,7 +507,7 @@
     var num = ['I', 'II', 'III', 'IV', 'V'];
     return '<div class="sc-body"><h3>How LVR Points Work</h3>' + rules.map(function (r, i) {
       return '<div class="sc-rule"><b>' + num[i] + '. ' + escapeHtml(r[0]) + '.</b> ' + escapeHtml(r[1]) + '</div>';
-    }).join('') + '<div class="sc-sign">Go eat real food. Earn points.</div></div>';
+    }).join('') + '<div class="sc-rule"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div><div class="sc-sign">Go eat real food. Earn points.</div></div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -591,12 +603,66 @@
     document.addEventListener('click', function (e) {
       if (mn.hidden) return;
       var t = e.target.closest ? e.target : null;
+      var it = t && t.closest('.lr-item');
+      if (it) { setOpen(false); lrAction(it.getAttribute('data-lr')); return; }
       if (t && t.closest('#scrollBtn, [data-act="addreceipt"]')) { setOpen(false); return; }
       if (t && (t.closest('#lrMenu') || t.closest('#lrToggle'))) return;
       setOpen(false);
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mn.hidden) { setOpen(false); tg.focus(); } });
   })();
+
+  // ---------- LVR Points menu (top right) ----------
+  function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
+  function lrListHtml() {
+    var recPaused = !DEMO && pausedFlag('receipts');
+    var rows = [
+      ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
+      ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
+      ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
+      ['prizes', '🎁', 'Prizes', 'What your points get you', ''],
+      ['contact', '💬', 'Contact us', 'Message us on Instagram', '']
+    ];
+    return '<div class="lr-list">' + rows.map(function (x) {
+      return '<button type="button" class="lr-item' + x[4] + '" data-lr="' + x[0] + '"><span class="ic" aria-hidden="true">' + x[1] + '</span><span class="tx"><b>' + x[2] + '</b><small>' + x[3] + '</small></span><span class="chev" aria-hidden="true">&rsaquo;</span></button>';
+    }).join('') + '</div>';
+  }
+  function infoModal(title, body) {
+    var d = ownDialog('<h3>' + escapeHtml(title) + '</h3>' + body + '<div class="own-row" style="margin-top:14px;"><button class="own-ok" id="ownOk">Got it</button></div>');
+    d.el.querySelector('#ownOk').addEventListener('click', d.close);
+    return d;
+  }
+  function openRules() { document.getElementById('scrollPaper').innerHTML = scrollHtml(); document.getElementById('scrollBack').classList.add('open'); var sc = document.getElementById('scrollClose'); if (sc) sc.focus(); }
+  function faqHtml() {
+    var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
+    var qa = [
+      ['How do I earn points?', 'Eat at a participating restaurant, tap Add a receipt, and send photos of the receipt with the date and the total you paid. When we have checked it, the points are added here. A free offer you redeemed does not earn points.'],
+      ['What can I do with my points?', 'Trade them for free food at the partner restaurants. Offers are pickup only, not valid for delivery, and one per customer.'],
+      ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order.'],
+      ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
+      ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
+    ];
+    if (prize) qa.push(['What is the bonus?', 'Every ' + c.waitDays + ' days a random bonus of ' + prize + ' points is ready for you. Open the bonus tile at the top and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + c.waitDays + '-day wait.']);
+    qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
+    return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
+  }
+  function prizesHtml() {
+    var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
+    return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl. Pickup only.</p></div></div>' +
+      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Bonus points</b><p>Every ' + c.waitDays + ' days, collect a random ' + prize + ' bonus points. You have ' + c.claimHours + ' hours to claim it.</p></div></div>' : '') +
+      '<div class="prz-row"><span class="ic" aria-hidden="true">➕</span><div><b>More offers coming</b><p>New offers are added as more restaurants join. Check the Redeem list.</p></div></div></div>';
+  }
+  function contactUsHtml() {
+    return '<p>Questions, or a problem with a receipt? Send us a message on Instagram and we will help.</p>' +
+      '<a class="btn btn-primary" href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener" style="display:block;text-align:center;">Message @LasVegas_Restaurants</a>';
+  }
+  function lrAction(kind) {
+    if (kind === 'add') { if (!DEMO && pausedFlag('receipts')) infoModal('Receipts are paused', '<p>Receipt submissions are paused for a moment. Please check back soon. Your points are safe.</p>'); else openReceipt(''); }
+    else if (kind === 'rules') openRules();
+    else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
+    else if (kind === 'prizes') infoModal('Prizes', prizesHtml());
+    else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
+  }
   function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
   function noteDialog(t) { var d = ownDialog('<h3>One moment</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
   function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
@@ -755,7 +821,7 @@
     items = items.filter(function(i){ return !isHidden(i.bizName || i.slug); });
 
     var html =
-      (OWNER ? ownerBarHtml(removedNames) : '') +
+      (OWNER ? ownerBarHtml(removedNames) + (DEMO ? demoBarHtml() : '') : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
       welcomeHtml() +
@@ -853,12 +919,7 @@
     earnPanelHtml();
     contentEl.innerHTML = html + earnParts.modal;
     var menuEl = document.getElementById('lrMenu');
-    if (menuEl) {
-      menuEl.innerHTML = monthBarHtml() +
-        (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>' : '') +
-        earnParts.card +
-        '<div class="lr-foot"><a href="rewards.html">Open the LVR Rewards page</a></div>';
-    }
+    if (menuEl) menuEl.innerHTML = lrListHtml();
     bindOwner(contentEl);
     bindEarnPanel();
     if (!DEMO) bindInvite();
