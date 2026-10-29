@@ -61,7 +61,7 @@ echo "live has Key Technologies LEADS: $(grep -c 'KEY TECHNOLOGIES — LEADS' /t
 
 echo "" >> "$LOG"
 echo "URL: https://lvr-data-a60c1.web.app/key-leads.html" >> "$LOG"
-echo "PIN: 702950 (change it by editing the 'var PIN =' line in key-leads.html and re-running this deploy)" >> "$LOG"
+echo "PIN: 137900 (change it by editing the 'var PIN =' line in key-leads.html and re-running this deploy)" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keyleadsdeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "==== done ===="; cat "$LOG"

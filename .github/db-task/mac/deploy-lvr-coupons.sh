@@ -95,7 +95,7 @@ echo "" >> "$LOG"
 echo "Customer claim link for Vanilla Rice (create this program first in the admin tool):" >> "$LOG"
 echo "  https://lvr-data-a60c1.web.app/lvr-coupon.html?biz=vanilla-rice" >> "$LOG"
 echo "Admin tool: https://lvr-data-a60c1.web.app/lvr-coupons-admin.html" >> "$LOG"
-echo "Admin PIN: 702953 (change it by editing the 'var PIN =' line in lvr-coupons-admin.html and re-running this deploy)" >> "$LOG"
+echo "Admin PIN: 137900 (change it by editing the 'var PIN =' line in lvr-coupons-admin.html and re-running this deploy)" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/lvrcoupondeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "==== done ===="; cat "$LOG"

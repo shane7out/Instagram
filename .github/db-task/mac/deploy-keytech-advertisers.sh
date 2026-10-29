@@ -152,7 +152,7 @@ fi
 
 echo "" >> "$LOG"
 echo "New PIN: 137901 — enter on the main dashboard login to go straight to the advertiser tool." >> "$LOG"
-echo "Same tool's own direct URL: https://lvr-data-a60c1.web.app/key-advertisers.html (PIN 137901)" >> "$LOG"
+echo "Same tool's own direct URL: https://lvr-data-a60c1.web.app/key-advertisers.html (PIN 137900)" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keytechadvdeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "==== done ===="; cat "$LOG"

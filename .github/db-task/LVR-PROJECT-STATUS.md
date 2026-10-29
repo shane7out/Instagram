@@ -351,7 +351,7 @@ restaurant/advertiser node):
   balance — same honest tradeoff as the rest of this no-backend project,
   narrowed (not eliminated) by re-fetching the balance fresh right before
   committing.
-- **`lvr-points-admin.html`** (PIN `702954`, owner only, single-sign-on via
+- **`lvr-points-admin.html`** (PIN `137900`, owner only, single-sign-on via
   the Key Tech Room bypass). Three tabs: **Wallets** (create a new wallet
   with a starting point grant and get the shareable link immediately,
   search existing wallets, add/subtract points with a reason logged every

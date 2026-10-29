@@ -60,7 +60,7 @@ echo "live has Key Technologies CRM: $(grep -c 'Key Technologies CRM' /tmp/ktcrm
 
 echo "" >> "$LOG"
 echo "URL: https://lvr-data-a60c1.web.app/kt-crm.html" >> "$LOG"
-echo "PIN: 702950 (change it by editing the 'var PIN =' line in kt-crm.html and re-running this deploy)" >> "$LOG"
+echo "PIN: 137900 (change it by editing the 'var PIN =' line in kt-crm.html and re-running this deploy)" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/ktcrmdeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "==== done ===="; cat "$LOG"
