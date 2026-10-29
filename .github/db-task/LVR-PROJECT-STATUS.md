@@ -1372,3 +1372,8 @@ top unless they tell you otherwise.*
 - On the member screen and the Las Vegas list, tap the small "Owner" link at the bottom, enter the owner PIN (137900), and every restaurant gets a Remove button (with a confirm popup). Removed restaurants can be restored from the same mode.
 - Removed names are saved at `lvr_points/settings/hiddenRestaurants/<name-slug>` (public read, settings is open-write like the other settings). Nothing is deleted. In a preview that can't reach the database the choice is kept on that device only.
 - The PIN check is light (hash in the page); real protection arrives with the Cloud Functions / Blaze step.
+
+## Monthly 20% return REMOVED (2026-10-29)
+- Per the owner: nobody's points are ever taken back. Removed the "Spend before the 1st" bar and the rules-scroll item from the member screen, the monthly-return sentence from both sign-up forms, the Settings box in Points admin, and the scheduled workflow (`lvr-monthly-decay.yml` deleted).
+- Points admin now always saves the old `decay` setting as OFF. The unused sweep script and database rules for it are still in the repo but nothing runs them; they can be deleted later. Needs `go-live.sh` for the Mac-hosted pages (sign-up + Points admin).
+- Attorney list: the "monthly 20% return" item no longer applies.
