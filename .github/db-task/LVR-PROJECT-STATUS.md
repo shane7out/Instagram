@@ -1381,3 +1381,9 @@ top unless they tell you otherwise.*
 ## Restaurants tab in Points admin (2026-10-29)
 - Key room > Points Program > **Restaurants** tab: all 36 restaurants on the Las Vegas list with Remove / Restore (confirm popup), search, and Restore all. Uses the same `settings/hiddenRestaurants/<slug>` as the Owner mode on the public pages. The list inside the tab is a copy of the public list in `menu.html`; update both together when restaurants are added or dropped.
 - Needs `go-live.sh` to reach the Mac-hosted Points admin.
+
+## Key room upgrades (2026-10-29)
+- **Counters on cards:** Leads shows "N new", Points Program shows "N receipts waiting" (read live from the database).
+- **Points program switches panel** at the top of the room: shows sign-ups / receipt uploads / redeeming as Running or Paused and has one Pause everything / Resume everything button (writes `lvr_points/settings/paused`, the same flags as Points admin > Settings).
+- **Restaurant Invoices** (`lvr-invoice.html`, in `deploy-key-room.sh` FILES): pick a restaurant + month; adds up receipts approved that month, applies the restaurant's commission (or the default), prints / saves as PDF, CSV of receipts. No member names are shown. Pay-to text is remembered in the browser.
+- All need `go-live.sh` (Mac-hosted).

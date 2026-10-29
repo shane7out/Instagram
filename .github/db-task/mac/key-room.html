@@ -52,6 +52,16 @@
   .tool-desc{font-size:13px;color:var(--ink-dim);margin-top:3px;}
   .tool-note{font-size:11.5px;color:var(--ink-dim);opacity:.75;margin-top:4px;}
   .tool-arrow{font-size:20px;color:var(--key-light);flex-shrink:0;}
+  .badge{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:800;background:#f0c239;color:#2b2100;vertical-align:middle;}
+  .badge[hidden]{display:none;}
+  .panel{max-width:604px;width:calc(100% - 36px);box-sizing:border-box;margin:18px auto 0;padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  .panel-title{font-size:15px;font-weight:800;margin-bottom:4px;}
+  .panel-sub{font-size:13px;color:var(--ink-dim);margin-bottom:12px;}
+  .sw-row{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:5px 0;border-bottom:1px solid var(--line);}
+  .sw-row:last-of-type{border-bottom:0;}
+  .sw-on{color:#3ddc84;font-weight:800;} .sw-off{color:#ff6b6b;font-weight:800;}
+  .big-btn{width:100%;margin-top:12px;padding:14px;border-radius:12px;border:0;font-size:16px;font-weight:800;cursor:pointer;color:#fff;}
+  .big-btn.pause{background:#e5484d;} .big-btn.resume{background:#1f9d57;} .big-btn:disabled{opacity:.6;cursor:default;}
 </style>
 </head>
 <body>
@@ -77,13 +87,20 @@
     <h1>Key Tech Room</h1>
     <p>Everything new, in one place.</p>
   </header>
+  <div class="panel" id="pausePanel">
+    <div class="panel-title">Points program switches</div>
+    <div class="panel-sub">One button to stop the program if anything looks wrong. Members see "paused for a moment" and their points stay safe.</div>
+    <div id="swRows"><div class="sw-row"><span>Checking…</span></div></div>
+    <button type="button" class="big-btn pause" id="pauseBtn" hidden></button>
+    <div class="panel-sub" id="swNote" style="margin:10px 0 0;"></div>
+  </div>
   <div class="grid">
     <a class="tool-card" href="https://keytechnologies.si/" target="_blank" rel="noopener">
       <div><div class="tool-name">Key Technologies Site</div><div class="tool-desc">The live, public site.</div></div>
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://lvr-data-a60c1.web.app/key-leads.html" target="_blank" rel="noopener">
-      <div><div class="tool-name">Leads</div><div class="tool-desc">Every form submission from the site, with status and contact info.</div></div>
+      <div><div class="tool-name">Leads<span class="badge" id="bd-leads" hidden></span></div><div class="tool-desc">Every form submission from the site, with status and contact info.</div></div>
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://lvr-data-a60c1.web.app/kt-crm.html" target="_blank" rel="noopener">
@@ -99,7 +116,11 @@
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://lvr-data-a60c1.web.app/lvr-points-admin.html" target="_blank" rel="noopener">
-      <div><div class="tool-name">Points Program</div><div class="tool-desc">Receipts to approve, businesses and your commission, what members can redeem, and the Restaurants tab to remove ones you do not want.</div></div>
+      <div><div class="tool-name">Points Program<span class="badge" id="bd-points" hidden></span></div><div class="tool-desc">Receipts to approve, businesses and your commission, what members can redeem, and the Restaurants tab to remove ones you do not want.</div></div>
+      <div class="tool-arrow">↗</div>
+    </a>
+    <a class="tool-card" href="https://lvr-data-a60c1.web.app/lvr-invoice.html" target="_blank" rel="noopener">
+      <div><div class="tool-name">Restaurant Invoices</div><div class="tool-desc">Pick a restaurant and a month: what they owe you, ready to print or save as a PDF.</div></div>
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://keytechnologies.si/my-account.html?demo=65" target="_blank" rel="noopener">
@@ -134,10 +155,61 @@
   function dynPin() {
     try { return localStorage.getItem('lv_pin') || '137900'; } catch (e) { return '137900'; }
   }
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
   function enterRoom() {
     document.getElementById('pin-screen').classList.add('hidden');
     document.getElementById('app').classList.add('visible');
+    loadBadges();
+    loadSwitches();
   }
+
+  // ---- counters on the cards ----
+  function setBadge(id, n, word) {
+    var b = document.getElementById(id); if (!b) return;
+    if (n > 0) { b.textContent = n + ' ' + word; b.hidden = false; } else b.hidden = true;
+  }
+  function loadBadges() {
+    fetch(DB + '/lvr_points/receipts.json').then(function (r) { return r.json(); }).then(function (rc) {
+      var n = Object.keys(rc || {}).filter(function (k) { return rc[k] && rc[k].status === 'pending'; }).length;
+      setBadge('bd-points', n, n === 1 ? 'receipt waiting' : 'receipts waiting');
+    }).catch(function () {});
+    fetch(DB + '/key_leads/leads.json').then(function (r) { return r.json(); }).then(function (ld) {
+      var n = Object.keys(ld || {}).filter(function (k) { return ld[k] && (!ld[k].status || ld[k].status === 'new'); }).length;
+      setBadge('bd-leads', n, n === 1 ? 'new' : 'new');
+    }).catch(function () {});
+  }
+
+  // ---- pause everything / resume everything ----
+  var SW = [['signups', 'New sign-ups'], ['receipts', 'Receipt uploads'], ['redemptions', 'Redeeming offers']];
+  var swState = null;
+  function loadSwitches() {
+    fetch(DB + '/lvr_points/settings/paused.json').then(function (r) { return r.json(); }).then(function (p) {
+      swState = p || {}; drawSwitches();
+    }).catch(function () { document.getElementById('swRows').innerHTML = '<div class="sw-row"><span>Could not check right now.</span></div>'; });
+  }
+  function drawSwitches() {
+    document.getElementById('swRows').innerHTML = SW.map(function (x) {
+      var off = swState[x[0]] === true;
+      return '<div class="sw-row"><span>' + x[1] + '</span><span class="' + (off ? 'sw-off' : 'sw-on') + '">' + (off ? 'Paused' : 'Running') + '</span></div>';
+    }).join('');
+    var any = SW.some(function (x) { return swState[x[0]] === true; });
+    var b = document.getElementById('pauseBtn');
+    b.hidden = false; b.disabled = false;
+    b.className = 'big-btn ' + (any ? 'resume' : 'pause');
+    b.textContent = any ? 'Resume everything' : 'Pause everything';
+    b.setAttribute('data-mode', any ? 'resume' : 'pause');
+    document.getElementById('swNote').textContent = any ? 'To resume just one of them, use Points Program > Settings.' : '';
+  }
+  document.getElementById('pauseBtn').addEventListener('click', function () {
+    var b = this, pause = b.getAttribute('data-mode') === 'pause';
+    if (!confirm(pause ? 'Pause the whole points program?\n\nNew sign-ups, receipt uploads and redeeming offers all stop right away. Points are safe, and you can resume with one tap.' : 'Resume the points program?\n\nSign-ups, receipts and redeeming start working again.')) return;
+    b.disabled = true; b.textContent = 'Saving…';
+    var body = {}; SW.forEach(function (x) { body[x[0]] = pause; });
+    fetch(DB + '/lvr_points/settings/paused.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function (r) {
+      if (!r.ok) throw new Error('save');
+      swState = body; drawSwitches();
+    }).catch(function () { alert('That did not save. Nothing changed. Please try again.'); loadSwitches(); });
+  });
 
   if (ownerSessionValid()) {
     enterRoom();

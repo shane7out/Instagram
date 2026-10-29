@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LVR — Restaurant Invoices</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --green:#3ddc84; --yellow:#f0c239; --red:#ff6b6b;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  a{color:var(--key-light);}
+
+  #pin-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+  #pin-screen.hidden{display:none;}
+  .pin-logo{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--key-light);text-transform:uppercase;}
+  .pin-sub{font-size:13px;color:var(--ink-dim);margin-bottom:28px;}
+  .pin-dots{display:flex;gap:12px;margin-bottom:26px;}
+  .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent;}
+  .pin-dot.filled{background:var(--key-blue);border-color:var(--key-blue);}
+  .pin-dot.error{background:#ff6b6b;border-color:#ff6b6b;}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:230px;}
+  .pin-key{height:58px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;}
+  .pin-key.empty{background:transparent;border:none;cursor:default;}
+  .pin-msg{color:#ff6b6b;font-size:13px;font-weight:600;margin-top:16px;min-height:18px;}
+
+  #app{display:none;}
+  #app.visible{display:block;}
+  .wrap{max-width:760px;margin:0 auto;padding:22px 18px 60px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--ink-dim);font-size:14px;margin:0 0 18px;}
+  .controls{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-bottom:12px;}
+  .controls .full{grid-column:1 / -1;}
+  label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
+  select,input,textarea{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font:inherit;font-size:15px;}
+  textarea{min-height:64px;resize:vertical;}
+  .btn{padding:12px 18px;border-radius:10px;border:0;background:var(--key-blue);color:#fff;font:inherit;font-weight:800;cursor:pointer;}
+  .btn.alt{background:transparent;border:1px solid var(--line);color:var(--ink);}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 20px;}
+  .note{color:var(--ink-dim);font-size:13px;}
+
+  /* the invoice itself: white paper, so it prints and saves as a PDF cleanly */
+  .paper{background:#fff;color:#111;border-radius:12px;padding:34px 34px 30px;font-size:14px;line-height:1.5;}
+  .paper h2{margin:0;font-size:26px;letter-spacing:.02em;}
+  .paper .from{color:#444;font-size:13px;margin-top:2px;}
+  .paper .meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+  .paper .meta b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#666;margin-bottom:2px;}
+  .paper table{width:100%;border-collapse:collapse;margin:8px 0 14px;}
+  .paper th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#666;text-align:left;border-bottom:2px solid #222;padding:6px 4px;}
+  .paper td{padding:7px 4px;border-bottom:1px solid #ddd;}
+  .paper .r{text-align:right;}
+  .paper .totals{margin-left:auto;width:min(100%,320px);}
+  .paper .totals div{display:flex;justify-content:space-between;padding:4px 0;}
+  .paper .totals .due{border-top:2px solid #222;margin-top:6px;padding-top:8px;font-size:19px;font-weight:800;}
+  .paper .terms{margin-top:22px;color:#444;font-size:12.5px;border-top:1px solid #ddd;padding-top:12px;white-space:pre-wrap;}
+  .paper .empty{padding:18px 0;color:#555;}
+  @media print{
+    body{background:#fff;} .noprint,#pin-screen{display:none !important;}
+    .wrap{padding:0;max-width:none;} .paper{border-radius:0;padding:0;}
+  }
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-logo">LVR — Invoices</div>
+  <div class="pin-sub">Enter PIN</div>
+  <div class="pin-dots">
+    <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
+    <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+    <button class="pin-key empty"></button><button class="pin-key" data-k="0">0</button><button class="pin-key" data-k="del">&larr;</button>
+  </div>
+  <div class="pin-msg" id="pin-msg"></div>
+</div>
+
+<div id="app">
+  <div class="wrap">
+    <div class="noprint">
+      <h1>Restaurant invoices</h1>
+      <p class="sub">Pick a restaurant and a month. The invoice adds up the receipts you approved that month and applies the commission you agreed. Customers' names are never shown.</p>
+      <div class="controls">
+        <div><label for="iRest">Restaurant</label><select id="iRest"><option>Loading…</option></select></div>
+        <div><label for="iMonth">Month</label><input type="month" id="iMonth"></div>
+        <div class="full"><label for="iPay">How to pay you (shown at the bottom of the invoice)</label><textarea id="iPay" placeholder="Example: Please pay by check to Key Technologies.si, or Zelle to …"></textarea></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="iPrint">Print / Save as PDF</button>
+        <button class="btn alt" id="iCsv">Download receipts (CSV)</button>
+      </div>
+      <p class="note" id="iStatus"></p>
+    </div>
+    <div class="paper" id="paper"></div>
+  </div>
+</div>
+
+<script>
+  var PIN = '137900'; // owner PIN
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  function _lvOwnerSessionValid(){
+    try { var t = parseInt(localStorage.getItem('lv_owner_session') || '0', 10); return t > 0 && (Date.now() - t) < 24*60*60*1000; } catch(e){ return false; }
+  }
+  var pinBuf = '';
+  var dots = [0,1,2,3,4,5].map(function(i){ return document.getElementById('pd' + i); });
+  function renderDots(err){ dots.forEach(function(d,i){ d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : ''); }); }
+  function enterApp(){
+    document.getElementById('pin-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    init();
+  }
+  function pinSubmit(){
+    if (pinBuf === PIN) { try { sessionStorage.setItem('lvr_invoice_unlocked', '1'); } catch(e){} enterApp(); }
+    else { renderDots(true); document.getElementById('pin-msg').textContent = 'Wrong PIN'; setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500); }
+  }
+  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-k');
+      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
+      if (pinBuf.length >= 6) return;
+      pinBuf += k; renderDots(false);
+      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
+    });
+  });
+
+  // ================= INVOICE =================
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function money(n){ return '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function get(p){ return fetch(DB + p + '.json').then(function(r){ return r.json(); }); }
+  var receipts = {}, directory = {}, settings = {}, commissionOverride = {}, current = null;
+
+  function init(){
+    var m = document.getElementById('iMonth');
+    var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1); // last month: the one you normally invoice
+    m.value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+    try { document.getElementById('iPay').value = localStorage.getItem('lvr_invoice_pay') || ''; } catch(e){}
+    document.getElementById('iStatus').textContent = 'Loading receipts…';
+    Promise.all([get('/lvr_points/receipts'), get('/lvr_points/directory'), get('/lvr_points/settings')]).then(function(r){
+      receipts = r[0] || {}; directory = r[1] || {}; settings = r[2] || {};
+      var slugs = Object.keys(directory);
+      Object.keys(receipts).forEach(function(k){ var s = receipts[k] && receipts[k].slug; if (s && slugs.indexOf(s) < 0) slugs.push(s); });
+      var sel = document.getElementById('iRest');
+      sel.innerHTML = slugs.length ? slugs.map(function(s){ return '<option value="' + esc(s) + '">' + esc((directory[s] && directory[s].bizName) || s) + '</option>'; }).join('') : '<option value="">No restaurants yet</option>';
+      document.getElementById('iStatus').textContent = '';
+      draw();
+    }).catch(function(){ document.getElementById('iStatus').textContent = 'Could not load. Check your connection and refresh.'; });
+    ['iRest','iMonth'].forEach(function(id){ document.getElementById(id).addEventListener('change', draw); });
+    document.getElementById('iPay').addEventListener('input', function(){ try { localStorage.setItem('lvr_invoice_pay', this.value); } catch(e){} drawTerms(); });
+    document.getElementById('iPrint').addEventListener('click', function(){ window.print(); });
+    document.getElementById('iCsv').addEventListener('click', downloadCsv);
+  }
+
+  function pctFor(slug){
+    if (commissionOverride[slug] != null) return commissionOverride[slug];
+    var d = settings && settings.defaultCommissionPct;
+    return d != null ? Number(d) : 20;
+  }
+  function draw(){
+    var slug = document.getElementById('iRest').value, month = document.getElementById('iMonth').value;
+    if (!slug || !month) { document.getElementById('paper').innerHTML = ''; return; }
+    // a business can have its own percent; read just that one value (the same field the Points admin Edit screen saves)
+    get('/lvr_points/restaurants/' + encodeURIComponent(slug) + '/commissionPct').then(function(v){
+      if (v != null && v !== '') commissionOverride[slug] = Number(v) || 0;
+    }).catch(function(){}).then(function(){ build(slug, month); });
+  }
+  function build(slug, month){
+    var p = month.split('-'), start = new Date(+p[0], +p[1] - 1, 1).getTime(), end = new Date(+p[0], +p[1], 1).getTime();
+    var rows = Object.keys(receipts).map(function(k){ return receipts[k]; }).filter(function(r){
+      if (!r || r.slug !== slug || r.status !== 'approved') return false;
+      var t = r.decidedAt || r.submittedAt || 0;
+      return t >= start && t < end;
+    }).sort(function(a, b){ return (a.receiptDate || '').localeCompare(b.receiptDate || '') || (a.decidedAt || 0) - (b.decidedAt || 0); });
+    var spend = rows.reduce(function(s, r){ return s + (Number(r.amount) || 0); }, 0);
+    var pct = pctFor(slug), due = Math.round(spend * pct) / 100;
+    var name = (directory[slug] && directory[slug].bizName) || slug;
+    var label = new Date(+p[0], +p[1] - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    var lastDay = new Date(+p[0], +p[1], 0).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+    var invNo = 'LVR-' + p[0] + p[1] + '-' + slug.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+    current = { rows: rows, name: name, month: month, spend: spend, pct: pct, due: due };
+    var body = rows.length
+      ? '<table><thead><tr><th>Date</th><th>Receipt #</th><th class="r">Verified amount</th></tr></thead><tbody>' + rows.map(function(r){
+          var d = r.receiptDate ? new Date(r.receiptDate + 'T12:00:00') : new Date(r.submittedAt || r.decidedAt || 0);
+          return '<tr><td>' + esc(d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) + '</td><td>' + esc(r.receiptNo || '') + '</td><td class="r">' + money(r.amount) + '</td></tr>';
+        }).join('') + '</tbody></table>' +
+        '<div class="totals"><div><span>Verified customer spend (' + rows.length + ' receipt' + (rows.length === 1 ? '' : 's') + ')</span><span>' + money(spend) + '</span></div>' +
+        '<div><span>Commission rate</span><span>' + pct + '%</span></div>' +
+        '<div class="due"><span>Amount due</span><span>' + money(due) + '</span></div></div>'
+      : '<div class="empty">No approved receipts for ' + esc(name) + ' in ' + esc(label) + '. Nothing is due.</div>';
+    document.getElementById('paper').innerHTML =
+      '<h2>INVOICE</h2><div class="from">Key Technologies.si — LVR Points Program</div>' +
+      '<div class="meta"><div><b>Billed to</b>' + esc(name) + '</div><div><b>Invoice number</b>' + esc(invNo) + '<br><b style="margin-top:8px;">Issued</b>' + esc(new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })) + '</div>' +
+      '<div><b>Period</b>' + esc(label) + ' (through ' + esc(lastDay) + ')</div><div></div></div>' +
+      body + '<div class="terms" id="terms"></div>';
+    drawTerms();
+  }
+  function drawTerms(){
+    var el = document.getElementById('terms'); if (!el) return;
+    var pay = document.getElementById('iPay').value.trim();
+    el.textContent = 'Commission on customer spend verified through the LVR points program, at the rate agreed. Each amount is the verified receipt total for what the customer paid, not counting any free offer redeemed with points.' + (pay ? '\n\n' + pay : '');
+  }
+  function downloadCsv(){
+    if (!current) return;
+    var lines = ['date,receipt_number,verified_amount_usd'].concat(current.rows.map(function(r){
+      return [r.receiptDate || '', '"' + String(r.receiptNo || '').replace(/"/g, '""') + '"', Number(r.amount || 0).toFixed(2)].join(',');
+    }));
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' }));
+    a.download = 'invoice-' + current.name.replace(/[^a-z0-9]+/gi, '-') + '-' + current.month + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+
+  try { if (_lvOwnerSessionValid() || sessionStorage.getItem('lvr_invoice_unlocked') === '1') setTimeout(enterApp, 0); } catch(e){}
+</script>
+<div class="noprint" style="text-align:center;font-size:12px;opacity:.65;padding:6px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
+</body>
+</html>
