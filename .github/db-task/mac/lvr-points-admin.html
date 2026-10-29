@@ -103,6 +103,7 @@
   <div class="tabs" id="tabs">
     <span class="tab active" data-v="receipts">Receipts</span>
     <span class="tab" data-v="restaurants">Businesses</span>
+    <span class="tab" data-v="showcase">Restaurants</span>
     <span class="tab" data-v="earnings">Earnings</span>
     <span class="tab" data-v="audit">Audit</span>
     <span class="tab" data-v="catalog">Catalog</span>
@@ -300,6 +301,7 @@
   function renderTab() {
     if (activeTab === 'receipts') renderReceiptsTab();
     else if (activeTab === 'restaurants') renderRestaurantsTab();
+    else if (activeTab === 'showcase') renderShowcaseTab();
     else if (activeTab === 'earnings') renderEarningsTab();
     else if (activeTab === 'audit') renderAuditTab();
     else if (activeTab === 'bonus') renderBonusTab();
@@ -711,6 +713,56 @@
     });
     view.querySelectorAll('[data-act="recalc"]').forEach(function(b){
       b.addEventListener('click', function(){ recalcCredit(b.getAttribute('data-slug')).then(function(){ showToast('Recalculated'); renderRestaurantsTab(); }); });
+    });
+  }
+
+
+  // ========================================================================
+  // RESTAURANTS TAB - the Las Vegas list members and visitors see.
+  // Remove hides a restaurant everywhere (saved at settings/hiddenRestaurants/<slug>);
+  // nothing is erased, and Restore brings it back. If restaurants are added to or
+  // dropped from the public list (menu.html), this list needs the same change.
+  // ========================================================================
+  var SHOWCASE = [["Vanilla Rice's Hibachi House","Plates & bowls",1,"Las Vegas, NV"],["Poke Heaven","Plates & bowls",1,"Las Vegas, NV"],["The Tea Terrace","Breakfast & sweet",1,"Las Vegas, NV"],["Pizza Rock","Pizza",0,"Las Vegas, NV"],["Metro Pizza","Pizza",0,"Las Vegas, NV"],["Yellowtail Japanese Restaurant & Lounge","Sushi",0,"Las Vegas, NV"],["Sushi Roku","Sushi",0,"Las Vegas, NV"],["Kabuto Edomae Sushi","Sushi",0,"Las Vegas, NV"],["Samurai Japanese Steakhouse & Sushi","Sushi",0,"Henderson, NV"],["Holsteins","Burgers",0,"Las Vegas, NV"],["Burger Bar","Burgers",0,"Las Vegas, NV"],["The Beach House","Appetizers",0,"Henderson, NV"],["The Irish Spot","Appetizers",0,"Las Vegas, NV"],["Peru Chicken","Appetizers",0,"Las Vegas, NV"],["AyAyAy! Mexican Cuisine","Mexican",0,"Henderson, NV"],["Panevino Italian Grille & Deli Café","Italian & pasta",0,"Las Vegas, NV"],["Smoking Pig BBQ Company","BBQ",0,"Las Vegas, NV"],["Doanburi","Plates & bowls",0,"Las Vegas, NV"],["Lotus of Siam","Thai",0,"Las Vegas, NV"],["Hash House A Go Go","Breakfast & sweet",0,"Las Vegas, NV"],["Black Mountain Griddle","Breakfast & sweet",0,"Henderson, NV"],["Aspire Coffee House","Breakfast & sweet",0,"Las Vegas, NV"],["MilkCow","Breakfast & sweet",0,"Las Vegas, NV"],["Grotto Ristorante","Italian & pasta",0,"Las Vegas, NV"],["Ferraro's Ristorante","Italian & pasta",0,"Las Vegas, NV"],["Nora's Italian Cuisine","Italian & pasta",0,"Las Vegas, NV"],["Maggiano's Little Italy","Italian & pasta",0,"Las Vegas, NV"],["Buddy V's Ristorante","Italian & pasta",0,"Las Vegas, NV"],["Settebello Pizzeria Napoletana","Pizza",0,"Henderson, NV"],["Komol Thai Restaurant","Thai",0,"Las Vegas, NV"],["Archi's Thai Kitchen","Thai",0,"Las Vegas, NV"],["Tacos El Gordo","Mexican",0,"Las Vegas, NV"],["Lindo Michoacán","Mexican",0,"Las Vegas, NV"],["Border Grill","Mexican",0,"Las Vegas, NV"],["Kura Revolving Sushi Bar","Sushi",0,"Las Vegas, NV"],["Sushi Neko","Sushi",0,"Las Vegas, NV"]]; // [name, category, founding partner (1/0), city]
+  function showSlug(n) { return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  var showHidden = {}, showFilter = '';
+  function renderShowcaseTab() {
+    view.innerHTML = '<div class="empty-note">Loading…</div>';
+    fbGet('/lvr_points/settings/hiddenRestaurants').then(function(h){ showHidden = h || {}; drawShowcase(); }).catch(function(){ showHidden = {}; drawShowcase(); });
+  }
+  function drawShowcase() {
+    var removed = SHOWCASE.filter(function(r){ return showHidden[showSlug(r[0])]; }).length;
+    var q = showFilter.trim().toLowerCase();
+    var html = '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurants on the Las Vegas list</div>' +
+      '<div class="row-sub" style="margin-bottom:10px;"><b>' + (SHOWCASE.length - removed) + '</b> shown · <b>' + removed + '</b> removed. Remove hides a restaurant from members and visitors right away. Nothing is erased, and Restore brings it back. (Restaurants in the points program keep their money records permanently; to hide one of those use Businesses &gt; Edit.)</div>' +
+      '<input type="text" id="showQ" placeholder="Search restaurants…" value="' + escapeHtml(showFilter) + '" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:15px;box-sizing:border-box;">' +
+      (removed ? '<div style="margin-top:10px;"><button class="btn" id="showRestoreAll">Restore all ' + removed + '</button></div>' : '') + '</div>';
+    var rows = SHOWCASE.filter(function(r){ return !q || r[0].toLowerCase().indexOf(q) >= 0 || r[1].toLowerCase().indexOf(q) >= 0; });
+    html += rows.length ? rows.map(function(r){
+      var gone = !!showHidden[showSlug(r[0])];
+      return '<div class="row-card"' + (gone ? ' style="opacity:.55;"' : '') + '><div class="row-top"><div><div class="row-name">' + escapeHtml(r[0]) + '</div>' +
+        '<div class="row-sub">' + (r[2] ? 'Founding partner · ' : '') + escapeHtml(r[1]) + ' · ' + escapeHtml(r[3]) + ' · ' + (gone ? '<b style="color:var(--red);">Removed</b>' : 'Shown') + '</div></div></div>' +
+        '<div class="row-actions"><button data-act="' + (gone ? 'show-restore' : 'show-remove') + '" data-name="' + escapeHtml(r[0]) + '"' + (gone ? '' : ' style="border-color:var(--red);color:#ff9a9a;"') + '>' + (gone ? 'Restore' : 'Remove') + '</button></div></div>';
+    }).join('') : '<div class="empty-note">No restaurant matches that search.</div>';
+    view.innerHTML = html;
+    var qi = document.getElementById('showQ');
+    qi.addEventListener('input', function(){ showFilter = qi.value; var pos = qi.selectionStart; drawShowcase(); var n = document.getElementById('showQ'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} });
+    view.querySelectorAll('[data-act="show-remove"],[data-act="show-restore"]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var name = b.getAttribute('data-name'), hide = b.getAttribute('data-act') === 'show-remove';
+        if (!confirm(hide ? 'Remove ' + name + ' from the Las Vegas list?\n\nMembers and visitors will no longer see it. Nothing is erased, and you can restore it any time.' : 'Restore ' + name + '? It will show up again.')) return;
+        var slug = showSlug(name);
+        (hide ? fbPut('/lvr_points/settings/hiddenRestaurants/' + slug, true) : fbDelete('/lvr_points/settings/hiddenRestaurants/' + slug)).then(function(res){
+          if (!res.ok) throw new Error('save');
+          if (hide) showHidden[slug] = true; else delete showHidden[slug];
+          showToast(hide ? 'Removed' : 'Restored'); drawShowcase();
+        }).catch(function(){ showToast('That did not save. Please try again.'); });
+      });
+    });
+    var ra = document.getElementById('showRestoreAll');
+    if (ra) ra.addEventListener('click', function(){
+      if (!confirm('Restore all ' + removed + ' removed restaurants?')) return;
+      fbDelete('/lvr_points/settings/hiddenRestaurants').then(function(res){ if (!res.ok) throw new Error('save'); showHidden = {}; showToast('Restored'); drawShowcase(); }).catch(function(){ showToast('That did not save. Please try again.'); });
     });
   }
 

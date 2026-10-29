@@ -1377,3 +1377,7 @@ top unless they tell you otherwise.*
 - Per the owner: nobody's points are ever taken back. Removed the "Spend before the 1st" bar and the rules-scroll item from the member screen, the monthly-return sentence from both sign-up forms, the Settings box in Points admin, and the scheduled workflow (`lvr-monthly-decay.yml` deleted).
 - Points admin now always saves the old `decay` setting as OFF. The unused sweep script and database rules for it are still in the repo but nothing runs them; they can be deleted later. Needs `go-live.sh` for the Mac-hosted pages (sign-up + Points admin).
 - Attorney list: the "monthly 20% return" item no longer applies.
+
+## Restaurants tab in Points admin (2026-10-29)
+- Key room > Points Program > **Restaurants** tab: all 36 restaurants on the Las Vegas list with Remove / Restore (confirm popup), search, and Restore all. Uses the same `settings/hiddenRestaurants/<slug>` as the Owner mode on the public pages. The list inside the tab is a copy of the public list in `menu.html`; update both together when restaurants are added or dropped.
+- Needs `go-live.sh` to reach the Mac-hosted Points admin.
