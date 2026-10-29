@@ -1369,6 +1369,6 @@ top unless they tell you otherwise.*
 - Prize range for now: a random whole number from 1 to 7 (each claim picks one).
 
 ## Owner "Remove restaurant" tool (2026-10-29)
-- On the member screen and the Las Vegas list, tap the small "Owner" link at the bottom, enter the owner PIN, and every restaurant gets a Remove button (with a confirm popup). Removed restaurants can be restored from the same mode.
+- On the member screen and the Las Vegas list, tap the small "Owner" link at the bottom, enter the owner PIN (137900), and every restaurant gets a Remove button (with a confirm popup). Removed restaurants can be restored from the same mode.
 - Removed names are saved at `lvr_points/settings/hiddenRestaurants/<name-slug>` (public read, settings is open-write like the other settings). Nothing is deleted. In a preview that can't reach the database the choice is kept on that device only.
 - The PIN check is light (hash in the page); real protection arrives with the Cloud Functions / Blaze step.

@@ -522,7 +522,7 @@
   // The owner types a PIN, then each restaurant gets a Remove button. Removed names are saved in
   // the database (settings/hiddenRestaurants) so every visitor stops seeing them; if the database
   // can't be reached (a preview), the choice is kept on this device only.
-  var OWNER_HASH = 'ae7d0d14929c05e59d8dd2fe1ca4dcfcf4a9a50c6c83522ae5c6767095415fb8';
+  var OWNER_HASH = '9e4c32dab44c74ea319d113162c8d3a583a2208bd001eb5657dfc469827ab09d';
   var OWNER = false; try { OWNER = sessionStorage.getItem('lvrOwner') === '1'; } catch (e) {}
   var localHidden = {}; try { localHidden = JSON.parse(localStorage.getItem('lvrHiddenDemo') || '{}') || {}; } catch (e) {}
   function restSlug(n) { return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
