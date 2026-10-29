@@ -621,6 +621,11 @@
         '</div>' +
         chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first bonus)') +
       '</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Prize ladder (what points can win)</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Shows members a ladder of bigger and bigger prizes under LVR Points > Prizes, so they see why earning more points is worth it. One prize per line, written as <b>points | prize</b>. Several prizes can share the same points. <b style="color:var(--yellow);">Leave this OFF until the prizes are funded and your attorney has approved them, and until prize claiming is built (members can see the prizes but cannot claim them yet).</b></div>' +
+        chk('sPrzOn', (settings.prizeLadder || {}).enabled === true, 'Show the prize ladder to members') +
+        '<div class="field"><label>Prizes (points | prize)</label><textarea id="sPrzText" rows="7" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font:inherit;font-size:14px;">' + escapeHtml((settings.prizeLadder && settings.prizeLadder.text) || '20 | Free meal at a partner restaurant\n50 | $50 gift card\n200 | $200 gas card\n500 | $500 Amazon gift card') + '</textarea></div>' +
+      '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurant commission</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">What each restaurant owes you, as a percent of the verified amount members paid there. A business can have its own percent (Restaurants tab > Edit); any business without one uses this default. The Earnings tab adds it up per restaurant per month and downloads a statement.</div>' +
         '<div class="field"><label>Default commission % (agreed with the restaurants)</label><input type="number" id="sCommDefault" min="0" max="100" step="0.5" value="' + (settings.defaultCommissionPct != null ? settings.defaultCommissionPct : 20) + '"></div>' +
@@ -651,6 +656,7 @@
           return { waitDays: Math.max(1, Math.min(365, parseInt(document.getElementById('sChestDays').value, 10) || 10)), claimHours: Math.max(1, Math.min(720, parseInt(document.getElementById('sChestHours').value, 10) || 48)), prizeMin: mx > 0 ? Math.max(1, mn) : mn, prizeMax: mx, repeat: document.getElementById('sChestRepeat').checked };
         })(),
         defaultCommissionPct: Math.max(0, Math.min(100, parseFloat(document.getElementById('sCommDefault').value) || 0)),
+        prizeLadder: { enabled: document.getElementById('sPrzOn').checked, text: document.getElementById('sPrzText').value.trim() },
         decay: { enabled: false, percent: 20, graceDays: 30 }, // the monthly return was removed; always saved as off
         welcome: {
           enabled: document.getElementById('sWelOn').checked,

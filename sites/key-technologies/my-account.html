@@ -167,6 +167,13 @@
   .top-panel{background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:22px;padding:6px 16px 4px;margin:0 0 30px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
   .lr-wrap{position:relative;}
   .lr-menu{position:absolute;right:0;top:calc(100% + 10px);width:min(92vw,430px);max-height:78vh;overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:18px;padding:4px 16px 12px;box-shadow:0 22px 54px rgba(0,0,0,.65);z-index:70;}
+  .lad-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;}
+  .lad-chip{padding:9px 14px;border-radius:99px;border:1.5px solid rgba(255,255,255,.22);background:transparent;color:#eef4fb;font:inherit;font-weight:800;font-size:15px;cursor:pointer;min-height:42px;}
+  .lad-chip.done{border-color:#3ddc84;color:#8ff0b8;} .lad-chip.on{background:#0f67c2;border-color:#3b97f2;color:#fff;}
+  .lad-head b{font-size:22px;} .lad-ok{color:#8ff0b8;font-weight:800;margin:6px 0 12px;} .lad-need{margin:6px 0 4px;color:#ffd35c;}
+  .lad-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;margin:4px 0 14px;} .lad-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd35c,#e8a317);}
+  .lad-item{display:flex;gap:12px;align-items:center;padding:11px 12px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.06);font-size:16px;font-weight:700;line-height:1.3;}
+  .lad-item .ic{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(240,169,26,.15);font-size:19px;}
   .lr-menu[hidden]{display:none;}
   .lr-menu{padding:8px 10px 10px;}
   .lr-list{display:grid;gap:8px;}
@@ -337,7 +344,7 @@
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
   .own-row{display:flex;gap:10px;}
   .own-row button{flex:1;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:12px;border:0;cursor:pointer;}
-  .own-yes{background:#c93a3f;color:#fff;} .own-ok{background:#1478d6;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
+  .own-yes{background:#c93a3f;color:#fff;} .own-ok{background:#0f67c2;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
   .own-link{font-size:13px;opacity:.85;}
 </style>
 </head>
@@ -614,13 +621,51 @@
 
   // ---------- LVR Points menu (top right) ----------
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
+
+  // ---------- Prize ladder (shown only when the owner switches it on; always on in the preview) ----------
+  var LADDER_DEFAULT = "20 | Free meal at a partner restaurant\n50 | $50 gift card\n200 | $200 gas card\n500 | $500 Amazon gift card";
+  function ladderCfg() {
+    var raw = (appSettings && appSettings.prizeLadder) || {};
+    return { enabled: DEMO ? true : raw.enabled === true, text: (raw.text && String(raw.text).trim()) || LADDER_DEFAULT };
+  }
+  function parseLadder(text) {
+    var map = {};
+    String(text || '').split(/\n/).forEach(function (l) {
+      var m = l.split('|'); if (m.length < 2) return;
+      var pts = parseInt(m[0].replace(/[^0-9]/g, ''), 10), item = m.slice(1).join('|').trim();
+      if (!(pts > 0) || !item) return;
+      (map[pts] = map[pts] || []).push(item);
+    });
+    return Object.keys(map).map(Number).sort(function (a, b) { return a - b; }).map(function (p) { return { pts: p, items: map[p] }; });
+  }
+  function prizeIcon(t) { t = String(t).toLowerCase(); return /gas|fuel/.test(t) ? '⛽' : /amazon/.test(t) ? '📦' : /meal|food|dinner|lunch|bowl|restaurant/.test(t) ? '🍽️' : '🎁'; }
+  function ladderState() { var tiers = parseLadder(ladderCfg().text), pts = (wallet && wallet.points) || 0, sel = -1; tiers.forEach(function (t, i) { if (sel < 0 && t.pts > pts) sel = i; }); return { tiers: tiers, pts: pts, sel: sel < 0 ? tiers.length - 1 : sel }; }
+  function ladderPanel(st, i) {
+    var t = st.tiers[i], reached = st.pts >= t.pts, pct = Math.max(4, Math.min(100, Math.round(100 * st.pts / t.pts)));
+    return '<div class="lad-head"><b>' + (i === 0 ? 'Up to ' : '') + t.pts + ' points</b></div>' +
+      (reached ? '<div class="lad-ok">✓ You have enough points for this level</div>'
+               : '<div class="lad-need"><b>' + (t.pts - st.pts) + ' more point' + (t.pts - st.pts === 1 ? '' : 's') + '</b> to get here (you have ' + st.pts + ')</div><div class="lad-bar"><i style="width:' + pct + '%"></i></div>') +
+      t.items.map(function (x) { return '<div class="lad-item"><span class="ic" aria-hidden="true">' + prizeIcon(x) + '</span><span>' + escapeHtml(x) + '</span></div>'; }).join('');
+  }
+  function bindLadder(dlg) {
+    var st = ladderState(); if (!st.tiers.length) return;
+    var panel = dlg.el.querySelector('#ladPanel'); if (!panel) return;
+    Array.prototype.forEach.call(dlg.el.querySelectorAll('.lad-chip'), function (c) {
+      c.addEventListener('click', function () {
+        var i = parseInt(c.getAttribute('data-i'), 10);
+        Array.prototype.forEach.call(dlg.el.querySelectorAll('.lad-chip'), function (x) { x.classList.toggle('on', x === c); });
+        panel.innerHTML = ladderPanel(st, i);
+      });
+    });
+    var go = dlg.el.querySelector('[data-act="addreceipt"]'); if (go) go.addEventListener('click', dlg.close);
+  }
   function lrListHtml() {
     var recPaused = !DEMO && pausedFlag('receipts');
     var rows = [
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
       ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
-      ['prizes', '🎁', 'Prizes', 'What your points get you', ''],
+      ['prizes', '🎁', 'Prizes', ladderCfg().enabled ? 'See what you can win' : 'What your points get you', ''],
       ['contact', '💬', 'Contact us', 'Message us on Instagram', '']
     ];
     return '<div class="lr-list">' + rows.map(function (x) {
@@ -647,7 +692,15 @@
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
   }
   function prizesHtml() {
+    var cfg = ladderCfg(), st = ladderState();
+    if (cfg.enabled && st.tiers.length) {
+      return '<p style="margin:0 0 10px !important;">You have <b>' + st.pts + '</b> points. Tap a level to see its prizes.</p>' +
+        '<div class="lad-chips">' + st.tiers.map(function (t, i) { return '<button type="button" class="lad-chip' + (i === st.sel ? ' on' : '') + (st.pts >= t.pts ? ' done' : '') + '" data-i="' + i + '">' + (i === 0 ? 'Up to ' : '') + t.pts + ' pts</button>'; }).join('') + '</div>' +
+        '<div id="ladPanel">' + ladderPanel(st, st.sel) + '</div>' +
+        '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:14px;">Earn more points</button>';
+    }
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
+
     return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl. Pickup only.</p></div></div>' +
       (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Bonus points</b><p>Every ' + c.waitDays + ' days, collect a random ' + prize + ' bonus points. You have ' + c.claimHours + ' hours to claim it.</p></div></div>' : '') +
       '<div class="prz-row"><span class="ic" aria-hidden="true">➕</span><div><b>More offers coming</b><p>New offers are added as more restaurants join. Check the Redeem list.</p></div></div></div>';
@@ -660,7 +713,7 @@
     if (kind === 'add') { if (!DEMO && pausedFlag('receipts')) infoModal('Receipts are paused', '<p>Receipt submissions are paused for a moment. Please check back soon. Your points are safe.</p>'); else openReceipt(''); }
     else if (kind === 'rules') openRules();
     else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
-    else if (kind === 'prizes') infoModal('Prizes', prizesHtml());
+    else if (kind === 'prizes') { var pd = infoModal('Prizes', prizesHtml()); bindLadder(pd); }
     else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
   }
   function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
