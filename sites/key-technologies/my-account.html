@@ -353,6 +353,12 @@
   .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
   .own-box p{margin:0 0 16px;color:#c3d2e3;}
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
+  .own-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 4px;}
+  .own-foot button{font:inherit;font-weight:800;font-size:14.5px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:11px 18px;min-height:44px;cursor:pointer;}
+  .own-foot button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
+  .pp-dots{display:flex;gap:12px;justify-content:center;margin:6px 0 18px;} .pp-dot{width:14px;height:14px;border-radius:50%;border:2px solid #4a6580;} .pp-dot.f{background:#59b5ff;border-color:#59b5ff;} .pp-dots.bad .pp-dot{background:#ff6b6b;border-color:#ff6b6b;}
+  .pp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:0 auto 14px;}
+  .pp-key{height:58px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid #4a6580;color:#eef4fb;font:inherit;font-size:22px;font-weight:700;cursor:pointer;} .pp-key:active{background:rgba(255,255,255,.18);} .pp-key.t{font-size:14px;font-weight:800;color:#c4d4e6;}
   .own-row{display:flex;gap:10px;}
   .own-row button{flex:1;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:12px;border:0;cursor:pointer;}
   .own-yes{background:#c93a3f;color:#fff;} .own-ok{background:#0f67c2;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
@@ -394,6 +400,7 @@
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
   </div>
+  <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
   <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </div>
 
@@ -555,13 +562,27 @@
     if (!window.crypto || !crypto.subtle) return Promise.resolve('');
     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); });
   }
+  // Owner PIN keypad (digits only; checks as soon as 6 digits are in)
   function ownerLogin() {
-    var d = ownDialog('<h3>Owner</h3><p>Enter your owner PIN to remove restaurants.</p><input id="ownPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12"><div class="own-row"><button class="own-no" id="ownCancel">Cancel</button><button class="own-ok" id="ownGo">Continue</button></div><p id="ownErr" style="margin:12px 0 0;color:#ff9a9a;"></p>');
-    var pin = d.el.querySelector('#ownPin'); pin.focus();
-    function go() { sha256hex(pin.value.trim()).then(function (h) { if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); ownRerender(); } else { d.el.querySelector('#ownErr').textContent = 'That PIN is not right.'; pin.value = ''; pin.focus(); } }); }
-    d.el.querySelector('#ownGo').addEventListener('click', go);
-    d.el.querySelector('#ownCancel').addEventListener('click', d.close);
-    pin.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    var d = ownDialog('<h3 style="text-align:center;">Owner PIN</h3><p style="text-align:center;margin:0 0 14px;">Enter your PIN to edit or remove restaurants.</p><div class="pp-dots" id="ppDots" aria-hidden="true">' + [0,1,2,3,4,5].map(function () { return '<span class="pp-dot"></span>'; }).join('') + '</div><div class="pp-grid">' + [1,2,3,4,5,6,7,8,9].map(function (n) { return '<button type="button" class="pp-key" data-k="' + n + '">' + n + '</button>'; }).join('') + '<button type="button" class="pp-key t" data-k="x">Cancel</button><button type="button" class="pp-key" data-k="0">0</button><button type="button" class="pp-key t" data-k="b" aria-label="Delete">⌫</button></div><p id="ownErr" role="alert" style="margin:4px 0 0;text-align:center;color:#ff9a9a;min-height:20px;"></p>');
+    var val = '', dots = d.el.querySelectorAll('.pp-dot'), box = d.el.querySelector('#ppDots');
+    function draw() { Array.prototype.forEach.call(dots, function (x, k) { x.classList.toggle('f', k < val.length); }); }
+    function check() {
+      sha256hex(val).then(function (h) {
+        if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); document.removeEventListener('keydown', onKey); ownRerender(); }
+        else { box.classList.add('bad'); d.el.querySelector('#ownErr').textContent = 'That PIN is not right.'; setTimeout(function () { box.classList.remove('bad'); val = ''; draw(); }, 600); }
+      });
+    }
+    function press(k) {
+      if (k === 'x') { d.close(); document.removeEventListener('keydown', onKey); return; }
+      if (k === 'b') { val = val.slice(0, -1); draw(); return; }
+      if (val.length >= 6) return;
+      val += k; draw(); d.el.querySelector('#ownErr').textContent = '';
+      if (val.length === 6) check();
+    }
+    function onKey(e) { if (/^[0-9]$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') press('b'); else if (e.key === 'Escape') press('x'); }
+    document.addEventListener('keydown', onKey);
+    d.el.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.pp-key'); if (b) press(b.getAttribute('data-k')); else if (e.target === d.el) document.removeEventListener('keydown', onKey); });
   }
   function ownerSet(name, hide) {
     var slug = restSlug(name), url = DB + '/lvr_points/settings/hiddenRestaurants/' + slug + '.json';
@@ -605,8 +626,6 @@
     });
     var done = root.querySelector('#ownDone');
     if (done) done.addEventListener('click', function () { OWNER = false; try { sessionStorage.removeItem('lvrOwner'); } catch (e) {} ownRerender(); });
-    var lk = root.querySelector('#ownerLink');
-    if (lk) lk.onclick = function (e) { e.preventDefault(); if (OWNER) { ownRerender(); } else ownerLogin(); };
   }
   function ownerBtnHtml(name) {
     if (!OWNER) return '';
@@ -809,7 +828,18 @@
   function liveTick() { if (document.hidden) return; if (DEMO) hiddenRefresh(); else liveRefresh(); }
   setInterval(liveTick, 60000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) liveTick(); });
-  function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
+  function syncOwnerFoot() {
+    var e = document.getElementById('ownEditBtn'); if (!e) return;
+    e.classList.toggle('on', !!OWNER); e.textContent = OWNER ? '✓ Done editing' : '✏️ Edit restaurants';
+  }
+  (function () {
+    var e = document.getElementById('ownEditBtn'), r = document.getElementById('ownRoomBtn');
+    if (e) e.addEventListener('click', function () {
+      if (OWNER) { OWNER = false; try { sessionStorage.removeItem('lvrOwner'); } catch (x) {} ownRerender(); } else ownerLogin();
+    });
+    if (r) r.addEventListener('click', function () { location.href = KEY_ROOM_URL; });
+  })();
+  function ownRerender() { var y = window.scrollY; syncOwnerFoot(); render(lastCat, lastRed); window.scrollTo(0, y); syncOwnerFoot(); }
   function noteDialog(t) { var d = ownDialog('<h3>One moment</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
   function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
 
@@ -1088,11 +1118,12 @@
       }).join('');
     }
 
-    html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a> · <a href="#" id="ownerLink" class="own-link">Owner</a></div>';
+    html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a></div>';
 
     earnPanelHtml();
     contentEl.innerHTML = html + earnParts.modal;
     applyFilters();
+    syncOwnerFoot();
     var menuEl = document.getElementById('lrMenu');
     if (menuEl) menuEl.innerHTML = lrListHtml();
     bindOwner(contentEl);
