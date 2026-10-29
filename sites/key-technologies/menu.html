@@ -120,6 +120,21 @@
   .how li b{color:var(--ink);}
   .footer-note{margin:44px 0 34px;text-align:center;font-size:14px;color:var(--ink-dim);}
   .footer-note a{color:var(--ink-dim);}
+  .own-bar{margin:0 0 14px;padding:12px 14px;border-radius:14px;border:1.5px solid rgba(255,107,107,.6);background:rgba(255,107,107,.08);color:#ffb3b3;font-size:14.5px;line-height:1.45;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  .own-bar button{font:inherit;font-weight:800;padding:8px 14px;border-radius:10px;border:1px solid #ff9a9a;background:transparent;color:#ffd0d0;cursor:pointer;}
+  .own-btn{flex:none;font:inherit;font-size:13px;font-weight:800;padding:6px 12px;border-radius:99px;border:1.5px solid #ff6b6b;background:rgba(255,107,107,.12);color:#ffb3b3;cursor:pointer;}
+  .own-btn.restore{border-color:#3ddc84;background:rgba(61,220,132,.12);color:#8ff0b8;}
+  .is-removed{opacity:.45;}
+  .own-back{position:fixed;inset:0;z-index:90;background:rgba(3,8,16,.8);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .own-box{width:100%;max-width:380px;background:#11243b;border:1.5px solid #2c4864;border-radius:20px;padding:22px 20px;color:#eef4fb;font-size:16px;line-height:1.5;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
+  .own-box p{margin:0 0 16px;color:#c3d2e3;}
+  .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
+  .own-row{display:flex;gap:10px;}
+  .own-row button{flex:1;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:12px;border:0;cursor:pointer;}
+  .own-yes{background:#e5484d;color:#fff;} .own-ok{background:#1478d6;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
+  .own-link{font-size:11.5px;opacity:.55;}
+  .vname .own-btn{float:right;margin-left:8px;}
 </style>
 </head>
 <body>
@@ -155,7 +170,7 @@
     <p style="margin:14px 0 0;font-size:14px;color:var(--ink-dim);">Each offer has a set number available and an end date, shown above. There is no need to hurry. Plan your visit, and please never rush or drive in a hurry to claim one.</p>
   </section>
 
-  <div class="footer-note">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a> <a href="#" id="ownerLink" class="own-link">Owner</a></div>
 </main>
 
 <script>
@@ -281,18 +296,100 @@
     yelp: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#d32323"/><path d="M12 4.6l1.6 4.6 4.7.1-3.8 2.8 1.4 4.6-3.9-2.8-3.9 2.8 1.4-4.6-3.8-2.8 4.7-.1z" fill="#fff"/></svg>',
     g: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M12 5.2a6.8 6.8 0 1 0 6.6 8.4H12v-3h9.7c.1.5.1 1 .1 1.6A9.8 9.8 0 1 1 12 2.2c2.5 0 4.7.9 6.4 2.4l-2.3 2.3A6.7 6.7 0 0 0 12 5.2z" fill="#4285f4"/><path d="M3.6 8.4l2.6 1.9" stroke="#ea4335" stroke-width="3.4" fill="none"/><path d="M5.6 15.8l2.6-1.9" stroke="#34a853" stroke-width="3.4" fill="none"/><path d="M12 21.8c2.5 0 4.6-.8 6.1-2.3l-2.7-2.1" stroke="#34a853" stroke-width="0" fill="none"/></svg>'
   };
+  var hiddenCfg = {};
+  // ---------- owner tools: remove / restore restaurants ----------
+  // The owner types a PIN, then each restaurant gets a Remove button. Removed names are saved in
+  // the database (settings/hiddenRestaurants) so every visitor stops seeing them; if the database
+  // can't be reached (a preview), the choice is kept on this device only.
+  var OWNER_HASH = 'ae7d0d14929c05e59d8dd2fe1ca4dcfcf4a9a50c6c83522ae5c6767095415fb8';
+  var OWNER = false; try { OWNER = sessionStorage.getItem('lvrOwner') === '1'; } catch (e) {}
+  var localHidden = {}; try { localHidden = JSON.parse(localStorage.getItem('lvrHiddenDemo') || '{}') || {}; } catch (e) {}
+  function restSlug(n) { return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function hiddenMap() { return Object.assign({}, localHidden, hiddenCfg); }
+  function isHidden(n) { return !!hiddenMap()[restSlug(n)]; }
+  function loadHidden() {
+    var t = new Promise(function (res) { setTimeout(function () { res(null); }, 2500); });
+    return Promise.race([fetch(DB + '/lvr_points/settings/hiddenRestaurants.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }), t]).then(function (h) { (hiddenCfg = h || {}); });
+  }
+  function ownDialog(html) {
+    var b = document.createElement('div'); b.className = 'own-back';
+    b.innerHTML = '<div class="own-box" role="dialog" aria-modal="true">' + html + '</div>';
+    document.body.appendChild(b);
+    var api = { el: b, close: function () { if (b.parentNode) b.parentNode.removeChild(b); } };
+    b.addEventListener('click', function (e) { if (e.target === b) api.close(); });
+    return api;
+  }
+  function sha256hex(s) {
+    if (!window.crypto || !crypto.subtle) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); });
+  }
+  function ownerLogin() {
+    var d = ownDialog('<h3>Owner</h3><p>Enter your owner PIN to remove restaurants.</p><input id="ownPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12"><div class="own-row"><button class="own-no" id="ownCancel">Cancel</button><button class="own-ok" id="ownGo">Continue</button></div><p id="ownErr" style="margin:12px 0 0;color:#ff9a9a;"></p>');
+    var pin = d.el.querySelector('#ownPin'); pin.focus();
+    function go() { sha256hex(pin.value.trim()).then(function (h) { if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); renderVegas(); } else { d.el.querySelector('#ownErr').textContent = 'That PIN is not right.'; pin.value = ''; pin.focus(); } }); }
+    d.el.querySelector('#ownGo').addEventListener('click', go);
+    d.el.querySelector('#ownCancel').addEventListener('click', d.close);
+    pin.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  }
+  function ownerSet(name, hide) {
+    var slug = restSlug(name), url = DB + '/lvr_points/settings/hiddenRestaurants/' + slug + '.json';
+    return fetch(url, hide ? { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: 'true' } : { method: 'DELETE' }).then(function (r) {
+      if (!r.ok) throw new Error('save');
+      var m = hiddenCfg; if (hide) m[slug] = true; else delete m[slug]; (hiddenCfg = m);
+      if (localHidden[slug]) { delete localHidden[slug]; try { localStorage.setItem('lvrHiddenDemo', JSON.stringify(localHidden)); } catch (e) {} }
+      return 'saved';
+    }).catch(function () {
+      if (hide) localHidden[slug] = true; else { delete localHidden[slug]; var m = hiddenCfg; delete m[slug]; (hiddenCfg = m); }
+      try { localStorage.setItem('lvrHiddenDemo', JSON.stringify(localHidden)); } catch (e) {}
+      return 'local';
+    });
+  }
+  function ownerConfirm(name, hide) {
+    var d = ownDialog(hide
+      ? '<h3>Remove ' + esc(name) + '?</h3><p>Members and visitors will no longer see it. Nothing is deleted, and you can bring it back any time from Owner mode.</p><div class="own-row"><button class="own-no" id="ownNo">Cancel</button><button class="own-yes" id="ownYes">Remove</button></div>'
+      : '<h3>Restore ' + esc(name) + '?</h3><p>It will show up again for members and visitors.</p><div class="own-row"><button class="own-no" id="ownNo">Cancel</button><button class="own-ok" id="ownYes">Restore</button></div>');
+    d.el.querySelector('#ownNo').addEventListener('click', d.close);
+    d.el.querySelector('#ownYes').addEventListener('click', function () {
+      var btn = this; btn.disabled = true; btn.textContent = 'Saving…';
+      ownerSet(name, hide).then(function (how) {
+        d.close(); renderVegas();
+        if (how === 'local' && typeof OWNER_NOTE === 'function') OWNER_NOTE('Saved on this device only. To make it final for everyone, open the live page and remove it there.');
+      });
+    });
+  }
+  function ownerBarHtml() {
+    var n = Object.keys(hiddenMap()).length;
+    return '<div class="own-bar"><span><b>Owner mode.</b> Tap Remove on any restaurant you do not want. ' + n + ' removed so far.</span><button type="button" id="ownDone">Done</button></div>';
+  }
+  function bindOwner(root) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-own]'), function (b) {
+      b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); ownerConfirm(b.getAttribute('data-name'), b.getAttribute('data-own') === 'remove'); });
+    });
+    var done = root.querySelector('#ownDone');
+    if (done) done.addEventListener('click', function () { OWNER = false; try { sessionStorage.removeItem('lvrOwner'); } catch (e) {} renderVegas(); });
+    var lk = root.querySelector('#ownerLink');
+    if (lk) lk.onclick = function (e) { e.preventDefault(); if (OWNER) { renderVegas(); } else ownerLogin(); };
+  }
+  function ownerBtnHtml(name) {
+    if (!OWNER) return '';
+    var h = isHidden(name);
+    return '<button type="button" class="own-btn' + (h ? ' restore' : '') + '" data-own="' + (h ? 'restore' : 'remove') + '" data-name="' + esc(name) + '">' + (h ? 'Restore' : 'Remove') + '</button>';
+  }
+  function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + esc(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
+
   function renderVegas() {
     $("eyebrow").textContent = "Las Vegas";
     $("bizName").textContent = "Las Vegas Restaurants";
     document.title = "Las Vegas Restaurants — Key Technologies.si";
     $("lede").textContent = "Real local restaurants serving pizza, pasta, sushi, burgers, Thai, Mexican and more. Tap an address for the map, a phone number to call, or Instagram, Yelp and Google for more.";
-    $("sampleBox").innerHTML = '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.<div style="margin-top:12px;"><a class="btn btn-primary" href="my-account.html?demo=65">See what a member sees: points, treasure chest and offers</a></div></div>' +
+    $("sampleBox").innerHTML = (OWNER ? ownerBarHtml() : '') + '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.<div style="margin-top:12px;"><a class="btn btn-primary" href="my-account.html?demo=65">See what a member sees: points, treasure chest and offers</a></div></div>' +
       '<div class="chips" id="chips">' + CATS.map(function (c, k) { return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join("") + '</div>';
     var parts = [], cur = null;
     function open(title, sub) { cur = { title: title, sub: sub, cards: [] }; parts.push(cur); }
     VEGAS.forEach(function (r, idx) {
-      if (idx === 0) open("Founding partners", "Joining the program");
-      if (!r.partner && cur && cur.title === "Founding partners") open("More Las Vegas favorites", "Listed with public information");
+      if (!OWNER && isHidden(r.n)) return;
+      if (!cur) open(r.partner ? "Founding partners" : "More Las Vegas favorites", r.partner ? "Joining the program" : "Listed with public information");
+      else if (!r.partner && cur.title === "Founding partners") open("More Las Vegas favorites", "Listed with public information");
       var city = r.city || "Las Vegas, NV";
       var base = r.n.replace(/ \(.*\)$/, "");
       var yelp = "https://www.yelp.com/search?find_desc=" + encodeURIComponent(base) + "&find_loc=" + encodeURIComponent(city);
@@ -301,7 +398,7 @@
       var tel = r.ph ? "tel:+1" + String(r.ph).replace(/\D/g, "") : "";
       var mail = r.em ? "mailto:" + r.em : "";
       var tag = r.o.real ? '<span class="sampletag" style="color:var(--green);border-color:rgba(61,220,132,.5);">Offer</span>' : '<span class="sampletag">Sample offer</span>';
-      cur.cards.push('<section class="vcard" data-cat="' + r.cat + '"><h3 class="vname">' + esc(r.n) + '<small>' + (r.partner ? 'Founding partner · ' : '') + esc(r.c) + '</small></h3>' +
+      cur.cards.push('<section class="vcard' + (isHidden(r.n) ? ' is-removed' : '') + '" data-cat="' + r.cat + '"><h3 class="vname">' + esc(r.n) + ownerBtnHtml(r.n) + '<small>' + (r.partner ? 'Founding partner · ' : '') + esc(r.c) + '</small></h3>' +
         '<div class="vinfo">' +
           (r.locs || [{ l: "Address", a: r.a }]).map(function (L) { var lg = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(base + " " + L.a); return '<a class="vrow" href="' + lg + '" target="_blank" rel="noopener">' + ICON.pin + '<span><span class="vlab">' + esc(L.l) + ' · tap for map</span><span class="vval">' + esc(L.a) + '</span></span></a>'; }).join("") +
           (r.ph ? '<a class="vrow" href="' + tel + '">' + ICON.phone + '<span><span class="vlab">Phone · tap to call</span><span class="vval">' + esc(r.ph) + '</span></span></a>' : '') +
@@ -339,6 +436,7 @@
       $("noMatch").hidden = any;
     });
     liveVanillaTally();
+    bindOwner(document);
   }
 
   // The Vanilla Rice offer is real, so its tally comes from the live catalog and redemption count.
@@ -417,7 +515,7 @@
   }
 
   var demoMode = new URLSearchParams(location.search).get("demo");
-  if (demoMode) { demoMode === "vegas" ? renderVegas() : renderDemo({}); return; }
+  if (demoMode) { if (demoMode === "vegas") loadHidden().then(renderVegas); else renderDemo({}); return; }
   Promise.all([get("/lvr_points/catalog"), get("/lvr_points/directory"), get("/lvr_points/settings")]).then(function (r) {
     var catalog = r[0] || {}, directory = r[1] || {}, settings = r[2] || {};
     var slug = slugWanted && catalog[slugWanted] ? slugWanted : Object.keys(catalog)[0];

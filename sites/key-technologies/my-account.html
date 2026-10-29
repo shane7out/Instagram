@@ -305,6 +305,20 @@
   }
   .paste-field button{margin-top:4px;}
   .paste-msg{font-size:13px;color:var(--red);min-height:16px;margin-top:6px;}
+  .own-bar{margin:0 0 14px;padding:12px 14px;border-radius:14px;border:1.5px solid rgba(255,107,107,.6);background:rgba(255,107,107,.08);color:#ffb3b3;font-size:14.5px;line-height:1.45;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  .own-bar button{font:inherit;font-weight:800;padding:8px 14px;border-radius:10px;border:1px solid #ff9a9a;background:transparent;color:#ffd0d0;cursor:pointer;}
+  .own-btn{flex:none;font:inherit;font-size:13px;font-weight:800;padding:6px 12px;border-radius:99px;border:1.5px solid #ff6b6b;background:rgba(255,107,107,.12);color:#ffb3b3;cursor:pointer;}
+  .own-btn.restore{border-color:#3ddc84;background:rgba(61,220,132,.12);color:#8ff0b8;}
+  .is-removed{opacity:.45;}
+  .own-back{position:fixed;inset:0;z-index:90;background:rgba(3,8,16,.8);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .own-box{width:100%;max-width:380px;background:#11243b;border:1.5px solid #2c4864;border-radius:20px;padding:22px 20px;color:#eef4fb;font-size:16px;line-height:1.5;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
+  .own-box p{margin:0 0 16px;color:#c3d2e3;}
+  .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
+  .own-row{display:flex;gap:10px;}
+  .own-row button{flex:1;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:12px;border:0;cursor:pointer;}
+  .own-yes{background:#e5484d;color:#fff;} .own-ok{background:#1478d6;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
+  .own-link{font-size:11.5px;opacity:.55;}
 </style>
 </head>
 <body>
@@ -504,6 +518,88 @@
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
 
+  // ---------- owner tools: remove / restore restaurants ----------
+  // The owner types a PIN, then each restaurant gets a Remove button. Removed names are saved in
+  // the database (settings/hiddenRestaurants) so every visitor stops seeing them; if the database
+  // can't be reached (a preview), the choice is kept on this device only.
+  var OWNER_HASH = 'ae7d0d14929c05e59d8dd2fe1ca4dcfcf4a9a50c6c83522ae5c6767095415fb8';
+  var OWNER = false; try { OWNER = sessionStorage.getItem('lvrOwner') === '1'; } catch (e) {}
+  var localHidden = {}; try { localHidden = JSON.parse(localStorage.getItem('lvrHiddenDemo') || '{}') || {}; } catch (e) {}
+  function restSlug(n) { return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function hiddenMap() { return Object.assign({}, localHidden, ((appSettings && appSettings.hiddenRestaurants) || {})); }
+  function isHidden(n) { return !!hiddenMap()[restSlug(n)]; }
+  function loadHidden() {
+    var t = new Promise(function (res) { setTimeout(function () { res(null); }, 2500); });
+    return Promise.race([fetch(DB + '/lvr_points/settings/hiddenRestaurants.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }), t]).then(function (h) { (appSettings.hiddenRestaurants = h || {}); });
+  }
+  function ownDialog(html) {
+    var b = document.createElement('div'); b.className = 'own-back';
+    b.innerHTML = '<div class="own-box" role="dialog" aria-modal="true">' + html + '</div>';
+    document.body.appendChild(b);
+    var api = { el: b, close: function () { if (b.parentNode) b.parentNode.removeChild(b); } };
+    b.addEventListener('click', function (e) { if (e.target === b) api.close(); });
+    return api;
+  }
+  function sha256hex(s) {
+    if (!window.crypto || !crypto.subtle) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); });
+  }
+  function ownerLogin() {
+    var d = ownDialog('<h3>Owner</h3><p>Enter your owner PIN to remove restaurants.</p><input id="ownPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12"><div class="own-row"><button class="own-no" id="ownCancel">Cancel</button><button class="own-ok" id="ownGo">Continue</button></div><p id="ownErr" style="margin:12px 0 0;color:#ff9a9a;"></p>');
+    var pin = d.el.querySelector('#ownPin'); pin.focus();
+    function go() { sha256hex(pin.value.trim()).then(function (h) { if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); ownRerender(); } else { d.el.querySelector('#ownErr').textContent = 'That PIN is not right.'; pin.value = ''; pin.focus(); } }); }
+    d.el.querySelector('#ownGo').addEventListener('click', go);
+    d.el.querySelector('#ownCancel').addEventListener('click', d.close);
+    pin.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  }
+  function ownerSet(name, hide) {
+    var slug = restSlug(name), url = DB + '/lvr_points/settings/hiddenRestaurants/' + slug + '.json';
+    return fetch(url, hide ? { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: 'true' } : { method: 'DELETE' }).then(function (r) {
+      if (!r.ok) throw new Error('save');
+      var m = ((appSettings && appSettings.hiddenRestaurants) || {}); if (hide) m[slug] = true; else delete m[slug]; (appSettings.hiddenRestaurants = m);
+      if (localHidden[slug]) { delete localHidden[slug]; try { localStorage.setItem('lvrHiddenDemo', JSON.stringify(localHidden)); } catch (e) {} }
+      return 'saved';
+    }).catch(function () {
+      if (hide) localHidden[slug] = true; else { delete localHidden[slug]; var m = ((appSettings && appSettings.hiddenRestaurants) || {}); delete m[slug]; (appSettings.hiddenRestaurants = m); }
+      try { localStorage.setItem('lvrHiddenDemo', JSON.stringify(localHidden)); } catch (e) {}
+      return 'local';
+    });
+  }
+  function ownerConfirm(name, hide) {
+    var d = ownDialog(hide
+      ? '<h3>Remove ' + escapeHtml(name) + '?</h3><p>Members and visitors will no longer see it. Nothing is deleted, and you can bring it back any time from Owner mode.</p><div class="own-row"><button class="own-no" id="ownNo">Cancel</button><button class="own-yes" id="ownYes">Remove</button></div>'
+      : '<h3>Restore ' + escapeHtml(name) + '?</h3><p>It will show up again for members and visitors.</p><div class="own-row"><button class="own-no" id="ownNo">Cancel</button><button class="own-ok" id="ownYes">Restore</button></div>');
+    d.el.querySelector('#ownNo').addEventListener('click', d.close);
+    d.el.querySelector('#ownYes').addEventListener('click', function () {
+      var btn = this; btn.disabled = true; btn.textContent = 'Saving…';
+      ownerSet(name, hide).then(function (how) {
+        d.close(); ownRerender();
+        if (how === 'local' && typeof OWNER_NOTE === 'function') OWNER_NOTE('Saved on this device only. To make it final for everyone, open the live page and remove it there.');
+      });
+    });
+  }
+  function ownerBarHtml() {
+    var n = Object.keys(hiddenMap()).length;
+    return '<div class="own-bar"><span><b>Owner mode.</b> Tap Remove on any restaurant you do not want. ' + n + ' removed so far.</span><button type="button" id="ownDone">Done</button></div>';
+  }
+  function bindOwner(root) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-own]'), function (b) {
+      b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); ownerConfirm(b.getAttribute('data-name'), b.getAttribute('data-own') === 'remove'); });
+    });
+    var done = root.querySelector('#ownDone');
+    if (done) done.addEventListener('click', function () { OWNER = false; try { sessionStorage.removeItem('lvrOwner'); } catch (e) {} ownRerender(); });
+    var lk = root.querySelector('#ownerLink');
+    if (lk) lk.onclick = function (e) { e.preventDefault(); if (OWNER) { ownRerender(); } else ownerLogin(); };
+  }
+  function ownerBtnHtml(name) {
+    if (!OWNER) return '';
+    var h = isHidden(name);
+    return '<button type="button" class="own-btn' + (h ? ' restore' : '') + '" data-own="' + (h ? 'restore' : 'remove') + '" data-name="' + escapeHtml(name) + '">' + (h ? 'Restore' : 'Remove') + '</button>';
+  }
+  var lastCat = {}, lastRed = {};
+  function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
+  function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
+
   function loadWallet() {
     showEmpty('Loading…');
     Promise.all([
@@ -650,13 +746,16 @@
     wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
     wallet.chestState = DEMO_CHEST ? { n: 1, amount: 2, at: Date.now() - 10 * 86400000 - 6 * 3600000 } : { n: 1, amount: 2, at: Date.now() - 2 * 86400000 };
     memberKey = null; appSettings = { chest: { waitDays: 10, claimHours: 48, prizeMin: 1, prizeMax: 7, repeat: true } }; myReceipts = {}; directory = {};
-    render({}, {});
+    loadHidden().then(function () { render({}, {}); });
   }
 
   function render(catalog, allRedemptions) {
+    lastCat = catalog; lastRed = allRedemptions;
     var items = DEMO ? demoItems() : flattenCatalog(catalog, allRedemptions);
+    items = items.filter(function(i){ return OWNER || !isHidden(i.bizName || i.slug); });
 
     var html =
+      (OWNER ? ownerBarHtml() : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
       welcomeHtml() +
@@ -687,10 +786,10 @@
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
         var min = g.items[0].pointCost;
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
-        return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
+        return '<div class="rest-group' + (ready ? ' has-ready' : '') + (isHidden(g.name) ? ' is-removed' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
           (SHOW_PHOTOS && firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
-          '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
+          ownerBtnHtml(g.name) + '<div class="rest-chip' + (ready ? ' on' : '') + '">' + (ready ? '★ ' + ready + ' ready' : 'from ' + min + ' pts') + '</div></div>' +
           '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
             var pic = SHOW_PHOTOS && idx !== 0 ? (item.photoUrl || item.photo || '') : '';
@@ -751,9 +850,10 @@
       }).join('');
     }
 
-    html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a></div>';
+    html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a> · <a href="#" id="ownerLink" class="own-link">Owner</a></div>';
 
     contentEl.innerHTML = html;
+    bindOwner(contentEl);
     bindEarnPanel();
     if (!DEMO) bindInvite();
     startPolling();
@@ -1000,8 +1100,8 @@
 
   function earnRule() { return 'Everything you order and pay for earns points. <b>The free offer itself does not count</b>: if you redeemed a free chicken bowl, leave that out and count only what else you paid for.'; }
   function earnRestaurants() {
-    if (DEMO) { var seen = {}, out = []; demoItems().forEach(function (it) { if (!seen[it.slug]) { seen[it.slug] = 1; out.push([it.slug, it.bizName]); } }); return out; }
-    return Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k); }).map(function (k) { return [k, directory[k].bizName || k]; });
+    if (DEMO) { var seen = {}, out = []; demoItems().forEach(function (it) { if (!isHidden(it.bizName) && !seen[it.slug]) { seen[it.slug] = 1; out.push([it.slug, it.bizName]); } }); return out; }
+    return Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k) && !isHidden(directory[k].bizName || k); }).map(function (k) { return [k, directory[k].bizName || k]; });
   }
   function earnPanelHtml() {
     var rests = earnRestaurants();
