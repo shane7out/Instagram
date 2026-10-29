@@ -135,12 +135,16 @@
   .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
   .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
   .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
-  .wheel-wrap{position:relative;width:224px;height:236px;margin:0 auto 6px;}
-  .wheel-ptr{position:absolute;left:50%;top:0;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:24px solid #ffd35c;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55));z-index:2;}
-  .wheel-rot{position:absolute;left:6px;top:14px;width:212px;height:212px;border-radius:50%;box-shadow:0 0 0 4px #ffd35c,0 0 22px rgba(240,169,26,.45);}
+  .wheel-wrap{position:relative;width:244px;height:256px;margin:0 auto 6px;}
+  .wheel-ptr{position:absolute;left:50%;top:0;transform:translateX(-50%);transform-origin:50% 4px;width:30px;height:38px;z-index:2;background:linear-gradient(180deg,#fff2b8,#ffd35c 45%,#d98f0a);clip-path:polygon(50% 100%,0 22%,18% 0,82% 0,100% 22%);filter:drop-shadow(0 3px 3px rgba(0,0,0,.6));}
+  .wheel-wrap.go .wheel-ptr{animation:ptrFlick .11s ease-in-out infinite alternate;}
+  @keyframes ptrFlick{from{transform:translateX(-50%) rotate(-14deg);}to{transform:translateX(-50%) rotate(10deg);}}
+  .wheel-rot{position:absolute;left:8px;top:20px;width:228px;height:228px;border-radius:50%;box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 26px rgba(240,169,26,.35);}
   .wheel-rot.wob{animation:wheelWob .35s ease-in-out infinite alternate;}
   @keyframes wheelWob{from{transform:rotate(-3deg);}to{transform:rotate(3deg);}}
   .wheel-rot svg{display:block;width:100%;height:100%;}
+  @media (prefers-reduced-motion:no-preference){.wheel-rot .b1{animation:bulb 1s steps(1) infinite;} .wheel-rot .b0{animation:bulb 1s steps(1) infinite reverse;}}
+  @keyframes bulb{0%{opacity:1;}50%{opacity:.35;}100%{opacity:1;}}
   @keyframes bnPop{from{transform:scale(.6);opacity:0;}to{transform:none;opacity:1;}}
   .chest-stage{position:relative;display:inline-block;}
   .chest-fx{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;overflow:visible;z-index:3;}
@@ -661,9 +665,10 @@
       var done = function () { res.textContent = '+' + prize + ' FREE points'; busy = false; go.disabled = false; go.textContent = 'Spin again'; };
       if (reduce) { done(); return; }
       cur = cur + 360 * 6 + ((((F - cur) % 360) + 360) % 360);
+      wheel.parentNode.classList.add('go');
       wheel.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
       wheel.style.transform = 'rotate(' + cur + 'deg)';
-      setTimeout(done, 5300);
+      setTimeout(function () { wheel.parentNode.classList.remove('go'); done(); }, 5300);
     });
   }
   function bindOwner(root) {
@@ -1303,15 +1308,21 @@
     return a[0] % n;
   }
   function wheelHtml(min, max, id) {
-    var N = max - min + 1, seg = 360 / N, R = 106, cols = ['#ffd35c', '#1b6fd1', '#e8a317', '#0f4c91'], tx = ['#3a2200', '#ffffff', '#3a2200', '#ffffff'], out = '';
-    function pt(a) { var r = (a - 90) * Math.PI / 180; return [(R + R * Math.cos(r)).toFixed(2), (R + R * Math.sin(r)).toFixed(2)]; }
-    for (var i = 0; i < N; i++) {
-      var a0 = i * seg, a1 = (i + 1) * seg, p0 = pt(a0), p1 = pt(a1), k = i % 2 + (i === N - 1 && N % 2 ? 2 : 0), c = a0 + seg / 2;
-      out += '<path d="M' + R + ',' + R + ' L' + p0[0] + ',' + p0[1] + ' A' + R + ',' + R + ' 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + p1[0] + ',' + p1[1] + ' Z" fill="' + cols[k] + '" stroke="#0b1b30" stroke-width="1.5"/>';
-      if (N <= 20) out += '<text x="' + R + '" y="' + (R - R * 0.74) + '" transform="rotate(' + c + ' ' + R + ' ' + R + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (N > 12 ? 13 : 20) + '" font-weight="800" fill="' + tx[k] + '">' + (min + i) + '</text>';
+    // classic carnival / game-show wheel: lit rim, bright segments, glossy hub, flicking pointer
+    var N = max - min + 1, seg = 360 / N, C = 120, R = 100, out = '';
+    var cols = ['#c8102e', '#ffd35c', '#1b5fc1', '#0f7a45', '#6a2fb5'], tx = ['#ffffff', '#3a2200', '#ffffff', '#ffffff', '#ffffff'];
+    function pt(a, r) { var t = (a - 90) * Math.PI / 180; return [(C + r * Math.cos(t)).toFixed(2), (C + r * Math.sin(t)).toFixed(2)]; }
+    out += '<defs><radialGradient id="wGloss" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="wHub" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#fff2b8"/><stop offset=".6" stop-color="#ffd35c"/><stop offset="1" stop-color="#b9780a"/></radialGradient></defs>';
+    out += '<circle cx="' + C + '" cy="' + C + '" r="119" fill="#1a2f4d" stroke="#ffd35c" stroke-width="3"/><circle cx="' + C + '" cy="' + C + '" r="103" fill="none" stroke="#0b1b30" stroke-width="3"/>';
+    for (var b = 0; b < 24; b++) { var bp = pt(b * 15, 111); out += '<circle class="bulb' + (b % 2 ? ' b1' : ' b0') + '" cx="' + bp[0] + '" cy="' + bp[1] + '" r="4.2" fill="' + (b % 2 ? '#fff4c2' : '#ffb21f') + '"/>'; }
+    for (var k = 0; k < N; k++) {
+      var a0 = k * seg, a1 = (k + 1) * seg, p0 = pt(a0, R), p1 = pt(a1, R), ci = k % 5, mid = a0 + seg / 2;
+      out += '<path d="M' + C + ',' + C + ' L' + p0[0] + ',' + p0[1] + ' A' + R + ',' + R + ' 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + p1[0] + ',' + p1[1] + ' Z" fill="' + cols[ci] + '" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>';
+      if (N <= 20) out += '<text x="' + C + '" y="' + (C - R * 0.7) + '" transform="rotate(' + mid + ' ' + C + ' ' + C + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (N > 12 ? 14 : 26) + '" font-weight="800" fill="' + tx[ci] + '"' + (ci === 1 ? '' : ' stroke="#000" stroke-opacity=".35" stroke-width=".6"') + '>' + (min + k) + '</text>';
     }
-    out += '<circle cx="' + R + '" cy="' + R + '" r="17" fill="#0b1b30" stroke="#ffd35c" stroke-width="3"/><text x="' + R + '" y="' + R + '" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="800" fill="#ffd35c">SPIN</text>';
-    return '<div class="wheel-wrap"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="' + (id || 'wheelRot') + '" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * R) + ' ' + (2 * R) + '" aria-hidden="true">' + out + '</svg></div></div>';
+    out += '<circle cx="' + C + '" cy="' + C + '" r="' + R + '" fill="url(#wGloss)"/>';
+    out += '<circle cx="' + C + '" cy="' + C + '" r="21" fill="url(#wHub)" stroke="#7a4a05" stroke-width="2.5"/><text x="' + C + '" y="' + C + '" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="900" fill="#3a2200">SPIN</text>';
+    return '<div class="wheel-wrap"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="' + (id || 'wheelRot') + '" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * C) + ' ' + (2 * C) + '" aria-hidden="true">' + out + '</svg></div></div>';
   }
   function clockParts(ms) {
     var t = Math.max(0, Math.ceil(ms / 1000));
@@ -1377,12 +1388,13 @@
     var prize = st.c.prizeMin + secureInt(st.c.prizeMax - st.c.prizeMin + 1);
     chestBusy = true; btn.hidden = true;
     var wheel = document.getElementById('wheelRot'), mEl = document.getElementById('chestMsg');
+    var cb = document.getElementById('soonClose'); if (cb) cb.hidden = true;
     if (wheel) wheel.classList.add('wob');
     if (mEl) mEl.textContent = 'Spinning…';
     var finish = function () {
       var at = Date.now();
       wallet.points = (wallet.points || 0) + prize; wallet.chestState = { n: st.n, amount: prize, at: at };
-      chestBusy = false; chestWin = { n: '+' + prize };
+      chestBusy = false; chestWin = { n: '+' + prize }; var cb2 = document.getElementById('soonClose'); if (cb2) cb2.hidden = false;
       var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
       var nx = chestInfo(), m = document.getElementById('chestMsg');
       if (m) m.textContent = nx.kind === 'wait' ? 'Your next free bonus spin arrives in ' + hrs(nx.waitDays) + ' hours.' : 'Thank you for being a member.';
@@ -1393,11 +1405,11 @@
       if (!wheel || reduce) { finish(); return; }
       var N = st.c.prizeMax - st.c.prizeMin + 1, seg = 360 / N, center = (prize - st.c.prizeMin + 0.5) * seg;
       var jitter = (secureInt(70) / 100 - 0.35) * seg, deg = 360 * 6 - center + jitter;
-      wheel.classList.remove('wob');
+      wheel.classList.remove('wob'); if (wheel.parentNode) wheel.parentNode.classList.add('go');
       wheel.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
       void wheel.offsetWidth;
       wheel.style.transform = 'rotate(' + deg + 'deg)';
-      setTimeout(finish, 5400);
+      setTimeout(function () { if (wheel.parentNode) wheel.parentNode.classList.remove('go'); finish(); }, 5400);
     };
     if (DEMO) { setTimeout(spin, 500); return; }
     var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey);
@@ -1406,7 +1418,7 @@
       .then(function (r) { if (!r.ok) throw new Error('claim'); return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }); })
       .then(function () { return fetch(DB + '/lvr_rewards/' + mk + '/points.json', { method: 'PUT', headers: H, body: JSON.stringify({ '.sv': { increment: prize } }) }); })
       .then(function (r) { if (!r.ok) throw new Error('points'); spin(); })
-      .catch(function () { chestBusy = false; if (wheel) wheel.classList.remove('wob'); document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest(); });
+      .catch(function () { chestBusy = false; var cb3 = document.getElementById('soonClose'); if (cb3) cb3.hidden = false; if (wheel) wheel.classList.remove('wob'); document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest(); });
   }
   setInterval(tickChest, 30000);
   (function () {
