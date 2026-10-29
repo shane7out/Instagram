@@ -1421,3 +1421,9 @@ top unless they tell you otherwise.*
 ## Name + hours (2026-10-29)
 - Program is now called **Reward Points** on the customer pages (header button, menu, rules title, page titles; sign-up page says "LVR Reward Points"). Buttons already read "Redeem N Reward Points".
 - The bonus countdown is shown in **hours only** (a new member sees "Bonus in 240 hours" the moment they sign up; the last hour shows minutes). Rules, Q&A, prizes and messages say "240 hours" instead of "10 days". The setting is still stored in days (Points admin > Settings > Days between bonuses).
+
+## Rules rewritten per the owner (2026-10-29)
+- "How Reward Points Work" now opens with: Reward Points are free; **no purchase necessary** (21 sign-up points + a free bonus every 240 hours); then **spend and earn: 1 point for every $2** (spend $50, earn 25), added after a receipt is checked (no drawing, no wheel); use points for free pickup-only food at participating restaurants and "try a restaurant you have not been to yet"; **one of each offer per person** (now enforced when redeeming), **may give a free offer to one friend**, **18 or older, restaurant may ask for a valid ID**; points have no cash value.
+- Both sign-up forms' "I'm in" box now says the person is 18 or older and that no purchase is necessary. Vanilla Rice earn rate set to 0.5 (was 1); Points admin default for new businesses is 0.5.
+- **Not enforced (owner to decide):** "use points at a restaurant you haven't used yet" is wording only. Enforcing it would block anyone who spent at Vanilla Rice from redeeming while Vanilla Rice is the only partner.
+- **Attorney list adds:** "no purchase necessary" wording and the free ways to get points; earning 1 point per $2 spent; 18+ and ID check; one free offer may be given to a friend; the prize ladder at this earn rate (a $50 gift card at 50 points = $100 of spending; commission on $100 is $20).
