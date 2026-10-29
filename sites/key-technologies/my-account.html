@@ -374,6 +374,10 @@
   .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
   .own-box p{margin:0 0 16px;color:#c3d2e3;}
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
+  .own-tools{width:100%;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .own-tools button,.own-tools a{font:inherit;font-weight:800;font-size:14px;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border:0;border-radius:99px;padding:9px 14px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
+  .own-tools a{background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--control-line,#4a6580);}
+  .prac-tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:4px 12px;margin-bottom:10px;}
   .own-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 4px;}
   .own-foot button{font:inherit;font-weight:800;font-size:14.5px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:11px 18px;min-height:44px;cursor:pointer;}
   .own-foot button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
@@ -591,7 +595,7 @@
     function draw() { Array.prototype.forEach.call(dots, function (x, k) { x.classList.toggle('f', k < val.length); }); }
     function check() {
       sha256hex(val).then(function (h) {
-        if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); document.removeEventListener('keydown', onKey); ownRerender(); }
+        if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); document.removeEventListener('keydown', onKey); ownRerender(); window.scrollTo(0, 0); }
         else { box.classList.add('bad'); d.el.querySelector('#ownErr').textContent = 'That PIN is not right.'; setTimeout(function () { box.classList.remove('bad'); val = ''; draw(); }, 600); }
       });
     }
@@ -635,14 +639,35 @@
   function ownerBarHtml(removed) {
     removed = removed || [];
     var list = removed.length ? '<details style="width:100%;margin-top:4px;"><summary style="cursor:pointer;font-weight:800;">' + removed.length + ' removed · tap to restore</summary><div style="margin-top:8px;display:grid;gap:6px;">' + removed.map(function (n) { return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>' + escapeHtml(n) + '</span><button type="button" class="own-btn restore" data-own="restore" data-name="' + escapeHtml(n) + '">Restore</button></div>'; }).join('') + '</div></details>' : '';
-    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want. Tap the Key Technologies name at the top to open your Key Tech room.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list + '</div>';
+    return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want. Tap the Key Technologies name at the top to open your Key Tech room.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list +
+      '<div class="own-tools"><b>Demos:</b> <button type="button" id="ownPractice">🎡 Practice spin</button> <a href="?demo=65">Full demo</a> <a href="?demo=5">5 pts</a> <a href="?demo=20">20 pts</a> <a href="?demo=40">40 pts</a> <a href="?demo=200">200 pts</a></div></div>';
   }
   // In owner mode the Key Technologies name at the top opens your Key Tech room instead of the public site.
   var KEY_ROOM_URL = 'https://lvr-data-a60c1.web.app/key-room.html';
   Array.prototype.forEach.call(document.querySelectorAll('.logo'), function (l) {
     l.addEventListener('click', function (e) { if (OWNER) { e.preventDefault(); location.href = KEY_ROOM_URL; } });
   });
+  // Practice spin: the owner can spin the wheel as many times as they like to show it off. Nothing is saved and no points move.
+  function practiceSpin() {
+    var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, cur = 0, busy = false;
+    var d = ownDialog('<div style="text-align:center;"><span class="prac-tag">Practice spin · no points are added</span><h3 style="margin:0 0 4px;">Spin for ' + min + ' to ' + max + ' FREE points</h3>' + wheelHtml(min, max, 'pracWheel') + '<div id="pracRes" role="status" style="min-height:44px;font-size:26px;font-weight:800;color:#7be3a6;margin:2px 0 10px;"></div><div class="own-row"><button class="own-no" id="pracClose">Close</button><button class="own-ok" id="pracGo">Spin the wheel</button></div></div>');
+    var wheel = d.el.querySelector('#pracWheel'), res = d.el.querySelector('#pracRes'), go = d.el.querySelector('#pracGo');
+    d.el.querySelector('#pracClose').addEventListener('click', function () { if (!busy) d.close(); });
+    go.addEventListener('click', function () {
+      if (busy) return; busy = true; go.disabled = true; res.textContent = '';
+      var prize = min + secureInt(max - min + 1), N = max - min + 1, seg = 360 / N;
+      var F = -((prize - min + 0.5) * seg) + (secureInt(70) / 100 - 0.35) * seg;
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var done = function () { res.textContent = '+' + prize + ' FREE points'; busy = false; go.disabled = false; go.textContent = 'Spin again'; };
+      if (reduce) { done(); return; }
+      cur = cur + 360 * 6 + ((((F - cur) % 360) + 360) % 360);
+      wheel.style.transition = 'transform 5s cubic-bezier(.12,.62,.1,1)';
+      wheel.style.transform = 'rotate(' + cur + 'deg)';
+      setTimeout(done, 5300);
+    });
+  }
   function bindOwner(root) {
+    var prac = root.querySelector('#ownPractice'); if (prac) prac.addEventListener('click', practiceSpin);
     Array.prototype.forEach.call(root.querySelectorAll('[data-own]'), function (b) {
       b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); ownerConfirm(b.getAttribute('data-name'), b.getAttribute('data-own') === 'remove'); });
     });
@@ -1277,7 +1302,7 @@
     do { c.getRandomValues(a); } while (a[0] >= lim);
     return a[0] % n;
   }
-  function wheelHtml(min, max) {
+  function wheelHtml(min, max, id) {
     var N = max - min + 1, seg = 360 / N, R = 106, cols = ['#ffd35c', '#1b6fd1', '#e8a317', '#0f4c91'], tx = ['#3a2200', '#ffffff', '#3a2200', '#ffffff'], out = '';
     function pt(a) { var r = (a - 90) * Math.PI / 180; return [(R + R * Math.cos(r)).toFixed(2), (R + R * Math.sin(r)).toFixed(2)]; }
     for (var i = 0; i < N; i++) {
@@ -1286,7 +1311,7 @@
       if (N <= 20) out += '<text x="' + R + '" y="' + (R - R * 0.74) + '" transform="rotate(' + c + ' ' + R + ' ' + R + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (N > 12 ? 13 : 20) + '" font-weight="800" fill="' + tx[k] + '">' + (min + i) + '</text>';
     }
     out += '<circle cx="' + R + '" cy="' + R + '" r="17" fill="#0b1b30" stroke="#ffd35c" stroke-width="3"/><text x="' + R + '" y="' + R + '" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="800" fill="#ffd35c">SPIN</text>';
-    return '<div class="wheel-wrap"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="wheelRot" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * R) + ' ' + (2 * R) + '" aria-hidden="true">' + out + '</svg></div></div>';
+    return '<div class="wheel-wrap"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="' + (id || 'wheelRot') + '" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * R) + ' ' + (2 * R) + '" aria-hidden="true">' + out + '</svg></div></div>';
   }
   function clockParts(ms) {
     var t = Math.max(0, Math.ceil(ms / 1000));
