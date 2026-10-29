@@ -209,7 +209,7 @@
     var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
     var days = Math.ceil((t - Date.now()) / 86400000);
     var endTxt = left <= 0 ? 'Was good until <b>' + esc(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + esc(fmtDay(exp)));
-    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
   var usedPhotos = {};
   var SHOW_PHOTOS = false;   // food photos are switched off for now; set to true to bring them back
@@ -226,12 +226,12 @@
   // Demo menu (fictional restaurants, generic food photos). Opened with menu.html?demo=1
   var DEMO = [
     { r: "Vanilla Rice's Hibachi House", tag: "Founding partner · Hibachi", items: [
-      { itemName: "Free Chicken Bowl", pointCost: 20, art: "hibachi", real: true, description: "Pickup only, not valid for delivery. Grilled teriyaki chicken over rice. Show your code at Vanilla Rice's Hibachi House to redeem." } ] },
+      { itemName: "Free Chicken Bowl", pointCost: 20, art: "hibachi", real: true, description: "Grilled teriyaki chicken over rice. Show your code at Vanilla Rice's Hibachi House to redeem." } ] },
     { r: "Golden Grain Rice House", tag: "Fast casual · Downtown", items: [
       { itemName: "Free Chicken & Egg Rice Bowl", pointCost: 13, art: "donburi", description: "Chicken and egg over steamed rice, finished with fresh herbs. Show your code to your server." },
       { itemName: "Free Thai Fried Rice", pointCost: 16, art: "thaifried", description: "Wok-fried rice with chicken, vegetables and fresh herbs." },
       { itemName: "Free Salmon Sushi Plate", pointCost: 20, art: "sushi", description: "Fresh salmon nigiri over seasoned rice." } ] },
-    { r: "Sunset Slice Pizza", tag: "Dine-in or pickup", items: [
+    { r: "Sunset Slice Pizza", tag: "Neighborhood pizza", items: [
       { itemName: "Free Gourmet Pizza", pointCost: 15, art: "pizza", description: "Hand-stretched crust topped with arugula, shaved cheese and lemon zest." },
       { itemName: "Free Italian Sandwich", pointCost: 6, art: "sandwich", description: "Stacked Italian meats and cheese with greens on fresh bread." },
       { itemName: "Free Hot Fudge Sundae", pointCost: 8, art: "sundae", description: "Vanilla ice cream, hot fudge and a cherry on top." } ] },
@@ -247,9 +247,9 @@
   // Real Las Vegas-area restaurants from the owner's LVR list (public business info only), shown
   // with sample offers to demonstrate the program. Opened with menu.html?demo=vegas
   var VEGAS = [
-    { partner: true, cat: "plates", n: "Vanilla Rice's Hibachi House", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146", locs: [{ l: "Charleston location", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146" }, { l: "Flamingo location (carry-out)", a: "3654 E Flamingo Rd Ste 12, Las Vegas, NV 89121" }], ig: "hibachihouselv", c: "Hibachi", o: { t: "Free Chicken Bowl", p: 20, art: "hibachi", real: true, d: "Pickup only, not valid for delivery. Grilled teriyaki chicken over rice. Show your code at Vanilla Rice's Hibachi House to redeem." } },
+    { partner: true, cat: "plates", n: "Vanilla Rice's Hibachi House", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146", locs: [{ l: "Charleston location", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146" }, { l: "Flamingo location (carry-out)", a: "3654 E Flamingo Rd Ste 12, Las Vegas, NV 89121" }], ig: "hibachihouselv", c: "Hibachi", o: { t: "Free Chicken Bowl", p: 20, art: "hibachi", real: true, d: "Grilled teriyaki chicken over rice. Show your code at Vanilla Rice's Hibachi House to redeem." } },
     { partner: true, cat: "plates", n: "Poke Heaven", a: "4747 S Maryland Pkwy, Las Vegas, NV 89119", ph: "(702) 730-3030", ig: "poke.heaven", c: "Poke bowls", o: { t: "Free Poke Bowl", p: 13, art: "pokebowl" } },
-    { partner: true, cat: "sweet", n: "The Tea Terrace", a: "6830 S Rainbow Blvd #140, Las Vegas, NV 89118", ph: "(702) 931-0562", ig: "ttterrace", web: "https://the-tea-terrace.com", c: "Afternoon tea room", o: { t: "Free Afternoon Tea Treats", p: 13, art: "teatier", d: "Pickup only, not valid for delivery. Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your points." } },
+    { partner: true, cat: "sweet", n: "The Tea Terrace", a: "6830 S Rainbow Blvd #140, Las Vegas, NV 89118", ph: "(702) 931-0562", ig: "ttterrace", web: "https://the-tea-terrace.com", c: "Afternoon tea room", o: { t: "Free Afternoon Tea Treats", p: 13, art: "teatier", d: "Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your points." } },
     { cat: "pizza", n: "Pizza Rock", locs: [{"l": "Downtown Grand", "a": "201 N 3rd St, Las Vegas, NV 89101"}, {"l": "Green Valley Ranch (Henderson)", "a": "2300 Paseo Verde Pkwy, Henderson, NV 89052"}], a: "201 N 3rd St, Las Vegas, NV 89101", ph: "(702) 385-0838", c: "Pizza, downtown", o: { t: "Free Personal Pizza", p: 12, art: "minipizza" } },
     { cat: "pizza", n: "Metro Pizza", ig: "metropizzalv", a: "4001 S Decatur Blvd Ste 39, Las Vegas, NV 89103", ph: "(702) 362-7896", web: "https://metropizza.com", c: "Pizza", o: { t: "Free Personal Pizza", p: 12, art: "pizzac" } },
     { cat: "sushi", n: "Yellowtail Japanese Restaurant & Lounge", a: "3600 Las Vegas Blvd S, Bellagio, Las Vegas, NV 89109", ph: "(702) 693-7223", c: "Sushi and Japanese", o: { t: "Free Sashimi Plate", p: 16, art: "sushi3" } },
@@ -263,7 +263,7 @@
     { cat: "apps", n: "Peru Chicken", locs: [{"l": "East Tropicana", "a": "2055 E Tropicana Ave Ste 9, Las Vegas, NV 89119"}, {"l": "West Sahara", "a": "3886 W Sahara Ave, Las Vegas, NV 89102"}], a: "2055 E Tropicana Ave Ste 9, Las Vegas, NV 89119", ig: "peruchickenofficial", c: "Peruvian rotisserie chicken", o: { t: "Free Chicken Sandwich", p: 10, art: "chickensandwich" } },
     { cat: "mexican", n: "AyAyAy! Mexican Cuisine", ig: "ayayaymexicancuisinelv", a: "1570 W Horizon Ridge Pkwy Ste 120, Henderson, NV 89012", c: "Mexican", city: "Henderson, NV", o: { t: "Free Burrito", p: 11, art: "burrito" } },
     { cat: "italian", n: "Panevino Italian Grille & Deli Café", ig: "panevinolasvegas", a: "246 Via Antonio Ave, Las Vegas, NV 89119", ph: "(702) 222-2400", web: "https://www.panevinolasvegas.com", c: "Italian deli café near the airport", o: { t: "Free Avocado Toast", p: 10, art: "avotoast" } },
-    { cat: "bbq", n: "Smoking Pig BBQ Company", a: "4379 N Las Vegas Blvd, Las Vegas, NV 89115", ph: "(725) 777-3988", ig: "smokingpigbbqlasvegas", c: "BBQ", o: { t: "Free Pulled Pork Sliders", p: 15, art: "bbqplate", d: "Pickup only, not valid for delivery. Slow-smoked pulled pork on toasted buns." } },
+    { cat: "bbq", n: "Smoking Pig BBQ Company", a: "4379 N Las Vegas Blvd, Las Vegas, NV 89115", ph: "(725) 777-3988", ig: "smokingpigbbqlasvegas", c: "BBQ", o: { t: "Free Pulled Pork Sliders", p: 15, art: "bbqplate", d: "Slow-smoked pulled pork on toasted buns." } },
     { cat: "plates", n: "Doanburi", a: "5840 S Rainbow Blvd, Las Vegas, NV 89118", ph: "(702) 915-7453", ig: "doanburi", c: "Japanese rice bowls", o: { t: "Free Rice Bowl", p: 13, art: "donburi" } },
     { cat: "thai", n: "Lotus of Siam", ig: "lotusofsiam", a: "953 E Sahara Ave Ste A5, Las Vegas, NV 89104", c: "Thai", o: { t: "Free Pad Thai", p: 12, art: "padthai" } },
     { cat: "sweet", n: "Hash House A Go Go", locs: [{"l": "The LINQ", "a": "3535 Las Vegas Blvd S, Las Vegas, NV 89109"}, {"l": "West Sahara", "a": "6800 W Sahara Ave, Las Vegas, NV 89146"}, {"l": "Plaza Hotel (downtown)", "a": "1 S Main St, Las Vegas, NV 89101"}], ig: "hashhouseagogo", a: "3535 Las Vegas Blvd S, The LINQ, Las Vegas, NV 89109", ph: "(702) 254-4646", web: "https://hashhouseagogo.com/locations/the-linq/", c: "Breakfast and brunch", o: { t: "Free Egg & Toast Plate", p: 9, art: "eggs" } },
@@ -436,7 +436,7 @@
           '<a class="vlink" href="' + goog + '" target="_blank" rel="noopener">' + ICON.g + 'Google</a>' +
         '</div><p class="vnote">Links open in a new tab. Close it to come back here.</p>' +
         '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(r.o.art) + '</div>' : '') +
-          '<div>' + tag + '<span class="pickup">Pickup only</span><div class="name">' + esc(r.o.t) + '</div></div>' +
+          '<div>' + tag + '<div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
           '<div style="grid-column:1 / -1"' + (r.o.real ? ' id="liveTally"' : '') + '>' + (r.o.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(idx)) + '</div></article></section>');
@@ -487,7 +487,7 @@
       html += '<div class="rest"><b>' + esc(g.r) + '</b><span>' + esc(g.tag) + '</span></div>';
       g.items.forEach(function (it) {
         html += '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(it.art) + '</div>' : '') +
-          '<div><span class="pickup">Pickup only</span><div class="name">' + esc(it.itemName) + '</div></div>' +
+          '<div><div class="name">' + esc(it.itemName) + '</div></div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description) + '</p>' +
           '<div style="grid-column:1 / -1"' + (it.real ? ' id="liveTally"' : '') + '>' + (it.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(di++)) + '</div>' +
@@ -519,7 +519,7 @@
       sections[s].forEach(function (it) {
         html += '<article class="dish' + (it.photoUrl ? ' has-pic' : '') + '">' +
           (it.photoUrl ? '<img class="photo" src="' + esc(it.photoUrl) + '" alt="" loading="lazy">' : '') +
-          '<div><span class="pickup">Pickup only</span><div class="name">' + esc(it.itemName) + '</div></div>' +
+          '<div><div class="name">' + esc(it.itemName) + '</div></div>' +
           '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
           '<p class="desc">' + esc(it.description || it.instructions || "") + '</p>' +
           '<div style="grid-column:1 / -1">' + (it._id ? tallyHtml(Number(it.maxRedemptions) || 0, (Number(it.maxRedemptions) || 0) - (it._used || 0), it.expiresAt) : "") + '</div>' +

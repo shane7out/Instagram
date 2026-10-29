@@ -496,7 +496,7 @@
     var rules = [
       ['Free to join, free to use', free],
       ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed with points does not count toward your spend.'],
-      ['Use your points', 'Trade points for free items at participating restaurants. Offers are pickup only, not valid for delivery. Try a restaurant you have not been to yet.'],
+      ['Use your points', 'Trade points for free items at participating restaurants. Try a restaurant you have not been to yet.'],
       ['Collect your bonus', prize ? 'Every ' + hrs(c.waitDays) + ' hours a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + hrs(c.waitDays) + '-hour wait.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
       ['Fair play', 'Points have no cash value, cannot be sold, and are never refunded once used. A code expires on the date shown.']
@@ -682,7 +682,7 @@
     var qa = [
       ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
       ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed does not count toward your spend.'],
-      ['What can I do with my points?', 'Trade them for free food at participating restaurants. Offers are pickup only, not valid for delivery. It is one of each offer per person.'],
+      ['What can I do with my points?', 'Trade them for free food at participating restaurants. It is one of each offer per person.'],
       ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
       ['Can I give my free offer to a friend?', 'Yes, to one friend. Points themselves cannot be sold or transferred.'],
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
@@ -703,7 +703,7 @@
     }
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
 
-    return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl. Pickup only.</p></div></div>' +
+    return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl.</p></div></div>' +
       (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Bonus points</b><p>Every ' + hrs(c.waitDays) + ' hours, collect a random ' + prize + ' bonus points. You have ' + c.claimHours + ' hours to claim it.</p></div></div>' : '') +
       '<div class="prz-row"><span class="ic" aria-hidden="true">➕</span><div><b>More offers coming</b><p>New offers are added as more restaurants join. Check the Redeem list.</p></div></div></div>';
   }
@@ -968,7 +968,7 @@
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div><span class="pickup">Pickup only</span>' + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div>') + '</div>' +
+                '<div>' + (item.fulfillment ? '<span class="pickup">' + escapeHtml(item.fulfillment) + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div>') + '</div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
@@ -978,7 +978,7 @@
               (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
             '</div>';
           }).join('') + '</div>' + contactHtml(first.contact, g.name) + '</div>';
-      }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
+      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
     }
 
     var mine = [];
@@ -1111,7 +1111,7 @@
     var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
     var days = Math.ceil((t - Date.now()) / 86400000);
     var endTxt = left <= 0 ? 'Was good until <b>' + escapeHtml(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + escapeHtml(fmtDay(exp)));
-    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------
@@ -1447,7 +1447,6 @@
     box.className = 'confirm-box';
     box.innerHTML =
       '<div>Use <b>' + item.pointCost + ' points</b> for ' + escapeHtml(item.itemName || 'this offer') + ' at ' + escapeHtml(item.bizName || item.slug) + '?</div>' +
-      '<div style="margin-top:8px;font-size:13px;font-weight:700;">Pickup only. Not valid for delivery.</div>' +
       '<div style="margin-top:8px;font-size:13px;color:#ffb4b4;font-weight:600;">No refunds. Your points are used right away. If you do not use this code by ' + (item.expiresAt ? escapeHtml(new Date(item.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) : 'the offer end date') + ', it expires and the points are not returned.</div>' +
       '<div class="confirm-row">' +
         '<button class="confirm-no" data-act="cancel">Cancel</button>' +
@@ -1551,7 +1550,6 @@
         '<div class="code-value">' + escapeHtml(code) + '</div>' +
       '</div>' +
       '<div class="overlay-instructions">' + escapeHtml(item.instructions || ('Show this code at ' + (item.bizName || item.slug) + ' to redeem.')) + '</div>' +
-      '<div class="overlay-instructions" style="font-weight:700;">Pickup only. Not valid for delivery.</div>' +
       '<button class="overlay-close" id="overlayCloseBtn">Done — ' + newBalance + ' points left</button>';
     document.getElementById('redeemOverlay').classList.add('show');
     document.getElementById('overlayCloseBtn').addEventListener('click', function(){

@@ -276,7 +276,6 @@
       return;
     }
     out.innerHTML = '<div class="lk-box lk-ok"><b>Valid</b> — ' + escapeHtml(row.itemName || 'offer') + ' for ' + escapeHtml(row.name || 'customer') +
-      '<div style="margin-top:8px;font-weight:700;">Pickup only. Not valid for delivery orders.</div>' +
       '<div style="margin-top:10px;"><button class="use-btn" id="lkUseBtn">Mark used</button></div></div>';
     document.getElementById('lkUseBtn').addEventListener('click', function(){ markUsed(row._id); });
   }

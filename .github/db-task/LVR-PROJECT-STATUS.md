@@ -1437,3 +1437,4 @@ top unless they tell you otherwise.*
 
 ## Demo labeling
 - Restaurants without a live offer show "Demo · waiting for approval" (amber tag), a disabled "Waiting for approval" button, and no claimed counter or receipt button. Vanilla Rice (live) stays fully working. Same tag on the Las Vegas list (menu.html).
+- "Pickup only / not valid for delivery" removed from all customer copy and the restaurant portal. Per-restaurant customization later: a catalog item with a `fulfillment` field (e.g. "Pickup only", "Delivery OK") shows as a small tag on the card.
