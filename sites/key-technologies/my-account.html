@@ -56,6 +56,8 @@
   .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
   .logo-word .logo-si{color:var(--key-light);}
   @media (max-width:420px){.logo-word{font-size:13.5px;}}
+  @media (max-width:380px){.nav-row{padding-inline:14px;} .logo{gap:7px;} .logo-word{font-size:13px;letter-spacing:0;} .nav-row .btn.lr-toggle{padding:9px 11px;font-size:13.5px;}}
+  @media (max-width:340px){.logo svg{display:none;}}
 
   header{
     position:sticky;top:0;z-index:50;
@@ -342,7 +344,7 @@
     </a>
     <div class="nav-cta">
       <div class="lr-wrap">
-        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Rewards <span aria-hidden="true">&#9662;</span></button>
+        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Points <span aria-hidden="true">&#9662;</span></button>
         <div class="lr-menu" id="lrMenu" hidden></div>
       </div>
     </div>
