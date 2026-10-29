@@ -123,7 +123,7 @@ curl -sL -o /tmp/keypill.sh https://raw.githubusercontent.com/shane7out/Instagra
 
 ### NEW — Key Technologies Prospect CRM, standalone page + login
 Deploys a brand-new, separate tool at `lvr-data-a60c1.web.app/kt-crm.html` —
-its own PIN (702950, easy to change), its own Firebase node
+its own PIN (now 137900), its own Firebase node
 (`/kt_crm/prospects`, completely separate from every `dashboard_*` restaurant
 node). Built 2026-10-24 after Shane decided restaurants aren't the real
 target for Key Technologies anymore (see §16) — this is for tracking
@@ -141,7 +141,7 @@ curl -sL -o /tmp/ktcrm.sh https://raw.githubusercontent.com/shane7out/Instagram/
 
 ### NEW — Key Technologies Leads viewer, standalone page + login
 Deploys a brand-new, separate tool at `lvr-data-a60c1.web.app/key-leads.html`
-— same PIN family (702950, easy to change), reads `/key_leads/leads`, the
+— same PIN family (now 137900), reads `/key_leads/leads`, the
 Firebase node every lead form on the live site already writes to (homepage
 short/full forms, the Free Website Audit, and all 4 vertical-page forms).
 Built 2026-10-24 right after Formspree got wired up, because Shane asked how
@@ -232,7 +232,7 @@ advertiser node):
   by default and explicitly optional, matching what was promised in the DM.
   If the same email or phone claims twice, it re-shows their existing code
   instead of creating a duplicate.
-- **`lvr-coupons-admin.html`** — PIN-gated (`702953`) tool for the owner:
+- **`lvr-coupons-admin.html`** — PIN-gated (now `137900`) tool for the owner:
   create/edit a coupon program per restaurant (business name, offer text,
   redemption instructions, optional real photo URL, expiration date, max
   claims, active toggle), copy each program's claim link, and view/mark-
@@ -1227,7 +1227,7 @@ Analytics (GA4 is also scaffolded in, inactive, `KEY_GA_MEASUREMENT_ID` still
 empty, offered as the deeper option later). Every real page now logs a
 lightweight hit (page, timestamp, referrer, screen width — no PII) to a new
 `key_pageviews` Firebase node. `keytechnologies.si/key-pageviews.html`
-(PIN `702951`, not linked in nav) shows total/7-day views per page, last-
+(PIN now `137900`, not linked in nav) shows total/7-day views per page, last-
 viewed time, and a recent-activity feed. Tested via Playwright (PIN gate,
 rendering, empty state) and verified against a real live round-trip (POST a
 test hit, read it back) via GH Actions — found along the way that this

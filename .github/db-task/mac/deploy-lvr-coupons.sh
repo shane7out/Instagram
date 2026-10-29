@@ -17,7 +17,7 @@
 #                             duplicate when the same email/phone claims
 #                             twice.
 #
-#   lvr-coupons-admin.html - PIN-gated (702953) admin tool for Shane: create/
+#   lvr-coupons-admin.html - PIN-gated (137900) admin tool for Shane: create/
 #                             edit coupon programs per restaurant (offer,
 #                             photo, expiration, max claims, active toggle),
 #                             copy each program's claim link, view/mark-
