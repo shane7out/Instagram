@@ -163,6 +163,12 @@
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
   .top-panel{background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:22px;padding:6px 16px 4px;margin:0 0 30px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+  .lr-wrap{position:relative;}
+  .lr-menu{position:absolute;right:0;top:calc(100% + 10px);width:min(92vw,430px);max-height:78vh;overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:18px;padding:4px 16px 12px;box-shadow:0 22px 54px rgba(0,0,0,.65);z-index:70;}
+  .lr-menu[hidden]{display:none;}
+  .lr-menu .month-card,.lr-menu .demo-bar,.lr-menu .earn-card{background:none;border:0;border-radius:0;box-shadow:none;margin:0;padding:16px 2px;}
+  .lr-menu .month-card{padding-top:14px;} .lr-menu .demo-bar,.lr-menu .earn-card{border-top:1px solid rgba(255,255,255,.1);}
+  .lr-menu .lr-foot{border-top:1px solid rgba(255,255,255,.1);padding:12px 2px 2px;font-size:14px;}
   .top-panel .balance-card,.top-panel .month-card,.top-panel .demo-bar,.top-panel .earn-card{background:none;border:0;border-radius:0;box-shadow:none;margin:0;padding:18px 2px;}
   .top-panel .balance-card{padding-top:16px;}
   .top-panel .month-card,.top-panel .demo-bar,.top-panel .earn-card{border-top:1px solid rgba(255,255,255,.1);}
@@ -335,7 +341,10 @@
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
     <div class="nav-cta">
-      <a class="btn btn-ghost" href="rewards.html">LVR Rewards</a>
+      <div class="lr-wrap">
+        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Rewards <span aria-hidden="true">&#9662;</span></button>
+        <div class="lr-menu" id="lrMenu" hidden></div>
+      </div>
     </div>
   </div>
 </header>
@@ -569,6 +578,23 @@
     return '<button type="button" class="own-btn' + (h ? ' restore' : '') + '" data-own="' + (h ? 'restore' : 'remove') + '" data-name="' + escapeHtml(name) + '">' + (h ? 'Restore' : 'Remove') + '</button>';
   }
   var lastCat = {}, lastRed = {};
+  (function () {
+    var tg = document.getElementById('lrToggle'), mn = document.getElementById('lrMenu');
+    function setOpen(on) { if (!mn || !tg) return; mn.hidden = !on; tg.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    tg.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!mn.innerHTML.trim()) { location.href = 'rewards.html'; return; }
+      setOpen(mn.hidden);
+    });
+    document.addEventListener('click', function (e) {
+      if (mn.hidden) return;
+      var t = e.target.closest ? e.target : null;
+      if (t && t.closest('#scrollBtn, [data-act="addreceipt"]')) { setOpen(false); return; }
+      if (t && (t.closest('#lrMenu') || t.closest('#lrToggle'))) return;
+      setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mn.hidden) { setOpen(false); tg.focus(); } });
+  })();
   function ownRerender() { var y = window.scrollY; render(lastCat, lastRed); window.scrollTo(0, y); }
   function noteDialog(t) { var d = ownDialog('<h3>One moment</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
   function OWNER_NOTE(t) { var d = ownDialog('<h3>Saved</h3><p>' + escapeHtml(t) + '</p><div class="own-row"><button class="own-ok" id="ownOk">OK</button></div>'); d.el.querySelector('#ownOk').addEventListener('click', d.close); }
@@ -738,9 +764,6 @@
         '<div class="balance-label">points available</div></div>' +
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
-      monthBarHtml() +
-      (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>' : '') +
-      earnPanelHtml() +
       '</div>' +
       '<h2>Redeem</h2>';
 
@@ -825,7 +848,15 @@
 
     html += '<div class="footer-note"><a href="#" id="notYouLink">Not you? Switch account</a> · <a href="#" id="ownerLink" class="own-link">Owner</a></div>';
 
-    contentEl.innerHTML = html;
+    earnPanelHtml();
+    contentEl.innerHTML = html + earnParts.modal;
+    var menuEl = document.getElementById('lrMenu');
+    if (menuEl) {
+      menuEl.innerHTML = monthBarHtml() +
+        (DEMO ? '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>' : '') +
+        earnParts.card +
+        '<div class="lr-foot"><a href="rewards.html">Open the LVR Rewards page</a></div>';
+    }
     bindOwner(contentEl);
     bindEarnPanel();
     if (!DEMO) bindInvite();
@@ -1076,10 +1107,14 @@
     if (DEMO) { var seen = {}, out = []; demoItems().forEach(function (it) { if (!isHidden(it.bizName) && !seen[it.slug]) { seen[it.slug] = 1; out.push([it.slug, it.bizName]); } }); return out; }
     return Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k) && !isHidden(directory[k].bizName || k); }).map(function (k) { return [k, directory[k].bizName || k]; });
   }
+  var earnParts = { card: '', modal: '' };
+  function earnCardHtml() { earnPanelHtml(); return earnParts.card; }
+  function earnModalHtml() { return earnParts.modal; }
   function earnPanelHtml() {
+    earnParts = { card: '', modal: '' };
     var rests = earnRestaurants();
     if (!rests.length) return '';
-    if (!DEMO && pausedFlag('receipts')) return '<div class="earn-card"><h2>Earn more points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>';
+    if (!DEMO && pausedFlag('receipts')) { earnParts.card = '<div class="earn-card"><h2>Earn more points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>'; return earnParts.card; }
     var form = '<div class="rcpt-box" id="earnCard" role="document">' +
       '<button type="button" class="rcpt-x" data-act="closereceipt" aria-label="Close">×</button>' +
       '<h2>Add a receipt</h2>' +
@@ -1096,11 +1131,12 @@
       '<label for="eAmt">Total you paid ($), not counting any free offer you redeemed</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
       '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
       '<div class="earn-msg" id="eMsg"></div></div>';
-    return '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
+    earnParts.card = '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
       '<div class="earn-sub">Eat at any participating restaurant, then add your receipt. ' + earnRule() + '</div>' +
       '<div class="earn-eg"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
-      '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:12px;">Add a receipt</button></div>' +
-      '<div class="rcpt-back" id="rcptBack">' + form + '</div>';
+      '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:12px;">Add a receipt</button></div>';
+    earnParts.modal = '<div class="rcpt-back" id="rcptBack">' + form + '</div>';
+    return earnParts.card + earnParts.modal;
   }
   function openReceipt(slug) {
     var back = document.getElementById('rcptBack'); if (!back) return;
