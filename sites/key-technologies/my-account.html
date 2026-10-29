@@ -142,6 +142,13 @@
   .wheel-wrap.go .wheel-ptr{animation:ptrFlick .11s ease-in-out infinite alternate;}
   @keyframes ptrFlick{from{transform:translateX(-50%) rotate(-14deg);}to{transform:translateX(-50%) rotate(10deg);}}
   .wheel-rot{position:absolute;left:8px;top:20px;width:228px;height:228px;border-radius:50%;box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 26px rgba(240,169,26,.35);}
+  .wheel-wrap.mini{width:104px;height:112px;margin:0 auto;}
+  .wheel-wrap.mini .wheel-ptr{width:16px;height:21px;transform-origin:50% 2px;}
+  .wheel-wrap.mini .wheel-rot{left:4px;top:11px;width:96px;height:96px;box-shadow:0 3px 10px rgba(0,0,0,.5),0 0 14px rgba(240,169,26,.3);}
+  .wheel-wrap.mini .wheel-rot .bulb{display:none;}
+  @media (prefers-reduced-motion:no-preference){.wheel-wrap.idle .wheel-rot{animation:idleSpin 28s linear infinite;} .reward-tile.ready .wheel-wrap.idle .wheel-rot{animation-duration:9s;} .wheel-wrap.idle .wheel-ptr{animation:ptrIdle 2.4s ease-in-out infinite;}}
+  @keyframes idleSpin{to{transform:rotate(360deg);}}
+  @keyframes ptrIdle{0%,100%{transform:translateX(-50%) rotate(0);}50%{transform:translateX(-50%) rotate(-5deg);}}
   .wheel-rot.wob{animation:wheelWob .35s ease-in-out infinite alternate;}
   @keyframes wheelWob{from{transform:rotate(-3deg);}to{transform:rotate(3deg);}}
   .wheel-rot svg{display:block;width:100%;height:100%;}
@@ -202,11 +209,9 @@
   .balance-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px 22px 22px;margin-bottom:22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:center;}
   /* points on the left, a compact bonus clock on the right (full-width strip only on very narrow phones) */
   .balance-card{grid-template-columns:minmax(0,1fr) auto;row-gap:0;column-gap:12px;align-items:center;}
-  .balance-main{display:contents;}
-  .balance-name{grid-column:1;grid-row:1;align-self:end;min-width:0;overflow-wrap:anywhere;}
-  .balance-num{grid-column:1;grid-row:2;}
-  .balance-label{grid-column:1;grid-row:3;}
-  .reward-tile{grid-column:2;grid-row:1 / span 3;align-self:center;gap:5px;padding:11px 10px 10px;min-width:0;}
+  .balance-main{display:block;min-width:0;grid-column:1;grid-row:1;}
+  .balance-name{overflow-wrap:anywhere;}
+  .reward-tile{grid-column:2;grid-row:1;align-self:center;gap:4px;padding:10px 10px 10px;min-width:0;}
   .rw-lab{font-size:13px;letter-spacing:.02em;}
   .clk{display:flex;justify-content:center;align-items:flex-start;gap:1px;font-variant-numeric:tabular-nums;}
   .clk .seg{display:flex;flex-direction:column;align-items:center;min-width:34px;}
@@ -224,7 +229,7 @@
   @media (max-width:400px){.balance-card{column-gap:8px;} .reward-tile{padding:10px 7px 9px;} .clk .seg{min-width:30px;} .clk .seg b{font-size:22px;} .clk .seg i{font-size:11px;letter-spacing:.02em;} .clk .sep{font-size:17px;}}
   @media (max-width:345px){
     .balance-card{grid-template-columns:minmax(0,1fr);}
-    .reward-tile{grid-column:1;grid-row:4;margin-top:14px;width:100%;}
+    .reward-tile{grid-column:1;grid-row:2;margin-top:14px;width:100%;}
   }
   .balance-name{font-size:14px;color:var(--ink-dim);margin-bottom:6px;}
   .balance-num{font-size:58px;font-weight:800;line-height:1;color:var(--key-light);text-shadow:0 0 12px rgba(89,181,255,.65),0 0 32px rgba(22,143,255,.45);}
@@ -1298,7 +1303,7 @@
   // number, inside the claim window, within the prize range), then the points are added.
   // Until the owner sets a prize above 0 the chest only says "coming soon".
   // "1 to 10", or "up to 10" when a zero slot is on the wheel
-  function prizeRange(c) { return c.prizeMin <= 0 ? 'up to ' + c.prizeMax : (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : ' to ') + c.prizeMax); }
+  function prizeRange(c) { return c.prizeMin <= 0 ? 'up to ' + c.prizeMax : (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : '-') + c.prizeMax); }
   function chestCfg() {
     var raw = (appSettings && appSettings.chest) || {};
     var max = raw.prizeMax != null ? Number(raw.prizeMax) : (Number(raw.bonus) || 0);
@@ -1329,7 +1334,8 @@
     do { c.getRandomValues(a); } while (a[0] >= lim);
     return a[0] % n;
   }
-  function wheelHtml(min, max, id) {
+  function wheelHtml(min, max, id, cls) {
+    var mini = cls && cls.indexOf('mini') >= 0;
     // classic carnival / game-show wheel: lit rim, bright segments, glossy hub, flicking pointer
     var N = max - min + 1, seg = 360 / N, C = 120, R = 100, out = '';
     var cols = ['#c8102e', '#ffd35c', '#1b5fc1', '#0f7a45', '#6a2fb5'], tx = ['#ffffff', '#3a2200', '#ffffff', '#ffffff', '#ffffff'];
@@ -1340,11 +1346,11 @@
     for (var k = 0; k < N; k++) {
       var a0 = k * seg, a1 = (k + 1) * seg, p0 = pt(a0, R), p1 = pt(a1, R), ci = (min <= 0 ? k + 4 : k) % 5, mid = a0 + seg / 2, zero = (min + k) === 0;
       out += '<path d="M' + C + ',' + C + ' L' + p0[0] + ',' + p0[1] + ' A' + R + ',' + R + ' 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + p1[0] + ',' + p1[1] + ' Z" fill="' + (zero ? '#26364d' : cols[ci]) + '" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>';
-      if (N <= 20) out += '<text x="' + C + '" y="' + (C - R * 0.7) + '" transform="rotate(' + mid + ' ' + C + ' ' + C + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (N > 12 ? 14 : 26) + '" font-weight="800" fill="' + (zero ? '#ffffff' : tx[ci]) + '"' + (ci === 1 && !zero ? '' : ' stroke="#000" stroke-opacity=".35" stroke-width=".6"') + '>' + (min + k) + '</text>';
+      if (N <= 20) out += '<text x="' + C + '" y="' + (C - R * 0.7) + '" transform="rotate(' + mid + ' ' + C + ' ' + C + ')" text-anchor="middle" dominant-baseline="middle" font-size="' + (mini ? 36 : (N > 12 ? 14 : 26)) + '" font-weight="800" fill="' + (zero ? '#ffffff' : tx[ci]) + '"' + (ci === 1 && !zero ? '' : ' stroke="#000" stroke-opacity=".35" stroke-width=".6"') + '>' + (min + k) + '</text>';
     }
     out += '<circle cx="' + C + '" cy="' + C + '" r="' + R + '" fill="url(#wGloss)"/>';
-    out += '<circle cx="' + C + '" cy="' + C + '" r="21" fill="url(#wHub)" stroke="#7a4a05" stroke-width="2.5"/><text x="' + C + '" y="' + C + '" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="900" fill="#3a2200">SPIN</text>';
-    return '<div class="wheel-wrap"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="' + (id || 'wheelRot') + '" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * C) + ' ' + (2 * C) + '" aria-hidden="true">' + out + '</svg></div></div>';
+    out += '<circle cx="' + C + '" cy="' + C + '" r="21" fill="url(#wHub)" stroke="#7a4a05" stroke-width="2.5"/>' + (mini ? '' : '<text x="' + C + '" y="' + C + '" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="900" fill="#3a2200">SPIN</text>');
+    return '<div class="wheel-wrap' + (cls ? ' ' + cls : '') + '"><div class="wheel-ptr" aria-hidden="true"></div><div class="wheel-rot" id="' + (id || 'wheelRot') + '" role="img" aria-label="Prize wheel with the numbers ' + min + ' to ' + max + '"><svg viewBox="0 0 ' + (2 * C) + ' ' + (2 * C) + '" aria-hidden="true">' + out + '</svg></div></div>';
   }
   function clockParts(ms) {
     var t = Math.max(0, Math.ceil(ms / 1000));
@@ -1376,19 +1382,20 @@
   }
   setInterval(tickClocks, 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) tickClocks(); });
+  var lastTileKey = '', lastArtKey = '';
   function tickChest() {
     var st = chestInfo(), tile = '', art = '', big = '', fair = false, title = 'Your free bonus spin', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
     if (st.kind === 'wait') {
       var range = prizeRange(st.c);
-      tile = '<span class="rw-lab">🎁 Free spin in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">' + range + ' FREE points</span></span>';
-      art = clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your free bonus spin</div>';
+      tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Free spin in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">Win ' + range + ' FREE points</span></span>';
+      art = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'prevWheel', 'idle') + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your free bonus spin</div>';
       title = 'Your free bonus spin';
       msg = (st.missed ? 'The last spin window closed, so the wait started over. ' : '') + 'When the countdown ends, a wheel appears. Spin it to win ' + range + ' free points. The number is random and we have no control over it. You will have ' + st.c.claimHours + ' hours to spin, or the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
     } else if (st.kind === 'ready') {
       var amt = prizeRange(st.c);
       var cl = fmtLeft(st.ms);
-      tile = '<span class="rw-lab">🎁 Spin within</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to spin</span></span>';
-      art = wheelHtml(st.c.prizeMin, st.c.prizeMax) + '<div class="bn-unit" style="margin-top:2px;font-weight:800;color:#ffd35c;">' + cl.long + ' left to spin</div>';
+      tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Spin within</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to spin</span></span>';
+      art = wheelHtml(st.c.prizeMin, st.c.prizeMax) + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:2px;font-weight:800;color:#ffd35c;">left to spin</div>';
       title = 'Spin for ' + amt + ' FREE points';
       msg = 'You have ' + cl.long + ' left to spin. After that the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
       fair = true;
@@ -1396,9 +1403,9 @@
     if (chestBusy) canOpen = false;
     if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (chestWin.pending ? 'FREE points won' : 'FREE points added to your balance') + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : 'You won!'; canOpen = false; }
     var btn = document.getElementById('giftBtn');
-    if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your free bonus spin is ready. Tap to spin.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); if (cc) cc.innerHTML = tile; }
+    if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your free bonus spin is ready. Tap to spin.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); var tk = st.kind + '|' + st.n + '|' + (st.c ? prizeRange(st.c) : ''); if (cc && tk !== lastTileKey) { cc.innerHTML = tile; lastTileKey = tk; } }
     var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
-    var a = document.getElementById('chestModalArt'); if (a && art && !chestBusy) a.innerHTML = art;
+    var a = document.getElementById('chestModalArt'), ak = st.kind + '|' + st.n + '|' + (st.c ? prizeRange(st.c) : '') + '|' + (chestWin ? chestWin.n + (chestWin.pending ? 'p' : '') : ''); if (a && art && !chestBusy && ak !== lastArtKey) { a.innerHTML = art; lastArtKey = ak; }
     var tt = document.getElementById('soonTitle'); if (tt && !chestBusy) tt.textContent = title;
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
