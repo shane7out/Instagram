@@ -484,18 +484,21 @@
     return '<div class="notice" style="background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome points are waiting for you. They are added automatically when your first receipt is approved.</div>';
   }
   function rulesHtml() {
-    var c = chestCfg();
+    var c = chestCfg(), w = welcomeCfg();
     var prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : ' to ') + c.prizeMax) : '';
+    var free = 'Reward Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points when you sign up' + (prize ? ', plus a free bonus every ' + hrs(c.waitDays) + ' hours' : '') + '. ' : (prize ? 'You get a free bonus every ' + hrs(c.waitDays) + ' hours. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
     var rules = [
-      ['Eat out', 'Visit LVR partner restaurants, upload your receipt, and earn points on everything you pay for. A free offer you redeemed with points does not earn points.'],
-      ['Spend your points', 'Trade points for free offers at the restaurants. Offers are pickup only, not valid for delivery, one per customer.'],
+      ['Free to join, free to use', free],
+      ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed with points does not count toward your spend.'],
+      ['Use your points', 'Trade points for free items at participating restaurants. Offers are pickup only, not valid for delivery. Try a restaurant you have not been to yet.'],
       ['Collect your bonus', prize ? 'Every ' + hrs(c.waitDays) + ' hours a random bonus of ' + prize + ' points is ready for you. Log in and collect it within ' + c.claimHours + ' hours, or it goes back to a ' + hrs(c.waitDays) + '-hour wait.' : 'A bonus for active members is coming soon.'],
-      ['Fair play', 'Points have no cash value and cannot be sold or transferred. Points are used when you claim an offer and are never refunded. A code expires on the date shown.']
+      ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
+      ['Fair play', 'Points have no cash value, cannot be sold, and are never refunded once used. A code expires on the date shown.']
     ];
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
     }).join('') + '</ol>' +
-      '<div class="rule-eg"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>';
+      '<div class="rule-eg"><b>Example.</b> You spend $50 at a restaurant and send in the receipt. We add 25 points. Use them on a free offer at any participating restaurant.</div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -667,9 +670,12 @@
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? c.prizeMax : c.prizeMin + ' to ' + c.prizeMax) : '';
     var qa = [
-      ['How do I earn points?', 'Eat at a participating restaurant, tap Add a receipt, and send photos of the receipt with the date and the total you paid. When we have checked it, the points are added here. A free offer you redeemed does not earn points.'],
-      ['What can I do with my points?', 'Trade them for free food at the partner restaurants. Offers are pickup only, not valid for delivery, and one per customer.'],
-      ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order.'],
+      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
+      ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed does not count toward your spend.'],
+      ['What can I do with my points?', 'Trade them for free food at participating restaurants. Offers are pickup only, not valid for delivery. It is one of each offer per person.'],
+      ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
+      ['Can I give my free offer to a friend?', 'Yes, to one friend. Points themselves cannot be sold or transferred.'],
+      ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
@@ -894,8 +900,12 @@
           ownerBtnHtml(g.name) + '</div>' +
           '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
+            var claimed = !DEMO && token && Object.keys((allRedemptions && allRedemptions[item.slug]) || {}).some(function (id) { var rr = allRedemptions[item.slug][id]; return rr && rr.token === token && rr.itemId === item.itemId; });
+            if (claimed) afford = false;
             var pic = SHOW_PHOTOS && idx !== 0 ? (item.photoUrl || item.photo || '') : '';
-            var goal = (!afford && paused && pts >= item.pointCost)
+            var goal = claimed
+              ? '<div class="goal ok">✓ You have claimed this offer. It is one per person.</div>'
+              : (!afford && paused && pts >= item.pointCost)
               ? '<div class="goal need">⏸ Redeeming is paused for a moment. Your points are safe.</div>'
               : afford
               ? '<div class="goal ok">✓ You can get this now<div class="gbar"><i style="width:100%"></i></div></div>'
@@ -908,7 +918,7 @@
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
               tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
-              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : 'Redeem ' + item.pointCost + ' Reward Point' + (Number(item.pointCost) === 1 ? '' : 's')) + '</button>' +
+              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' Reward Point' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
               '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button></div>' +
               '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>' +
             '</div>';
@@ -1276,7 +1286,7 @@
     sel.addEventListener('change', function(){
       var d = directory[sel.value];
       var el = document.getElementById('eRate');
-      el.textContent = (d && d.earnRate) ? ('You earn about ' + d.earnRate + ' point' + (d.earnRate === 1 ? '' : 's') + ' per $1 spent.') : '';
+      el.textContent = (d && d.earnRate) ? earnRateText(d.earnRate) : '';
     });
     document.getElementById('eBtn').addEventListener('click', function () {
       if (DEMO) { earnMsg('Preview only: in the real app this sends your receipt for checking, and points are added once it is approved. Nothing was sent.', 'ok'); return; }
@@ -1299,6 +1309,11 @@
     });
   }
 
+  function earnRateText(rate) {
+    rate = Number(rate) || 0;
+    if (rate > 0 && rate < 1) { var x = 1 / rate; if (Math.abs(x - Math.round(x)) < 0.01) return 'You earn 1 point for every $' + Math.round(x) + ' you spend.'; }
+    return 'You earn about ' + rate + ' point' + (rate === 1 ? '' : 's') + ' per $1 spent.';
+  }
   function earnMsg(text, cls) {
     var m = document.getElementById('eMsg');
     if (m) { m.textContent = text; m.className = 'earn-msg ' + (cls || ''); }
@@ -1403,7 +1418,7 @@
     if (pausedFlag('redemptions')) { noteDialog('Redemptions are paused for a moment. Please try again soon.'); loadWallet(); return; }
     Promise.all([
       fbGet(MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points'),
-      item.maxRedemptions ? fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)) : Promise.resolve(null),
+      fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)),
       fbGet(DIRECTORY_PATH + '/' + encodeURIComponent(item.slug) + '/creditRemaining')
     ]).then(function(results){
       var freshBalance = results[0] || 0;
@@ -1419,6 +1434,8 @@
         loadWallet();
         return;
       }
+      var alreadyMine = Object.keys(freshRedemptions || {}).some(function (id) { var rr = freshRedemptions[id]; return rr && rr.token === token && rr.itemId === item.itemId; });
+      if (alreadyMine) { noteDialog('You have already claimed this offer. It is one per person.'); loadWallet(); return; }
       if (item.maxRedemptions) {
         var freshCount = Object.keys(freshRedemptions || {}).filter(function(id){
           return freshRedemptions[id] && freshRedemptions[id].itemId === item.itemId;

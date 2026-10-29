@@ -837,7 +837,7 @@
         '<div class="field"><label>Slug (letters/numbers/dashes, cannot change later)</label><input type="text" id="rSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
         '<div class="field"><label>Restaurant portal PIN (optional - only if they will log in to see/verify redemptions)</label><input type="text" id="rPin" value="' + escapeHtml(r.pin || '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Points earned per $1 spent (e.g. 0.05 = 5% back)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 0.05) + '"></div>' +
+          '<div class="field"><label>Points earned per $1 spent (0.5 = 1 point for every $2 spent)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 0.5) + '"></div>' +
           '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : commissionFor(slug || '')) + '"></div>' +
         '</div>' +
         '<div class="checkbox-row"><input type="checkbox" id="rActive"' + (d.active !== false ? ' checked' : '') + '><label for="rActive">Show to members (they can submit receipts for it)</label></div>' +
