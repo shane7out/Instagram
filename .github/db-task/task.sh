@@ -16,3 +16,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # restored
 # restored
 # re-run: zero slot rules
+# re-run: zero slot rules reverted

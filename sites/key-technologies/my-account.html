@@ -655,8 +655,8 @@
   });
   // Practice spin: the owner can spin the wheel as many times as they like to show it off. Nothing is saved and no points move.
   function practiceSpin() {
-    var c = chestCfg(), min = 0, max = c.prizeMax > 0 ? c.prizeMax : 10, cur = 0, busy = false;
-    var d = ownDialog('<div style="text-align:center;"><span class="prac-tag">Practice spin · no points are added</span><h3 style="margin:0 0 4px;">Spin for up to ' + max + ' FREE points</h3>' + wheelHtml(min, max, 'pracWheel') + '<div id="pracRes" role="status" style="min-height:44px;font-size:26px;font-weight:800;color:#7be3a6;margin:2px 0 10px;"></div><p style="font-size:12.5px;line-height:1.4;color:#9fb3c8;margin:0 0 10px;">Real spins use the random number generator built into the member’s browser. We have no control over the result.</p><div class="own-row"><button class="own-no" id="pracClose">Close</button><button class="own-ok" id="pracGo">Spin the wheel</button></div></div>');
+    var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, cur = 0, busy = false;
+    var d = ownDialog('<div style="text-align:center;"><span class="prac-tag">Practice spin · no points are added</span><h3 style="margin:0 0 4px;">Spin for ' + prizeRange({ prizeMin: min, prizeMax: max }) + ' FREE points</h3>' + wheelHtml(min, max, 'pracWheel') + '<div id="pracRes" role="status" style="min-height:44px;font-size:26px;font-weight:800;color:#7be3a6;margin:2px 0 10px;"></div><p style="font-size:12.5px;line-height:1.4;color:#9fb3c8;margin:0 0 10px;">Real spins use the random number generator built into the member’s browser. We have no control over the result.</p><div class="own-row"><button class="own-no" id="pracClose">Close</button><button class="own-ok" id="pracGo">Spin the wheel</button></div></div>');
     var wheel = d.el.querySelector('#pracWheel'), res = d.el.querySelector('#pracRes'), go = d.el.querySelector('#pracGo');
     d.el.querySelector('#pracClose').addEventListener('click', function () { if (!busy) d.close(); });
     go.addEventListener('click', function () {
@@ -823,7 +823,7 @@
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
-    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Each number, including zero, has the same chance.']);
+    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point.']);
     if (prize) qa.push(['What is the bonus spin?', 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.']);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
@@ -1058,7 +1058,7 @@
     wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 17 * 60000 };
     // default demo = a brand-new member (full wait ahead); ?chest shows the "ready to collect" state
     if (DEMO_CHEST) wallet.chestState = { n: 1, amount: 2, at: Date.now() - 7 * 86400000 - 6 * 3600000 };
-    memberKey = null; appSettings = { chest: { waitDays: 7, claimHours: 48, prizeMin: 0, prizeMax: 10, repeat: true } }; myReceipts = {}; directory = {};
+    memberKey = null; appSettings = { chest: { waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10, repeat: true } }; myReceipts = {}; directory = {};
     loadHidden().then(function () { hiddenSig = JSON.stringify(hiddenMap()); render({}, {}); });
   }
 
@@ -1286,7 +1286,7 @@
     var raw = (appSettings && appSettings.chest) || {};
     var max = raw.prizeMax != null ? Number(raw.prizeMax) : (Number(raw.bonus) || 0);
     var min = raw.prizeMin != null ? Number(raw.prizeMin) : max;
-    return { waitDays: Number(raw.waitDays) || 7, claimHours: Number(raw.claimHours) || 48, prizeMin: Math.max(0, Math.min(min, max)), prizeMax: max, repeat: raw.repeat === true };
+    return { waitDays: Number(raw.waitDays) || 7, claimHours: Number(raw.claimHours) || 48, prizeMin: Math.max(1, Math.min(min, max)), prizeMax: max, repeat: raw.repeat === true };
   }
   function chestInfo() {
     var c = chestCfg(), cs = wallet && wallet.chestState, n = cs ? Number(cs.n) || 0 : 0;

@@ -91,16 +91,6 @@ const BIG = 'x'.repeat(100);
   check('bonus: settings out of range (prize 500)', await call('anon', 'PUT', '/lvr_points/settings/chest', Object.assign({}, CH, { prizeMax: 500 })), false);
   check('bonus: settings out of range (claim window 5000 hours)', await call('anon', 'PUT', '/lvr_points/settings/chest', Object.assign({}, CH, { claimHours: 5000 })), false);
   check('bonus: owner saves settings', await call('anon', 'PUT', '/lvr_points/settings/chest', CH), true);
-  // a zero slot on the wheel: allowed only when the owner's smallest prize is 0
-  await call('admin', 'PUT', '/lvr_rewards/OLD1/chestState', { n: 1, amount: 1, at: Date.now() - 11 * DAYMS });
-  check('zero slot: a 0-point spin is refused while the smallest prize is 1', await call('anon', 'PATCH', '/lvr_rewards/OLD1', { chestState: { n: 2, amount: 0, at: TS } }), false);
-  check('zero slot: smallest prize 0 is accepted as a setting', await call('anon', 'PUT', '/lvr_points/settings/chest', Object.assign({}, CH, { prizeMin: 0 })), true);
-  check('zero slot: a 0-point spin is recorded when the smallest prize is 0', await call('anon', 'PATCH', '/lvr_rewards/OLD1', { chestState: { n: 2, amount: 0, at: TS } }), true);
-  check('zero slot: the 0-point spin is logged', await call('anon', 'PUT', '/lvr_points/chest_log/OLD1/2', { amount: 0, at: TS }), true);
-  await call('admin', 'PUT', '/lvr_rewards/OLD1/chestState', { n: 1, amount: 1, at: Date.now() - 11 * DAYMS });
-  check('zero slot: a negative spin is refused', await call('anon', 'PATCH', '/lvr_rewards/OLD1', { chestState: { n: 2, amount: -1, at: TS } }), false);
-  check('zero slot: a prize above the maximum is still refused', await call('anon', 'PATCH', '/lvr_rewards/OLD1', { chestState: { n: 2, amount: 9, at: TS } }), false);
-  await call('admin', 'PUT', '/lvr_points/settings/chest', CH);
   check('bonus record: give 5 points with a reason', await call('anon', 'PUT', '/lvr_points/bonuses/b1', { memberKey: 'K1', name: 'Kayla', points: 5, reason: 'Posted a video', at: TS }), true);
   check('bonus record: no reason', await call('anon', 'PUT', '/lvr_points/bonuses/b2', { memberKey: 'K1', points: 5, reason: '', at: TS }), false);
   check('bonus record: 5000 points', await call('anon', 'PUT', '/lvr_points/bonuses/b3', { memberKey: 'K1', points: 5000, reason: 'big one', at: TS }), false);
