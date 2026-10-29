@@ -731,7 +731,7 @@
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
-        '<div class="balance-label">points available' + (readyCount(items) ? ' · <b style="color:#ffd35c;">' + readyCount(items) + ' offer' + (readyCount(items) === 1 ? '' : 's') + ' ready</b>' : '') + '</div></div>' +
+        '<div class="balance-label">points available</div></div>' +
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       monthBarHtml() +
@@ -1014,7 +1014,7 @@
   function bindMini() {
     var card = document.querySelector('.balance-card'), num = document.getElementById('balanceNum'), bar = document.getElementById('miniBal'), mn = document.getElementById('miniNum');
     if (!card || !num || !bar || !('IntersectionObserver' in window)) return;
-    function setMini() { var r = document.querySelectorAll('.item-card.ready').length; mn.textContent = num.textContent; mn.nextSibling.textContent = ' points' + (r ? ' · ' + r + ' ready' : ''); }
+    function setMini() { var r = document.querySelectorAll('.item-card.ready').length; mn.textContent = num.textContent; mn.nextSibling.textContent = ' points'; }
     setMini();
     if (miniObs) miniObs.disconnect();
     miniObs = new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { rootMargin: '-60px 0px 0px 0px' });
