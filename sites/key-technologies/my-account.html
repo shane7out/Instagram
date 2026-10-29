@@ -213,6 +213,11 @@
   .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
   .chip{font:inherit;font-weight:700;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:7px 13px;cursor:pointer;}
+  .svc-seg{display:flex;gap:0;margin:0 0 12px;border:1.5px solid var(--control-line);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.04);}
+  .svc-seg button{flex:1;font:inherit;font-weight:800;font-size:15px;color:var(--ink);background:transparent;border:0;padding:12px 6px;cursor:pointer;min-height:46px;}
+  .svc-seg button + button{border-left:1px solid var(--control-line);}
+  .svc-seg button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);color:#3a2200;}
+  .own-svc{font:inherit;font-size:13px;font-weight:700;padding:5px 8px;border-radius:10px;border:1.5px solid var(--control-line);background:var(--bg-2,#10233a);color:var(--ink);}
   .filter-note{font-size:13px;color:var(--ink-dim);margin:-6px 0 18px;} #filterNote{font-weight:700;color:var(--ink);}
   .chip.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
   .rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap;}
@@ -594,8 +599,53 @@
   }
   function ownerBtnHtml(name) {
     if (!OWNER) return '';
-    var h = isHidden(name);
-    return '<button type="button" class="own-btn' + (h ? ' restore' : '') + '" data-own="' + (h ? 'restore' : 'remove') + '" data-name="' + escapeHtml(name) + '">' + (h ? 'Restore' : 'Remove') + '</button>';
+    var h = isHidden(name), cur = (function () { var s = restSlug(name), m = Object.assign({}, localSvc, (appSettings && appSettings.serviceModes) || {})[s]; return m || ''; })();
+    var sel = '<select class="own-svc" data-name="' + escapeHtml(name) + '" aria-label="Dine-in or pickup for ' + escapeHtml(name) + '">' + [['', 'Not set'], ['dine', 'Dine-in'], ['pickup', 'Pickup'], ['both', 'Both']].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === cur ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select> ';
+    return sel + '<button type="button" class="own-btn' + (h ? ' restore' : '') + '" data-own="' + (h ? 'restore' : 'remove') + '" data-name="' + escapeHtml(name) + '">' + (h ? 'Restore' : 'Remove') + '</button>';
+  }
+  // Dine-in / pickup: each restaurant is dine-in, pickup or both (settings/serviceModes/<slug>).
+  // Not set = shown under every filter with no tag. Previews give demo restaurants a sample mix.
+  var localSvc = {}; try { localSvc = JSON.parse(localStorage.getItem('lvrSvcDemo') || '{}') || {}; } catch (e) {}
+  var SVC_LABEL = { dine: 'Dine-in', pickup: 'Pickup', both: 'Dine-in + Pickup' };
+  function svcMode(name) {
+    var s = restSlug(name), m = Object.assign({}, localSvc, (appSettings && appSettings.serviceModes) || {})[s];
+    if (m === 'dine' || m === 'pickup' || m === 'both') return m;
+    if (DEMO) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return ['both', 'pickup', 'dine', 'both', 'pickup'][h % 5]; }
+    return '';
+  }
+  function ownerSetSvc(name, mode) {
+    var slug = restSlug(name), url = DB + '/lvr_points/settings/serviceModes/' + slug + '.json';
+    return fetch(url, mode ? { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mode) } : { method: 'DELETE' }).then(function (r) {
+      if (!r.ok) throw new Error('save');
+      var m = (appSettings.serviceModes = (appSettings.serviceModes || {})); if (mode) m[slug] = mode; else delete m[slug];
+      delete localSvc[slug]; try { localStorage.setItem('lvrSvcDemo', JSON.stringify(localSvc)); } catch (e) {}
+      return 'saved';
+    }).catch(function () {
+      if (mode) localSvc[slug] = mode; else delete localSvc[slug];
+      try { localStorage.setItem('lvrSvcDemo', JSON.stringify(localSvc)); } catch (e) {}
+      return 'local';
+    });
+  }
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('.own-svc'); if (!sel || !OWNER) return;
+    sel.disabled = true;
+    ownerSetSvc(sel.getAttribute('data-name'), sel.value).then(function (how) {
+      ownRerender();
+      if (how === 'local' && typeof OWNER_NOTE === 'function') OWNER_NOTE('Saved on this device only. To make it final for everyone, open the live page and set it there.');
+    });
+  });
+  var svcSel = 'all';
+  function applyFilters() {
+    var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+    var sel = chips.filter(function (x) { return x.classList.contains('on'); }).map(function (x) { return x.getAttribute('data-cat'); });
+    var allCat = !chips.length || sel.indexOf('all') >= 0, shown = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) {
+      var mode = g.getAttribute('data-svc') || '';
+      var okCat = allCat || sel.indexOf(g.getAttribute('data-cat')) >= 0;
+      var okSvc = svcSel === 'all' || !mode || mode === 'both' || mode === svcSel;
+      g.hidden = !(okCat && okSvc); if (!g.hidden) shown++;
+    });
+    var note = document.getElementById('filterNote'); if (note) note.textContent = 'Showing ' + shown + ' restaurant' + (shown === 1 ? '' : 's');
   }
   var lastCat = {}, lastRed = {};
   (function () {
@@ -888,6 +938,12 @@
     });
   }
   document.addEventListener('click', function (e) {
+    var sg = e.target.closest && e.target.closest('.svc-seg button');
+    if (sg) {
+      svcSel = sg.getAttribute('data-svc');
+      Array.prototype.forEach.call(document.querySelectorAll('.svc-seg button'), function (x) { var on = x === sg; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      applyFilters(); return;
+    }
     var b = e.target.closest && e.target.closest('.chip'); if (!b) return;
     var chips = Array.prototype.slice.call(document.querySelectorAll('.chip')), cat = b.getAttribute('data-cat');
     if (cat === 'all') chips.forEach(function (x) { x.classList.toggle('on', x === b); });
@@ -896,10 +952,8 @@
       chips.forEach(function (x) { if (x.getAttribute('data-cat') === 'all') x.classList.remove('on'); });
       if (!chips.some(function (x) { return x.classList.contains('on'); })) chips.forEach(function (x) { if (x.getAttribute('data-cat') === 'all') x.classList.add('on'); });
     }
-    var sel = chips.filter(function (x) { return x.classList.contains('on'); }).map(function (x) { return x.getAttribute('data-cat'); }), all = sel.indexOf('all') >= 0, shown = 0;
     chips.forEach(function (x) { x.setAttribute('aria-pressed', x.classList.contains('on') ? 'true' : 'false'); });
-    Array.prototype.forEach.call(document.querySelectorAll('.rest-group'), function (g) { var show = all || sel.indexOf(g.getAttribute('data-cat')) >= 0; g.hidden = !show; if (show) shown++; });
-    var note = document.getElementById('filterNote'); if (note) note.textContent = 'Showing ' + shown + ' restaurant' + (shown === 1 ? '' : 's');
+    applyFilters();
   });
   function startDemo() {
     wallet = { name: 'Mary Walker', instagram: '@marywalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 40 * 86400000 };
@@ -938,13 +992,15 @@
       var rank = function(k){ var r = groups[k].items[0].rank; return typeof r === 'number' ? r : 99; };
       order.sort(function(x, y){ return (rank(x) - rank(y)) || (Math.min.apply(null, groups[x].items.map(function(i){ return i.pointCost; })) - Math.min.apply(null, groups[y].items.map(function(i){ return i.pointCost; }))); });
       var CATS = [['all', 'All'], ['pizza', 'Pizza'], ['italian', 'Italian & pasta'], ['sushi', 'Sushi'], ['burgers', 'Burgers'], ['thai', 'Thai'], ['mexican', 'Mexican'], ['bbq', 'BBQ'], ['apps', 'Appetizers'], ['plates', 'Plates & bowls'], ['sweet', 'Breakfast & sweet']];
+      var anySvc = items.some(function (i) { return svcMode(i.bizName || i.slug); });
+      if (anySvc || OWNER) html += '<div class="svc-seg" role="group" aria-label="Dine-in or pickup">' + [['all', 'All'], ['dine', 'Dine-in'], ['pickup', 'Pickup']].map(function (o) { return '<button type="button" data-svc="' + o[0] + '" class="' + (svcSel === o[0] ? 'on' : '') + '" aria-pressed="' + (svcSel === o[0] ? 'true' : 'false') + '">' + o[1] + '</button>'; }).join('') + '</div>';
       if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + '<div class="filter-note">Tap more than one to see them together. <span id="filterNote"></span></div>';
       html += order.map(function(k){
         var g = groups[k]; g.items.sort(function(x, y){ return x.pointCost - y.pointCost; });
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
         var min = g.items[0].pointCost;
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
-        return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
+        return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-svc="' + svcMode(g.name) + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
           '<div class="offer-head">' + escapeHtml(first.itemName || 'Offer') + '</div>' +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           ownerBtnHtml(g.name) + '</div>' +
@@ -968,7 +1024,7 @@
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div>' + (item.fulfillment ? '<span class="pickup">' + escapeHtml(item.fulfillment) + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div>') + '</div>' +
+                '<div>' + (svcMode(g.name) ? '<span class="pickup">' + SVC_LABEL[svcMode(g.name)] + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div>') + '</div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
@@ -1022,6 +1078,7 @@
 
     earnPanelHtml();
     contentEl.innerHTML = html + earnParts.modal;
+    applyFilters();
     var menuEl = document.getElementById('lrMenu');
     if (menuEl) menuEl.innerHTML = lrListHtml();
     bindOwner(contentEl);
