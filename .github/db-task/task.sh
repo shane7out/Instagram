@@ -1,5 +1,5 @@
 #!/bin/bash
-# Set Vanilla Rice's earn rate to 1 point for every $2 spent (0.5). Guarded: only if no rate is set yet.
+# Vanilla Rice earn rate: 1 point for every $2 spent (0.5). Changes it only if it is unset or the old value 1.
 node <<'NODE'
 const https = require('https');
 const DB = 'lvr-data-a60c1-default-rtdb.firebaseio.com';
@@ -11,7 +11,7 @@ const call = (method, path, body) => new Promise(res => {
 (async () => {
   const d = (await call('GET', '/lvr_points/directory/vanilla-rice')).json || {};
   console.log('before:', JSON.stringify({ bizName: d.bizName, active: d.active, category: d.category, earnRate: d.earnRate, creditRemaining: d.creditRemaining }));
-  if (d.earnRate != null) { console.log('earn rate already set - not changing'); return; }
+  if (d.earnRate != null && d.earnRate !== 1) { console.log('earn rate is ' + d.earnRate + ' - not changing'); return; }
   const r = await call('PUT', '/lvr_points/directory/vanilla-rice/earnRate', 0.5);
   const a = (await call('GET', '/lvr_points/directory/vanilla-rice')).json || {};
   console.log('set earnRate 0.5 ->', r.status, '| now:', JSON.stringify({ earnRate: a.earnRate, creditRemaining: a.creditRemaining }));
