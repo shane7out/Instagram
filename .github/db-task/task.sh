@@ -1,7 +1,15 @@
 #!/bin/bash
-# Read-only live check (prints only counts and status codes).
-R=https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/lvr-points-admin.html
-curl -s "$R" -o /tmp/raw.html -w "raw github [%{http_code}] " ; echo "ShownToCustomers=$(grep -c 'Shown to customers' /tmp/raw.html)"
-curl -s "https://lvr-data-a60c1.web.app/lvr-points-admin.html" -D /tmp/h.txt -o /tmp/p.html
-echo "live ShownToCustomers=$(grep -c 'Shown to customers' /tmp/p.html) bytes=$(wc -c < /tmp/p.html) rawBytes=$(wc -c < /tmp/raw.html)"
-grep -i "cache-control\|^date\|last-modified\|^age" /tmp/h.txt
+# Re-run the rules simulator (nothing touches the real database).
+bash .github/db-task/rules/run-rules-test.sh
+# re-run: chest + bonus rules
+# re-run: quest removed
+# re-run: use-by rules
+# re-run: monthly return tests
+# re-run: dry-run expectation fixed
+# re-run: repeating chest tests
+# restored
+# re-run: default commission rule
+# re-run: commission write rule fixed
+# restored
+# restored
+# re-run: 10-day bonus with 48-hour claim window
