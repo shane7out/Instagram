@@ -422,7 +422,7 @@
       var insta = "https://www.instagram.com/" + encodeURIComponent(r.ig || "") + "/";
       var tel = r.ph ? "tel:+1" + String(r.ph).replace(/\D/g, "") : "";
       var mail = r.em ? "mailto:" + r.em : "";
-      var tag = r.o.real ? '<span class="sampletag" style="color:var(--green);border-color:rgba(61,220,132,.5);">Offer</span>' : '<span class="sampletag">Sample offer</span>';
+      var tag = r.o.real ? '<span class="sampletag" style="color:var(--green);border-color:rgba(61,220,132,.5);">Offer</span>' : '<span class="sampletag" style="color:#1f1400;background:#ffd35c;border-color:#ffd35c;">Demo · waiting for approval</span>';
       cur.cards.push('<section class="vcard" data-cat="' + r.cat + '"><h3 class="vname">' + esc(r.n) + ownerBtnHtml(r.n) + '<small>' + (r.partner ? 'Founding partner · ' : '') + esc(r.c) + '</small></h3>' +
         '<div class="vinfo">' +
           (r.locs || [{ l: "Address", a: r.a }]).map(function (L) { var lg = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(base + " " + L.a); return '<a class="vrow" href="' + lg + '" target="_blank" rel="noopener">' + ICON.pin + '<span><span class="vlab">' + esc(L.l) + ' · tap for map</span><span class="vval">' + esc(L.a) + '</span></span></a>'; }).join("") +

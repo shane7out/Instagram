@@ -159,6 +159,7 @@
   .lad-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;margin:4px 0 14px;} .lad-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd35c,#e8a317);}
   .lad-item{display:flex;gap:12px;align-items:center;padding:11px 12px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.06);font-size:16px;font-weight:700;line-height:1.3;}
   .lad-item .ic{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(240,169,26,.15);font-size:19px;}
+  .demo-tag{display:inline-block;margin-left:8px;font-size:12.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#1f1400;background:#ffd35c;border-radius:99px;padding:3px 10px;vertical-align:middle;}
   .lr-menu[hidden]{display:none;}
   .steps{list-style:none;margin:0 0 14px;padding:0;} .steps li{display:flex;gap:12px;align-items:flex-start;margin:0 0 15px;}
   .steps .n{flex:none;width:32px;height:32px;border-radius:50%;background:#0f67c2;color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;}
@@ -878,7 +879,7 @@
       ["r42", "Sushi Neko", "Free Sushi Roll Plate", 11, "sushi2", 25, 16, 40, "sushi"],,
     ];
     return rows.map(function (r, i) {
-      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: r[9] || '', cat: r[8], rank: i < 3 ? i : 99, contact: CONTACT[r[1]] };
+      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: r[9] || '', cat: r[8], rank: i < 3 ? i : 99, contact: CONTACT[r[1]], demoPending: r[0] !== 'r0' };
     });
   }
   document.addEventListener('click', function (e) {
@@ -946,8 +947,12 @@
             var afford = pts >= item.pointCost && !paused;
             var claimed = !DEMO && token && Object.keys((allRedemptions && allRedemptions[item.slug]) || {}).some(function (id) { var rr = allRedemptions[item.slug][id]; return rr && rr.token === token && rr.itemId === item.itemId; });
             if (claimed) afford = false;
+            var pending = !!item.demoPending;
+            if (pending) afford = false;
             var pic = SHOW_PHOTOS && idx !== 0 ? (item.photoUrl || item.photo || '') : '';
-            var goal = claimed
+            var goal = pending
+              ? '<div class="goal need">This restaurant has not approved its offer yet. It is shown as a demo.</div>'
+              : claimed
               ? '<div class="goal ok">✓ You have claimed this offer. It is one per person.</div>'
               : (!afford && paused && pts >= item.pointCost)
               ? '<div class="goal need">⏸ Redeeming is paused for a moment. Your points are safe.</div>'
@@ -957,14 +962,14 @@
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div><span class="pickup">Pickup only</span><div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '' + '</div></div>' +
+                '<div><span class="pickup">Pickup only</span>' + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '' + '</div></div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
-              tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt) +
-              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' Reward Point' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
-              '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button></div>' +
-              '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>' +
+              (pending ? '' : tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt)) +
+              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pending ? 'Waiting for approval' : paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' Reward Point' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
+              (pending ? '' : '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button>') + '</div>' +
+              (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
             '</div>';
           }).join('') + '</div>' + contactHtml(first.contact, g.name) + '</div>';
       }).join('') + '<div class="fineprint">Pickup only, not valid for delivery. One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';

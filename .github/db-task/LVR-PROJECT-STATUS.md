@@ -1434,3 +1434,6 @@ top unless they tell you otherwise.*
 - **Points admin** checks for new receipts every minute: the Receipts tab shows "(N)" and a message pops up when a new one arrives.
 - **Go-live no longer hits GitHub's stale copy:** the Mac scripts add a fresh `?cb=` to every download, so there is no "wait 5 minutes" step. Use the command with `?$(date +%s)` after go-live.sh.
 - **Real customer screen shows only restaurants that have a live offer in the database** (today: Vanilla Rice). The other 35 on the Las Vegas list are showcase entries with no agreed offer, so they stay off the member screen on purpose. A restaurant appears automatically (within a minute on open screens) once it has a business entry and an active catalog offer with a maximum and end date. Fixed: the real screen used to show the slug "vanilla-rice" as the name and no address/phone/Instagram; it now uses the name from the business entry and looks up the contact details on file.
+
+## Demo labeling
+- Restaurants without a live offer show "Demo · waiting for approval" (amber tag), a disabled "Waiting for approval" button, and no claimed counter or receipt button. Vanilla Rice (live) stays fully working. Same tag on the Las Vegas list (menu.html).
