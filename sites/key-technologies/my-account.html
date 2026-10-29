@@ -944,6 +944,9 @@
       ["r41", "Kura Revolving Sushi Bar", "Free Sushi Plate", 12, "sushi1", 40, 5, 8, "sushi"],
       ["r42", "Sushi Neko", "Free Sushi Roll Plate", 11, "sushi2", 25, 16, 40, "sushi"],,
     ];
+    // restaurants the owner already removed on the live site stay out of the demo too
+    var GONE = ['archi-s-thai-kitchen', 'black-mountain-griddle', 'border-grill', 'buddy-v-s-ristorante', 'doanburi', 'ferraro-s-ristorante', 'grotto-ristorante', 'hash-house-a-go-go', 'kabuto-edomae-sushi', 'komol-thai-restaurant', 'kura-revolving-sushi-bar', 'lindo-michoac-n', 'lotus-of-siam', 'maggiano-s-little-italy', 'metro-pizza', 'nora-s-italian-cuisine', 'peru-chicken', 'pizza-rock', 'samurai-japanese-steakhouse-sushi', 'settebello-pizzeria-napoletana', 'sushi-neko', 'tacos-el-gordo', 'the-beach-house', 'the-irish-spot'];
+    rows = rows.filter(function (r) { return GONE.indexOf(restSlug(r[1])) < 0; });
     return rows.map(function (r, i) {
       return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: r[9] || '', cat: r[8], rank: i < 3 ? i : 99, contact: CONTACT[r[1]], demoPending: r[0] !== 'r0' };
     });
@@ -1005,7 +1008,7 @@
       var CATS = [['all', 'All'], ['pizza', 'Pizza'], ['italian', 'Italian & pasta'], ['sushi', 'Sushi'], ['burgers', 'Burgers'], ['thai', 'Thai'], ['mexican', 'Mexican'], ['bbq', 'BBQ'], ['apps', 'Appetizers'], ['plates', 'Plates & bowls'], ['sweet', 'Breakfast & sweet']];
       var anySvc = items.some(function (i) { return svcMode(i.bizName || i.slug); });
       if (anySvc || OWNER) html += '<div class="svc-seg" role="group" aria-label="Dine-in or pickup">' + [['all', 'All'], ['dine', 'Dine-in'], ['pickup', 'Pickup']].map(function (o) { return '<button type="button" data-svc="' + o[0] + '" class="' + (svcSel === o[0] ? 'on' : '') + '" aria-pressed="' + (svcSel === o[0] ? 'true' : 'false') + '">' + o[1] + '</button>'; }).join('') + '</div>';
-      if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + '<div class="filter-note">Tap more than one to see them together. <span id="filterNote"></span></div>';
+      if (items.some(function(i){ return i.cat; })) html += '<div class="chips" id="chips">' + CATS.filter(function(c){ return c[0] === 'all' || items.some(function(i){ return i.cat === c[0]; }); }).map(function(c, k){ return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + '<div class="filter-note">Tap more than one to see them together. <span id="filterNote"></span></div>';
       html += order.map(function(k){
         var g = groups[k]; g.items.sort(function(x, y){ return x.pointCost - y.pointCost; });
         var ready = g.items.filter(function(i){ return pts >= i.pointCost && !paused; }).length;
