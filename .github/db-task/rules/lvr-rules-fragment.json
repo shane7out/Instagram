@@ -147,7 +147,7 @@
    "$mk": {
     "$n": {
      ".write": "newData.exists() && !data.exists()",
-     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 50"
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() >= 0 && newData.child('amount').val() <= 50"
     }
    }
   }
@@ -177,7 +177,7 @@
     ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 12"
    },
    "chestState": {
-    ".validate": "newData.hasChildren(['n','amount','at']) && newData.child('n').isNumber() && newData.child('amount').isNumber() && newData.child('at').isNumber() && newData.child('n').val() == (data.child('n').exists() ? data.child('n').val() + 1 : 1) && (newData.child('n').val() == 1 || root.child('lvr_points/settings/chest/repeat').val() == true) && root.child('lvr_points/settings/chest/prizeMax').val() > 0 && newData.child('amount').val() > 0 && newData.child('amount').val() >= root.child('lvr_points/settings/chest/prizeMin').val() && newData.child('amount').val() <= root.child('lvr_points/settings/chest/prizeMax').val() && (newData.child('at').val() - (data.child('at').exists() ? data.child('at').val() : newData.parent().child('joinedAt').val())) % (86400000 * root.child('lvr_points/settings/chest/waitDays').val() + 3600000 * (root.child('lvr_points/settings/chest/claimHours').exists() ? root.child('lvr_points/settings/chest/claimHours').val() : 48)) >= 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
+    ".validate": "newData.hasChildren(['n','amount','at']) && newData.child('n').isNumber() && newData.child('amount').isNumber() && newData.child('at').isNumber() && newData.child('n').val() == (data.child('n').exists() ? data.child('n').val() + 1 : 1) && (newData.child('n').val() == 1 || root.child('lvr_points/settings/chest/repeat').val() == true) && root.child('lvr_points/settings/chest/prizeMax').val() > 0 && newData.child('amount').val() >= 0 && newData.child('amount').val() >= root.child('lvr_points/settings/chest/prizeMin').val() && newData.child('amount').val() <= root.child('lvr_points/settings/chest/prizeMax').val() && (newData.child('at').val() - (data.child('at').exists() ? data.child('at').val() : newData.parent().child('joinedAt').val())) % (86400000 * root.child('lvr_points/settings/chest/waitDays').val() + 3600000 * (root.child('lvr_points/settings/chest/claimHours').exists() ? root.child('lvr_points/settings/chest/claimHours').val() : 48)) >= 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
    }
   }
  },

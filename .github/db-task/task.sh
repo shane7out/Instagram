@@ -15,3 +15,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # re-run: 10-day bonus with 48-hour claim window
 # restored
 # restored
+# re-run: zero slot rules
