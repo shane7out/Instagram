@@ -204,6 +204,11 @@
   .rest-group .item-card,.rest-group .item-card.ready,.rest-group .item-card.locked{background:none;border:0;border-radius:0;box-shadow:none;padding:2px 4px 4px;opacity:1;}
   .rest-group .item-card + .item-card{border-top:1px solid rgba(255,255,255,.1);margin-top:10px;padding-top:16px;}
   .rest-group .items{gap:0;}
+  .offer-head{text-align:center;font-size:32px;line-height:1.1;font-weight:900;letter-spacing:-.02em;color:#ffd35c;text-shadow:0 0 18px rgba(240,169,26,.35);margin:2px 4px 6px;text-wrap:balance;}
+  .rest-group .rest-head{justify-content:center;text-align:center;}
+  .rest-group .rest-name{font-size:19px;font-weight:700;color:var(--ink-dim,#a9bdd3);}
+  .rest-group .item-top{justify-content:center;text-align:center;} .rest-group .item-note{text-align:center;}
+  @media (max-width:380px){.offer-head{font-size:27px;}}
   .rest-photo{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;margin:0 0 14px;}
   .rest-photo.locked{filter:grayscale(.45) brightness(.85);}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
@@ -940,9 +945,10 @@
         var min = g.items[0].pointCost;
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
         return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
-          (SHOW_PHOTOS && firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
+          '<div class="offer-head">' + escapeHtml(first.itemName || 'Offer') + '</div>' +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           ownerBtnHtml(g.name) + '</div>' +
+          (SHOW_PHOTOS && firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
           '<div class="items">' + g.items.map(function(item, idx){
             var afford = pts >= item.pointCost && !paused;
             var claimed = !DEMO && token && Object.keys((allRedemptions && allRedemptions[item.slug]) || {}).some(function (id) { var rr = allRedemptions[item.slug][id]; return rr && rr.token === token && rr.itemId === item.itemId; });
@@ -962,7 +968,7 @@
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div><span class="pickup">Pickup only</span>' + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '' + '</div></div>' +
+                '<div><span class="pickup">Pickup only</span>' + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div>') + '</div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
