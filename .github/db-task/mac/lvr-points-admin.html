@@ -298,8 +298,15 @@
   var DISPOSABLE = /@(mailinator|guerrillamail|10minutemail|tempmail|temp-mail|yopmail|trashmail|sharklasers|getnada|dispostable|maildrop|throwaway)\./i;
   function renderApprovalsTab() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
-    fbGet(MEMBERS_PATH).then(function(all){
-      all = all || {};
+    Promise.all([fbGet(MEMBERS_PATH), fbGet('/lvr_points/round1').catch(function(){ return {}; })]).then(function(x){
+      var all = x[0] || {}, reg = x[1] || {};
+      // keep the Round One leaderboard in step: any member missing from it (joined before it existed, or a failed write) is added
+      Object.keys(all).forEach(function(k){
+        if (reg[k] || !all[k]) return;
+        var n = String(all[k].name || '').trim().split(/\s+/).filter(Boolean);
+        var nm = !n.length ? 'Member' : n.length === 1 ? n[0] : n[0] + ' ' + n[n.length - 1].charAt(0).toUpperCase() + '.';
+        fbPut('/lvr_points/round1/' + encodeURIComponent(k), { name: nm.slice(0, 40), at: Number(all[k].joinedAt) || Date.now(), status: all[k].status === 'pending' ? 'pending' : 'approved' }).catch(function(){});
+      });
       var keys = Object.keys(all).sort(), pend = keys.filter(function(k){ return all[k] && all[k].status === 'pending'; });
       var seen = { e: {}, p: {}, n: {} };
       keys.forEach(function(k){ var m = all[k] || {}; if (m.status === 'rejected') return;
