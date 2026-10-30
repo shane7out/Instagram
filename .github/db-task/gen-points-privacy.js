@@ -1,0 +1,46 @@
+// Builds sites/key-technologies/points-privacy.html from the terms in my-account.html (single source of truth).
+// Run from the repo root:  node .github/db-task/gen-points-privacy.js
+const fs = require('fs');
+const src = fs.readFileSync('sites/key-technologies/my-account.html', 'utf8');
+const ver = [null, '2026-10-30', 'October 30, 2026 (draft 1)'];
+const list = [
+  ['Who we are', 'LVR Points (Las Vegas Restaurant Points) is a free points program run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram) and built by Key Technologies. This page explains what information the program collects and how it is used. It is a plain-language draft and is being reviewed.'],
+  ['What we collect', 'When you sign up: your name, email address and, if you choose to give it, your phone number. While you use the program: your points balance, the receipts you send (the photo or screenshot and its date, number and total), the offers you redeem, your free spins and their results, and your agreement to our terms (with the version and time). If you use the Instagram tag bonus: the link to your public post. If you join the Round One list: your first name and last initial. We do not ask for payment card numbers, passwords or government ID. Please cover any card number or personal detail on a receipt before you send the photo.'],
+  ['How we use it', 'To run your account, approve your sign-up, check receipts and add points, let you redeem offers, run the free spin and the monthly points share, prevent fraud and fake accounts, keep a permanent record of point changes, and contact you about your account. We do not sell your information and we do not use it to show you ads.'],
+  ['Who can see it', 'The program owner can see your account information. A restaurant sees only what it needs when you redeem an offer there (your name and your code). The Round One leaderboard shows only your first name and last initial. Information is also processed by the services that run the program: Google Firebase (the database and website hosting), Formspree (email alerts to the owner about new sign-ups and interest forms) and Google Fonts (which loads the fonts on our pages, so your device contacts Google). Public posts you tag us in are, of course, public.'],
+  ['How long we keep it', 'While the program runs and for as long as we need records of points and redemptions. The permanent ledger of point changes is kept so balances can be checked; it is linked to your account code, not to your name or email. If the program ends, we may keep records for as long as the law or a dispute requires.'],
+  ['Your choices', 'You can ask us to correct or delete your account information, or to stop contacting you, by sending a message to @LasVegas_Restaurants on Instagram. Deleting your account removes your points. You must be 18 or older to join.'],
+  ['Security', 'We use reasonable measures to protect your information, and we are working to strengthen who can read it. No online system is perfectly secure, so please share only what the program asks for. Your account link is your login: anyone who has it can use your account, so keep it private.'],
+  ['Cookies and tracking', 'We do not use advertising cookies. The pages keep a few small items on your device (your account link, your choices such as sound on or off, and queued point records) so the app works. We count page visits without collecting your name or email.'],
+  ['Changes to this page', 'We may update this page. The version date below tells you which one applies.']
+];
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy — LVR Points</title>
+<meta name="description" content="How LVR Points handles your information.">
+<style>
+  :root{--bg:#07111f;--card:#11243b;--ink:#eef4fb;--dim:#9fb3c8;--gold:#ffd35c;--blue:#59b5ff;--line:#2c4864;}
+  *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  header{background:#0d1d33;padding:14px 16px;} header a{color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:.02em;} header span{color:var(--blue);}
+  main{max-width:640px;margin:0 auto;padding:26px 16px 70px;}
+  h1{font-size:28px;line-height:1.2;margin:0 0 6px;} .ver{color:var(--dim);font-size:14px;margin:0 0 18px;}
+  .short{background:rgba(255,211,92,.08);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:13px 15px;margin:0 0 20px;} .short b{color:var(--gold);}
+  ol{margin:0;padding:0 0 0 22px;display:grid;gap:14px;} li b{color:var(--ink);} 
+  .back{display:inline-block;margin-top:26px;color:var(--blue);font-weight:700;} .note{color:var(--dim);font-size:14px;margin-top:22px;}
+  @media print{body{background:#fff;color:#000;} header{display:none;} .short{border-color:#999;background:#f4f4f4;} .back{display:none;}}
+</style></head><body>
+<header><a href="index.html">KEY TECHNOLOGIES<span>.SI</span></a></header>
+<main>
+  <h1>LVR Points Privacy</h1>
+  <p class="ver">Version ${ver[2]} · Las Vegas Restaurants</p>
+  <div class="short"><b>In short:</b> we collect only what the program needs, we do not sell it, and you can ask us to delete it.</div>
+  <ol>
+${list.map(t => `    <li><b>${esc(t[0])}.</b> ${esc(t[1])}</li>`).join('\n')}
+  </ol>
+  <p class="note">This page is a draft that is being reviewed. Version ${ver[2]}. Questions or requests? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram. See also the <a href="points-terms.html" style="color:var(--blue);">Program Terms</a>.</p>
+  <a class="back" href="my-account.html">&larr; Back to my LVR Points</a>
+</main></body></html>
+`;
+fs.writeFileSync('sites/key-technologies/points-privacy.html', html);
+console.log('wrote points-privacy.html, version', ver[1], ',', list.length, 'terms');
