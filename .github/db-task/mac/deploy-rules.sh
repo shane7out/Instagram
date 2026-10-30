@@ -73,6 +73,8 @@ async function status(label, url, opts) {
     // deletes of a key that does not exist: harmless either way, but the new rules answer 'denied'
     ['deleting a receipt is blocked', await status('', `${DB}/lvr_points/receipts/zz_probe_none.json`, { method: 'DELETE' }), 401],
     ['deleting a receipt photo is blocked', await status('', `${DB}/lvr_points/receipt_photos/zz_probe_none.json`, { method: 'DELETE' }), 401],
+    ['deleting a ledger entry is blocked', await status('', `${DB}/lvr_points/transactions/zz_probe/zz_none.json`, { method: 'DELETE' }), 401],
+    ['deleting a Round One entry is blocked', await status('', `${DB}/lvr_points/round1/zz_probe_none.json`, { method: 'DELETE' }), 401],
   ];
   for (const [name, got, want] of probes) {
     const good = got === want || (want === 401 && got === 403);
