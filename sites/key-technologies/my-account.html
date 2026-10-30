@@ -372,6 +372,7 @@
   .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
   .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
   .decay-note,.rules-dd{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:var(--ink-dim);font-size:14px;line-height:1.5;border-radius:12px;padding:0 14px;margin:0 0 16px;} .decay-note summary,.rules-dd summary{cursor:pointer;padding:12px 0;color:#ffe08a;min-height:24px;} .decay-note summary b,.rules-dd summary b{color:#ffd35c;} .decay-body{padding:0 0 12px;} .decay-body b{color:var(--ink);}
+  .see-demo-row{display:flex;justify-content:flex-end;margin:18px 0 22px;}
   .live-demo-row{display:flex;justify-content:flex-end;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;} .live-demo{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,#ffd35c,#ffb020);color:#2a1d00;font-weight:800;font-size:14.5px;text-decoration:none;border:0;box-shadow:0 2px 14px rgba(255,211,92,.35);} .live-demo:hover{filter:brightness(1.06);} .live-demo.alt{background:rgba(89,181,255,.16);color:#bfe3ff;box-shadow:none;border:1px solid rgba(89,181,255,.55);} .live-demo .dot{width:9px;height:9px;border-radius:50%;background:#e11d48;box-shadow:0 0 0 0 rgba(225,29,72,.7);animation:ldp 1.6s infinite;} @keyframes ldp{70%{box-shadow:0 0 0 8px rgba(225,29,72,0);}100%{box-shadow:0 0 0 0 rgba(225,29,72,0);}} @media (prefers-reduced-motion:reduce){.live-demo .dot{animation:none;}}
   .r1-list{list-style:none;margin:0;padding:0;display:grid;gap:4px;} .r1-row{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04);font-size:15px;} .r1-row.me{background:rgba(89,181,255,.16);outline:1px solid rgba(89,181,255,.5);} .r1-n{min-width:30px;font-weight:800;color:#ffd35c;text-align:center;} .r1-me{font-size:18px;margin:8px 0;} .pend-tag{display:inline-block;background:rgba(255,211,92,.15);border:1px solid rgba(255,211,92,.5);color:#ffd35c;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;margin-bottom:8px;}
   .terms-notice{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.3);border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--ink-dim);} .terms-notice b{color:#ffd35c;}
@@ -511,8 +512,8 @@
   var DEMO_PTS = Math.max(0, parseInt(params.get('demo'), 10) || 65);
   var contentEl = document.getElementById('content');
   (function () {
-    var row = document.getElementById('liveDemoRow'); if (!row) return;
-    row.innerHTML = DEMO ? '<button type="button" class="live-demo" id="demoHelpBtn"><span class="dot" aria-hidden="true"></span>How the demo works</button><a class="live-demo alt" href="rewards.html" style="margin-left:8px;">Join for real \u203a</a><div id="demoWatchRes" role="status" style="flex-basis:100%;text-align:right;"></div>' : '<a class="live-demo" href="my-account.html?demo=65"><span class="dot" aria-hidden="true"></span>Live demo \u25b6</a>';
+    var row = document.getElementById('liveDemoRow'); if (!row) return; if (!DEMO) { row.remove(); return; }
+    row.innerHTML = DEMO ? '<button type="button" class="live-demo" id="demoHelpBtn"><span class="dot" aria-hidden="true"></span>How the demo works</button><a class="live-demo alt" href="rewards.html" style="margin-left:8px;">Join for real \u203a</a><div id="demoWatchRes" role="status" style="flex-basis:100%;text-align:right;"></div>' : '';
   })();
 
   // A token in the URL (e.g. a link texted to a new device) always wins and
@@ -1457,6 +1458,7 @@
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       '</div>' +
+      (DEMO ? '' : '<div class="see-demo-row"><a class="live-demo" href="my-account.html?demo=65"><span class="dot" aria-hidden="true"></span>See demo &#9654;</a></div>') +
       '<div class="pt-note"><b>1 point = $1</b> toward a free offer at any participating restaurant, new ones included. Every offer is at least 15 LVR Points.' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' Everyone starts with <b>' + welcomeCfg().amount + ' free points</b> ($' + welcomeCfg().amount + ').' : '') + ' Points can only be used for those offers, not for anything else or exchanged for cash.</div>' +
       decayHtml() +
       igCardHtml() +
