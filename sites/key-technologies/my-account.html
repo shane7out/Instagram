@@ -136,6 +136,10 @@
   .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
   .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
   .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
+  .real-tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#052b14;background:#7be3a6;border-radius:99px;padding:4px 12px;margin-bottom:8px;}
+  .demo-res{font-size:18px;font-weight:800;color:#ffd35c;min-height:0;} .demo-res:not(:empty){margin:2px 0 10px;}
+  #demoSpinGo.primary{background:linear-gradient(180deg,#ffd35c,#e8a317);color:#3a2200;border:0;font-weight:800;}
+  @media (max-height:860px){.soon-box .wheel-wrap:not(.mini){width:204px;height:216px;} .soon-box .wheel-wrap:not(.mini) .wheel-rot{left:6px;top:17px;width:192px;height:192px;} .soon-box .wheel-wrap:not(.mini) .wheel-ptr{width:22px;height:38px;} .soon-box .clk.big .seg b{font-size:30px;} .soon-box .bn-art{min-height:0;margin:2px 0 4px;}}
   .terms-check{display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:12px;padding:12px 13px;margin:0 0 12px;cursor:pointer;}
   .terms-check input{flex:none;width:24px;height:24px;margin:1px 0 0;accent-color:#ffd35c;cursor:pointer;}
   .linkbtn.inl{display:inline;padding:0;min-height:0;font-size:inherit;}
@@ -447,13 +451,17 @@
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
       <div class="demo-tag2" id="demoTagM" hidden style="margin-bottom:8px;">Demo only · no value</div>
+      <div class="real-tag" id="realTagM" hidden>This is your real spin</div>
       <div id="chestModalArt" class="bn-art"></div>
+      <div id="demoRes" class="demo-res" role="status"></div>
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
       <div class="fair-box" id="fairBox" hidden><button type="button" class="linkbtn" data-fair>🔒 How the spin works ›</button><button type="button" class="linkbtn snd" id="sndBtn" aria-pressed="false">🔇 Sound off</button></div>
       <label class="terms-check" id="termsRow" hidden><input type="checkbox" id="termsCb"><span>I have read and agree to the <button type="button" class="linkbtn inl" data-terms>Spin Terms</button>. I understand the number is random and LVR Rewards has no control over it.</span></label>
-      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden disabled style="margin-bottom:10px;">Spin the wheel</button>
+      <label class="terms-check" id="realRow" hidden><input type="checkbox" id="realCb"><span><b>This is my one real spin.</b> I understand it counts and will be recorded, and I can't redo it or spin again until my next spin is ready.</span></label>
+      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden disabled style="margin-bottom:10px;">Spin for real</button>
+      <button type="button" class="btn btn-ghost" id="demoSpinGo" hidden style="margin-bottom:10px;">🎡 Try a demo spin · demo only, no value</button>
       <button type="button" class="btn btn-ghost" id="demoSpinBtn" hidden style="margin-bottom:10px;">Preview the spin (demo only)</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
@@ -707,8 +715,7 @@
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       var done = function () { res.textContent = prize === 0 ? '0 · better luck next time' : '+' + prize + ' FREE points'; busy = false; go.disabled = false; go.textContent = 'Spin again'; };
       if (reduce) { done(); return; }
-      cur = cur + 360 * 6 + ((((F - cur) % 360) + 360) % 360);
-      spinWheel(wheel, practiceFrom, cur, 6200, N, done); practiceFrom = cur;
+      unlockAudio(); spinTo(wheel, F, N, 6200, done);
     });
   }
   function bindOwner(root) {
@@ -800,7 +807,9 @@
       '<div class="demo-links"><button type="button" data-dview="wait">Waiting view</button><button type="button" data-dview="ready">Ready view</button><button type="button" id="demoWatch">Watch a sample spin</button></div>' +
       '<div id="demoWatchRes" role="status"></div></div>';
   }
-  document.addEventListener('change', function (e) { if (e.target && e.target.id === 'termsCb') { var ob = document.getElementById('chestOpenBtn'); if (ob) ob.disabled = !e.target.checked; } });
+  document.addEventListener('change', function (e) {
+    if (e.target && (e.target.id === 'termsCb' || e.target.id === 'realCb')) { var ob = document.getElementById('chestOpenBtn'), a = document.getElementById('termsCb'), b = document.getElementById('realCb'); if (ob) ob.disabled = modalDemoBusy || !(a && a.checked && b && b.checked); }
+  });
   function syncSnd() { var b = document.getElementById('sndBtn'); if (!b) return; b.textContent = soundOn ? '🔊 Sound on' : '🔇 Sound off'; b.setAttribute('aria-pressed', soundOn ? 'true' : 'false'); }
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null; if (!t) return;
@@ -818,9 +827,10 @@
     if (reduce) { show(); return; }
     demoWatchBusy = true; if (res) res.textContent = '';
     wrap.classList.remove('idle');
-    spinWheel(w, 0, 360 * 6 - (prize - c.prizeMin + 0.5) * seg + (secureInt(70) / 100 - 0.35) * seg, 6200, N, function () {
+    unlockAudio();
+    spinTo(w, -((prize - c.prizeMin + 0.5) * seg) + (secureInt(70) / 100 - 0.35) * seg, N, 6200, function () {
       show();
-      setTimeout(function () { w.style.transition = 'none'; w.style.transform = ''; w.style.animation = ''; wrap.classList.add('idle'); demoWatchBusy = false; }, 3500);
+      setTimeout(function () { w.style.transition = 'none'; w.style.transform = ''; w.style.animation = ''; w._ang = 0; wrap.classList.add('idle'); demoWatchBusy = false; }, 3500);
     });
   }
   document.addEventListener('click', function (e) {
@@ -831,7 +841,7 @@
       ownRerender(); return;
     }
     if (e.target.closest && e.target.closest('#demoWatch') && DEMO) demoWatchSpin();
-    if (e.target.closest && e.target.closest('#demoTry') && DEMO) { var c1 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c1.waitDays * 86400000 - 6 * 3600000 }; ownRerender(); setTimeout(function () { var g = document.getElementById('giftBtn'); if (g) g.click(); }, 80); }
+    if (e.target.closest && e.target.closest('#demoTry') && DEMO) { unlockAudio(); var c1 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c1.waitDays * 86400000 - 6 * 3600000 }; ownRerender(); setTimeout(function () { var g = document.getElementById('giftBtn'); if (g) g.click(); }, 80); }
   });
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
 
@@ -1451,8 +1461,10 @@
     return a[0] % n;
   }
   // Spin engine: the wheel is turned by the script (not a CSS transition) so the flapper can click past each peg the way a TV-show wheel does.
-  var soundOn = false; try { soundOn = localStorage.getItem('lvrSound') === '1'; } catch (e) {}
+  var soundOn = true; try { soundOn = localStorage.getItem('lvrSound') !== '0'; } catch (e) {}
   var actx = null;
+  // browsers only allow sound after a tap, so every spin button calls this first
+  function unlockAudio() { if (!soundOn) return; try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {} }
   function clack(v) {
     if (!soundOn) return;
     try {
@@ -1481,6 +1493,11 @@
       if (t < 1) requestAnimationFrame(frame); else done && done();
     }
     requestAnimationFrame(frame);
+  }
+  // spin from wherever the wheel is now to the slot with the chosen number (F = final angle, mod 360)
+  function spinTo(wheel, F, N, ms, done) {
+    var from = wheel._ang || 0, to = from + 360 * 6 + ((((F - from) % 360) + 360) % 360);
+    wheel._ang = to; spinWheel(wheel, from, to, ms, N, done);
   }
   function wheelHtml(min, max, id, cls) {
     var mini = cls && cls.indexOf('mini') >= 0;
@@ -1532,14 +1549,30 @@
   }
   setInterval(tickClocks, 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) tickClocks(); });
-  var lastTileKey = '', lastArtKey = '';
+  var lastTileKey = '', lastArtKey = '', modalDemoBusy = false;
+  // A demo spin inside the spin screen: same wheel, same sound, nothing is saved and no points move
+  function modalDemoSpin() {
+    var wheel = document.querySelector('#chestModalArt .wheel-rot'); if (!wheel || chestBusy || modalDemoBusy) return;
+    var c = chestCfg(), N = c.prizeMax - c.prizeMin + 1, prize = c.prizeMin + secureInt(N), seg = 360 / N;
+    var res = document.getElementById('demoRes'), dg = document.getElementById('demoSpinGo'), og = document.getElementById('chestOpenBtn');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    modalDemoBusy = true; if (res) res.textContent = ''; if (dg) dg.disabled = true; if (og) og.disabled = true; unlockAudio();
+    var fin = function () {
+      modalDemoBusy = false; if (dg) dg.disabled = false;
+      if (res) res.textContent = 'Demo spin: ' + prize + ' · demo only, no value, not recorded';
+      var tc = document.getElementById('termsCb'), rc = document.getElementById('realCb'); if (og) og.disabled = !(tc && tc.checked && rc && rc.checked);
+      if (wheel.parentNode.classList.contains('idle')) setTimeout(function () { wheel.style.transition = 'none'; wheel.style.transform = ''; wheel.style.animation = ''; wheel._ang = 0; }, 2500);
+    };
+    if (reduce) { fin(); return; }
+    spinTo(wheel, -((prize - c.prizeMin + 0.5) * seg) + (secureInt(70) / 100 - 0.35) * seg, N, 6200, fin);
+  }
   function tickChest() {
-    var st = chestInfo(), tile = '', art = '', big = '', fair = false, title = 'Your free bonus spin', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
+    var st = chestInfo(), tile = '', art = '', big = '', fair = false, demoGo = '', title = 'Your free bonus spin', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
     if (st.kind === 'wait') {
       var range = prizeRange(st.c);
       tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Free spin in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">Win ' + range + ' FREE points</span></span>';
       art = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'prevWheel', 'idle') + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your free bonus spin</div>';
-      title = 'Your free bonus spin';
+      title = 'Your free bonus spin'; fair = true; demoGo = 'primary';
       msg = (st.missed ? 'The last spin window closed, so the wait started over. ' : '') + 'When the countdown ends, a wheel appears. Spin it to win ' + range + ' free points. The number is random and we have no control over it. You will have ' + st.c.claimHours + ' hours to spin, or the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
     } else if (st.kind === 'ready') {
       var amt = prizeRange(st.c);
@@ -1547,8 +1580,8 @@
       tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Spin within</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to spin</span></span>';
       art = wheelHtml(st.c.prizeMin, st.c.prizeMax) + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:2px;font-weight:800;color:#ffd35c;">left to spin</div>';
       title = 'Spin for ' + amt + ' FREE points';
-      msg = 'Spin before the clock runs out. After that the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
-      fair = true;
+      msg = 'You get one spin and this is it. Spin before the clock runs out, or it is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
+      fair = true; demoGo = DEMO ? '' : 'ghost';
     } else { show = false; }
     if (chestBusy) canOpen = false;
     if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (DEMO ? 'demo points · no value' : (chestWin.pending ? 'FREE points won' : 'FREE points added to your balance')) + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : (DEMO ? 'Nice spin! (demo)' : 'You won!'); canOpen = false; }
@@ -1559,17 +1592,22 @@
     var tt = document.getElementById('soonTitle'); if (tt && !chestBusy) tt.textContent = title;
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
-    var dtm = document.getElementById('demoTagM'); if (dtm) dtm.hidden = !DEMO;
+    var idle = !chestBusy && !chestWin, dtm = document.getElementById('demoTagM'), rtm = document.getElementById('realTagM');
+    if (dtm) dtm.hidden = !(idle && (DEMO || st.kind === 'wait'));
+    if (rtm) rtm.hidden = !(idle && !DEMO && st.kind === 'ready');
     var fb = document.getElementById('fairBox'); if (fb) fb.hidden = !(fair && !chestBusy && !chestWin); syncSnd();
-    var tr = document.getElementById('termsRow'), tcb = document.getElementById('termsCb'); if (tr) tr.hidden = !(canOpen && !chestBusy);
-    var o = document.getElementById('chestOpenBtn'); if (o) { o.hidden = !canOpen; o.disabled = !(tcb && tcb.checked); }
-    var ds = document.getElementById('demoSpinBtn'); if (ds) ds.hidden = !(DEMO && st.kind === 'wait' && !chestBusy && !chestWin);
+    var tr = document.getElementById('termsRow'), tcb = document.getElementById('termsCb'), rr = document.getElementById('realRow'), rcb = document.getElementById('realCb');
+    if (tr) tr.hidden = !(canOpen && !chestBusy); if (rr) rr.hidden = !(canOpen && !chestBusy);
+    var o = document.getElementById('chestOpenBtn'); if (o) { o.hidden = !canOpen; o.disabled = !(tcb && tcb.checked && rcb && rcb.checked); }
+    var dg = document.getElementById('demoSpinGo'); if (dg) { dg.hidden = !(demoGo && idle); dg.classList.toggle('primary', demoGo === 'primary'); if (demoGo === 'ghost') dg.textContent = '🎡 Try a demo spin first · demo only, no value'; else dg.textContent = '🎡 Try a demo spin · demo only, no value'; }
+    var ds = document.getElementById('demoSpinBtn'); if (ds) ds.hidden = true;
   }
   function openChest() {
     var st = chestInfo(), btn = document.getElementById('chestOpenBtn');
     if (st.kind !== 'ready' || chestBusy || (!memberKey && !DEMO)) return;
-    var tcb0 = document.getElementById('termsCb');
-    if (!tcb0 || !tcb0.checked) { var mm = document.getElementById('chestMsg'); if (mm) mm.textContent = 'Please tick the box to confirm you have read the Spin Terms.'; return; }
+    var tcb0 = document.getElementById('termsCb'), rcb0 = document.getElementById('realCb');
+    if (!tcb0 || !tcb0.checked || !rcb0 || !rcb0.checked) { var mm = document.getElementById('chestMsg'); if (mm) mm.textContent = 'Please tick both boxes first: the Spin Terms, and that this is your one real spin.'; return; }
+    unlockAudio(); var dgb = document.getElementById('demoSpinGo'); if (dgb) dgb.hidden = true; var dr0 = document.getElementById('demoRes'); if (dr0) dr0.textContent = '';
     // the number is drawn from the browser's secure random source; the owner has no say in it
     var prize = st.c.prizeMin + secureInt(st.c.prizeMax - st.c.prizeMin + 1);
     chestBusy = true; btn.hidden = true;
@@ -1581,7 +1619,7 @@
     var finish = function () {
       var at = Date.now();
       wallet.points = (wallet.points || 0) + prize; wallet.chestState = { n: st.n, amount: prize, at: at };
-      chestBusy = false; chestWin = { n: '+' + prize }; var cb2 = document.getElementById('soonClose'); if (cb2) cb2.hidden = false; var tcb1 = document.getElementById('termsCb'); if (tcb1) tcb1.checked = false;
+      chestBusy = false; chestWin = { n: '+' + prize }; var cb2 = document.getElementById('soonClose'); if (cb2) cb2.hidden = false; var tcb1 = document.getElementById('termsCb'); if (tcb1) tcb1.checked = false; var rcb1 = document.getElementById('realCb'); if (rcb1) rcb1.checked = false;
       var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
       var nx = chestInfo(), m = document.getElementById('chestMsg');
       if (m) m.textContent = nx.kind === 'wait' ? (prize === 0 ? 'The wheel landed on zero. Your next free spin arrives in ' : 'Your next free bonus spin arrives in ') + hrs(nx.waitDays) + ' hours.' : 'Thank you for being a member.';
@@ -1591,9 +1629,9 @@
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!wheel || reduce) { finish(); return; }
       var N = st.c.prizeMax - st.c.prizeMin + 1, seg = 360 / N, center = (prize - st.c.prizeMin + 0.5) * seg;
-      var jitter = (secureInt(70) / 100 - 0.35) * seg, deg = 360 * 6 - center + jitter;
+      var jitter = (secureInt(70) / 100 - 0.35) * seg;
       wheel.classList.remove('wob');
-      spinWheel(wheel, 0, deg, 6200, N, finish);
+      spinTo(wheel, -center + jitter, N, 6200, finish);
     };
     if (DEMO) { setTimeout(spin, 500); return; }
     var H = { 'Content-Type': 'application/json' }, mk = encodeURIComponent(memberKey), claimed = false;
@@ -1606,7 +1644,7 @@
     };
     // claim first (the database only accepts the next spin, after the full wait and inside the claim window, within the allowed range), then log it, then add the points, then spin the wheel to the number
     fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
-      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' }, terms: SPIN_TERMS_VERSION }) }).catch(function () { return null; }); })
+      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' }, terms: SPIN_TERMS_VERSION, confirmedReal: true }) }).catch(function () { return null; }); })
       .then(function () { return credit(3); })
       .then(function (r) { if (!r || !r.ok) throw new Error('points'); spin(); })
       .catch(function () {
@@ -1648,12 +1686,13 @@
   (function () {
     var back = document.getElementById('soonBack');
     var lastFocus = null;
-    function open() { lastFocus = document.activeElement; tickChest(); back.classList.add('open'); var c = document.getElementById('chestOpenBtn'); if (!c || c.hidden) c = document.getElementById('soonClose'); if (c) c.focus(); }
+    function open() { lastFocus = document.activeElement; tickChest(); back.classList.add('open'); var c = document.getElementById('chestOpenBtn'); if (!c || c.hidden || c.disabled) c = document.getElementById('soonClose'); if (c) { try { c.focus({ preventScroll: true }); } catch (e) { c.focus(); } } var bx = back.querySelector('.soon-box'); if (bx) bx.scrollTop = 0; }
     function close() { if (chestBusy) return; back.classList.remove('open'); chestWin = ''; tickChest(); try { if (lastFocus && lastFocus.focus) lastFocus.focus(); } catch (e) {} }
     document.addEventListener('click', function (e) {
       var t = e.target.closest ? e.target : null;
       if (t && t.closest('#giftBtn')) open();
       else if (t && t.closest('#demoSpinBtn')) { var c0 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c0.waitDays * 86400000 - 6 * 3600000 }; tickChest(); }
+      else if (t && t.closest('#demoSpinGo')) modalDemoSpin();
       else if (t && t.closest('#chestOpenBtn')) openChest();
       else if (e.target === back || (t && t.closest('#soonClose'))) close();
     });
