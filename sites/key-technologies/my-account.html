@@ -173,6 +173,7 @@
   .mini-bal small{font-weight:600;color:var(--ink-dim);font-size:13px;text-shadow:none;margin-left:4px;}
   .soon-back{position:fixed;inset:0;background:rgba(3,8,16,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
   .soon-back.open{display:flex;}
+  body.hnav-on .soon-back{padding-top:48px;} body.hnav-on .soon-box{max-height:calc(100vh - 70px);}
   .soon-box{max-height:94vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
@@ -392,11 +393,14 @@
   .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
   .own-box p{margin:0 0 16px;color:#c3d2e3;}
   .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
-  .demo-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px;}
-  .demo-ctl-tag{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:5px 11px;}
-  .demo-ctl{gap:6px;} .demo-ctl button{font:inherit;font-weight:800;font-size:13px;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:99px;padding:9px 11px;min-height:40px;cursor:pointer;}
-  .demo-ctl button.on{background:linear-gradient(180deg,#ffd35c,#e8a317);border-color:#e8a317;color:#3a2200;}
-  #demoWatchRes{flex-basis:100%;font-size:14px;font-weight:700;color:#7be3a6;min-height:18px;}
+  .demo-card{background:linear-gradient(180deg,rgba(255,211,92,.12),rgba(255,211,92,.04));border:1.5px dashed rgba(255,211,92,.6);border-radius:16px;padding:14px 15px 12px;margin:0 0 16px;text-align:center;}
+  .demo-tag2{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#3a2200;background:#ffd35c;border-radius:99px;padding:4px 12px;}
+  .demo-card-title{font-size:20px;font-weight:800;margin:8px 0 2px;color:var(--ink);}
+  .demo-card p{margin:0 0 12px;font-size:14px;line-height:1.45;color:var(--ink-dim);}
+  .demo-try{font:inherit;font-weight:800;font-size:16px;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border:0;border-radius:12px;padding:13px 18px;min-height:48px;width:100%;cursor:pointer;}
+  .demo-links{display:flex;flex-wrap:wrap;gap:0 16px;justify-content:center;align-items:center;margin-top:8px;color:var(--ink-dim);}
+  .demo-links button{font:inherit;font-size:13.5px;font-weight:700;color:var(--key-light);background:none;border:0;padding:9px 2px;min-height:40px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  #demoWatchRes{font-size:14px;font-weight:700;color:#7be3a6;} #demoWatchRes:not(:empty){margin-top:4px;}
   .own-tools{width:100%;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
   .own-tools button,.own-tools a{font:inherit;font-weight:800;font-size:14px;color:#3a2200;background:linear-gradient(180deg,#ffd35c,#e8a317);border:0;border-radius:99px;padding:9px 14px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
   .own-tools a{background:rgba(255,255,255,.1);color:var(--ink);border:1px solid var(--control-line,#4a6580);}
@@ -442,6 +446,7 @@
   <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
+      <div class="demo-tag2" id="demoTagM" hidden style="margin-bottom:8px;">Demo only · no value</div>
       <div id="chestModalArt" class="bn-art"></div>
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
@@ -788,11 +793,11 @@
   // ---------- Reward Points menu (top right) ----------
   // Demo-only controls so the two bonus states and a real spin can be shown on demand
   function demoCtlHtml() {
-    var k = chestInfo().kind;
-    return '<div class="demo-ctl"><span class="demo-ctl-tag">Demo</span>' +
-      '<button type="button" data-dview="wait" aria-pressed="' + (k === 'wait') + '" class="' + (k === 'wait' ? 'on' : '') + '">Waiting</button>' +
-      '<button type="button" data-dview="ready" aria-pressed="' + (k === 'ready') + '" class="' + (k === 'ready' ? 'on' : '') + '">Ready</button>' +
-      '<button type="button" id="demoWatch">▶ Watch spin</button>' +
+    return '<div class="demo-card"><span class="demo-tag2">Demo only · no value</span>' +
+      '<div class="demo-card-title">Try the free spin yourself</div>' +
+      '<p>A practice account. Demo points have no value.</p>' +
+      '<button type="button" id="demoTry" class="demo-try">🎡 Try the free spin</button>' +
+      '<div class="demo-links"><button type="button" data-dview="wait">Waiting view</button><button type="button" data-dview="ready">Ready view</button><button type="button" id="demoWatch">Watch a sample spin</button></div>' +
       '<div id="demoWatchRes" role="status"></div></div>';
   }
   document.addEventListener('change', function (e) { if (e.target && e.target.id === 'termsCb') { var ob = document.getElementById('chestOpenBtn'); if (ob) ob.disabled = !e.target.checked; } });
@@ -826,6 +831,7 @@
       ownRerender(); return;
     }
     if (e.target.closest && e.target.closest('#demoWatch') && DEMO) demoWatchSpin();
+    if (e.target.closest && e.target.closest('#demoTry') && DEMO) { var c1 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c1.waitDays * 86400000 - 6 * 3600000 }; ownRerender(); setTimeout(function () { var g = document.getElementById('giftBtn'); if (g) g.click(); }, 80); }
   });
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
 
@@ -1545,7 +1551,7 @@
       fair = true;
     } else { show = false; }
     if (chestBusy) canOpen = false;
-    if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (chestWin.pending ? 'FREE points won' : 'FREE points added to your balance') + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : 'You won!'; canOpen = false; }
+    if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (DEMO ? 'demo points · no value' : (chestWin.pending ? 'FREE points won' : 'FREE points added to your balance')) + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : (DEMO ? 'Nice spin! (demo)' : 'You won!'); canOpen = false; }
     var btn = document.getElementById('giftBtn');
     if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your free bonus spin is ready. Tap to spin.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); var tk = st.kind + '|' + st.n + '|' + (st.c ? prizeRange(st.c) : ''); if (cc && tk !== lastTileKey) { cc.innerHTML = tile; lastTileKey = tk; } }
     var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
@@ -1553,6 +1559,7 @@
     var tt = document.getElementById('soonTitle'); if (tt && !chestBusy) tt.textContent = title;
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
+    var dtm = document.getElementById('demoTagM'); if (dtm) dtm.hidden = !DEMO;
     var fb = document.getElementById('fairBox'); if (fb) fb.hidden = !(fair && !chestBusy && !chestWin); syncSnd();
     var tr = document.getElementById('termsRow'), tcb = document.getElementById('termsCb'); if (tr) tr.hidden = !(canOpen && !chestBusy);
     var o = document.getElementById('chestOpenBtn'); if (o) { o.hidden = !canOpen; o.disabled = !(tcb && tcb.checked); }
