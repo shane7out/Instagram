@@ -574,6 +574,13 @@
       });
     }).then(function(r){
       if(!r.ok) throw new Error("HTTP " + r.status);
+      // ledger: the welcome points are written down as a transaction (my-account.html sends it)
+      return r.json().then(function(j){
+        if (j && j.name && welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
+          try { var q = JSON.parse(localStorage.getItem("lvrTxQueue") || "[]") || []; q.push({ mk: encodeURIComponent(j.name), key: "welcome", type: "welcome", amount: welcomeCfg.amount, ref: "Welcome points at sign-up" }); localStorage.setItem("lvrTxQueue", JSON.stringify(q.slice(-60))); } catch (e) {}
+        }
+      }).catch(function(){});
+    }).then(function(){
       status.textContent = "Account open — taking you to your wallet…";
       status.className = "form-status ok";
       try { localStorage.setItem(ACCOUNT_TOKEN_KEY, token); } catch (e) {}

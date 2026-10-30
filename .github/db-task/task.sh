@@ -20,3 +20,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # restored
 # re-run: offer minimum 15 points
 # re-run: old catalog test updated to 20 points
+# re-run: transactions ledger rules

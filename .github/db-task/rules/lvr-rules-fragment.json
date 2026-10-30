@@ -144,6 +144,32 @@
     ".validate": "newData.isNumber() && newData.val() >= 0"
    }
   },
+  "transactions": {
+   "$mk": {
+    "$id": {
+     ".write": "newData.exists() && !data.exists()",
+     ".validate": "newData.hasChildren(['type', 'amount', 'at']) && (newData.child('type').val() == 'welcome' || newData.child('type').val() == 'receipt' || newData.child('type').val() == 'spin' || newData.child('type').val() == 'redeem' || newData.child('type').val() == 'bonus' || newData.child('type').val() == 'referral' || newData.child('type').val() == 'opening' || newData.child('type').val() == 'adjustment') && newData.child('amount').isNumber() && newData.child('amount').val() != 0 && newData.child('amount').val() >= -100000 && newData.child('amount').val() <= 100000 && newData.child('at').val() <= now && newData.child('at').val() > now - 120000",
+     "type": {
+      ".validate": "newData.isString()"
+     },
+     "amount": {
+      ".validate": "newData.isNumber()"
+     },
+     "at": {
+      ".validate": "newData.isNumber()"
+     },
+     "ref": {
+      ".validate": "newData.isString() && newData.val().length <= 300"
+     },
+     "by": {
+      ".validate": "newData.isString() && newData.val().length <= 20"
+     },
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
   "chest_log": {
    "$mk": {
     "$n": {

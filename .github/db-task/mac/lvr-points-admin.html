@@ -200,6 +200,16 @@
   function fbPost(path, body) { return fetch(DB + path + '.json', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
   function fbPut(path, body) { return fetch(DB + path + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
   function fbPatch(path, body) { return fetch(DB + path + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
+  // Permanent ledger: every point movement is also written as a write-once, server-timed transaction
+  // (lvr_points/transactions/<member>/<event key>). One fixed key per event, so a retry never double-writes.
+  function txLog(mk, key, type, amount, ref) {
+    if (!mk || !amount) return Promise.resolve();
+    var p = '/lvr_points/transactions/' + encodeURIComponent(mk) + '/' + encodeURIComponent(key);
+    return fbGet(p).then(function(cur){
+      if (cur) return;
+      return fbPut(p, { type: type, amount: amount, at: { '.sv': 'timestamp' }, ref: String(ref || '').slice(0, 280), by: 'admin' }).then(function(r){ if (!r.ok) throw new Error('ledger'); });
+    }).catch(function(){ showToast('Points saved, but the ledger entry did not. Open Audit > Ledger and run the check.'); });
+  }
   function fbDelete(path) { return fetch(DB + path + '.json', { method: 'DELETE' }); }
 
   function escapeHtml(s) {
@@ -463,6 +473,7 @@
         var credit = pts > 0 ? fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: pts } }) : Promise.resolve({ ok: true });
         return credit.then(function(resp){
           if (!resp.ok) throw new Error('credit failed');
+          if (pts > 0) txLog(r.memberKey, 'receipt-' + id, 'receipt', pts, 'Receipt ' + (r.receiptNo || '') + ' at ' + bizOf(r.slug) + ' ($' + r.amount + ')');
           return fbPatch(RECEIPTS_PATH + '/' + id, { pointsApplied: true });
         }).then(function(){ return applyWelcome(id, r, pts).catch(function(){ showToast('Points added - welcome bonus did not land (see Audit notes)'); }); });
       }).then(function(){ return applyReferrals(id).catch(function(){ showToast('Points added - referral bonus will need a retry'); }); })
@@ -482,7 +493,7 @@
       if (given) return;
       return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven', { amount: w.amount, receiptId: id, at: { '.sv': 'timestamp' } })
         .then(function(c){ if (!c.ok) throw new Error('claim failed'); return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: w.amount } }); })
-        .then(function(c){ if (!c.ok) throw new Error('credit failed'); return fbPatch(RECEIPTS_PATH + '/' + id, { welcomeAwarded: w.amount }); });
+        .then(function(c){ if (!c.ok) throw new Error('credit failed'); txLog(r.memberKey, 'welcome', 'welcome', w.amount, 'Welcome points (first approved receipt)'); return fbPatch(RECEIPTS_PATH + '/' + id, { welcomeAwarded: w.amount }); });
     });
   }
 
@@ -524,6 +535,7 @@
           if (!(bonus > 0)) return null;
           return fbPut(MEMBERS_PATH + '/' + upKey + '/points', { '.sv': { increment: bonus } }).then(function(r){
             if (!r.ok) throw new Error('bonus credit failed');
+            txLog(upKey, 'referral-' + receiptId + '-' + level, 'referral', bonus, 'Referral bonus, level ' + (level + 1) + ', receipt ' + receiptId);
             return fbPut(MEMBERS_PATH + '/' + upKey + '/refBonusTotal', { '.sv': { increment: bonus } });
           });
         }).then(function(){
@@ -590,7 +602,7 @@
     var id = genToken().slice(0, 14);
     fbPut('/lvr_points/bonuses/' + id, { memberKey: k, token: m.token || null, name: m.name || '', points: pts, reason: why, at: { '.sv': 'timestamp' } })
       .then(function(r){ if (!r.ok) throw new Error('record'); return fbPut(MEMBERS_PATH + '/' + k + '/points', { '.sv': { increment: pts } }); })
-      .then(function(r){ if (!r.ok) throw new Error('points'); m.points = (m.points || 0) + pts; bonusLog[id] = { name: m.name, points: pts, reason: why, at: Date.now() }; showToast('Added ' + pts + ' points to ' + (m.name || 'member')); renderBonusTab(); })
+      .then(function(r){ if (!r.ok) throw new Error('points'); txLog(k, 'bonus-' + id, 'bonus', pts, why); m.points = (m.points || 0) + pts; bonusLog[id] = { name: m.name, points: pts, reason: why, at: Date.now() }; showToast('Added ' + pts + ' points to ' + (m.name || 'member')); renderBonusTab(); })
       .catch(function(){ btn.disabled = false; showToast('Something went wrong - check the Recent list before trying again'); });
   }
   function drawBonusLog() {
@@ -1048,6 +1060,73 @@
         .catch(function(e){ line.textContent = 'Could not build the package: ' + e.message; })
         .then(function(){ btn.disabled = false; });
     });
+    var lb = document.createElement('div'); lb.id = 'ledgerBox'; view.appendChild(lb); renderLedgerBox();
+  }
+
+  // ========================================================================
+  // LEDGER (inside the Audit tab): every transaction, a balance check, and a hand-off package
+  // ========================================================================
+  var ledgerData = null;
+  function ledgerLoad() {
+    return Promise.all([fbGet('/lvr_points/transactions'), fbGet(MEMBERS_PATH)]).then(function(r){ ledgerData = { tx: r[0] || {}, members: r[1] || {} }; return ledgerData; });
+  }
+  function ledgerRows(d) {
+    var rows = [];
+    Object.keys(d.tx).forEach(function(mk){
+      Object.keys(d.tx[mk] || {}).forEach(function(id){
+        var t = d.tx[mk][id] || {};
+        rows.push({ time: t.at ? new Date(t.at).toISOString() : '', member: (d.members[mk] || {}).name || '', memberKey: mk, type: t.type || '', points: t.amount, note: t.ref || '', by: t.by || '', entryId: id });
+      });
+    });
+    rows.sort(function(a, b){ return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; });
+    return rows;
+  }
+  function ledgerCheck(d) {
+    var out = [];
+    Object.keys(d.members).forEach(function(mk){
+      var m = d.members[mk] || {}, bal = Number(m.points) || 0, sum = 0;
+      Object.keys(d.tx[mk] || {}).forEach(function(id){ sum += Number(d.tx[mk][id].amount) || 0; });
+      out.push({ mk: mk, name: m.name || mk, balance: bal, ledger: sum, diff: bal - sum });
+    });
+    return out;
+  }
+  function renderLedgerBox() {
+    var box = document.getElementById('ledgerBox'); if (!box) return;
+    box.innerHTML = '<div class="form-box" style="margin-top:18px;"><div style="font-weight:800;margin-bottom:6px;">Ledger (every point movement)</div>' +
+      '<div class="row-sub" style="margin-bottom:12px;">Every sign-up bonus, spin, approved receipt, referral, manual bonus and redemption is written down once, with the server time, and cannot be edited or deleted. The check compares each member\'s balance with the total of their ledger. A difference means points moved without a record. Run it any time.</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" id="lgRun">Run the ledger check</button><button class="btn btn-ghost" id="lgCsv">Download ledger (CSV)</button><button class="btn btn-ghost" id="lgPkg">Download hand-off package (zip)</button></div>' +
+      '<div id="lgOut" style="margin-top:12px;"></div></div>';
+    var out = document.getElementById('lgOut');
+    function run() {
+      out.innerHTML = '<div class="row-sub">Checking…</div>';
+      return ledgerLoad().then(function(d){
+        var rows = ledgerRows(d), chk = ledgerCheck(d), bad = chk.filter(function(c){ return c.diff !== 0; });
+        out.innerHTML = '<div class="row-card"><div class="row-title">' + rows.length + ' transactions · ' + chk.length + ' members · ' + (bad.length ? '<span style="color:#ff9a9a;">' + bad.length + ' do not match</span>' : '<span style="color:#7be3a6;">all match</span>') + '</div></div>' +
+          bad.map(function(c){ return '<div class="row-card"><div class="row-title">' + escapeHtml(c.name) + '</div><div class="row-sub">Balance ' + c.balance + ' · ledger total ' + c.ledger + ' · difference ' + (c.diff > 0 ? '+' : '') + c.diff + '</div></div>'; }).join('') +
+          (bad.length ? '<div class="row-sub" style="margin:10px 0;">Members created before the ledger existed will show a difference. "Record opening balances" writes one clearly labelled <b>opening</b> entry for each difference, so from then on the ledger explains every point. Only do this once, after you have looked at the list above.</div><button class="btn btn-ghost" id="lgOpen">Record opening balances</button>' : '');
+        var ob = document.getElementById('lgOpen');
+        if (ob) ob.addEventListener('click', function(){
+          if (!confirm('Write an opening-balance entry for ' + bad.length + ' member(s)? This is permanent and cannot be edited.')) return;
+          ob.disabled = true;
+          Promise.all(bad.map(function(c){ return txLog(c.mk, 'opening-' + Date.now(), 'opening', c.diff, 'Opening balance before the ledger started (recorded by the owner)'); })).then(run);
+        });
+      }).catch(function(){ out.innerHTML = '<div class="empty-note">Could not load the ledger. Check your connection (and that the database rules were deployed).</div>'; });
+    }
+    document.getElementById('lgRun').addEventListener('click', run);
+    document.getElementById('lgCsv').addEventListener('click', function(){
+      ledgerLoad().then(function(d){ var r = ledgerRows(d); if (!r.length) { showToast('No transactions yet'); return; } downloadBlob('lvr-ledger-' + new Date().toISOString().slice(0, 10) + '.csv', new Blob([csvText(r)], { type: 'text/csv' })); }).catch(function(){ showToast('Could not load the ledger'); });
+    });
+    document.getElementById('lgPkg').addEventListener('click', function(){
+      var btn = this; btn.disabled = true; out.innerHTML = '<div class="row-sub">Preparing the package…</div>';
+      Promise.all([ledgerLoad(), fbGet(RECEIPTS_PATH), loadJsZip()]).then(function(r){
+        var d = r[0], rc = r[1] || {}, JSZip = r[2], zip = new JSZip(), chk = ledgerCheck(d);
+        zip.file('ledger-transactions.csv', csvText(ledgerRows(d)) || 'no transactions yet\n');
+        zip.file('members-and-balances.csv', csvText(chk.map(function(c){ var m = d.members[c.mk] || {}; return { member: c.name, memberKey: c.mk, instagram: m.instagram || '', balance: c.balance, ledgerTotal: c.ledger, difference: c.diff }; })) || 'no members\n');
+        zip.file('receipts.csv', csvText(Object.keys(rc).map(function(id){ var x = rc[id]; return { receiptId: id, restaurant: bizOf(x.slug), memberKey: x.memberKey, receiptNo: x.receiptNo, receiptDate: x.receiptDate, amount: x.amount, status: x.status, pointsAwarded: x.pointsAwarded || 0, submitted: x.submittedAt ? new Date(x.submittedAt).toISOString() : '', decided: x.decidedAt ? new Date(x.decidedAt).toISOString() : '' }; })) || 'no receipts\n');
+        zip.file('README.txt', ['LVR POINTS RECORDS - HAND-OFF PACKAGE', 'Created: ' + new Date().toISOString(), '', 'What this is: a complete record of the LVR Points program (Las Vegas Restaurants, @LasVegas_Restaurants), built by Key Technologies.si.', '', 'ledger-transactions.csv  Every point movement (sign-up bonus, free spin, approved receipt, referral, manual bonus, redemption, opening balance), oldest first, with the server time it was written. Entries cannot be edited or deleted once written.', 'members-and-balances.csv  Each member, the points balance, the total of that member\'s ledger and the difference. Zero difference means every point is explained by a transaction. Opening-balance entries mark points that existed before the ledger started.', 'receipts.csv  Every receipt submitted, who/where/how much, and whether points were awarded. Receipt photos are exported separately from the Audit tab (Download package).', '', 'How to verify: for any member, add up their rows in ledger-transactions.csv. It should equal the balance in members-and-balances.csv.', 'Rules of the game (version history): the Spin Terms page, spin-terms.html on the Key Technologies site, lists the terms and the version date each spin agreed to. Points are worth $1 toward a free restaurant offer and cannot be exchanged for cash.', 'Contact for questions: @LasVegas_Restaurants on Instagram.'].join('\n'));
+        return zip.generateAsync({ type: 'blob' }).then(function(blob){ downloadBlob('lvr-handoff-package-' + new Date().toISOString().slice(0, 10) + '.zip', blob); out.innerHTML = '<div class="row-sub">Done - saved to your downloads. Counts: ' + ledgerRows(d).length + ' transactions, ' + chk.length + ' members, ' + Object.keys(rc).length + ' receipts.</div>'; });
+      }).catch(function(e){ out.innerHTML = '<div class="empty-note">Could not build the package: ' + escapeHtml(e.message || 'error') + '</div>'; }).then(function(){ btn.disabled = false; });
+    });
   }
 
   // ========================================================================
@@ -1114,7 +1193,7 @@
         '<div class="field"><label>Restaurant portal PIN (for them to view/export their own redemptions)</label><input type="text" id="fRestPin" value="' + escapeHtml(isEdit ? (rest.pin || '') : '') + '" placeholder="e.g. 4 digits"></div>' +
         '<div class="field"><label>Item name</label><input type="text" id="fItemName" value="' + escapeHtml(item ? item.itemName : '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Point cost (1 point = $1, so this is the offer's worth. At least 15)</label><input type="number" id="fPointCost" min="15" value="' + (item ? item.pointCost : 15) + '"></div>' +
+          '<div class="field"><label>Point cost (1 point = $1, so this is what the offer is worth, at least 15)</label><input type="number" id="fPointCost" min="15" value="' + (item ? item.pointCost : 15) + '"></div>' +
           '<div class="field"><label>Max redemptions (required)</label><input type="number" id="fMaxRedemptions" min="1" value="' + (item && item.maxRedemptions ? item.maxRedemptions : 50) + '"></div>' +
         '</div>' +
         '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
