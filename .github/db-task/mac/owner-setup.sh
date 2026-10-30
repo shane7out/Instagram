@@ -32,12 +32,25 @@ async function report() { try { await fetch(DB + '/_debug/ownersetup.json', { me
   if (!TOKEN) { log('No gcloud login found - nothing changed.'); return report(); }
   const H = { Authorization: 'Bearer ' + TOKEN, 'x-goog-user-project': PROJECT, 'Content-Type': 'application/json' };
   const call = async (method, url, body, headers) => { try { const r = await fetch(url, { method, headers: headers || H, body: body ? JSON.stringify(body) : undefined }); const t = await r.text(); let j = null; try { j = JSON.parse(t); } catch (e) {} return { s: r.status, j, t }; } catch (e) { return { s: 0, j: null, t: String(e) }; } };
-  // 1. make sure sign-in is set up and email+password is on
+  // 1. try to turn on email + password sign-in by script. On the free plan this is refused (the script API needs billing),
+  //    so the fallback is one click in the Firebase console.
   let r = await call('POST', `https://identitytoolkit.googleapis.com/v2/projects/${PROJECT}/identityPlatform:initializeAuth`, {});
-  log('Set up sign-in service -> HTTP ' + r.s + (r.s === 200 ? '' : ' (' + mask((r.j && r.j.error && r.j.error.message) || r.t).slice(0, 120) + ')'));
-  r = await call('PATCH', `https://identitytoolkit.googleapis.com/admin/v2/projects/${PROJECT}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`, { signIn: { email: { enabled: true, passwordRequired: true } } });
-  log('Turn on email + password sign-in -> HTTP ' + r.s + (r.s === 200 ? '' : ' (' + mask((r.j && r.j.error && r.j.error.message) || r.t).slice(0, 160) + ')'));
-  if (r.s !== 200) { log('Could not turn on sign-in, so I stopped. Nothing else changed.'); return report(); }
+  const needsBilling = r.s === 400 && /BILLING_NOT_ENABLED/.test(JSON.stringify(r.j || r.t));
+  log('Set up sign-in service by script -> HTTP ' + r.s + (r.s === 200 ? '' : needsBilling ? ' (needs the paid plan; using the free console route instead)' : ' (' + mask((r.j && r.j.error && r.j.error.message) || r.t).slice(0, 120) + ')'));
+  let viaApi = false;
+  if (!needsBilling) {
+    r = await call('PATCH', `https://identitytoolkit.googleapis.com/admin/v2/projects/${PROJECT}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`, { signIn: { email: { enabled: true, passwordRequired: true } } });
+    log('Turn on email + password sign-in -> HTTP ' + r.s + (r.s === 200 ? '' : ' (' + mask((r.j && r.j.error && r.j.error.message) || r.t).slice(0, 160) + ')'));
+    viaApi = r.s === 200;
+  }
+  if (!viaApi) {
+    console.log('\n==== ONE QUICK STEP IN YOUR BROWSER (free, about 1 minute) ====');
+    console.log('1. Open https://console.firebase.google.com/project/' + PROJECT + '/authentication');
+    console.log('2. If you see "Get started", click it.');
+    console.log('3. Click the "Sign-in method" tab, click "Email/Password", switch on the FIRST switch (Email/Password), and click Save.');
+    console.log('   (Leave "Email link" off. You do NOT need to add a user there: this script makes your owner account.)');
+    ask('When that is saved, press Return here to continue: ', false);
+  }
   // 2. the project's public web key
   let KEY = '';
   r = await call('GET', `https://firebase.googleapis.com/v1beta1/projects/${PROJECT}/webApps`);
@@ -59,13 +72,18 @@ async function report() { try { await fetch(DB + '/_debug/ownersetup.json', { me
   const pw2 = ask('Type it again: ', true);
   if (pw !== pw2 || pw.length < 12 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { log('The email or password did not match the rules (12+ characters, typed twice). Nothing changed.'); return report(); }
   const idt = 'https://identitytoolkit.googleapis.com/v1/accounts';
-  let su = await call('POST', `${idt}:signUp?key=${KEY}`, { email, password: pw, returnSecureToken: true }, { 'Content-Type': 'application/json' });
+  let su = await call('POST', `${idt}:signInWithPassword?key=${KEY}`, { email, password: pw, returnSecureToken: true }, { 'Content-Type': 'application/json' });
   let uid = su.j && su.j.localId;
-  if (!uid && su.j && su.j.error && /EMAIL_EXISTS/.test(su.j.error.message || '')) {
-    su = await call('POST', `${idt}:signInWithPassword?key=${KEY}`, { email, password: pw, returnSecureToken: true }, { 'Content-Type': 'application/json' });
-    uid = su.j && su.j.localId; log('That owner account already existed; signed in with it -> HTTP ' + su.s);
-  } else log('Create owner account -> HTTP ' + su.s + (uid ? '' : ' (' + mask((su.j && su.j.error && su.j.error.message) || su.t).slice(0, 120) + ')'));
-  if (!uid) { log('Could not create or sign in the owner account. Nothing else changed.'); return report(); }
+  if (uid) log('Signed in with your existing owner account -> HTTP ' + su.s);
+  else {
+    const em = (su.j && su.j.error && su.j.error.message) || '';
+    if (/INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS/.test(em) && !/EMAIL_NOT_FOUND/.test(em)) { /* could be a wrong password for an existing account, or no account yet: try to create */ }
+    su = await call('POST', `${idt}:signUp?key=${KEY}`, { email, password: pw, returnSecureToken: true }, { 'Content-Type': 'application/json' });
+    uid = su.j && su.j.localId;
+    log('Create owner account -> HTTP ' + su.s + (uid ? '' : ' (' + mask((su.j && su.j.error && su.j.error.message) || su.t).slice(0, 140) + ')'));
+    if (!uid && su.j && su.j.error && /EMAIL_EXISTS/.test(su.j.error.message || '')) log('That email already has an account but the password did not match. Run the script again with the right password.');
+    if (!uid && su.j && su.j.error && /OPERATION_NOT_ALLOWED|CONFIGURATION_NOT_FOUND/.test(su.j.error.message || '')) log('Email/Password sign-in is not switched on yet (the browser step). Switch it on, then run this script again.');
+  }
   // 4. close public sign-ups
   r = await call('PATCH', `https://identitytoolkit.googleapis.com/admin/v2/projects/${PROJECT}/config?updateMask=client.permissions.disabledUserSignup`, { client: { permissions: { disabledUserSignup: true } } });
   log('Close public sign-ups -> HTTP ' + r.s + (r.s === 200 ? '' : ' (' + mask((r.j && r.j.error && r.j.error.message) || r.t).slice(0, 120) + ') - not critical, rules only trust your owner id'));

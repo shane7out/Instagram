@@ -1,6 +1,7 @@
 #!/bin/bash
-# read-only: show what owner-setup.sh left behind (emails masked, key shortened)
+# cleanup of a harmless probe key left by a live check, then the rules simulators (nothing else touches the real database)
 DB=https://lvr-data-a60c1-default-rtdb.firebaseio.com
-echo "===== _debug/ownersetup ====="
-curl -s "$DB/_debug/ownersetup.json" | sed -E 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/[EMAIL]/g' | sed 's/\\n/\n/g'
-echo; echo "ownerAuth/apiKey stored: $(curl -s $DB/ownerAuth/apiKey.json | cut -c1-6)..."
+echo "cleanup zz_probe -> $(curl -s -o /dev/null -w '%{http_code}' -X DELETE $DB/lvr_points/settings/zz_probe.json)"
+bash .github/db-task/rules/run-rules-test.sh
+echo "=============== STAGED OWNER-ONLY RULES ==============="
+bash .github/db-task/rules/run-owner-rules-test.sh
