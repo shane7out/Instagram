@@ -372,7 +372,7 @@
   .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
   .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
   .decay-note,.rules-dd{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:var(--ink-dim);font-size:14px;line-height:1.5;border-radius:12px;padding:0 14px;margin:0 0 16px;} .decay-note summary,.rules-dd summary{cursor:pointer;padding:12px 0;color:#ffe08a;min-height:24px;} .decay-note summary b,.rules-dd summary b{color:#ffd35c;} .decay-body{padding:0 0 12px;} .decay-body b{color:var(--ink);}
-  .live-demo-row{display:flex;justify-content:flex-end;margin:0 0 12px;} .live-demo{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,#ffd35c,#ffb020);color:#2a1d00;font-weight:800;font-size:14.5px;text-decoration:none;border:0;box-shadow:0 2px 14px rgba(255,211,92,.35);} .live-demo:hover{filter:brightness(1.06);} .live-demo.alt{background:rgba(89,181,255,.16);color:#bfe3ff;box-shadow:none;border:1px solid rgba(89,181,255,.55);} .live-demo .dot{width:9px;height:9px;border-radius:50%;background:#e11d48;box-shadow:0 0 0 0 rgba(225,29,72,.7);animation:ldp 1.6s infinite;} @keyframes ldp{70%{box-shadow:0 0 0 8px rgba(225,29,72,0);}100%{box-shadow:0 0 0 0 rgba(225,29,72,0);}} @media (prefers-reduced-motion:reduce){.live-demo .dot{animation:none;}}
+  .live-demo-row{display:flex;justify-content:flex-end;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;} .live-demo{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,#ffd35c,#ffb020);color:#2a1d00;font-weight:800;font-size:14.5px;text-decoration:none;border:0;box-shadow:0 2px 14px rgba(255,211,92,.35);} .live-demo:hover{filter:brightness(1.06);} .live-demo.alt{background:rgba(89,181,255,.16);color:#bfe3ff;box-shadow:none;border:1px solid rgba(89,181,255,.55);} .live-demo .dot{width:9px;height:9px;border-radius:50%;background:#e11d48;box-shadow:0 0 0 0 rgba(225,29,72,.7);animation:ldp 1.6s infinite;} @keyframes ldp{70%{box-shadow:0 0 0 8px rgba(225,29,72,0);}100%{box-shadow:0 0 0 0 rgba(225,29,72,0);}} @media (prefers-reduced-motion:reduce){.live-demo .dot{animation:none;}}
   .r1-list{list-style:none;margin:0;padding:0;display:grid;gap:4px;} .r1-row{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04);font-size:15px;} .r1-row.me{background:rgba(89,181,255,.16);outline:1px solid rgba(89,181,255,.5);} .r1-n{min-width:30px;font-weight:800;color:#ffd35c;text-align:center;} .r1-me{font-size:18px;margin:8px 0;} .pend-tag{display:inline-block;background:rgba(255,211,92,.15);border:1px solid rgba(255,211,92,.5);color:#ffd35c;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;margin-bottom:8px;}
   .terms-notice{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.3);border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--ink-dim);} .terms-notice b{color:#ffd35c;}
   .invite-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:26px 0 8px;}
@@ -512,7 +512,7 @@
   var contentEl = document.getElementById('content');
   (function () {
     var row = document.getElementById('liveDemoRow'); if (!row) return;
-    row.innerHTML = DEMO ? '<a class="live-demo alt" href="rewards.html">Join for real \u203a</a>' : '<a class="live-demo" href="my-account.html?demo=65"><span class="dot" aria-hidden="true"></span>Live demo \u25b6</a>';
+    row.innerHTML = DEMO ? '<button type="button" class="live-demo" id="demoHelpBtn"><span class="dot" aria-hidden="true"></span>How the demo works</button><a class="live-demo alt" href="rewards.html" style="margin-left:8px;">Join for real \u203a</a><div id="demoWatchRes" role="status" style="flex-basis:100%;text-align:right;"></div>' : '<a class="live-demo" href="my-account.html?demo=65"><span class="dot" aria-hidden="true"></span>Live demo \u25b6</a>';
   })();
 
   // A token in the URL (e.g. a link texted to a new device) always wins and
@@ -822,7 +822,15 @@
       '<p>A practice account. Demo points have no value.</p>' +
       '<button type="button" id="demoTry" class="demo-try">🎡 Try the free spin</button>' +
       '<div class="demo-links"><button type="button" data-dview="wait">Waiting view</button><button type="button" data-dview="ready">Ready view</button><button type="button" id="demoWatch">Watch a sample spin</button></div>' +
-      '<div id="demoWatchRes" role="status"></div></div>';
+      '</div>';
+  }
+  // The demo card only opens when the visitor taps "How the demo works" (it is no longer on the page by default)
+  var demoHelpDlg = null;
+  function closeDemoHelp() { if (demoHelpDlg) { demoHelpDlg.close(); demoHelpDlg = null; } }
+  function openDemoHelp() {
+    closeDemoHelp();
+    demoHelpDlg = ownDialog(demoCtlHtml() + '<div class="own-row" style="margin-top:12px;"><button class="own-no" id="demoHelpClose">Close</button></div>');
+    demoHelpDlg.el.querySelector('#demoHelpClose').addEventListener('click', closeDemoHelp);
   }
   document.addEventListener('change', function (e) {
     if (e.target && (e.target.id === 'termsCb' || e.target.id === 'realCb')) { var ob = document.getElementById('chestOpenBtn'), a = document.getElementById('termsCb'), b = document.getElementById('realCb'); if (ob) ob.disabled = modalDemoBusy || !(a && a.checked && b && b.checked); }
@@ -852,14 +860,16 @@
     });
   }
   document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('#demoHelpBtn') && DEMO) { openDemoHelp(); return; }
     var v = e.target.closest && e.target.closest('[data-dview]');
     if (v && DEMO) {
+      closeDemoHelp();
       if (v.getAttribute('data-dview') === 'ready') { var c0 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c0.waitDays * 86400000 - 6 * 3600000 }; }
       else { delete wallet.chestState; wallet.joinedAt = Date.now() - 17 * 60000; }
       ownRerender(); return;
     }
-    if (e.target.closest && e.target.closest('#demoWatch') && DEMO) demoWatchSpin();
-    if (e.target.closest && e.target.closest('#demoTry') && DEMO) { unlockAudio(); var c1 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c1.waitDays * 86400000 - 6 * 3600000 }; ownRerender(); setTimeout(function () { var g = document.getElementById('giftBtn'); if (g) g.click(); }, 80); }
+    if (e.target.closest && e.target.closest('#demoWatch') && DEMO) { closeDemoHelp(); demoWatchSpin(); }
+    if (e.target.closest && e.target.closest('#demoTry') && DEMO) { closeDemoHelp(); unlockAudio(); var c1 = chestCfg(); wallet.chestState = { n: 1, amount: 2, at: Date.now() - c1.waitDays * 86400000 - 6 * 3600000 }; ownRerender(); setTimeout(function () { var g = document.getElementById('giftBtn'); if (g) g.click(); }, 80); }
   });
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
 
@@ -1437,7 +1447,6 @@
       termsNoticeHtml() +
       (OWNER ? ownerBarHtml(removedNames) + (DEMO ? demoBarHtml() : '') : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
-      (DEMO ? demoCtlHtml() : '') +
       noticeHtml() +
       welcomeHtml() +
       '<div class="top-panel">' +
