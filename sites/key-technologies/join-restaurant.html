@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restaurants: Join LVR Points</title>
+<meta name="description" content="Own or run a Las Vegas restaurant? Tell us you are interested in joining LVR Points, the free points promotion from Las Vegas Restaurants. Nothing is agreed until we talk.">
+<meta name="theme-color" content="#07111f">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<script>
+  // Lightweight page-view counter - same as every other page on this site.
+  (function () {
+    try {
+      var page = location.pathname.split("/").pop() || "index.html";
+      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page.replace(/\./g, "_")) + ".json";
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").split(/[?#]/)[0].slice(0, 200), w: window.innerWidth })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root{
+    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
+    --white:#ffffff; --btn-blue:#0f64b2; --btn-blue-hover:#1272cc; --control-line:#637283;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:72px;overflow-x:hidden;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--key-light);}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px;}
+  h1,h2,h3{line-height:1.18;letter-spacing:-0.01em;text-wrap:balance;margin:0;}
+  h2{font-size:clamp(26px,4vw,36px);font-weight:800;}
+  h3{font-size:19px;font-weight:700;}
+  p{margin:0;color:var(--ink-dim);text-wrap:pretty;}
+  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--key-light);}
+  .eyebrow-mark{display:inline-flex;align-items:center;gap:6px;}
+  .eyebrow-mark svg{flex:none;}
+  section{padding-block:56px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .section-head{max-width:640px;margin-bottom:30px;}
+  .section-head p{margin-top:10px;font-size:16.5px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
+    padding:14px 26px;border-radius:9px;cursor:pointer;text-decoration:none;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--btn-blue);color:var(--white);}
+  .btn-primary:hover{background:var(--btn-blue-hover);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
+  .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
+  .btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+  .btn:disabled{opacity:.6;cursor:default;}
+
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .logo svg{display:block;flex:none;filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 11px rgba(22,143,255,.35));}
+  .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
+  .logo-word .logo-si{color:var(--key-light);}
+  @media (max-width:420px){.logo-word{font-size:13.5px;}}
+
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  }
+  .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;}
+  .nav-links{display:flex;align-items:center;gap:22px;list-style:none;margin:0;padding:0;}
+  .nav-links a{color:var(--ink-dim);text-decoration:none;font-size:14.5px;font-weight:600;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+  .account-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--control-line);color:var(--ink-dim);text-decoration:none;flex-shrink:0;}
+  .account-icon:hover{border-color:var(--key-blue);color:var(--key-light);}
+  .account-icon.logged-in{border-color:var(--key-blue);color:var(--key-light);}
+  .burger{
+    display:none;width:40px;height:40px;border-radius:8px;border:1px solid var(--control-line);
+    background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  }
+  .burger span{display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s;}
+  .burger[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg);}
+  .burger[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg);}
+  .mobile-menu{
+    display:none;position:fixed;inset:56px 0 0 0;z-index:49;background:var(--bg);border-top:1px solid var(--line);
+    padding:18px 20px 28px;overflow-y:auto;
+  }
+  .mobile-menu.open{display:block;}
+  .mobile-menu ul{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:2px;}
+  .mobile-menu a{display:block;padding:14px 4px;color:var(--ink);text-decoration:none;font-size:17px;font-weight:600;border-bottom:1px solid var(--line);}
+  @media (max-width:860px){
+    .nav-links, .nav-cta .btn-ghost{display:none;}
+    .burger{display:flex;}
+  }
+
+  .hero{padding-block:52px 40px;border-top:none;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .hero h1{font-size:clamp(32px,5vw,52px);font-weight:800;}
+  .hero h1 .accent{color:var(--key-light);}
+  .hero-sub{margin-top:18px;font-size:19px;max-width:54ch;}
+  .hero-ctas{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;}
+  .hero-ctas .btn{flex:1 1 200px;}
+
+  .lead-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;}
+  .lead-card h2{font-size:20px;}
+  .lead-card .eyebrow{display:block;margin-bottom:6px;}
+  form{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:13px;font-weight:600;color:var(--ink-dim);}
+  input{
+    font-family:inherit;font-size:16px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:12px 13px;width:100%;
+  }
+  input:focus{outline:2px solid var(--key-blue);outline-offset:1px;}
+  .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
+  .req{color:#ff8a7a;margin-left:2px;}
+  .form-status{font-size:14px;margin-top:4px;min-height:18px;}
+  .form-status.ok{color:var(--key-light);}
+  .form-status.err{color:#ff8a7a;}
+
+  .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
+  @media (max-width:800px){.step-grid{grid-template-columns:1fr;}}
+  .step-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px;}
+  .step-num{font-size:13px;font-weight:800;color:var(--key-light);letter-spacing:.08em;}
+  .step-card h3{font-size:17px;}
+  .step-card p{font-size:15px;}
+
+  details{border:1px solid var(--line);border-radius:12px;padding:4px 18px;background:var(--card);margin-bottom:10px;}
+  summary{padding:16px 0;font-weight:700;font-size:16px;cursor:pointer;list-style:none;position:relative;padding-right:26px;}
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:'+';position:absolute;right:0;top:14px;color:var(--key-light);font-size:20px;font-weight:400;transition:transform .2s;}
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{padding-bottom:16px;font-size:15px;}
+
+  .cta-band{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;padding-block:48px;}
+  .cta-band h2{margin-bottom:10px;}
+  .cta-band p{max-width:52ch;margin:0 auto 22px;font-size:16.5px;}
+
+  footer{padding-block:40px;text-align:center;}
+  footer .logo{justify-content:center;margin-bottom:14px;}
+  .foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:16px 0;list-style:none;padding:0;}
+  .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
+  .foot-links a:hover{color:var(--ink);}
+  .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
+
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:100;}
+  .skip-link:focus{left:0;}
+
+  /* ---- additions for this page ---- */
+  .page-hero{padding-block:44px 28px;border-top:none;}
+  .page-hero h1{font-size:clamp(30px,5vw,46px);font-weight:800;}
+  .page-hero h1 .accent{color:var(--key-light);}
+  .page-hero .hero-sub{margin-top:16px;font-size:18px;max-width:56ch;}
+  .join-wrap{max-width:640px;}
+  .how-list{margin:0 0 22px;padding-left:22px;color:var(--ink-dim);display:grid;gap:10px;}
+  .how-list li{padding-left:4px;}
+  .how-list b{color:var(--ink);}
+  .lead-card h2{font-size:22px;}
+  select,textarea{
+    font-family:inherit;font-size:16px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;padding:12px 13px;width:100%;
+  }
+  select:focus,textarea:focus,input:focus-visible{outline:2px solid var(--key-light);outline-offset:1px;}
+  textarea{min-height:110px;resize:vertical;line-height:1.45;}
+  .opt{color:var(--ink-dim);font-weight:400;margin-left:4px;}
+  .count{font-size:12.5px;color:var(--ink-dim);text-align:right;}
+  .check{display:flex;gap:12px;align-items:flex-start;margin-top:4px;}
+  .check input{width:22px;height:22px;flex:none;margin:2px 0 0;padding:0;accent-color:var(--btn-blue);}
+  .check label{font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:400;}
+  .field [aria-invalid="true"]{border-color:#ff8a7a;}
+  .hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+  .dm-line{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);font-size:15px;}
+  .thanks h2{margin-bottom:10px;}
+  .thanks h2:focus{outline:none;}
+  .thanks p{font-size:16.5px;}
+  .thanks p + p{margin-top:10px;}
+  .btn[type=submit]{width:100%;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap nav-row">
+    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="rewards.html">LVR Points</a></li>
+        <li><a href="index.html">Key Technologies</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="rewards.html">LVR Points</a>
+      <button class="burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="rewards.html">LVR Points</a></li>
+    <li><a href="index.html">&larr; Back to Key Technologies</a></li>
+  </ul>
+  <a class="btn btn-primary" style="width:100%" href="#join">Tell us about your restaurant</a>
+</div>
+
+<main id="main">
+
+  <section class="page-hero wrap">
+    <div class="join-wrap">
+      <p class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>For restaurants</p>
+      <h1 style="margin-top:14px;">Restaurants: <span class="accent">join LVR Points</span></h1>
+      <p class="hero-sub">LVR Points is a free points promotion from Las Vegas Restaurants. Members earn points from their receipts and trade them for free offers at participating restaurants. If you run a restaurant and would like to be part of it, tell us a little about you below.</p>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:8px;border-top:none;">
+    <div class="join-wrap">
+      <h2 style="font-size:20px;margin-bottom:14px;">How it works for a restaurant</h2>
+      <ul class="how-list">
+        <li><b>You choose the free offer.</b> Every offer is worth at least $15 (15 points).</li>
+        <li><b>Members send in receipts</b>, so you see real customers.</li>
+        <li><b>You show up</b> on the Las Vegas Restaurants Instagram and in the LVR Points app.</li>
+      </ul>
+
+      <div class="lead-card" id="join">
+        <span class="eyebrow">Interest form</span>
+        <h2>Bring your restaurant into LVR Points</h2>
+        <form id="joinForm" novalidate>
+          <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required. This only tells us you are interested. It is not a sign-up or a contract.</p>
+          <div class="field">
+            <label for="j-restaurant">Restaurant name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-restaurant" name="restaurant" type="text" autocomplete="organization" required>
+          </div>
+          <div class="field">
+            <label for="j-name">Your name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="j-role">Your role</label>
+            <select id="j-role" name="role">
+              <option value="">Choose one</option>
+              <option>Owner</option>
+              <option>Manager</option>
+              <option>Marketing</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="j-email">Email <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="j-phone">Phone <span class="opt">(optional)</span></label>
+            <input id="j-phone" name="phone" type="tel" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="j-ig">Restaurant Instagram handle <span class="opt">(optional)</span></label>
+            <input id="j-ig" name="instagram" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourrestaurant">
+          </div>
+          <div class="field">
+            <label for="j-area">Neighborhood or address <span class="opt">(optional)</span></label>
+            <input id="j-area" name="area" type="text" autocomplete="street-address">
+          </div>
+          <div class="field">
+            <label for="j-msg">Anything you want us to know? <span class="opt">(optional)</span></label>
+            <textarea id="j-msg" name="message" maxlength="600" aria-describedby="j-count"></textarea>
+            <div class="count" id="j-count" aria-live="off">0 / 600</div>
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label for="j-website">Leave this field empty</label>
+            <input id="j-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="check">
+            <input id="j-agree" name="agree" type="checkbox" required>
+            <label for="j-agree">I am allowed to speak for this restaurant and I understand LVR Points is a free promotion, that offers are funded and honored by the restaurant, and that nothing is agreed until we talk. <span class="req" aria-hidden="true">*</span></label>
+          </div>
+          <button class="btn btn-primary" type="submit" id="j-btn">Send my interest</button>
+          <p class="form-status" id="j-status" role="status"></p>
+        </form>
+
+        <p class="dm-line">Prefer Instagram? Send a DM to <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+    <ul class="foot-links">
+      <li><a href="rewards.html">LVR Points</a></li>
+      <li><a href="index.html">Key Technologies</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="foot-fine">LVR Points is run by Las Vegas Restaurants and was built by Key Technologies.si — <a href="index.html#contact">we build systems like this for businesses</a>.</p>
+    <p class="foot-fine">&copy; <span id="year"></span> Key Technologies. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var LEADS_URL = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_leads/leads.json";
+  var FORMSPREE_URL = "https://formspree.io/f/mzeedbyb";
+
+  var burger = document.getElementById("burgerBtn");
+  var menu = document.getElementById("mobileMenu");
+  function closeMenu(){
+    menu.classList.remove("open");
+    burger.setAttribute("aria-expanded","false");
+    burger.setAttribute("aria-label","Open menu");
+  }
+  function openMenu(){
+    menu.classList.add("open");
+    burger.setAttribute("aria-expanded","true");
+    burger.setAttribute("aria-label","Close menu");
+  }
+  burger.addEventListener("click", function(){
+    if(menu.classList.contains("open")) closeMenu(); else openMenu();
+  });
+  menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeMenu); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeMenu(); });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  var form = document.getElementById("joinForm");
+  var st = document.getElementById("j-status");
+  var btn = document.getElementById("j-btn");
+  var msg = document.getElementById("j-msg");
+  var count = document.getElementById("j-count");
+  function $(id){ return document.getElementById(id); }
+  function updateCount(){ count.textContent = msg.value.length + " / 600"; }
+  msg.addEventListener("input", updateCount);
+
+  function fail(text, field){
+    st.textContent = text; st.className = "form-status err";
+    Array.prototype.forEach.call(form.querySelectorAll("[aria-invalid]"), function(el){ el.removeAttribute("aria-invalid"); });
+    if (field) { field.setAttribute("aria-invalid", "true"); field.focus(); }
+  }
+
+  function thanks(){
+    var card = $("join");
+    card.innerHTML = '<div class="thanks"><span class="eyebrow">Thank you</span><h2 id="thanksTitle" tabindex="-1">Thanks, we will contact you soon.</h2>' +
+      '<div role="status"><p>Nothing is agreed until we talk.</p></div>' +
+      '<p class="dm-line">Want to say hello sooner? Send a DM to <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a></p></div>';
+    var t = $("thanksTitle"); if (t) t.focus();
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var restaurant = $("j-restaurant").value.trim();
+    var name = $("j-name").value.trim();
+    var email = $("j-email").value.trim();
+    if (!restaurant) { fail("Please enter your restaurant name.", $("j-restaurant")); return; }
+    if (!name) { fail("Please enter your name.", $("j-name")); return; }
+    if (!email) { fail("Please enter your email.", $("j-email")); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fail("Please enter a valid email.", $("j-email")); return; }
+    if (!$("j-agree").checked) { fail("Please tick the box to confirm before sending.", $("j-agree")); return; }
+
+    // Honeypot: real people never see this field. Pretend success, send nothing.
+    if ($("j-website").value) { thanks(); return; }
+
+    var data = {
+      source: "lvr-restaurant-join",
+      name: name,
+      email: email,
+      phone: $("j-phone").value.trim(),
+      restaurant: restaurant,
+      role: $("j-role").value,
+      instagram: $("j-ig").value.trim(),
+      area: $("j-area").value.trim(),
+      message: msg.value.trim().slice(0, 600),
+      createdAt: {".sv": "timestamp"},
+      landingPage: location.pathname
+    };
+    Array.prototype.forEach.call(form.querySelectorAll("[aria-invalid]"), function(el){ el.removeAttribute("aria-invalid"); });
+    btn.disabled = true;
+    st.textContent = "Sending…"; st.className = "form-status";
+    fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) }).then(function(r){
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      var mail = { _subject: "New restaurant wants to join LVR Points" };
+      for (var k in data) mail[k] = data[k];
+      fetch(FORMSPREE_URL, { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify(mail) }).catch(function(){});
+      thanks();
+    }).catch(function(){
+      st.textContent = "Something went wrong. Please try again, or send us a DM on Instagram.";
+      st.className = "form-status err";
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+<script>window.HNAV_HOME="index.html";</script>
+<!--HNAV-START-->
+<style id="hnav-css">
+  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#07111f;pointer-events:none;}
+  #hnav .hn-btn{pointer-events:auto;position:relative;width:26px;height:26px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#d6e6f7;display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
+  #hnav .hn-btn::before{content:"";position:absolute;inset:-9px;}
+  #hnav .hn-btn:hover{background:rgba(89,181,255,.22);border-color:#59b5ff;color:#fff;}
+  #hnav .hn-btn:active{transform:scale(.92);}
+  #hnav .hn-btn:focus-visible{outline:2px solid #59b5ff;outline-offset:2px;}
+  #hnav .hn-btn:disabled{opacity:.3;cursor:default;pointer-events:none;}
+  #hnav svg{display:block;}
+  body.hnav-on{padding-top:34px !important;}
+  body.hnav-on header{top:34px !important;}
+  body.hnav-on .vname{top:34px !important;}
+  body.hnav-on .mini-bal{top:91px !important;}
+  body.hnav-on .mobile-menu{inset:90px 0 0 0 !important;}
+  @media print{#hnav{display:none !important;} body.hnav-on{padding-top:0 !important;}}
+</style>
+<script>
+(function () {
+  // Slim Back / Forward arrows pinned to the top-left of the page. Inside a preview frame they are shown
+  // but switched off (going "back" there would move the page that contains the preview).
+  var framed = false; try { framed = window.top !== window.self; } catch (e) { framed = true; }
+  if (document.getElementById('hnav')) return;
+  var HOME = window.HNAV_HOME || '';
+  function arrow(d) { return '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; }
+  function mk(label, d) { var b = document.createElement('button'); b.type = 'button'; b.className = 'hn-btn'; b.setAttribute('aria-label', label); b.title = label; b.innerHTML = arrow(d); return b; }
+  var bar = document.createElement('div'); bar.id = 'hnav'; bar.setAttribute('role', 'navigation'); bar.setAttribute('aria-label', 'Back and forward');
+  var back = mk('Go back', 'M15 5l-7 7 7 7'), fwd = mk('Go forward', 'M9 5l7 7-7 7');
+  bar.appendChild(back); bar.appendChild(fwd);
+  function update() {
+    if (framed) { back.disabled = true; fwd.disabled = true; return; }
+    back.disabled = !(history.length > 1 || HOME);
+    var cf = (window.navigation && typeof window.navigation.canGoForward === 'boolean') ? window.navigation.canGoForward : null;
+    fwd.disabled = cf === false;
+  }
+  back.addEventListener('click', function () { if (history.length > 1) history.back(); else if (HOME) location.href = HOME; });
+  fwd.addEventListener('click', function () { history.forward(); });
+  document.body.insertBefore(bar, document.body.firstChild);
+  document.body.classList.add('hnav-on');
+  window.addEventListener('pageshow', update); update();
+})();
+</script>
+<!--HNAV-END-->
+</body>
+</html>

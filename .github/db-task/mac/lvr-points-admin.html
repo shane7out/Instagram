@@ -805,6 +805,10 @@
         '<div class="field"><label>New members are safe for (days)</label><input type="number" id="sDecGrace" min="0" max="365" step="1" value="' + ((settings.decay || {}).graceDays == null ? 30 : settings.decay.graceDays) + '"></div></div>' +
         '<div class="form-actions"><button class="btn" id="sDecPreview">Preview this month\'s return (changes nothing)</button><button class="btn" id="sDecRun" style="border-color:var(--red);color:var(--red);">Run this month\'s return now</button></div>' +
         '<p class="row-sub" id="sDecOut" role="status" style="margin-top:8px;"></p>' +
+        '<div style="font-weight:800;margin:16px 0 6px;">Hand the pool out at random</div>' +
+        '<div class="row-sub" style="margin-bottom:10px;">After the return, the pool is handed out at random to other approved members, a few points at a time (the same range as the free spin), the way the points were first given out. Members whose points went back this month are not in that month\'s draw. You do not choose anyone: a secure random number generator picks the members and the amounts, and every drop is written to the permanent ledger. Once per month. Whatever is left over stays in the pool.</div>' +
+        '<div class="form-actions"><button class="btn" id="sDropPreview">Preview the pool drop (changes nothing)</button><button class="btn" id="sDropRun" style="border-color:var(--red);color:var(--red);">Hand out the pool now</button></div>' +
+        '<p class="row-sub" id="sDropOut" role="status" style="margin-top:8px;"></p>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Instagram tag bonus</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">Members post on Instagram, tag @LasVegas_Restaurants, and paste the link. You check it in the Tags tab and the points are added. <b style="color:var(--yellow);">Leave this OFF until the database rules are deployed and your attorney has approved the #ad wording.</b></div>' +
@@ -928,6 +932,53 @@
     }
     document.getElementById('sDecPreview').addEventListener('click', function(){ runReturn(true); });
     document.getElementById('sDecRun').addEventListener('click', function(){ runReturn(false); });
+    // Pool drop: the returned points are handed out at random (secure random generator), one record per member per month.
+    function rnd(n) { var c = window.crypto, lim = Math.floor(4294967296 / n) * n, b = new Uint32Array(1); do { c.getRandomValues(b); } while (b[0] >= lim); return b[0] % n; }
+    function monthKey() {
+      var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit' }).formatToParts(new Date());
+      return parts.filter(function(x){ return x.type === 'year'; })[0].value + '-' + parts.filter(function(x){ return x.type === 'month'; })[0].value;
+    }
+    function runDrop(dry) {
+      var out = document.getElementById('sDropOut'), run = monthKey();
+      var ch = Object.assign({ prizeMin: 1, prizeMax: 10 }, settings.chest || {}), mn = Math.max(1, Number(ch.prizeMin) || 1), mx = Math.max(mn, Math.min(50, Number(ch.prizeMax) || 10));
+      out.textContent = 'Reading the pool and members…';
+      return Promise.all([fbGet('/lvr_points/pool/total'), fbGet(MEMBERS_PATH), fbGet('/lvr_points/decay_by_member'), fbGet('/lvr_points/pool_drop_runs/' + run)]).then(function(x){
+        var pool = Number(x[0]) || 0, all = x[1] || {}, gave = x[2] || {}, already = x[3];
+        if (already) { out.textContent = 'The pool was already handed out for ' + run + ' (' + already.points + ' points to ' + already.members + ' members).'; return; }
+        if (pool < 1) { out.textContent = 'The pool is empty. Run the monthly return first.'; return; }
+        var eligible = Object.keys(all).filter(function(k){ var m = all[k] || {}; return m.status !== 'pending' && m.status !== 'rejected' && !(gave[k] && gave[k][run]); });
+        if (!eligible.length) { out.textContent = 'No eligible members this month.'; return; }
+        for (var i = eligible.length - 1; i > 0; i--) { var j = rnd(i + 1), t = eligible[i]; eligible[i] = eligible[j]; eligible[j] = t; } // random order
+        var left = pool, plan = [];
+        eligible.forEach(function(k){ if (left < 1) return; var amt = Math.min(mn + rnd(mx - mn + 1), left); plan.push({ k: k, amt: amt }); left -= amt; });
+        var given = pool - left;
+        if (dry) { out.textContent = 'Preview for ' + run + ': pool ' + pool + ' points. It would go to ' + plan.length + ' of ' + eligible.length + ' eligible members, ' + mn + ' to ' + mx + ' points each (' + given + ' points in total); ' + left + ' would stay in the pool. The real run draws again, so the exact people will differ. Nothing was changed.'; return; }
+        if (!confirm('Hand out ' + given + ' points of the pool at random to ' + plan.length + ' members now (month ' + run + ')?')) { out.textContent = ''; return; }
+        var done = 0, total = 0, failed = 0, skipped = 0;
+        return plan.reduce(function(chain, it){
+          return chain.then(function(){
+            var enc = encodeURIComponent(it.k);
+            return fbPut('/lvr_points/pool_drops/' + enc + '/' + run, { amount: it.amt, at: { '.sv': 'timestamp' } }).then(function(c){
+              if (!c.ok) { skipped++; return; }
+              return fbPut('/lvr_points/pool/total', { '.sv': { increment: -it.amt } }).then(function(d){
+                if (!d.ok) { failed++; return; }
+                return fbPut(MEMBERS_PATH + '/' + enc + '/points', { '.sv': { increment: it.amt } }).then(function(e){
+                  if (!e.ok) return fbPut(MEMBERS_PATH + '/' + enc + '/points', { '.sv': { increment: it.amt } }); return e;
+                }).then(function(e){
+                  if (!e.ok) { failed++; return; }
+                  txLog(it.k, 'pooldrop-' + run, 'bonus', it.amt, 'Community pool drop ' + run + ' (handed out at random)'); done++; total += it.amt;
+                });
+              });
+            }).catch(function(){ failed++; }).then(function(){ out.textContent = 'Handing out… ' + (done + skipped + failed) + ' of ' + plan.length; });
+          });
+        }, Promise.resolve()).then(function(){
+          if (!failed) fbPut('/lvr_points/pool_drop_runs/' + run, { members: done, points: total, at: { '.sv': 'timestamp' } }).catch(function(){});
+          out.textContent = 'Done for ' + run + ': ' + total + ' points handed out at random to ' + done + ' members.' + (skipped ? ' ' + skipped + ' were already done.' : '') + (failed ? ' ' + failed + ' failed: check Audit > Ledger before running again.' : '');
+        });
+      }).catch(function(){ out.textContent = 'Something went wrong. Check balances and the pool before trying again.'; });
+    }
+    document.getElementById('sDropPreview').addEventListener('click', function(){ runDrop(true); });
+    document.getElementById('sDropRun').addEventListener('click', function(){ runDrop(false); });
     function balances() {
       return fbGet(MEMBERS_PATH).then(function(all){ all = all || {}; return Object.keys(all).map(function(k){ var m = all[k] || {}; return { key: k, name: m.name || '', instagram: m.instagram || '', points: Number(m.points) || 0 }; }); });
     }

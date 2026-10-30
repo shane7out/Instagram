@@ -238,7 +238,7 @@
       <div>
         <p class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>LVR Points</p>
         <h1 style="margin-top:14px;">Join LVR Points. <span class="accent">Earn free food.</span></h1>
-        <p class="hero-sub">Like your favorite drive-thru app, but for local Las Vegas restaurants. Join free, earn 1 point for every $1 you spend, and trade your points for free food. <b id="welcomeLine"></b><b id="foundLine"></b><span id="shareLine" hidden>It is a points game: <b><span class="decayPct">20</span>% of unused points go back into the game each month for other players to use.</span> </span>No app to download and no password: just a link that's yours.</p>
+        <p class="hero-sub">Like your favorite drive-thru app, but for local Las Vegas restaurants. Join free, earn 1 point for every $1 you spend, and trade your points for free food. <b id="welcomeLine"></b><b id="foundLine"></b><span id="shareLine" hidden>It is a points game: <b>use your points before the 1st. <span class="decayPct">20</span>% of unused points go back into the game each month and are handed out at random to other players.</b> </span>No app to download and no password: just a link that's yours.</p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#signup">Join Free</a>
           <a class="btn btn-ghost" href="#how">See How It Works</a>
@@ -262,10 +262,10 @@
             <label for="r-phone">Phone (optional)</label>
             <input id="r-phone" name="phone" type="tel" autocomplete="tel">
           </div>
-          <details id="decayBox" hidden style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:0 13px;margin:2px 0 12px;font-size:13.5px;line-height:1.45;color:var(--ink-dim);"><summary style="cursor:pointer;padding:11px 0;color:#ffe08a;"><b style="color:#ffd35c;">How the monthly points share works</b> (tap to open or close)</summary><div style="padding:0 0 11px;"><p style="margin:0 0 8px;">LVR Points is a points game, and the game works best when points keep moving. On the <b>1st of every month</b>, <span class="decayPct">20</span>% of the points a player has not used go back into the game, so other players can use them.</p><p style="margin:0 0 8px;"><b>Example:</b> you have 50 points on the 1st. <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your points on a free offer before the 1st, nothing goes back.</p><p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first 30 days.</p></div></details>
+          <details id="decayBox" hidden style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:0 13px;margin:2px 0 12px;font-size:13.5px;line-height:1.45;color:var(--ink-dim);"><summary style="cursor:pointer;padding:11px 0;color:#ffe08a;"><b style="color:#ffd35c;">How the monthly points share works</b> (tap to open or close)</summary><div style="padding:0 0 11px;"><p style="margin:0 0 8px;"><b>Use your points before the 1st.</b> LVR Points is a points game, and the game works best when points keep moving. On the <b>1st of every month</b>, <span class="decayPct">20</span>% of the points a player has not used go back into the game.</p><p style="margin:0 0 8px;">Those points do not disappear. They are <b>handed out at random to other players</b>, a few points at a time, the same way points were first given out to you.</p><p style="margin:0 0 8px;"><b>Example:</b> you have 50 points on the 1st. <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your points on a free offer before the 1st, nothing goes back.</p><p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first 30 days.</p></div></details>
           <label for="r-rules" style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--ink-dim);margin:2px 0 14px;cursor:pointer;">
             <input id="r-rules" type="checkbox" style="margin-top:3px;width:18px;height:18px;flex:none;">
-            <span><b style="color:var(--ink);">I'm in.</b> I am 18 or older. I understand this is a game that gives points for eating at local restaurants. No purchase is necessary. 1 point = $1 toward a free offer at a participating restaurant. Points can only be used for free offers at participating restaurants, not for anything else or for cash. Points are used when I claim an offer and are never refunded. I agree to the <a href="points-terms.html" target="_blank" rel="noopener">LVR Points Program Terms</a>, including that LVR Points is a free promotion that may be paused, changed or ended, and points adjusted or taken back, at any time at its sole discretion, with nothing owed to me. I understand every sign-up is reviewed by hand and points are added only after I am approved, that on the 1st of every month a share of my unused points may go back into the game for other players, and that Round One members are shown on a leaderboard by first name and last initial.</span>
+            <span><b style="color:var(--ink);">I'm in.</b> I am 18 or older. I understand this is a game that gives points for eating at local restaurants. No purchase is necessary. 1 point = $1 toward a free offer at a participating restaurant. Points can only be used for free offers at participating restaurants, not for anything else or for cash. Points are used when I claim an offer and are never refunded. I agree to the <a href="points-terms.html" target="_blank" rel="noopener">LVR Points Program Terms</a>, including that LVR Points is a free promotion that may be paused, changed or ended, and points adjusted or taken back, at any time at its sole discretion, with nothing owed to me. I understand every sign-up is reviewed by hand and points are added only after I am approved, that on the 1st of every month a share of my unused points may go back into the game and be handed out at random to other players, and that Round One members are shown on a leaderboard by first name and last initial.</span>
           </label>
           <button class="btn btn-primary" type="submit" id="signupBtn">Open My Account</button>
           <p class="form-status" id="signupStatus" role="status"></p>
@@ -327,10 +327,10 @@
 
     <details id="decayFaq" hidden>
       <summary>How does the monthly points share work?</summary>
-      <p>LVR Points is a points game. On the 1st of every month, <span class="decayPct">20</span>% of the points a player has
-        not used go back into the game for other players to use. Example: you have 50 points on the 1st,
-        <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your points on a free offer
-        before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first 30 days.</p>
+      <p><b>Use your points before the 1st.</b> LVR Points is a points game. On the 1st of every month, <span class="decayPct">20</span>% of the points a player has
+        not used go back into the game and are handed out at random to other players, a few points at a time, the same way points were first given out.
+        Example: you have 50 points on the 1st, <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your points on a
+        free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first 30 days.</p>
     </details>
 
     <details>
@@ -690,7 +690,7 @@
         points: 0, token: token, refCode: genRefCode(), source: "keytechnologies-rewards-signup",
         joinedAt: {".sv": "timestamp"},
         consent_rules: true, consent_rules_ts: {".sv": "timestamp"},
-        consent_terms: "2026-10-30d" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
+        consent_terms: "2026-10-30e" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
       };
       if (referrerKey) rec.referredBy = referrerKey;
       if (gateRes && gateRes.founding) rec.founding = true;

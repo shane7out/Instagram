@@ -968,7 +968,7 @@
     return infoModal('Spin Terms', html);
   }
   // ---------- monthly return to the community pool ----------
-  var decayLast = null, poolTotal = null;
+  var decayLast = null, poolTotal = null, dropLast = null;
   function decayCfg() {
     var d = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, appSettings.decay || {});
     d.percent = Math.max(1, Math.min(50, Number(d.percent) || 20));
@@ -980,7 +980,8 @@
   // The same plain explanation (with an example) is used in the main-page note, the rules dropdown, the sign-up page and the Q&A.
   function decayHow() {
     var d = decayCfg(), p = d.percent, ex = 50, back = Math.floor(ex * p / 100);
-    return '<p style="margin:0 0 8px;">LVR Points is a points game, and the game works best when points keep moving. On the <b>1st of every month</b>, ' + p + '% of the points a player has not used go back into the game, so other players can use them.</p>' +
+    return '<p style="margin:0 0 8px;"><b>Use your points before the 1st.</b> LVR Points is a points game, and the game works best when points keep moving. On the <b>1st of every month</b>, ' + p + '% of the points a player has not used go back into the game.</p>' +
+      '<p style="margin:0 0 8px;">Those points do not disappear. They are <b>handed out at random to other players</b>, a few points at a time, the same way points were first given out to you. So every month some lucky players get a surprise drop.</p>' +
       '<p style="margin:0 0 8px;"><b>Example:</b> you have ' + ex + ' points on the 1st. ' + back + ' go back into the game and you keep ' + (ex - back) + '. If you spend your points on a free offer before the 1st, nothing goes back.</p>' +
       '<p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first ' + d.graceDays + ' days. Points are rounded down, so a small balance may return nothing.</p>';
   }
@@ -1003,7 +1004,14 @@
     }
     var pool = poolTotal > 0 ? '<div style="margin-top:6px;opacity:.9;">Points back in the game so far: <b>' + poolTotal + '</b>.</div>' : '';
     var closed = false; try { closed = localStorage.getItem('lvrDecayClosed') === '1'; } catch (e) {}
-    return '<details class="decay-note" id="decayNote"' + (closed ? '' : ' open') + '><summary><b>Monthly points share:</b> ' + d.percent + '% of unused points go back into the game</summary><div class="decay-body">' + decayHow() + '<div style="margin-top:10px;">' + line + '</div>' + last + pool + '</div></details>';
+    return '<details class="decay-note" id="decayNote"' + (closed ? '' : ' open') + '><summary><b>Use your points before the 1st.</b> ' + d.percent + '% of unused points go back into the game for other players</summary><div class="decay-body">' + decayHow() + '<div style="margin-top:10px;">' + line + '</div>' + last + pool + '</div></details>';
+  }
+  // A green notice for 10 days after the member received a pool drop
+  function dropNoticeHtml() {
+    if (DEMO || !dropLast) return '';
+    var ks = Object.keys(dropLast).sort(), k = ks[ks.length - 1], r = dropLast[k];
+    if (!r || !r.amount || !r.at || Date.now() - r.at > 10 * 86400000) return '';
+    return '<div class="notice" role="status" style="background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.45);color:#7be3a6;">\u{1F381} <b>Pool drop!</b> You received <b>+' + r.amount + ' points</b> from the community pool. Points that go back into the game are handed out at random to other players.</div>';
   }
   function bindDecay() {
     var n = document.getElementById('decayNote'); if (!n) return;
@@ -1062,14 +1070,14 @@
   }, 30000);
   // The Program Terms: our rights to pause, change, end the program and adjust or take back points.
   // Bump PROGRAM_TERMS_VERSION when the wording changes, and re-run: node .github/db-task/gen-points-terms.js
-  var PROGRAM_TERMS_VERSION = '2026-10-30d', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 4)';
+  var PROGRAM_TERMS_VERSION = '2026-10-30e', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 5)';
   function programTermsList() {
     return [
       ["What LVR Points is", "LVR Points (Las Vegas Restaurant Points) is a free, just-for-fun promotion run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram). We are doing our best to promote it for participating restaurants and to make it a good experience, but it is offered as is and we make no promise that it will be available at any time."],
       ["Points have no cash value", "Points are a promotional perk. They are not money, a deposit, a gift card, stored value, a security or your property. \"1 point = $1\" only describes the discount an offer gives you while the program is running. Points cannot be exchanged for cash, sold or transferred, and nothing is owed to you for a balance."],
       ["Our rights, at our sole discretion", "At any time, with or without notice, for any reason or no reason, we may in our sole discretion: (a) pause, suspend, change or end the program, the free spin, the invite system, any offer or any restaurant; (b) limit, freeze, suspend or close any account; and (c) adjust, cancel, void, reduce, remove or take back any or all points, including points you earned, were given or won. These rights belong to us alone, and our decisions are final."],
       ["Examples of reasons", "Suspected fraud or abuse, fake, duplicate or shared accounts, altered or incorrect receipts, a security incident, hacking or being hacked, a vulnerability, a technical error or a points mistake, a participating restaurant leaving or changing its offer, a legal or regulatory reason, protecting members, restaurants or ourselves, the program ending, or any other reason we decide. These are examples, not a limit on our rights."],
-      ["Monthly points share", "On the 1st of every month, a percentage of each member's unused points (currently 20%, rounded down) goes back into the game for other players to use. For example, with 50 unused points on the 1st, 10 go back and 40 stay. It is not a fee or a charge, and no money is involved. New members are not affected during their first days (currently 30). We may change the percentage and timing, or stop the monthly return, at any time."],
+      ["Monthly points share", "On the 1st of every month, a percentage of each member's unused points (currently 20%, rounded down) goes back into the game. We then hand those points out at random to other approved members, a few points at a time (like the free spin), usually once a month. Nobody chooses who gets them: a random number generator picks the members and the amounts. Members whose points went back that month are not part of that month's draw, and any points left over stay in the pool for a later draw. For example, with 50 unused points on the 1st, 10 go back and 40 stay. It is not a fee or a charge, and no money is involved. New members are not affected during their first days (currently 30). We may change the percentage, the timing or how points are handed out, or stop the monthly share, at any time. Use your points before the 1st."],
       ["Sign-ups are reviewed", "Every sign-up is reviewed by hand. We may approve or decline any sign-up for any reason, including to keep out fake accounts, bots and automated sign-ups. Points, including welcome points, are added only after a sign-up is approved. Round One is limited to the first group of members (currently 25), who are shown on a leaderboard by first name and last initial."],
       ["If the program changes or ends", "If we pause or end the program or take points back, unused points and unused offers may stop working. You are not owed a refund, payment, replacement or compensation of any kind. We will try to post a notice in the app or on our website when we reasonably can, but we are not required to give notice first."],
       ["Offers belong to the restaurants", "Each offer is provided by a participating restaurant. Offers may be changed, limited, paused or withdrawn, are available while supplies last, and a restaurant may decline an offer it cannot honor. We are not responsible for a restaurant's food, service or decisions."],
@@ -1183,7 +1191,7 @@
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
       ['Will the free spin always be available?', 'No. The free spin is not always turned on. It comes and goes, so keep watching for it. We are doing our best to get this going and to sign up as many restaurants as we can.'],
       ['I own a restaurant. Can I join?', 'Yes, we would love that. Send a DM to @LasVegas_Restaurants on Instagram, or fill out the form at keytechnologies.si and we will get back to you.'],
-      decayOn() ? ['How does the monthly points share work?', 'LVR Points is a points game. On the 1st of every month, ' + decayCfg().percent + '% of the points a player has not used go back into the game for other players to use. Example: you have 50 points on the 1st. ' + Math.floor(50 * decayCfg().percent / 100) + ' go back into the game and you keep ' + (50 - Math.floor(50 * decayCfg().percent / 100)) + '. If you spend your points on a free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first ' + decayCfg().graceDays + ' days, and points are rounded down.'] : null,
+      decayOn() ? ['How does the monthly points share work?', 'Use your points before the 1st. LVR Points is a points game. On the 1st of every month, ' + decayCfg().percent + '% of the points a player has not used go back into the game, and they are handed out at random to other players, a few points at a time, the same way points were first given out. Example: you have 50 points on the 1st. ' + Math.floor(50 * decayCfg().percent / 100) + ' go back into the game and you keep ' + (50 - Math.floor(50 * decayCfg().percent / 100)) + '. If you spend your points on a free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first ' + decayCfg().graceDays + ' days, and points are rounded down.'] : null,
       ['Can the program change or stop?', 'Yes. LVR Points is a free, fun promotion. We may pause, change or end it at any time, and we may adjust or take back points, for example if we suspect fraud, are hacked, find a vulnerability or a mistake, a restaurant leaves, or for any other reason. Points have no cash value and nothing is owed if that happens. Please read the Program Terms in the menu.'],
       ['Do my points expire?', decayOn() ? 'Points do not have a set end date. But each month a share of unused points goes back into the game for other players. See "How does the monthly points share work?" below. Each offer also has its own end date, and a code that is not used by the date shown expires.' : 'Points do not have a set end date right now. A monthly points share may be added later (see the Program Terms). Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
@@ -1294,8 +1302,8 @@
       wallet = found[memberKey];
       if (wallet.status === 'pending' || wallet.status === 'rejected') { showPendingScreen(wallet.status === 'rejected'); return; }
       liveSig = JSON.stringify([catalog || {}, allRedemptions || {}, directory || {}, appSettings || {}, wallet.points]);
-      return Promise.all([fbGet('/lvr_points/decay_by_member/' + encodeURIComponent(memberKey)).catch(function () { return null; }), fbGet('/lvr_points/pool/total').catch(function () { return null; })]).then(function (x) {
-        decayLast = x[0]; poolTotal = Number(x[1]) || 0;
+      return Promise.all([fbGet('/lvr_points/decay_by_member/' + encodeURIComponent(memberKey)).catch(function () { return null; }), fbGet('/lvr_points/pool/total').catch(function () { return null; }), fbGet('/lvr_points/pool_drops/' + encodeURIComponent(memberKey)).catch(function () { return null; })]).then(function (x) {
+        decayLast = x[0]; poolTotal = Number(x[1]) || 0; dropLast = x[2];
         render(catalog, allRedemptions);
       });
     }).catch(function(){
@@ -1458,6 +1466,7 @@
     var html =
       brandStripHtml() +
       termsNoticeHtml() +
+      dropNoticeHtml() +
       (OWNER ? ownerBarHtml(removedNames) + (DEMO ? demoBarHtml() : '') : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       noticeHtml() +
