@@ -292,7 +292,7 @@
   // Decline = account stays closed and the Round One spot is freed.
   // ========================================================================
   function pendingSignups() {
-    return fbGet(MEMBERS_PATH + '?orderBy="status"&equalTo="pending"').catch(function(){ return fbGet(MEMBERS_PATH).then(function(all){ var o = {}; Object.keys(all || {}).forEach(function(k){ if (all[k] && all[k].status === 'pending') o[k] = all[k]; }); return o; }); })
+    return fetch(DB + MEMBERS_PATH + '.json?orderBy="status"&equalTo="pending"').then(function(r){ if (!r.ok) throw new Error('idx'); return r.json(); }).catch(function(){ return fbGet(MEMBERS_PATH).then(function(all){ var o = {}; Object.keys(all || {}).forEach(function(k){ if (all[k] && all[k].status === 'pending') o[k] = all[k]; }); return o; }); })
       .then(function(o){ return Object.keys(o || {}).length; });
   }
   var DISPOSABLE = /@(mailinator|guerrillamail|10minutemail|tempmail|temp-mail|yopmail|trashmail|sharklasers|getnada|dispostable|maildrop|throwaway)\./i;
@@ -302,9 +302,11 @@
       var all = x[0] || {}, reg = x[1] || {};
       // keep the Round One leaderboard in step: any member missing from it (joined before it existed, or a failed write) is added
       Object.keys(all).forEach(function(k){
+        if (reg[k] && all[k] && all[k].status === 'rejected' && reg[k].status !== 'rejected') { setRegistry(k, 'rejected', all[k]); return; }
         if (reg[k] || !all[k]) return;
         var n = String(all[k].name || '').trim().split(/\s+/).filter(Boolean);
         var nm = !n.length ? 'Member' : n.length === 1 ? n[0] : n[0] + ' ' + n[n.length - 1].charAt(0).toUpperCase() + '.';
+        if (all[k].status === 'rejected') { setRegistry(k, 'rejected', all[k]); return; }
         fbPut('/lvr_points/round1/' + encodeURIComponent(k), { name: nm.slice(0, 40), at: Number(all[k].joinedAt) || Date.now(), status: all[k].status === 'pending' ? 'pending' : 'approved' }).catch(function(){});
       });
       var keys = Object.keys(all).sort(), pend = keys.filter(function(k){ return all[k] && all[k].status === 'pending'; });
@@ -336,18 +338,31 @@
       var at = document.querySelector('.tab[data-v="approvals"]'); if (at) at.textContent = 'Approvals' + (pend.length ? ' (' + pend.length + ')' : '');
     }).catch(function(){ view.innerHTML = '<div class="empty-note">Could not load. Check your connection.</div>'; });
   }
+  // Registry (leaderboard / spot count) entry: PATCH the status; if the entry is missing, create it as pending first.
+  function setRegistry(k, status, m) {
+    var enc = encodeURIComponent(k), path = '/lvr_points/round1/' + enc;
+    return fbPatch(path, { status: status }).then(function(r){
+      if (r.ok) return;
+      var n = String((m && m.name) || '').trim().split(/\s+/).filter(Boolean), nm = !n.length ? 'Member' : n.length === 1 ? n[0] : n[0] + ' ' + n[n.length - 1].charAt(0).toUpperCase() + '.';
+      return fbPut(path, { name: nm.slice(0, 40), at: Number(m && m.joinedAt) || Date.now(), status: 'pending' }).then(function(c){ if (c.ok && status !== 'pending') return fbPatch(path, { status: status }); });
+    }).catch(function(){ showToast('The leaderboard did not update, open Approvals again to retry'); });
+  }
   function approveMember(k) {
     var enc = encodeURIComponent(k);
     fbGet(MEMBERS_PATH + '/' + enc).then(function(m){
       if (!m || m.status !== 'pending') { showToast('Already handled'); return; }
       return fbPatch(MEMBERS_PATH + '/' + enc, { status: 'approved', approvedAt: { '.sv': 'timestamp' } }).then(function(r){
         if (!r.ok) throw new Error('approve');
-        fbPatch('/lvr_points/round1/' + enc, { status: 'approved' }).catch(function(){});
+        setRegistry(k, 'approved', m);
         var w = welcomeCfg();
         if (w.enabled === true && w.when === 'signup' && w.amount > 0 && !m.welcomeGiven) {
           return fbPut(MEMBERS_PATH + '/' + enc + '/welcomeGiven', { amount: w.amount, via: 'approval', at: { '.sv': 'timestamp' } })
             .then(function(c){ if (!c.ok) throw new Error('claim'); return fbPut(MEMBERS_PATH + '/' + enc + '/points', { '.sv': { increment: w.amount } }); })
-            .then(function(c){ if (!c.ok) throw new Error('credit'); txLog(k, 'welcome', 'welcome', w.amount, 'Welcome points (sign-up approved)'); });
+            .then(function(c){ if (!c.ok) throw new Error('credit'); return txLog(k, 'welcome', 'welcome', w.amount, 'Welcome points (sign-up approved)'); })
+            .catch(function(e){
+              // the points did not land: put the sign-up back to pending (and clear the claim) so Approve can simply be tried again
+              return Promise.all([fbPatch(MEMBERS_PATH + '/' + enc, { status: 'pending' }), fbDelete(MEMBERS_PATH + '/' + enc + '/welcomeGiven'), setRegistry(k, 'pending', m)]).then(function(){ throw e; });
+            });
         }
       }).then(function(){ showToast('Approved ' + (m.name || '')); });
     }).then(function(){ loadAll(); }).catch(function(){ showToast('Something went wrong, check the member before trying again'); renderApprovalsTab(); });
@@ -359,7 +374,7 @@
       if (!m || m.status !== 'pending') { showToast('Already handled'); return; }
       return fbPatch(MEMBERS_PATH + '/' + enc, { status: 'rejected', decidedAt: { '.sv': 'timestamp' } }).then(function(r){
         if (!r.ok) throw new Error('decline');
-        fbPatch('/lvr_points/round1/' + enc, { status: 'rejected' }).catch(function(){});
+        setRegistry(k, 'rejected', m);
         showToast('Declined');
       });
     }).then(function(){ loadAll(); }).catch(function(){ showToast('Something went wrong'); renderApprovalsTab(); });
@@ -411,6 +426,7 @@
         Promise.all(ks.map(function(k){
           var r = cleanupMembers[k] || {};
           var igKey = r.instagram ? String(r.instagram).toLowerCase().replace(/^@/, '').replace(/\./g, '_') : '';
+          fbPatch('/lvr_points/round1/' + encodeURIComponent(k), { status: 'rejected' }).catch(function(){}); // frees the Round One spot
           return fbDelete(MEMBERS_PATH + '/' + encodeURIComponent(k)).then(function(res){
             if (!res.ok) throw new Error('delete failed');
             delete cleanupMembers[k];
@@ -547,15 +563,18 @@
     }).catch(function(){ btn.textContent = 'Photos failed'; });
   }
 
+  var approving = {};
   function approveReceipt(id) {
     var pts = parseInt(document.getElementById('pts-' + id).value, 10);
     if (isNaN(pts) || pts < 0) { showToast('Enter the points to award'); return; }
+    if (approving[id]) return; // a double tap must never credit twice
+    approving[id] = true;
     fbGet(RECEIPTS_PATH + '/' + id).then(function(fresh){
       if (!fresh || fresh.status !== 'pending') { showToast('Already handled'); return loadAll(); }
       return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'approved', pointsAwarded: pts, pointsApplied: false, referralDone: false, decidedAt: { '.sv': 'timestamp' } })
         .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return applyAward(id); })
         .then(loadAll);
-    }).catch(function(){ showToast('Something went wrong - nothing was awarded'); });
+    }).catch(function(){ showToast('Something went wrong - nothing was awarded'); }).then(function(){ delete approving[id]; });
   }
 
   // Idempotent: only ever credits a receipt whose pointsApplied is false,
@@ -731,10 +750,11 @@
     function chk(id, on, label) { return '<div class="checkbox-row"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><label for="' + id + '">' + label + '</label></div>'; }
     view.innerHTML =
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Safety switches</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Tick a box to pause that part of the program. Members see a friendly "paused" message, and everything already earned stays safe. (These are honored by the member pages; see the security note in the plan.)</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Tick a box to pause that part of the program. Members see a friendly "paused" message and nothing is changed while it is paused. (These are honored by the member pages; see the security note in the plan.)</div>' +
         chk('sPauseSignups', paused.signups, 'Pause new sign-ups (the sign-up pages show a "launching soon" form instead)') +
         chk('sPauseReceipts', paused.receipts, 'Pause new receipt submissions') +
         chk('sPauseRedeem', paused.redemptions, 'Pause redemptions (offers show "Paused for now")') +
+        chk('sPauseSpin', paused.spin, 'Pause the free spin (no one can open or collect a spin)') +
         '<div class="field"><label>Message shown at the top of member pages (optional, e.g. "We\'re upgrading - back Monday")</label><input type="text" id="sBanner" value="' + escapeHtml(settings.banner || '') + '"></div>' +
         '<div class="form-actions"><button class="btn" id="sPauseAll" style="border-color:var(--red);color:var(--red);">Pause everything</button><button class="btn" id="sResumeAll">Resume everything</button></div>' +
       '</div>' +
@@ -753,7 +773,7 @@
           '<div class="field"><label>Receipt must be within (days)</label><input type="number" id="sWindow" min="1" value="' + lim.windowDays + '"></div>' +
         '</div></div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Welcome bonus</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Free starting points for a new member. They are added once, when the member\'s FIRST receipt is approved, so a real purchase always comes first. Members see "welcome points are waiting" until then. Offers are funded by the participating restaurants through the credit ledger.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Free starting points for a new member. With "The moment they sign up" the points are added when you APPROVE the sign-up (Approvals tab); with "first receipt" they are added when the member\'s first receipt is approved. Offers are funded by the participating restaurants through the credit ledger.</div>' +
         chk('sWelOn', welcome.enabled === true, 'Welcome bonus is on') +
         '<div class="field-row"><div class="field"><label>Welcome points (about the price of the free item, e.g. 21)</label><input type="number" id="sWelAmt" min="1" max="50" step="1" value="' + (welcome.amount || 21) + '"></div>' +
         '<div class="field"><label>Give them</label><select id="sWelWhen"><option value="signup"' + (welcome.when === 'signup' ? ' selected' : '') + '>The moment they sign up</option><option value="receipt"' + (welcome.when !== 'signup' ? ' selected' : '') + '>When their first receipt is approved</option></select></div></div>' +
@@ -792,7 +812,7 @@
         '<div class="field"><label>Points for an approved post (1 to 50)</label><input type="number" id="sTagPts" min="1" max="50" step="1" value="' + ((settings.tagBonus || {}).points || 5) + '"></div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Prize ladder (what points can win)</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Shows members a ladder of bigger and bigger prizes under LVR Points > Prizes, so they see why earning more points is worth it. One prize per line, written as <b>points | prize</b>. Several prizes can share the same points. <b style="color:var(--yellow);">Leave this OFF until the prizes are funded and your attorney has approved them, and until prize claiming is built (members can see the prizes but cannot claim them yet).</b></div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Shows members a ladder of bigger and bigger prizes under LVR Points > Prizes, so they see why earning more points is worth it. One prize per line, written as <b>points | prize</b>. Several prizes can share the same points. <b style="color:var(--yellow);">Currently the app does not show prizes at all (points stay in restaurants only), so this switch does nothing. Leave this OFF until the prizes are funded and your attorney has approved them, and until prize claiming is built (members can see the prizes but cannot claim them yet).</b></div>' +
         chk('sPrzOn', (settings.prizeLadder || {}).enabled === true, 'Show the prize ladder to members') +
         '<div class="field"><label>Prizes (points | prize)</label><textarea id="sPrzText" rows="7" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font:inherit;font-size:14px;">' + escapeHtml((settings.prizeLadder && settings.prizeLadder.text) || '20 | Free meal at a partner restaurant\n250 | $50 gas card\n500 | $100 gas card\n1000 | $200 Amazon gift card\n2500 | $500 Amazon gift card') + '</textarea></div>' +
       '</div>' +
@@ -813,7 +833,7 @@
 
     function collect() {
       return {
-        paused: { signups: document.getElementById('sPauseSignups').checked, receipts: document.getElementById('sPauseReceipts').checked, redemptions: document.getElementById('sPauseRedeem').checked },
+        paused: { signups: document.getElementById('sPauseSignups').checked, receipts: document.getElementById('sPauseReceipts').checked, redemptions: document.getElementById('sPauseRedeem').checked, spin: document.getElementById('sPauseSpin').checked },
         banner: document.getElementById('sBanner').value.trim(),
         limits: {
           maxAmount: Math.max(1, parseFloat(document.getElementById('sMaxAmt').value) || 300),
@@ -853,26 +873,33 @@
     });
     document.getElementById('sPauseAll').addEventListener('click', function(){
       if (!confirm('Pause sign-ups, receipts and redemptions for everyone?')) return;
-      var v = collect(); v.paused = { signups: true, receipts: true, redemptions: true };
+      var v = collect(); v.paused = { signups: true, receipts: true, redemptions: true, spin: true };
       saveAll(v).then(function(){ showToast('Everything is paused'); renderSettingsTab(); }).catch(function(){ showToast('Something went wrong'); });
     });
     document.getElementById('sResumeAll').addEventListener('click', function(){
-      var v = collect(); v.paused = { signups: false, receipts: false, redemptions: false };
+      var v = collect(); v.paused = { signups: false, receipts: false, redemptions: false, spin: false };
       saveAll(v).then(function(){ showToast('Everything is running'); renderSettingsTab(); }).catch(function(){ showToast('Something went wrong'); });
     });
     // Monthly return: same rules as the scheduled script (decay/monthly-decay.js). Each member's month is claimed with a
     // create-only record first, so a second click never takes anything twice.
     function runReturn(dry) {
-      var out = document.getElementById('sDecOut'), pct = Math.max(1, Math.min(50, parseInt(document.getElementById('sDecPct').value, 10) || 20)), grace = Math.max(0, parseInt(document.getElementById('sDecGrace').value, 10) || 0);
-      var now = new Date(), run = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-      out.textContent = 'Reading members…';
+      var out = document.getElementById('sDecOut');
+      var cfgd = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, settings.decay || {});
+      var pct = Math.max(1, Math.min(50, Number(cfgd.percent) || 20)), grace = Math.max(0, Number(cfgd.graceDays) || 0);
+      if (cfgd.enabled !== true) { out.textContent = 'The monthly return is switched off. Tick "Monthly return is on" and press "Save all settings" first.'; return Promise.resolve(); }
+      // the month is counted in Las Vegas time, the same as the scheduled script
+      var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+      var gp = function(t){ return parts.filter(function(x){ return x.type === t; })[0].value; };
+      var now = { getDate: function(){ return parseInt(gp('day'), 10); } }, run = gp('year') + '-' + gp('month');
+      out.textContent = 'Using the SAVED settings: ' + pct + '%, new members safe for ' + grace + ' days. Reading members…';
       return fbGet(MEMBERS_PATH).then(function(all){
         all = all || {};
         var todo = [], tooNew = 0;
         Object.keys(all).forEach(function(k){
           var m = all[k] || {}, pts = Number(m.points) || 0;
           if (pts < 1 || m.status === 'pending' || m.status === 'rejected') return;
-          if (m.joinedAt && Date.now() - m.joinedAt < grace * 86400000) { tooNew++; return; }
+          var since = m.approvedAt || m.joinedAt; // the safe period starts when the sign-up was approved
+          if (since && Date.now() - since < grace * 86400000) { tooNew++; return; }
           var take = Math.floor(pts * pct / 100); if (take < 1) return;
           todo.push({ k: k, pts: pts, take: take });
         });
@@ -920,7 +947,7 @@
           return chain.then(function(){ return takeBackPoints(r.key, why).then(function(n){ done++; total += n || 0; }).catch(function(){ failed++; }); }).then(function(){ st.textContent = 'Taking points back… ' + (done + failed) + ' of ' + todo.length; });
         }, Promise.resolve()).then(function(){
           // only the pause switches and the banner are written (no other setting is touched)
-          var pz = { signups: true, receipts: true, redemptions: true }, bn = 'LVR Points is paused: ' + why;
+          var pz = { signups: true, receipts: true, redemptions: true, spin: true }, bn = 'LVR Points is paused: ' + why;
           return Promise.all([fbPut(SETTINGS_PATH + '/paused', pz), fbPut(SETTINGS_PATH + '/banner', bn)]).then(function(rs){
             if (rs.some(function(r){ return !r.ok; })) throw new Error('save failed');
             settings.paused = pz; settings.banner = bn;

@@ -284,6 +284,13 @@
     { cat: "sushi", n: "Kura Revolving Sushi Bar", a: "4258 Spring Mountain Rd Ste 108, Las Vegas, NV 89102", ph: "(725) 214-5024", web: "https://kurasushi.com/locations/las-vegas-nv", c: "Revolving sushi", o: { t: "Free Sushi Plate", p: 12, art: "sushi1" } },
     { cat: "sushi", n: "Sushi Neko", a: "5115 W Spring Mountain Rd #117, Las Vegas, NV 89146", c: "Late-night sushi", o: { t: "Free Sushi Roll Plate", p: 11, art: "sushi2" } },
   ];
+  // Rule: every offer is worth at least 15 LVR Points, including the example offers on this page.
+  (function () {
+    var F = 15;
+    SAMPLE.forEach(function (it) { if (it.pointCost < F) it.pointCost = F; });
+    DEMO.forEach(function (g) { (g.items || []).forEach(function (it) { if (it.pointCost < F) it.pointCost = F; }); });
+    VEGAS.forEach(function (r) { if (r.o && r.o.p < F) r.o.p = F; });
+  })();
   var CATS = [["all", "All"], ["pizza", "Pizza"], ["italian", "Italian & pasta"], ["sushi", "Sushi"], ["burgers", "Burgers"], ["thai", "Thai"], ["mexican", "Mexican"], ["bbq", "BBQ"], ["apps", "Appetizers"], ["plates", "Plates & bowls"], ["sweet", "Breakfast & sweet"]];
   var ICON = {
     web: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#5b6b82"/><circle cx="12" cy="12" r="6.4" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M5.6 12h12.8M12 5.6c2.6 2.4 2.6 10.4 0 12.8M12 5.6c-2.6 2.4-2.6 10.4 0 12.8" fill="none" stroke="#fff" stroke-width="1.4"/></svg>',
@@ -504,7 +511,7 @@
     var w = settings && settings.welcome;
     if (w && w.enabled === true && w.amount > 0 && !hasAccount) {
       $("welcomeBox").innerHTML = '<div class="welcome">New members start with <strong>' + esc(w.amount) + ' points</strong>' +
-        (w.when === "receipt" ? ", added when your first receipt is approved." : ", added the moment you join.") + '</div>';
+        (w.when === "receipt" ? ", added when your first receipt is approved." : ", added once your sign-up is approved.") + '</div>';
     }
     if (sample) $("sampleBox").innerHTML = '<div class="sample">These are example items to show how a menu looks. Real specials appear here as soon as a restaurant adds them.</div>';
     var sections = {}, order = [];

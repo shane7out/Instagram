@@ -540,7 +540,7 @@
   // Members are keyed by their own Firebase push-id, not by the personal
   // link token - look one up by its token field via a REST query.
   function fbFindByToken(t) {
-    return fetch(DB + MEMBERS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(t) + '"').then(function(r){ return r.json(); });
+    return fetch(DB + MEMBERS_PATH + '.json?orderBy="token"&equalTo="' + encodeURIComponent(t) + '"').then(function(r){ if (!r.ok) throw new Error('load'); return r.json(); });
   }
 
   function showEmpty(text) {
@@ -597,7 +597,7 @@
   function rulesHtml() {
     var c = chestCfg(), w = welcomeCfg();
     var prize = c.prizeMax > 0 ? prizeRange(c) : '';
-    var free = 'LVR Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points when you sign up' + (prize ? ', plus a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + cycleText(c.waitDays) + '. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
+    var free = 'LVR Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points once your sign-up is approved' + (prize ? ', plus a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + cycleText(c.waitDays) + '. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
     var rules = [
       ['Free to join, free to use', free],
       ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed with points does not count toward your spend.'],
@@ -645,6 +645,11 @@
     var f0 = b.querySelector('button,select,input'); if (f0) { try { f0.focus({ preventScroll: true }); } catch (e) { try { f0.focus(); } catch (e2) {} } } b.scrollTop = 0; if (b.firstChild) b.firstChild.scrollTop = 0;
     return api;
   }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var own = document.querySelectorAll('.own-back'); if (!own.length) return;
+    var top = own[own.length - 1]; if (top.parentNode) top.parentNode.removeChild(top);
+  });
   // keep Tab inside whichever dialog is open
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Tab') return;
@@ -984,7 +989,7 @@
     if (d.enabled !== true) return '';
     var pts = (wallet && wallet.points) || 0, next = nextFirst();
     var nextLabel = next.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
-    var joined = (wallet && wallet.joinedAt) || 0;
+    var joined = (wallet && (wallet.approvedAt || wallet.joinedAt)) || 0;
     var inGrace = joined && next.getTime() < joined + d.graceDays * 86400000;
     var take = Math.floor(pts * d.percent / 100);
     var line;
@@ -1005,9 +1010,16 @@
     n.addEventListener('toggle', function () { try { localStorage.setItem('lvrDecayClosed', n.open ? '0' : '1'); } catch (e) {} });
   }
   // ---------- Round One leaderboard ----------
-  function r1Rows(reg, limit) {
-    var ks = Object.keys(reg || {}).filter(function (k) { return reg[k] && reg[k].status !== 'rejected'; }).sort();
-    return ks.slice(0, limit).map(function (k, i) { return { n: i + 1, key: k, name: reg[k].name || 'Member', status: reg[k].status }; });
+  // Rows come from the real member list (so deleted or declined sign-ups never show), names/status from the registry.
+  function r1Rows(reg, limit, memberKeys) {
+    reg = reg || {};
+    var ks = (memberKeys || Object.keys(reg)).filter(function (k) { return !(reg[k] && reg[k].status === 'rejected'); }).sort();
+    return ks.slice(0, limit).map(function (k, i) { var r = reg[k] || {}; return { n: i + 1, key: k, name: r.name || 'Member', status: r.status || 'approved' }; });
+  }
+  function r1Load() {
+    return Promise.all([fbGet('/lvr_points/round1').catch(function () { return {}; }), fetch(DB + MEMBERS_PATH + '.json?shallow=true').then(function (r) { if (!r.ok) throw new Error('x'); return r.json(); }).catch(function () { return null; })]).then(function (x) {
+      return { reg: x[0] || {}, keys: x[1] ? Object.keys(x[1]) : null };
+    });
   }
   function r1ListHtml(rows, limit, myKey) {
     var out = '';
@@ -1025,7 +1037,7 @@
   function bindRound1() {
     var el = document.getElementById('r1Body'); if (!el) return;
     var lc = launchCfg(); if (!lc) return;
-    fbGet('/lvr_points/round1').then(function (reg) { el.innerHTML = r1ListHtml(r1Rows(reg || {}, lc.limit), lc.limit, memberKey); }).catch(function () { el.textContent = 'Could not load the leaderboard right now.'; });
+    r1Load().then(function (d) { el.innerHTML = r1ListHtml(r1Rows(d.reg, lc.limit, d.keys), lc.limit, memberKey); }).catch(function () { el.textContent = 'Could not load the leaderboard right now.'; });
   }
   // ---------- waiting for approval ----------
   function showPendingScreen(rejected) {
@@ -1034,12 +1046,12 @@
       contentEl.innerHTML = '<div class="no-account-card"><h1>We could not approve this sign-up</h1><p>Every sign-up is checked by hand. If you think we made a mistake, send us a message on Instagram and we will take another look.</p><a class="btn btn-primary" href="' + IG_LINK + '" target="_blank" rel="noopener">Message @LasVegas_Restaurants</a></div>';
       return;
     }
-    contentEl.innerHTML = '<div class="no-account-card pending-card"><span class="pend-tag">Waiting for approval</span><h1>Thanks, ' + escapeHtml(first) + '! You are on the list.</h1>' +
+    contentEl.innerHTML = '<div class="no-account-card pending-card"><span class="pend-tag">Waiting for approval</span><h2 style="font-size:26px;line-height:1.2;margin:6px 0 10px;">Thanks, ' + escapeHtml(first) + '! You are on the list.</h2>' +
       '<p>We check every sign-up by hand so that only real people join LVR Points. As soon as you are approved, this page opens up' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' and your ' + welcomeCfg().amount + ' free points are added' : '') + '. Keep this page, it checks for approval by itself.</p>' +
       '<div class="r1-me" id="r1Me"></div>' + (lc ? '<h2 style="margin:18px 0 6px;font-size:18px;">Round One leaderboard</h2><div id="r1Body">Loading…</div>' : '') +
       '<p style="font-size:13px;color:var(--ink-dim);margin-top:14px;">By joining you agreed to the <button type="button" class="linkbtn inl" data-pterms>Program Terms</button>.</p></div>';
-    fbGet('/lvr_points/round1').then(function (reg) {
-      var rows = r1Rows(reg || {}, 100000), me = null; rows.forEach(function (r) { if (r.key === memberKey) me = r; });
+    r1Load().then(function (d) {
+      var rows = r1Rows(d.reg, 100000, d.keys), me = null; rows.forEach(function (r) { if (r.key === memberKey) me = r; });
       var m = document.getElementById('r1Me'); if (m && me) m.innerHTML = 'Your spot: <b>#' + me.n + '</b>' + (me.n <= lim ? ' in Round One' : '');
       var b = document.getElementById('r1Body'); if (b) b.innerHTML = r1ListHtml(rows.slice(0, lim), lim, memberKey);
     }).catch(function () {});
@@ -1050,15 +1062,15 @@
   }, 30000);
   // The Program Terms: our rights to pause, change, end the program and adjust or take back points.
   // Bump PROGRAM_TERMS_VERSION when the wording changes, and re-run: node .github/db-task/gen-points-terms.js
-  var PROGRAM_TERMS_VERSION = '2026-10-30c', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 3)';
+  var PROGRAM_TERMS_VERSION = '2026-10-30d', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 4)';
   function programTermsList() {
     return [
       ["What LVR Points is", "LVR Points (Las Vegas Restaurant Points) is a free, just-for-fun promotion run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram). We are doing our best to promote it for participating restaurants and to make it a good experience, but it is offered as is and we make no promise that it will be available at any time."],
       ["Points have no cash value", "Points are a promotional perk. They are not money, a deposit, a gift card, stored value, a security or your property. \"1 point = $1\" only describes the discount an offer gives you while the program is running. Points cannot be exchanged for cash, sold or transferred, and nothing is owed to you for a balance."],
       ["Our rights, at our sole discretion", "At any time, with or without notice, for any reason or no reason, we may in our sole discretion: (a) pause, suspend, change or end the program, the free spin, the invite system, any offer or any restaurant; (b) limit, freeze, suspend or close any account; and (c) adjust, cancel, void, reduce, remove or take back any or all points, including points you earned, were given or won. These rights belong to us alone, and our decisions are final."],
       ["Examples of reasons", "Suspected fraud or abuse, fake, duplicate or shared accounts, altered or incorrect receipts, a security incident, hacking or being hacked, a vulnerability, a technical error or a points mistake, a participating restaurant leaving or changing its offer, a legal or regulatory reason, protecting members, restaurants or ourselves, the program ending, or any other reason we decide. These are examples, not a limit on our rights."],
-      ["Monthly points share", "On the 1st of every month, a percentage of each member's unused points (currently 20%, rounded down) goes back into the game for other players to use. For example, with 50 unused points on the 1st, 10 go back and 40 stay. It is not a fee or a charge, and no money is involved. New members are not affected during their first 30 days. We may change the percentage and timing, or stop the monthly return, at any time."],
-      ["Sign-ups are reviewed", "Every sign-up is reviewed by hand. We may approve or decline any sign-up for any reason, including to keep out fake accounts, bots and automated sign-ups. Points, including welcome points, are added only after a sign-up is approved. Round One is limited to the first 25 members, who are shown on a leaderboard by first name and last initial."],
+      ["Monthly points share", "On the 1st of every month, a percentage of each member's unused points (currently 20%, rounded down) goes back into the game for other players to use. For example, with 50 unused points on the 1st, 10 go back and 40 stay. It is not a fee or a charge, and no money is involved. New members are not affected during their first days (currently 30). We may change the percentage and timing, or stop the monthly return, at any time."],
+      ["Sign-ups are reviewed", "Every sign-up is reviewed by hand. We may approve or decline any sign-up for any reason, including to keep out fake accounts, bots and automated sign-ups. Points, including welcome points, are added only after a sign-up is approved. Round One is limited to the first group of members (currently 25), who are shown on a leaderboard by first name and last initial."],
       ["If the program changes or ends", "If we pause or end the program or take points back, unused points and unused offers may stop working. You are not owed a refund, payment, replacement or compensation of any kind. We will try to post a notice in the app or on our website when we reasonably can, but we are not required to give notice first."],
       ["Offers belong to the restaurants", "Each offer is provided by a participating restaurant. Offers may be changed, limited, paused or withdrawn, are available while supplies last, and a restaurant may decline an offer it cannot honor. We are not responsible for a restaurant's food, service or decisions."],
       ["No reliance", "No purchase is necessary to join or to use the free spin. Do not buy anything, travel or spend money expecting to earn or use points. Points are never guaranteed."],
@@ -1162,7 +1174,7 @@
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? prizeRange(c) : '';
     var qa = [
-      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. Use your points for free food at participating restaurants.'],
+      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points once your sign-up is approved' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. Use your points for free food at participating restaurants.'],
       ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed does not count toward your spend.'],
       ['What is a point worth?', '1 point = $1 toward a free offer at a participating restaurant.' + giftTxt()],
       ['What can I do with my points?', 'Trade them for free food at participating restaurants.' + (giftOn() ? ' You can also save them for the gift cards we list on the Prizes screen.' : ' That is the only thing points can be used for.') + ' They cannot be exchanged for cash. It is one of each offer per person.'],
@@ -1173,7 +1185,7 @@
       ['I own a restaurant. Can I join?', 'Yes, we would love that. Send a DM to @LasVegas_Restaurants on Instagram, or fill out the form at keytechnologies.si and we will get back to you.'],
       decayOn() ? ['How does the monthly points share work?', 'LVR Points is a points game. On the 1st of every month, ' + decayCfg().percent + '% of the points a player has not used go back into the game for other players to use. Example: you have 50 points on the 1st. ' + Math.floor(50 * decayCfg().percent / 100) + ' go back into the game and you keep ' + (50 - Math.floor(50 * decayCfg().percent / 100)) + '. If you spend your points on a free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first ' + decayCfg().graceDays + ' days, and points are rounded down.'] : null,
       ['Can the program change or stop?', 'Yes. LVR Points is a free, fun promotion. We may pause, change or end it at any time, and we may adjust or take back points, for example if we suspect fraud, are hacked, find a vulnerability or a mistake, a restaurant leaves, or for any other reason. Points have no cash value and nothing is owed if that happens. Please read the Program Terms in the menu.'],
-      ['Do my points expire?', decayOn() ? 'Points do not have a set end date. But each month a share of unused points goes back into the game for other players. See "How does the monthly points share work?" below. Each offer also has its own end date, and a code that is not used by the date shown expires.' : 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
+      ['Do my points expire?', decayOn() ? 'Points do not have a set end date. But each month a share of unused points goes back into the game for other players. See "How does the monthly points share work?" below. Each offer also has its own end date, and a code that is not used by the date shown expires.' : 'Points do not have a set end date right now. A monthly points share may be added later (see the Program Terms). Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
     if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). LVR Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
@@ -1201,7 +1213,7 @@
       '<a class="btn btn-primary" href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener" style="display:block;text-align:center;">Message @LasVegas_Restaurants</a>';
   }
   function lrAction(kind) {
-    if (kind === 'add') { if (!DEMO && pausedFlag('receipts')) infoModal('Receipts are paused', '<p>Receipt submissions are paused for a moment. Please check back soon. Your points are safe.</p>'); else openReceipt(''); }
+    if (kind === 'add') { if (!DEMO && pausedFlag('receipts')) infoModal('Receipts are paused', '<p>Receipt submissions are paused for a moment. Please check back soon. Nothing is being changed while this is paused.</p>'); else openReceipt(''); }
     else if (kind === 'rules') openRules();
     else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
     else if (kind === 'fair') fairnessModal();
@@ -1498,7 +1510,7 @@
               : claimed
               ? '<div class="goal ok">✓ You have claimed this offer. It is one per person.</div>'
               : (!afford && paused && pts >= item.pointCost)
-              ? '<div class="goal need">⏸ Redeeming is paused for a moment. Your points are safe.</div>'
+              ? '<div class="goal need">⏸ Redeeming is paused for a moment. Nothing is being changed while it is paused.</div>'
               : afford
               ? '<div class="goal ok">✓ You can get this now<div class="gbar"><i style="width:100%"></i></div></div>'
               : '<div class="goal need">🔒 ' + (item.pointCost - pts) + ' more point' + (item.pointCost - pts === 1 ? '' : 's') + ' to unlock · you have ' + pts + ' of ' + item.pointCost + '<div class="gbar"><i style="width:' + Math.min(100, Math.round(100 * pts / item.pointCost)) + '%"></i></div></div>';
@@ -1720,7 +1732,7 @@
   function chestInfo() {
     var c = chestCfg(), cs = wallet && wallet.chestState, n = cs ? Number(cs.n) || 0 : 0;
     if (n >= 1 && !c.repeat) return { kind: 'done', amount: cs.amount, n: n };
-    var base = n ? Number(cs.at) : Number(wallet && wallet.joinedAt);
+    var base = n ? Number(cs.at) : Number(wallet && (wallet.approvedAt || wallet.joinedAt));
     if (!base) return { kind: 'soon', n: n };
     var waitMs = c.waitDays * 86400000, cycle = waitMs + c.claimHours * 3600000;
     var el = Math.max(0, Date.now() - base), k = Math.floor(el / cycle), ph = el - k * cycle;
@@ -1890,6 +1902,7 @@
   function openChest() {
     var st = chestInfo(), btn = document.getElementById('chestOpenBtn');
     if (st.kind !== 'ready' || chestBusy || (!memberKey && !DEMO)) return;
+    if (!DEMO && pausedFlag('spin')) { var pm = document.getElementById('chestMsg'); if (pm) pm.textContent = 'The free spin is paused for a moment. Please check back soon. Nothing is changed while it is paused.'; return; }
     var tcb0 = document.getElementById('termsCb'), rcb0 = document.getElementById('realCb');
     if (!tcb0 || !tcb0.checked || !rcb0 || !rcb0.checked) { var mm = document.getElementById('chestMsg'); if (mm) mm.textContent = 'Please tick both boxes first: the Spin Terms, and that this is your one real spin.'; return; }
     unlockAudio(); var dgb = document.getElementById('demoSpinGo'); if (dgb) dgb.hidden = true; var dr0 = document.getElementById('demoRes'); if (dr0) dr0.textContent = '';
@@ -1929,9 +1942,9 @@
     };
     // claim first (the database only accepts the next spin, after the full wait and inside the claim window, within the allowed range), then log it, then add the points, then spin the wheel to the number
     fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
-      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' }, terms: SPIN_TERMS_VERSION, confirmedReal: true }) }).catch(function () { return null; }); })
+      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; try { localStorage.setItem('lvrPendingCredit', JSON.stringify({ mk: mk, n: st.n, prize: prize })); } catch (e) {} return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' }, terms: SPIN_TERMS_VERSION, confirmedReal: true }) }).catch(function () { return null; }); })
       .then(function () { return credit(3); })
-      .then(function (r) { if (!r || !r.ok) throw new Error('points'); logTx(mk, 'spin-' + st.n, 'spin', prize, 'Free spin #' + st.n + ' (terms ' + SPIN_TERMS_VERSION + ')'); spin(); })
+      .then(function (r) { if (!r || !r.ok) throw new Error('points'); try { localStorage.removeItem('lvrPendingCredit'); } catch (e) {} logTx(mk, 'spin-' + st.n, 'spin', prize, 'Free spin #' + st.n + ' (terms ' + SPIN_TERMS_VERSION + ')'); spin(); })
       .catch(function () {
         var cb3 = document.getElementById('soonClose'); if (cb3) cb3.hidden = false;
         if (wheel) wheel.classList.remove('wob');
@@ -1974,7 +1987,9 @@
     var pc = null; try { pc = JSON.parse(localStorage.getItem('lvrPendingCredit') || 'null'); } catch (e) {}
     if (!pc || pc.mk !== encodeURIComponent(memberKey) || !(pc.prize > 0)) return;
     pendingBusy = true;
-    fetch(DB + '/lvr_rewards/' + pc.mk + '/points.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ '.sv': { increment: pc.prize } }) })
+    fetch(DB + '/lvr_points/transactions/' + pc.mk + '/spin-' + pc.n + '.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (done) {
+      if (done) { try { localStorage.removeItem('lvrPendingCredit'); } catch (e) {} pendingBusy = false; return null; }
+      return fetch(DB + '/lvr_rewards/' + pc.mk + '/points.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ '.sv': { increment: pc.prize } }) })
       .then(function (r) {
         pendingBusy = false;
         if (!r.ok) return;
@@ -1986,6 +2001,7 @@
         chestWin = chestWin && chestWin.pending ? { n: '+' + pc.prize } : chestWin; tickChest();
       })
       .catch(function () { pendingBusy = false; });
+    });
   }
   setInterval(tickChest, 30000);
   setInterval(flushPending, 20000);
@@ -2221,7 +2237,7 @@
         return fetch(DB + PHOTOS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ wide: wide, close: close }) })
           .then(function(r){
             if (r.ok) return;
-            return fetch(DB + RECEIPTS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'DELETE' }).then(function(){ throw new Error('photo upload failed'); });
+            return fetch(DB + RECEIPTS_PATH + '/' + encodeURIComponent(id) + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ status: 'rejected', decidedAt: { '.sv': 'timestamp' } }) }).then(function(){ throw new Error('photo upload failed'); }); // the receipt cannot be deleted, so it is voided and the member can send it again
           });
       }).then(function(){ loadWallet(); });
     }).catch(function(){
@@ -2265,7 +2281,13 @@
 
   function doRedeem(item) {
     if (pausedFlag('redemptions')) { noteDialog('Redemptions are paused for a moment. Please try again soon.'); loadWallet(); return; }
-    Promise.all([
+    fbGet('/lvr_points/settings/paused').catch(function () { return null; }).then(function (pz) {
+      if (pz && pz.redemptions) { appSettings.paused = pz; noteDialog('Redemptions are paused for a moment. Please try again soon.'); loadWallet(); return; }
+      return doRedeemNow(item);
+    });
+  }
+  function doRedeemNow(item) {
+    return Promise.all([
       fbGet(MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points'),
       fbGet(REDEMPTIONS_PATH + encodeURIComponent(item.slug)),
       fbGet(DIRECTORY_PATH + '/' + encodeURIComponent(item.slug) + '/creditRemaining')

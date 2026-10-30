@@ -690,7 +690,7 @@
         points: 0, token: token, refCode: genRefCode(), source: "keytechnologies-rewards-signup",
         joinedAt: {".sv": "timestamp"},
         consent_rules: true, consent_rules_ts: {".sv": "timestamp"},
-        consent_terms: "2026-10-30c" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
+        consent_terms: "2026-10-30d" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
       };
       if (referrerKey) rec.referredBy = referrerKey;
       if (gateRes && gateRes.founding) rec.founding = true;
@@ -712,7 +712,7 @@
       return r.json().then(function(j){
         if (j && j.name) {
           // Round One registry (leaderboard name + status) and the owner's alert (Leads list + email)
-          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ name: shortName(name), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }) }).catch(function(){});
+          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ name: shortName(name).slice(0, 40), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }) }).catch(function(){});
           var note = { source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "pending" : "approved", memberKey: j.name, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
           fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(note) }).catch(function(){});
           fetch("https://formspree.io/f/mzeedbyb", { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify({ _subject: "New LVR Points sign-up" + (pendingApproval ? " waiting for your approval" : ""), source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "WAITING FOR APPROVAL: open Points admin > Approvals" : "approved", message: "A new person signed up for LVR Points. Open the Points admin, Approvals tab, to approve or decline." }) }).catch(function(){});

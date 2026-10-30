@@ -41,8 +41,10 @@ function laNow() {
     const m = members[mk] || {};
     const pts = Number(m.points) || 0;
     if (pts < 1) continue;
+    if (m.status === 'pending' || m.status === 'rejected') continue;
     // Accounts without a join date (the very first testers) count as long-standing.
-    if (m.joinedAt && Date.now() - m.joinedAt < grace * DAY) { tooNew++; continue; }
+    const since = m.approvedAt || m.joinedAt; // safe period starts when the sign-up was approved
+    if (since && Date.now() - since < grace * DAY) { tooNew++; continue; }
     const take = Math.floor(pts * pct / 100);
     if (take < 1) continue;
     eligible++;
