@@ -1448,8 +1448,23 @@
     }
     return attempt(0);
   }
+  // Founding Members: while settings/launch is on, only the first N accounts can invite, and only a set number of friends each.
+  function launchCfg() {
+    var l = appSettings && appSettings.launch;
+    if (!l || l.enabled !== true) return null;
+    return { limit: Math.max(1, Math.min(100000, Number(l.limit) || 25)), invites: Math.max(0, Math.min(50, l.invites == null ? 1 : Number(l.invites))) };
+  }
   function inviteCardHtml() {
     if (DEMO) return '';
+    var lc = launchCfg();
+    if (lc) {
+      // starts hidden-ish ("Checking…"); bindInvite removes it for members who are not founders
+      return '<div class="invite-card" id="inviteCard" data-launch="1"><h2 id="invTitle">Invite a friend</h2>' +
+        '<div class="earn-sub" style="margin-bottom:0;" id="invSub">Checking your invites…</div>' +
+        '<div class="invite-link" id="inviteLink">Getting your link…</div>' +
+        '<button class="btn btn-primary" id="inviteBtn" style="width:100%;" disabled>Share my link</button>' +
+        '<div class="invite-stats"><div><b id="invFriends">–</b>friends joined</div><div><b id="invLeft">–</b>invites left</div></div></div>';
+    }
     if (!refSettings || refSettings.enabled !== true) return '';
     var extra = refSettings.l2Pct > 0 ? ' and ' + refSettings.l2Pct + '% of what their friends earn' : '';
     return '<div class="invite-card" id="inviteCard"><h2>Invite friends</h2>' +
@@ -1460,6 +1475,34 @@
   }
   function bindInvite() {
     if (!document.getElementById('inviteCard')) return;
+    var lc = launchCfg();
+    if (lc) {
+      var card = document.getElementById('inviteCard');
+      fetch(DB + MEMBERS_PATH + '.json?shallow=true').then(function(r){ if (!r.ok) throw new Error('x'); return r.json(); }).then(function(j){
+        var keys = Object.keys(j || {}).sort(), rank = keys.indexOf(memberKey);
+        if (rank < 0 || rank >= lc.limit) { card.remove(); return; }
+        return fetch(DB + MEMBERS_PATH + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(memberKey)) + '&shallow=true').then(function(r){ return r.json(); }).then(function(f){
+          var used = f ? Object.keys(f).length : 0, left = Math.max(0, lc.invites - used);
+          document.getElementById('invTitle').textContent = 'Founding Member #' + (rank + 1);
+          document.getElementById('invSub').textContent = 'You are one of the first ' + lc.limit + ' people in LVR Points. Each Founding Member can invite ' + (lc.invites === 1 ? 'one friend' : lc.invites + ' friends') + '. ' + (left > 0 ? 'Share your link below.' : 'You have used ' + (lc.invites === 1 ? 'your invite' : 'all your invites') + '. Thank you for spreading the word.') + (refSettings && refSettings.enabled === true && refSettings.l1Pct > 0 ? ' When your friend earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn. It never reduces their points.' : '');
+          document.getElementById('invFriends').textContent = used;
+          document.getElementById('invLeft').textContent = left;
+          if (left <= 0) { document.getElementById('inviteLink').style.display = 'none'; document.getElementById('inviteBtn').style.display = 'none'; return; }
+          return ensureRefCode().then(function(code){
+            var url = 'https://keytechnologies.si/rewards.html?ref=' + code;
+            document.getElementById('inviteLink').textContent = url;
+            var btn = document.getElementById('inviteBtn'); btn.disabled = false;
+            btn.addEventListener('click', function(){
+              var text = 'I am a Founding Member of LVR Points, free food at Las Vegas restaurants. Here is your invite: ' + url;
+              if (navigator.share) { navigator.share({ text: text }).catch(function(){}); }
+              else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Link copied!'; }); }
+              else { btn.textContent = url; }
+            });
+          });
+        });
+      }).catch(function(){ var sub = document.getElementById('invSub'); if (sub) sub.textContent = 'Could not check your invites right now. Please try again later.'; });
+      return;
+    }
     ensureRefCode().then(function(code){
       var url = 'https://keytechnologies.si/rewards.html?ref=' + code;
       document.getElementById('inviteLink').textContent = url;

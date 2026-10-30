@@ -123,6 +123,18 @@
      ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
     }
    },
+   "launch": {
+    ".write": true,
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "limit": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000"
+    },
+    "invites": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    }
+   },
    "defaultCommissionPct": {
     ".write": true,
     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"

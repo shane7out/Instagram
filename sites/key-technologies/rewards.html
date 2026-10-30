@@ -238,7 +238,7 @@
       <div>
         <p class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>LVR Points</p>
         <h1 style="margin-top:14px;">Join LVR Points. <span class="accent">Earn free food.</span></h1>
-        <p class="hero-sub">Like your favorite drive-thru app, but for local Las Vegas restaurants. Join free, earn 1 point for every $1 you spend, and trade your points for free food. <b id="welcomeLine"></b>No app to download and no password: just a link that's yours.</p>
+        <p class="hero-sub">Like your favorite drive-thru app, but for local Las Vegas restaurants. Join free, earn 1 point for every $1 you spend, and trade your points for free food. <b id="welcomeLine"></b><b id="foundLine"></b>No app to download and no password: just a link that's yours.</p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#signup">Join Free</a>
           <a class="btn btn-ghost" href="#how">See How It Works</a>
@@ -492,18 +492,56 @@
   var SETTINGS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/lvr_points/settings") + ".json";
   var LEADS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/key_leads/leads") + ".json";
   function signupsPaused(){
-    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null }; });
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null, launch: (st && st.launch) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null, launch: null }; });
   }
   // "You start with 21 free points." only when the owner has that switched on
   signupsPaused().then(function(r){
     var w = r && r.welcome, el = document.getElementById("welcomeLine");
     if (el && w && w.enabled === true && w.when === "signup" && w.amount > 0 && w.amount <= 50) el.textContent = "You start with " + w.amount + " free points. ";
   }).catch(function(){});
-  function showWaitlist(banner){
+  // FOUNDING MEMBERS: only the first N people can join on their own (N is set in Points admin > Settings).
+  // After that, only a Founding Member's invite link works, and each founder can invite a limited number of friends
+  // (default 1). Founders are simply the first N accounts ever opened (account keys sort by creation time).
+  // Honest limit: this is checked here in the sign-up page, not by a server, so a technical person could bypass it.
+  function launchCfg(l){
+    if (!l || l.enabled !== true) return null;
+    return { limit: Math.max(1, Math.min(100000, Number(l.limit) || 25)), invites: Math.max(0, Math.min(50, l.invites == null ? 1 : Number(l.invites))) };
+  }
+  function memberKeys(){
+    return fetch(LVR_REWARDS_DB_URL + ".json?shallow=true").then(function(r){ if (!r.ok) throw new Error("x"); return r.json(); }).then(function(j){ return Object.keys(j || {}).sort(); });
+  }
+  // Resolves { ok, left, founders, reason }. reason: "full" | "noinvite" | "notfounder" | "used"
+  function launchGate(launch, phone, email){
+    var cfg = launchCfg(launch);
+    if (!cfg) return Promise.resolve({ ok: true });
+    return memberKeys().then(function(keys){
+      var left = Math.max(0, cfg.limit - keys.length);
+      if (left > 0) return { ok: true, founding: true, left: left, limit: cfg.limit };
+      var code = savedRef();
+      if (!code) return { ok: false, reason: "noinvite", limit: cfg.limit };
+      return findReferrer(code, phone, email).then(function(rk){
+        if (!rk) return { ok: false, reason: "noinvite", limit: cfg.limit };
+        if (keys.slice(0, cfg.limit).indexOf(rk) < 0) return { ok: false, reason: "notfounder", limit: cfg.limit };
+        return fetch(LVR_REWARDS_DB_URL + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(rk)) + "&shallow=true").then(function(r){ return r.json(); }).then(function(used){
+          if ((used ? Object.keys(used).length : 0) >= cfg.invites) return { ok: false, reason: "used", limit: cfg.limit };
+          return { ok: true, invited: true, limit: cfg.limit };
+        });
+      });
+    }).catch(function(){ return { ok: true }; });
+  }
+  function showFull(g){
+    var n = g && g.limit || 25;
+    var why = g && g.reason === "used" ? "The invite link you used has already been used. Each Founding Member can invite " + "a limited number of friends." :
+      g && g.reason === "notfounder" ? "Right now only Founding Members can invite friends." :
+      "Ask a Founding Member for their invite link.";
+    showWaitlist("", "Founding members only", "The first " + n + " spots are taken",
+      "LVR Points is starting with " + n + " Founding Members, and each one can invite a friend. " + why + " Leave your email and we will tell you the moment more spots open.");
+  }
+  function showWaitlist(banner, eyebrow, title, blurb){
     var card = document.getElementById("signup");
     if (!card) return;
-    card.innerHTML = '<span class="eyebrow">Launching soon</span><h2>Sign-ups are paused for a moment</h2>' +
-      '<p class="form-note">' + (banner ? banner.replace(/</g, "&lt;") : "We are getting ready to welcome new members.") + ' Leave your email and we will let you know the moment it opens.</p>' +
+    card.innerHTML = '<span class="eyebrow">' + (eyebrow || "Launching soon") + '</span><h2>' + (title || "Sign-ups are paused for a moment") + '</h2>' +
+      '<p class="form-note">' + (blurb || ((banner ? banner.replace(/</g, "&lt;") : "We are getting ready to welcome new members.") + ' Leave your email and we will let you know the moment it opens.')) + '</p>' +
       '<form id="waitForm" novalidate><div class="field"><label for="w-name">Name</label><input id="w-name" type="text" autocomplete="name"></div>' +
       '<div class="field"><label for="w-email">Email <span class="req" aria-hidden="true">*</span></label><input id="w-email" type="email" autocomplete="email" required></div>' +
       '<button class="btn btn-primary" type="submit" id="w-btn">Notify me</button><p class="form-status" id="w-status" role="status"></p></form>';
@@ -520,7 +558,15 @@
       }).catch(function(){ st.textContent = "Something went wrong. Please try again."; st.className = "form-status err"; document.getElementById("w-btn").disabled = false; });
     });
   }
-  signupsPaused().then(function(r){ if (r.paused) showWaitlist(r.banner); });
+  signupsPaused().then(function(r){
+    if (r.paused) { showWaitlist(r.banner); return; }
+    launchGate(r.launch, "", "").then(function(g){
+      var el = document.getElementById("foundLine");
+      if (g.ok && g.founding && el) el.textContent = "Only " + g.limit + " Founding Member spots: " + g.left + " left. ";
+      if (g.ok && g.invited && el) el.textContent = "You were invited by a Founding Member. ";
+      if (!g.ok) showFull(g);
+    });
+  });
 
   var form = document.getElementById("signupForm");
   var status = document.getElementById("signupStatus");
@@ -550,11 +596,15 @@
     status.textContent = "Opening your account…";
     status.className = "form-status";
 
-    var welcomeCfg = null;
+    var welcomeCfg = null, gateRes = null;
     signupsPaused().then(function(r){
       if (r.paused) { showWaitlist(r.banner); throw new Error("paused"); }
       welcomeCfg = r.welcome;
-      return findReferrer(savedRef(), phone, email);
+      return launchGate(r.launch, phone, email).then(function(g){
+        if (!g.ok) { showFull(g); throw new Error("full"); }
+        gateRes = g;
+        return findReferrer(savedRef(), phone, email);
+      });
     }).then(function(referrerKey){
       var rec = {
         name: name, email: email, phone: phone,
@@ -563,6 +613,7 @@
         consent_rules: true, consent_rules_ts: {".sv": "timestamp"}
       };
       if (referrerKey) rec.referredBy = referrerKey;
+      if (gateRes && gateRes.founding) rec.founding = true;
       // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
       if (welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
         rec.points = welcomeCfg.amount;
