@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LVR Points — Free Food at Real Vegas Restaurants — Key Technologies.si</title>
+<title>Join LVR Points — Earn Free Food at Real Vegas Restaurants — Key Technologies.si</title>
 <meta name="description" content="LVR Points: earn points, redeem them for free food at real Las Vegas restaurants. No password, no app — just a link that's yours. Brought to you by Las Vegas Restaurants, a Key Technologies sister project.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="LVR Points — Free Food at Real Vegas Restaurants">
+<meta property="og:title" content="Join LVR Points. Earn free food at real Vegas restaurants.">
 <meta property="og:description" content="Earn points, redeem them for free food at real Las Vegas restaurants. No password, no app needed.">
 <meta property="og:url" content="https://keytechnologies.si/rewards.html">
 <meta property="og:image" content="https://keytechnologies.si/og-image.png">
@@ -237,12 +237,10 @@
     <div class="hero-grid">
       <div>
         <p class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>LVR Points</p>
-        <h1 style="margin-top:14px;">Free food at real Vegas restaurants. <span class="accent">No password.</span></h1>
-        <p class="hero-sub">LVR Points is a points program from Las Vegas Restaurants — open an account, see what's
-          redeemable, and use your points at real participating restaurants. No app to download, no password to
-          remember. Just a link that's yours.</p>
+        <h1 style="margin-top:14px;">Join LVR Points. <span class="accent">Earn free food.</span></h1>
+        <p class="hero-sub">Like your favorite drive-thru app, but for local Las Vegas restaurants. Join free, earn 1 point for every $1 you spend, and trade your points for free food. <b id="welcomeLine"></b>No app to download and no password: just a link that's yours.</p>
         <div class="hero-ctas">
-          <a class="btn btn-primary" href="#signup">Open My Account</a>
+          <a class="btn btn-primary" href="#signup">Join Free</a>
           <a class="btn btn-ghost" href="#how">See How It Works</a>
         </div>
       </div>
@@ -279,25 +277,23 @@
   <section class="wrap" id="how">
     <div class="section-head">
       <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>How It Works</span>
-      <h2>Three steps, no app, no password</h2>
+      <h2>Join. Earn. Eat free.</h2>
     </div>
     <div class="step-grid">
       <article class="step-card">
         <span class="step-num">STEP 1</span>
-        <h3>Get your points</h3>
-        <p>Follow <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a>
-          on Instagram — that's where points drops get announced first.</p>
+        <h3>Join free</h3>
+        <p>Open your account in about 10 seconds. Then follow <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram, where new restaurants and free offers show up first.</p>
       </article>
       <article class="step-card">
         <span class="step-num">STEP 2</span>
-        <h3>Open your wallet</h3>
-        <p>Your account link is your wallet — bookmark it. It shows your balance and everything you can redeem
-          right now, at a glance.</p>
+        <h3>Earn points</h3>
+        <p>Eat at a participating restaurant, add your receipt, and earn 1 point for every $1 you spend. Your account link is your wallet: bookmark it.</p>
       </article>
       <article class="step-card">
         <span class="step-num">STEP 3</span>
-        <h3>Redeem at the restaurant</h3>
-        <p>Tap an offer, confirm, and a code pops up on your phone. Show it to your server to redeem — that simple.</p>
+        <h3>Eat free</h3>
+        <p>Trade your points for free food. Tap an offer, confirm, and show the code to your server. 20 points gets a free Chicken Bowl at Vanilla Rice's Hibachi House.</p>
       </article>
     </div>
   </section>
@@ -340,7 +336,7 @@
     <div class="wrap">
       <h2>Open your account</h2>
       <p>Takes about 10 seconds — no password, nothing to download.</p>
-      <a class="btn btn-primary" href="#signup">Open My Account</a>
+      <a class="btn btn-primary" href="#signup">Join Free</a>
     </div>
   </section>
 
@@ -498,6 +494,11 @@
   function signupsPaused(){
     return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null }; });
   }
+  // "You start with 21 free points." only when the owner has that switched on
+  signupsPaused().then(function(r){
+    var w = r && r.welcome, el = document.getElementById("welcomeLine");
+    if (el && w && w.enabled === true && w.when === "signup" && w.amount > 0 && w.amount <= 50) el.textContent = "You start with " + w.amount + " free points. ";
+  }).catch(function(){});
   function showWaitlist(banner){
     var card = document.getElementById("signup");
     if (!card) return;
