@@ -371,6 +371,8 @@
   .notice{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:700;line-height:1.4;}
   .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
   .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
+  .decay-note{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);color:#ffd35c;font-size:13.5px;line-height:1.5;border-radius:12px;padding:12px 14px;margin:0 0 16px;} .decay-note b{color:#ffe08a;}
+  .r1-list{list-style:none;margin:0;padding:0;display:grid;gap:4px;} .r1-row{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04);font-size:15px;} .r1-row.me{background:rgba(89,181,255,.16);outline:1px solid rgba(89,181,255,.5);} .r1-n{min-width:30px;font-weight:800;color:#ffd35c;text-align:center;} .r1-me{font-size:18px;margin:8px 0;} .pend-tag{display:inline-block;background:rgba(255,211,92,.15);border:1px solid rgba(255,211,92,.5);color:#ffd35c;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;margin-bottom:8px;}
   .terms-notice{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.3);border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--ink-dim);} .terms-notice b{color:#ffd35c;}
   .invite-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:26px 0 8px;}
   .invite-card h2{margin-bottom:4px;}
@@ -594,9 +596,11 @@
       ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed with points does not count toward your spend.'],
       ['Use your points', '1 point = $1 toward a free offer at a participating restaurant.' + (giftOn() ? giftTxt() : ' That is the only thing points can be used for.') + ' New restaurants join all the time, so there is always somewhere new to use your points. Try one you have not been to yet.'],
       ['Spin for free points', prize ? 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.' : 'A bonus for active members is coming soon.'],
+      decayOn() ? ['Use it or share it', 'On the 1st of every month, ' + decayCfg().percent + '% of your unused points go back into the community pool, so other members get a chance to use them. It is not a charge and no money is involved: it keeps LVR Points running and fair for everyone. Use your points on offers before the 1st and they are yours. New members are safe for their first ' + decayCfg().graceDays + ' days.'] : null,
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
       ['Fair play', (giftOn() ? 'Points can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Points can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown. LVR Points is a free promotion: we may pause, change or end it, and adjust or take back points, at any time at our sole discretion, with nothing owed (see the Program Terms).']
     ];
+    rules = rules.filter(Boolean);
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
     }).join('') + '</ol>' +
@@ -941,15 +945,91 @@
       '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#59b5ff;">spin-terms.html</a></p>';
     return infoModal('Spin Terms', html);
   }
+  // ---------- monthly return to the community pool ----------
+  var decayLast = null, poolTotal = null;
+  function decayCfg() {
+    var d = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, appSettings.decay || {});
+    d.percent = Math.max(1, Math.min(50, Number(d.percent) || 20));
+    if (DEMO) d.enabled = true;
+    return d;
+  }
+  function decayOn() { return decayCfg().enabled === true; }
+  function nextFirst() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth() + 1, 1); }
+  function decayHtml() {
+    var d = decayCfg();
+    if (d.enabled !== true) return '';
+    var pts = (wallet && wallet.points) || 0, next = nextFirst();
+    var nextLabel = next.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+    var joined = (wallet && wallet.joinedAt) || 0;
+    var inGrace = joined && next.getTime() < joined + d.graceDays * 86400000;
+    var take = Math.floor(pts * d.percent / 100);
+    var line;
+    if (inGrace) line = 'You are new, so your points are safe on ' + nextLabel + '. The return starts after your first ' + d.graceDays + ' days.';
+    else if (take >= 1) line = 'On <b>' + nextLabel + '</b>, about <b>' + take + ' of your ' + pts + ' points</b> will go back to the pool. Use them on an offer before then and they are yours.';
+    else line = 'Nothing is due on ' + nextLabel + '.';
+    var last = '';
+    if (decayLast) {
+      var ks = Object.keys(decayLast).sort(), k = ks[ks.length - 1], r = decayLast[k];
+      if (r && r.amount) last = '<div style="margin-top:6px;opacity:.85;">Last return (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' points went back to the pool.</div>';
+    }
+    var pool = poolTotal > 0 ? '<div style="margin-top:6px;opacity:.85;">Community pool so far: <b>' + poolTotal + ' points</b> returned for others to use.</div>' : '';
+    return '<div class="notice decay-note" role="note"><b>Use it or share it.</b> On the 1st of every month, ' + d.percent + '% of unused points go back into the community pool, so other members get a chance to use them. It is not a charge and no money is involved: it keeps LVR Points running and fair for everyone. <b>Use your points before the 1st.</b><div style="margin-top:8px;">' + line + '</div>' + last + pool + '</div>';
+  }
+  // ---------- Round One leaderboard ----------
+  function r1Rows(reg, limit) {
+    var ks = Object.keys(reg || {}).filter(function (k) { return reg[k] && reg[k].status !== 'rejected'; }).sort();
+    return ks.slice(0, limit).map(function (k, i) { return { n: i + 1, key: k, name: reg[k].name || 'Member', status: reg[k].status }; });
+  }
+  function r1ListHtml(rows, limit, myKey) {
+    var out = '';
+    for (var i = 0; i < limit; i++) {
+      var r = rows[i], medal = i === 0 ? '\u{1F947}' : i === 1 ? '\u{1F948}' : i === 2 ? '\u{1F949}' : '';
+      var nm = r ? (r.status === 'pending' ? '<span style="opacity:.88;">Reserved, waiting for approval</span>' : escapeHtml(r.name)) : '<span style="opacity:.8;">Open spot</span>';
+      out += '<li class="r1-row' + (r && r.key === myKey ? ' me' : '') + '"><span class="r1-n">' + (medal || (i + 1)) + '</span><span class="r1-nm">' + nm + (r && r.key === myKey ? ' <b>(you)</b>' : '') + '</span></li>';
+    }
+    return '<ol class="r1-list">' + out + '</ol>';
+  }
+  function round1CardHtml() {
+    var lc = launchCfg(); if (DEMO || !lc) return '';
+    return '<div class="invite-card" id="r1Card"><h2>Round One leaderboard</h2><div class="earn-sub" style="margin-bottom:8px;">The first ' + lc.limit + ' members, in the order they joined. Names show first name and last initial.</div><div id="r1Body">Loading…</div></div>';
+  }
+  function bindRound1() {
+    var el = document.getElementById('r1Body'); if (!el) return;
+    var lc = launchCfg(); if (!lc) return;
+    fbGet('/lvr_points/round1').then(function (reg) { el.innerHTML = r1ListHtml(r1Rows(reg || {}, lc.limit), lc.limit, memberKey); }).catch(function () { el.textContent = 'Could not load the leaderboard right now.'; });
+  }
+  // ---------- waiting for approval ----------
+  function showPendingScreen(rejected) {
+    var first = String((wallet && wallet.name) || '').split(/\s+/)[0] || 'there', lc = launchCfg(), lim = lc ? lc.limit : 25;
+    if (rejected) {
+      contentEl.innerHTML = '<div class="no-account-card"><h1>We could not approve this sign-up</h1><p>Every sign-up is checked by hand. If you think we made a mistake, send us a message on Instagram and we will take another look.</p><a class="btn btn-primary" href="' + IG_LINK + '" target="_blank" rel="noopener">Message @LasVegas_Restaurants</a></div>';
+      return;
+    }
+    contentEl.innerHTML = '<div class="no-account-card pending-card"><span class="pend-tag">Waiting for approval</span><h1>Thanks, ' + escapeHtml(first) + '! You are on the list.</h1>' +
+      '<p>We check every sign-up by hand so that only real people join LVR Points. As soon as you are approved, this page opens up' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' and your ' + welcomeCfg().amount + ' free points are added' : '') + '. Keep this page, it checks for approval by itself.</p>' +
+      '<div class="r1-me" id="r1Me"></div>' + (lc ? '<h2 style="margin:18px 0 6px;font-size:18px;">Round One leaderboard</h2><div id="r1Body">Loading…</div>' : '') +
+      '<p style="font-size:13px;color:var(--ink-dim);margin-top:14px;">By joining you agreed to the <button type="button" class="linkbtn inl" data-pterms>Program Terms</button>.</p></div>';
+    fbGet('/lvr_points/round1').then(function (reg) {
+      var rows = r1Rows(reg || {}, 100000), me = null; rows.forEach(function (r) { if (r.key === memberKey) me = r; });
+      var m = document.getElementById('r1Me'); if (m && me) m.innerHTML = 'Your spot: <b>#' + me.n + '</b>' + (me.n <= lim ? ' in Round One' : '');
+      var b = document.getElementById('r1Body'); if (b) b.innerHTML = r1ListHtml(rows.slice(0, lim), lim, memberKey);
+    }).catch(function () {});
+  }
+  setInterval(function () {
+    if (document.hidden || DEMO || !token || !wallet || wallet.status !== 'pending') return;
+    fbFindByToken(token).then(function (f) { var w = f && f[memberKey]; if (w && w.status !== 'pending') location.reload(); }).catch(function () {});
+  }, 30000);
   // The Program Terms: our rights to pause, change, end the program and adjust or take back points.
   // Bump PROGRAM_TERMS_VERSION when the wording changes, and re-run: node .github/db-task/gen-points-terms.js
-  var PROGRAM_TERMS_VERSION = '2026-10-30', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 1)';
+  var PROGRAM_TERMS_VERSION = '2026-10-30b', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 2)';
   function programTermsList() {
     return [
       ["What LVR Points is", "LVR Points (Las Vegas Restaurant Points) is a free, just-for-fun promotion run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram). We are doing our best to promote it for participating restaurants and to make it a good experience, but it is offered as is and we make no promise that it will be available at any time."],
       ["Points have no cash value", "Points are a promotional perk. They are not money, a deposit, a gift card, stored value, a security or your property. \"1 point = $1\" only describes the discount an offer gives you while the program is running. Points cannot be exchanged for cash, sold or transferred, and nothing is owed to you for a balance."],
       ["Our rights, at our sole discretion", "At any time, with or without notice, for any reason or no reason, we may in our sole discretion: (a) pause, suspend, change or end the program, the free spin, the invite system, any offer or any restaurant; (b) limit, freeze, suspend or close any account; and (c) adjust, cancel, void, reduce, remove or take back any or all points, including points you earned, were given or won. These rights belong to us alone, and our decisions are final."],
       ["Examples of reasons", "Suspected fraud or abuse, fake, duplicate or shared accounts, altered or incorrect receipts, a security incident, hacking or being hacked, a vulnerability, a technical error or a points mistake, a participating restaurant leaving or changing its offer, a legal or regulatory reason, protecting members, restaurants or ourselves, the program ending, or any other reason we decide. These are examples, not a limit on our rights."],
+      ["Monthly return to the pool", "On the 1st of every month, a percentage of each member's unused points (currently 20%, rounded down) goes back into the community pool so other members get a chance to use them. It is not a fee or a charge, no money is involved, and it helps keep LVR Points running. New members are not affected during their first 30 days. Use your points on offers before the 1st and they are yours. We may change the percentage and timing, or stop the monthly return, at any time."],
+      ["Sign-ups are reviewed", "Every sign-up is reviewed by hand. We may approve or decline any sign-up for any reason, including to keep out fake accounts, bots and automated sign-ups. Points, including welcome points, are added only after a sign-up is approved. Round One is limited to the first 25 members, who are shown on a leaderboard by first name and last initial."],
       ["If the program changes or ends", "If we pause or end the program or take points back, unused points and unused offers may stop working. You are not owed a refund, payment, replacement or compensation of any kind. We will try to post a notice in the app or on our website when we reasonably can, but we are not required to give notice first."],
       ["Offers belong to the restaurants", "Each offer is provided by a participating restaurant. Offers may be changed, limited, paused or withdrawn, are available while supplies last, and a restaurant may decline an offer it cannot honor. We are not responsible for a restaurant's food, service or decisions."],
       ["No reliance", "No purchase is necessary to join or to use the free spin. Do not buy anything, travel or spend money expecting to earn or use points. Points are never guaranteed."],
@@ -1062,12 +1142,14 @@
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
       ['Will the free spin always be available?', 'No. The free spin is not always turned on. It comes and goes, so keep watching for it. We are doing our best to get this going and to sign up as many restaurants as we can.'],
       ['I own a restaurant. Can I join?', 'Yes, we would love that. Send a DM to @LasVegas_Restaurants on Instagram, or fill out the form at keytechnologies.si and we will get back to you.'],
+      decayOn() ? ['Why do ' + decayCfg().percent + '% of unused points go back to the pool?', 'LVR Points is free and funded by the restaurants and by people sharing. Returning a share of unused points each month keeps points moving so that other members get a chance to use them, and it helps keep the program running. It is not a fee, no money is involved, and nothing returns if you use your points before the 1st.'] : null,
       ['Can the program change or stop?', 'Yes. LVR Points is a free, fun promotion. We may pause, change or end it at any time, and we may adjust or take back points, for example if we suspect fraud, are hacked, find a vulnerability or a mistake, a restaurant leaves, or for any other reason. Points have no cash value and nothing is owed if that happens. Please read the Program Terms in the menu.'],
-      ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
+      ['Do my points expire?', decayOn() ? 'Not on a date, but there is a monthly return. On the 1st of every month, ' + decayCfg().percent + '% of your unused points go back into the community pool so others get a chance to use them (rounded down; new members are safe for ' + decayCfg().graceDays + ' days). Use your points on offers before the 1st and they are yours. Each offer also has its own end date, and a code that is not used by the date shown expires.' : 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
     if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). LVR Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
     if (prize) qa.push(['What is the bonus spin?', 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.']);
+    qa = qa.filter(Boolean);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
   }
@@ -1169,8 +1251,12 @@
       }
       memberKey = keys[0];
       wallet = found[memberKey];
+      if (wallet.status === 'pending' || wallet.status === 'rejected') { showPendingScreen(wallet.status === 'rejected'); return; }
       liveSig = JSON.stringify([catalog || {}, allRedemptions || {}, directory || {}, appSettings || {}, wallet.points]);
-      render(catalog, allRedemptions);
+      return Promise.all([fbGet('/lvr_points/decay_by_member/' + encodeURIComponent(memberKey)).catch(function () { return null; }), fbGet('/lvr_points/pool/total').catch(function () { return null; })]).then(function (x) {
+        decayLast = x[0]; poolTotal = Number(x[1]) || 0;
+        render(catalog, allRedemptions);
+      });
     }).catch(function(){
       showEmpty("Couldn't load your account right now. Please try again in a moment.");
     });
@@ -1345,6 +1431,7 @@
       '</div>' +
       '</div>' +
       '<div class="pt-note"><b>1 point = $1</b> toward a free offer at any participating restaurant, new ones included. Every offer is at least 15 LVR Points.' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' Everyone starts with <b>' + welcomeCfg().amount + ' free points</b> ($' + welcomeCfg().amount + ').' : '') + ' Points can only be used for those offers, not for anything else or exchanged for cash.</div>' +
+      decayHtml() +
       igCardHtml() +
       '<h2>Redeem</h2>';
 
@@ -1399,7 +1486,7 @@
               (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
             '</div>';
           }).join('') + '</div>' + contactHtml(first.contact, g.name) + '</div>';
-      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Points cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div>';
+      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Points cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.' + (decayOn() ? ' On the 1st of every month, ' + decayCfg().percent + '% of unused points go back into the community pool, so use your points before the 1st.' : '') + '</div>';
     }
 
     var mine = [];
@@ -1423,6 +1510,7 @@
       }).join('');
     }
 
+    html += round1CardHtml();
     html += inviteCardHtml();
 
     var rIds = Object.keys(myReceipts || {}).filter(function(id){ return myReceipts[id]; });
@@ -1450,7 +1538,7 @@
     if (menuEl) menuEl.innerHTML = lrListHtml();
     bindOwner(contentEl);
     bindEarnPanel();
-    if (!DEMO) bindInvite();
+    if (!DEMO) { bindInvite(); bindRound1(); }
     bindTermsNotice();
     startPolling();
     tickChest();

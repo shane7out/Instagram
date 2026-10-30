@@ -262,9 +262,10 @@
             <label for="r-phone">Phone (optional)</label>
             <input id="r-phone" name="phone" type="tel" autocomplete="tel">
           </div>
+          <div id="decayBox" hidden style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:11px 13px;margin:2px 0 12px;font-size:13.5px;line-height:1.45;color:var(--ink-dim);"><b style="color:#ffd35c;">Use it or share it.</b> On the 1st of every month, <span class="decayPct">20</span>% of unused points go back into the community pool, so other members get a chance to use them. It is not a fee or a charge and no money is involved: it keeps LVR Points running. <b>Use your points on offers before the 1st.</b></div>
           <label for="r-rules" style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--ink-dim);margin:2px 0 14px;cursor:pointer;">
             <input id="r-rules" type="checkbox" style="margin-top:3px;width:18px;height:18px;flex:none;">
-            <span><b style="color:var(--ink);">I'm in.</b> I am 18 or older. I understand this is a game that gives points for eating at local restaurants. No purchase is necessary. 1 point = $1 toward a free offer at a participating restaurant. Points can only be used for free offers at participating restaurants, not for anything else or for cash. Points are used when I claim an offer and are never refunded. I agree to the <a href="points-terms.html" target="_blank" rel="noopener">LVR Points Program Terms</a>, including that LVR Points is a free promotion that may be paused, changed or ended, and points adjusted or taken back, at any time at its sole discretion, with nothing owed to me.</span>
+            <span><b style="color:var(--ink);">I'm in.</b> I am 18 or older. I understand this is a game that gives points for eating at local restaurants. No purchase is necessary. 1 point = $1 toward a free offer at a participating restaurant. Points can only be used for free offers at participating restaurants, not for anything else or for cash. Points are used when I claim an offer and are never refunded. I agree to the <a href="points-terms.html" target="_blank" rel="noopener">LVR Points Program Terms</a>, including that LVR Points is a free promotion that may be paused, changed or ended, and points adjusted or taken back, at any time at its sole discretion, with nothing owed to me. I understand every sign-up is reviewed by hand and points are added only after I am approved, that on the 1st of every month a share of my unused points may go back into the community pool, and that Round One members are shown on a leaderboard by first name and last initial.</span>
           </label>
           <button class="btn btn-primary" type="submit" id="signupBtn">Open My Account</button>
           <p class="form-status" id="signupStatus" role="status"></p>
@@ -298,12 +299,39 @@
     </div>
   </section>
 
+  <!-- ============ ROUND ONE LEADERBOARD ============ -->
+  <section class="wrap" id="round1" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Round One</span>
+      <h2 id="r1Title">Founding Members leaderboard</h2>
+    </div>
+    <div class="lead-card" style="max-width:560px;">
+      <p class="form-note" id="r1Note" style="margin-top:0;"></p>
+      <ol id="r1List" style="list-style:none;margin:0;padding:0;display:grid;gap:6px;"></ol>
+    </div>
+  </section>
+
   <!-- ============ FAQ ============ -->
   <section class="wrap" id="faq">
     <div class="section-head">
       <span class="eyebrow eyebrow-mark"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="13" y="10.2" width="9" height="3.6" rx="1.8" fill="currentColor"/><rect x="18.6" y="13" width="2.6" height="5" rx="1" fill="currentColor"/></svg>FAQ</span>
       <h2>Questions, answered</h2>
     </div>
+
+    <details>
+      <summary>Why do I have to wait to be approved?</summary>
+      <p>We check every sign-up by hand so that only real people join LVR Points, not bots or fake accounts.
+        After you sign up you see a "waiting for approval" page that checks by itself. As soon as you are approved,
+        your account opens and any welcome points are added.</p>
+    </details>
+
+    <details id="decayFaq" hidden>
+      <summary>Why do 20% of unused points go back to the pool?</summary>
+      <p>On the 1st of every month, <span class="decayPct">20</span>% of your unused points (rounded down) go back into the
+        community pool, so other members get a chance to use them. It is not a fee or a charge and no money is involved:
+        it helps keep LVR Points running and fair for everyone. <b>Use your points on offers before the 1st and they are yours.</b>
+        New members are safe for their first 30 days.</p>
+    </details>
 
     <details>
       <summary>Do I get points just for signing up?</summary>
@@ -492,7 +520,7 @@
   var SETTINGS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/lvr_points/settings") + ".json";
   var LEADS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/key_leads/leads") + ".json";
   function signupsPaused(){
-    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null, launch: (st && st.launch) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null, launch: null }; });
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null, launch: (st && st.launch) || null, decay: (st && st.decay) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null, launch: null, decay: null }; });
   }
   // "You start with 21 free points." only when the owner has that switched on
   signupsPaused().then(function(r){
@@ -507,8 +535,40 @@
     if (!l || l.enabled !== true) return null;
     return { limit: Math.max(1, Math.min(100000, Number(l.limit) || 25)), invites: Math.max(0, Math.min(50, l.invites == null ? 1 : Number(l.invites))) };
   }
+  // Round One registry (lvr_points/round1/<member key> = { name, at, status }) holds the leaderboard names and each
+  // sign-up's approval status. A member rejected by the owner frees the spot. Members with no registry entry (the very
+  // first accounts) count as approved.
+  var R1_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/lvr_points/round1") + ".json";
+  var round1Reg = {}, lastKeys = null;
   function memberKeys(){
-    return fetch(LVR_REWARDS_DB_URL + ".json?shallow=true").then(function(r){ if (!r.ok) throw new Error("x"); return r.json(); }).then(function(j){ return Object.keys(j || {}).sort(); });
+    return Promise.all([
+      fetch(LVR_REWARDS_DB_URL + ".json?shallow=true").then(function(r){ if (!r.ok) throw new Error("x"); return r.json(); }),
+      fetch(R1_URL).then(function(r){ return r.ok ? r.json() : {}; }).catch(function(){ return {}; })
+    ]).then(function(x){
+      var reg = x[1] || {}; round1Reg = reg;
+      lastKeys = Object.keys(x[0] || {}).filter(function(k){ return !(reg[k] && reg[k].status === "rejected"); }).sort();
+      return lastKeys;
+    });
+  }
+  function esc(t){ return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+  function shortName(n){
+    var p = String(n || "").trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return "Member";
+    return p.length === 1 ? p[0] : p[0] + " " + p[p.length - 1].charAt(0).toUpperCase() + ".";
+  }
+  function renderRound1(limit){
+    var sec = document.getElementById("round1"), ul = document.getElementById("r1List");
+    if (!sec || !ul || !lastKeys) return;
+    var out = "";
+    for (var i = 0; i < limit; i++) {
+      var k = lastKeys[i], r = k ? round1Reg[k] : null, medal = i === 0 ? "\u{1F947}" : i === 1 ? "\u{1F948}" : i === 2 ? "\u{1F949}" : "";
+      var nm = !k ? '<span style="opacity:.8;">Open spot</span>' : (r && r.status === "pending") ? '<span style="opacity:.88;">Reserved, waiting for approval</span>' : esc(r && r.name || "Member");
+      out += '<li style="display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04);"><span style="min-width:30px;font-weight:800;color:#ffd35c;text-align:center;">' + (medal || (i + 1)) + '</span><span>' + nm + '</span></li>';
+    }
+    ul.innerHTML = out;
+    document.getElementById("r1Title").textContent = "Round One: the first " + limit + " Founding Members";
+    document.getElementById("r1Note").textContent = "In the order they joined. Names show first name and last initial. Every sign-up is approved by hand.";
+    sec.hidden = false;
   }
   // Resolves { ok, left, founders, reason }. reason: "full" | "noinvite" | "notfounder" | "used"
   function launchGate(launch, phone, email){
@@ -565,7 +625,15 @@
       if (g.ok && g.founding && el) el.textContent = "Only " + g.limit + " Founding Member spots: " + g.left + " left. ";
       if (g.ok && g.invited && el) el.textContent = "You were invited by a Founding Member. ";
       if (!g.ok) showFull(g);
+      var lc = launchCfg(r.launch); if (lc) renderRound1(lc.limit);
     });
+  });
+  // monthly return disclosure (only while the owner has it switched on)
+  signupsPaused().then(function(r){
+    var d = r && r.decay; if (!d || d.enabled !== true) return;
+    var pct = Math.max(1, Math.min(50, Number(d.percent) || 20));
+    Array.prototype.forEach.call(document.querySelectorAll(".decayPct"), function(e){ e.textContent = pct; });
+    var b = document.getElementById("decayBox"), f = document.getElementById("decayFaq"); if (b) b.hidden = false; if (f) f.hidden = false;
   });
 
   var form = document.getElementById("signupForm");
@@ -596,10 +664,11 @@
     status.textContent = "Opening your account…";
     status.className = "form-status";
 
-    var welcomeCfg = null, gateRes = null;
+    var welcomeCfg = null, gateRes = null, pendingApproval = true;
     signupsPaused().then(function(r){
       if (r.paused) { showWaitlist(r.banner); throw new Error("paused"); }
       welcomeCfg = r.welcome;
+      pendingApproval = !(r.launch && r.launch.approval === false);
       return launchGate(r.launch, phone, email).then(function(g){
         if (!g.ok) { showFull(g); throw new Error("full"); }
         gateRes = g;
@@ -611,12 +680,14 @@
         points: 0, token: token, refCode: genRefCode(), source: "keytechnologies-rewards-signup",
         joinedAt: {".sv": "timestamp"},
         consent_rules: true, consent_rules_ts: {".sv": "timestamp"},
-        consent_terms: "2026-10-30" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
+        consent_terms: "2026-10-30b" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
       };
       if (referrerKey) rec.referredBy = referrerKey;
       if (gateRes && gateRes.founding) rec.founding = true;
+      // Every sign-up waits for the owner's approval (to keep out bots and fake accounts); welcome points are added on approval.
+      if (pendingApproval) rec.status = "pending";
       // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
-      if (welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
+      if (!pendingApproval && welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
         rec.points = welcomeCfg.amount;
         rec.welcomeGiven = { amount: welcomeCfg.amount, via: "signup", at: {".sv": "timestamp"} };
       }
@@ -629,12 +700,19 @@
       if(!r.ok) throw new Error("HTTP " + r.status);
       // ledger: the welcome points are written down as a transaction (my-account.html sends it)
       return r.json().then(function(j){
-        if (j && j.name && welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
+        if (j && j.name) {
+          // Round One registry (leaderboard name + status) and the owner's alert (Leads list + email)
+          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ name: shortName(name), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }) }).catch(function(){});
+          var note = { source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "pending" : "approved", memberKey: j.name, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
+          fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(note) }).catch(function(){});
+          fetch("https://formspree.io/f/mzeedbyb", { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify({ _subject: "New LVR Points sign-up" + (pendingApproval ? " waiting for your approval" : ""), source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "WAITING FOR APPROVAL: open Points admin > Approvals" : "approved", message: "A new person signed up for LVR Points. Open the Points admin, Approvals tab, to approve or decline." }) }).catch(function(){});
+        }
+        if (j && j.name && !pendingApproval && welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
           try { var q = JSON.parse(localStorage.getItem("lvrTxQueue") || "[]") || []; q.push({ mk: encodeURIComponent(j.name), key: "welcome", type: "welcome", amount: welcomeCfg.amount, ref: "Welcome points at sign-up" }); localStorage.setItem("lvrTxQueue", JSON.stringify(q.slice(-60))); } catch (e) {}
         }
       }).catch(function(){});
     }).then(function(){
-      status.textContent = "Account open — taking you to your wallet…";
+      status.textContent = pendingApproval ? "Thanks! Your sign-up is waiting for approval…" : "Account open — taking you to your wallet…";
       status.className = "form-status ok";
       try { localStorage.setItem(ACCOUNT_TOKEN_KEY, token); } catch (e) {}
       location.href = "my-account.html";

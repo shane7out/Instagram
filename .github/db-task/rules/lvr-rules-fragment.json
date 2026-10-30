@@ -133,6 +133,9 @@
     },
     "invites": {
      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "approval": {
+     ".validate": "newData.isBoolean()"
     }
    },
    "defaultCommissionPct": {
@@ -209,6 +212,24 @@
      ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 50"
     }
    }
+  },
+  "round1": {
+   "$mk": {
+    ".write": "newData.exists() && (data.exists() ? (newData.child('name').val() == data.child('name').val() && newData.child('at').val() == data.child('at').val()) : (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved'))",
+    ".validate": "newData.hasChildren(['name', 'at', 'status']) && newData.child('name').isString() && newData.child('name').val().length <= 40 && newData.child('at').isNumber() && newData.child('at').val() <= now && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected')",
+    "name": {
+     ".validate": "newData.isString()"
+    },
+    "at": {
+     ".validate": "newData.isNumber()"
+    },
+    "status": {
+     ".validate": "newData.isString()"
+    },
+    "$other": {
+     ".validate": "false"
+    }
+   }
   }
  },
  "lvr_rewards": {
@@ -216,7 +237,8 @@
   ".indexOn": [
    "token",
    "refCode",
-   "referredBy"
+   "referredBy",
+   "status"
   ],
   "$k": {
    ".write": "!newData.exists() || (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('chestState').exists() || (newData.child('chestState/n').val() >= data.child('chestState/n').val() && newData.child('chestState/at').val() >= data.child('chestState/at').val())) && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val())) : (newData.child('name').isString() && (newData.child('points').val() == 0 || (root.child('lvr_points/settings/welcome/enabled').val() == true && root.child('lvr_points/settings/welcome/when').val() == 'signup' && newData.child('points').val() == root.child('lvr_points/settings/welcome/amount').val() && newData.child('welcomeGiven/amount').val() == newData.child('points').val()))))",
@@ -237,6 +259,9 @@
    },
    "chestState": {
     ".validate": "newData.hasChildren(['n','amount','at']) && newData.child('n').isNumber() && newData.child('amount').isNumber() && newData.child('at').isNumber() && newData.child('n').val() == (data.child('n').exists() ? data.child('n').val() + 1 : 1) && (newData.child('n').val() == 1 || root.child('lvr_points/settings/chest/repeat').val() == true) && root.child('lvr_points/settings/chest/prizeMax').val() > 0 && newData.child('amount').val() > 0 && newData.child('amount').val() >= root.child('lvr_points/settings/chest/prizeMin').val() && newData.child('amount').val() <= root.child('lvr_points/settings/chest/prizeMax').val() && (newData.child('at').val() - (data.child('at').exists() ? data.child('at').val() : newData.parent().child('joinedAt').val())) % (86400000 * root.child('lvr_points/settings/chest/waitDays').val() + 3600000 * (root.child('lvr_points/settings/chest/claimHours').exists() ? root.child('lvr_points/settings/chest/claimHours').val() : 48)) >= 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
+   },
+   "status": {
+    ".validate": "newData.val() == 'pending' || newData.val() == 'approved' || newData.val() == 'rejected'"
    }
   }
  },

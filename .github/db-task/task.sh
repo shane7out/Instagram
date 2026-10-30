@@ -1,24 +1,13 @@
 #!/bin/bash
-# Re-run the rules simulator (nothing touches the real database).
-bash .github/db-task/rules/run-rules-test.sh
-# re-run: chest + bonus rules
-# re-run: quest removed
-# re-run: use-by rules
-# re-run: monthly return tests
-# re-run: dry-run expectation fixed
-# re-run: repeating chest tests
-# restored
-# re-run: default commission rule
-# re-run: commission write rule fixed
-# restored
-# restored
-# re-run: 10-day bonus with 48-hour claim window
-# restored
-# restored
-# re-run: zero slot rules
-# re-run: zero slot rules reverted
-# restored
-# re-run: offer minimum 15 points
-# re-run: old catalog test updated to 20 points
-# re-run: transactions ledger rules
-# re-run: tag claims rules
+# 1) rules simulator (nothing touches the real database)
+bash .github/db-task/rules/run-rules-test.sh; RC=$?
+# 2) one-time live setup (owner decisions 2026-10-30): Round One leaderboard backfill, approval on, monthly return on
+DB=https://lvr-data-a60c1-default-rtdb.firebaseio.com
+node .github/db-task/backfill-round1.js
+echo "launch BEFORE:"; curl -s "$DB/lvr_points/settings/launch.json"; echo
+curl -s -X PATCH -H 'Content-Type: application/json' -d '{"approval":true}' "$DB/lvr_points/settings/launch.json"; echo
+echo "decay BEFORE:"; curl -s "$DB/lvr_points/settings/decay.json"; echo
+curl -s -X PUT -H 'Content-Type: application/json' -d '{"enabled":true,"percent":20,"graceDays":30}' "$DB/lvr_points/settings/decay.json"; echo
+echo "launch AFTER:"; curl -s "$DB/lvr_points/settings/launch.json"; echo
+echo "decay AFTER:"; curl -s "$DB/lvr_points/settings/decay.json"; echo
+exit $RC
