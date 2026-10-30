@@ -371,6 +371,7 @@
   .notice{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:700;line-height:1.4;}
   .notice.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.45);color:var(--green);}
   .notice.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:var(--red);}
+  .terms-notice{background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.3);border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--ink-dim);} .terms-notice b{color:#ffd35c;}
   .invite-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:26px 0 8px;}
   .invite-card h2{margin-bottom:4px;}
   .invite-link{word-break:break-all;font-size:13px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin:10px 0;color:var(--key-light);}
@@ -473,7 +474,7 @@
     </div>
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
-  <div class="footer-note" id="builtBy"><a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Points (Las Vegas Restaurant Points) is run by Las Vegas Restaurants, <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram.<br>Own a restaurant and want to be part of this? <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">Send us a DM</a> or <a href="index.html#contact">fill out the form</a>.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note" id="builtBy"><a href="points-terms.html" data-pterms>Program Terms</a> · <a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Points (Las Vegas Restaurant Points) is run by Las Vegas Restaurants, <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram.<br>Own a restaurant and want to be part of this? <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">Send us a DM</a> or <a href="index.html#contact">fill out the form</a>.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </main>
 
 <div id="redeemOverlay">
@@ -594,7 +595,7 @@
       ['Use your points', '1 point = $1 toward a free offer at a participating restaurant.' + (giftOn() ? giftTxt() : ' That is the only thing points can be used for.') + ' New restaurants join all the time, so there is always somewhere new to use your points. Try one you have not been to yet.'],
       ['Spin for free points', prize ? 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
-      ['Fair play', (giftOn() ? 'Points can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Points can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown.']
+      ['Fair play', (giftOn() ? 'Points can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Points can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown. LVR Points is a free promotion: we may pause, change or end it, and adjust or take back points, at any time at our sole discretion, with nothing owed (see the Program Terms).']
     ];
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
@@ -630,7 +631,7 @@
     var opener = document.activeElement;
     var api = { el: b, close: function () { if (b.parentNode) { b.parentNode.removeChild(b); try { if (opener && opener.focus && document.body.contains(opener)) opener.focus(); } catch (e) {} } } };
     b.addEventListener('click', function (e) { if (e.target === b) api.close(); });
-    var f0 = b.querySelector('button,select,input'); if (f0) { try { f0.focus(); } catch (e) {} }
+    var f0 = b.querySelector('button,select,input'); if (f0) { try { f0.focus({ preventScroll: true }); } catch (e) { try { f0.focus(); } catch (e2) {} } } b.scrollTop = 0; if (b.firstChild) b.firstChild.scrollTop = 0;
     return api;
   }
   // keep Tab inside whichever dialog is open
@@ -820,6 +821,7 @@
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null; if (!t) return;
     if (t.closest('[data-fair]')) { fairnessModal(); return; }
+    if (t.closest('[data-pterms]')) { e.preventDefault(); programTermsModal(); return; }
     if (t.closest('[data-terms]')) { e.preventDefault(); spinTermsModal(); return; }
     if (t.closest('#termsFoot')) { e.preventDefault(); spinTermsModal(); return; }
     if (t.closest('#sndBtn')) { soundOn = !soundOn; try { localStorage.setItem('lvrSound', soundOn ? '1' : '0'); } catch (x) {} syncSnd(); if (soundOn) clack(1); }
@@ -897,6 +899,7 @@
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
       tagCfg().enabled ? ['tag', '📸', 'Tag us, earn ' + tagCfg().points + ' points', 'Post and tag @LasVegas_Restaurants', ''] : null,
       ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
+      ['pterms', '📃', 'Program Terms', 'Our rights to pause, change or end the program', ''],
       ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
       ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''],
@@ -913,7 +916,7 @@
   }
   // The full "why we have no control" page, reachable from the spin screen, the menu and the Q&A
   // The Spin Terms. Bump SPIN_TERMS_VERSION when the wording changes, and keep spin-terms.html in step.
-  var SPIN_TERMS_VERSION = '2026-10-30d', SPIN_TERMS_DATE = 'October 30, 2026 (rev. 4)';
+  var SPIN_TERMS_VERSION = '2026-10-30e', SPIN_TERMS_DATE = 'October 30, 2026 (rev. 5)';
   function spinTermsList(c) {
     var range = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + ' to ' + c.prizeMax) : '1 to 10';
     return [
@@ -926,7 +929,7 @@
       ['Who can spin', 'You must be 18 or older, and one person may have only one account. Using more than one account, or trying to interfere with the wheel, the app or the records, voids the spin and may close the account.'],
       ['Records', 'Every spin is recorded with the date, time and number, together with the version of these terms you agreed to. If you think a spin was recorded wrongly, contact us and we will review the record with you.'],
       ['Not gambling', 'The spin is a free promotion. There is nothing to bet or buy and no cash prize.'],
-      ['Changes', 'We may change or end the spin, or these terms, at any time. Spins already recorded are not taken back. The version date on this page tells you which terms apply.']
+      ['Changes', 'We may pause, change or end the spin, or these terms, at any time, at our sole discretion. We may also cancel a spin or take back points won from a spin if we suspect fraud, a mistake or a security problem. Points have no cash value. See the Program Terms. The version date on this page tells you which terms apply.']
     ];
   }
   function spinTermsModal() {
@@ -937,6 +940,44 @@
       '<p style="margin:14px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-fair>How the spin works, and test it yourself ›</button></p>' +
       '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#59b5ff;">spin-terms.html</a></p>';
     return infoModal('Spin Terms', html);
+  }
+  // The Program Terms: our rights to pause, change, end the program and adjust or take back points.
+  // Bump PROGRAM_TERMS_VERSION when the wording changes, and re-run: node .github/db-task/gen-points-terms.js
+  var PROGRAM_TERMS_VERSION = '2026-10-30', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 1)';
+  function programTermsList() {
+    return [
+      ["What LVR Points is", "LVR Points (Las Vegas Restaurant Points) is a free, just-for-fun promotion run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram). We are doing our best to promote it for participating restaurants and to make it a good experience, but it is offered as is and we make no promise that it will be available at any time."],
+      ["Points have no cash value", "Points are a promotional perk. They are not money, a deposit, a gift card, stored value, a security or your property. \"1 point = $1\" only describes the discount an offer gives you while the program is running. Points cannot be exchanged for cash, sold or transferred, and nothing is owed to you for a balance."],
+      ["Our rights, at our sole discretion", "At any time, with or without notice, for any reason or no reason, we may in our sole discretion: (a) pause, suspend, change or end the program, the free spin, the invite system, any offer or any restaurant; (b) limit, freeze, suspend or close any account; and (c) adjust, cancel, void, reduce, remove or take back any or all points, including points you earned, were given or won. These rights belong to us alone, and our decisions are final."],
+      ["Examples of reasons", "Suspected fraud or abuse, fake, duplicate or shared accounts, altered or incorrect receipts, a security incident, hacking or being hacked, a vulnerability, a technical error or a points mistake, a participating restaurant leaving or changing its offer, a legal or regulatory reason, protecting members, restaurants or ourselves, the program ending, or any other reason we decide. These are examples, not a limit on our rights."],
+      ["If the program changes or ends", "If we pause or end the program or take points back, unused points and unused offers may stop working. You are not owed a refund, payment, replacement or compensation of any kind. We will try to post a notice in the app or on our website when we reasonably can, but we are not required to give notice first."],
+      ["Offers belong to the restaurants", "Each offer is provided by a participating restaurant. Offers may be changed, limited, paused or withdrawn, are available while supplies last, and a restaurant may decline an offer it cannot honor. We are not responsible for a restaurant's food, service or decisions."],
+      ["No reliance", "No purchase is necessary to join or to use the free spin. Do not buy anything, travel or spend money expecting to earn or use points. Points are never guaranteed."],
+      ["Fair play and accuracy", "Points are earned only from genuine receipts that we verify. You may have one account. We can correct mistakes at any time, including by removing points that were added in error. Misuse, fraud or interfering with the program voids the points involved."],
+      ["Limit of our responsibility", "To the fullest extent the law allows, Las Vegas Restaurants, Key Technologies and the participating restaurants are not liable for lost, removed or expired points, a paused or ended program, downtime, hacking or data incidents, or any indirect or other damages. Nothing here limits any right you have by law that cannot be limited."],
+      ["Changes to these terms", "We may change these terms at any time. If you keep using LVR Points after a change, you accept the new terms. The version date on this page tells you which terms apply. The Spin Terms also apply to the free spin."]
+    ];
+  }
+  function programTermsModal() {
+    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Points (Las Vegas Restaurant Points) \u00b7 Program Terms \u00b7 version ' + PROGRAM_TERMS_DATE + '</p>' +
+      '<div class="tr-intro"><b>In short:</b> this is a free, fun promotion. We can pause, change or end it, and adjust or take back points, at any time, at our sole discretion. Points have no cash value.</div>' +
+      '<ol style="margin:0;padding:0 0 0 20px;display:grid;gap:10px;font-size:15px;line-height:1.5;">' + programTermsList().map(function (t) { return '<li><b>' + t[0] + '.</b> ' + t[1] + '</li>'; }).join('') + '</ol>' +
+      '<p style="margin:14px 0 0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="points-terms.html" target="_blank" rel="noopener">points-terms.html</a></p>';
+    return infoModal('Program Terms', html);
+  }
+  // Existing members: a quiet strip asking them to agree to the Program Terms once (new members agree at sign-up)
+  function termsNoticeHtml() {
+    if (DEMO || !memberKey || !wallet || wallet.consent_terms === PROGRAM_TERMS_VERSION) return '';
+    try { if (localStorage.getItem('lvrTermsAgreed') === PROGRAM_TERMS_VERSION) return ''; } catch (e) {}
+    return '<div class="terms-notice" id="termsNotice" role="region" aria-label="Program Terms"><b>We added Program Terms.</b> LVR Points is a free, fun promotion. We can pause, change or end it, and adjust or take back points, at any time. Points have no cash value. <button type="button" class="linkbtn inl" data-pterms>Read the Program Terms</button> <button type="button" class="own-ok" id="termsAgree" style="margin-top:8px;width:100%;">I agree</button></div>';
+  }
+  function bindTermsNotice() {
+    var b = document.getElementById('termsAgree'); if (!b) return;
+    b.addEventListener('click', function () {
+      try { localStorage.setItem('lvrTermsAgreed', PROGRAM_TERMS_VERSION); } catch (e) {}
+      if (memberKey) fbPatch(MEMBERS_PATH + '/' + encodeURIComponent(memberKey), { consent_terms: PROGRAM_TERMS_VERSION, consent_terms_ts: { '.sv': 'timestamp' } }).then(function (r) { if (r.ok && wallet) wallet.consent_terms = PROGRAM_TERMS_VERSION; }).catch(function () {});
+      var n = document.getElementById('termsNotice'); if (n) n.remove();
+    });
   }
   // Tag bonus: post on Instagram, tag @LasVegas_Restaurants, paste the link; the owner checks it and adds the points
   function tagCfg() { var t = (appSettings && appSettings.tagBonus) || {}; return { enabled: DEMO ? true : t.enabled === true, points: Math.max(1, Math.min(50, Number(t.points) || 5)) }; }
@@ -1021,6 +1062,7 @@
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
       ['Will the free spin always be available?', 'No. The free spin is not always turned on. It comes and goes, so keep watching for it. We are doing our best to get this going and to sign up as many restaurants as we can.'],
       ['I own a restaurant. Can I join?', 'Yes, we would love that. Send a DM to @LasVegas_Restaurants on Instagram, or fill out the form at keytechnologies.si and we will get back to you.'],
+      ['Can the program change or stop?', 'Yes. LVR Points is a free, fun promotion. We may pause, change or end it at any time, and we may adjust or take back points, for example if we suspect fraud, are hacked, find a vulnerability or a mistake, a restaurant leaves, or for any other reason. Points have no cash value and nothing is owed if that happens. Please read the Program Terms in the menu.'],
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
@@ -1053,6 +1095,7 @@
     else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
     else if (kind === 'fair') fairnessModal();
     else if (kind === 'terms') spinTermsModal();
+    else if (kind === 'pterms') programTermsModal();
     else if (kind === 'tag') tagDialog();
     else if (kind === 'prizes') { var pd = infoModal('Prizes', prizesHtml()); bindLadder(pd); }
     else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
@@ -1287,6 +1330,7 @@
 
     var html =
       brandStripHtml() +
+      termsNoticeHtml() +
       (OWNER ? ownerBarHtml(removedNames) + (DEMO ? demoBarHtml() : '') : '') +
       (appSettings.banner ? '<div class="notice" style="background:rgba(240,169,26,.1);border:1px solid rgba(240,169,26,.45);color:#f0a91a;">' + escapeHtml(appSettings.banner) + '</div>' : '') +
       (DEMO ? demoCtlHtml() : '') +
@@ -1407,6 +1451,7 @@
     bindOwner(contentEl);
     bindEarnPanel();
     if (!DEMO) bindInvite();
+    bindTermsNotice();
     startPolling();
     tickChest();
     bindMini();
@@ -1484,7 +1529,7 @@
         return fetch(DB + MEMBERS_PATH + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(memberKey)) + '&shallow=true').then(function(r){ return r.json(); }).then(function(f){
           var used = f ? Object.keys(f).length : 0, left = Math.max(0, lc.invites - used);
           document.getElementById('invTitle').textContent = 'Founding Member #' + (rank + 1);
-          document.getElementById('invSub').textContent = 'You are one of the first ' + lc.limit + ' people in LVR Points. Each Founding Member can invite ' + (lc.invites === 1 ? 'one friend' : lc.invites + ' friends') + '. ' + (left > 0 ? 'Share your link below.' : 'You have used ' + (lc.invites === 1 ? 'your invite' : 'all your invites') + '. Thank you for spreading the word.') + (refSettings && refSettings.enabled === true && refSettings.l1Pct > 0 ? ' When your friend earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn. It never reduces their points.' : '');
+          document.getElementById('invSub').textContent = 'You are one of the first ' + lc.limit + ' people in LVR Points. Each Founding Member can invite ' + (lc.invites === 1 ? 'one friend' : lc.invites + ' friends') + ', so choose a friend who will really use it. ' + (left > 0 ? 'Share your link below.' : 'You have used ' + (lc.invites === 1 ? 'your invite' : 'all your invites') + '. Thank you for spreading the word.') + (refSettings && refSettings.enabled === true && refSettings.l1Pct > 0 ? ' When your friend earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn. It never reduces their points.' : '');
           document.getElementById('invFriends').textContent = used;
           document.getElementById('invLeft').textContent = left;
           if (left <= 0) { document.getElementById('inviteLink').style.display = 'none'; document.getElementById('inviteBtn').style.display = 'none'; return; }

@@ -229,6 +229,18 @@
     (window.crypto || window.msCrypto).getRandomValues(bytes);
     return Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2, '0'); }).join('');
   }
+  // Taking points back (owner right under the Program Terms). Always logged to the permanent ledger as an "adjustment".
+  function takeBackPoints(k, why, want) {
+    return fbGet(MEMBERS_PATH + '/' + encodeURIComponent(k) + '/points').then(function(cur){
+      var pts = Math.min(Number(cur) || 0, want == null ? Infinity : want);
+      if (!(pts > 0)) return 0;
+      var id = 'takeback-' + Date.now().toString(36) + '-' + genToken().slice(0, 6);
+      return fbPut(MEMBERS_PATH + '/' + encodeURIComponent(k) + '/points', { '.sv': { increment: -pts } }).then(function(r){
+        if (!r.ok) throw new Error('points');
+        return txLog(k, id, 'adjustment', -pts, 'Taken back: ' + why).then(function(){ return pts; });
+      });
+    });
+  }
   function downloadCsv(filename, rows) {
     if (!rows.length) { showToast('Nothing to export'); return; }
     var cols = Object.keys(rows[0]);
@@ -592,8 +604,22 @@
     document.getElementById('bForm').innerHTML = '<div class="row-card"><div class="row-title">' + escapeHtml(m.name || '') + '</div><div class="row-sub">' + (m.points || 0) + ' points now</div></div>' +
       '<div class="field-row"><div class="field"><label>Points to add (1 to 1000)</label><input type="number" id="bPts" min="1" max="1000" step="1"></div>' +
       '<div class="field"><label>Reason (kept permanently)</label><input type="text" id="bWhy" maxlength="200" placeholder="e.g. Posted a video about Vanilla Rice"></div></div>' +
-      '<div class="form-actions"><button class="btn btn-primary" id="bGive">Add the points</button></div>';
+      '<div class="form-actions"><button class="btn btn-primary" id="bGive">Add the points</button></div>' +
+      '<div style="margin:18px 0 6px;font-weight:800;color:var(--red);">Take points back</div>' +
+      '<div class="row-sub" style="margin-bottom:8px;">Under the Program Terms you may adjust or take back points at any time. This removes points from this member and writes a permanent ledger entry with your reason. It never goes below 0.</div>' +
+      '<div class="field-row"><div class="field"><label>Points to take back (leave empty to take all ' + (m.points || 0) + ')</label><input type="number" id="bTakePts" min="1" step="1"></div>' +
+      '<div class="field"><label>Reason (kept permanently)</label><input type="text" id="bTakeWhy" maxlength="200" placeholder="e.g. Suspected fraud, duplicate account"></div></div>' +
+      '<div class="form-actions"><button class="btn" id="bTake" style="border-color:var(--red);color:var(--red);">Take the points back</button></div>';
     document.getElementById('bGive').addEventListener('click', giveBonus);
+    document.getElementById('bTake').addEventListener('click', function(){
+      var why = document.getElementById('bTakeWhy').value.trim(), raw = document.getElementById('bTakePts').value.trim(), want = raw ? parseInt(raw, 10) : null;
+      if (why.length < 3) { showToast('Please write a short reason'); return; }
+      if (raw && !(want >= 1)) { showToast('Enter a whole number of points'); return; }
+      if (!confirm('Take ' + (want == null ? 'ALL' : want) + ' points back from ' + (m.name || 'this member') + '?')) return;
+      this.disabled = true;
+      takeBackPoints(k, why, want).then(function(n){ if (!n) { showToast('This member has no points to take back'); return; } m.points = Math.max(0, (m.points || 0) - n); showToast('Took back ' + n + ' points from ' + (m.name || 'member')); pickBonusMember(k); })
+        .catch(function(){ showToast('Something went wrong - check the member balance before trying again'); pickBonusMember(k); });
+    });
   }
   function giveBonus() {
     var k = bonusPick, m = k && bonusMembers[k];
@@ -628,6 +654,14 @@
         chk('sPauseRedeem', paused.redemptions, 'Pause redemptions (offers show "Paused for now")') +
         '<div class="field"><label>Message shown at the top of member pages (optional, e.g. "We\'re upgrading - back Monday")</label><input type="text" id="sBanner" value="' + escapeHtml(settings.banner || '') + '"></div>' +
         '<div class="form-actions"><button class="btn" id="sPauseAll" style="border-color:var(--red);color:var(--red);">Pause everything</button><button class="btn" id="sResumeAll">Resume everything</button></div>' +
+      '</div>' +
+      '<div class="form-box" style="border-color:var(--red);"><div style="font-weight:800;margin-bottom:6px;color:var(--red);">Emergency controls: take points back / end the program</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">The Program Terms give you the sole right to pause, change or end LVR Points and to take points back at any time (fraud, a hack, a vulnerability, a mistake, a restaurant leaving, anything). "Pause everything" above stops activity and keeps balances. This box changes balances. Every take-back is written to the permanent ledger as an <b>adjustment</b> with your reason, so the record shows what happened. To take back points from ONE member, use Bonus points > find the member > Take points back.</div>' +
+        '<div class="field"><label>Reason (kept in the ledger and shown to members at the top of the app)</label><input type="text" id="eReason" maxlength="160" placeholder="e.g. LVR Points has ended / security incident"></div>' +
+        '<div class="form-actions"><button class="btn" id="eBackup">Download a backup of all balances (CSV)</button></div>' +
+        '<div class="field"><label>To take back ALL points from ALL members, type: TAKE BACK ALL POINTS</label><input type="text" id="eConfirm" autocomplete="off"></div>' +
+        '<div class="form-actions"><button class="btn" id="eEnd" style="border-color:var(--red);color:var(--red);">Take back ALL points and end the program</button></div>' +
+        '<p class="row-sub" id="eStatus" role="status" style="margin-top:8px;"></p>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Receipt limits</div>' +
         '<div class="field-row">' +
@@ -733,6 +767,33 @@
     document.getElementById('sResumeAll').addEventListener('click', function(){
       var v = collect(); v.paused = { signups: false, receipts: false, redemptions: false };
       saveAll(v).then(function(){ showToast('Everything is running'); renderSettingsTab(); }).catch(function(){ showToast('Something went wrong'); });
+    });
+    function balances() {
+      return fbGet(MEMBERS_PATH).then(function(all){ all = all || {}; return Object.keys(all).map(function(k){ var m = all[k] || {}; return { key: k, name: m.name || '', instagram: m.instagram || '', points: Number(m.points) || 0 }; }); });
+    }
+    document.getElementById('eBackup').addEventListener('click', function(){
+      balances().then(function(rows){ downloadCsv('lvr-balances-backup-' + new Date().toISOString().slice(0, 10) + '.csv', rows); }).catch(function(){ showToast('Could not load members'); });
+    });
+    document.getElementById('eEnd').addEventListener('click', function(){
+      var why = document.getElementById('eReason').value.trim(), st = document.getElementById('eStatus');
+      if (why.length < 3) { showToast('Please write a reason first'); return; }
+      if (document.getElementById('eConfirm').value.trim() !== 'TAKE BACK ALL POINTS') { showToast('Type TAKE BACK ALL POINTS exactly to confirm'); return; }
+      if (!confirm('This removes ALL points from ALL members and pauses the program. A backup CSV downloads first. Continue?')) return;
+      var btn = this; btn.disabled = true; st.textContent = 'Saving a backup and reading members…';
+      balances().then(function(rows){
+        downloadCsv('lvr-balances-BEFORE-takeback-' + new Date().toISOString().slice(0, 10) + '.csv', rows);
+        var todo = rows.filter(function(r){ return r.points > 0; }), done = 0, total = 0, failed = 0;
+        return todo.reduce(function(chain, r){
+          return chain.then(function(){ return takeBackPoints(r.key, why).then(function(n){ done++; total += n || 0; }).catch(function(){ failed++; }); }).then(function(){ st.textContent = 'Taking points back… ' + (done + failed) + ' of ' + todo.length; });
+        }, Promise.resolve()).then(function(){
+          // only the pause switches and the banner are written (no other setting is touched)
+          var pz = { signups: true, receipts: true, redemptions: true }, bn = 'LVR Points is paused: ' + why;
+          return Promise.all([fbPut(SETTINGS_PATH + '/paused', pz), fbPut(SETTINGS_PATH + '/banner', bn)]).then(function(rs){
+            if (rs.some(function(r){ return !r.ok; })) throw new Error('save failed');
+            settings.paused = pz; settings.banner = bn;
+          }).then(function(){ st.textContent = 'Done. Took back ' + total + ' points from ' + done + ' members' + (failed ? ' (' + failed + ' failed, run it again)' : '') + '. The program is paused. Backup CSV is in your downloads.'; });
+        });
+      }).catch(function(){ st.textContent = 'Something went wrong. Check balances before trying again.'; btn.disabled = false; });
     });
   }
 
