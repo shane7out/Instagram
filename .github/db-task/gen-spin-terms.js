@@ -31,7 +31,7 @@ const html = `<!doctype html>
 ${list.map(t => `    <li><b>${esc(t[0])}.</b> ${esc(t[1])}</li>`).join('\n')}
   </ol>
   <p class="note">These terms stay on this page, and under the LVR Points menu in the app, for as long as the spin exists. Questions? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram.</p>
-  <a class="back" href="my-account.html">&larr; Back to my rewards</a>
+  <a class="back" href="my-account.html">&larr; Back to my LVR Points</a>
 </main></body></html>
 `;
 fs.writeFileSync('sites/key-technologies/spin-terms.html', html);
