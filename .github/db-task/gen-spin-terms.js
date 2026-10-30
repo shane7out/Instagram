@@ -5,7 +5,8 @@ const src = fs.readFileSync('sites/key-technologies/my-account.html', 'utf8');
 const ver = /SPIN_TERMS_VERSION = '([^']+)', SPIN_TERMS_DATE = '([^']+)'/.exec(src);
 const fnSrc = /function spinTermsList\(c\) \{[\s\S]*?\n  \}\n/.exec(src)[0];
 const hrs = d => Math.round(d * 24);
-const list = new Function('hrs', fnSrc + '; return spinTermsList;')(hrs)({ waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10 });
+const cycleText = d => d >= 1 && d === Math.round(d) ? d + (d === 1 ? ' day' : ' days') : hrs(d) + ' hours';
+const list = new Function('hrs', 'cycleText', fnSrc + '; return spinTermsList;')(hrs, cycleText)({ waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10 });
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
