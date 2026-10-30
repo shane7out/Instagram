@@ -1,6 +1,5 @@
 #!/bin/bash
-# Re-run the rules simulator (nothing touches the real database).
+# Re-run the rules simulators (nothing touches the real database): the live rules, then the staged owner-only rules.
 bash .github/db-task/rules/run-rules-test.sh
-# re-run: member status test fixed
-# re-run: after review fixes (monthly-decay.js changed)
-# re-run: pool drop rules
+echo "=============== STAGED OWNER-ONLY RULES ==============="
+bash .github/db-task/rules/run-owner-rules-test.sh

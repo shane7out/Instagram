@@ -696,11 +696,7 @@
       if (gateRes && gateRes.founding) rec.founding = true;
       // Every sign-up waits for the owner's approval (to keep out bots and fake accounts); welcome points are added on approval.
       if (pendingApproval) rec.status = "pending";
-      // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
-      if (!pendingApproval && welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
-        rec.points = welcomeCfg.amount;
-        rec.welcomeGiven = { amount: welcomeCfg.amount, via: "signup", at: {".sv": "timestamp"} };
-      }
+      // Welcome points are never added here: the owner adds them when the sign-up is approved (Points admin > Approvals).
       return fetch(LVR_REWARDS_DB_URL + ".json", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -708,7 +704,6 @@
       });
     }).then(function(r){
       if(!r.ok) throw new Error("HTTP " + r.status);
-      // ledger: the welcome points are written down as a transaction (my-account.html sends it)
       return r.json().then(function(j){
         if (j && j.name) {
           // Round One registry (leaderboard name + status) and the owner's alert (Leads list + email)
@@ -716,9 +711,6 @@
           var note = { source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "pending" : "approved", memberKey: j.name, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
           fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(note) }).catch(function(){});
           fetch("https://formspree.io/f/mzeedbyb", { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify({ _subject: "New LVR Points sign-up" + (pendingApproval ? " waiting for your approval" : ""), source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "WAITING FOR APPROVAL: open Points admin > Approvals" : "approved", message: "A new person signed up for LVR Points. Open the Points admin, Approvals tab, to approve or decline." }) }).catch(function(){});
-        }
-        if (j && j.name && !pendingApproval && welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === "signup" && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
-          try { var q = JSON.parse(localStorage.getItem("lvrTxQueue") || "[]") || []; q.push({ mk: encodeURIComponent(j.name), key: "welcome", type: "welcome", amount: welcomeCfg.amount, ref: "Welcome points at sign-up" }); localStorage.setItem("lvrTxQueue", JSON.stringify(q.slice(-60))); } catch (e) {}
         }
       }).catch(function(){});
     }).then(function(){

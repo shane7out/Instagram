@@ -996,11 +996,9 @@
         consent_rules_ts: nowTs
       };
       if (referrerKey) rec.referredBy = referrerKey;
-      // Welcome points at sign-up (only when the owner has chosen "the moment they sign up").
-      if (welcomeCfg && welcomeCfg.enabled === true && welcomeCfg.when === 'signup' && welcomeCfg.amount > 0 && welcomeCfg.amount <= 50) {
-        rec.points = welcomeCfg.amount;
-        rec.welcomeGiven = { amount: welcomeCfg.amount, via: 'signup', at: { '.sv': 'timestamp' } };
-      }
+      // Every sign-up waits for the owner's approval (keeps out bots and fake accounts); welcome points are added
+      // by the owner when the sign-up is approved (Points admin > Approvals), so nothing is credited here.
+      rec.status = 'pending';
       return fetch(RTDB_URL, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1011,7 +1009,13 @@
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     })
-    .then(function() {
+    .then(function(j) {
+      // Round One registry entry (leaderboard name + status), same as the main sign-up page
+      if (j && j.name) {
+        var parts = String(name).trim().split(/\s+/).filter(Boolean);
+        var short = !parts.length ? 'Member' : parts.length === 1 ? parts[0] : parts[0] + ' ' + parts[parts.length - 1].charAt(0).toUpperCase() + '.';
+        fetch(RTDB_URL.replace(/\.json.*$/, '') .replace(/\/lvr_rewards$/, '/lvr_points/round1') + '/' + encodeURIComponent(j.name) + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: short.slice(0, 40), at: { '.sv': 'timestamp' }, status: 'pending' }) }).catch(function () {});
+      }
       return fetch(IG_IDX_BASE + igToKey(ig) + '.json', {
         method:  'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1023,8 +1027,8 @@
       $('formWrap').style.display = 'none';
       $('successScreen').classList.add('show');
       $('sBody').innerHTML =
-        '<strong>' + esc(name) + '</strong>, you\'re officially an LVR Points + VIP member!<br>' +
-        'Start earning points at participating Las Vegas restaurants.<br>' +
+        '<strong>' + esc(name) + '</strong>, you\'re on the LVR Points + VIP list!<br>' +
+        'Every sign-up is approved by hand. You will be able to use your account as soon as you are approved.<br>' +
         'We\'ll celebrate your birthday on <strong>' + bdStr + '</strong> 🎂<br>' +
         (anStr ? 'Anniversary on <strong>' + anStr + '</strong> too! 🥂<br>' : '') +
         'Watch for <strong>VIP party &amp; event invitations</strong> by text! 🎉<br>' +

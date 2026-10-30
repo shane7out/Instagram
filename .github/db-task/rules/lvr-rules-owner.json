@@ -1,0 +1,319 @@
+{
+ "lvr_points": {
+  ".read": true,
+  "receipts": {
+   ".indexOn": [
+    "token",
+    "slug",
+    "receiptNo",
+    "memberKey"
+   ],
+   "$id": {
+    ".write": "newData.exists() && (data.exists() ? ((auth != null && auth.uid == '__OWNER_UID__') && newData.child('slug').val() == data.child('slug').val() && newData.child('memberKey').val() == data.child('memberKey').val() && newData.child('token').val() == data.child('token').val() && newData.child('receiptNo').val() == data.child('receiptNo').val() && newData.child('amount').val() == data.child('amount').val() && newData.child('receiptDate').val() == data.child('receiptDate').val() && newData.child('submittedAt').val() == data.child('submittedAt').val() && (data.child('status').val() == 'pending' || newData.child('status').val() == data.child('status').val()) && (!data.child('pointsAwarded').exists() || newData.child('pointsAwarded').val() == data.child('pointsAwarded').val()) && (!data.child('decidedAt').exists() || newData.child('decidedAt').val() == data.child('decidedAt').val())) : (newData.child('status').val() == 'pending' && !newData.child('pointsAwarded').exists() && !newData.child('pointsApplied').exists() && !newData.child('referralDone').exists() && !newData.child('welcomeAwarded').exists() && !newData.child('refL1Done').exists() && !newData.child('refL1Points').exists() && !newData.child('refL2Done').exists() && !newData.child('refL2Points').exists() && !newData.child('decidedAt').exists() && !newData.child('restFlag').exists()))",
+    ".validate": "newData.hasChildren(['slug', 'memberKey', 'token', 'receiptNo', 'amount', 'status', 'submittedAt']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 5000 && newData.child('receiptNo').isString() && newData.child('receiptNo').val().length <= 40 && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected')",
+    "restFlag": {
+     ".write": "newData.exists() && data.parent().exists()"
+    },
+    "status": {
+     ".write": "data.val() == 'pending' && newData.val() == 'rejected' && data.parent().child('submittedAt').val() > now - 600000"
+    },
+    "decidedAt": {
+     ".write": "!data.exists() && newData.isNumber() && data.parent().child('status').val() == 'pending' && newData.parent().child('status').val() == 'rejected' && data.parent().child('submittedAt').val() > now - 600000"
+    }
+   }
+  },
+  "receipt_photos": {
+   "$id": {
+    ".write": "newData.exists() && !data.exists()",
+    ".validate": "newData.child('wide').exists() || newData.child('data').exists()",
+    "wide": {
+     ".validate": "newData.isString() && newData.val().length < 2500000"
+    },
+    "close": {
+     ".validate": "newData.isString() && newData.val().length < 2500000"
+    },
+    "data": {
+     ".validate": "newData.isString() && newData.val().length < 2500000"
+    },
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "redemptions": {
+   "$slug": {
+    "$id": {
+     ".write": "newData.exists() && (data.exists() ? (newData.child('token').val() == data.child('token').val() && newData.child('itemId').val() == data.child('itemId').val() && newData.child('pointCost').val() == data.child('pointCost').val() && newData.child('code').val() == data.child('code').val() && newData.child('redeemedAt').val() == data.child('redeemedAt').val() && newData.child('useBy').val() == data.child('useBy').val() && (!data.child('usedAt').exists() || newData.child('usedAt').val() == data.child('usedAt').val())) : !newData.child('usedAt').exists())",
+     ".validate": "newData.hasChildren(['token', 'itemId', 'pointCost', 'code']) && newData.child('pointCost').isNumber() && newData.child('pointCost').val() > 0 && newData.child('pointCost').val() <= 100000"
+    }
+   }
+  },
+  "fundings": {
+   "$slug": {
+    "$id": {
+     ".write": "newData.exists() && !data.exists() && (auth != null && auth.uid == '__OWNER_UID__')",
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0"
+    }
+   }
+  },
+  "catalog": {
+   "$slug": {
+    "$itemId": {
+     ".write": true,
+     ".validate": "newData.child('pointCost').isNumber() && newData.child('pointCost').val() >= 15"
+    }
+   }
+  },
+  "restaurants": {
+   "$slug": {
+    ".write": true
+   }
+  },
+  "directory": {
+   "$slug": {
+    ".write": true
+   }
+  },
+  "settings": {
+   ".write": "(auth != null && auth.uid == '__OWNER_UID__')",
+   "welcome": {
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "amount": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
+    },
+    "when": {
+     ".validate": "newData.val() == 'signup' || newData.val() == 'receipt'"
+    }
+   },
+   "chest": {
+    "waitDays": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 365"
+    },
+    "bonus": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "prizeMin": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "prizeMax": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "claimHours": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 720"
+    },
+    "repeat": {
+     ".validate": "newData.isBoolean()"
+    }
+   },
+   "decay": {
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "percent": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
+    },
+    "graceDays": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 365"
+    }
+   },
+   "tagBonus": {
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "points": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
+    }
+   },
+   "launch": {
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "limit": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000"
+    },
+    "invites": {
+     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 50"
+    },
+    "approval": {
+     ".validate": "newData.isBoolean()"
+    }
+   },
+   "defaultCommissionPct": {
+    ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+   },
+   "hiddenRestaurants": {
+    ".write": true
+   },
+   "serviceModes": {
+    ".write": true
+   }
+  },
+  "bonuses": {
+   "$id": {
+    ".write": "newData.exists() && !data.exists() && (auth != null && auth.uid == '__OWNER_UID__')",
+    ".validate": "newData.child('memberKey').isString() && newData.child('points').isNumber() && newData.child('points').val() > 0 && newData.child('points').val() <= 1000 && newData.child('reason').isString() && newData.child('reason').val().length >= 3 && newData.child('reason').val().length <= 200"
+   }
+  },
+  "decay_by_member": {
+   "$mk": {
+    "$run": {
+     ".write": "newData.exists() && !data.exists() && (auth != null && auth.uid == '__OWNER_UID__')",
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('before').isNumber() && newData.child('percent').isNumber()"
+    }
+   }
+  },
+  "decay_runs": {
+   "$run": {
+    ".write": "newData.exists() && !data.exists() && (auth != null && auth.uid == '__OWNER_UID__')"
+   }
+  },
+  "pool": {
+   "total": {
+    ".write": "(auth != null && auth.uid == '__OWNER_UID__')",
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   }
+  },
+  "tag_claims": {
+   ".indexOn": [
+    "memberKey",
+    "postUrl",
+    "status"
+   ],
+   "$id": {
+    ".write": "newData.exists() && (data.exists() ? ((auth != null && auth.uid == '__OWNER_UID__') && newData.child('memberKey').val() == data.child('memberKey').val() && newData.child('token').val() == data.child('token').val() && newData.child('postUrl').val() == data.child('postUrl').val() && newData.child('submittedAt').val() == data.child('submittedAt').val() && (data.child('status').val() == 'pending' || newData.child('status').val() == data.child('status').val()) && (!data.child('pointsAwarded').exists() || newData.child('pointsAwarded').val() == data.child('pointsAwarded').val()) && (!data.child('decidedAt').exists() || newData.child('decidedAt').val() == data.child('decidedAt').val())) : (newData.child('status').val() == 'pending' && !newData.child('pointsAwarded').exists() && !newData.child('pointsApplied').exists() && !newData.child('decidedAt').exists()))",
+    ".validate": "newData.hasChildren(['memberKey', 'token', 'postUrl', 'status', 'submittedAt']) && newData.child('postUrl').isString() && newData.child('postUrl').val().length <= 300 && newData.child('postUrl').val().matches(/^https:\\/\\/(www\\.)?instagram\\.com\\/.*/) && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected') && (!newData.child('pointsAwarded').exists() || (newData.child('pointsAwarded').isNumber() && newData.child('pointsAwarded').val() >= 0 && newData.child('pointsAwarded').val() <= 50))"
+   }
+  },
+  "transactions": {
+   "$mk": {
+    "$id": {
+     ".write": "newData.exists() && !data.exists() && ((auth != null && auth.uid == '__OWNER_UID__') || newData.child('type').val() == 'spin' || newData.child('type').val() == 'redeem')",
+     ".validate": "newData.hasChildren(['type', 'amount', 'at']) && (newData.child('type').val() == 'welcome' || newData.child('type').val() == 'receipt' || newData.child('type').val() == 'spin' || newData.child('type').val() == 'redeem' || newData.child('type').val() == 'bonus' || newData.child('type').val() == 'referral' || newData.child('type').val() == 'opening' || newData.child('type').val() == 'adjustment') && newData.child('amount').isNumber() && newData.child('amount').val() != 0 && newData.child('amount').val() >= -100000 && newData.child('amount').val() <= 100000 && newData.child('at').val() <= now && newData.child('at').val() > now - 120000",
+     "type": {
+      ".validate": "newData.isString()"
+     },
+     "amount": {
+      ".validate": "newData.isNumber()"
+     },
+     "at": {
+      ".validate": "newData.isNumber()"
+     },
+     "ref": {
+      ".validate": "newData.isString() && newData.val().length <= 300"
+     },
+     "by": {
+      ".validate": "newData.isString() && newData.val().length <= 20"
+     },
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "chest_log": {
+   "$mk": {
+    "$n": {
+     ".write": "newData.exists() && !data.exists()",
+     ".validate": "newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 50"
+    }
+   }
+  },
+  "round1": {
+   "$mk": {
+    ".write": "newData.exists() && (data.exists() ? ((auth != null && auth.uid == '__OWNER_UID__') && newData.child('name').val() == data.child('name').val() && newData.child('at').val() == data.child('at').val()) : (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved'))",
+    ".validate": "newData.hasChildren(['name', 'at', 'status']) && newData.child('name').isString() && newData.child('name').val().length <= 40 && newData.child('at').isNumber() && newData.child('at').val() <= now && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected')",
+    "name": {
+     ".validate": "newData.isString()"
+    },
+    "at": {
+     ".validate": "newData.isNumber()"
+    },
+    "status": {
+     ".validate": "newData.isString()"
+    },
+    "$other": {
+     ".validate": "false"
+    }
+   }
+  },
+  "pool_drops": {
+   "$mk": {
+    "$run": {
+     ".write": "newData.exists() && !data.exists() && (auth != null && auth.uid == '__OWNER_UID__')",
+     ".validate": "newData.hasChildren(['amount', 'at']) && newData.child('amount').isNumber() && newData.child('amount').val() >= 1 && newData.child('amount').val() <= 50 && newData.child('at').isNumber()",
+     "amount": {
+      ".validate": "newData.isNumber()"
+     },
+     "at": {
+      ".validate": "newData.isNumber()"
+     },
+     "$other": {
+      ".validate": "false"
+     }
+    }
+   }
+  },
+  "pool_drop_runs": {
+   "$run": {
+    ".write": "newData.exists() && !data.exists() && (auth != null && auth.uid == '__OWNER_UID__')",
+    ".validate": "newData.hasChildren(['members', 'points', 'at']) && newData.child('members').isNumber() && newData.child('points').isNumber() && newData.child('at').isNumber()"
+   }
+  }
+ },
+ "lvr_rewards": {
+  ".read": true,
+  ".indexOn": [
+   "token",
+   "refCode",
+   "referredBy",
+   "status"
+  ],
+  "$k": {
+   ".write": "newData.exists() ? (data.exists() ? ((!data.child('token').exists() || newData.child('token').val() == data.child('token').val()) && (!data.child('refCode').exists() || newData.child('refCode').val() == data.child('refCode').val()) && newData.child('referredBy').val() == data.child('referredBy').val() && (!data.child('chestState').exists() || (newData.child('chestState/n').val() >= data.child('chestState/n').val() && newData.child('chestState/at').val() >= data.child('chestState/at').val())) && (!data.child('joinedAt').exists() || newData.child('joinedAt').val() == data.child('joinedAt').val()) && ((auth != null && auth.uid == '__OWNER_UID__') || (newData.child('status').val() == data.child('status').val() && newData.child('approvedAt').val() == data.child('approvedAt').val() && newData.child('decidedAt').val() == data.child('decidedAt').val() && newData.child('welcomeGiven').exists() == data.child('welcomeGiven').exists() && newData.child('welcomeGiven/amount').val() == data.child('welcomeGiven/amount').val() && newData.child('welcomeGiven/via').val() == data.child('welcomeGiven/via').val() && newData.child('welcomeGiven/receiptId').val() == data.child('welcomeGiven/receiptId').val() && newData.child('welcomeGiven/at').val() == data.child('welcomeGiven/at').val()))) : (newData.child('name').isString() && ((auth != null && auth.uid == '__OWNER_UID__') || (newData.child('points').val() == 0 && !newData.child('welcomeGiven').exists() && !newData.child('approvedAt').exists() && !newData.child('decidedAt').exists() && (!newData.child('status').exists() || newData.child('status').val() == 'pending'))))) : (auth != null && auth.uid == '__OWNER_UID__')",
+   "points": {
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   },
+   "refBonusTotal": {
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   },
+   "refCarry": {
+    ".validate": "newData.isNumber() && newData.val() >= 0"
+   },
+   "token": {
+    ".validate": "newData.isString() && newData.val().length >= 16 && newData.val().length <= 64"
+   },
+   "refCode": {
+    ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 12"
+   },
+   "chestState": {
+    ".validate": "newData.hasChildren(['n','amount','at']) && newData.child('n').isNumber() && newData.child('amount').isNumber() && newData.child('at').isNumber() && newData.child('n').val() == (data.child('n').exists() ? data.child('n').val() + 1 : 1) && (newData.child('n').val() == 1 || root.child('lvr_points/settings/chest/repeat').val() == true) && root.child('lvr_points/settings/chest/prizeMax').val() > 0 && newData.child('amount').val() > 0 && newData.child('amount').val() >= root.child('lvr_points/settings/chest/prizeMin').val() && newData.child('amount').val() <= root.child('lvr_points/settings/chest/prizeMax').val() && (newData.child('at').val() - (data.child('at').exists() ? data.child('at').val() : newData.parent().child('joinedAt').val())) % (86400000 * root.child('lvr_points/settings/chest/waitDays').val() + 3600000 * (root.child('lvr_points/settings/chest/claimHours').exists() ? root.child('lvr_points/settings/chest/claimHours').val() : 48)) >= 86400000 * root.child('lvr_points/settings/chest/waitDays').val()"
+   },
+   "status": {
+    ".validate": "newData.val() == 'pending' || newData.val() == 'approved' || newData.val() == 'rejected'"
+   }
+  }
+ },
+ "lvr_instagram_index": {
+  ".read": true,
+  "$k": {
+   ".write": true
+  }
+ },
+ "lvr_coupons": {
+  ".read": true,
+  "programs": {
+   "$slug": {
+    ".write": true
+   }
+  },
+  "claims": {
+   "$slug": {
+    "$id": {
+     ".write": true
+    }
+   }
+  }
+ }
+}
