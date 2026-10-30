@@ -868,9 +868,9 @@
   function ladderState() { var tiers = parseLadder(ladderCfg().text), pts = (wallet && wallet.points) || 0, sel = -1; tiers.forEach(function (t, i) { if (sel < 0 && t.pts > pts) sel = i; }); return { tiers: tiers, pts: pts, sel: sel < 0 ? tiers.length - 1 : sel }; }
   function ladderPanel(st, i) {
     var t = st.tiers[i], reached = st.pts >= t.pts, pct = Math.max(4, Math.min(100, Math.round(100 * st.pts / t.pts)));
-    return '<div class="lad-head"><b>' + (i === 0 ? 'Up to ' : '') + t.pts + ' points</b></div>' +
+    return '<div class="lad-head"><b>' + (i === 0 ? 'Up to ' : '') + t.pts.toLocaleString('en-US') + ' points</b></div>' +
       (reached ? '<div class="lad-ok">✓ You have enough points for this level</div>'
-               : '<div class="lad-need"><b>' + (t.pts - st.pts) + ' more point' + (t.pts - st.pts === 1 ? '' : 's') + '</b> to get here (you have ' + st.pts + ')</div><div class="lad-bar"><i style="width:' + pct + '%"></i></div>') +
+               : '<div class="lad-need"><b>' + (t.pts - st.pts).toLocaleString('en-US') + ' more point' + (t.pts - st.pts === 1 ? '' : 's') + '</b> to get here (you have ' + st.pts + ')</div><div class="lad-bar"><i style="width:' + pct + '%"></i></div>') +
       t.items.map(function (x) { return '<div class="lad-item"><span class="ic" aria-hidden="true">' + prizeIcon(x) + '</span><span>' + escapeHtml(x) + '</span></div>'; }).join('');
   }
   function bindLadder(dlg) {
@@ -977,7 +977,7 @@
     var cfg = ladderCfg(), st = ladderState();
     if (cfg.enabled && st.tiers.length) {
       return '<p style="margin:0 0 10px !important;">You have <b>' + st.pts + '</b> points. Tap a level to see its prizes.</p>' +
-        '<div class="lad-chips">' + st.tiers.map(function (t, i) { return '<button type="button" class="lad-chip' + (i === st.sel ? ' on' : '') + (st.pts >= t.pts ? ' done' : '') + '" data-i="' + i + '">' + (i === 0 ? 'Up to ' : '') + t.pts + ' pts</button>'; }).join('') + '</div>' +
+        '<div class="lad-chips">' + st.tiers.map(function (t, i) { return '<button type="button" class="lad-chip' + (i === st.sel ? ' on' : '') + (st.pts >= t.pts ? ' done' : '') + '" data-i="' + i + '">' + (i === 0 ? 'Up to ' : '') + t.pts.toLocaleString('en-US') + ' pts</button>'; }).join('') + '</div>' +
         '<div id="ladPanel">' + ladderPanel(st, st.sel) + '</div>' +
         '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:14px;">Earn more points</button>';
     }
