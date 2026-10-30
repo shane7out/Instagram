@@ -230,6 +230,29 @@
      ".validate": "false"
     }
    }
+  },
+  "pool_drops": {
+   "$mk": {
+    "$run": {
+     ".write": "newData.exists() && !data.exists()",
+     ".validate": "newData.hasChildren(['amount', 'at']) && newData.child('amount').isNumber() && newData.child('amount').val() >= 1 && newData.child('amount').val() <= 50 && newData.child('at').isNumber()",
+     "amount": {
+      ".validate": "newData.isNumber()"
+     },
+     "at": {
+      ".validate": "newData.isNumber()"
+     },
+     "$other": {
+      ".validate": "false"
+     }
+    }
+   }
+  },
+  "pool_drop_runs": {
+   "$run": {
+    ".write": "newData.exists() && !data.exists()",
+    ".validate": "newData.hasChildren(['members', 'points', 'at']) && newData.child('members').isNumber() && newData.child('points').isNumber() && newData.child('at').isNumber()"
+   }
   }
  },
  "lvr_rewards": {

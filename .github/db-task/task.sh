@@ -3,3 +3,4 @@
 bash .github/db-task/rules/run-rules-test.sh
 # re-run: member status test fixed
 # re-run: after review fixes (monthly-decay.js changed)
+# re-run: pool drop rules
