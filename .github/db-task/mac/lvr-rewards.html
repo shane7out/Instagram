@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LVR Rewards | Las Vegas Restaurants</title>
+  <title>LVR Points | Las Vegas Restaurants</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
@@ -579,7 +579,7 @@
     </div>
     <div class="rewards-chip">
       <span class="chip-label">Member Program</span>
-      <span class="chip-val">Rewards</span>
+      <span class="chip-val">Points</span>
     </div>
   </div>
 
@@ -589,14 +589,14 @@
     <div class="tagline-dot"></div>
     <span class="tagline-item">Earn</span>
     <div class="tagline-dot"></div>
-    <span class="tagline-item">Get Rewarded</span>
+    <span class="tagline-item">Earn LVR Points</span>
     <div class="tagline-dot"></div>
     <span class="tagline-item" style="color:var(--gold);">VIP Events</span>
   </div>
 
   <!-- Intro blurb -->
   <div class="intro-blurb">
-    Join the <strong>LVR Rewards Program</strong> — Las Vegas's premier dining community.
+    Join the <strong>LVR Points Program</strong> — Las Vegas's premier dining community.
     Earn points at the city's top restaurants, celebrate your birthday &amp; anniversary in style,
     and get <strong>exclusive invitations to VIP parties &amp; special events</strong> around Las Vegas.
   </div>
@@ -675,7 +675,7 @@
             <input type="checkbox" id="consentSms" class="consent-cb" />
             <span class="consent-text">
               <strong>I agree to receive text messages from Las Vegas Restaurants (LVR)</strong>
-              at the phone number I provided. Rewards notifications, VIP event invitations, birthday
+              at the phone number I provided. Points notifications, VIP event invitations, birthday
               perks, anniversary perks, and program updates will be sent by text.
               Message frequency: <strong>no more than 1 message per week.</strong>
               Msg &amp; data rates may apply. Reply <span class="stop-word">STOP</span> to opt out at any time.
@@ -694,7 +694,7 @@
             <input type="checkbox" id="consentPrivacy" class="consent-cb" />
             <span class="consent-text">
               I understand that LVR will collect and use my name, phone number, and Instagram
-              handle solely to operate the LVR Rewards Program.
+              handle solely to operate the LVR Points Program.
               <strong>LVR does not sell, rent, or share my personal information with third parties
               for marketing purposes.</strong>
               I may request deletion of my data at any time by messaging
@@ -711,7 +711,7 @@
           <label class="consent-row" for="consentRules">
             <input type="checkbox" id="consentRules" class="consent-cb" />
             <span class="consent-text">
-              <strong>I'm in.</strong> I am 18 or older. I understand this is a game that rewards eating at local restaurants.
+              <strong>I'm in.</strong> I am 18 or older. I understand this is a game that gives points for eating at local restaurants.
               No purchase is necessary. Points have no cash value. Points are used when I claim an offer and are never refunded.
             </span>
           </label>
@@ -724,7 +724,7 @@
       <div class="save-status" id="saveStatus"></div>
 
       <div class="submit-wrap">
-        <button class="btn" id="submitBtn" onclick="handleSubmit()">🎟️ &nbsp; Join LVR Rewards &amp; VIP Access</button>
+        <button class="btn" id="submitBtn" onclick="handleSubmit()">🎟️ &nbsp; Join LVR Points &amp; VIP Access</button>
         <p class="btn-note">
           Free to join &nbsp;·&nbsp; Points redeemable at participating restaurants &nbsp;·&nbsp; No cash value<br>
           VIP event invitations sent via text &nbsp;·&nbsp; Reply STOP to opt out anytime
@@ -739,7 +739,7 @@
     <div class="s-emoji">🎉</div>
     <div class="s-title">Welcome, Member!</div>
     <div class="s-body" id="sBody"></div>
-    <div class="s-badge">⭐ LVR Rewards + VIP Member</div>
+    <div class="s-badge">⭐ LVR Points + VIP Member</div>
     <div id="sLinkBox" style="margin-top:18px;padding:16px;border:1px dashed var(--sky);border-radius:12px;text-align:left;"></div>
   </div>
 
@@ -760,7 +760,7 @@
       <div class="perk">
         <div class="perk-icon">🎂</div>
         <div class="perk-title">Birthday Perks</div>
-        <div class="perk-desc">Special rewards and surprise perks delivered on your birthday</div>
+        <div class="perk-desc">Special perks and surprises delivered on your birthday</div>
       </div>
       <div class="perk">
         <div class="perk-icon">💑</div>
@@ -773,16 +773,16 @@
   <!-- Privacy Notice -->
   <div class="privacy-notice">
     <div class="privacy-notice-title">🔒 Your Privacy &amp; Your Rights</div>
-    <p><strong>What we collect:</strong> Your name, phone number, Instagram handle, birthday, and anniversary (optional) for the sole purpose of operating the LVR Rewards Program.</p>
+    <p><strong>What we collect:</strong> Your name, phone number, Instagram handle, birthday, and anniversary (optional) for the sole purpose of operating the LVR Points Program.</p>
     <p><strong>We never sell your data.</strong> Your information is never sold, rented, or shared with third parties for advertising or marketing purposes.</p>
     <p><strong>SMS communications:</strong> By joining, you consent to receive no more than 1 promotional or transactional text message per week from Las Vegas Restaurants. Standard message and data rates from your carrier may apply. You may opt out at any time by replying <strong>STOP</strong> to any message. This program complies with the Telephone Consumer Protection Act (TCPA).</p>
     <p><strong>Data storage:</strong> Your data is stored securely on Google Firebase infrastructure. You may request full deletion of your account data at any time by contacting <strong>@las_vegas_restaurants</strong> on Instagram or by using the message form at the bottom of this page.</p>
-    <p><strong>No purchase required.</strong> Joining the LVR Rewards Program is free and no purchase is necessary to participate.</p>
+    <p><strong>No purchase required.</strong> Joining the LVR Points Program is free and no purchase is necessary to participate.</p>
   </div>
 
   <!-- Footer -->
   <div class="footer">
-    <div class="footer-line">Las Vegas Restaurants &nbsp;·&nbsp; LVR Rewards Program</div>
+    <div class="footer-line">Las Vegas Restaurants &nbsp;·&nbsp; LVR Points Program</div>
     <div class="footer-line">@las_vegas_restaurants &nbsp;·&nbsp; Las Vegas, NV</div>
     <details class="contact-box" id="contactBox">
       <summary>Questions? Send us a message</summary>
@@ -958,7 +958,7 @@
           btn.disabled = false;
           $('saveStatus').className = 'save-status';
           setErr('instagram', true);
-          $('instagramErr').textContent = '@' + ig + ' is already an LVR Rewards member 🎟  Each Instagram can only sign up once.';
+          $('instagramErr').textContent = '@' + ig + ' is already an LVR Points member 🎟  Each Instagram can only sign up once.';
           return;
         }
         _doSignup(name, phone, ig, bdStr, anStr, nowTs, btn);
@@ -1019,11 +1019,11 @@
       });
     })
     .then(function() {
-      setSaveStatus('saved', '✅  You\'re in the LVR Rewards database');
+      setSaveStatus('saved', '✅  You\'re in the LVR Points database');
       $('formWrap').style.display = 'none';
       $('successScreen').classList.add('show');
       $('sBody').innerHTML =
-        '<strong>' + esc(name) + '</strong>, you\'re officially an LVR Rewards + VIP member!<br>' +
+        '<strong>' + esc(name) + '</strong>, you\'re officially an LVR Points + VIP member!<br>' +
         'Start earning points at participating Las Vegas restaurants.<br>' +
         'We\'ll celebrate your birthday on <strong>' + bdStr + '</strong> 🎂<br>' +
         (anStr ? 'Anniversary on <strong>' + anStr + '</strong> too! 🥂<br>' : '') +
@@ -1032,7 +1032,7 @@
       var acctUrl = ACCOUNT_URL + token;
       $('sLinkBox').innerHTML =
         '<div style="font-weight:700;margin-bottom:6px;">Your account link — save this!</div>' +
-        '<div style="font-size:0.85em;opacity:0.85;margin-bottom:10px;">This link is how you check your points and redeem rewards. There\'s no password — just this link.</div>' +
+        '<div style="font-size:0.85em;opacity:0.85;margin-bottom:10px;">This link is how you check your points and redeem free food. There\'s no password — just this link.</div>' +
         '<div style="word-break:break-all;font-size:0.85em;padding:8px;background:rgba(255,255,255,0.07);border-radius:8px;margin-bottom:10px;" id="sLinkText">' + esc(acctUrl) + '</div>' +
         '<button type="button" id="sLinkCopyBtn" style="padding:10px 16px;border-radius:8px;border:none;background:var(--sky);color:#0B2361;font-weight:700;cursor:pointer;">Copy My Link</button>' +
         '<span id="sLinkCopyMsg" style="margin-left:10px;font-size:0.85em;"></span>';

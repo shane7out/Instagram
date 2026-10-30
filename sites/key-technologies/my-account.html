@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My LVR Rewards — Las Vegas Restaurants</title>
+<title>My LVR Points — Las Vegas Restaurants</title>
 <meta name="robots" content="noindex">
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -437,7 +437,7 @@
     </a>
     <div class="nav-cta">
       <div class="lr-wrap">
-        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Rewards <span aria-hidden="true">&#9662;</span></button>
+        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Points <span aria-hidden="true">&#9662;</span></button>
         <div class="lr-menu" id="lrMenu" hidden></div>
       </div>
     </div>
@@ -445,7 +445,7 @@
 </header>
 
 <main class="page-wrap" id="main">
-  <h1 class="sr-only">Your LVR Rewards</h1>
+  <h1 class="sr-only">Your LVR Points</h1>
   <div id="content"><div class="empty">Loading…</div></div>
   <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
@@ -458,7 +458,7 @@
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
       <div class="fair-box" id="fairBox" hidden><button type="button" class="linkbtn" data-fair>🔒 How the spin works ›</button><button type="button" class="linkbtn snd" id="sndBtn" aria-pressed="false">🔇 Sound off</button></div>
-      <label class="terms-check" id="termsRow" hidden><input type="checkbox" id="termsCb"><span>I have read and agree to the <button type="button" class="linkbtn inl" data-terms>Spin Terms</button>. I understand the number is random and LVR Rewards has no control over it.</span></label>
+      <label class="terms-check" id="termsRow" hidden><input type="checkbox" id="termsCb"><span>I have read and agree to the <button type="button" class="linkbtn inl" data-terms>Spin Terms</button>. I understand the number is random and LVR Points has no control over it.</span></label>
       <label class="terms-check" id="realRow" hidden><input type="checkbox" id="realCb"><span><b>This is my one real spin.</b> I understand it counts and will be recorded, and I can't redo it or spin again until my next spin is ready.</span></label>
       <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden disabled style="margin-bottom:10px;">Spin for real</button>
       <button type="button" class="btn btn-ghost" id="demoSpinGo" hidden style="margin-bottom:10px;">🎡 Try a demo spin · demo only, no value</button>
@@ -467,7 +467,7 @@
     </div>
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
-  <div class="footer-note" id="builtBy"><a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Rewards is a Las Vegas Restaurants program.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note" id="builtBy"><a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Points is a Las Vegas Restaurants program.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </main>
 
 <div id="redeemOverlay">
@@ -581,10 +581,10 @@
   function rulesHtml() {
     var c = chestCfg(), w = welcomeCfg();
     var prize = c.prizeMax > 0 ? prizeRange(c) : '';
-    var free = 'Reward Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points when you sign up' + (prize ? ', plus a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + hrs(c.waitDays) + ' hours. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
+    var free = 'LVR Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points when you sign up' + (prize ? ', plus a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + hrs(c.waitDays) + ' hours. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
     var rules = [
       ['Free to join, free to use', free],
-      ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed with points does not count toward your spend.'],
+      ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed with points does not count toward your spend.'],
       ['Use your points', '1 point = $1 toward a free offer at a participating restaurant.' + (giftOn() ? giftTxt() : ' That is the only thing points can be used for.') + ' Try a restaurant you have not been to yet.'],
       ['Spin for free points', prize ? 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
@@ -593,7 +593,7 @@
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
     }).join('') + '</ol>' +
-      '<div class="rule-eg"><b>Example.</b> You spend $50 at a restaurant and send in the receipt. We add 25 points. Use them on a free offer at any participating restaurant.</div>';
+      '<div class="rule-eg"><b>Example.</b> You spend $50 at a restaurant and send in the receipt. We add 50 points. Use them on a free offer at any participating restaurant.</div>';
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -797,7 +797,7 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mn.hidden) { setOpen(false); tg.focus(); } });
   })();
 
-  // ---------- Reward Points menu (top right) ----------
+  // ---------- LVR Points menu (top right) ----------
   // Demo-only controls so the two bonus states and a real spin can be shown on demand
   function demoCtlHtml() {
     return '<div class="demo-card"><span class="demo-tag2">Demo only · no value</span>' +
@@ -889,7 +889,7 @@
     var recPaused = !DEMO && pausedFlag('receipts');
     var rows = [
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
-      ['rules', '📜', 'How LVR Rewards Work', 'The simple rules', ''],
+      ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
       ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
       ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''],
@@ -911,10 +911,10 @@
   function spinTermsList(c) {
     var range = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + ' to ' + c.prizeMax) : '1 to 10';
     return [
-      ['Free to join, free to spin', 'No purchase is necessary to join LVR Rewards or to spin. Buying food does not improve your chances.'],
+      ['Free to join, free to spin', 'No purchase is necessary to join LVR Points or to spin. Buying food does not improve your chances.'],
       ['One free spin at a time', 'You get one free spin every ' + hrs(c.waitDays) + ' hours. When a spin is ready you have ' + c.claimHours + ' hours to use it. If you do not spin in time, that spin is gone and the wait starts again.'],
-      ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Rewards, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
-      ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free Reward Points.'],
+      ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Points, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
+      ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free LVR Points.'],
       ['What points are worth', '1 point = $1 toward a free offer at a participating restaurant. Points can also be saved for the gift cards we list on the Prizes screen, when available (for example, 1,000 points = a $200 Amazon gift card). Points cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
       ['Who can spin', 'You must be 18 or older, and one person may have only one account. Using more than one account, or trying to interfere with the wheel, the app or the records, voids the spin and may close the account.'],
       ['Records', 'Every spin is recorded with the date, time and number, together with the version of these terms you agreed to. If you think a spin was recorded wrongly, contact us and we will review the record with you.'],
@@ -924,18 +924,18 @@
   }
   function spinTermsModal() {
     var c = chestCfg();
-    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Rewards · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
+    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Points · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
       '<div class="tr-intro"><b>In short:</b> the number is random and we have no control over it.</div>' +
       '<ol style="margin:0;padding:0 0 0 20px;display:grid;gap:10px;font-size:15px;line-height:1.5;">' + spinTermsList(c).map(function (t) { return '<li><b>' + t[0] + '.</b> ' + t[1] + '</li>'; }).join('') + '</ol>' +
       '<p style="margin:14px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-fair>How the spin works, and test it yourself ›</button></p>' +
-      '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Rewards menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#59b5ff;">spin-terms.html</a></p>';
+      '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#59b5ff;">spin-terms.html</a></p>';
     return infoModal('Spin Terms', html);
   }
   var IG_LINK = 'https://instagram.com/lasvegas_restaurants';
   function fairnessModal() {
     var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, N = max - min + 1, pct = Math.round(1000 / N) / 10, avg = (min + max) / 2;
     var sec = function (q, body, open) { return '<details class="tr-sec"' + (open ? ' open' : '') + '><summary>' + q + '</summary><div class="tr-body">' + body + '</div></details>'; };
-    var html = '<div class="tr-intro"><b>The short answer:</b> we have no control over the number. Not the owner, not Reward Points, not the restaurants. Here is exactly why.</div>' +
+    var html = '<div class="tr-intro"><b>The short answer:</b> we have no control over the number. Not the owner, not LVR Points, not the restaurants. Here is exactly why.</div>' +
       sec('Who picks the number?', 'Your phone does, at the moment you tap Spin. The number comes from your web browser\u2019s built-in random number generator (it is called <i>Web Crypto</i>). It is a public, open web standard that Chrome, Safari, Firefox and Edge all include, and it is the same kind of random generator browsers rely on for security. We did not write it and we cannot reach into it.', true) +
       sec('Does every number have the same chance?', 'Yes. The wheel has ' + N + ' slots, ' + min + ' to ' + max + '. Each slot has the same chance: 1 in ' + N + ' (' + pct + '%). The pick is made with a method that removes the tiny bias some random methods have, so no number is favored. If you land on 5, you get 5. If you land on ' + max + ', you get ' + max + '. Over many spins the average is ' + avg + ' points.') +
       sec('Can anyone change my number?', 'No. There is no setting, button or admin screen that picks or changes a person\u2019s number. The only thing we set is the range for everybody (' + min + ' to ' + max + '), and you can see it on the wheel. The spinning wheel is only a picture of the number your phone already picked.') +
@@ -954,12 +954,12 @@
     });
     return d;
   }
-  function openRules() { infoModal('How LVR Rewards Work', rulesHtml()); }
+  function openRules() { infoModal('How LVR Points Work', rulesHtml()); }
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? prizeRange(c) : '';
     var qa = [
       ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
-      ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed does not count toward your spend.'],
+      ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed does not count toward your spend.'],
       ['What is a point worth?', '1 point = $1 toward a free offer at a participating restaurant.' + giftTxt()],
       ['What can I do with my points?', 'Trade them for free food at participating restaurants.' + (giftOn() ? ' You can also save them for the gift cards we list on the Prizes screen.' : ' That is the only thing points can be used for.') + ' They cannot be exchanged for cash. It is one of each offer per person.'],
       ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
@@ -968,7 +968,7 @@
       ['Do my points expire?', 'Right now your points do not expire. Each offer has its own end date, and a code that is not used by the date shown expires.'],
       ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
-    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). Reward Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
+    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). LVR Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
     if (prize) qa.push(['What is the bonus spin?', 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.']);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
@@ -1279,7 +1279,7 @@
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
               (pending ? '' : tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt)) +
-              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pending ? 'Waiting for approval' : paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' Reward Point' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
+              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pending ? 'Waiting for approval' : paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' LVR Point' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
               (pending ? '' : '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button>') + '</div>' +
               (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
             '</div>';
@@ -1394,7 +1394,7 @@
       document.getElementById('inviteLink').textContent = url;
       var btn = document.getElementById('inviteBtn'); btn.disabled = false;
       btn.addEventListener('click', function(){
-        var text = 'Join LVR Reward Points and earn points at Las Vegas restaurants: ' + url;
+        var text = 'Join LVR Points and earn points at Las Vegas restaurants: ' + url;
         if (navigator.share) { navigator.share({ text: text }).catch(function(){}); }
         else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Link copied!'; }); }
         else { btn.textContent = url; }
@@ -1856,6 +1856,7 @@
 
   function earnRateText(rate) {
     rate = Number(rate) || 0;
+    if (rate === 1) return 'You earn 1 point for every $1 you spend.';
     if (rate > 0 && rate < 1) { var x = 1 / rate; if (Math.abs(x - Math.round(x)) < 0.01) return 'You earn 1 point for every $' + Math.round(x) + ' you spend.'; }
     return 'You earn about ' + rate + ' point' + (rate === 1 ? '' : 's') + ' per $1 spent.';
   }

@@ -9,8 +9,8 @@ const list = new Function('hrs', fnSrc + '; return spinTermsList;')(hrs)({ waitD
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spin Terms — LVR Rewards</title>
-<meta name="description" content="The rules of the free LVR Rewards spin. The number is random and we have no control over it.">
+<title>Spin Terms — LVR Points</title>
+<meta name="description" content="The rules of the free LVR Points spin. The number is random and we have no control over it.">
 <style>
   :root{--bg:#07111f;--card:#11243b;--ink:#eef4fb;--dim:#9fb3c8;--gold:#ffd35c;--blue:#59b5ff;--line:#2c4864;}
   *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
@@ -24,13 +24,13 @@ const html = `<!doctype html>
 </style></head><body>
 <header><a href="index.html">KEY TECHNOLOGIES<span>.SI</span></a></header>
 <main>
-  <h1>LVR Rewards Spin Terms</h1>
+  <h1>LVR Points Spin Terms</h1>
   <p class="ver">Version ${ver[2]} · Las Vegas Restaurants</p>
   <div class="short"><b>In short:</b> the number is random and we have no control over it.</div>
   <ol>
 ${list.map(t => `    <li><b>${esc(t[0])}.</b> ${esc(t[1])}</li>`).join('\n')}
   </ol>
-  <p class="note">These terms stay on this page, and under the LVR Rewards menu in the app, for as long as the spin exists. Questions? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram.</p>
+  <p class="note">These terms stay on this page, and under the LVR Points menu in the app, for as long as the spin exists. Questions? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram.</p>
   <a class="back" href="my-account.html">&larr; Back to my rewards</a>
 </main></body></html>
 `;
