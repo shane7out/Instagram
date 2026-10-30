@@ -1,0 +1,107 @@
+<!--OWNER-AUTH-START-->
+<script>
+// Owner sign-in (Firebase Auth, email + password). Optional: it stays dormant until ownerAuth/apiKey exists in the
+// database (the Mac script owner-setup.sh puts it there). Once signed in, every request this page makes to the
+// database carries the owner's sign-in token, so database rules can tell the owner from a stranger.
+// The password is never stored. The token lives in this browser tab (or on this Mac if "Stay signed in" is ticked).
+(function () {
+  if (window.OWNER_AUTH) return;
+  var DBH = 'lvr-data-a60c1-default-rtdb.firebaseio.com', SS = 'lvrOwnerAuth', KEEP = 'lvrOwnerAuthKeep';
+  var st = null, apiKey = null, keyP = null, origFetch = window.fetch.bind(window), listeners = [];
+  try { st = JSON.parse(sessionStorage.getItem(SS) || localStorage.getItem(KEEP) || 'null'); } catch (e) {}
+  function save(keep) {
+    try { sessionStorage.removeItem(SS); localStorage.removeItem(KEEP); } catch (e) {}
+    if (!st) return;
+    try { (keep || st.keep ? localStorage : sessionStorage).setItem(keep || st.keep ? KEEP : SS, JSON.stringify(st)); } catch (e) {}
+  }
+  function note() { listeners.forEach(function (f) { try { f(); } catch (e) {} }); render(); }
+  function getKey() {
+    if (apiKey) return Promise.resolve(apiKey);
+    if (!keyP) keyP = origFetch('https://' + DBH + '/ownerAuth/apiKey.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (k) { apiKey = (typeof k === 'string' && k) || null; return apiKey; }).catch(function () { return null; });
+    return keyP;
+  }
+  function refresh() {
+    if (!st || !st.refreshToken) return Promise.resolve(null);
+    return getKey().then(function (k) {
+      if (!k) return null;
+      return origFetch('https://securetoken.googleapis.com/v1/token?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(st.refreshToken) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j) { st = null; save(); note(); return null; }
+          st = { idToken: j.id_token, refreshToken: j.refresh_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000 - 60000, uid: j.user_id, keep: st.keep };
+          save(); return st.idToken;
+        }).catch(function () { return null; });
+    });
+  }
+  function token() { if (!st) return Promise.resolve(null); if (Date.now() < st.exp) return Promise.resolve(st.idToken); return refresh(); }
+  // add the owner token to every database request this page makes
+  window.fetch = function (input, init) {
+    var isStr = typeof input === 'string', url = isStr ? input : (input && input.url) || '';
+    if (!st || url.indexOf(DBH) < 0 || /[?&](auth|access_token)=/.test(url) || !isStr) return origFetch(input, init);
+    return token().then(function (t) {
+      var u = t ? url + (url.indexOf('?') < 0 ? '?' : '&') + 'auth=' + encodeURIComponent(t) : url;
+      return origFetch(u, init).then(function (r) {
+        if (r.status === 401 && init && init.method && init.method !== 'GET') banner('The database refused that change. Sign in as owner (bottom right) and try again.');
+        return r;
+      });
+    });
+  };
+  function signIn(email, pw, keep) {
+    return getKey().then(function (k) {
+      if (!k) throw new Error('Owner sign-in is not set up yet. Run owner-setup.sh on the Mac first.');
+      return origFetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pw, returnSecureToken: true }) })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j && j.error && /PASSWORD|EMAIL|INVALID|CREDENTIAL/i.test(j.error.message || '') ? 'That email or password is not right.' : 'Sign-in did not work. Try again.'); return j; }); });
+    }).then(function (j) {
+      st = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) || 3600) * 1000 - 60000, uid: j.localId, keep: !!keep };
+      save(keep); note(); return st;
+    });
+  }
+  function signOut() { st = null; save(); note(); }
+  // ---- tiny UI: a button bottom right + a sign-in box
+  var btn = null, bar = null;
+  function render() {
+    if (!document.body) return;
+    if (!btn) {
+      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'ownerAuthBtn';
+      btn.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147482000;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#0d1d33;color:#fff;font:700 13px system-ui,sans-serif;cursor:pointer;display:none;';
+      btn.addEventListener('click', function () { if (st) { if (confirm('Sign out of the owner login?')) signOut(); } else dialog(); });
+      document.body.appendChild(btn);
+    }
+    getKey().then(function (k) {
+      if (!k) { btn.style.display = 'none'; return; }
+      btn.style.display = 'block';
+      btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
+      btn.style.background = st ? '#0f5d34' : '#7a2a00';
+    });
+  }
+  function banner(text) {
+    if (!document.body) return;
+    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; dialog(); }); document.body.appendChild(bar); }
+    bar.textContent = text; bar.style.display = 'block'; setTimeout(function () { if (bar) bar.style.display = 'none'; }, 9000);
+  }
+  function dialog() {
+    var back = document.createElement('div');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and points with this login.</p>' +
+      '<label style="display:block;font-weight:700;margin:6px 0 3px;" for="oaEmail">Email</label><input id="oaEmail" type="email" autocomplete="username" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
+      '<label style="display:block;font-weight:700;margin:10px 0 3px;" for="oaPw">Password</label><input id="oaPw" type="password" autocomplete="current-password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
+      '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13.5px;color:#9fb3c8;"><input id="oaKeep" type="checkbox"> Stay signed in on this Mac</label>' +
+      '<p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p>' +
+      '<div style="display:flex;gap:8px;"><button type="button" id="oaNo" style="flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;">Cancel</button><button type="submit" style="flex:1;padding:12px;border-radius:10px;border:0;background:#0f67c2;color:#fff;font-weight:800;">Sign in</button></div></form>';
+    document.body.appendChild(back);
+    var f = back.querySelector('form'), msg = back.querySelector('#oaMsg');
+    back.querySelector('#oaEmail').focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault(); msg.style.color = '#9fb3c8'; msg.textContent = 'Signing in…';
+      signIn(back.querySelector('#oaEmail').value.trim(), back.querySelector('#oaPw').value, back.querySelector('#oaKeep').checked)
+        .then(function () { back.remove(); }).catch(function (er) { msg.style.color = '#ff9a9a'; msg.textContent = er.message || 'Sign-in did not work.'; });
+    });
+  }
+  window.OWNER_AUTH = { signedIn: function () { return !!st; }, uid: function () { return st && st.uid; }, signIn: signIn, signOut: signOut, dialog: dialog, onChange: function (f) { listeners.push(f); } };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+  // a signed-in token that is older than its life is renewed in the background
+  setInterval(function () { if (st && Date.now() > st.exp - 120000) refresh(); }, 120000);
+})();
+</script>
+<!--OWNER-AUTH-END-->
