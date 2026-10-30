@@ -1635,7 +1635,7 @@
         var keys = Object.keys(j || {}).filter(function(k){ return !(reg[k] && reg[k].status === 'rejected'); }).sort(), rank = keys.indexOf(memberKey);
         if (rank < 0 || rank >= lc.limit) { card.remove(); return; }
         return fetch(DB + MEMBERS_PATH + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(memberKey)) + '&shallow=true').then(function(r){ return r.json(); }).then(function(f){
-          var used = f ? Object.keys(f).length : 0, left = Math.max(0, lc.invites - used);
+          var used = Object.keys(f || {}).filter(function(k){ return !(reg[k] && reg[k].status === 'rejected'); }).length, left = Math.max(0, lc.invites - used);
           document.getElementById('invTitle').textContent = 'Founding Member #' + (rank + 1);
           document.getElementById('invSub').textContent = 'You are one of the first ' + lc.limit + ' people in LVR Points. Each Founding Member can invite ' + (lc.invites === 1 ? 'one friend' : lc.invites + ' friends') + ', so choose a friend who will really use it. ' + (left > 0 ? 'Share your link below.' : 'You have used ' + (lc.invites === 1 ? 'your invite' : 'all your invites') + '. Thank you for spreading the word.') + (refSettings && refSettings.enabled === true && refSettings.l1Pct > 0 ? ' When your friend earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn. It never reduces their points.' : '');
           document.getElementById('invFriends').textContent = used;

@@ -591,7 +591,8 @@
         if (!rk) return { ok: false, reason: "noinvite", limit: cfg.limit };
         if (keys.slice(0, cfg.limit).indexOf(rk) < 0) return { ok: false, reason: "notfounder", limit: cfg.limit };
         return fetch(LVR_REWARDS_DB_URL + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(rk)) + "&shallow=true").then(function(r){ return r.json(); }).then(function(used){
-          if ((used ? Object.keys(used).length : 0) >= cfg.invites) return { ok: false, reason: "used", limit: cfg.limit };
+          var live = Object.keys(used || {}).filter(function(k){ return !(round1Reg[k] && round1Reg[k].status === "rejected"); }).length; // a declined friend does not use up the invite
+          if (live >= cfg.invites) return { ok: false, reason: "used", limit: cfg.limit };
           return { ok: true, invited: true, limit: cfg.limit };
         });
       });
