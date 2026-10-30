@@ -1744,16 +1744,16 @@
     var q = txQueue(); if (!q.some(function (x) { return x.mk === mk && x.key === key; })) q.push({ mk: mk, key: key, type: type, amount: amount, ref: String(ref || '').slice(0, 280) });
     txSave(q); flushTx();
   }
-  var txBusy = false;
+  var txBusy = false, txPause = 0;
   function flushTx() {
-    if (txBusy || DEMO) return;
+    if (txBusy || DEMO || Date.now() < txPause) return;
     var q = txQueue(); if (!q.length) return;
     txBusy = true;
     var it = q[0], url = DB + '/lvr_points/transactions/' + it.mk + '/' + encodeURIComponent(it.key) + '.json';
     fetch(url).then(function (r) { if (!r.ok) throw new Error('get'); return r.json(); }).then(function (cur) {
       if (cur) return true;
       return fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: it.type, amount: it.amount, at: { '.sv': 'timestamp' }, ref: it.ref, by: 'member' }) }).then(function (r) { if (!r.ok) throw new Error('put'); return true; });
-    }).then(function () { var q2 = txQueue(); q2.shift(); txSave(q2); txBusy = false; flushTx(); }).catch(function () { txBusy = false; });
+    }).then(function () { var q2 = txQueue(); q2.shift(); txSave(q2); txBusy = false; flushTx(); }).catch(function () { txBusy = false; txPause = Date.now() + 300000; });
   }
   setInterval(flushTx, 30000); setTimeout(flushTx, 3000);
   var pendingBusy = false;
