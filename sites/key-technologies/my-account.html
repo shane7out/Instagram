@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Account — Reward Points — Key Technologies.si</title>
+<title>My LVR Rewards — Las Vegas Restaurants</title>
 <meta name="robots" content="noindex">
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -136,8 +136,12 @@
   .bn-num{font-size:72px;font-weight:800;line-height:1;color:#ffd35c;font-variant-numeric:tabular-nums;}
   .bn-num.ready{font-size:54px;} .bn-num.win{color:#7be3a6;animation:bnPop .5s cubic-bezier(.2,1.4,.4,1);}
   .bn-unit{font-size:16px;color:var(--ink-dim);margin-top:4px;}
+  .terms-check{display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);background:rgba(255,255,255,.05);border:1.5px solid var(--control-line,#4a6580);border-radius:12px;padding:12px 13px;margin:0 0 12px;cursor:pointer;}
+  .terms-check input{flex:none;width:24px;height:24px;margin:1px 0 0;accent-color:#ffd35c;cursor:pointer;}
+  .linkbtn.inl{display:inline;padding:0;min-height:0;font-size:inherit;}
+  #chestOpenBtn:disabled{opacity:.45;cursor:not-allowed;}
   .linkbtn{font:inherit;font-size:13.5px;font-weight:800;color:var(--key-light);background:none;border:0;padding:8px 0;min-height:36px;cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px;} .linkbtn.snd{color:var(--ink-dim);text-decoration:none;}
-  .fair-box{display:flex;flex-wrap:wrap;gap:2px 14px;align-items:center;justify-content:space-between;} .fair-box span{flex-basis:100%;}
+  .fair-box{display:flex;flex-wrap:wrap;gap:2px 14px;align-items:center;justify-content:space-between;background:none;border:0;padding:0 2px;margin:0 0 6px;}
   .tr-intro{background:rgba(255,211,92,.08);border:1px solid rgba(255,211,92,.3);border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:15px;} .tr-intro b{color:#ffd35c;}
   .tr-sec{border:1px solid #2c4864;border-radius:12px;margin:0 0 8px;background:rgba(255,255,255,.03);} .tr-sec summary{cursor:pointer;font-weight:800;padding:13px 14px;list-style:none;display:flex;justify-content:space-between;gap:10px;min-height:44px;} .tr-sec summary::-webkit-details-marker{display:none;} .tr-sec summary::after{content:'+';color:#ffd35c;font-size:20px;line-height:1;} .tr-sec[open] summary::after{content:'−';} .tr-sec .tr-body{padding:0 14px 13px;font-size:14.5px;line-height:1.55;color:#c4d4e6;}
   .tr-bars{display:grid;gap:5px;margin:10px 0 4px;} .tr-bar{display:grid;grid-template-columns:22px 1fr 44px;gap:8px;align-items:center;font-size:13px;font-variant-numeric:tabular-nums;} .tr-bar i{display:block;height:12px;border-radius:99px;background:linear-gradient(90deg,#ffd35c,#e8a317);}
@@ -169,7 +173,7 @@
   .mini-bal small{font-weight:600;color:var(--ink-dim);font-size:13px;text-shadow:none;margin-left:4px;}
   .soon-back{position:fixed;inset:0;background:rgba(3,8,16,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
   .soon-back.open{display:flex;}
-  .soon-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
+  .soon-box{max-height:94vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;}
   .soon-box h3{margin:10px 0 6px;font-size:20px;}
   .soon-box p{margin:0 0 18px;color:var(--ink-dim);font-size:15px;}
   .top-panel{background:linear-gradient(180deg,#0f2036,#0b1a2d);border:1px solid #234160;border-radius:22px;padding:6px 16px 4px;margin:0 0 30px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
@@ -425,7 +429,7 @@
     </a>
     <div class="nav-cta">
       <div class="lr-wrap">
-        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">Reward Points <span aria-hidden="true">&#9662;</span></button>
+        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Rewards <span aria-hidden="true">&#9662;</span></button>
         <div class="lr-menu" id="lrMenu" hidden></div>
       </div>
     </div>
@@ -433,7 +437,7 @@
 </header>
 
 <main class="page-wrap" id="main">
-  <h1 class="sr-only">Your Reward Points</h1>
+  <h1 class="sr-only">Your LVR Rewards</h1>
   <div id="content"><div class="empty">Loading…</div></div>
   <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
@@ -442,14 +446,15 @@
       <h3 id="soonTitle">Your bonus</h3>
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
-      <div class="fair-box" id="fairBox" hidden><span>🔒 The number is picked by your phone's own random number generator. <b>We have no control over it.</b></span><button type="button" class="linkbtn" data-fair>How the spin works ›</button><button type="button" class="linkbtn snd" id="sndBtn" aria-pressed="false">🔇 Sound off</button></div>
-      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden style="margin-bottom:10px;">Spin the wheel</button>
+      <div class="fair-box" id="fairBox" hidden><button type="button" class="linkbtn" data-fair>🔒 How the spin works ›</button><button type="button" class="linkbtn snd" id="sndBtn" aria-pressed="false">🔇 Sound off</button></div>
+      <label class="terms-check" id="termsRow" hidden><input type="checkbox" id="termsCb"><span>I have read and agree to the <button type="button" class="linkbtn inl" data-terms>Spin Terms</button>. I understand the number is random and LVR Rewards has no control over it.</span></label>
+      <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden disabled style="margin-bottom:10px;">Spin the wheel</button>
       <button type="button" class="btn btn-ghost" id="demoSpinBtn" hidden style="margin-bottom:10px;">Preview the spin (demo only)</button>
       <button type="button" class="btn btn-ghost" id="soonClose">Got it</button>
     </div>
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
-  <div class="footer-note" id="builtBy">Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note" id="builtBy"><a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Rewards is a Las Vegas Restaurants program.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </main>
 
 <div id="redeemOverlay">
@@ -790,10 +795,13 @@
       '<button type="button" id="demoWatch">▶ Watch spin</button>' +
       '<div id="demoWatchRes" role="status"></div></div>';
   }
+  document.addEventListener('change', function (e) { if (e.target && e.target.id === 'termsCb') { var ob = document.getElementById('chestOpenBtn'); if (ob) ob.disabled = !e.target.checked; } });
   function syncSnd() { var b = document.getElementById('sndBtn'); if (!b) return; b.textContent = soundOn ? '🔊 Sound on' : '🔇 Sound off'; b.setAttribute('aria-pressed', soundOn ? 'true' : 'false'); }
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null; if (!t) return;
     if (t.closest('[data-fair]')) { fairnessModal(); return; }
+    if (t.closest('[data-terms]')) { e.preventDefault(); spinTermsModal(); return; }
+    if (t.closest('#termsFoot')) { e.preventDefault(); spinTermsModal(); return; }
     if (t.closest('#sndBtn')) { soundOn = !soundOn; try { localStorage.setItem('lvrSound', soundOn ? '1' : '0'); } catch (x) {} syncSnd(); if (soundOn) clack(1); }
   });
   var demoWatchBusy = false;
@@ -862,7 +870,8 @@
     var recPaused = !DEMO && pausedFlag('receipts');
     var rows = [
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
-      ['rules', '📜', 'How Reward Points Work', 'The simple rules', ''],
+      ['rules', '📜', 'How LVR Rewards Work', 'The simple rules', ''],
+      ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
       ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''],
       ['prizes', '🎁', 'Prizes', ladderCfg().enabled ? 'See what you can win' : 'What your points get you', ''],
@@ -878,6 +887,31 @@
     return d;
   }
   // The full "why we have no control" page, reachable from the spin screen, the menu and the Q&A
+  // The Spin Terms. Bump SPIN_TERMS_VERSION when the wording changes, and keep spin-terms.html in step.
+  var SPIN_TERMS_VERSION = '2026-10-29', SPIN_TERMS_DATE = 'October 29, 2026';
+  function spinTermsList(c) {
+    var range = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + ' to ' + c.prizeMax) : '1 to 10';
+    return [
+      ['Free to join, free to spin', 'No purchase is necessary to join LVR Rewards or to spin. Buying food does not improve your chances.'],
+      ['One free spin at a time', 'You get one free spin every ' + hrs(c.waitDays) + ' hours. When a spin is ready you have ' + c.claimHours + ' hours to use it. If you do not spin in time, that spin is gone and the wait starts again.'],
+      ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Rewards, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
+      ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free Reward Points.'],
+      ['What points are worth', '1 point = $1 toward a free offer at a participating restaurant. Points can only be used for those offers. They cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
+      ['Who can spin', 'You must be 18 or older, and one person may have only one account. Using more than one account, or trying to interfere with the wheel, the app or the records, voids the spin and may close the account.'],
+      ['Records', 'Every spin is recorded with the date, time and number, together with the version of these terms you agreed to. If you think a spin was recorded wrongly, contact us and we will review the record with you.'],
+      ['Not gambling', 'The spin is a free promotion. There is nothing to bet or buy and no cash prize.'],
+      ['Changes', 'We may change or end the spin, or these terms, at any time. Spins already recorded are not taken back. The version date on this page tells you which terms apply.']
+    ];
+  }
+  function spinTermsModal() {
+    var c = chestCfg();
+    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Rewards · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
+      '<div class="tr-intro"><b>In short:</b> the number is random and we have no control over it.</div>' +
+      '<ol style="margin:0;padding:0 0 0 20px;display:grid;gap:10px;font-size:15px;line-height:1.5;">' + spinTermsList(c).map(function (t) { return '<li><b>' + t[0] + '.</b> ' + t[1] + '</li>'; }).join('') + '</ol>' +
+      '<p style="margin:14px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-fair>How the spin works, and test it yourself ›</button></p>' +
+      '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Rewards menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#59b5ff;">spin-terms.html</a></p>';
+    return infoModal('Spin Terms', html);
+  }
   var IG_LINK = 'https://instagram.com/lasvegas_restaurants';
   function fairnessModal() {
     var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, N = max - min + 1, pct = Math.round(1000 / N) / 10, avg = (min + max) / 2;
@@ -891,7 +925,7 @@
       sec('Test it yourself', 'Run 10,000 test spins on your own phone and see how even the results are. Test spins are not saved and do not give points.<br><button type="button" class="own-ok" id="trTest" style="margin-top:10px;width:100%;padding:12px;border:0;border-radius:12px;font:inherit;font-weight:800;color:#fff;background:#0f67c2;cursor:pointer;">Run 10,000 test spins</button><div id="trOut" role="status" style="margin-top:8px;"></div>') +
       sec('An honest note', 'A website can\u2019t prove to you what its own code does. That is why we use the browser\u2019s standard generator, show every number\u2019s chance, record every spin and let you test it. If a spin ever looks wrong to you, message us and we will look at the record with you.') +
       sec('Is there a catch?', 'No purchase is necessary. You get one free spin every ' + hrs(c.waitDays) + ' hours. Points are worth $1 toward free offers at participating restaurants, and cannot be exchanged for cash.');
-    var d = infoModal('How the spin works', html + '<p style="margin:12px 0 0;font-size:14px;">Questions? <a href="' + IG_LINK + '" target="_blank" rel="noopener" style="color:#59b5ff;">Message us on Instagram</a></p>');
+    var d = infoModal('How the spin works', html + '<p style="margin:12px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-terms>Read the full Spin Terms ›</button></p><p style="margin:0;font-size:14px;">Questions? <a href="' + IG_LINK + '" target="_blank" rel="noopener" style="color:#59b5ff;">Message us on Instagram</a></p>');
     var go = d.el.querySelector('#trTest');
     go.addEventListener('click', function () {
       var cnt = {}, i, k; for (k = min; k <= max; k++) cnt[k] = 0;
@@ -901,7 +935,7 @@
     });
     return d;
   }
-  function openRules() { infoModal('How Reward Points Work', rulesHtml()); }
+  function openRules() { infoModal('How LVR Rewards Work', rulesHtml()); }
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? prizeRange(c) : '';
     var qa = [
@@ -943,6 +977,7 @@
     else if (kind === 'rules') openRules();
     else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
     else if (kind === 'fair') fairnessModal();
+    else if (kind === 'terms') spinTermsModal();
     else if (kind === 'prizes') { var pd = infoModal('Prizes', prizesHtml()); bindLadder(pd); }
     else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
   }
@@ -1519,12 +1554,15 @@
     var b = document.getElementById('chestBig'); if (b) { b.hidden = true; }
     var m = document.getElementById('chestMsg'); if (m && !chestBusy && !chestWin) m.textContent = msg;
     var fb = document.getElementById('fairBox'); if (fb) fb.hidden = !(fair && !chestBusy && !chestWin); syncSnd();
-    var o = document.getElementById('chestOpenBtn'); if (o) o.hidden = !canOpen;
+    var tr = document.getElementById('termsRow'), tcb = document.getElementById('termsCb'); if (tr) tr.hidden = !(canOpen && !chestBusy);
+    var o = document.getElementById('chestOpenBtn'); if (o) { o.hidden = !canOpen; o.disabled = !(tcb && tcb.checked); }
     var ds = document.getElementById('demoSpinBtn'); if (ds) ds.hidden = !(DEMO && st.kind === 'wait' && !chestBusy && !chestWin);
   }
   function openChest() {
     var st = chestInfo(), btn = document.getElementById('chestOpenBtn');
     if (st.kind !== 'ready' || chestBusy || (!memberKey && !DEMO)) return;
+    var tcb0 = document.getElementById('termsCb');
+    if (!tcb0 || !tcb0.checked) { var mm = document.getElementById('chestMsg'); if (mm) mm.textContent = 'Please tick the box to confirm you have read the Spin Terms.'; return; }
     // the number is drawn from the browser's secure random source; the owner has no say in it
     var prize = st.c.prizeMin + secureInt(st.c.prizeMax - st.c.prizeMin + 1);
     chestBusy = true; btn.hidden = true;
@@ -1536,7 +1574,7 @@
     var finish = function () {
       var at = Date.now();
       wallet.points = (wallet.points || 0) + prize; wallet.chestState = { n: st.n, amount: prize, at: at };
-      chestBusy = false; chestWin = { n: '+' + prize }; var cb2 = document.getElementById('soonClose'); if (cb2) cb2.hidden = false;
+      chestBusy = false; chestWin = { n: '+' + prize }; var cb2 = document.getElementById('soonClose'); if (cb2) cb2.hidden = false; var tcb1 = document.getElementById('termsCb'); if (tcb1) tcb1.checked = false;
       var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
       var nx = chestInfo(), m = document.getElementById('chestMsg');
       if (m) m.textContent = nx.kind === 'wait' ? (prize === 0 ? 'The wheel landed on zero. Your next free spin arrives in ' : 'Your next free bonus spin arrives in ') + hrs(nx.waitDays) + ' hours.' : 'Thank you for being a member.';
@@ -1561,7 +1599,7 @@
     };
     // claim first (the database only accepts the next spin, after the full wait and inside the claim window, within the allowed range), then log it, then add the points, then spin the wheel to the number
     fetch(DB + '/lvr_rewards/' + mk + '/chestState.json', { method: 'PUT', headers: H, body: JSON.stringify({ n: st.n, amount: prize, at: { '.sv': 'timestamp' } }) })
-      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' } }) }).catch(function () { return null; }); })
+      .then(function (r) { if (!r.ok) throw new Error('claim'); claimed = true; return fetch(DB + '/lvr_points/chest_log/' + mk + '/' + st.n + '.json', { method: 'PUT', headers: H, body: JSON.stringify({ amount: prize, at: { '.sv': 'timestamp' }, terms: SPIN_TERMS_VERSION }) }).catch(function () { return null; }); })
       .then(function () { return credit(3); })
       .then(function (r) { if (!r || !r.ok) throw new Error('points'); spin(); })
       .catch(function () {
