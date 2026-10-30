@@ -165,7 +165,7 @@ const BIG = 'x'.repeat(100);
   check('wipe all redemptions', await call('anon', 'DELETE', '/lvr_points/redemptions'), false);
 
   // ---------- owner-managed pieces keep working
-  check('create a catalog item', await call('anon', 'PUT', '/lvr_points/catalog/van/i1', { itemName: 'Free Bowl', pointCost: 10, active: true }), true);
+  check('create a catalog item', await call('anon', 'PUT', '/lvr_points/catalog/van/i1', { itemName: 'Free Bowl', pointCost: 20, active: true }), true);
   check('edit / delete one catalog item', await call('anon', 'DELETE', '/lvr_points/catalog/van/i1'), true);
   check('wipe the whole catalog', await call('anon', 'DELETE', '/lvr_points/catalog'), false);
   check('save a business + PIN', await call('anon', 'PATCH', '/lvr_points/restaurants/van', { bizName: 'Vanilla Rice', pin: '1234', commissionPct: 15 }), true);
