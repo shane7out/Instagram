@@ -259,6 +259,7 @@
   .rest-group .item-card,.rest-group .item-card.ready,.rest-group .item-card.locked{background:none;border:0;border-radius:0;box-shadow:none;padding:2px 4px 4px;opacity:1;}
   .rest-group .item-card + .item-card{border-top:1px solid rgba(255,255,255,.1);margin-top:10px;padding-top:16px;}
   .rest-group .items{gap:0;}
+  .offer-worth{display:table;margin:0 auto 6px;font-size:14px;font-weight:800;letter-spacing:.03em;color:#052b14;background:linear-gradient(180deg,#8ff0b8,#3ddc84);border-radius:99px;padding:4px 14px;}
   .offer-head{text-align:center;font-size:32px;line-height:1.1;font-weight:900;letter-spacing:-.02em;color:#ffd35c;text-shadow:0 0 18px rgba(240,169,26,.35);margin:2px 4px 6px;text-wrap:balance;}
   .rest-group .rest-head{justify-content:center;text-align:center;}
   .rest-group .rest-name{font-size:19px;font-weight:700;color:var(--ink-dim,#a9bdd3);}
@@ -467,7 +468,7 @@
     </div>
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
-  <div class="footer-note" id="builtBy"><a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Points is a Las Vegas Restaurants program.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note" id="builtBy"><a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Points (Las Vegas Restaurant Points) is a Las Vegas Restaurants program.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </main>
 
 <div id="redeemOverlay">
@@ -906,7 +907,7 @@
   }
   // The full "why we have no control" page, reachable from the spin screen, the menu and the Q&A
   // The Spin Terms. Bump SPIN_TERMS_VERSION when the wording changes, and keep spin-terms.html in step.
-  var SPIN_TERMS_VERSION = '2026-10-30b', SPIN_TERMS_DATE = 'October 30, 2026 (rev. 2)';
+  var SPIN_TERMS_VERSION = '2026-10-30c', SPIN_TERMS_DATE = 'October 30, 2026 (rev. 3)';
   function spinTermsList(c) {
     var range = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + ' to ' + c.prizeMax) : '1 to 10';
     return [
@@ -914,7 +915,7 @@
       ['One free spin at a time', 'You get one free spin every ' + hrs(c.waitDays) + ' hours. When a spin is ready you have ' + c.claimHours + ' hours to use it. If you do not spin in time, that spin is gone and the wait starts again.'],
       ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Points, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
       ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free LVR Points.'],
-      ['What points are worth', '1 point = $1 toward a free offer at any participating restaurant, including new ones as they join. Points can only be used for those offers. They cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
+      ['What points are worth', '1 point = $1 toward a free offer at any participating restaurant, including new ones as they join. Every offer is worth at least $15. Points can only be used for those offers. They cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
       ['Who can spin', 'You must be 18 or older, and one person may have only one account. Using more than one account, or trying to interfere with the wheel, the app or the records, voids the spin and may close the account.'],
       ['Records', 'Every spin is recorded with the date, time and number, together with the version of these terms you agreed to. If you think a spin was recorded wrongly, contact us and we will review the record with you.'],
       ['Not gambling', 'The spin is a free promotion. There is nothing to bet or buy and no cash prize.'],
@@ -923,7 +924,7 @@
   }
   function spinTermsModal() {
     var c = chestCfg();
-    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Points · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
+    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Points (Las Vegas Restaurant Points) · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
       '<div class="tr-intro"><b>In short:</b> the number is random and we have no control over it.</div>' +
       '<ol style="margin:0;padding:0 0 0 20px;display:grid;gap:10px;font-size:15px;line-height:1.5;">' + spinTermsList(c).map(function (t) { return '<li><b>' + t[0] + '.</b> ' + t[1] + '</li>'; }).join('') + '</ol>' +
       '<p style="margin:14px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-fair>How the spin works, and test it yourself ›</button></p>' +
@@ -1098,6 +1099,8 @@
     keys.forEach(function (k) { var nk = normName(k); if (nk === nn || (ns.length >= 5 && nk.indexOf(ns) === 0)) hits.push(k); });
     return hits.length === 1 ? CONTACT[hits[0]] : null;
   }
+  // Every offer must be worth at least $15 (1 point = $1), so nothing below 15 points is ever shown
+  var MIN_OFFER_VALUE = 15;
   function flattenCatalog(catalog, allRedemptions) {
     var items = [];
     Object.keys(catalog).forEach(function(slug){
@@ -1106,6 +1109,7 @@
       Object.keys(bizItems).forEach(function(itemId){
         var item = bizItems[itemId];
         if (!item || item.active === false) return;
+        if (!(Number(item.pointCost) >= MIN_OFFER_VALUE)) return;
         if (item.expiresAt && Date.now() > item.expiresAt) return;
         var cr = directory[slug] && directory[slug].creditRemaining;
         if (typeof cr === 'number' && cr < item.pointCost) return;
@@ -1180,7 +1184,7 @@
     var GONE = ['archi-s-thai-kitchen', 'black-mountain-griddle', 'border-grill', 'buddy-v-s-ristorante', 'doanburi', 'ferraro-s-ristorante', 'grotto-ristorante', 'hash-house-a-go-go', 'kabuto-edomae-sushi', 'komol-thai-restaurant', 'kura-revolving-sushi-bar', 'lindo-michoac-n', 'lotus-of-siam', 'maggiano-s-little-italy', 'metro-pizza', 'nora-s-italian-cuisine', 'peru-chicken', 'pizza-rock', 'samurai-japanese-steakhouse-sushi', 'settebello-pizzeria-napoletana', 'sushi-neko', 'tacos-el-gordo', 'the-beach-house', 'the-irish-spot'];
     rows = rows.filter(function (r) { return GONE.indexOf(restSlug(r[1])) < 0; });
     return rows.map(function (r, i) {
-      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: r[3], photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: r[9] || '', cat: r[8], rank: i < 3 ? i : 99, contact: CONTACT[r[1]], demoPending: r[0] !== 'r0' };
+      return { slug: r[0], itemId: 'd' + i, bizName: r[1], itemName: r[2], pointCost: Math.max(MIN_OFFER_VALUE, r[3]), photoUrl: 'img/food/' + r[4] + '.jpg', maxRedemptions: r[5], _redeemedCount: r[5] - r[6], expiresAt: soon(r[7]), instructions: r[9] || '', cat: r[8], rank: i < 3 ? i : 99, contact: CONTACT[r[1]], demoPending: r[0] !== 'r0' };
     });
   }
   document.addEventListener('click', function (e) {
@@ -1205,7 +1209,7 @@
     wallet = { name: 'Lisa Walker', instagram: '@lisawalker_eats', points: DEMO_PTS, joinedAt: Date.now() - 17 * 60000 };
     // default demo = a brand-new member (full wait ahead); ?chest shows the "ready to collect" state
     if (DEMO_CHEST) wallet.chestState = { n: 1, amount: 2, at: Date.now() - 7 * 86400000 - 6 * 3600000 };
-    memberKey = null; appSettings = { chest: { waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10, repeat: true } }; myReceipts = {}; directory = {};
+    memberKey = null; appSettings = { chest: { waitDays: 7, claimHours: 48, prizeMin: 1, prizeMax: 10, repeat: true }, welcome: { enabled: true, amount: 21, when: 'signup' } }; myReceipts = {}; directory = {};
     loadHidden().then(function () { hiddenSig = JSON.stringify(hiddenMap()); render({}, {}); });
   }
 
@@ -1230,7 +1234,7 @@
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       '</div>' +
-      '<div class="pt-note">' + (giftOn() ? '<b>1 point = $1</b> toward a free offer at a participating restaurant. Or save up: <b>1,000 points = a $200 Amazon gift card</b>, to use anywhere on Amazon. Points cannot be exchanged for cash.' : '<b>1 point = $1</b> toward a free offer at a participating restaurant. Points can only be used for those offers. They cannot be used for anything else or exchanged for cash.') + '</div>' +
+      '<div class="pt-note"><b>1 point = $1</b> toward a free offer at any participating restaurant, new ones included. Every offer is worth at least $15.' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' Everyone starts with <b>' + welcomeCfg().amount + ' free points</b> ($' + welcomeCfg().amount + ').' : '') + ' Points can only be used for those offers, not for anything else or exchanged for cash.</div>' +
       '<h2>Redeem</h2>';
 
     if (!items.length) {
@@ -1251,6 +1255,7 @@
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
         return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-svc="' + svcMode(g.name) + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
           '<div class="offer-head">' + escapeHtml(first.itemName || 'Offer') + '</div>' +
+          '<div class="offer-worth">Worth $' + first.pointCost + '</div>' +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           ownerBtnHtml(g.name) + '</div>' +
           (SHOW_PHOTOS && firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
@@ -1273,7 +1278,7 @@
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div>' + (svcMode(g.name) ? '<span class="pickup">' + SVC_LABEL[svcMode(g.name)] + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + '</div>') + '</div>' +
+                '<div>' + (svcMode(g.name) ? '<span class="pickup">' + SVC_LABEL[svcMode(g.name)] + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + ' · worth $' + item.pointCost + '</div>') + '</div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +

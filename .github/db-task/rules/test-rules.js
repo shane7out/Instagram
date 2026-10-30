@@ -91,6 +91,12 @@ const BIG = 'x'.repeat(100);
   check('bonus: settings out of range (prize 500)', await call('anon', 'PUT', '/lvr_points/settings/chest', Object.assign({}, CH, { prizeMax: 500 })), false);
   check('bonus: settings out of range (claim window 5000 hours)', await call('anon', 'PUT', '/lvr_points/settings/chest', Object.assign({}, CH, { claimHours: 5000 })), false);
   check('bonus: owner saves settings', await call('anon', 'PUT', '/lvr_points/settings/chest', CH), true);
+  // every offer must be worth at least $15 (15 points)
+  check('offer: 20 points is accepted', await call('anon', 'PUT', '/lvr_points/catalog/van/bowl1', { itemName: 'Free Chicken Bowl', pointCost: 20, active: true }), true);
+  check('offer: exactly 15 points is accepted', await call('anon', 'PUT', '/lvr_points/catalog/van/min15', { itemName: 'Free Plate', pointCost: 15, active: true }), true);
+  check('offer: 10 points is refused', await call('anon', 'PUT', '/lvr_points/catalog/van/cheap', { itemName: 'Free Drink', pointCost: 10, active: true }), false);
+  check('offer: lowering an existing offer to 14 is refused', await call('anon', 'PATCH', '/lvr_points/catalog/van/bowl1', { pointCost: 14 }), false);
+  check('offer: switching an offer off still works', await call('anon', 'PATCH', '/lvr_points/catalog/van/bowl1', { active: false }), true);
   check('bonus record: give 5 points with a reason', await call('anon', 'PUT', '/lvr_points/bonuses/b1', { memberKey: 'K1', name: 'Kayla', points: 5, reason: 'Posted a video', at: TS }), true);
   check('bonus record: no reason', await call('anon', 'PUT', '/lvr_points/bonuses/b2', { memberKey: 'K1', points: 5, reason: '', at: TS }), false);
   check('bonus record: 5000 points', await call('anon', 'PUT', '/lvr_points/bonuses/b3', { memberKey: 'K1', points: 5000, reason: 'big one', at: TS }), false);

@@ -1114,7 +1114,7 @@
         '<div class="field"><label>Restaurant portal PIN (for them to view/export their own redemptions)</label><input type="text" id="fRestPin" value="' + escapeHtml(isEdit ? (rest.pin || '') : '') + '" placeholder="e.g. 4 digits"></div>' +
         '<div class="field"><label>Item name</label><input type="text" id="fItemName" value="' + escapeHtml(item ? item.itemName : '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Point cost</label><input type="number" id="fPointCost" value="' + (item ? item.pointCost : 10) + '"></div>' +
+          '<div class="field"><label>Point cost (1 point = $1, so this is the offer's worth. At least 15)</label><input type="number" id="fPointCost" min="15" value="' + (item ? item.pointCost : 15) + '"></div>' +
           '<div class="field"><label>Max redemptions (required)</label><input type="number" id="fMaxRedemptions" min="1" value="' + (item && item.maxRedemptions ? item.maxRedemptions : 50) + '"></div>' +
         '</div>' +
         '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
@@ -1137,6 +1137,7 @@
       var itemName = document.getElementById('fItemName').value.trim();
       var pointCost = parseInt(document.getElementById('fPointCost').value, 10);
       if (!newSlug || !bizName || !itemName || !pointCost) { showToast('Restaurant name, slug, item name, and point cost are required'); return; }
+      if (pointCost < 15) { showToast('Every offer must be worth at least $15 (15 points)'); return; }
 
       var expiresVal = document.getElementById('fExpires').value;
       var maxRedemptionsVal = document.getElementById('fMaxRedemptions').value;

@@ -50,7 +50,8 @@
   "catalog": {
    "$slug": {
     "$itemId": {
-     ".write": true
+     ".write": true,
+     ".validate": "newData.child('pointCost').isNumber() && newData.child('pointCost').val() >= 15"
     }
    }
   },

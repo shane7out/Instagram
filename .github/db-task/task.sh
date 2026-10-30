@@ -18,3 +18,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # re-run: zero slot rules
 # re-run: zero slot rules reverted
 # restored
+# re-run: offer minimum 15 points
