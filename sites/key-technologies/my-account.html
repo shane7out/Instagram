@@ -585,10 +585,10 @@
     var rules = [
       ['Free to join, free to use', free],
       ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed with points does not count toward your spend.'],
-      ['Use your points', '1 point = $1 toward a free offer at a participating restaurant. That is the only thing points can be used for. Try a restaurant you have not been to yet.'],
+      ['Use your points', '1 point = $1 toward a free offer at a participating restaurant.' + (giftOn() ? giftTxt() : ' That is the only thing points can be used for.') + ' Try a restaurant you have not been to yet.'],
       ['Spin for free points', prize ? 'Every ' + hrs(c.waitDays) + ' hours a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the ' + hrs(c.waitDays) + '-hour wait starts again.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
-      ['Fair play', 'Points can only be used for free offers at participating restaurants. They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown.']
+      ['Fair play', (giftOn() ? 'Points can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Points can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown.']
     ];
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
@@ -846,7 +846,10 @@
   function demoBarHtml() { return '<div class="demo-bar"><b>Preview.</b> This is what a member sees. The member, restaurants and balance here are examples, and nothing is saved. Try a different balance: <a href="?demo=5">5 pts</a><a href="?demo=20">20 pts</a><a href="?demo=40">40 pts</a><a href="?demo=65">65 pts</a><br><a href="?demo=65&chest=1" style="display:inline-block;margin-top:6px;">Try the bonus</a></div>'; }
 
   // ---------- Prize ladder (shown only when the owner switches it on; always on in the preview) ----------
-  var LADDER_DEFAULT = "20 | Free meal at a partner restaurant\n50 | $50 gift card\n200 | $200 gas card\n500 | $500 Amazon gift card";
+  var LADDER_DEFAULT = "20 | Free meal at a partner restaurant\n250 | $50 gas card\n500 | $100 gas card\n1000 | $200 Amazon gift card\n2500 | $500 Amazon gift card";
+  // gift-card wording only shows when the prize ladder is switched on (always in the demo)
+  function giftOn() { return ladderCfg().enabled; }
+  function giftTxt() { return giftOn() ? ' You can also save your points for gift cards: for example, 1,000 points = a $200 Amazon gift card, to use on Amazon, not just at restaurants.' : ''; }
   function ladderCfg() {
     var raw = (appSettings && appSettings.prizeLadder) || {};
     return { enabled: DEMO ? true : raw.enabled === true, text: (raw.text && String(raw.text).trim()) || LADDER_DEFAULT };
@@ -904,7 +907,7 @@
   }
   // The full "why we have no control" page, reachable from the spin screen, the menu and the Q&A
   // The Spin Terms. Bump SPIN_TERMS_VERSION when the wording changes, and keep spin-terms.html in step.
-  var SPIN_TERMS_VERSION = '2026-10-29', SPIN_TERMS_DATE = 'October 29, 2026';
+  var SPIN_TERMS_VERSION = '2026-10-30', SPIN_TERMS_DATE = 'October 30, 2026';
   function spinTermsList(c) {
     var range = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + ' to ' + c.prizeMax) : '1 to 10';
     return [
@@ -912,7 +915,7 @@
       ['One free spin at a time', 'You get one free spin every ' + hrs(c.waitDays) + ' hours. When a spin is ready you have ' + c.claimHours + ' hours to use it. If you do not spin in time, that spin is gone and the wait starts again.'],
       ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Rewards, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
       ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free Reward Points.'],
-      ['What points are worth', '1 point = $1 toward a free offer at a participating restaurant. Points can only be used for those offers. They cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
+      ['What points are worth', '1 point = $1 toward a free offer at a participating restaurant. Points can also be saved for the gift cards we list on the Prizes screen, when available (for example, 1,000 points = a $200 Amazon gift card). Points cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
       ['Who can spin', 'You must be 18 or older, and one person may have only one account. Using more than one account, or trying to interfere with the wheel, the app or the records, voids the spin and may close the account.'],
       ['Records', 'Every spin is recorded with the date, time and number, together with the version of these terms you agreed to. If you think a spin was recorded wrongly, contact us and we will review the record with you.'],
       ['Not gambling', 'The spin is a free promotion. There is nothing to bet or buy and no cash prize.'],
@@ -957,8 +960,8 @@
     var qa = [
       ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points when you join' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + hrs(c.waitDays) + ' hours' : '') + '. Use your points for free food at participating restaurants.'],
       ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $2 you spend. Spend $50 and you earn 25 points. A free offer you redeemed does not count toward your spend.'],
-      ['What is a point worth?', '1 point = $1 toward a free offer at a participating restaurant.'],
-      ['What can I do with my points?', 'Trade them for free food at participating restaurants. That is the only thing points can be used for. They cannot be used for anything else or exchanged for cash. It is one of each offer per person.'],
+      ['What is a point worth?', '1 point = $1 toward a free offer at a participating restaurant.' + giftTxt()],
+      ['What can I do with my points?', 'Trade them for free food at participating restaurants.' + (giftOn() ? ' You can also save them for the gift cards we list on the Prizes screen.' : ' That is the only thing points can be used for.') + ' They cannot be exchanged for cash. It is one of each offer per person.'],
       ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
       ['Can I give my free offer to a friend?', 'Yes, to one friend. Points themselves cannot be sold or transferred.'],
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
@@ -1228,7 +1231,7 @@
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       '</div>' +
-      '<div class="pt-note"><b>1 point = $1</b> toward a free offer at a participating restaurant. Points can only be used for those offers. They cannot be used for anything else or exchanged for cash.</div>' +
+      '<div class="pt-note">' + (giftOn() ? '<b>1 point = $1</b> toward a free offer at a participating restaurant. Or save up: <b>1,000 points = a $200 Amazon gift card</b>, to use anywhere on Amazon. Points cannot be exchanged for cash.' : '<b>1 point = $1</b> toward a free offer at a participating restaurant. Points can only be used for those offers. They cannot be used for anything else or exchanged for cash.') + '</div>' +
       '<h2>Redeem</h2>';
 
     if (!items.length) {
