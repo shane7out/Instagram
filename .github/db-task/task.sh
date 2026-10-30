@@ -21,3 +21,4 @@ bash .github/db-task/rules/run-rules-test.sh
 # re-run: offer minimum 15 points
 # re-run: old catalog test updated to 20 points
 # re-run: transactions ledger rules
+# re-run: tag claims rules

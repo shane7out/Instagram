@@ -109,6 +109,7 @@
     <span class="tab" data-v="catalog">Catalog</span>
     <span class="tab" data-v="redemptions">Redemptions</span>
     <span class="tab" data-v="bonus">Bonus</span>
+    <span class="tab" data-v="tags">Tags</span>
     <span class="tab" data-v="settings">Settings</span>
     <span class="tab" data-v="cleanup" style="border-color:rgba(255,107,107,.6);color:#ff9a9a;">Clean up</span>
   </div>
@@ -334,6 +335,7 @@
     else if (activeTab === 'earnings') renderEarningsTab();
     else if (activeTab === 'audit') renderAuditTab();
     else if (activeTab === 'bonus') renderBonusTab();
+    else if (activeTab === 'tags') renderTagsTab();
     else if (activeTab === 'settings') renderSettingsTab();
     else if (activeTab === 'cleanup') renderCleanupTab();
     else if (activeTab === 'catalog') renderCatalogTab();
@@ -652,6 +654,11 @@
         '</div>' +
         chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first bonus)') +
       '</div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Instagram tag bonus</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Members post on Instagram, tag @LasVegas_Restaurants, and paste the link. You check it in the Tags tab and the points are added. <b style="color:var(--yellow);">Leave this OFF until the database rules are deployed and your attorney has approved the #ad wording.</b></div>' +
+        chk('sTagOn', (settings.tagBonus || {}).enabled === true, 'Show "Tag us, earn points" to members') +
+        '<div class="field"><label>Points for an approved post (1 to 50)</label><input type="number" id="sTagPts" min="1" max="50" step="1" value="' + ((settings.tagBonus || {}).points || 5) + '"></div>' +
+      '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Prize ladder (what points can win)</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">Shows members a ladder of bigger and bigger prizes under LVR Points > Prizes, so they see why earning more points is worth it. One prize per line, written as <b>points | prize</b>. Several prizes can share the same points. <b style="color:var(--yellow);">Leave this OFF until the prizes are funded and your attorney has approved them, and until prize claiming is built (members can see the prizes but cannot claim them yet).</b></div>' +
         chk('sPrzOn', (settings.prizeLadder || {}).enabled === true, 'Show the prize ladder to members') +
@@ -687,6 +694,7 @@
           return { waitDays: Math.max(1, Math.min(365, parseInt(document.getElementById('sChestDays').value, 10) || 10)), claimHours: Math.max(1, Math.min(720, parseInt(document.getElementById('sChestHours').value, 10) || 48)), prizeMin: mx > 0 ? Math.max(1, mn) : mn, prizeMax: mx, repeat: document.getElementById('sChestRepeat').checked };
         })(),
         defaultCommissionPct: Math.max(0, Math.min(100, parseFloat(document.getElementById('sCommDefault').value) || 0)),
+        tagBonus: { enabled: document.getElementById('sTagOn').checked, points: Math.max(1, Math.min(50, parseInt(document.getElementById('sTagPts').value, 10) || 5)) },
         prizeLadder: { enabled: document.getElementById('sPrzOn').checked, text: document.getElementById('sPrzText').value.trim() },
         decay: { enabled: false, percent: 20, graceDays: 30 }, // the monthly return was removed; always saved as off
         welcome: {
@@ -1061,6 +1069,51 @@
         .then(function(){ btn.disabled = false; });
     });
     var lb = document.createElement('div'); lb.id = 'ledgerBox'; view.appendChild(lb); renderLedgerBox();
+  }
+
+  // ========================================================================
+  // TAGS TAB: Instagram tag-bonus claims (check the post, then approve or reject)
+  // ========================================================================
+  function renderTagsTab() {
+    view.innerHTML = '<div class="empty-note">Loading posts…</div>';
+    Promise.all([fbGet('/lvr_points/tag_claims'), fbGet(MEMBERS_PATH), fbGet(SETTINGS_PATH + '/tagBonus')]).then(function(r){
+      var claims = r[0] || {}, members = r[1] || {}, cfg = r[2] || {}, pts = Math.max(1, Math.min(50, Number(cfg.points) || 5));
+      var ids = Object.keys(claims).sort(function(a, b){ return (claims[b].submittedAt || 0) - (claims[a].submittedAt || 0); });
+      var pend = ids.filter(function(i){ return claims[i].status === 'pending'; }), done = ids.filter(function(i){ return claims[i].status !== 'pending'; }).slice(0, 25);
+      function card(id) {
+        var c = claims[id], m = members[c.memberKey] || {};
+        return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(m.name || c.memberKey) + ' ' + escapeHtml(c.handle || m.instagram || '') + '</div>' +
+          '<div class="row-sub">' + (c.submittedAt ? new Date(c.submittedAt).toLocaleString() : '') + ' · <a href="' + escapeHtml(c.postUrl) + '" target="_blank" rel="noopener" style="color:var(--key-light);">Open the post</a></div></div>' +
+          '<div class="row-num">' + (c.status === 'approved' ? '+' + (c.pointsAwarded || '') : c.status === 'rejected' ? 'No' : '') + '</div></div>' +
+          (c.status === 'pending' ? '<div class="row-sub" style="margin:8px 0;">Check: public account, tags @LasVegas_Restaurants, shows #ad / #LVRPoints, genuinely at a participating restaurant, not a duplicate or someone else\'s photo.</div><div style="display:flex;gap:8px;"><button class="btn btn-primary" data-tag="ok" data-id="' + id + '">Approve +' + pts + '</button><button class="btn btn-ghost" data-tag="no" data-id="' + id + '">Not approved</button></div>' : (c.status === 'approved' && c.pointsApplied === false ? '<button class="btn btn-ghost" data-tag="retry" data-id="' + id + '" style="margin-top:8px;">Points did not land - retry</button>' : '')) + '</div>';
+      }
+      view.innerHTML = '<div class="row-sub" style="margin-bottom:12px;">' + (cfg.enabled ? 'Tag bonus is ON (' + pts + ' points).' : 'Tag bonus is OFF. Turn it on in Settings when the rules are deployed.') + ' Each approval adds the points and writes a ledger entry.</div>' +
+        '<div style="font-weight:800;margin:6px 0;">Waiting to be checked (' + pend.length + ')</div>' + (pend.map(card).join('') || '<div class="empty-note">Nothing waiting.</div>') +
+        '<div style="font-weight:800;margin:18px 0 6px;">Recently checked</div>' + (done.map(card).join('') || '<div class="empty-note">Nothing yet.</div>');
+      view.querySelectorAll('[data-tag]').forEach(function(b){ b.addEventListener('click', function(){ tagDecide(b.getAttribute('data-id'), b.getAttribute('data-tag'), claims, pts, b); }); });
+    }).catch(function(){ view.innerHTML = '<div class="empty-note">Could not load. Check your connection (and that the database rules were deployed).</div>'; });
+  }
+  function tagDecide(id, act, claims, pts, btn) {
+    var c = claims[id]; if (!c) return;
+    btn.disabled = true;
+    if (act === 'no') {
+      if (!confirm('Mark this post as not approved? No points are added.')) { btn.disabled = false; return; }
+      fbPatch('/lvr_points/tag_claims/' + id, { status: 'rejected', decidedAt: { '.sv': 'timestamp' } }).then(function(r){ if (!r.ok) throw new Error('x'); showToast('Marked not approved'); renderTagsTab(); }).catch(function(){ btn.disabled = false; showToast('Could not save'); });
+      return;
+    }
+    // approve: mark approved (points not yet applied), then credit once, then flip the flag; a retry only credits while pointsApplied is false
+    var first = act === 'ok' ? fbGet('/lvr_points/tag_claims/' + id).then(function(f){
+      if (!f || f.status !== 'pending') throw new Error('handled');
+      return fbPatch('/lvr_points/tag_claims/' + id, { status: 'approved', pointsAwarded: pts, pointsApplied: false, decidedAt: { '.sv': 'timestamp' } }).then(function(r){ if (!r.ok) throw new Error('approve'); return pts; });
+    }) : fbGet('/lvr_points/tag_claims/' + id).then(function(f){ if (!f || f.status !== 'approved' || f.pointsApplied !== false) throw new Error('handled'); return f.pointsAwarded || pts; });
+    first.then(function(n){
+      return fbGet(MEMBERS_PATH + '/' + c.memberKey + '/token').then(function(tok){
+        if (!tok || tok !== c.token) throw new Error('member mismatch');
+        return fbPut('/lvr_points/bonuses/tag-' + id, { memberKey: c.memberKey, token: tok, name: (claims[id].handle || ''), points: n, reason: 'Instagram tag bonus', at: { '.sv': 'timestamp' } }).catch(function(){});
+      }).then(function(){ return fbPut(MEMBERS_PATH + '/' + c.memberKey + '/points', { '.sv': { increment: n } }); })
+        .then(function(r){ if (!r.ok) throw new Error('credit'); txLog(c.memberKey, 'tag-' + id, 'bonus', n, 'Instagram tag bonus: ' + c.postUrl); return fbPatch('/lvr_points/tag_claims/' + id, { pointsApplied: true }); })
+        .then(function(){ showToast('Approved - ' + n + ' points added'); renderTagsTab(); });
+    }).catch(function(e){ btn.disabled = false; showToast(e && e.message === 'handled' ? 'Already handled' : 'Something went wrong. Reload, then use retry if it shows.'); renderTagsTab(); });
   }
 
   // ========================================================================

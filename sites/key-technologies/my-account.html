@@ -895,12 +895,13 @@
     var recPaused = !DEMO && pausedFlag('receipts');
     var rows = [
       ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
+      tagCfg().enabled ? ['tag', '📸', 'Tag us, earn ' + tagCfg().points + ' points', 'Post and tag @LasVegas_Restaurants', ''] : null,
       ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
       ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
       ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''],
       ['contact', '💬', 'Contact us', 'Message us on Instagram', '']
-    ];
+    ].filter(Boolean);
     return '<div class="lr-list">' + rows.map(function (x) {
       return '<button type="button" class="lr-item' + x[4] + '" data-lr="' + x[0] + '"><span class="ic" aria-hidden="true">' + x[1] + '</span><span class="tx"><b>' + x[2] + '</b><small>' + x[3] + '</small></span><span class="chev" aria-hidden="true">&rsaquo;</span></button>';
     }).join('') + '</div>';
@@ -935,6 +936,53 @@
       '<p style="margin:14px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-fair>How the spin works, and test it yourself ›</button></p>' +
       '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#59b5ff;">spin-terms.html</a></p>';
     return infoModal('Spin Terms', html);
+  }
+  // Tag bonus: post on Instagram, tag @LasVegas_Restaurants, paste the link; the owner checks it and adds the points
+  function tagCfg() { var t = (appSettings && appSettings.tagBonus) || {}; return { enabled: DEMO ? true : t.enabled === true, points: Math.max(1, Math.min(50, Number(t.points) || 5)) }; }
+  function tagUrlClean(u) {
+    var m = /^https?:\/\/(?:www\.)?instagram\.com\/((?:p|reel|reels|tv)\/[A-Za-z0-9_-]+)/i.exec(String(u || '').trim());
+    return m ? 'https://www.instagram.com/' + m[1] + '/' : '';
+  }
+  function tagDialog() {
+    var c = tagCfg(), tags = '@LasVegas_Restaurants #ad #LVRPoints';
+    var d = ownDialog('<h3>Tag us, earn ' + c.points + ' LVR Points</h3>' +
+      '<ol style="margin:0 0 12px;padding-left:20px;display:grid;gap:8px;font-size:15px;line-height:1.5;">' +
+      '<li>Post a photo or video from a participating restaurant on your <b>public</b> Instagram.</li>' +
+      '<li>Tag <b>@LasVegas_Restaurants</b> and the restaurant.</li>' +
+      '<li>Add <b>#ad #LVRPoints</b> so everyone knows you earn points for posting.</li>' +
+      '<li>Paste the link to your post below. We check it and add <b>' + c.points + ' points</b>.</li></ol>' +
+      '<button type="button" class="linkbtn" id="tagCopy">Copy the tags: ' + tags + '</button>' +
+      '<div class="field-lite"><label for="tagUrl" style="display:block;font-weight:700;margin:8px 0 4px;">Link to your post</label><input id="tagUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://www.instagram.com/p/..." style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #4a6580;background:#0b1b30;color:#eef4fb;font:inherit;"></div>' +
+      '<p id="tagMsg" role="status" style="min-height:20px;margin:8px 0;font-size:14px;"></p>' +
+      '<div class="own-row"><button class="own-no" id="tagClose">Close</button><button class="own-ok" id="tagGo">Send for checking</button></div>' +
+      '<p style="margin:12px 0 0;font-size:12.5px;line-height:1.45;color:#9fb3c8;">Say what you honestly think. Points are the same for any honest post, and we never pay for positive posts. One tag bonus per week. Your account must stay public until we check it. We never need your password. This is not sponsored, endorsed or administered by, or associated with, Instagram. ' + (DEMO ? '<b>Demo: nothing is sent.</b>' : '') + '</p>' +
+      '<div id="tagMine" style="margin-top:10px;font-size:14px;"></div>');
+    var msg = d.el.querySelector('#tagMsg'), url = d.el.querySelector('#tagUrl'), go = d.el.querySelector('#tagGo');
+    d.el.querySelector('#tagClose').addEventListener('click', d.close);
+    d.el.querySelector('#tagCopy').addEventListener('click', function () { try { navigator.clipboard.writeText(tags); msg.textContent = 'Copied. Paste it into your caption.'; msg.style.color = '#7be3a6'; } catch (e) { msg.textContent = 'Copy this: ' + tags; } });
+    var Q = DB + '/lvr_points/tag_claims.json', mine = [];
+    if (!DEMO && memberKey) fetch(Q + '?orderBy="memberKey"&equalTo=' + encodeURIComponent(JSON.stringify(memberKey))).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      mine = Object.keys(j || {}).map(function (k) { return j[k]; }).sort(function (a, b) { return (b.submittedAt || 0) - (a.submittedAt || 0); });
+      d.el.querySelector('#tagMine').innerHTML = mine.length ? '<b>Your posts</b>' + mine.slice(0, 5).map(function (x) { return '<div style="margin-top:6px;">' + (x.status === 'approved' ? '✅ +' + (x.pointsAwarded || '') + ' points added' : x.status === 'rejected' ? '✖ Not approved' : '⏳ Waiting to be checked') + ' · <span style="color:#9fb3c8;">' + escapeHtml(String(x.postUrl || '').replace('https://www.instagram.com/', '')) + '</span></div>'; }).join('') : '';
+    }).catch(function () {});
+    function say(t, ok) { msg.textContent = t; msg.style.color = ok ? '#7be3a6' : '#ff9a9a'; }
+    go.addEventListener('click', function () {
+      var clean = tagUrlClean(url.value);
+      if (!clean) { say('Please paste the link to your Instagram post (it looks like instagram.com/p/…).'); return; }
+      if (DEMO) { say('Demo only: in the real app this is sent to be checked.', true); return; }
+      if (!memberKey) { say('Please open your own link first.'); return; }
+      var recent = mine.some(function (x) { return x.status !== 'rejected' && Date.now() - (x.submittedAt || 0) < 7 * 86400000; });
+      if (recent) { say('You already sent a post this week. One tag bonus per week.'); return; }
+      go.disabled = true; say('Checking…', true);
+      fetch(Q + '?orderBy="postUrl"&equalTo=' + encodeURIComponent(JSON.stringify(clean))).then(function (r) { return r.ok ? r.json() : null; }).then(function (dup) {
+        if (dup && Object.keys(dup).length) { say('That post was already sent.'); go.disabled = false; return null; }
+        return fetch(Q, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ memberKey: memberKey, token: token, handle: wallet.instagram || '', postUrl: clean, status: 'pending', submittedAt: { '.sv': 'timestamp' } }) }).then(function (r) {
+          if (!r.ok) throw new Error('send');
+          say('Sent! We will check your post and add ' + c.points + ' points if it qualifies.', true); url.value = ''; go.textContent = 'Sent';
+        });
+      }).catch(function () { say('That did not work. Please try again in a moment.'); go.disabled = false; });
+    });
+    return d;
   }
   var IG_LINK = 'https://instagram.com/lasvegas_restaurants';
   function fairnessModal() {
@@ -1002,6 +1050,7 @@
     else if (kind === 'faq') infoModal('Questions & answers', faqHtml());
     else if (kind === 'fair') fairnessModal();
     else if (kind === 'terms') spinTermsModal();
+    else if (kind === 'tag') tagDialog();
     else if (kind === 'prizes') { var pd = infoModal('Prizes', prizesHtml()); bindLadder(pd); }
     else if (kind === 'contact') infoModal('Contact us', contactUsHtml());
   }

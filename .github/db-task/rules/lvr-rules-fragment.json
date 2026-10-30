@@ -114,6 +114,15 @@
      ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 365"
     }
    },
+   "tagBonus": {
+    ".write": true,
+    "enabled": {
+     ".validate": "newData.isBoolean()"
+    },
+    "points": {
+     ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 50"
+    }
+   },
    "defaultCommissionPct": {
     ".write": true,
     ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
@@ -142,6 +151,17 @@
    "total": {
     ".write": true,
     ".validate": "newData.isNumber() && newData.val() >= 0"
+   }
+  },
+  "tag_claims": {
+   ".indexOn": [
+    "memberKey",
+    "postUrl",
+    "status"
+   ],
+   "$id": {
+    ".write": "newData.exists() && (data.exists() ? (newData.child('memberKey').val() == data.child('memberKey').val() && newData.child('token').val() == data.child('token').val() && newData.child('postUrl').val() == data.child('postUrl').val() && newData.child('submittedAt').val() == data.child('submittedAt').val() && (data.child('status').val() == 'pending' || newData.child('status').val() == data.child('status').val()) && (!data.child('pointsAwarded').exists() || newData.child('pointsAwarded').val() == data.child('pointsAwarded').val()) && (!data.child('decidedAt').exists() || newData.child('decidedAt').val() == data.child('decidedAt').val())) : (newData.child('status').val() == 'pending' && !newData.child('pointsAwarded').exists() && !newData.child('pointsApplied').exists() && !newData.child('decidedAt').exists()))",
+    ".validate": "newData.hasChildren(['memberKey', 'token', 'postUrl', 'status', 'submittedAt']) && newData.child('postUrl').isString() && newData.child('postUrl').val().length <= 300 && newData.child('postUrl').val().matches(/^https:\\/\\/(www\\.)?instagram\\.com\\/.*/) && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected') && (!newData.child('pointsAwarded').exists() || (newData.child('pointsAwarded').isNumber() && newData.child('pointsAwarded').val() >= 0 && newData.child('pointsAwarded').val() <= 50))"
    }
   },
   "transactions": {
