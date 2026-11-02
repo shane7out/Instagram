@@ -173,9 +173,6 @@
   }
   .nav-links a:hover{color:var(--ink);}
   .nav-cta{display:flex;align-items:center;gap:14px;}
-  .account-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--control-line);color:var(--ink-dim);text-decoration:none;flex-shrink:0;}
-  .account-icon:hover{border-color:var(--key-blue);color:var(--key-light);}
-  .account-icon.logged-in{border-color:var(--key-blue);color:var(--key-light);}
 
   /* two-line hamburger — NOT three lines */
   .burger{
@@ -201,6 +198,9 @@
     display:block;padding:14px 4px;color:var(--ink);text-decoration:none;
     font-size:17px;font-weight:600;border-bottom:1px solid var(--line);
   }
+  .mm-account{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:14px 16px;border:1px solid var(--key-blue);border-radius:12px;color:var(--ink);text-decoration:none;font-size:17px;font-weight:700;min-height:48px;}
+  .mobile-menu a.mm-account{display:flex;border-bottom:1px solid var(--key-blue);padding:14px 16px;}
+  .mm-account small{color:var(--key-light);font-weight:600;font-size:13px;}
   .mm-cta-row{display:flex;gap:10px;margin-bottom:26px;}
   .mm-cta-row .btn{flex:1;text-align:center;padding-left:10px;padding-right:10px;}
   .mm-group-label{
@@ -461,9 +461,6 @@
 
     <div class="nav-cta">
       <a class="btn btn-ghost" href="#contact">Contact</a>
-      <a class="account-icon" id="accountIcon" href="rewards.html" aria-label="My Account" title="My Account">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-      </a>
       <button class="burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
         <span></span><span></span>
       </button>
@@ -479,6 +476,7 @@
      relative to header's own box instead of the viewport, collapsing this
      menu to a sliver instead of covering the screen. Keep it out here. -->
 <div class="mobile-menu" id="mobileMenu">
+  <a class="mm-account" id="mmAccount" href="rewards.html"><span>Log in</span><small>LVR Points member</small></a>
   <div class="mm-cta-row">
     <a class="btn btn-primary" href="#lead-short">Book a Call</a>
     <a class="btn btn-ghost" href="#audit">Free Website Audit</a>
@@ -1237,6 +1235,7 @@
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#platform">Platform</a></li>
       <li><a href="#method">How It Works</a></li>
+      <li><a href="rewards.html" id="footAccount">Member login</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#results">Results</a></li>
       <li><a href="#locations">Locations</a></li>
@@ -1338,15 +1337,13 @@
   document.getElementById("year").textContent = new Date().getFullYear();
 
   (function(){
-    var icon = document.getElementById("accountIcon");
-    if (!icon) return;
     var acctToken = "";
     try { acctToken = localStorage.getItem("lvr_wallet_token") || ""; } catch(e) {}
-    if (acctToken) {
-      icon.href = "my-account.html";
-      icon.classList.add("logged-in");
-      icon.title = "My Account (logged in)";
-    }
+    if (!acctToken) return;
+    var mm = document.getElementById("mmAccount");
+    if (mm) { mm.href = "my-account.html"; mm.querySelector("span").textContent = "My Account"; mm.querySelector("small").textContent = "Logged in"; }
+    var ft = document.getElementById("footAccount");
+    if (ft) { ft.href = "my-account.html"; ft.textContent = "My Account"; }
   })();
 
   // ---- forms: real submission once KEY_LEADS_DB_URL is set, honest
