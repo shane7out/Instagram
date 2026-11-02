@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Email Intelligence demo | Key Technologies.si</title><meta name="description" content="Demo of inbox triage and approval-first draft replies."><meta name="robots" content="noindex">
+<meta name="theme-color" content="#07111f"><link rel="icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="key-platform.css"></head><body>
+<header class="kp"><div class="wrap nav-row"><a class="logo" href="../index.html" aria-label="Key Technologies, home"><svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true"><circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/><rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/><rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/><rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/></svg><span>KEY TECHNOLOGIES<span class="logo-si">.SI</span></span></a><nav class="kp-nav" aria-label="Demos"><a href="index.html">Demos</a><a href="voice.html">Voice</a><a href="email.html" aria-current="page">Email</a><a href="sales.html">Sales</a></nav></div></header>
+<div class="demo-banner" role="note"><b>Demo only.</b> Fictional data. Nothing here is sent, booked, charged or paid.</div>
+<main class="wrap"><span class="eyebrow">Email Intelligence</span>
+<h1>Your inbox, sorted, with replies ready for approval</h1>
+<p class="lede">Pick a fictional message. See how it is sorted, what the draft is based on, and approve, edit or reject it. Nothing is ever sent without a person.</p>
+<div class="card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">Mailbox connection (demo)</h3><p class="small muted" style="margin:4px 0 0">Read-only access. We can read and label. We cannot send, delete or change anything.</p></div><span class="tag solid">Read-only</span></div></div>
+<div class="grid g2" style="grid-template-columns:minmax(0,1fr)">
+<section class="card" aria-labelledby="inh"><h2 id="inh">Inbox</h2><div id="inbox" role="list"></div></section>
+<section class="card" id="view" aria-live="polite"></section></div>
+<div class="card"><h3>Audit log (demo)</h3><ul id="log" class="small muted" style="margin:0;padding-left:18px"><li>No actions yet.</li></ul></div>
+<div class="card real-panel"><h3>Built in, in the real version</h3><ul><li>Secure sign-in with your mail provider, least-privilege read-only first.</li><li>Drafts use only information you approve (your price list, hours, policies), and say so.</li><li>Every send is a manual approval, logged with who and when. Untrusted mail is treated as untrusted.</li></ul></div></main>
+<footer class="kp"><div class="wrap">KEY Technologies.si demo prototypes. Every business, person, message, number and price on these pages is made up. Not connected to any real phone line, mailbox, calendar, payment system or customer record. <a href="../index.html#services">Back to all services</a></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>function toast(t){var e=document.getElementById('toast');e.textContent=t;e.className='toast show';clearTimeout(window.__t);window.__t=setTimeout(function(){e.className='toast'},3500);}
+
+var mails=[
+{id:1,from:'Jordan Lee (fictional)',subj:'Quote for 3 offices?',cat:'Sales lead',pri:'High',body:'Hi, we are opening three small offices in Henderson and need phones answered and a shared inbox. Can you send pricing and a time to talk this week?',draft:'Hi Jordan, thanks for reaching out. For three offices we usually start with a short call to learn your hours and how calls should be routed, then send a written quote. I can offer Wednesday 10:00 AM or Thursday 2:00 PM. Which works for you?',src:['Pricing policy: written quote after discovery call','Calendar: Wed 10:00 AM, Thu 2:00 PM open']},
+{id:2,from:'Priya Nair (fictional)',subj:'Invoice question',cat:'Billing',pri:'Normal',body:'Hello, my invoice shows a charge I do not recognize from the 12th. Can someone explain it?',draft:'Hi Priya, thank you for flagging this. I am asking our billing team to review the charge from the 12th and I will reply with a clear explanation. You do not need to do anything right now.',src:['Billing policy: explain every line item','No refund promised without approval']},
+{id:3,from:'Newsletter (fictional)',subj:'10 tips for spring marketing',cat:'Newsletter',pri:'Low',body:'This week in marketing: tip 1 ... tip 10.',draft:'',src:[]},
+{id:4,from:'Unknown sender (fictional)',subj:'URGENT: wire payment today',cat:'Possible scam',pri:'Review',body:'Please wire $4,800 today to the account below. Reply only to this address.',draft:'',src:[]}];
+var cur=null,ib=document.getElementById('inbox'),vw=document.getElementById('view');
+function addLog(t){var l=document.getElementById('log');if(l.firstChild&&l.firstChild.textContent==='No actions yet.')l.innerHTML='';var li=document.createElement('li');li.textContent=t;l.appendChild(li);}
+function renderList(){ib.innerHTML='';mails.forEach(function(m){var b=document.createElement('button');b.className='btn ghost';b.style.cssText='width:100%;justify-content:space-between;text-align:left;margin:0 0 8px;border-radius:12px;height:auto;min-height:56px;flex-wrap:wrap';b.setAttribute('role','listitem');b.innerHTML='<span><b>'+m.subj+'</b><br><span class="small muted">'+m.from+'</span></span><span class="tag '+(m.pri==='High'?'solid':'')+'">'+m.cat+'</span>';b.onclick=function(){open(m.id)};ib.appendChild(b);});}
+function open(id){cur=mails.filter(function(m){return m.id===id})[0];var m=cur;var h='<h2>'+m.subj+'</h2><p class="small muted">From '+m.from+'</p><p>'+m.body+'</p><div class="row"><span class="tag">'+m.cat+'</span><span class="tag outline">Priority: '+m.pri+'</span></div><hr class="hr">';
+if(m.draft){h+='<h3>Draft reply (needs approval)</h3><textarea id="dr" rows="6" aria-label="Draft reply">'+m.draft+'</textarea><p class="small muted">Based on:</p><div class="row">'+m.src.map(function(s){return '<span class="tag mute">'+s+'</span>'}).join('')+'</div><div class="row" style="margin-top:12px"><button class="btn" id="ap">Approve</button><button class="btn ghost" id="ed">Save edit</button><button class="btn ghost" id="rj">Reject</button></div>';}
+else if(m.cat==='Possible scam'){h+='<h3>No reply drafted</h3><p class="muted">This looks like a payment scam: urgent wire request from an unknown sender. It is held for a person and never answered automatically.</p><div class="row"><button class="btn" id="fl">Flag and hold</button></div>';}
+else{h+='<h3>No reply needed</h3><p class="muted">Sorted as a newsletter. No draft is created.</p><div class="row"><button class="btn ghost" id="ar">Archive label</button></div>';}
+vw.innerHTML=h;addLog('Opened: '+m.subj);
+var q=function(i,f){var e=document.getElementById(i);if(e)e.onclick=f;};
+q('ap',function(){toast('Demo: approved. In a real setup a person sends it. Nothing was sent.');addLog('Approved draft for "'+m.subj+'" (demo, not sent)');});
+q('ed',function(){toast('Demo: edit saved. Nothing was sent.');addLog('Edited draft for "'+m.subj+'"');});
+q('rj',function(){toast('Draft rejected.');addLog('Rejected draft for "'+m.subj+'"');});
+q('fl',function(){toast('Held for review.');addLog('Flagged "'+m.subj+'" as possible scam');});
+q('ar',function(){toast('Demo: labeled, nothing deleted.');addLog('Labeled "'+m.subj+'"');});}
+renderList();open(1);</script></body></html>
