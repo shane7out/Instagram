@@ -1,0 +1,24 @@
+/* PREVIEW ONLY: a deep-navy and bright-blue palette in the spirit of a streaming-service look.
+   Colors only. No third-party names, logos or marks. Not applied to the live site. */
+:root{
+  --bg:#0f171e; --bg-2:#131e28; --card:#1a2530; --line:#2c3b4b;
+  --ink:#ffffff; --ink-dim:#a9b8c8;
+  --key-light:#00a8e1; --key-blue:#1a98ff;
+  --btn-blue:#1a98ff; --btn-blue-hover:#4db2ff; --control-line:#6b7f93;
+}
+body{background:var(--bg)}
+header{background:rgba(15,23,30,.94)!important}
+.btn-primary,.primary,.tag.solid,.chat-bubble.caller{background:#1a98ff!important;border-color:#1a98ff!important;color:#0f171e!important}
+.btn-primary:hover,.primary:hover{background:#4db2ff!important}
+.tag.solid{color:#0f171e!important}
+.hero h1 .accent,.hero h1 span{color:#00a8e1}
+.demo-chip,.eyebrow,.service-card .num,.launch-tag,.demo-link,a{color:#00a8e1}
+.btn,.demo-link,.kp-switch a,.kp-tabs .nav{color:inherit}
+.btn-ghost,.kp-switch a,.kp-tabs .nav,.outline{color:#fff}
+.kp-switch a[aria-current=page],.kp-tabs .nav.active{background:rgba(26,152,255,.16);border-color:#1a98ff}
+.demo-chip{color:#00a8e1;border-color:#1a98ff}
+.demo-strip{border-color:#1a98ff}
+.logo-word .logo-si{color:#00a8e1}
+.mm-account small{color:#00a8e1}
+.bar i,.bar>*{background:#1a98ff!important}
+.demo-link{color:#00a8e1}
