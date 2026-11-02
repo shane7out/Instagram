@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f171e'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%2300a8e1' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%2300a8e1'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%2300a8e1'/%3E%3C/svg%3E">
 <script>
   (function () {
     try {
@@ -24,9 +24,9 @@
 </script>
 <style>
   :root{
-    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
-    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
-    --btn-blue:#0f64b2; --btn-blue-hover:#1272cc; --control-line:#637283;
+    --bg:#0f171e; --bg-2:#121a22; --card:#232f3e; --line:#37475a;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#00a8e1; --key-blue:#00a8e1;
+    --btn-blue:#00a8e1; --btn-blue-hover:#33bce8; --control-line:#637283;
     --green:#3ddc84; --gold:#f0a91a;
     color-scheme: dark;
   }
@@ -43,7 +43,7 @@
   .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;white-space:nowrap;}
   .logo-word span{color:var(--key-light);}
   .btn{display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:15px;font-weight:700;padding:13px 22px;border-radius:9px;text-decoration:none;border:1px solid transparent;cursor:pointer;}
-  .btn-primary{background:var(--btn-blue);color:#fff;}
+  .btn-primary{background:var(--btn-blue);color:#0f171e;}
   .btn-primary:hover{background:var(--btn-blue-hover);}
   .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
   .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
@@ -52,7 +52,7 @@
   .eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--key-light);}
   h1{font-size:clamp(34px,8vw,52px);line-height:1.05;margin:8px 0 12px;letter-spacing:-.02em;text-wrap:balance;}
   .lede{color:var(--ink-dim);margin:0;max-width:52ch;}
-  .welcome{margin:22px 0 0;background:rgba(22,143,255,.1);border:1px solid rgba(22,143,255,.45);border-radius:14px;padding:16px 18px;color:#b9dcff;font-weight:600;}
+  .welcome{margin:22px 0 0;background:rgba(0,168,225,.1);border:1px solid rgba(0,168,225,.45);border-radius:14px;padding:16px 18px;color:#b9dcff;font-weight:600;}
   .welcome strong{color:#fff;}
   .sample{margin:16px 0 0;font-size:14px;color:var(--gold);border:1px dashed var(--gold);border-radius:10px;padding:10px 14px;}
 
@@ -101,7 +101,7 @@
   [hidden]{display:none!important;}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 0;}
   .chip{font:inherit;font-weight:700;font-size:14px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--control-line);border-radius:99px;padding:8px 14px;cursor:pointer;}
-  .chip.on{background:var(--btn-blue);border-color:var(--key-blue);color:#fff;}
+  .chip.on{background:var(--btn-blue);border-color:var(--key-blue);color:#0f171e;}
   .vlink svg{flex:none;display:block;width:20px;height:20px;}
   .vnote{font-size:13px;color:var(--ink-dim);margin:6px 0 0;}
   .vcard .dish{border-bottom:0;padding:18px 0 4px;}
@@ -126,13 +126,13 @@
   .own-btn.restore{border-color:#3ddc84;background:rgba(61,220,132,.12);color:#8ff0b8;}
   .is-removed{opacity:.45;}
   .own-back{position:fixed;inset:0;z-index:90;background:rgba(3,8,16,.8);display:flex;align-items:center;justify-content:center;padding:20px;}
-  .own-box{width:100%;max-width:380px;background:#11243b;border:1.5px solid #2c4864;border-radius:20px;padding:22px 20px;color:#eef4fb;font-size:16px;line-height:1.5;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .own-box{width:100%;max-width:380px;background:#232f3e;border:1.5px solid #37475a;border-radius:20px;padding:22px 20px;color:#eef4fb;font-size:16px;line-height:1.5;box-shadow:0 20px 60px rgba(0,0,0,.6);}
   .own-box h3{margin:0 0 8px;font-size:21px;line-height:1.2;}
   .own-box p{margin:0 0 16px;color:#c3d2e3;}
-  .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c4864;background:#0a1626;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
+  .own-box input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #37475a;background:#121a22;color:#fff;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;margin:0 0 14px;}
   .own-row{display:flex;gap:10px;}
   .own-row button{flex:1;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:12px;border:0;cursor:pointer;}
-  .own-yes{background:#e5484d;color:#fff;} .own-ok{background:#0f67c2;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #4a6580 !important;}
+  .own-yes{background:#e5484d;color:#fff;} .own-ok{background:#146eb4;color:#fff;} .own-no{background:transparent;color:#eef4fb;border:1px solid #5b6d80 !important;}
   .own-link{font-size:13px;opacity:.85;}
   .vname .own-btn{float:right;margin-left:8px;}
 </style>
@@ -141,7 +141,7 @@
 <header>
   <div class="nav-row">
     <a class="logo" href="index.html" aria-label="Key Technologies — home">
-      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true"><circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/><rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/><rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/><rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/></svg>
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true"><circle cx="13" cy="20" r="11" fill="none" stroke="#00a8e1" stroke-width="5"/><rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#00a8e1"/><rect x="42" y="22.5" width="5" height="9" rx="2" fill="#00a8e1"/><rect x="50" y="22.5" width="5" height="12" rx="2" fill="#00a8e1"/></svg>
       <span class="logo-word">KEY TECHNOLOGIES<span>.SI</span></span>
     </a>
     <a class="btn btn-ghost" href="rewards.html" id="navJoin">Join free</a>
@@ -572,12 +572,12 @@
 <script>window.HNAV_HOME="index.html";</script>
 <!--HNAV-START-->
 <style id="hnav-css">
-  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#07111f;pointer-events:none;}
+  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#0f171e;pointer-events:none;}
   #hnav .hn-btn{pointer-events:auto;position:relative;width:26px;height:26px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#d6e6f7;display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
   #hnav .hn-btn::before{content:"";position:absolute;inset:-9px;}
-  #hnav .hn-btn:hover{background:rgba(89,181,255,.22);border-color:#59b5ff;color:#fff;}
+  #hnav .hn-btn:hover{background:rgba(0,168,225,.22);border-color:#00a8e1;color:#fff;}
   #hnav .hn-btn:active{transform:scale(.92);}
-  #hnav .hn-btn:focus-visible{outline:2px solid #59b5ff;outline-offset:2px;}
+  #hnav .hn-btn:focus-visible{outline:2px solid #00a8e1;outline-offset:2px;}
   #hnav .hn-btn:disabled{opacity:.3;cursor:default;pointer-events:none;}
   #hnav svg{display:block;}
   body.hnav-on{padding-top:34px !important;}

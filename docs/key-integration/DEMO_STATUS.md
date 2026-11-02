@@ -2,6 +2,15 @@
 
 Updated 2026-11-02. Branch `claude/master-file-e6ofy0`. Everything below lives under `sites/key-technologies/key-platform/`.
 
+## Colors (2026-11-02)
+Site-wide palette, in the style of a well-known streaming service's navy and bright blue (colors only: no third-party names, logos or marks):
+- Page background `#0f171e` (dark blue-black), inputs `#121a22`
+- Cards and surfaces `#232f3e` (navy), borders `#37475a`
+- Main accent and primary buttons `#00a8e1` (bright blue; buttons use dark `#0f171e` text for contrast)
+- Deeper blue for solid fills with white text `#146eb4`
+- Text: white and a cool gray `#aab9ca`
+Not changed on purpose: the LVR Points gold, green and red status colors, the page `marketplace-demo.html` (deal stuff), and the raster images (`og-image.png`, `apple-touch-icon.png`). The old light blue `#59b5ff` is gone.
+
 ## Layout (rebuilt 2026-11-02)
 The demos no longer use the package's own app shell (sidebar, separate header). Every page now uses the Key Technologies site header, mobile menu, banner and footer, the homepage stylesheet (`site-base.css`, a verbatim copy of the homepage CSS) and `kp.css` (demo components in the same style). Sections of each demo are horizontal tabs. If the homepage styles change, re-copy them into `site-base.css`.
 

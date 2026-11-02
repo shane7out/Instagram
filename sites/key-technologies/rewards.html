@@ -14,13 +14,13 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://keytechnologies.si/og-image.png">
-<meta name="theme-color" content="#07111f">
+<meta name="theme-color" content="#0f171e">
 <link rel="canonical" href="https://keytechnologies.si/rewards.html">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%23168fff' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%23168fff'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%23168fff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f171e'/%3E%3Ccircle cx='22' cy='32' r='11' fill='none' stroke='%2300a8e1' stroke-width='5'/%3E%3Crect x='31' y='29' width='24' height='6' rx='3' fill='%2300a8e1'/%3E%3Crect x='46' y='34' width='6' height='9' rx='2' fill='%2300a8e1'/%3E%3C/svg%3E">
 <script>
   // Google Analytics (GA4) - not turned on yet. See index.html for setup.
   var KEY_GA_MEASUREMENT_ID = "";
@@ -51,9 +51,9 @@
 </script>
 <style>
   :root{
-    --bg:#07111f; --bg-2:#091728; --card:#0c1a2b; --line:#20364e;
-    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#59b5ff; --key-blue:#168fff;
-    --white:#ffffff; --btn-blue:#0f64b2; --btn-blue-hover:#1272cc; --control-line:#637283;
+    --bg:#0f171e; --bg-2:#121a22; --card:#232f3e; --line:#37475a;
+    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#00a8e1; --key-blue:#00a8e1;
+    --white:#ffffff; --btn-blue:#00a8e1; --btn-blue-hover:#33bce8; --control-line:#637283;
     color-scheme: dark;
   }
   *{box-sizing:border-box;}
@@ -86,7 +86,7 @@
     font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
     padding:14px 26px;border-radius:9px;cursor:pointer;text-decoration:none;border:1px solid transparent;
   }
-  .btn-primary{background:var(--btn-blue);color:var(--white);}
+  .btn-primary{background:var(--btn-blue);color:#0f171e;}
   .btn-primary:hover{background:var(--btn-blue-hover);}
   .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
   .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
@@ -94,14 +94,14 @@
   .btn:disabled{opacity:.6;cursor:default;}
 
   .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
-  .logo svg{display:block;flex:none;filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 11px rgba(22,143,255,.35));}
+  .logo svg{display:block;flex:none;filter:drop-shadow(0 0 4px rgba(0,168,225,.55)) drop-shadow(0 0 11px rgba(0,168,225,.35));}
   .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
   .logo-word .logo-si{color:var(--key-light);}
   @media (max-width:420px){.logo-word{font-size:13.5px;}}
 
   header{
     position:sticky;top:0;z-index:50;
-    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    background:rgba(15,23,30,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
   }
   .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;}
   .nav-links{display:flex;align-items:center;gap:22px;list-style:none;margin:0;padding:0;}
@@ -181,7 +181,7 @@
   .foot-links a:hover{color:var(--ink);}
   .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
 
-  .skip-link{position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:100;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#0f171e;padding:10px 16px;border-radius:0 0 8px 0;z-index:100;}
   .skip-link:focus{left:0;}
 </style>
 </head>
@@ -193,10 +193,10 @@
   <div class="wrap nav-row">
     <a class="logo" href="index.html" aria-label="Key Technologies — home">
       <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
-        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
-        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
-        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
-        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#00a8e1" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#00a8e1"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#00a8e1"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#00a8e1"/>
       </svg>
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
@@ -375,10 +375,10 @@
   <div class="wrap">
     <a class="logo" href="index.html" aria-label="Key Technologies — home">
       <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
-        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
-        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
-        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
-        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#00a8e1" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#00a8e1"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#00a8e1"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#00a8e1"/>
       </svg>
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
@@ -729,12 +729,12 @@
 <script>window.HNAV_HOME="index.html";</script>
 <!--HNAV-START-->
 <style id="hnav-css">
-  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#07111f;pointer-events:none;}
+  #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#0f171e;pointer-events:none;}
   #hnav .hn-btn{pointer-events:auto;position:relative;width:26px;height:26px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#d6e6f7;display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
   #hnav .hn-btn::before{content:"";position:absolute;inset:-9px;}
-  #hnav .hn-btn:hover{background:rgba(89,181,255,.22);border-color:#59b5ff;color:#fff;}
+  #hnav .hn-btn:hover{background:rgba(0,168,225,.22);border-color:#00a8e1;color:#fff;}
   #hnav .hn-btn:active{transform:scale(.92);}
-  #hnav .hn-btn:focus-visible{outline:2px solid #59b5ff;outline-offset:2px;}
+  #hnav .hn-btn:focus-visible{outline:2px solid #00a8e1;outline-offset:2px;}
   #hnav .hn-btn:disabled{opacity:.3;cursor:default;pointer-events:none;}
   #hnav svg{display:block;}
   body.hnav-on{padding-top:34px !important;}
