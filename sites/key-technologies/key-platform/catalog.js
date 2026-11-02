@@ -1,0 +1,17 @@
+/* Shared KEY services catalog (demo data). One list used by the hub and the Sales demo.
+   States: draft | prototype | approved | available | retired.
+   Only approved or available offerings may be quoted or billed as live products.
+   Everything below is draft or prototype today. Prices are illustrative, not an offer. */
+window.KEY_STATES={draft:'Idea or plan only',prototype:'Demo exists, not for sale',approved:'Owner-approved, not yet launched',available:'Live and sellable',retired:'No longer offered'};
+window.KEY_SELLABLE=function(s){return s==='approved'||s==='available'};
+window.KEY_CATALOG=[
+{id:'voice',name:'24/7 AI Voice Receptionist',category:'Customer communications',state:'prototype',legacy:'prototype',price:199,description:'Professional always-on inbound call answering, lead capture, and future scheduling integrations.',features:['Custom AI greeting','Business FAQ responses','Callback requests','Call reporting'],icon:'☎'},
+{id:'email',name:'Email Intelligence',category:'Customer communications',state:'prototype',legacy:'prototype',price:149,description:'Sorts the inbox and drafts replies from approved business information. A person approves before anything is sent.',features:['Inbox triage','Grounded draft replies','Human approval','Audit log'],icon:'✉'},
+{id:'crm',name:'KEY Business CRM',category:'Customer management',state:'draft',legacy:'existing',price:149,description:'Package the KEY customer and lead system for client businesses, once packaging, permissions and support are finalized.',features:['Lead and customer records','Contact notes and follow-ups','Sales pipeline','Business reporting'],icon:'▦'},
+{id:'web',name:'Business Websites & Landing Pages',category:'Digital presence',state:'draft',legacy:'planned',price:129,description:'Fast, mobile-friendly business sites and lead-generating landing pages.',features:['Responsive layouts','Contact forms','Lead capture','Analytics-ready'],icon:'◇'},
+{id:'automations',name:'Workflow Automation',category:'Business operations',state:'draft',legacy:'planned',price:199,description:'Connect approved processes so teams spend less time on repetitive tasks.',features:['Follow-up workflows','Internal notifications','Task routing','Custom integrations'],icon:'⇄'},
+{id:'marketing',name:'Marketing & Social Growth',category:'Customer acquisition',state:'draft',legacy:'planned',price:249,description:'Campaign planning, audience engagement, and measurable business promotions.',features:['Campaign planning','Social media support','Promotional landing pages','Results reporting'],icon:'↗'},
+{id:'appointments',name:'Scheduling & Reminders',category:'Appointments',state:'draft',legacy:'planned',price:99,description:'Customer scheduling, reminders and appointment request handling through verified integrations.',features:['Booking requests','Reminder workflows','Schedule synchronization','Cancellation handling'],icon:'▣'},
+{id:'reviews',name:'Customer Feedback & Reviews',category:'Retention',state:'draft',legacy:'planned',price:79,description:'Help businesses gather legitimate feedback and monitor customer satisfaction.',features:['Feedback requests','Customer follow-up','Issue escalation','Sentiment reporting'],icon:'☆'},
+{id:'analytics',name:'Reporting & Business Intelligence',category:'Insights',state:'draft',legacy:'planned',price:149,description:'Turn CRM and operations information into clear KPI dashboards and actionable reporting.',features:['KPI dashboards','Lead tracking','Sales reports','Data summaries'],icon:'◈'}
+];

@@ -14,9 +14,23 @@
 <a class="card" href="email/index.html" style="text-decoration:none;color:inherit"><span class="tag solid">Demo</span><h2 style="margin-top:10px">Email Intelligence</h2><p class="muted">Sorts your inbox, drafts grounded replies from your own information, and waits for a person to approve before anything goes out.</p><span class="btn">Try the Email demo</span></a>
 <a class="card" href="sales/index.html" style="text-decoration:none;color:inherit"><span class="tag solid">Demo</span><h2 style="margin-top:10px">Sales Partner Network</h2><p class="muted">A service catalog, quote builder, pipeline and a transparent commission model for independent sales partners.</p><span class="btn">Try the Sales demo</span></a>
 </div>
+
+<section aria-labelledby="cath" style="margin-top:34px"><span class="eyebrow">Business Solutions</span><h2 id="cath">One catalog behind everything</h2>
+<p class="lede" style="font-size:16px">The same list feeds the website, the sales tools and quotes. Each offering has a state, and only <b>approved</b> or <b>available</b> ones can be quoted or billed as live products. Today every offering is a draft or a prototype.</p>
+<div class="row" id="legend" style="margin:12px 0"></div>
+<div class="grid g3" id="catalog"></div></section>
+<section aria-labelledby="partnersh" style="margin-top:34px"><div class="card"><span class="tag outline">Prototype, not open for enrollment</span><h2 id="partnersh" style="margin-top:10px">Sales Partner Network</h2>
+<p class="muted">An idea for independent partners who introduce Key Technologies services to businesses they know. The model being studied shares 50% of defined, collected revenue from a partner's own customers after approved direct costs and refunds. Five performance levels are being designed. There would be no fee to join and no pay for recruiting. Nothing is guaranteed, and any real terms would be in a written agreement after legal review.</p>
+<div class="row"><a class="btn" href="sales/index.html">Explore the Sales demo</a><a class="btn ghost" href="partners.html">Join the interest list</a></div></div></section>
 <div class="card real-panel"><h3>What is real and what is a demo</h3><ul><li><b>Demo today:</b> every screen on these pages, with fictional data.</li><li><b>Not connected:</b> phone lines, mailboxes, calendars, payments, payouts and your customer records.</li><li><b>Before anything goes live:</b> a separate review of security, consent, contracts and costs, and your written approval.</li></ul></div>
 <p><a class="btn ghost" href="../index.html#contact">Talk to Key Technologies</a></p></main>
 <footer class="kp"><div class="wrap">KEY Technologies.si demo prototypes. Every business, person, message, number and price on these pages is made up. Not connected to any real phone line, mailbox, calendar, payment system or customer record. <a href="../index.html#services">Back to all services</a></div></footer>
+<script src="catalog.js"></script><script>(function(){var c=document.getElementById('catalog'),l=document.getElementById('legend');
+function esc(t){return String(t).replace(/[&<>"]/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x]})}
+var cls={draft:'mute',prototype:'outline',approved:'',available:'solid',retired:'mute'};
+l.innerHTML=Object.keys(KEY_STATES).map(function(k){return '<span class="tag '+cls[k]+'" title="'+esc(KEY_STATES[k])+'">'+k+'</span>'}).join('')+'<span class="small muted">draft = idea, prototype = demo, approved/available = may be quoted</span>';
+var demo={voice:'voice/index.html',email:'email/index.html'};
+c.innerHTML=KEY_CATALOG.map(function(s){var d=demo[s.id];return '<div class="card" style="margin:0"><div class="row" style="justify-content:space-between"><span class="small muted">'+esc(s.category)+'</span><span class="tag '+cls[s.state]+'">'+s.state+'</span></div><h3 style="margin-top:8px">'+esc(s.name)+'</h3><p class="small muted">'+esc(s.description)+'</p>'+(d?'<a class="btn ghost" href="'+d+'">Try the demo</a>':'<span class="small muted">'+(KEY_SELLABLE(s.state)?'Can be quoted':'Not quotable yet')+'</span>')+'</div>'}).join('');})();</script>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>function toast(t){var e=document.getElementById('toast');e.textContent=t;e.className='toast show';clearTimeout(window.__t);window.__t=setTimeout(function(){e.className='toast'},3500);}
 </script></body></html>
