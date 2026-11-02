@@ -184,3 +184,19 @@ td{color:var(--ink)}
 .formgrid>div>label{margin-top:0}
 .sales-form,.page>form.panel{margin-bottom:16px}
 .mail-item small{display:block}
+
+/* ---- demo widgets ---- */
+.tag.solid{background:var(--btn-blue);border-color:var(--btn-blue);color:#fff}
+.tag.pale{background:rgba(22,143,255,.14)}
+.tag.mute{border-color:var(--line);color:var(--ink-dim)}
+.tag.outline{background:transparent}
+.hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+.bar i{display:block;height:8px;background:var(--key-blue);border-radius:99px}
+.bar{height:8px}
+.table-wrap table select,.table-wrap table input[type=number]{padding:8px 10px}
+.table-wrap{-webkit-overflow-scrolling:touch}
+.panel .rowstat small{display:block}
+.panel input[type=range]{padding:0;accent-color:var(--key-blue)}
+.page .symbol{margin-bottom:0}
+button.mail-item{display:block;font-family:inherit}
+#widget .row,.panel .row[id]{justify-content:flex-start}

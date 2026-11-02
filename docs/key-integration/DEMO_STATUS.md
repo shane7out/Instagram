@@ -5,6 +5,39 @@ Updated 2026-11-02. Branch `claude/master-file-e6ofy0`. Everything below lives u
 ## Layout (rebuilt 2026-11-02)
 The demos no longer use the package's own app shell (sidebar, separate header). Every page now uses the Key Technologies site header, mobile menu, banner and footer, the homepage stylesheet (`site-base.css`, a verbatim copy of the homepage CSS) and `kp.css` (demo components in the same style). Sections of each demo are horizontal tabs. If the homepage styles change, re-copy them into `site-base.css`.
 
+## Demo for every service (added 2026-11-02)
+Every service card on the homepage has a demo link. Pages live in `/key-platform/demos/` and are built by `docs/key-integration/build_service_demos.py` from `key-platform/demo-widgets.js`, all on the site shell. The hub (`/key-platform/`) lists them all (section "A demo for every service").
+
+| Service | Demo |
+|---|---|
+| 01 Digital Content Creators | content-creators |
+| 02 AI/SI Strategy | ai-strategy |
+| 03 Business Automation | business-automation |
+| 04 AI/SI Agents | ai-agents |
+| 05 Custom CRM & Lead Management | custom-crm |
+| 06 Customer Experience | customer-experience |
+| 07 Operations | operations |
+| 08 Data & Knowledge Systems | data-knowledge |
+| 09 Marketing | marketing |
+| 10 Security & Technology | security-technology |
+| 11 Custom AI/SI Systems | custom-ai-systems |
+| 12 AI/SI Website Development | website-development |
+| 13 Email Automation | email/ (Email Intelligence) |
+| 14 Social Media Management | social-media |
+| 15 Review & Reputation Management | reviews-reputation |
+| 16 AI/SI Phone & Text Answering | voice/ (Voice Services) |
+| 17 Booking & Scheduling Automation | booking-scheduling |
+| 18 AI/SI Training & Custom Training Software | ai-training |
+| 19 Custom Website Programming | custom-programming |
+| 20 ADA & Accessibility Compliance | accessibility-ada |
+| 21 PHP & WordPress Migration | php-wordpress-migration |
+| 22 Private LLM Setup | private-llm |
+| 23 Cybersecurity & Network Hardening | cybersecurity |
+| 24 Sales Partner Network | sales/ |
+| LVR Points | points |
+
+All are DEMO: fictional data, in-browser only, nothing saved or sent. The LVR Points demo uses sample points at made-up restaurants and follows the program wording (points, not cash; food only; free spin comes and goes; monthly points share; use your points before the 1st).
+
 ## Imported from the handoff package
 | Module | Page | Source | Changes made on import |
 |---|---|---|---|

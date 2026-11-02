@@ -1,0 +1,177 @@
+[
+ {
+  "slug": "content-creators",
+  "num": "01",
+  "title": "Digital Content Creators",
+  "tag": "AI/SI creators with a consistent brand voice that make posts around the clock.",
+  "href": "demos/content-creators.html"
+ },
+ {
+  "slug": "ai-strategy",
+  "num": "02",
+  "title": "AI/SI Strategy",
+  "tag": "Find where AI/SI pays off, and where it can not yet.",
+  "href": "demos/ai-strategy.html"
+ },
+ {
+  "slug": "business-automation",
+  "num": "03",
+  "title": "Business Automation",
+  "tag": "Connect steps that run by hand today so they run on their own.",
+  "href": "demos/business-automation.html"
+ },
+ {
+  "slug": "ai-agents",
+  "num": "04",
+  "title": "AI/SI Agents",
+  "tag": "Assistants that do defined tasks, with limits you set.",
+  "href": "demos/ai-agents.html"
+ },
+ {
+  "slug": "custom-crm",
+  "num": "05",
+  "title": "Custom CRM & Lead Management",
+  "tag": "A CRM built around your business, not stretched to fit.",
+  "href": "demos/custom-crm.html"
+ },
+ {
+  "slug": "customer-experience",
+  "num": "06",
+  "title": "Customer Experience",
+  "tag": "Faster replies that still sound like a person wrote them.",
+  "href": "demos/customer-experience.html"
+ },
+ {
+  "slug": "operations",
+  "num": "07",
+  "title": "Operations",
+  "tag": "Find the slow steps and what automating them would give back.",
+  "href": "demos/operations.html"
+ },
+ {
+  "slug": "data-knowledge",
+  "num": "08",
+  "title": "Data & Knowledge Systems",
+  "tag": "Make what your business knows easy to find and use.",
+  "href": "demos/data-knowledge.html"
+ },
+ {
+  "slug": "marketing",
+  "num": "09",
+  "title": "Marketing",
+  "tag": "Segments, research and content, with a person approving the message.",
+  "href": "demos/marketing.html"
+ },
+ {
+  "slug": "security-technology",
+  "num": "10",
+  "title": "Security & Technology",
+  "tag": "Check access before an AI tool touches your systems.",
+  "href": "demos/security-technology.html"
+ },
+ {
+  "slug": "custom-ai-systems",
+  "num": "11",
+  "title": "Custom AI/SI Systems",
+  "tag": "Systems built around how your business operates.",
+  "href": "demos/custom-ai-systems.html"
+ },
+ {
+  "slug": "website-development",
+  "num": "12",
+  "title": "AI/SI Website Development",
+  "tag": "Websites with chat, personalization and lead capture built in.",
+  "href": "demos/website-development.html"
+ },
+ {
+  "slug": "../email/index.html",
+  "num": "13",
+  "title": "Email Automation",
+  "tag": "",
+  "href": "email/index.html"
+ },
+ {
+  "slug": "social-media",
+  "num": "14",
+  "title": "Social Media Management",
+  "tag": "A real presence on a schedule, with review before anything goes live.",
+  "href": "demos/social-media.html"
+ },
+ {
+  "slug": "reviews-reputation",
+  "num": "15",
+  "title": "Review & Reputation Management",
+  "tag": "Answer reviews quickly and flag negative ones early.",
+  "href": "demos/reviews-reputation.html"
+ },
+ {
+  "slug": "../voice/index.html",
+  "num": "16",
+  "title": "AI/SI Phone & Text Answering",
+  "tag": "",
+  "href": "voice/index.html"
+ },
+ {
+  "slug": "booking-scheduling",
+  "num": "17",
+  "title": "Booking & Scheduling Automation",
+  "tag": "Booking, confirmations and reminders without staff time.",
+  "href": "demos/booking-scheduling.html"
+ },
+ {
+  "slug": "ai-training",
+  "num": "18",
+  "title": "AI/SI Training & Custom Training Software",
+  "tag": "Teach your team to use AI/SI well, in your own portal.",
+  "href": "demos/ai-training.html"
+ },
+ {
+  "slug": "custom-programming",
+  "num": "19",
+  "title": "Custom Website Programming",
+  "tag": "Full custom-coded sites and web applications.",
+  "href": "demos/custom-programming.html"
+ },
+ {
+  "slug": "accessibility-ada",
+  "num": "20",
+  "title": "ADA & Accessibility Compliance",
+  "tag": "Make a site usable for everyone and reduce legal risk.",
+  "href": "demos/accessibility-ada.html"
+ },
+ {
+  "slug": "php-wordpress-migration",
+  "num": "21",
+  "title": "PHP & WordPress Migration",
+  "tag": "Move off PHP and WordPress to a modern custom stack.",
+  "href": "demos/php-wordpress-migration.html"
+ },
+ {
+  "slug": "private-llm",
+  "num": "22",
+  "title": "Private LLM Setup",
+  "tag": "Your own private AI that knows your business and keeps it private.",
+  "href": "demos/private-llm.html"
+ },
+ {
+  "slug": "cybersecurity",
+  "num": "23",
+  "title": "Cybersecurity & Network Hardening",
+  "tag": "A full security pass that closes real gaps.",
+  "href": "demos/cybersecurity.html"
+ },
+ {
+  "slug": "../sales/index.html",
+  "num": "24",
+  "title": "Sales Partner Network",
+  "tag": "",
+  "href": "sales/index.html"
+ },
+ {
+  "slug": "points",
+  "num": "P",
+  "title": "LVR Points",
+  "tag": "Earn points at restaurants and use them for food.",
+  "href": "demos/points.html"
+ }
+]
