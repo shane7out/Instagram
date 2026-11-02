@@ -9,6 +9,8 @@ Site-wide palette, in the style of a well-known streaming service's navy and bri
 - Main accent and primary buttons `#00a8e1` (bright blue; buttons use dark `#0f171e` text for contrast)
 - Deeper blue for solid fills with white text `#146eb4`
 - Text: white and a cool gray `#aab9ca`
+Font: Lato (free, open license, via Google Fonts) with system sans-serif fallbacks, as the closest free match to Amazon's own typeface "Amazon Ember", which is proprietary and not licensed for general website use. To change the font site-wide, replace `Lato` in the font-family stacks and the Google Fonts link in every page, then re-copy the homepage stylesheet into `key-platform/site-base.css`.
+
 Not changed on purpose: the LVR Points gold, green and red status colors, the page `marketplace-demo.html` (deal stuff), and the raster images (`og-image.png`, `apple-touch-icon.png`). The old light blue `#59b5ff` is gone.
 
 ## Layout (rebuilt 2026-11-02)

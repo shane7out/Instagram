@@ -11,7 +11,7 @@ body{min-height:100vh}
 .kp-switch a[aria-current=page]{border-color:var(--key-blue);background:rgba(0,168,225,.14);color:var(--ink)}
 .kp-tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 0 14px;margin:0 0 6px;border-bottom:1px solid var(--line);scrollbar-width:none}
 .kp-tabs::-webkit-scrollbar{display:none}
-.kp-tabs .nav{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid var(--control-line);background:transparent;color:var(--ink-dim);font:600 14px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap}
+.kp-tabs .nav{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid var(--control-line);background:transparent;color:var(--ink-dim);font:600 14px/1 Lato,sans-serif;cursor:pointer;white-space:nowrap}
 .kp-tabs .nav:hover{border-color:var(--key-blue);color:var(--ink)}
 .kp-tabs .nav.active{border-color:var(--key-blue);background:rgba(0,168,225,.14);color:var(--ink)}
 .kp-tabs .nav span{display:none}
@@ -70,7 +70,7 @@ body{min-height:100vh}
 .flow-step>span:first-child,.step>span:first-child{font-size:13px;font-weight:800;color:var(--key-light);letter-spacing:.06em}
 
 /* ---- buttons ---- */
-.primary,.outline,.secondary,.quiet,.danger,.text-link,.textbtn,.upload-btn,.tableBtn,.full-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 15px/1.2 Inter,sans-serif;letter-spacing:.02em;padding:13px 22px;border-radius:9px;cursor:pointer;text-decoration:none;border:1px solid transparent;min-height:44px}
+.primary,.outline,.secondary,.quiet,.danger,.text-link,.textbtn,.upload-btn,.tableBtn,.full-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 15px/1.2 Lato,sans-serif;letter-spacing:.02em;padding:13px 22px;border-radius:9px;cursor:pointer;text-decoration:none;border:1px solid transparent;min-height:44px}
 .primary{background:var(--btn-blue);color:#0f171e}
 .primary:hover{background:var(--btn-blue-hover)}
 .outline,.secondary,.upload-btn,.tableBtn{background:transparent;color:var(--ink);border-color:var(--control-line)}
