@@ -38,6 +38,9 @@ Every service card on the homepage has a demo link. Pages live in `/key-platform
 
 All are DEMO: fictional data, in-browser only, nothing saved or sent. The LVR Points demo uses sample points at made-up restaurants and follows the program wording (points, not cash; food only; free spin comes and goes; monthly points share; use your points before the 1st).
 
+## Finding demos
+"Demos" is the first item in the Explore list of the menu (hamburger) on every page, and a link in the footer. It opens the demo library on the hub (`/key-platform/#library`). The library reads `/key-platform/demos/list.json`, which `build_service_demos.py` writes, so a new demo appears there after it is added to that script and the script is run. (The three older demos Email, Voice and Sales are appended to the list by the script.)
+
 ## Imported from the handoff package
 | Module | Page | Source | Changes made on import |
 |---|---|---|---|

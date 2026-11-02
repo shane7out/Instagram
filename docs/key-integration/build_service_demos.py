@@ -17,6 +17,7 @@ def fix(h, root):
     h = re.sub(r'href="#"', 'href="%sindex.html"' % root, h)
     h = re.sub(r'href="#([a-z-]+)"', lambda m: 'href="%sindex.html#%s"' % (root, m.group(1)), h)
     h = re.sub(r'href="(rewards|my-account|privacy|terms)\.html"', lambda m: 'href="%s%s.html"' % (root, m.group(1)), h)
+    h = h.replace('href="key-platform/', 'href="%skey-platform/' % root)
     return h.replace('<span id="year"></span>', '<span id="kpYear"></span>')
 
 # reuse the menu/toast script already present in the hub page (key-platform/index.html)
@@ -74,7 +75,7 @@ def page(i, s):
 <div class="two-columns" style="margin-top:22px"><div class="panel"><h3>What you get</h3><ul style="margin:10px 0 0;padding-left:18px">%s</ul></div>
 <div class="panel"><h3>About this demo</h3><p>Everything here is fictional sample data that runs in your browser. Nothing is sent, posted, booked or charged, and nothing is connected to a real system. A real project starts with your own information and a review of what is safe to automate.</p><div class="action-row">%s%s</div></div></div>
 %s</section>''' % (label, esc(title), esc(tag), esc(head), esc(how), ''.join('<li>%s</li>' % esc(b) for b in bullets), cta, ghost, nav)
-    root = '../../../'
+    root = '../../'
     return '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>%s demo | Key Technologies.si</title><meta name="description" content="%s"><meta name="theme-color" content="#07111f">
@@ -93,7 +94,7 @@ def page(i, s):
 <div id="toast" role="status" aria-live="polite"></div>
 %s
 <script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
-</body></html>''' % (esc(title), esc(tag), '../../../', '../../../', fix(HEADER, root), fix(MENU, root), switch(), body, fix(FOOTER, root), BURGER, widget)
+</body></html>''' % (esc(title), esc(tag), '../../', '../../', fix(HEADER, root), fix(MENU, root), switch(), body, fix(FOOTER, root), BURGER, widget)
 
 def esc(t):
     return t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
