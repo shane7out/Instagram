@@ -52,6 +52,9 @@ All are DEMO: fictional data, in-browser only, nothing saved or sent. The LVR Po
 ## Finding demos
 "Demos" is the first item in the Explore list of the menu (hamburger) on every page, and a link in the footer. It opens the demo library on the hub (`/key-platform/#library`). The library reads `/key-platform/demos/list.json`, which `build_service_demos.py` writes, so a new demo appears there after it is added to that script and the script is run. (The three older demos Email, Voice and Sales are appended to the list by the script.)
 
+## Demo gallery and tap sound
+The hub library is a gallery of numbered tiles (01 to 24, LVR) with group filters (Marketing & Content, AI Systems & Strategy, Operations & Sales, Customers & Communication, Websites & Security, Training & Points). Groups come from `CAT` in `build_service_demos.py`. Every demo page has "All demos" at the top and previous/next links at the bottom. `kp-sound.js` plays a soft tap (made in the browser, no audio files) when a demo link or button is pressed, with a "Sound: on/off" switch on the platform pages that is remembered in the browser.
+
 ## Imported from the handoff package
 | Module | Page | Source | Changes made on import |
 |---|---|---|---|

@@ -73,6 +73,7 @@
 <main id="main" class="wrap kp-main">
 <nav class="kp-switch" aria-label="KEY Platform demos"><span class="lbl">KEY Platform</span><a href="../index.html">Overview</a><a href="../voice/index.html">Voice Services</a><a href="../email/index.html">Email Intelligence</a><a href="../sales/index.html">Sales Partner Network</a><a href="../index.html#library">All demos</a></nav>
 <section class="page active" style="display:block;padding-top:6px">
+<a class="kp-back" href="../index.html#library">&larr; All demos</a>
 <div class="hero"><span class="eyebrow">Service 05 &middot; Demo</span><h1 style="margin-top:10px">Custom CRM &amp; Lead Management</h1><p>A CRM built around your business, not stretched to fit.</p></div>
 <div class="sectionhead"><div><span class="eyebrow">Try it</span><h2>Try a small pipeline</h2></div></div>
 <p class="lead">Move leads through stages, filter them, and add your own.</p>
@@ -124,5 +125,5 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
 var y=document.getElementById("kpYear");if(y)y.textContent=new Date().getFullYear();
 try{if(localStorage.getItem("lvr_wallet_token")){var a=document.getElementById("mmAccount");if(a){a.href=a.href.replace("rewards.html","my-account.html");a.querySelector("span").textContent="My Account";a.querySelector("small").textContent="Logged in"}var f=document.getElementById("footAccount");if(f){f.href=f.href.replace("rewards.html","my-account.html");f.textContent="My Account"}}}catch(e){}
 })();function toast(t){var e=document.getElementById("toast");if(!e)return;e.textContent=t;e.className="";clearTimeout(window.__t);window.__t=setTimeout(function(){e.textContent=""},3500)}</script>
-<script src="../demo-widgets.js"></script><script>KPD.mount('crm',document.getElementById("widget"));</script>
+<script src="../kp-sound.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount('crm',document.getElementById("widget"));</script>
 </body></html>

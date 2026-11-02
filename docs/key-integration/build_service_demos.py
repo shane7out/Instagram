@@ -68,6 +68,7 @@ def page(i, s):
     cta = '<a class="btn btn-primary" href="../../index.html#contact">Talk to us about this</a>' if num != 'P' else '<a class="btn btn-primary" href="../../rewards.html">Join LVR Points</a>'
     ghost = '<a class="btn btn-ghost" href="../../index.html#services">See all services</a>' if num != 'P' else '<a class="btn btn-ghost" href="../index.html#library">All demos</a>'
     body = '''<section class="page active" style="display:block;padding-top:6px">
+<a class="kp-back" href="../index.html#library">&larr; All demos</a>
 <div class="hero"><span class="eyebrow">%s &middot; Demo</span><h1 style="margin-top:10px">%s</h1><p>%s</p></div>
 <div class="sectionhead"><div><span class="eyebrow">Try it</span><h2>%s</h2></div></div>
 <p class="lead">%s</p>
@@ -93,7 +94,7 @@ def page(i, s):
 %s
 <div id="toast" role="status" aria-live="polite"></div>
 %s
-<script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
+<script src="../kp-sound.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
 </body></html>''' % (esc(title), esc(tag), '../../', '../../', fix(HEADER, root), fix(MENU, root), switch(), body, fix(FOOTER, root), BURGER, widget)
 
 def esc(t):
@@ -106,8 +107,14 @@ print('wrote', len(S), 'pages')
 
 # machine-readable list for the hub and the homepage
 import json
-lst = [{'slug': s[0], 'num': s[1], 'title': s[2], 'tag': s[3], 'href': 'demos/%s.html' % s[0]} for s in S]
+CAT = {'01': 'Marketing & Content', '09': 'Marketing & Content', '14': 'Marketing & Content',
+       '13': 'Customers & Communication', '16': 'Customers & Communication', '06': 'Customers & Communication', '15': 'Customers & Communication', '17': 'Customers & Communication',
+       '02': 'AI Systems & Strategy', '04': 'AI Systems & Strategy', '08': 'AI Systems & Strategy', '11': 'AI Systems & Strategy', '22': 'AI Systems & Strategy',
+       '03': 'Operations & Sales', '05': 'Operations & Sales', '07': 'Operations & Sales', '24': 'Operations & Sales',
+       '10': 'Websites & Security', '12': 'Websites & Security', '19': 'Websites & Security', '20': 'Websites & Security', '21': 'Websites & Security', '23': 'Websites & Security',
+       '18': 'Training & Points', 'P': 'Training & Points'}
+lst = [{'slug': s[0], 'num': s[1], 'title': s[2], 'tag': s[3], 'cat': CAT[s[1]], 'href': 'demos/%s.html' % s[0]} for s in S]
 for n, (t, h, _) in EXISTING.items():
-    lst.append({'slug': h, 'num': n, 'title': t, 'tag': '', 'href': h.replace('../', '')})
+    lst.append({'slug': h, 'num': n, 'title': t, 'tag': '', 'cat': CAT[n], 'href': h.replace('../', '')})
 lst.sort(key=lambda x: (x['num'] == 'P', int(x['num']) if x['num'].isdigit() else 99))
 json.dump(lst, open(SITE + 'key-platform/demos/list.json', 'w'), indent=1)

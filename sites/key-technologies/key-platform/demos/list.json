@@ -4,6 +4,7 @@
   "num": "01",
   "title": "Digital Content Creators",
   "tag": "AI/SI creators with a consistent brand voice that make posts around the clock.",
+  "cat": "Marketing & Content",
   "href": "demos/content-creators.html"
  },
  {
@@ -11,6 +12,7 @@
   "num": "02",
   "title": "AI/SI Strategy",
   "tag": "Find where AI/SI pays off, and where it can not yet.",
+  "cat": "AI Systems & Strategy",
   "href": "demos/ai-strategy.html"
  },
  {
@@ -18,6 +20,7 @@
   "num": "03",
   "title": "Business Automation",
   "tag": "Connect steps that run by hand today so they run on their own.",
+  "cat": "Operations & Sales",
   "href": "demos/business-automation.html"
  },
  {
@@ -25,6 +28,7 @@
   "num": "04",
   "title": "AI/SI Agents",
   "tag": "Assistants that do defined tasks, with limits you set.",
+  "cat": "AI Systems & Strategy",
   "href": "demos/ai-agents.html"
  },
  {
@@ -32,6 +36,7 @@
   "num": "05",
   "title": "Custom CRM & Lead Management",
   "tag": "A CRM built around your business, not stretched to fit.",
+  "cat": "Operations & Sales",
   "href": "demos/custom-crm.html"
  },
  {
@@ -39,6 +44,7 @@
   "num": "06",
   "title": "Customer Experience",
   "tag": "Faster replies that still sound like a person wrote them.",
+  "cat": "Customers & Communication",
   "href": "demos/customer-experience.html"
  },
  {
@@ -46,6 +52,7 @@
   "num": "07",
   "title": "Operations",
   "tag": "Find the slow steps and what automating them would give back.",
+  "cat": "Operations & Sales",
   "href": "demos/operations.html"
  },
  {
@@ -53,6 +60,7 @@
   "num": "08",
   "title": "Data & Knowledge Systems",
   "tag": "Make what your business knows easy to find and use.",
+  "cat": "AI Systems & Strategy",
   "href": "demos/data-knowledge.html"
  },
  {
@@ -60,6 +68,7 @@
   "num": "09",
   "title": "Marketing",
   "tag": "Segments, research and content, with a person approving the message.",
+  "cat": "Marketing & Content",
   "href": "demos/marketing.html"
  },
  {
@@ -67,6 +76,7 @@
   "num": "10",
   "title": "Security & Technology",
   "tag": "Check access before an AI tool touches your systems.",
+  "cat": "Websites & Security",
   "href": "demos/security-technology.html"
  },
  {
@@ -74,6 +84,7 @@
   "num": "11",
   "title": "Custom AI/SI Systems",
   "tag": "Systems built around how your business operates.",
+  "cat": "AI Systems & Strategy",
   "href": "demos/custom-ai-systems.html"
  },
  {
@@ -81,6 +92,7 @@
   "num": "12",
   "title": "AI/SI Website Development",
   "tag": "Websites with chat, personalization and lead capture built in.",
+  "cat": "Websites & Security",
   "href": "demos/website-development.html"
  },
  {
@@ -88,6 +100,7 @@
   "num": "13",
   "title": "Email Automation",
   "tag": "",
+  "cat": "Customers & Communication",
   "href": "email/index.html"
  },
  {
@@ -95,6 +108,7 @@
   "num": "14",
   "title": "Social Media Management",
   "tag": "A real presence on a schedule, with review before anything goes live.",
+  "cat": "Marketing & Content",
   "href": "demos/social-media.html"
  },
  {
@@ -102,6 +116,7 @@
   "num": "15",
   "title": "Review & Reputation Management",
   "tag": "Answer reviews quickly and flag negative ones early.",
+  "cat": "Customers & Communication",
   "href": "demos/reviews-reputation.html"
  },
  {
@@ -109,6 +124,7 @@
   "num": "16",
   "title": "AI/SI Phone & Text Answering",
   "tag": "",
+  "cat": "Customers & Communication",
   "href": "voice/index.html"
  },
  {
@@ -116,6 +132,7 @@
   "num": "17",
   "title": "Booking & Scheduling Automation",
   "tag": "Booking, confirmations and reminders without staff time.",
+  "cat": "Customers & Communication",
   "href": "demos/booking-scheduling.html"
  },
  {
@@ -123,6 +140,7 @@
   "num": "18",
   "title": "AI/SI Training & Custom Training Software",
   "tag": "Teach your team to use AI/SI well, in your own portal.",
+  "cat": "Training & Points",
   "href": "demos/ai-training.html"
  },
  {
@@ -130,6 +148,7 @@
   "num": "19",
   "title": "Custom Website Programming",
   "tag": "Full custom-coded sites and web applications.",
+  "cat": "Websites & Security",
   "href": "demos/custom-programming.html"
  },
  {
@@ -137,6 +156,7 @@
   "num": "20",
   "title": "ADA & Accessibility Compliance",
   "tag": "Make a site usable for everyone and reduce legal risk.",
+  "cat": "Websites & Security",
   "href": "demos/accessibility-ada.html"
  },
  {
@@ -144,6 +164,7 @@
   "num": "21",
   "title": "PHP & WordPress Migration",
   "tag": "Move off PHP and WordPress to a modern custom stack.",
+  "cat": "Websites & Security",
   "href": "demos/php-wordpress-migration.html"
  },
  {
@@ -151,6 +172,7 @@
   "num": "22",
   "title": "Private LLM Setup",
   "tag": "Your own private AI that knows your business and keeps it private.",
+  "cat": "AI Systems & Strategy",
   "href": "demos/private-llm.html"
  },
  {
@@ -158,6 +180,7 @@
   "num": "23",
   "title": "Cybersecurity & Network Hardening",
   "tag": "A full security pass that closes real gaps.",
+  "cat": "Websites & Security",
   "href": "demos/cybersecurity.html"
  },
  {
@@ -165,6 +188,7 @@
   "num": "24",
   "title": "Sales Partner Network",
   "tag": "",
+  "cat": "Operations & Sales",
   "href": "sales/index.html"
  },
  {
@@ -172,6 +196,7 @@
   "num": "P",
   "title": "LVR Points",
   "tag": "Earn points at restaurants and use them for food.",
+  "cat": "Training & Points",
   "href": "demos/points.html"
  }
 ]
