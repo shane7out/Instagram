@@ -1,42 +1,145 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sales Partner interest list | Key Technologies.si</title><meta name="description" content="Join the interest list for the Key Technologies Sales Partner Network."><meta name="robots" content="noindex">
-<meta name="theme-color" content="#07111f"><link rel="icon" href="../apple-touch-icon.png">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Sales Partner interest list | Key Technologies.si</title><meta name="description" content="Join the interest list for the Key Technologies Sales Partner Network."><meta name="theme-color" content="#07111f">
+<link rel="icon" href="../apple-touch-icon.png"><link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-<link rel="stylesheet" href="key-platform.css"></head><body>
-<header class="kp"><div class="wrap nav-row"><a class="logo" href="../index.html" aria-label="Key Technologies, home"><svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true"><circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/><rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/><rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/><rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/></svg><span>KEY TECHNOLOGIES<span class="logo-si">.SI</span></span></a><nav class="kp-nav" aria-label="Demos"><a href="index.html" aria-current="page">Demos</a><a href="voice/index.html">Voice</a><a href="email/index.html">Email</a><a href="sales/index.html">Sales</a></nav></div></header>
-<div class="demo-banner" role="note"><b>Demo only.</b> Fictional data. Nothing here is sent, booked, charged or paid.</div>
-<main class="wrap">
-<span class="eyebrow">Sales Partner Network</span>
-<h1>Join the interest list</h1>
-<p class="lede">The Sales Partner Network is a prototype and is not open for enrollment. Tell us a little about yourself and we will contact you if and when a pilot opens. Applying is free and creates no obligation on either side.</p>
-<div class="grid g2">
-<form class="card" id="pform" novalidate aria-labelledby="fh"><h2 id="fh">Your details</h2>
-<label for="pname">Full name *</label><input id="pname" name="name" autocomplete="name" required>
-<label for="pemail">Email *</label><input id="pemail" name="email" type="email" autocomplete="email" required>
-<label for="pphone">Phone (optional)</label><input id="pphone" name="phone" type="tel" autocomplete="tel">
-<label for="pcity">City and state *</label><input id="pcity" name="location" required>
-<label for="pexp">Sales experience</label><select id="pexp" name="experience"><option value="">Choose one</option><option>None yet</option><option>Under 2 years</option><option>2 to 5 years</option><option>5+ years</option></select>
-<label for="pabout">What kinds of businesses do you know? *</label><textarea id="pabout" name="about" rows="4" required></textarea>
-<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;margin-top:12px"><input type="checkbox" id="pack" style="width:auto;min-height:0;margin-top:4px" required><span>I understand this is only an interest list. It is not a job offer, there is no guaranteed income, no fee is charged, and any terms would be in a written agreement.</span></label>
-<p class="small muted">Please do not enter bank, tax or ID numbers. We store only what you type here, to contact you about this program.</p>
-<div class="row"><button class="btn" type="submit" id="psend">Join the interest list</button></div><p id="pstatus" role="status" aria-live="polite" class="small"></p></form>
-<div><div class="card"><h3>What to expect</h3><ul><li>No fee to apply or to join.</li><li>No payment for recruiting other people.</li><li>Partners would sell only offerings that are approved and available.</li><li>Any commission would be defined in a signed agreement after legal review.</li></ul></div>
-<div class="card real-panel"><h3>Honest status</h3><p class="small muted">Nothing is live yet. Today there is a demo of the catalog, quotes, pipeline and a commission calculator with example numbers. See it on the <a href="sales/index.html" style="color:var(--key-light)">Sales demo</a>.</p></div></div></div>
+<link rel="stylesheet" href="site-base.css"><link rel="stylesheet" href="kp.css"></head><body>
+<header>
+  <div class="wrap nav-row">
+    <a class="logo" href="../index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="../index.html#services">Services</a></li>
+        <li><a href="../index.html#audit">Free Website Audit</a></li>
+        <li><a href="../index.html#solutions">Solutions</a></li>
+        <li><a href="../index.html#method">How It Works</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#results">Results</a></li>
+        <li><a href="../index.html#locations">Locations</a></li>
+        <li><a href="../index.html#faq">FAQ</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="../index.html#contact">Contact</a>
+      <button class="burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="mm-account" id="mmAccount" href="../rewards.html"><span>Log in</span><small>LVR Points member</small></a>
+  <div class="mm-cta-row">
+    <a class="btn btn-primary" href="../index.html#lead-short">Book a Call</a>
+    <a class="btn btn-ghost" href="../index.html#audit">Free Website Audit</a>
+  </div>
+
+  <p class="mm-group-label">Explore</p>
+  <ul>
+    <li><a href="../index.html#services">Services</a></li>
+    <li><a href="../index.html#industries">Industries</a></li>
+    <li><a href="../index.html#solutions">Solutions</a></li>
+    <li><a href="../index.html#platform">Platform</a></li>
+    <li><a href="../index.html#method">How It Works</a></li>
+    <li><a href="../index.html#results">Results</a></li>
+  </ul>
+
+  <p class="mm-group-label">Company</p>
+  <ul>
+    <li><a href="../index.html#about">About Shane</a></li>
+    <li><a href="../index.html#locations">Locations</a></li>
+    <li><a href="../index.html#faq">FAQ</a></li>
+    <li><a href="../rewards.html">LVR Points</a></li>
+  </ul>
+
+  <a class="btn btn-primary" style="width:100%" href="../index.html#lead-short">Explore My Options</a>
+</div>
+
+<div class="launch-banner" role="note"><p><span class="launch-tag">Demo</span>Every business, person, message and number here is fictional. Nothing is sent, booked, charged or paid.</p></div>
+<main id="main" class="wrap kp-main">
+<nav class="kp-switch" aria-label="KEY Platform demos"><span class="lbl">KEY Platform</span><a href="./index.html">Overview</a><a href="./voice/index.html">Voice Services</a><a href="./email/index.html">Email Intelligence</a><a href="./sales/index.html">Sales Partner Network</a><a href="./partners.html" aria-current=page>Partner interest list</a></nav>
+<section class="page active" style="display:block;padding-top:6px">
+<div class="hero"><span class="eyebrow">Sales Partner Network</span><h1 style="margin-top:10px">Join the <span>interest list</span></h1>
+<p>The Sales Partner Network is a prototype and is not open for enrollment. Tell us a little about yourself and we will contact you if and when a pilot opens. Applying is free and creates no obligation on either side.</p></div>
+<div class="two-columns" style="margin-top:26px">
+<div class="lead-card"><span class="eyebrow">Your details</span><h2 style="margin-top:6px">Join the interest list</h2>
+<form id="pform" novalidate>
+<div class="field"><label for="pname">Full name <span class="req">*</span></label><input id="pname" name="name" autocomplete="name" required></div>
+<div class="field"><label for="pemail">Email <span class="req">*</span></label><input id="pemail" name="email" type="email" autocomplete="email" required></div>
+<div class="field"><label for="pphone">Phone (optional)</label><input id="pphone" name="phone" type="tel" autocomplete="tel"></div>
+<div class="field"><label for="pcity">City and state <span class="req">*</span></label><input id="pcity" name="location" required></div>
+<div class="field"><label for="pexp">Sales experience</label><select id="pexp" name="experience"><option value="">Choose one</option><option>None yet</option><option>Under 2 years</option><option>2 to 5 years</option><option>5+ years</option></select></div>
+<div class="field"><label for="pabout">What kinds of businesses do you know? <span class="req">*</span></label><textarea id="pabout" name="about" rows="4" required></textarea></div>
+<label class="checkline"><input type="checkbox" id="pack" required><span>I understand this is only an interest list. It is not a job offer, there is no guaranteed income, no fee is charged, and any terms would be in a written agreement.</span></label>
+<p class="form-note">Please do not enter bank, tax or ID numbers. We store only what you type here, to contact you about this program.</p>
+<button class="btn btn-primary" type="submit" id="psend">Join the interest list</button><p id="pstatus" role="status" aria-live="polite" class="form-status"></p></form></div>
+<div style="display:grid;gap:16px;align-content:start"><div class="panel"><h3>What to expect</h3><ul style="margin:10px 0 0;padding-left:18px"><li>No fee to apply or to join.</li><li>No payment for recruiting other people.</li><li>Partners would sell only offerings that are approved and available.</li><li>Any commission would be defined in a signed agreement after legal review.</li></ul></div>
+<div class="kp-foot-note" style="margin:0"><b>Honest status.</b> Nothing is live yet. Today there is a demo of the catalog, quotes, pipeline and a commission calculator with example numbers. See the <a href="sales/index.html">Sales demo</a>.</div></div></div></section>
 </main>
-</main>
-<footer class="kp"><div class="wrap">KEY Technologies.si demo prototypes. Every business, person, message, number and price on these pages is made up. Not connected to any real phone line, mailbox, calendar, payment system or customer record. <a href="../index.html#services">Back to all services</a></div></footer>
+<footer>
+  <div class="wrap">
+    <a class="logo" href="../index.html" aria-label="Key Technologies — home">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true">
+        <circle cx="13" cy="20" r="11" fill="none" stroke="#168fff" stroke-width="5"/>
+        <rect x="23" y="17.5" width="32" height="5" rx="2.5" fill="#168fff"/>
+        <rect x="42" y="22.5" width="5" height="9" rx="2" fill="#168fff"/>
+        <rect x="50" y="22.5" width="5" height="12" rx="2" fill="#168fff"/>
+      </svg>
+      <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
+    </a>
+    <ul class="foot-links">
+      <li><a href="../index.html#services">Services</a></li>
+      <li><a href="../index.html#industries">Industries</a></li>
+      <li><a href="../index.html#audit">Free Website Audit</a></li>
+      <li><a href="../index.html#solutions">Solutions</a></li>
+      <li><a href="../index.html#platform">Platform</a></li>
+      <li><a href="../index.html#method">How It Works</a></li>
+      <li><a href="../rewards.html" id="footAccount">Member login</a></li>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#results">Results</a></li>
+      <li><a href="../index.html#locations">Locations</a></li>
+      <li><a href="../index.html#faq">FAQ</a></li>
+      <li><a href="../rewards.html">LVR Points</a></li>
+      <li><a href="../privacy.html">Privacy</a></li>
+      <li><a href="../terms.html">Terms</a></li>
+    </ul>
+    <a class="foot-phone" href="../index.html#lead-short">Book a Call</a>
+    <p class="foot-fine">Manhattan Beach, California &middot; Las Vegas, Nevada &middot; Remote nationwide</p>
+    <p class="foot-fine">&copy; <span id="kpYear"></span> Key Technologies. All rights reserved.</p>
+  </div>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>(function(){var b=document.getElementById("burgerBtn"),m=document.getElementById("mobileMenu");if(!b||!m)return;
+function c(){m.classList.remove("open");b.setAttribute("aria-expanded","false");b.setAttribute("aria-label","Open menu")}
+function o(){m.classList.add("open");b.setAttribute("aria-expanded","true");b.setAttribute("aria-label","Close menu")}
+b.addEventListener("click",function(){m.classList.contains("open")?c():o()});
+m.querySelectorAll("a").forEach(function(a){a.addEventListener("click",c)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
+var y=document.getElementById("kpYear");if(y)y.textContent=new Date().getFullYear();
+try{if(localStorage.getItem("lvr_wallet_token")){var a=document.getElementById("mmAccount");if(a){a.href=a.href.replace("rewards.html","my-account.html");a.querySelector("span").textContent="My Account";a.querySelector("small").textContent="Logged in"}var f=document.getElementById("footAccount");if(f){f.href=f.href.replace("rewards.html","my-account.html");f.textContent="My Account"}}}catch(e){}
+})();function toast(t){var e=document.getElementById("toast");if(!e)return;e.textContent=t;e.className="";clearTimeout(window.__t);window.__t=setTimeout(function(){e.textContent=""},3500)}</script>
 <script>(function(){var LEADS="https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_leads/leads.json",FS="https://formspree.io/f/mzeedbyb";
 var f=document.getElementById('pform'),st=document.getElementById('pstatus');
-f.addEventListener('submit',function(e){e.preventDefault();
-var req=f.querySelectorAll('[required]');for(var i=0;i<req.length;i++){var r=req[i];if(r.type==='checkbox'?!r.checked:!r.value.trim()){r.focus();st.textContent=r.type==='checkbox'?'Please tick the box to confirm you understand.':'Please fill in all required fields.';return}}
-if(!/^\S+@\S+\.\S+$/.test(document.getElementById('pemail').value.trim())){document.getElementById('pemail').focus();st.textContent='Please enter a valid email.';return}
+f.addEventListener('submit',function(e){e.preventDefault();st.className='form-status';
+var req=f.querySelectorAll('[required]');for(var i=0;i<req.length;i++){var r=req[i];if(r.type==='checkbox'?!r.checked:!r.value.trim()){r.focus();st.textContent=r.type==='checkbox'?'Please tick the box to confirm you understand.':'Please fill in all required fields.';st.className='form-status err';return}}
+if(!/^\S+@\S+\.\S+$/.test(document.getElementById('pemail').value.trim())){document.getElementById('pemail').focus();st.textContent='Please enter a valid email.';st.className='form-status err';return}
 var d={source:'partner-interest-list',interests:['Sales partner network'],createdAt:{'.sv':'timestamp'},landingPage:location.pathname,acknowledgedInterestListOnly:true};
 new FormData(f).forEach(function(v,k){if(k!=='')d[k]=String(v).slice(0,2000)});
 var b=document.getElementById('psend');b.disabled=true;st.textContent='Sending...';
 fetch(LEADS,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error(r.status);
 fetch(FS,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(d)}).catch(function(){});
-st.textContent='Thank you. You are on the interest list. We will be in touch if a pilot opens.';f.reset();toast('Added to the interest list')}).catch(function(){st.textContent='Something went wrong. Please try again, or contact us from the main site.'}).then(function(){b.disabled=false});});})();</script>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>function toast(t){var e=document.getElementById('toast');e.textContent=t;e.className='toast show';clearTimeout(window.__t);window.__t=setTimeout(function(){e.className='toast'},3500);}
-</script></body></html>
+st.textContent='Thank you. You are on the interest list. We will be in touch if a pilot opens.';st.className='form-status ok';f.reset()}).catch(function(){st.textContent='Something went wrong. Please try again, or contact us from the main site.';st.className='form-status err'}).then(function(){b.disabled=false});});})();</script>
+</body></html>

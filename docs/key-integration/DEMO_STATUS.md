@@ -2,10 +2,13 @@
 
 Updated 2026-11-02. Branch `claude/master-file-e6ofy0`. Everything below lives under `sites/key-technologies/key-platform/`.
 
+## Layout (rebuilt 2026-11-02)
+The demos no longer use the package's own app shell (sidebar, separate header). Every page now uses the Key Technologies site header, mobile menu, banner and footer, the homepage stylesheet (`site-base.css`, a verbatim copy of the homepage CSS) and `kp.css` (demo components in the same style). Sections of each demo are horizontal tabs. If the homepage styles change, re-copy them into `site-base.css`.
+
 ## Imported from the handoff package
 | Module | Page | Source | Changes made on import |
 |---|---|---|---|
-| Voice Services | `/key-platform/voice/` | package `voice/public` (v4) | official key logo (SVG), `noindex`, back-link to the main site |
+| Voice Services | `/key-platform/voice/` | package `voice/public` (v4) | rebuilt on the site shell and styles, official key logo, `noindex` |
 | Email Intelligence | `/key-platform/email/` | package `email/public` (v1) | same, plus the "Integration plan" developer page removed |
 | Sales Partner Network | `/key-platform/sales/` | package `sales/public` (v1) | same, plus the "Integration roadmap" developer page removed |
 | Hub | `/key-platform/` | original | three demos, shared catalog with states, partner program summary |

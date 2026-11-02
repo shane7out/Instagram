@@ -1,0 +1,373 @@
+/* Verbatim copy of the Key Technologies homepage stylesheet so the demo pages match the site exactly.
+   If the homepage styles change, re-copy them here. */
+
+  :root{
+    --bg:#07111f;
+    --bg-2:#091728;
+    --card:#0c1a2b;
+    --line:#20364e;
+    --ink:#f6f8fb;
+    --ink-dim:#aab9ca;
+    --key-light:#59b5ff;
+    --key-blue:#168fff;
+    --white:#ffffff;
+    /* ---- WCAG 2.1 AA fixes ----
+       --key-blue/--key-light stay as-is for text/icon/border use (already
+       8.5:1+ against --bg) - the fix below is scoped to where they were
+       used as a SOLID FILL under white button text, which only hit
+       3.28:1 (needs 4.5:1) at rest and 2.22:1 on hover (fails even the
+       3:1 large-text floor). --control-line is a separate, higher-
+       contrast token for borders that are the ONLY visible boundary of
+       an interactive control (inputs, ghost buttons, checkbox pills,
+       the menu button) - WCAG 1.4.11 requires 3:1 there; --line stays
+       at its original value for purely decorative dividers/card edges,
+       which 1.4.11 doesn't apply to. */
+    --btn-blue:#0f64b2;
+    --btn-blue-hover:#1272cc;
+    --control-line:#637283;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  /* header is sticky at 56px + a 1px border; without this every anchor
+     jump (nav links, every button, the skip-link, footer links) lands its
+     target flush under that header, hiding the heading it scrolled to */
+  html{scroll-behavior:smooth;scroll-padding-top:72px;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+  html{overflow-x:hidden;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-size:16.5px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;}
+  a{color:var(--key-light);}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px;}
+  h1,h2,h3{line-height:1.18;letter-spacing:-0.01em;text-wrap:balance;margin:0;}
+  h2{font-size:clamp(26px,4vw,36px);font-weight:800;}
+  h3{font-size:19px;font-weight:700;}
+  p{margin:0;color:var(--ink-dim);text-wrap:pretty;}
+  .eyebrow{
+    font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--key-light);
+  }
+  .eyebrow-mark{display:inline-flex;align-items:center;gap:6px;}
+  .eyebrow-mark svg{flex:none;}
+
+  /* ---- brand watermark (hero / final CTA) ---- */
+  .watermark{
+    position:absolute;top:-40px;right:-40px;z-index:-1;
+    opacity:.07;pointer-events:none;
+  }
+  .watermark-alt{top:auto;right:auto;bottom:-50px;left:-50px;}
+  section{padding-block:56px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .section-head{max-width:640px;margin-bottom:30px;}
+  .section-head p{margin-top:10px;font-size:16.5px;}
+
+  /* ---- buttons ---- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
+    padding:14px 26px;border-radius:9px;cursor:pointer;text-decoration:none;
+    border:1px solid transparent;
+  }
+  .btn-primary{background:var(--btn-blue);color:var(--white);}
+  .btn-primary:hover{background:var(--btn-blue-hover);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--control-line);}
+  .btn-ghost:hover{border-color:var(--key-blue);color:var(--key-light);}
+  .btn:focus-visible{outline:2px solid var(--key-light);outline-offset:2px;}
+
+  /* ---- logo (inline SVG, symbol + wordmark kept separate, key stays straight) ---- */
+  .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+  .logo svg{
+    display:block;flex:none;
+    filter:drop-shadow(0 0 4px rgba(22,143,255,.55)) drop-shadow(0 0 11px rgba(22,143,255,.35));
+  }
+  .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
+  .logo-word .logo-si{color:var(--key-light);}
+  @media (max-width:420px){.logo-word{font-size:13.5px;}}
+
+  /* ---- header: thin, sticky ---- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,17,31,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  /* The header needs more room than the 1120px body .wrap allows - with
+     9 nav links plus the logo and Contact button, 1120px wasn't enough at
+     ANY viewport width (the .wrap cap applies even on a 1920px screen),
+     which was pushing "Services" flush against the logo with zero gap and
+     wrapping "Free Website Audit" to two lines. Give the header its own
+     wider container; body content keeps the narrower 1120px for readability. */
+  header .wrap{max-width:1360px;}
+  .nav-row{
+    display:flex;align-items:center;justify-content:space-between;
+    height:56px;
+  }
+  .nav-links{display:flex;align-items:center;gap:22px;list-style:none;margin:0;padding:0;}
+  .nav-links a{
+    color:var(--ink-dim);text-decoration:none;font-size:14.5px;font-weight:600;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+
+  /* two-line hamburger — NOT three lines */
+  .burger{
+    display:none;width:40px;height:40px;border-radius:8px;border:1px solid var(--control-line);
+    background:transparent;cursor:pointer;
+    flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  }
+  .burger span{
+    display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;
+    transition:transform .2s, opacity .2s;
+  }
+  .burger[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg);}
+  .burger[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg);}
+
+  .mobile-menu{
+    display:none;position:fixed;inset:56px 0 0 0;z-index:49;
+    background:var(--bg);border-top:1px solid var(--line);
+    padding:18px 20px 28px;overflow-y:auto;
+  }
+  .mobile-menu.open{display:block;}
+  .mobile-menu ul{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:2px;}
+  .mobile-menu a{
+    display:block;padding:14px 4px;color:var(--ink);text-decoration:none;
+    font-size:17px;font-weight:600;border-bottom:1px solid var(--line);
+  }
+  .mm-account{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:14px 16px;border:1px solid var(--key-blue);border-radius:12px;color:var(--ink);text-decoration:none;font-size:17px;font-weight:700;min-height:48px;}
+  .mobile-menu a.mm-account{display:flex;border-bottom:1px solid var(--key-blue);padding:14px 16px;}
+  .mm-account small{color:var(--key-light);font-weight:600;font-size:13px;}
+  .mm-cta-row{display:flex;gap:10px;margin-bottom:26px;}
+  .mm-cta-row .btn{flex:1;text-align:center;padding-left:10px;padding-right:10px;}
+  .mm-group-label{
+    font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-dim);margin:0 0 8px;
+  }
+
+  @media (max-width:1180px){
+    .nav-links, .nav-cta .btn-ghost{display:none;}
+    .burger{display:flex;}
+  }
+
+  /* ---- launch banner ---- */
+  .launch-banner{background:var(--card);border-bottom:1px solid var(--line);padding:12px 20px;}
+  .launch-banner p{margin:0 auto;max-width:900px;text-align:center;font-size:14px;line-height:1.5;color:var(--ink-dim);}
+  .launch-tag{color:var(--key-light);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.03em;margin-right:8px;}
+
+  /* ---- hero ---- */
+  .hero{padding-block:52px 40px;border-top:none;position:relative;overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .hero h1{
+    font-size:clamp(34px,5.6vw,58px);font-weight:800;
+  }
+  .hero h1 .accent{color:var(--key-light);}
+  .hero-sub{margin-top:18px;font-size:19px;max-width:54ch;}
+  .hero-ctas{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;}
+  .hero-ctas .btn{flex:1 1 200px;}
+
+  /* ---- lead forms ---- */
+  .lead-card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:26px;
+  }
+  .lead-card h2, .lead-card h3{font-size:20px;}
+  .lead-card .eyebrow{display:block;margin-bottom:6px;}
+  form{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:13px;font-weight:600;color:var(--ink-dim);}
+  input, textarea, select{
+    font-family:inherit;font-size:16px;color:var(--ink);
+    background:var(--bg-2);border:1px solid var(--control-line);border-radius:8px;
+    padding:12px 13px;width:100%;
+  }
+  input:focus, textarea:focus, select:focus{outline:2px solid var(--key-blue);outline-offset:1px;}
+  textarea{min-height:90px;resize:vertical;}
+  fieldset{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0;min-width:0;}
+  fieldset legend{padding:0 6px;font-size:13px;font-weight:600;color:var(--ink-dim);}
+  .check-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+  .check-grid label{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 16px;border-radius:999px;border:1px solid var(--control-line);
+    background:var(--bg-2);font-size:14px;color:var(--ink-dim);font-weight:500;
+    cursor:pointer;transition:border-color .15s,background .15s,color .15s;
+  }
+  .check-grid label:hover{border-color:var(--key-blue);}
+  .check-grid label:has(input:checked){
+    border-color:var(--key-blue);background:rgba(22,143,255,.14);color:var(--ink);
+  }
+  .check-grid label input[type="checkbox"]{
+    width:16px;height:16px;padding:0;margin:0;border-radius:4px;
+    background:none;accent-color:var(--key-blue);flex:none;
+  }
+  .form-note{font-size:13px;color:var(--ink-dim);margin-top:2px;}
+  .req{color:#ff8a7a;margin-left:2px;}
+  .form-status{font-size:14px;margin-top:4px;min-height:18px;}
+  .form-status.ok{color:var(--key-light);}
+  .form-status.err{color:#ff8a7a;}
+
+  /* ---- PHP / WordPress risk check ---- */
+  .risk-badge{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+    font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  }
+  .risk-badge.risk-ok{background:rgba(74,222,128,.14);color:#4ade80;}
+  .risk-badge.risk-warn{background:rgba(251,191,36,.14);color:#fbbf24;}
+  .risk-badge.risk-danger{background:rgba(255,138,122,.14);color:#ff8a7a;}
+  .risk-badge.risk-unknown{background:rgba(170,185,202,.14);color:var(--ink-dim);}
+  .risk-result{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
+  .risk-result p{margin-top:12px;}
+
+  /* ---- website audit grade ---- */
+  .grade-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
+  .grade-badge{
+    flex:none;width:92px;height:92px;border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    border:3px solid var(--line);background:var(--bg-2);
+  }
+  .grade-badge.grade-ok{border-color:#4ade80;}
+  .grade-badge.grade-warn{border-color:#fbbf24;}
+  .grade-badge.grade-danger{border-color:#ff8a7a;}
+  .grade-badge.grade-unknown{border-color:var(--line);}
+  .grade-letter{font-size:32px;font-weight:800;color:var(--ink);line-height:1;}
+  .grade-label{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);}
+  .score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;flex:1;min-width:200px;}
+  .score-card{
+    background:var(--bg-2);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;display:flex;flex-direction:column;gap:2px;
+  }
+  .score-label{font-size:11.5px;font-weight:600;color:var(--ink-dim);}
+  .score-value{font-size:20px;font-weight:800;}
+  .score-value.score-ok{color:#4ade80;}
+  .score-value.score-warn{color:#fbbf24;}
+  .score-value.score-danger{color:#ff8a7a;}
+  .score-value.score-na{color:var(--ink-dim);}
+
+  /* ---- services ---- */
+  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
+  @media (max-width:900px){.service-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:600px){.service-grid{grid-template-columns:1fr;}}
+  .service-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px;display:flex;flex-direction:column;gap:10px;
+  }
+  .service-card .num{font-size:13px;font-weight:700;color:var(--key-light);letter-spacing:.06em;}
+  .service-card p{font-size:15px;}
+  .demo-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-weight:700;font-size:14px;color:var(--key-light);text-decoration:none;min-height:44px;}
+  .demo-link:hover{text-decoration:underline;}
+  .demo-chip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--key-blue);border-radius:999px;padding:2px 8px;color:var(--key-light);}
+  .demo-strip{margin:0 0 20px;padding:14px 18px;border:1px solid var(--key-blue);border-radius:14px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;}
+  .demo-strip a{color:var(--key-light);font-weight:700;}
+
+  /* ---- Key Technologies Method ---- */
+  .method-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
+  @media (max-width:900px){.method-row{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:560px){.method-row{grid-template-columns:1fr 1fr;}}
+  .method-step{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px 16px;text-align:left;
+    border-top:3px solid var(--accent, var(--key-light));
+  }
+  .method-step .letter{
+    font-size:13px;font-weight:800;color:var(--accent, var(--key-light));letter-spacing:.08em;
+  }
+  .method-step h3{margin-top:6px;font-size:16px;}
+  .method-step p{margin-top:6px;font-size:14px;}
+
+  /* ---- about ---- */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+  @media (max-width:860px){.about-grid{grid-template-columns:1fr;}}
+  .about-grid p + p{margin-top:14px;}
+  .brand-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
+  .brand-pill{
+    border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+    font-size:13.5px;font-weight:600;color:var(--ink-dim);background:var(--card);
+  }
+
+  /* ---- results ---- */
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px;}
+  @media (max-width:760px){.stat-row{grid-template-columns:1fr;}}
+  .stat-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px 20px;
+  }
+  .stat-number{font-size:38px;font-weight:800;color:var(--key-light);line-height:1.1;}
+  .stat-label{margin-top:8px;font-size:14.5px;color:var(--ink-dim);}
+
+  /* ---- industries ---- */
+  .industry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media (max-width:900px){.industry-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:560px){.industry-grid{grid-template-columns:1fr;}}
+  .industry-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;
+    text-decoration:none;display:block;transition:border-color .15s;
+  }
+  .industry-card:hover{border-color:var(--key-blue);}
+  .industry-card h3{font-size:17px;color:var(--ink);}
+  .industry-card p{margin-top:8px;font-size:14px;}
+  .industry-card .arrow{color:var(--key-light);font-weight:700;margin-top:10px;display:inline-block;}
+
+  /* ---- locations ---- */
+  .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:700px){.loc-grid{grid-template-columns:1fr;}}
+  .loc-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;
+  }
+  .loc-card h3{font-size:18px;}
+  .loc-card p{margin-top:8px;font-size:15px;}
+
+  /* ---- FAQ ---- */
+  details{
+    border:1px solid var(--line);border-radius:12px;padding:4px 18px;
+    background:var(--card);margin-bottom:10px;
+  }
+  summary{
+    padding:16px 0;font-weight:700;font-size:16px;cursor:pointer;list-style:none;
+    position:relative;padding-right:26px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{
+    content:'+';position:absolute;right:0;top:14px;color:var(--key-light);
+    font-size:20px;font-weight:400;transition:transform .2s;
+  }
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{padding-bottom:16px;font-size:15px;}
+
+  /* ---- final CTA ---- */
+  .cta-band{
+    background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    text-align:center;padding-block:48px;position:relative;overflow:hidden;
+  }
+  .cta-band h2{margin-bottom:10px;}
+  .cta-band p{max-width:52ch;margin:0 auto 22px;font-size:16.5px;}
+
+  /* ---- see it working (links into the LVR points program) ---- */
+  .proof{margin-top:34px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);}
+  .proof h3{margin:6px 0 8px;font-size:21px;line-height:1.25;}
+  .proof p{margin:0 0 16px;max-width:620px;}
+  .proof-actions{display:flex;flex-wrap:wrap;gap:10px;}
+  /* ---- footer ---- */
+  footer{padding-block:40px;text-align:center;}
+  footer .logo{justify-content:center;margin-bottom:14px;}
+  .foot-links{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:16px 0;
+    list-style:none;padding:0;
+  }
+  .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
+  .foot-links a:hover{color:var(--ink);}
+  .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
+  .foot-phone{display:inline-block;margin-top:14px;font-size:17px;font-weight:700;color:var(--key-light);text-decoration:none;}
+  .foot-phone:hover{color:var(--key-blue);}
+
+  .skip-link{
+    position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#fff;
+    padding:10px 16px;border-radius:0 0 8px 0;z-index:100;
+  }
+  .skip-link:focus{left:0;}
