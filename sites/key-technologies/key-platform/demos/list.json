@@ -5,6 +5,7 @@
   "title": "Digital Content Creators",
   "tag": "AI/SI creators with a consistent brand voice that make posts around the clock.",
   "cat": "Marketing & Content",
+  "thumb": "demos/thumbs/content-creators.jpg",
   "href": "demos/content-creators.html"
  },
  {
@@ -13,6 +14,7 @@
   "title": "AI/SI Strategy",
   "tag": "Find where AI/SI pays off, and where it can not yet.",
   "cat": "AI Systems & Strategy",
+  "thumb": "demos/thumbs/ai-strategy.jpg",
   "href": "demos/ai-strategy.html"
  },
  {
@@ -21,6 +23,7 @@
   "title": "Business Automation",
   "tag": "Connect steps that run by hand today so they run on their own.",
   "cat": "Operations & Sales",
+  "thumb": "demos/thumbs/business-automation.jpg",
   "href": "demos/business-automation.html"
  },
  {
@@ -29,6 +32,7 @@
   "title": "AI/SI Agents",
   "tag": "Assistants that do defined tasks, with limits you set.",
   "cat": "AI Systems & Strategy",
+  "thumb": "demos/thumbs/ai-agents.jpg",
   "href": "demos/ai-agents.html"
  },
  {
@@ -37,6 +41,7 @@
   "title": "Custom CRM & Lead Management",
   "tag": "A CRM built around your business, not stretched to fit.",
   "cat": "Operations & Sales",
+  "thumb": "demos/thumbs/custom-crm.jpg",
   "href": "demos/custom-crm.html"
  },
  {
@@ -45,6 +50,7 @@
   "title": "Customer Experience",
   "tag": "Faster replies that still sound like a person wrote them.",
   "cat": "Customers & Communication",
+  "thumb": "demos/thumbs/customer-experience.jpg",
   "href": "demos/customer-experience.html"
  },
  {
@@ -53,6 +59,7 @@
   "title": "Operations",
   "tag": "Find the slow steps and what automating them would give back.",
   "cat": "Operations & Sales",
+  "thumb": "demos/thumbs/operations.jpg",
   "href": "demos/operations.html"
  },
  {
@@ -61,6 +68,7 @@
   "title": "Data & Knowledge Systems",
   "tag": "Make what your business knows easy to find and use.",
   "cat": "AI Systems & Strategy",
+  "thumb": "demos/thumbs/data-knowledge.jpg",
   "href": "demos/data-knowledge.html"
  },
  {
@@ -69,6 +77,7 @@
   "title": "Marketing",
   "tag": "Segments, research and content, with a person approving the message.",
   "cat": "Marketing & Content",
+  "thumb": "demos/thumbs/marketing.jpg",
   "href": "demos/marketing.html"
  },
  {
@@ -77,6 +86,7 @@
   "title": "Security & Technology",
   "tag": "Check access before an AI tool touches your systems.",
   "cat": "Websites & Security",
+  "thumb": "demos/thumbs/security-technology.jpg",
   "href": "demos/security-technology.html"
  },
  {
@@ -85,6 +95,7 @@
   "title": "Custom AI/SI Systems",
   "tag": "Systems built around how your business operates.",
   "cat": "AI Systems & Strategy",
+  "thumb": "demos/thumbs/custom-ai-systems.jpg",
   "href": "demos/custom-ai-systems.html"
  },
  {
@@ -93,14 +104,16 @@
   "title": "AI/SI Website Development",
   "tag": "Websites with chat, personalization and lead capture built in.",
   "cat": "Websites & Security",
+  "thumb": "demos/thumbs/website-development.jpg",
   "href": "demos/website-development.html"
  },
  {
   "slug": "../email/index.html",
   "num": "13",
   "title": "Email Automation",
-  "tag": "",
+  "tag": "Sorts the inbox and drafts replies that a person approves.",
   "cat": "Customers & Communication",
+  "thumb": "demos/thumbs/email.jpg",
   "href": "email/index.html"
  },
  {
@@ -109,6 +122,7 @@
   "title": "Social Media Management",
   "tag": "A real presence on a schedule, with review before anything goes live.",
   "cat": "Marketing & Content",
+  "thumb": "demos/thumbs/social-media.jpg",
   "href": "demos/social-media.html"
  },
  {
@@ -117,14 +131,16 @@
   "title": "Review & Reputation Management",
   "tag": "Answer reviews quickly and flag negative ones early.",
   "cat": "Customers & Communication",
+  "thumb": "demos/thumbs/reviews-reputation.jpg",
   "href": "demos/reviews-reputation.html"
  },
  {
   "slug": "../voice/index.html",
   "num": "16",
   "title": "AI/SI Phone & Text Answering",
-  "tag": "",
+  "tag": "An AI receptionist that answers calls and captures leads.",
   "cat": "Customers & Communication",
+  "thumb": "demos/thumbs/voice.jpg",
   "href": "voice/index.html"
  },
  {
@@ -133,6 +149,7 @@
   "title": "Booking & Scheduling Automation",
   "tag": "Booking, confirmations and reminders without staff time.",
   "cat": "Customers & Communication",
+  "thumb": "demos/thumbs/booking-scheduling.jpg",
   "href": "demos/booking-scheduling.html"
  },
  {
@@ -141,6 +158,7 @@
   "title": "AI/SI Training & Custom Training Software",
   "tag": "Teach your team to use AI/SI well, in your own portal.",
   "cat": "Training & Points",
+  "thumb": "demos/thumbs/ai-training.jpg",
   "href": "demos/ai-training.html"
  },
  {
@@ -149,6 +167,7 @@
   "title": "Custom Website Programming",
   "tag": "Full custom-coded sites and web applications.",
   "cat": "Websites & Security",
+  "thumb": "demos/thumbs/custom-programming.jpg",
   "href": "demos/custom-programming.html"
  },
  {
@@ -157,6 +176,7 @@
   "title": "ADA & Accessibility Compliance",
   "tag": "Make a site usable for everyone and reduce legal risk.",
   "cat": "Websites & Security",
+  "thumb": "demos/thumbs/accessibility-ada.jpg",
   "href": "demos/accessibility-ada.html"
  },
  {
@@ -165,6 +185,7 @@
   "title": "PHP & WordPress Migration",
   "tag": "Move off PHP and WordPress to a modern custom stack.",
   "cat": "Websites & Security",
+  "thumb": "demos/thumbs/php-wordpress-migration.jpg",
   "href": "demos/php-wordpress-migration.html"
  },
  {
@@ -173,6 +194,7 @@
   "title": "Private LLM Setup",
   "tag": "Your own private AI that knows your business and keeps it private.",
   "cat": "AI Systems & Strategy",
+  "thumb": "demos/thumbs/private-llm.jpg",
   "href": "demos/private-llm.html"
  },
  {
@@ -181,14 +203,16 @@
   "title": "Cybersecurity & Network Hardening",
   "tag": "A full security pass that closes real gaps.",
   "cat": "Websites & Security",
+  "thumb": "demos/thumbs/cybersecurity.jpg",
   "href": "demos/cybersecurity.html"
  },
  {
   "slug": "../sales/index.html",
   "num": "24",
   "title": "Sales Partner Network",
-  "tag": "",
+  "tag": "A catalog, quotes, pipeline and commission calculator for partners.",
   "cat": "Operations & Sales",
+  "thumb": "demos/thumbs/sales.jpg",
   "href": "sales/index.html"
  },
  {
@@ -197,6 +221,7 @@
   "title": "LVR Points",
   "tag": "Earn points at restaurants and use them for food.",
   "cat": "Training & Points",
+  "thumb": "demos/thumbs/points.jpg",
   "href": "demos/points.html"
  }
 ]

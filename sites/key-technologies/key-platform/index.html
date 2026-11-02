@@ -83,6 +83,7 @@
 <article class="service-card"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Sales Partner Network</h3><p>A service catalog, quote builder, pipeline and commission calculator for independent sales partners. Not open for enrollment.</p><a class="demo-link" href="sales/index.html"><span class="demo-chip">Demo</span> Try the Sales demo &rarr;</a></article></div>
 <div class="sectionhead" id="library"><div><span class="eyebrow">Demo library</span><h2>A demo for every service</h2></div></div>
 <p class="lead">Each service on the main page has a short, clearly labeled demo with made-up data. Pick one to try it.</p>
+<div class="kp-libtools"><button type="button" class="btn btn-primary kp-tourstart" id="tourStart">&#9654; Start the tour</button><span class="muted" style="font-size:15px">Walk through every demo in order. Use Next, or the arrow keys.</span></div>
 <div class="kp-chips" id="libchips" role="group" aria-label="Filter demos by group"></div>
 <div class="demo-gallery" id="libgrid" aria-live="polite"><p class="muted">Loading the demo list. If nothing appears, open the <a href="voice/index.html">Voice</a>, <a href="email/index.html">Email</a> or <a href="sales/index.html">Sales</a> demo directly.</p></div>
 <div class="sectionhead"><div><span class="eyebrow">Business Solutions</span><h2>One catalog behind everything</h2></div></div>
@@ -142,7 +143,7 @@ fetch('demos/list.json',{cache:'no-cache'}).then(function(r){return r.json()}).t
  var cats=['All'];L.forEach(function(x){if(cats.indexOf(x.cat)<0)cats.push(x.cat)});var cur='All';
  function n(cat){return cat==='All'?L.length:L.filter(function(x){return x.cat===cat}).length}
  function draw(){c.innerHTML=cats.map(function(k){return '<button type="button" class="kp-chip" data-c="'+esc(k)+'" aria-pressed="'+(k===cur)+'">'+esc(k)+' <span class="n">'+n(k)+'</span></button>'}).join('');
-  g.innerHTML=L.filter(function(x){return cur==='All'||x.cat===cur}).map(function(x){var num=x.num==='P'?'LVR':x.num;return '<a class="demo-tile" href="'+esc(x.href)+'"><span class="dt-top"><span class="dt-num">'+esc(num)+'</span><span class="dt-cat">Demo</span></span><h3>'+esc(x.title)+'</h3><p>'+esc(x.tag||'Open the full interactive demo.')+'</p><span class="dt-go">Open demo &rarr;</span></a>'}).join('');
+  g.innerHTML=L.filter(function(x){return cur==='All'||x.cat===cur}).map(function(x){var num=x.num==='P'?'LVR':x.num;return '<a class="demo-tile" href="'+esc(x.href)+'"><span class="dt-img" aria-hidden="true"><img src="'+esc(x.thumb||'')+'" alt="" loading="lazy" onerror="this.parentNode.style.display=&quot;none&quot;"></span><span class="dt-top"><span class="dt-num">'+esc(num)+'</span><span class="dt-cat">Demo</span></span><h3>'+esc(x.title)+'</h3><p>'+esc(x.tag||'Open the full interactive demo.')+'</p><span class="dt-go">Open demo &rarr;</span></a>'}).join('');
   [].forEach.call(c.querySelectorAll('[data-c]'),function(b){b.onclick=function(){cur=b.getAttribute('data-c');draw()}})}
  draw()}).catch(function(){})})();</script>
 <script src="catalog.js"></script><script>(function(){var c=document.getElementById('catalog'),l=document.getElementById('legend');
@@ -151,4 +152,6 @@ l.innerHTML=Object.keys(KEY_STATES).map(function(k){return '<span class="tag" ti
 var demo={voice:'voice/index.html',email:'email/index.html'};
 c.innerHTML=KEY_CATALOG.map(function(s,i){var d=demo[s.id];return '<article class="service-card"><span class="num"><span class="demo-chip">'+s.state+'</span></span><h3>'+esc(s.name)+'</h3><p>'+esc(s.description)+'</p>'+(d?'<a class="demo-link" href="'+d+'"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>':'<p style="margin-top:12px;font-size:14px">'+(KEY_SELLABLE(s.state)?'Can be quoted':'Not quotable yet')+'</p>')+'</article>'}).join('');})();</script>
 <script src="kp-sound.js"></script>
+<script src="kp-tour.js"></script>
+<script>(function(){var b=document.getElementById("tourStart");if(b)b.addEventListener("click",function(){if(window.KPTour)window.KPTour.start()})})();</script>
 </body></html>

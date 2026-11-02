@@ -55,6 +55,11 @@ All are DEMO: fictional data, in-browser only, nothing saved or sent. The LVR Po
 ## Demo gallery and tap sound
 The hub library is a gallery of numbered tiles (01 to 24, LVR) with group filters (Marketing & Content, AI Systems & Strategy, Operations & Sales, Customers & Communication, Websites & Security, Training & Points). Groups come from `CAT` in `build_service_demos.py`. Every demo page has "All demos" at the top and previous/next links at the bottom. `kp-sound.js` plays a soft tap (made in the browser, no audio files) when a demo link or button is pressed, with a "Sound: on/off" switch on the platform pages that is remembered in the browser.
 
+## Tile previews, tour and follow-up (added 2026-11-02)
+- **Previews:** each gallery tile shows a small picture of its demo, made by `docs/key-integration/make_demo_thumbs.js` into `key-platform/demos/thumbs/`. Re-run it after a demo changes look.
+- **Tour:** "Start the tour" on the hub (`kp-tour.js`) walks through all 25 demos in order with a bar at the bottom (Back, Next, End tour, progress; arrow keys work). Tour state lives only in the browser tab.
+- **Follow-up:** each demo ends with "Want this for your business?" (`kp-followup.js`): the visitor's email and optional name go to the site's existing leads list (`key_leads/leads`, source `demo-follow-up`, with the demo name) and the same email alert as the other site forms. Nothing is sent until the visitor presses the button. Tested only against a mock, so check one real submission.
+
 ## Imported from the handoff package
 | Module | Page | Source | Changes made on import |
 |---|---|---|---|

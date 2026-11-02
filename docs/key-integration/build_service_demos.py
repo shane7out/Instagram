@@ -50,7 +50,7 @@ S = [
  ('cybersecurity', '23', 'Cybersecurity & Network Hardening', 'A full security pass that closes real gaps.', 'hardening', 'Run an example check', 'Run the check on a fictional office and read the fix plan.', ['Passwords, access, networks, backups and exposed systems', 'Findings explained in plain language', 'Backed by 25+ years of hands-on security and networking experience']),
  ('points', 'P', 'LVR Points', 'Earn points at restaurants and use them for food.', 'points', 'Try the points program', 'Earn from a receipt, take the free spin, use points, and see the monthly points share.', ['Earn 1 point per $1 on checked receipts', 'A free spin that comes and goes', 'Points used only for food at participating restaurants']),
 ]
-EXISTING = {'13': ('Email Automation', '../email/index.html', 'Email Intelligence demo'), '16': ('AI/SI Phone & Text Answering', '../voice/index.html', 'Voice Services demo'), '24': ('Sales Partner Network', '../sales/index.html', 'Sales Partner Network demo')}
+EXISTING = {'13': ('Email Automation', '../email/index.html', 'Sorts the inbox and drafts replies that a person approves.'), '16': ('AI/SI Phone & Text Answering', '../voice/index.html', 'An AI receptionist that answers calls and captures leads.'), '24': ('Sales Partner Network', '../sales/index.html', 'A catalog, quotes, pipeline and commission calculator for partners.')}
 
 def switch():
     items = [('Overview', '../index.html'), ('Voice Services', '../voice/index.html'), ('Email Intelligence', '../email/index.html'), ('Sales Partner Network', '../sales/index.html'), ('All demos', '../index.html#library')]
@@ -94,7 +94,7 @@ def page(i, s):
 %s
 <div id="toast" role="status" aria-live="polite"></div>
 %s
-<script src="../kp-sound.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
+<script src="../kp-sound.js"></script><script src="../kp-tour.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
 </body></html>''' % (esc(title), esc(tag), '../../', '../../', fix(HEADER, root), fix(MENU, root), switch(), body, fix(FOOTER, root), BURGER, widget)
 
 def esc(t):
@@ -113,8 +113,8 @@ CAT = {'01': 'Marketing & Content', '09': 'Marketing & Content', '14': 'Marketin
        '03': 'Operations & Sales', '05': 'Operations & Sales', '07': 'Operations & Sales', '24': 'Operations & Sales',
        '10': 'Websites & Security', '12': 'Websites & Security', '19': 'Websites & Security', '20': 'Websites & Security', '21': 'Websites & Security', '23': 'Websites & Security',
        '18': 'Training & Points', 'P': 'Training & Points'}
-lst = [{'slug': s[0], 'num': s[1], 'title': s[2], 'tag': s[3], 'cat': CAT[s[1]], 'href': 'demos/%s.html' % s[0]} for s in S]
-for n, (t, h, _) in EXISTING.items():
-    lst.append({'slug': h, 'num': n, 'title': t, 'tag': '', 'cat': CAT[n], 'href': h.replace('../', '')})
+lst = [{'slug': s[0], 'num': s[1], 'title': s[2], 'tag': s[3], 'cat': CAT[s[1]], 'thumb': 'demos/thumbs/%s.jpg' % s[0], 'href': 'demos/%s.html' % s[0]} for s in S]
+for n, (t, h, tg) in EXISTING.items():
+    lst.append({'slug': h, 'num': n, 'title': t, 'tag': tg, 'cat': CAT[n], 'thumb': 'demos/thumbs/%s.jpg' % h.replace('../', '').split('/')[0], 'href': h.replace('../', '')})
 lst.sort(key=lambda x: (x['num'] == 'P', int(x['num']) if x['num'].isdigit() else 99))
 json.dump(lst, open(SITE + 'key-platform/demos/list.json', 'w'), indent=1)
