@@ -642,6 +642,59 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('pet game stays locked to anonymous visitors', 'anon', 'PUT', '/petgame/pets/p1', { name: 'x' }, false);
   await t('pet game stays locked even to the owner token (unchanged)', 'owner', 'PUT', '/petgame/pets/p1', { name: 'x' }, false);
 
+  // =====================================================================
+  // 12. KEY TECHNOLOGIES DATA  (key-rules-owner.json): leads, page views, CRM, owner sign-in key
+  //     Visitors may only ADD a lead / a page view. Reading or changing anything is owner-only.
+  // =====================================================================
+  const bigStr = n => 'x'.repeat(n);
+  await t('key leads: a visitor can still send a lead', 'anon', 'POST', '/key_leads/leads', { source: 'homepage-short-form', name: 'A B', email: 'a@example.com', phone: '7025550100' }, true);
+  await t('key leads: a full realistic lead (interests, server time, nested audit) is accepted', 'anon', 'POST', '/key_leads/leads', { source: 'homepage-website-audit', name: 'A', email: 'a@example.com', url: 'https://example.com', createdAt: { '.sv': 'timestamp' }, landingPage: '/index.html', interests: ['AI phone receptionist', 'Book a call'], audit: { performance: 90, security: 'ok' } }, true);
+  await t('key leads: the booking-form lead is accepted', 'anon', 'POST', '/key_leads/leads', { source: 'book-a-call', interests: ['Book a call'], name: 'N', email: 'n@example.com', phone: '', topic: 'T', language: 'Espanol', notes: 'hi', requestedTimeUtc: '2026-11-04T22:00:00.000Z', createdAt: { '.sv': 'timestamp' }, landingPage: '/book.html' }, true);
+  await t('key leads: a lead with no source is refused', 'anon', 'POST', '/key_leads/leads', { email: 'a@example.com' }, false);
+  await t('key leads: source that is not text is refused', 'anon', 'POST', '/key_leads/leads', { source: 5 }, false);
+  await t('key leads: a 300-character email is refused', 'anon', 'POST', '/key_leads/leads', { source: 'x', email: bigStr(300) }, false);
+  await t('key leads: a 5000-character note is refused', 'anon', 'POST', '/key_leads/leads', { source: 'x', notes: bigStr(5000) }, false);
+  await t('key leads: a visitor cannot read the leads list', 'anon', 'GET', '/key_leads/leads', undefined, false);
+  await t('key leads: a visitor cannot read the whole node', 'anon', 'GET', '/key_leads', undefined, false);
+  await call('admin', 'PUT', '/key_leads/leads/L1', { source: 'x', email: 'a@example.com', name: 'Old Lead' });
+  await call('admin', 'PUT', '/key_leads/leads/L3', { email: 'nosource@example.com' });
+  await t('key leads: a visitor cannot read one lead', 'anon', 'GET', '/key_leads/leads/L1', undefined, false);
+  await t('key leads: a signed-in stranger cannot read the leads', 'other', 'GET', '/key_leads/leads', undefined, false);
+  await t('key leads: a visitor cannot overwrite an existing lead', 'anon', 'PUT', '/key_leads/leads/L1', { source: 'x', email: 'evil@example.com' }, false);
+  await t('key leads: a visitor cannot edit part of a lead', 'anon', 'PATCH', '/key_leads/leads/L1', { email: 'evil@example.com' }, false);
+  await t('key leads: a visitor cannot delete a lead', 'anon', 'DELETE', '/key_leads/leads/L1', undefined, false);
+  await t('key leads: a visitor cannot wipe the leads list', 'anon', 'DELETE', '/key_leads/leads', undefined, false);
+  await t('key leads: a visitor cannot replace the leads list', 'anon', 'PUT', '/key_leads/leads', { Z: { source: 'x' } }, false);
+  await t('key leads: a visitor cannot create under a different key_leads child', 'anon', 'PUT', '/key_leads/other', { a: 1 }, false);
+  await t('key leads: a signed-in stranger cannot edit a lead', 'other', 'PATCH', '/key_leads/leads/L1', { email: 'evil@example.com' }, false);
+  await t('key leads: the owner can read the leads', 'owner', 'GET', '/key_leads/leads', undefined, true);
+  await t('key leads: the owner can mark a lead (status, notes)', 'owner', 'PATCH', '/key_leads/leads/L1', { status: 'contacted', ownerNote: 'called' }, true);
+  await t('key leads: the owner can update an old lead that has no source', 'owner', 'PATCH', '/key_leads/leads/L3', { status: 'done' }, true);
+  await t('key leads: the owner can delete a lead', 'owner', 'DELETE', '/key_leads/leads/L1', undefined, true);
+  await t('page views: the tracker can still add a view', 'anon', 'POST', '/key_pageviews/hits/index_html', { t: 1767225600000, ref: 'https://www.google.com/', w: 390 }, true);
+  await t('page views: a view with no time is refused', 'anon', 'POST', '/key_pageviews/hits/index_html', { ref: 'x' }, false);
+  await t('page views: a time that is text is refused', 'anon', 'POST', '/key_pageviews/hits/index_html', { t: 'now' }, false);
+  await t('page views: a 400-character referrer is refused', 'anon', 'POST', '/key_pageviews/hits/index_html', { t: 1, ref: bigStr(400) }, false);
+  await call('admin', 'PUT', '/key_pageviews/hits/index_html/H1', { t: 5 });
+  await t('page views: a visitor cannot read the views', 'anon', 'GET', '/key_pageviews/hits', undefined, false);
+  await t('page views: a visitor cannot read the whole node', 'anon', 'GET', '/key_pageviews', undefined, false);
+  await t('page views: a visitor cannot overwrite a recorded view', 'anon', 'PUT', '/key_pageviews/hits/index_html/H1', { t: 9 }, false);
+  await t('page views: a visitor cannot delete the views', 'anon', 'DELETE', '/key_pageviews/hits', undefined, false);
+  await t('page views: the owner can read the views', 'owner', 'GET', '/key_pageviews/hits', undefined, true);
+  await call('admin', 'PUT', '/kt_crm/prospects/P1', { name: 'Prospect' });
+  await t('CRM: a visitor cannot read prospects', 'anon', 'GET', '/kt_crm/prospects', undefined, false);
+  await t('CRM: a visitor cannot add a prospect', 'anon', 'PUT', '/kt_crm/prospects/P2', { name: 'x' }, false);
+  await t('CRM: a visitor cannot delete a prospect', 'anon', 'DELETE', '/kt_crm/prospects/P1', undefined, false);
+  await t('CRM: a signed-in stranger cannot read prospects', 'other', 'GET', '/kt_crm/prospects', undefined, false);
+  await t('CRM: the owner can read prospects', 'owner', 'GET', '/kt_crm/prospects', undefined, true);
+  await t('CRM: the owner can save a prospect', 'owner', 'PUT', '/kt_crm/prospects/P2', { name: 'New' }, true);
+  await t('CRM: the owner can save outreach status', 'owner', 'PUT', '/kt_crm/adv_outreach/A1', { status: 'sent' }, true);
+  await call('admin', 'PUT', '/ownerAuth/apiKey', 'AIzaFAKEKEYFORTEST');
+  await t('owner sign-in key: anyone can read it (the sign-in box needs it)', 'anon', 'GET', '/ownerAuth/apiKey', undefined, true);
+  await t('owner sign-in key: a visitor cannot replace it', 'anon', 'PUT', '/ownerAuth/apiKey', 'AIzaEVIL', false);
+  await t('owner sign-in key: a signed-in stranger cannot replace it', 'other', 'PUT', '/ownerAuth/apiKey', 'AIzaEVIL', false);
+  await t('owner sign-in key: a browser cannot change it even with the owner login (only the setup script can)', 'owner', 'PUT', '/ownerAuth/apiKey', 'AIzaEVIL', false);
+
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.log('TEST HARNESS ERROR', e); process.exit(2); });

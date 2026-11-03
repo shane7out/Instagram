@@ -1,0 +1,32 @@
+{
+  "ownerAuth": {
+    ".read": true,
+    ".write": false
+  },
+  "key_leads": {
+    ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+    "leads": {
+      "$id": {
+        ".write": "(auth != null && auth.uid == '__OWNER_UID__') || (!data.exists() && newData.exists())",
+        ".validate": "data.exists() || (newData.hasChildren(['source']) && newData.child('source').isString() && newData.child('source').val().length <= 80 && (!newData.child('email').exists() || (newData.child('email').isString() && newData.child('email').val().length <= 254)) && (!newData.child('name').exists() || (newData.child('name').isString() && newData.child('name').val().length <= 200)) && (!newData.child('phone').exists() || (newData.child('phone').isString() && newData.child('phone').val().length <= 60)) && (!newData.child('notes').exists() || (newData.child('notes').isString() && newData.child('notes').val().length <= 4000)) && (!newData.child('message').exists() || (newData.child('message').isString() && newData.child('message').val().length <= 4000)))"
+      }
+    }
+  },
+  "key_pageviews": {
+    ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+    "hits": {
+      "$page": {
+        "$id": {
+          ".write": "!data.exists() && newData.exists()",
+          ".validate": "newData.hasChildren(['t']) && newData.child('t').isNumber() && (!newData.child('ref').exists() || (newData.child('ref').isString() && newData.child('ref').val().length <= 300))"
+        }
+      }
+    }
+  },
+  "kt_crm": {
+    ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".write": "auth != null && auth.uid == '__OWNER_UID__'"
+  }
+}

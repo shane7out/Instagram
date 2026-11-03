@@ -3,7 +3,9 @@
 #   python3 .github/db-task/owner-auth/apply-owner-auth.py
 import re, sys
 SNIP = open('.github/db-task/owner-auth/owner-auth.snippet.html').read().strip()
-FILES = ['.github/db-task/mac/lvr-points-admin.html', '.github/db-task/mac/key-room.html']
+FILES = ['.github/db-task/mac/lvr-points-admin.html', '.github/db-task/mac/key-room.html',
+         '.github/db-task/mac/kt-crm.html', '.github/db-task/mac/key-leads.html', '.github/db-task/mac/key-advertisers.html',
+         'sites/key-technologies/key-pageviews.html']
 for f in FILES:
     s = open(f).read()
     if '<!--OWNER-AUTH-START-->' in s:

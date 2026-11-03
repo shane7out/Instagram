@@ -66,7 +66,7 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
   const probes = [
     ['members still readable', await status(`${DB}/lvr_rewards.json?shallow=true`), 200],
     ['catalog still readable', await status(`${DB}/lvr_points/catalog.json?shallow=true`), 200],
-    ['other app (key_leads) readable', await status(`${DB}/key_leads/leads.json?shallow=true`), 200],
+    ['owner sign-in key readable', await status(`${DB}/ownerAuth/apiKey.json`), 200],
     ['a stranger cannot change settings', await status(`${DB}/lvr_points/settings/zz_probe.json`, { method: 'PUT', headers: J, body: '1' }), 401],
     ['YOU can change settings', await status(`${DB}/lvr_points/settings/zz_probe.json?auth=${encodeURIComponent(ID)}`, { method: 'PUT', headers: J, body: '1' }), 200],
   ];
