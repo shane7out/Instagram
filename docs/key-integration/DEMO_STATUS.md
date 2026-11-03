@@ -15,6 +15,11 @@ Logo: a key in `#00a8e1` with a thick round ring, a straight bar and two square-
 
 Not changed on purpose: the LVR Points gold, green and red status colors, the page `marketplace-demo.html` (deal stuff), and the raster images (`og-image.png`, `apple-touch-icon.png`). The old light blue `#59b5ff` is gone.
 
+## Book a call, SEO and install (2026-11-03)
+- **`/book.html`** (built by `docs/key-integration/build_book_page.py`): the visitor picks a day and time (Mon to Fri, 9:00 to 17:00 Pacific, 30-minute steps, 24 hours notice, 14 days ahead, shown in the visitor's time zone), enters name, email and optional phone, and the request is saved to the leads list (`key_leads/leads`, source `book-a-call`, with the time in UTC and Pacific) plus the same email alert as the other forms. Nothing is booked until Shane replies to confirm. A "tentative" calendar file is offered after sending. Hours, days and blocked dates are at the top of the page script. Every "Book a Call" button on the site now goes there.
+- **SEO:** the main structured data now lists the 23 services (`hasOfferCatalog`; the Sales Partner Network prototype is left out); `book.html` is in the sitemap; missing descriptions, canonical links and share images were added to the legal, menu and LVR pages; the owner page-views page is `noindex`.
+- **Install:** `site.webmanifest` with 192 and 512 icons so the site can be added to a phone home screen.
+
 ## Layout (rebuilt 2026-11-02)
 The demos no longer use the package's own app shell (sidebar, separate header). Every page now uses the Key Technologies site header, mobile menu, banner and footer, the homepage stylesheet (`site-base.css`, a verbatim copy of the homepage CSS) and `kp.css` (demo components in the same style). Sections of each demo are horizontal tabs. If the homepage styles change, re-copy them into `site-base.css`.
 

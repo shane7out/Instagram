@@ -18,6 +18,7 @@ def fix(h, root):
     h = re.sub(r'href="#([a-z-]+)"', lambda m: 'href="%sindex.html#%s"' % (root, m.group(1)), h)
     h = re.sub(r'href="(rewards|my-account|privacy|terms)\.html"', lambda m: 'href="%s%s.html"' % (root, m.group(1)), h)
     h = h.replace('href="key-platform/', 'href="%skey-platform/' % root)
+    h = h.replace('href="book.html"', 'href="%sbook.html"' % root)
     return h.replace('<span id="year"></span>', '<span id="kpYear"></span>')
 
 # reuse the menu/toast script already present in the hub page (key-platform/index.html)
