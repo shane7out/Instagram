@@ -128,3 +128,6 @@ Demo state is kept only in the visitor's own browser (`localStorage` keys `key.v
 `/guides/` (hub) plus three guides, all built by `docs/key-integration/build_guides.py` on the site shell and added to `sitemap.xml` and `llms.txt` by that script: **PHP2Shell: what small-business website owners should do now** (facts checked against the PHP project's release notes on 2026-11-03: two critical flaws, fixed Oct 21, 2026 in PHP 8.5.12, 8.4.27, 8.3.36, 8.2.35), **How much does an AI receptionist cost?** (cost drivers and vendor questions only, no prices, because pricing is on hold), **AI for restaurants: 6 practical ways to save time** (each use links to its demo). Each page has Article, FAQ and breadcrumb structured data. Linked from the homepage menu, footer and a "Guides" row above the FAQ.
 - **Keep fresh:** the PHP2Shell guide is time-sensitive. Re-check php.net before editing, then update the text and `DATE` in the script and re-run it.
 - To add a guide, add an entry in `build_guides.py` and run it.
+
+## Founder photo (added 2026-11-03)
+Shane's photo is in the About section (`images/shane-christensen.jpg` 528x600 and `-320.jpg`), lazy-loaded with a small and a full size, and set as the founder's `image` in the page's structured data. To swap it, replace those two files (keep the names) or edit the `<figure class="about-photo">` block.

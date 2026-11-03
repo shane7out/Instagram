@@ -379,6 +379,8 @@
   .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
   @media (max-width:860px){.about-grid{grid-template-columns:1fr;}}
   .about-grid p + p{margin-top:14px;}
+  .about-photo{margin:24px 0 0;max-width:300px;}
+  .about-photo img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.5);}
   .brand-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
   .brand-pill{
     border:1px solid var(--line);border-radius:999px;padding:7px 14px;
@@ -1012,6 +1014,7 @@
         <h2 style="margin-top:8px;">SHANE CHRISTENSEN</h2>
         <p style="margin-top:14px;font-size:18px;color:var(--ink);font-weight:600;">Decades in technology.
           Ten years building digital audiences. Now focused on what AI/SI can do for business.</p>
+        <figure class="about-photo reveal"><img src="images/shane-christensen-320.jpg" srcset="images/shane-christensen-320.jpg 320w, images/shane-christensen.jpg 528w" sizes="300px" width="528" height="600" alt="Shane Christensen, founder of Key Technologies" loading="lazy" decoding="async"></figure>
       </div>
       <div>
         <p>Shane Christensen first saw a computer in his junior high school computer lab, back when floppy
@@ -1803,6 +1806,7 @@
   "founder": {
     "@type": "Person",
     "name": "Shane Christensen",
+    "image": "https://keytechnologies.si/images/shane-christensen.jpg",
     "description": "Founder of Key Technologies with more than 42 years of hands-on experience with computers and software. His work includes computer security, networking, database management and business technology systems.",
     "knowsAbout": [
       "Computer security",
