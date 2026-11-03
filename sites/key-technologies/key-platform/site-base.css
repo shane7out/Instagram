@@ -88,7 +88,7 @@
   .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
   .logo svg{
     display:block;flex:none;
-    filter:drop-shadow(0 0 4px rgba(0,168,225,.55)) drop-shadow(0 0 11px rgba(0,168,225,.35));
+    filter:drop-shadow(0 0 4px rgba(242,181,46,.5)) drop-shadow(0 0 11px rgba(242,181,46,.3));
   }
   .logo-word{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--ink);white-space:nowrap;}
   .logo-word .logo-si{color:var(--key-light);}
