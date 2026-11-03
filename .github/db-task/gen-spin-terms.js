@@ -12,13 +12,13 @@ const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Spin Terms — LVR Rewards</title>
 <meta name="description" content="The rules of the free LVR Rewards spin. The number is random and we have no control over it.">
-<style>
-  :root{--bg:#07111f;--card:#11243b;--ink:#eef4fb;--dim:#9fb3c8;--gold:#ffd35c;--blue:#59b5ff;--line:#2c4864;}
-  *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
-  header{background:#0d1d33;padding:14px 16px;} header a{color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:.02em;} header span{color:var(--blue);}
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><style>
+  :root{--bg:#0f171e;--card:#232f3e;--ink:#ffffff;--dim:#aab9ca;--gold:#00a8e1;--blue:#00a8e1;--line:#37475a;}
+  *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Lato,Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  header{background:#232f3e;padding:14px 16px;} header a{color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:.02em;} header span{color:var(--blue);}
   main{max-width:640px;margin:0 auto;padding:26px 16px 70px;}
   h1{font-size:28px;line-height:1.2;margin:0 0 6px;} .ver{color:var(--dim);font-size:14px;margin:0 0 18px;}
-  .short{background:rgba(255,211,92,.08);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:13px 15px;margin:0 0 20px;} .short b{color:var(--gold);}
+  .short{background:rgba(0,168,225,.10);border:1px solid rgba(0,168,225,.45);border-radius:12px;padding:13px 15px;margin:0 0 20px;} .short b{color:var(--gold);}
   ol{margin:0;padding:0 0 0 22px;display:grid;gap:14px;} li b{color:var(--ink);} 
   .back{display:inline-block;margin-top:26px;color:var(--blue);font-weight:700;} .note{color:var(--dim);font-size:14px;margin-top:22px;}
   @media print{body{background:#fff;color:#000;} header{display:none;} .short{border-color:#999;background:#f4f4f4;} .back{display:none;}}

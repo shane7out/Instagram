@@ -80,7 +80,7 @@ def page(i, s):
     root = '../../'
     return '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>%s demo | Key Technologies.si</title><meta name="description" content="%s"><meta name="theme-color" content="#07111f">
+<title>%s demo | Key Technologies.si</title><meta name="description" content="%s"><meta name="theme-color" content="#0f171e">
 <link rel="icon" href="%sapple-touch-icon.png"><link rel="apple-touch-icon" href="%sapple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
