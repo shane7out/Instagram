@@ -147,3 +147,6 @@ Shane found that on Book a Call and in the KEY Platform tabs there was no obviou
 - first item in the desktop header menu,
 - first item in the phone menu (above Demos).
 It is added by `docs/key-integration/add_home_link.py`, which is idempotent and skips the homepage. **Run it last**, after the other generators (`build_book_page.py`, `build_service_demos.py`, `build_guides.py`, `build_city_pages.py`, `build_testimonials.py`), because those rebuild pages from templates that do not contain the Home link. The desktop menus also get slightly tighter spacing between 861 and 1100 px so the extra item never wraps.
+
+### Always-visible Home button (same day)
+Shane asked to be able to go to the homepage "anytime", so the top bar of every inner page now also shows a **Home** button (house icon) next to the menu button whenever the menu button is shown. On phones (480 px and narrower) it is icon-only so nothing is pushed off the screen; below 340 px it is hidden (the logo is still a Home link and the menu still lists Home). On the Rewards app pages (My Account, Menu) it is a plain Home button. `add_home_link.py` adds all of it; the CSS lives in `key-platform/site-base.css` and the inline CSS of the homepage, industry, rewards and join-restaurant pages. Checked at 320, 360, 390, 430, 768, 1000 and 1200 px: nothing overflows or overlaps.

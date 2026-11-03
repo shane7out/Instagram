@@ -31,6 +31,17 @@ for f in sorted(glob.glob(SITE + '**/*.html', recursive=True)):
             i = t.find('<ul>', mm.end())
             if i != -1 and i < seg_end:
                 t = t[:i + 4] + '\n    <li><a href="%s">Home</a></li>' % home + t[i + 4:]
+    # 4. always-visible Home button in the top bar (shown whenever the menu button is), plus plain Home buttons on the two Rewards app headers
+    HOUSE_SVG = ('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg>')
+    HOUSE = ('<a class="home-btn" href="%s" aria-label="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg><span>Home</span></a>' % home)
+    HOMELINK = ('<a class="btn btn-ghost home-link" href="%s" aria-label="Home">' % home) + HOUSE_SVG + '<span class="hl-text">Home</span></a>'
+    if 'class="home-btn"' not in t and '<button class="burger"' in t:
+        t = t.replace('<button class="burger"', HOUSE + '\n      <button class="burger"', 1)
+    if rel == 'my-account.html' and 'home-link' not in t:
+        t = t.replace('<div class="nav-cta">', '<div class="nav-cta">\n      ' + HOMELINK, 1)
+    if rel == 'menu.html' and 'home-link' not in t.split('</header>')[0]:
+        t = t.replace('<a class="btn btn-ghost" href="rewards.html" id="navJoin">', HOMELINK + '\n    <a class="btn btn-ghost" href="rewards.html" id="navJoin">', 1)
     if t != o:
         open(f, 'w', encoding='utf-8').write(t); changed += 1
 print('Home link added/updated on', changed, 'page(s)')
