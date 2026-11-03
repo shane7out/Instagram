@@ -194,6 +194,13 @@
   .foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:16px 0;list-style:none;padding:0;}
   .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
   .foot-links a:hover{color:var(--ink);}
+  .logo{position:relative;}
+  .logo::after{content:"";position:absolute;inset:-8px -6px;}
+  @media (max-width:800px){
+    .foot-links{gap:0 16px;}
+    .foot-links a{display:inline-block;padding:10px 2px;}
+    a.tap{display:inline-block;padding:10px 0;}
+  }
   .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
   .foot-phone{display:inline-block;margin-top:14px;font-size:17px;font-weight:700;color:var(--key-light);text-decoration:none;}
   .foot-phone:hover{color:var(--key-blue);}
@@ -370,7 +377,7 @@
         <div class="stat-label">Hands-on experience in security, networking and business technology</div>
       </div>
     </div>
-    <p style="margin-top:20px;"><a href="index.html#results">See the full track record &rarr;</a></p>
+    <p style="margin-top:20px;"><a class="tap" href="index.html#results">See the full track record &rarr;</a></p>
   </section>
 
   <!-- ============ FAQ ============ -->

@@ -476,6 +476,13 @@
   }
   .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
   .foot-links a:hover{color:var(--ink);}
+  .logo{position:relative;}
+  .logo::after{content:"";position:absolute;inset:-8px -6px;}
+  @media (max-width:800px){
+    .foot-links{gap:0 16px;}
+    .foot-links a{display:inline-block;padding:10px 2px;}
+    a.tap{display:inline-block;padding:10px 0;}
+  }
   .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
   .foot-phone{display:inline-block;margin-top:14px;font-size:17px;font-weight:700;color:var(--key-light);text-decoration:none;}
   .foot-phone:hover{color:var(--key-blue);}

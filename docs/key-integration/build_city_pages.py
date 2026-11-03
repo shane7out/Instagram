@@ -335,7 +335,7 @@ def body_for(c):
   <div class="roots">
     <div class="reveal"><span class="eyebrow">Shane Christensen</span><h2 style="margin:8px 0 14px">{esc(rh)}</h2><p>{rp}</p>
       {roots_more}
-      <p><a href="index.html#about">Read more about Shane</a>.</p>{roots_btn_html}</div>
+      <p><a class="tap" href="index.html#about">Read more about Shane</a>.</p>{roots_btn_html}</div>
     <figure class="about-photo reveal"><img src="images/shane-christensen-320.jpg" srcset="images/shane-christensen-320.jpg 320w, images/shane-christensen.jpg 528w" sizes="300px" width="528" height="594" alt="Shane Christensen, founder of Key Technologies" loading="lazy" decoding="async"></figure>
   </div>
 </section>

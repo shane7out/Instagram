@@ -155,6 +155,13 @@
   .foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:16px 0;list-style:none;padding:0;}
   .foot-links a{color:var(--ink-dim);text-decoration:none;font-size:14px;}
   .foot-links a:hover{color:var(--ink);}
+  .logo{position:relative;}
+  .logo::after{content:"";position:absolute;inset:-8px -6px;}
+  @media (max-width:800px){
+    .foot-links{gap:0 16px;}
+    .foot-links a{display:inline-block;padding:10px 2px;}
+    a.tap{display:inline-block;padding:10px 0;}
+  }
   .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
 
   .skip-link{position:absolute;left:-9999px;top:0;background:var(--key-blue);color:#0f171e;padding:10px 16px;border-radius:0 0 8px 0;z-index:100;}
