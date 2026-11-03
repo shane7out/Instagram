@@ -150,3 +150,11 @@ It is added by `docs/key-integration/add_home_link.py`, which is idempotent and 
 
 ### Always-visible Home button (same day)
 Shane asked to be able to go to the homepage "anytime", so the top bar of every inner page now also shows a **Home** button (house icon) next to the menu button whenever the menu button is shown. On phones (480 px and narrower) it is icon-only so nothing is pushed off the screen; below 340 px it is hidden (the logo is still a Home link and the menu still lists Home). On the Rewards app pages (My Account, Menu) it is a plain Home button. `add_home_link.py` adds all of it; the CSS lives in `key-platform/site-base.css` and the inline CSS of the homepage, industry, rewards and join-restaurant pages. Checked at 320, 360, 390, 430, 768, 1000 and 1200 px: nothing overflows or overlaps.
+
+### Home on every page, including the homepage, and the pop-up Home pill (same day)
+Shane: "I need it even on the home page. When I start scrolling a little bit I want the home button up top to pop up. Across all pages."
+- The **homepage** now has the Home button in its top bar too (house icon, plus Home in the desktop menu and the phone menu). On the homepage it scrolls smoothly to the top instead of reloading.
+- The Home button is **never hidden any more**: it fits at 320 px (smaller wordmark and buttons) instead of disappearing on tiny screens.
+- Pages whose top bar scrolls away (Privacy, Terms, Rewards terms/privacy, Spin terms, Rewards Menu, deal page) load `key-platform/home-pop.js`: a "Home" pill that pops in at the top right after about 60 px of scrolling, with a short slide (no slide if the visitor prefers reduced motion). Every other page keeps its sticky top bar with the Home button in view all the time.
+- The three legal-page generators (`.github/db-task/gen-points-terms.js`, `gen-points-privacy.js`, `gen-spin-terms.js`) now add the pill's script tag, so regenerating keeps it.
+- Verified: scrolling every page at 390 px and 1280 px always leaves a visible way home; the top bar fits at 320/360/390/430/768/1000/1200 px; accessibility check clean on the changed pages.

@@ -3,7 +3,7 @@
   * the KEY Platform chip row (Voice / Email / Sales ...)  -> first chip "Home"
   * the desktop header menu                                -> first item "Home"
   * the phone menu                                         -> first item "Home" (above Demos)
-Idempotent: pages that already have it are left alone. The homepage itself is skipped.
+Idempotent: pages that already have it are left alone. The homepage gets it too (the Home link there scrolls smoothly to the top).
 Run from the repo root AFTER the other generators:  python3 docs/key-integration/add_home_link.py
 """
 import os, re, glob
@@ -12,7 +12,7 @@ if not SITE.endswith('/'): SITE += '/'
 changed = 0
 for f in sorted(glob.glob(SITE + '**/*.html', recursive=True)):
     rel = os.path.relpath(f, SITE)
-    if rel == 'index.html' or '/thumbs/' in f: continue
+    if '/thumbs/' in f: continue
     depth = rel.count('/')
     home = '../' * depth + 'index.html'
     t = o = open(f, encoding='utf-8').read()
@@ -42,6 +42,11 @@ for f in sorted(glob.glob(SITE + '**/*.html', recursive=True)):
         t = t.replace('<div class="nav-cta">', '<div class="nav-cta">\n      ' + HOMELINK, 1)
     if rel == 'menu.html' and 'home-link' not in t.split('</header>')[0]:
         t = t.replace('<a class="btn btn-ghost" href="rewards.html" id="navJoin">', HOMELINK + '\n    <a class="btn btn-ghost" href="rewards.html" id="navJoin">', 1)
+    if rel == 'index.html' and '/*home-top*/' not in t:
+        js = ('<script>/*home-top*/(function(){document.querySelectorAll(\'header a[href="index.html"],.mobile-menu a[href="index.html"]\').forEach(function(a){'
+              'a.addEventListener("click",function(e){e.preventDefault();var r=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;'
+              'window.scrollTo({top:0,behavior:r?"auto":"smooth"});try{history.replaceState(null,"","index.html")}catch(x){}});});})();</script>\n')
+        t = t.replace('</body>', js + '</body>', 1)
     if t != o:
         open(f, 'w', encoding='utf-8').write(t); changed += 1
 print('Home link added/updated on', changed, 'page(s)')

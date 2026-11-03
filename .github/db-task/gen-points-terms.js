@@ -35,7 +35,7 @@ ${list.map(t => `    <li><b>${esc(t[0])}.</b> ${esc(t[1])}</li>`).join('\n')}
   </ol>
   <p class="note">These terms stay on this page, and under the LVR Rewards menu in the app, for as long as the program exists. The <a href="spin-terms.html" style="color:var(--blue);">Spin Terms</a> also apply to the free spin. Questions? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram.</p>
   <a class="back" href="my-account.html">&larr; Back to my LVR Rewards</a>
-</main></body></html>
+</main><script src="key-platform/home-pop.js" defer></script></body></html>
 `;
 fs.writeFileSync('sites/key-technologies/rewards-terms.html', html);
 console.log('wrote rewards-terms.html, version', ver[1], ',', list.length, 'terms');

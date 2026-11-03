@@ -42,7 +42,7 @@ ${list.map(t => `    <li><b>${esc(t[0])}.</b> ${esc(t[1])}</li>`).join('\n')}
   </ol>
   <p class="note">This page is a draft that is being reviewed. Version ${ver[2]}. Questions or requests? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram. See also the <a href="rewards-terms.html" style="color:var(--blue);">Program Terms</a>.</p>
   <a class="back" href="my-account.html">&larr; Back to my LVR Rewards</a>
-</main></body></html>
+</main><script src="key-platform/home-pop.js" defer></script></body></html>
 `;
 fs.writeFileSync('sites/key-technologies/rewards-privacy.html', html);
 console.log('wrote rewards-privacy.html, version', ver[1], ',', list.length, 'terms');
