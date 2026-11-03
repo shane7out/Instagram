@@ -119,3 +119,9 @@ for n, (t, h, tg) in EXISTING.items():
     lst.append({'slug': h, 'num': n, 'title': t, 'tag': tg, 'cat': CAT[n], 'thumb': 'demos/thumbs/%s.jpg' % h.replace('../', '').split('/')[0], 'href': h.replace('../', '')})
 lst.sort(key=lambda x: (x['num'] == 'P', int(x['num']) if x['num'].isdigit() else 99))
 json.dump(lst, open(SITE + 'key-platform/demos/list.json', 'w'), indent=1)
+
+# keep the indexable demos indexable after a rebuild
+import sys as _s, os as _o
+_s.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+import apply_demo_seo
+apply_demo_seo.run()

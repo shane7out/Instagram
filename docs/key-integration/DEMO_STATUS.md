@@ -20,6 +20,9 @@ Not changed on purpose: the LVR Points gold, green and red status colors, the pa
 - **SEO:** the main structured data now lists the 23 services (`hasOfferCatalog`; the Sales Partner Network prototype is left out); `book.html` is in the sitemap; missing descriptions, canonical links and share images were added to the legal, menu and LVR pages; the owner page-views page is `noindex`.
 - **Install:** `site.webmanifest` with 192 and 512 icons so the site can be added to a phone home screen.
 
+## Demos on Google (2026-11-03)
+Indexable (no `noindex`, canonical, share tags, structured data, sitemap entry, plus a short "how it works / before it goes live / common questions" block whose text matches the FAQ structured data): the demo hub `/key-platform/`, Voice (AI receptionist), Email, Reviews, Booking, Custom CRM and Content Creators. Configured in `docs/key-integration/apply_demo_seo.py`, which `build_service_demos.py` runs after every rebuild. Still `noindex` on purpose: the other 18 demos, the LVR Points demo (waiting on the rename decision and attorney review), the Sales Partner Network demo and the partner interest page. To add another demo to Google, add an entry to `SEO` in that script and run it. Google decides if and when pages appear; submitting `sitemap.xml` in Search Console speeds it up.
+
 ## Layout (rebuilt 2026-11-02)
 The demos no longer use the package's own app shell (sidebar, separate header). Every page now uses the Key Technologies site header, mobile menu, banner and footer, the homepage stylesheet (`site-base.css`, a verbatim copy of the homepage CSS) and `kp.css` (demo components in the same style). Sections of each demo are horizontal tabs. If the homepage styles change, re-copy them into `site-base.css`.
 
