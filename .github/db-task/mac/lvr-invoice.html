@@ -195,7 +195,7 @@
         '<div class="due"><span>Amount due</span><span>' + money(due) + '</span></div></div>'
       : '<div class="empty">No approved receipts for ' + esc(name) + ' in ' + esc(label) + '. Nothing is due.</div>';
     document.getElementById('paper').innerHTML =
-      '<h2>INVOICE</h2><div class="from">Key Technologies.si — LVR Points Program</div>' +
+      '<h2>INVOICE</h2><div class="from">Key Technologies.si — LVR Rewards Program</div>' +
       '<div class="meta"><div><b>Billed to</b>' + esc(name) + '</div><div><b>Invoice number</b>' + esc(invNo) + '<br><b style="margin-top:8px;">Issued</b>' + esc(new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })) + '</div>' +
       '<div><b>Period</b>' + esc(label) + ' (through ' + esc(lastDay) + ')</div><div></div></div>' +
       body + '<div class="terms" id="terms"></div>';
@@ -204,7 +204,7 @@
   function drawTerms(){
     var el = document.getElementById('terms'); if (!el) return;
     var pay = document.getElementById('iPay').value.trim();
-    el.textContent = 'Commission on customer spend verified through the LVR points program, at the rate agreed. Each amount is the verified receipt total for what the customer paid, not counting any free offer redeemed with points.' + (pay ? '\n\n' + pay : '');
+    el.textContent = 'Commission on customer spend verified through the LVR rewards program, at the rate agreed. Each amount is the verified receipt total for what the customer paid, not counting any free offer redeemed with rewards.' + (pay ? '\n\n' + pay : '');
   }
   function downloadCsv(){
     if (!current) return;

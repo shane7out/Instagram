@@ -85,7 +85,7 @@
   function dialog() {
     var back = document.createElement('div');
     back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
-    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and points with this login.</p>' +
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and rewards with this login.</p>' +
       '<label style="display:block;font-weight:700;margin:6px 0 3px;" for="oaEmail">Email</label><input id="oaEmail" type="email" autocomplete="username" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
       '<label style="display:block;font-weight:700;margin:10px 0 3px;" for="oaPw">Password</label><input id="oaPw" type="password" autocomplete="current-password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
       '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13.5px;color:#9fb3c8;"><input id="oaKeep" type="checkbox"> Stay signed in on this Mac</label>' +
@@ -110,7 +110,7 @@
 <!--OWNER-AUTH-END-->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LVR — Points</title>
+<title>LVR — Rewards</title>
 <meta name="robots" content="noindex">
 <style>
   :root{
@@ -187,8 +187,8 @@
 <body>
 
 <div id="pin-screen">
-  <div class="pin-logo">Points</div>
-  <div class="pin-sub">Enter PIN to manage the points program</div>
+  <div class="pin-logo">Rewards</div>
+  <div class="pin-sub">Enter PIN to manage the rewards program</div>
   <div class="pin-dots">
     <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
     <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
@@ -204,7 +204,7 @@
 
 <div id="app">
   <header>
-    <div class="brand">LVR — POINTS PROGRAM</div>
+    <div class="brand">LVR — REWARDS PROGRAM</div>
     <button class="btn" id="refreshBtn">Refresh</button>
   </header>
   <div class="tabs" id="tabs">
@@ -221,7 +221,7 @@
     <span class="tab" data-v="settings">Settings</span>
     <span class="tab" data-v="cleanup" style="border-color:rgba(255,107,107,.6);color:#ff9a9a;">Clean up</span>
   </div>
-  <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their point balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool handles receipts (approve = points land instantly), restaurants and your commission, what members can redeem, and who already has.</div>
+  <div style="padding:0 18px;margin-top:10px;font-size:12.5px;color:var(--ink-dim);">Members &amp; their reward balances now live in the Rewards screen on your main dashboard (search by name/phone/Instagram) — not here. This tool handles receipts (approve = rewards land instantly), restaurants and your commission, what members can redeem, and who already has.</div>
   <div id="view"></div>
 </div>
 
@@ -317,7 +317,7 @@
     return fbGet(p).then(function(cur){
       if (cur) return;
       return fbPut(p, { type: type, amount: amount, at: { '.sv': 'timestamp' }, ref: String(ref || '').slice(0, 280), by: 'admin' }).then(function(r){ if (!r.ok) throw new Error('ledger'); });
-    }).catch(function(){ showToast('Points saved, but the ledger entry did not. Open Audit > Ledger and run the check.'); });
+    }).catch(function(){ showToast('Rewards saved, but the ledger entry did not. Open Audit > Ledger and run the check.'); });
   }
   function fbDelete(path) { return fetch(DB + path + '.json', { method: 'DELETE' }); }
 
@@ -432,7 +432,7 @@
       }
       var approved = keys.filter(function(k){ return all[k] && all[k].status !== 'pending' && all[k].status !== 'rejected'; }).length;
       view.innerHTML = '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Waiting for approval (' + pend.length + ')</div>' +
-        '<div class="row-sub" style="margin-bottom:10px;">Check that each one looks like a real person: a real-looking name, an email that matches the name, a phone number if given, no repeats. Approving opens their account' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' ? ' and adds their ' + welcomeCfg().amount + ' welcome points' : '') + '. Declining closes it and frees the spot. ' + approved + ' members are approved so far.</div></div>' +
+        '<div class="row-sub" style="margin-bottom:10px;">Check that each one looks like a real person: a real-looking name, an email that matches the name, a phone number if given, no repeats. Approving opens their account' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' ? ' and adds their ' + welcomeCfg().amount + ' welcome rewards' : '') + '. Declining closes it and frees the spot. ' + approved + ' members are approved so far.</div></div>' +
         (pend.length ? pend.map(function(k){
           var m = all[k], f = flags(k, m), when = m.joinedAt ? new Date(m.joinedAt).toLocaleString() : '';
           return '<div class="row-card"><div class="row-title">' + escapeHtml(m.name || '(no name)') + ' <span style="color:var(--ink-dim);font-weight:500;">· spot #' + (keys.filter(function(x){ return all[x] && all[x].status !== 'rejected'; }).indexOf(k) + 1) + '</span></div>' +
@@ -465,7 +465,7 @@
         if (w.enabled === true && w.when === 'signup' && w.amount > 0 && !m.welcomeGiven) {
           return fbPut(MEMBERS_PATH + '/' + enc + '/welcomeGiven', { amount: w.amount, via: 'approval', at: { '.sv': 'timestamp' } })
             .then(function(c){ if (!c.ok) throw new Error('claim'); return fbPut(MEMBERS_PATH + '/' + enc + '/points', { '.sv': { increment: w.amount } }); })
-            .then(function(c){ if (!c.ok) throw new Error('credit'); return txLog(k, 'welcome', 'welcome', w.amount, 'Welcome points (sign-up approved)'); })
+            .then(function(c){ if (!c.ok) throw new Error('credit'); return txLog(k, 'welcome', 'welcome', w.amount, 'Welcome rewards (sign-up approved)'); })
             .catch(function(e){
               // the points did not land: put the sign-up back to pending (and clear the claim) so Approve can simply be tried again
               return Promise.all([fbPatch(MEMBERS_PATH + '/' + enc, { status: 'pending' }), fbDelete(MEMBERS_PATH + '/' + enc + '/welcomeGiven'), setRegistry(k, 'pending', m)]).then(function(){ throw e; });
@@ -505,14 +505,14 @@
     keys.sort(function(a, b){ return (cleanupMembers[b].joinedAt || 0) - (cleanupMembers[a].joinedAt || 0); });
     view.innerHTML =
       '<div class="form-box" style="border-color:rgba(255,107,107,.6);"><div style="font-weight:800;margin-bottom:6px;color:#ff9a9a;">Clean up test members (temporary)</div>' +
-      '<div class="row-sub" style="margin-bottom:10px;">Tick the people who are NOT real, then delete them. This is permanent: their account, points and personal link stop working, and their Instagram handle is freed. Real members are never touched unless you tick them. There are <b>' + keys.length + '</b> members.</div>' +
+      '<div class="row-sub" style="margin-bottom:10px;">Tick the people who are NOT real, then delete them. This is permanent: their account, rewards and personal link stop working, and their Instagram handle is freed. Real members are never touched unless you tick them. There are <b>' + keys.length + '</b> members.</div>' +
       (msg ? '<div class="row-sub" style="color:var(--green);margin-bottom:8px;">' + escapeHtml(msg) + '</div>' : '') +
       '<div id="cuList">' + (keys.length ? keys.map(function(k){
         var r = cleanupMembers[k] || {};
         return '<label class="row-card" style="display:flex;gap:12px;align-items:center;cursor:pointer;margin-bottom:8px;">' +
           '<input type="checkbox" class="cuChk" data-k="' + escapeHtml(k) + '" style="width:22px;height:22px;flex:none;">' +
           '<span style="min-width:0;"><span class="row-name" style="display:block;">' + escapeHtml(r.name || '(no name)') + '</span>' +
-          '<span class="row-sub" style="display:block;">' + escapeHtml(r.instagram ? String(r.instagram) : 'no Instagram') + ' · ' + escapeHtml(r.phone || r.email || 'no contact') + ' · ' + (r.points || 0) + ' points · joined ' + (r.joinedAt ? new Date(r.joinedAt).toLocaleDateString() : 'n/a') + (r.source ? ' · ' + escapeHtml(r.source) : '') + '</span></span></label>';
+          '<span class="row-sub" style="display:block;">' + escapeHtml(r.instagram ? String(r.instagram) : 'no Instagram') + ' · ' + escapeHtml(r.phone || r.email || 'no contact') + ' · ' + (r.points || 0) + ' rewards · joined ' + (r.joinedAt ? new Date(r.joinedAt).toLocaleDateString() : 'n/a') + (r.source ? ' · ' + escapeHtml(r.source) : '') + '</span></span></label>';
       }).join('') : '<div class="empty-note">No members.</div>') + '</div>' +
       '<div class="form-actions" id="cuActs"><button class="btn" id="cuAll">Tick everyone</button><button class="btn" id="cuNone">Untick all</button><button class="btn" id="cuDel" style="border-color:var(--red);color:var(--red);" disabled>Delete ticked (0)</button></div>' +
       '<div id="cuConfirm"></div></div>';
@@ -640,14 +640,14 @@
           '<input type="number" id="pts-' + id + '" value="' + suggested + '" min="0" style="width:84px;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);">' +
           '<button data-act="approve" data-id="' + id + '" style="background:#0f67c2;border-color:#0f67c2;color:#fff;">Approve</button>' +
           '<button data-act="reject" data-id="' + id + '">Reject</button>' +
-        '</div><div class="row-sub" style="margin-top:6px;">' + (rate ? ('Suggested ' + suggested + ' = ' + money(r.amount) + ' x ' + rate + ' pts per $1') : 'No earn rate set for this restaurant yet - enter points by hand.') + '</div></div>';
+        '</div><div class="row-sub" style="margin-top:6px;">' + (rate ? ('Suggested ' + suggested + ' = ' + money(r.amount) + ' x ' + rate + ' pts per $1') : 'No earn rate set for this restaurant yet - enter rewards by hand.') + '</div></div>';
     }
     if (r.status === 'approved' && r.pointsApplied === true && r.referralDone === false) {
-      return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Points landed, but the referral bonus did not finish. Tap retry (safe - each level pays once).</div>' +
+      return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Rewards landed, but the referral bonus did not finish. Tap retry (safe - each level pays once).</div>' +
         '<div class="row-actions"><button data-act="retryref" data-id="' + id + '">Retry referral bonus</button></div></div>';
     }
     if (r.status === 'approved' && r.pointsApplied === false) {
-      return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Approved for ' + (r.pointsAwarded||0) + ' pts but the points did not land. Tap retry (safe - it will not double-award).</div>' +
+      return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Approved for ' + (r.pointsAwarded||0) + ' pts but the rewards did not land. Tap retry (safe - it will not double-award).</div>' +
         '<div class="row-actions"><button data-act="retry" data-id="' + id + '">Retry award</button></div></div>';
     }
     var label = r.status === 'approved' ? ('Approved +' + (r.pointsAwarded||0) + ' pts') : 'Rejected';
@@ -673,7 +673,7 @@
   var approving = {};
   function approveReceipt(id) {
     var pts = parseInt(document.getElementById('pts-' + id).value, 10);
-    if (isNaN(pts) || pts < 0) { showToast('Enter the points to award'); return; }
+    if (isNaN(pts) || pts < 0) { showToast('Enter the rewards to award'); return; }
     if (approving[id]) return; // a double tap must never credit twice
     approving[id] = true;
     fbGet(RECEIPTS_PATH + '/' + id).then(function(fresh){
@@ -698,10 +698,10 @@
           if (!resp.ok) throw new Error('credit failed');
           if (pts > 0) txLog(r.memberKey, 'receipt-' + id, 'receipt', pts, 'Receipt ' + (r.receiptNo || '') + ' at ' + bizOf(r.slug) + ' ($' + r.amount + ')');
           return fbPatch(RECEIPTS_PATH + '/' + id, { pointsApplied: true });
-        }).then(function(){ return applyWelcome(id, r, pts).catch(function(){ showToast('Points added - welcome bonus did not land (see Audit notes)'); }); });
-      }).then(function(){ return applyReferrals(id).catch(function(){ showToast('Points added - referral bonus will need a retry'); }); })
-        .then(function(){ showToast('Approved - points added'); });
-    }).catch(function(){ showToast('Points did not land - use Retry'); });
+        }).then(function(){ return applyWelcome(id, r, pts).catch(function(){ showToast('Rewards added - welcome bonus did not land (see Audit notes)'); }); });
+      }).then(function(){ return applyReferrals(id).catch(function(){ showToast('Rewards added - referral bonus will need a retry'); }); })
+        .then(function(){ showToast('Approved - rewards added'); });
+    }).catch(function(){ showToast('Rewards did not land - use Retry'); });
   }
 
   // Welcome bonus: once per member, when their FIRST approved receipt (with
@@ -716,12 +716,12 @@
       if (given) return;
       return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/welcomeGiven', { amount: w.amount, receiptId: id, at: { '.sv': 'timestamp' } })
         .then(function(c){ if (!c.ok) throw new Error('claim failed'); return fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: w.amount } }); })
-        .then(function(c){ if (!c.ok) throw new Error('credit failed'); txLog(r.memberKey, 'welcome', 'welcome', w.amount, 'Welcome points (first approved receipt)'); return fbPatch(RECEIPTS_PATH + '/' + id, { welcomeAwarded: w.amount }); });
+        .then(function(c){ if (!c.ok) throw new Error('credit failed'); txLog(r.memberKey, 'welcome', 'welcome', w.amount, 'Welcome rewards (first approved receipt)'); return fbPatch(RECEIPTS_PATH + '/' + id, { welcomeAwarded: w.amount }); });
     });
   }
 
   function rejectReceipt(id) {
-    if (!confirm('Reject this receipt? No points will be awarded.')) return;
+    if (!confirm('Reject this receipt? No rewards will be awarded.')) return;
     fbGet(RECEIPTS_PATH + '/' + id).then(function(fresh){
       if (!fresh || fresh.status !== 'pending') { showToast('Already handled'); return loadAll(); }
       return fbPatch(RECEIPTS_PATH + '/' + id, { status: 'rejected', decidedAt: { '.sv': 'timestamp' } }).then(function(){ showToast('Rejected'); loadAll(); });
@@ -789,11 +789,11 @@
   // ========================================================================
   var bonusMembers = null, bonusPick = null, bonusLog = {};
   function renderBonusTab() {
-    view.innerHTML = '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Give bonus points</div>' +
-      '<div class="row-sub" style="margin-bottom:12px;">For things like a video they posted or a special thank-you. Points from receipts are approved on the Receipts tab; use this only for extras. The reason is kept permanently in the record.</div>' +
+    view.innerHTML = '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Give bonus rewards</div>' +
+      '<div class="row-sub" style="margin-bottom:12px;">For things like a video they posted or a special thank-you. Rewards from receipts are approved on the Receipts tab; use this only for extras. The reason is kept permanently in the record.</div>' +
       '<div class="field"><label>Find the member (name or Instagram)</label><input type="text" id="bSearch" placeholder="Start typing…" autocomplete="off"></div>' +
       '<div id="bResults"></div><div id="bForm"></div></div>' +
-      '<div style="margin:22px 0 10px;font-weight:800;font-size:14px;">Recent bonus points</div><div id="bLog"><div class="empty-note">Loading…</div></div>';
+      '<div style="margin:22px 0 10px;font-weight:800;font-size:14px;">Recent bonus rewards</div><div id="bLog"><div class="empty-note">Loading…</div></div>';
     Promise.all([bonusMembers ? Promise.resolve(bonusMembers) : fbGet(MEMBERS_PATH), fbGet('/lvr_points/bonuses')]).then(function(r){
       bonusMembers = r[0] || {}; bonusLog = r[1] || {};
       drawBonusLog();
@@ -803,48 +803,48 @@
       bonusPick = null; document.getElementById('bForm').innerHTML = '';
       if (!bonusMembers || q.length < 2) { box.innerHTML = ''; return; }
       var hits = Object.keys(bonusMembers).filter(function(k){ var m = bonusMembers[k] || {}; return (String(m.name || '') + ' ' + String(m.instagram || '')).toLowerCase().indexOf(q) > -1; }).slice(0, 8);
-      box.innerHTML = hits.length ? hits.map(function(k){ var m = bonusMembers[k]; return '<div class="row-card" style="cursor:pointer;" data-pick="' + escapeHtml(k) + '"><div class="row-title">' + escapeHtml(m.name || '') + (m.instagram ? ' <span style="color:var(--ink-dim);font-weight:500;">' + escapeHtml(m.instagram) + '</span>' : '') + '</div><div class="row-sub">' + (m.points || 0) + ' points now</div></div>'; }).join('') : '<div class="empty-note">No one found.</div>';
+      box.innerHTML = hits.length ? hits.map(function(k){ var m = bonusMembers[k]; return '<div class="row-card" style="cursor:pointer;" data-pick="' + escapeHtml(k) + '"><div class="row-title">' + escapeHtml(m.name || '') + (m.instagram ? ' <span style="color:var(--ink-dim);font-weight:500;">' + escapeHtml(m.instagram) + '</span>' : '') + '</div><div class="row-sub">' + (m.points || 0) + ' rewards now</div></div>'; }).join('') : '<div class="empty-note">No one found.</div>';
       box.querySelectorAll('[data-pick]').forEach(function(el){ el.addEventListener('click', function(){ pickBonusMember(el.getAttribute('data-pick')); }); });
     });
   }
   function pickBonusMember(k) {
     var m = bonusMembers[k]; bonusPick = k;
     document.getElementById('bResults').innerHTML = '';
-    document.getElementById('bForm').innerHTML = '<div class="row-card"><div class="row-title">' + escapeHtml(m.name || '') + '</div><div class="row-sub">' + (m.points || 0) + ' points now</div></div>' +
-      '<div class="field-row"><div class="field"><label>Points to add (1 to 1000)</label><input type="number" id="bPts" min="1" max="1000" step="1"></div>' +
+    document.getElementById('bForm').innerHTML = '<div class="row-card"><div class="row-title">' + escapeHtml(m.name || '') + '</div><div class="row-sub">' + (m.points || 0) + ' rewards now</div></div>' +
+      '<div class="field-row"><div class="field"><label>Rewards to add (1 to 1000)</label><input type="number" id="bPts" min="1" max="1000" step="1"></div>' +
       '<div class="field"><label>Reason (kept permanently)</label><input type="text" id="bWhy" maxlength="200" placeholder="e.g. Posted a video about Vanilla Rice"></div></div>' +
-      '<div class="form-actions"><button class="btn btn-primary" id="bGive">Add the points</button></div>' +
-      '<div style="margin:18px 0 6px;font-weight:800;color:var(--red);">Take points back</div>' +
-      '<div class="row-sub" style="margin-bottom:8px;">Under the Program Terms you may adjust or take back points at any time. This removes points from this member and writes a permanent ledger entry with your reason. It never goes below 0.</div>' +
-      '<div class="field-row"><div class="field"><label>Points to take back (leave empty to take all ' + (m.points || 0) + ')</label><input type="number" id="bTakePts" min="1" step="1"></div>' +
+      '<div class="form-actions"><button class="btn btn-primary" id="bGive">Add the rewards</button></div>' +
+      '<div style="margin:18px 0 6px;font-weight:800;color:var(--red);">Take rewards back</div>' +
+      '<div class="row-sub" style="margin-bottom:8px;">Under the Program Terms you may adjust or take back rewards at any time. This removes rewards from this member and writes a permanent ledger entry with your reason. It never goes below 0.</div>' +
+      '<div class="field-row"><div class="field"><label>Rewards to take back (leave empty to take all ' + (m.points || 0) + ')</label><input type="number" id="bTakePts" min="1" step="1"></div>' +
       '<div class="field"><label>Reason (kept permanently)</label><input type="text" id="bTakeWhy" maxlength="200" placeholder="e.g. Suspected fraud, duplicate account"></div></div>' +
-      '<div class="form-actions"><button class="btn" id="bTake" style="border-color:var(--red);color:var(--red);">Take the points back</button></div>';
+      '<div class="form-actions"><button class="btn" id="bTake" style="border-color:var(--red);color:var(--red);">Take the rewards back</button></div>';
     document.getElementById('bGive').addEventListener('click', giveBonus);
     document.getElementById('bTake').addEventListener('click', function(){
       var why = document.getElementById('bTakeWhy').value.trim(), raw = document.getElementById('bTakePts').value.trim(), want = raw ? parseInt(raw, 10) : null;
       if (why.length < 3) { showToast('Please write a short reason'); return; }
-      if (raw && !(want >= 1)) { showToast('Enter a whole number of points'); return; }
-      if (!confirm('Take ' + (want == null ? 'ALL' : want) + ' points back from ' + (m.name || 'this member') + '?')) return;
+      if (raw && !(want >= 1)) { showToast('Enter a whole number of rewards'); return; }
+      if (!confirm('Take ' + (want == null ? 'ALL' : want) + ' rewards back from ' + (m.name || 'this member') + '?')) return;
       this.disabled = true;
-      takeBackPoints(k, why, want).then(function(n){ if (!n) { showToast('This member has no points to take back'); return; } m.points = Math.max(0, (m.points || 0) - n); showToast('Took back ' + n + ' points from ' + (m.name || 'member')); pickBonusMember(k); })
+      takeBackPoints(k, why, want).then(function(n){ if (!n) { showToast('This member has no rewards to take back'); return; } m.points = Math.max(0, (m.points || 0) - n); showToast('Took back ' + n + ' rewards from ' + (m.name || 'member')); pickBonusMember(k); })
         .catch(function(){ showToast('Something went wrong - check the member balance before trying again'); pickBonusMember(k); });
     });
   }
   function giveBonus() {
     var k = bonusPick, m = k && bonusMembers[k];
     var pts = parseInt(document.getElementById('bPts').value, 10), why = document.getElementById('bWhy').value.trim();
-    if (!m || !(pts >= 1 && pts <= 1000)) { showToast('Enter 1 to 1000 points'); return; }
+    if (!m || !(pts >= 1 && pts <= 1000)) { showToast('Enter 1 to 1000 rewards'); return; }
     if (why.length < 3) { showToast('Please write a short reason'); return; }
     var btn = document.getElementById('bGive'); btn.disabled = true;
     var id = genToken().slice(0, 14);
     fbPut('/lvr_points/bonuses/' + id, { memberKey: k, token: m.token || null, name: m.name || '', points: pts, reason: why, at: { '.sv': 'timestamp' } })
       .then(function(r){ if (!r.ok) throw new Error('record'); return fbPut(MEMBERS_PATH + '/' + k + '/points', { '.sv': { increment: pts } }); })
-      .then(function(r){ if (!r.ok) throw new Error('points'); txLog(k, 'bonus-' + id, 'bonus', pts, why); m.points = (m.points || 0) + pts; bonusLog[id] = { name: m.name, points: pts, reason: why, at: Date.now() }; showToast('Added ' + pts + ' points to ' + (m.name || 'member')); renderBonusTab(); })
+      .then(function(r){ if (!r.ok) throw new Error('points'); txLog(k, 'bonus-' + id, 'bonus', pts, why); m.points = (m.points || 0) + pts; bonusLog[id] = { name: m.name, points: pts, reason: why, at: Date.now() }; showToast('Added ' + pts + ' rewards to ' + (m.name || 'member')); renderBonusTab(); })
       .catch(function(){ btn.disabled = false; showToast('Something went wrong - check the Recent list before trying again'); });
   }
   function drawBonusLog() {
     var ids = Object.keys(bonusLog).sort(function(a, b){ return (bonusLog[b].at || 0) - (bonusLog[a].at || 0); }).slice(0, 25);
-    document.getElementById('bLog').innerHTML = ids.length ? ids.map(function(id){ var b = bonusLog[id]; return '<div class="row-card"><div class="row-title">+' + b.points + ' to ' + escapeHtml(b.name || '') + '</div><div class="row-sub">' + escapeHtml(b.reason || '') + ' · ' + (b.at ? new Date(b.at).toLocaleDateString() : '') + '</div></div>'; }).join('') : '<div class="empty-note">No bonus points given yet.</div>';
+    document.getElementById('bLog').innerHTML = ids.length ? ids.map(function(id){ var b = bonusLog[id]; return '<div class="row-card"><div class="row-title">+' + b.points + ' to ' + escapeHtml(b.name || '') + '</div><div class="row-sub">' + escapeHtml(b.reason || '') + ' · ' + (b.at ? new Date(b.at).toLocaleDateString() : '') + '</div></div>'; }).join('') : '<div class="empty-note">No bonus rewards given yet.</div>';
   }
 
   function renderSettingsTab() {
@@ -865,12 +865,12 @@
         '<div class="field"><label>Message shown at the top of member pages (optional, e.g. "We\'re upgrading - back Monday")</label><input type="text" id="sBanner" value="' + escapeHtml(settings.banner || '') + '"></div>' +
         '<div class="form-actions"><button class="btn" id="sPauseAll" style="border-color:var(--red);color:var(--red);">Pause everything</button><button class="btn" id="sResumeAll">Resume everything</button></div>' +
       '</div>' +
-      '<div class="form-box" style="border-color:var(--red);"><div style="font-weight:800;margin-bottom:6px;color:var(--red);">Emergency controls: take points back / end the program</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">The Program Terms give you the sole right to pause, change or end LVR Points and to take points back at any time (fraud, a hack, a vulnerability, a mistake, a restaurant leaving, anything). "Pause everything" above stops activity and keeps balances. This box changes balances. Every take-back is written to the permanent ledger as an <b>adjustment</b> with your reason, so the record shows what happened. To take back points from ONE member, use Bonus points > find the member > Take points back.</div>' +
-        '<div class="field"><label>Reason (kept in the ledger and shown to members at the top of the app)</label><input type="text" id="eReason" maxlength="160" placeholder="e.g. LVR Points has ended / security incident"></div>' +
+      '<div class="form-box" style="border-color:var(--red);"><div style="font-weight:800;margin-bottom:6px;color:var(--red);">Emergency controls: take rewards back / end the program</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">The Program Terms give you the sole right to pause, change or end LVR Rewards and to take rewards back at any time (fraud, a hack, a vulnerability, a mistake, a restaurant leaving, anything). "Pause everything" above stops activity and keeps balances. This box changes balances. Every take-back is written to the permanent ledger as an <b>adjustment</b> with your reason, so the record shows what happened. To take back rewards from ONE member, use Bonus rewards > find the member > Take rewards back.</div>' +
+        '<div class="field"><label>Reason (kept in the ledger and shown to members at the top of the app)</label><input type="text" id="eReason" maxlength="160" placeholder="e.g. LVR Rewards has ended / security incident"></div>' +
         '<div class="form-actions"><button class="btn" id="eBackup">Download a backup of all balances (CSV)</button></div>' +
-        '<div class="field"><label>To take back ALL points from ALL members, type: TAKE BACK ALL POINTS</label><input type="text" id="eConfirm" autocomplete="off"></div>' +
-        '<div class="form-actions"><button class="btn" id="eEnd" style="border-color:var(--red);color:var(--red);">Take back ALL points and end the program</button></div>' +
+        '<div class="field"><label>To take back ALL rewards from ALL members, type: TAKE BACK ALL REWARDS</label><input type="text" id="eConfirm" autocomplete="off"></div>' +
+        '<div class="form-actions"><button class="btn" id="eEnd" style="border-color:var(--red);color:var(--red);">Take back ALL rewards and end the program</button></div>' +
         '<p class="row-sub" id="eStatus" role="status" style="margin-top:8px;"></p>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Receipt limits</div>' +
@@ -880,62 +880,62 @@
           '<div class="field"><label>Receipt must be within (days)</label><input type="number" id="sWindow" min="1" value="' + lim.windowDays + '"></div>' +
         '</div></div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Welcome bonus</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Free starting points for a new member. With "The moment they sign up" the points are added when you APPROVE the sign-up (Approvals tab); with "first receipt" they are added when the member\'s first receipt is approved. Offers are funded by the participating restaurants through the credit ledger.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Free starting points for a new member. With "The moment they sign up" the rewards are added when you APPROVE the sign-up (Approvals tab); with "first receipt" they are added when the member\'s first receipt is approved. Offers are funded by the participating restaurants through the credit ledger.</div>' +
         chk('sWelOn', welcome.enabled === true, 'Welcome bonus is on') +
-        '<div class="field-row"><div class="field"><label>Welcome points (about the price of the free item, e.g. 21)</label><input type="number" id="sWelAmt" min="1" max="50" step="1" value="' + (welcome.amount || 21) + '"></div>' +
+        '<div class="field-row"><div class="field"><label>Welcome rewards (about the price of the free item, e.g. 21)</label><input type="number" id="sWelAmt" min="1" max="50" step="1" value="' + (welcome.amount || 21) + '"></div>' +
         '<div class="field"><label>Give them</label><select id="sWelWhen"><option value="signup"' + (welcome.when === 'signup' ? ' selected' : '') + '>The moment they sign up</option><option value="receipt"' + (welcome.when !== 'signup' ? ' selected' : '') + '>When their first receipt is approved</option></select></div></div>' +
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Signing up is easy to abuse with fake accounts. The restaurant\'s credit in the funding ledger is the safety net: once it is used up, offers stop. Keep that credit modest, and use the pause switch if sign-ups look strange.</div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Member bonus</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a plain "Bonus in N days" number that starts counting the day they join. When it ends the bonus is ready: they log in and collect a random whole number of points between your minimum and maximum. They have a set number of hours to claim it (48 by default). If they miss that window, it goes back to a full wait. After a claim the next countdown starts. It keeps going until you untick "Keep repeating". While the biggest prize is 0, members see no bonus at all and nothing is given. Every prize is written to a permanent log.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Each member sees a plain "Bonus in N days" number that starts counting the day they join. When it ends the bonus is ready: they log in and collect a random whole number of rewards between your minimum and maximum. They have a set number of hours to claim it (48 by default). If they miss that window, it goes back to a full wait. After a claim the next countdown starts. It keeps going until you untick "Keep repeating". While the biggest prize is 0, members see no bonus at all and nothing is given. Every prize is written to a permanent log.</div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Days between bonuses (7 = a bonus every 7 days)</label><input type="number" id="sChestDays" min="1" max="365" step="1" value="' + (chest.waitDays || 7) + '"></div>' +
           '<div class="field"><label>Hours to claim it once ready (48 = two days)</label><input type="number" id="sChestHours" min="1" max="720" step="1" value="' + (chest.claimHours || 48) + '"></div>' +
         '</div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Smallest prize (points, at least 1 so every spin wins something)</label><input type="number" id="sChestMin" min="0" max="50" step="1" value="' + (chest.prizeMin == null ? 1 : chest.prizeMin) + '"></div>' +
-          '<div class="field"><label>Biggest bonus (points, 0 = no bonus at all, max 50)</label><input type="number" id="sChestMax" min="0" max="50" step="1" value="' + (chest.prizeMax == null ? 0 : chest.prizeMax) + '"></div>' +
+          '<div class="field"><label>Smallest prize (rewards, at least 1 so every spin wins something)</label><input type="number" id="sChestMin" min="0" max="50" step="1" value="' + (chest.prizeMin == null ? 1 : chest.prizeMin) + '"></div>' +
+          '<div class="field"><label>Biggest bonus (rewards, 0 = no bonus at all, max 50)</label><input type="number" id="sChestMax" min="0" max="50" step="1" value="' + (chest.prizeMax == null ? 0 : chest.prizeMax) + '"></div>' +
         '</div>' +
         chk('sChestRepeat', chest.repeat !== false, 'Keep repeating (untick to stop after each member\'s first bonus)') +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Founding members (limited start)</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">Only the FIRST people can join on their own. After that, joining needs an invite link from one of those Founding Members, and each founder can invite only the number below. Founders are simply the first accounts ever opened (members already in the list count). Raise the numbers, or untick the box, whenever you want to open the doors. <b style="color:var(--yellow);">This is checked by the sign-up page, not by a server, so treat it as a strong gate, not a lock.</b></div>' +
         chk('sLaunchOn', (settings.launch || {}).enabled === true, 'Limit sign-ups to Founding Members') +
-        chk('sLaunchApprove', (settings.launch || {}).approval !== false, 'Every new sign-up must be approved by me (Approvals tab) before the account opens and welcome points are added') +
+        chk('sLaunchApprove', (settings.launch || {}).approval !== false, 'Every new sign-up must be approved by me (Approvals tab) before the account opens and welcome rewards are added') +
         '<div class="field-row"><div class="field"><label>Founding Member spots (the first N people)</label><input type="number" id="sLaunchLimit" min="1" max="100000" step="1" value="' + ((settings.launch || {}).limit || 25) + '"></div>' +
         '<div class="field"><label>Friends each Founding Member can invite</label><input type="number" id="sLaunchInv" min="0" max="50" step="1" value="' + ((settings.launch || {}).invites == null ? 1 : settings.launch.invites) + '"></div></div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Monthly return to the pool (use it or share it)</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">On the 1st of every month, this percent of each member\'s unused points (rounded down) goes back into the community pool so other members get a chance to use them. Members see this in the app, on the sign-up page, in the rules, Q&amp;A and Program Terms. Call it a "return to the pool", not a fee: no money is involved. New members are safe during their first days (grace). The return runs when YOU click the button below on or after the 1st; nobody is charged twice for the same month. <b style="color:var(--yellow);">Attorney: confirm before relying on it.</b></div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">On the 1st of every month, this percent of each member\'s unused rewards (rounded down) goes back into the community pool so other members get a chance to use them. Members see this in the app, on the sign-up page, in the rules, Q&amp;A and Program Terms. Call it a "return to the pool", not a fee: no money is involved. New members are safe during their first days (grace). The return runs when YOU click the button below on or after the 1st; nobody is charged twice for the same month. <b style="color:var(--yellow);">Attorney: confirm before relying on it.</b></div>' +
         chk('sDecOn', (settings.decay || {}).enabled === true, 'Monthly return is on (members see the notice)') +
         '<div class="field-row"><div class="field"><label>Percent returned each month (1 to 50)</label><input type="number" id="sDecPct" min="1" max="50" step="1" value="' + ((settings.decay || {}).percent || 20) + '"></div>' +
         '<div class="field"><label>New members are safe for (days)</label><input type="number" id="sDecGrace" min="0" max="365" step="1" value="' + ((settings.decay || {}).graceDays == null ? 30 : settings.decay.graceDays) + '"></div></div>' +
         '<div class="form-actions"><button class="btn" id="sDecPreview">Preview this month\'s return (changes nothing)</button><button class="btn" id="sDecRun" style="border-color:var(--red);color:var(--red);">Run this month\'s return now</button></div>' +
         '<p class="row-sub" id="sDecOut" role="status" style="margin-top:8px;"></p>' +
         '<div style="font-weight:800;margin:16px 0 6px;">Hand the pool out at random</div>' +
-        '<div class="row-sub" style="margin-bottom:10px;">After the return, the pool is handed out at random to other approved members, a few points at a time (the same range as the free spin), the way the points were first given out. Members whose points went back this month are not in that month\'s draw. You do not choose anyone: a secure random number generator picks the members and the amounts, and every drop is written to the permanent ledger. Once per month. Whatever is left over stays in the pool.</div>' +
+        '<div class="row-sub" style="margin-bottom:10px;">After the return, the pool is handed out at random to other approved members, a few rewards at a time (the same range as the free spin), the way the rewards were first given out. Members whose rewards went back this month are not in that month\'s draw. You do not choose anyone: a secure random number generator picks the members and the amounts, and every drop is written to the permanent ledger. Once per month. Whatever is left over stays in the pool.</div>' +
         '<div class="form-actions"><button class="btn" id="sDropPreview">Preview the pool drop (changes nothing)</button><button class="btn" id="sDropRun" style="border-color:var(--red);color:var(--red);">Hand out the pool now</button></div>' +
         '<p class="row-sub" id="sDropOut" role="status" style="margin-top:8px;"></p>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Instagram tag bonus</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Members post on Instagram, tag @LasVegas_Restaurants, and paste the link. You check it in the Tags tab and the points are added. <b style="color:var(--yellow);">Leave this OFF until the database rules are deployed and your attorney has approved the #ad wording.</b></div>' +
-        chk('sTagOn', (settings.tagBonus || {}).enabled === true, 'Show "Tag us, earn points" to members') +
-        '<div class="field"><label>Points for an approved post (1 to 50)</label><input type="number" id="sTagPts" min="1" max="50" step="1" value="' + ((settings.tagBonus || {}).points || 5) + '"></div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Members post on Instagram, tag @LasVegas_Restaurants, and paste the link. You check it in the Tags tab and the rewards are added. <b style="color:var(--yellow);">Leave this OFF until the database rules are deployed and your attorney has approved the #ad wording.</b></div>' +
+        chk('sTagOn', (settings.tagBonus || {}).enabled === true, 'Show "Tag us, earn rewards" to members') +
+        '<div class="field"><label>Rewards for an approved post (1 to 50)</label><input type="number" id="sTagPts" min="1" max="50" step="1" value="' + ((settings.tagBonus || {}).points || 5) + '"></div>' +
       '</div>' +
-      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Prize ladder (what points can win)</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">Shows members a ladder of bigger and bigger prizes under LVR Points > Prizes, so they see why earning more points is worth it. One prize per line, written as <b>points | prize</b>. Several prizes can share the same points. <b style="color:var(--yellow);">Currently the app does not show prizes at all (points stay in restaurants only), so this switch does nothing. Leave this OFF until the prizes are funded and your attorney has approved them, and until prize claiming is built (members can see the prizes but cannot claim them yet).</b></div>' +
+      '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Prize ladder (what rewards can win)</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">Shows members a ladder of bigger and bigger prizes under LVR Rewards > Prizes, so they see why earning more rewards is worth it. One prize per line, written as <b>rewards | prize</b>. Several prizes can share the same rewards. <b style="color:var(--yellow);">Currently the app does not show prizes at all (rewards stay in restaurants only), so this switch does nothing. Leave this OFF until the prizes are funded and your attorney has approved them, and until prize claiming is built (members can see the prizes but cannot claim them yet).</b></div>' +
         chk('sPrzOn', (settings.prizeLadder || {}).enabled === true, 'Show the prize ladder to members') +
-        '<div class="field"><label>Prizes (points | prize)</label><textarea id="sPrzText" rows="7" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font:inherit;font-size:14px;">' + escapeHtml((settings.prizeLadder && settings.prizeLadder.text) || '20 | Free meal at a partner restaurant\n250 | $50 gas card\n500 | $100 gas card\n1000 | $200 Amazon gift card\n2500 | $500 Amazon gift card') + '</textarea></div>' +
+        '<div class="field"><label>Prizes (rewards | prize)</label><textarea id="sPrzText" rows="7" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font:inherit;font-size:14px;">' + escapeHtml((settings.prizeLadder && settings.prizeLadder.text) || '20 | Free meal at a partner restaurant\n250 | $50 gas card\n500 | $100 gas card\n1000 | $200 Amazon gift card\n2500 | $500 Amazon gift card') + '</textarea></div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurant commission</div>' +
         '<div class="row-sub" style="margin-bottom:12px;">What each restaurant owes you, as a percent of the verified amount members paid there. A business can have its own percent (Restaurants tab > Edit); any business without one uses this default. The Earnings tab adds it up per restaurant per month and downloads a statement.</div>' +
         '<div class="field"><label>Default commission % (agreed with the restaurants)</label><input type="number" id="sCommDefault" min="0" max="100" step="0.5" value="' + (settings.defaultCommissionPct != null ? settings.defaultCommissionPct : 20) + '"></div>' +
       '</div>' +
       '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Referral rewards</div>' +
-        '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns points from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s points.</div>' +
+        '<div class="row-sub" style="margin-bottom:12px;">When someone joins from a member\'s link and earns rewards from verified receipts, the member who invited them earns a bonus. Nothing is paid for signing people up, and it never reduces the friend\'s rewards.</div>' +
         chk('sRefOn', c.enabled === true, 'Referral rewards are on (off until your attorney has reviewed them)') +
         '<div class="field-row">' +
-          '<div class="field"><label>Level 1: % of the friend\'s points (invited by a member)</label><input type="number" id="sL1" min="0" max="100" step="1" value="' + (c.l1Pct || 0) + '"></div>' +
+          '<div class="field"><label>Level 1: % of the friend\'s rewards (invited by a member)</label><input type="number" id="sL1" min="0" max="100" step="1" value="' + (c.l1Pct || 0) + '"></div>' +
           '<div class="field"><label>Level 2: % paid up one more step</label><input type="number" id="sL2" min="0" max="100" step="1" value="' + (c.l2Pct || 0) + '"></div>' +
         '</div>' +
         '<div class="row-sub" style="margin-bottom:12px;color:var(--yellow);">Keep Level 2 at 0 until your attorney confirms multi-level rewards are allowed. The system never goes past two levels.</div>' +
@@ -1015,10 +1015,10 @@
           todo.push({ k: k, pts: pts, take: take });
         });
         var total = todo.reduce(function(s, x){ return s + x.take; }, 0);
-        if (dry) { out.textContent = 'Preview for ' + run + ': ' + todo.length + ' members would give back ' + total + ' points (' + pct + '%, rounded down). ' + tooNew + ' new members are inside the safe period. Nothing was changed.'; return; }
+        if (dry) { out.textContent = 'Preview for ' + run + ': ' + todo.length + ' members would give back ' + total + ' rewards (' + pct + '%, rounded down). ' + tooNew + ' new members are inside the safe period. Nothing was changed.'; return; }
         if (!todo.length) { out.textContent = 'Nothing to return this month.'; return; }
         if (now.getDate() > 3 && !confirm('Today is the ' + now.getDate() + 'th. The return is normally run on the 1st. Run it anyway for ' + run + '?')) { out.textContent = ''; return; }
-        if (!confirm('Take ' + pct + '% of unused points back to the pool now: ' + todo.length + ' members, ' + total + ' points in total (month ' + run + ')?')) { out.textContent = ''; return; }
+        if (!confirm('Take ' + pct + '% of unused rewards back to the pool now: ' + todo.length + ' members, ' + total + ' rewards in total (month ' + run + ')?')) { out.textContent = ''; return; }
         var done = 0, gave = 0, already = 0, failed = 0;
         return todo.reduce(function(chain, x){
           return chain.then(function(){
@@ -1033,7 +1033,7 @@
           });
         }, Promise.resolve()).then(function(){
           if (!failed) fbPut('/lvr_points/decay_runs/' + run, { members: done, points: gave, percent: pct, at: { '.sv': 'timestamp' } }).catch(function(){});
-          out.textContent = 'Done for ' + run + ': ' + gave + ' points from ' + done + ' members went to the pool.' + (already ? ' ' + already + ' were already done this month.' : '') + (failed ? ' ' + failed + ' failed: run it again.' : '');
+          out.textContent = 'Done for ' + run + ': ' + gave + ' rewards from ' + done + ' members went to the pool.' + (already ? ' ' + already + ' were already done this month.' : '') + (failed ? ' ' + failed + ' failed: run it again.' : '');
         });
       }).catch(function(){ out.textContent = 'Something went wrong. Check balances before trying again.'; });
     }
@@ -1051,7 +1051,7 @@
       out.textContent = 'Reading the pool and members…';
       return Promise.all([fbGet('/lvr_points/pool/total'), fbGet(MEMBERS_PATH), fbGet('/lvr_points/decay_by_member'), fbGet('/lvr_points/pool_drop_runs/' + run)]).then(function(x){
         var pool = Number(x[0]) || 0, all = x[1] || {}, gave = x[2] || {}, already = x[3];
-        if (already) { out.textContent = 'The pool was already handed out for ' + run + ' (' + already.points + ' points to ' + already.members + ' members).'; return; }
+        if (already) { out.textContent = 'The pool was already handed out for ' + run + ' (' + already.points + ' rewards to ' + already.members + ' members).'; return; }
         if (pool < 1) { out.textContent = 'The pool is empty. Run the monthly return first.'; return; }
         var eligible = Object.keys(all).filter(function(k){ var m = all[k] || {}; return m.status !== 'pending' && m.status !== 'rejected' && !(gave[k] && gave[k][run]); });
         if (!eligible.length) { out.textContent = 'No eligible members this month.'; return; }
@@ -1059,7 +1059,7 @@
         var left = pool, plan = [];
         eligible.forEach(function(k){ if (left < 1) return; var amt = Math.min(mn + rnd(mx - mn + 1), left); plan.push({ k: k, amt: amt }); left -= amt; });
         var given = pool - left;
-        if (dry) { out.textContent = 'Preview for ' + run + ': pool ' + pool + ' points. It would go to ' + plan.length + ' of ' + eligible.length + ' eligible members, ' + mn + ' to ' + mx + ' points each (' + given + ' points in total); ' + left + ' would stay in the pool. The real run draws again, so the exact people will differ. Nothing was changed.'; return; }
+        if (dry) { out.textContent = 'Preview for ' + run + ': pool ' + pool + ' rewards. It would go to ' + plan.length + ' of ' + eligible.length + ' eligible members, ' + mn + ' to ' + mx + ' rewards each (' + given + ' rewards in total); ' + left + ' would stay in the pool. The real run draws again, so the exact people will differ. Nothing was changed.'; return; }
         if (!confirm('Hand out ' + given + ' points of the pool at random to ' + plan.length + ' members now (month ' + run + ')?')) { out.textContent = ''; return; }
         var done = 0, total = 0, failed = 0, skipped = 0;
         return plan.reduce(function(chain, it){
@@ -1080,7 +1080,7 @@
           });
         }, Promise.resolve()).then(function(){
           if (!failed) fbPut('/lvr_points/pool_drop_runs/' + run, { members: done, points: total, at: { '.sv': 'timestamp' } }).catch(function(){});
-          out.textContent = 'Done for ' + run + ': ' + total + ' points handed out at random to ' + done + ' members.' + (skipped ? ' ' + skipped + ' were already done.' : '') + (failed ? ' ' + failed + ' failed: check Audit > Ledger before running again.' : '');
+          out.textContent = 'Done for ' + run + ': ' + total + ' rewards handed out at random to ' + done + ' members.' + (skipped ? ' ' + skipped + ' were already done.' : '') + (failed ? ' ' + failed + ' failed: check Audit > Ledger before running again.' : '');
         });
       }).catch(function(){ out.textContent = 'Something went wrong. Check balances and the pool before trying again.'; });
     }
@@ -1095,21 +1095,21 @@
     document.getElementById('eEnd').addEventListener('click', function(){
       var why = document.getElementById('eReason').value.trim(), st = document.getElementById('eStatus');
       if (why.length < 3) { showToast('Please write a reason first'); return; }
-      if (document.getElementById('eConfirm').value.trim() !== 'TAKE BACK ALL POINTS') { showToast('Type TAKE BACK ALL POINTS exactly to confirm'); return; }
-      if (!confirm('This removes ALL points from ALL members and pauses the program. A backup CSV downloads first. Continue?')) return;
+      if (document.getElementById('eConfirm').value.trim() !== 'TAKE BACK ALL REWARDS') { showToast('Type TAKE BACK ALL REWARDS exactly to confirm'); return; }
+      if (!confirm('This removes ALL rewards from ALL members and pauses the program. A backup CSV downloads first. Continue?')) return;
       var btn = this; btn.disabled = true; st.textContent = 'Saving a backup and reading members…';
       balances().then(function(rows){
         downloadCsv('lvr-balances-BEFORE-takeback-' + new Date().toISOString().slice(0, 10) + '.csv', rows);
         var todo = rows.filter(function(r){ return r.points > 0; }), done = 0, total = 0, failed = 0;
         return todo.reduce(function(chain, r){
-          return chain.then(function(){ return takeBackPoints(r.key, why).then(function(n){ done++; total += n || 0; }).catch(function(){ failed++; }); }).then(function(){ st.textContent = 'Taking points back… ' + (done + failed) + ' of ' + todo.length; });
+          return chain.then(function(){ return takeBackPoints(r.key, why).then(function(n){ done++; total += n || 0; }).catch(function(){ failed++; }); }).then(function(){ st.textContent = 'Taking rewards back… ' + (done + failed) + ' of ' + todo.length; });
         }, Promise.resolve()).then(function(){
           // only the pause switches and the banner are written (no other setting is touched)
-          var pz = { signups: true, receipts: true, redemptions: true, spin: true }, bn = 'LVR Points is paused: ' + why;
+          var pz = { signups: true, receipts: true, redemptions: true, spin: true }, bn = 'LVR Rewards is paused: ' + why;
           return Promise.all([fbPut(SETTINGS_PATH + '/paused', pz), fbPut(SETTINGS_PATH + '/banner', bn)]).then(function(rs){
             if (rs.some(function(r){ return !r.ok; })) throw new Error('save failed');
             settings.paused = pz; settings.banner = bn;
-          }).then(function(){ st.textContent = 'Done. Took back ' + total + ' points from ' + done + ' members' + (failed ? ' (' + failed + ' failed, run it again)' : '') + '. The program is paused. Backup CSV is in your downloads.'; });
+          }).then(function(){ st.textContent = 'Done. Took back ' + total + ' rewards from ' + done + ' members' + (failed ? ' (' + failed + ' failed, run it again)' : '') + '. The program is paused. Backup CSV is in your downloads.'; });
         });
       }).catch(function(){ st.textContent = 'Something went wrong. Check balances before trying again.'; btn.disabled = false; });
     });
@@ -1165,7 +1165,7 @@
     var removed = SHOWCASE.filter(function(r){ return showHidden[showSlug(r[0])]; }).length;
     var q = showFilter.trim().toLowerCase();
     var html = '<div class="form-box"><div style="font-weight:800;margin-bottom:6px;">Restaurants on the Las Vegas list</div>' +
-      '<div class="row-sub" style="margin-bottom:10px;"><b>' + (SHOWCASE.length - removed) + '</b> shown · <b>' + removed + '</b> removed. Remove hides a restaurant from members and visitors right away. Nothing is erased, and Restore brings it back. (Restaurants in the points program keep their money records permanently; to hide one of those use Businesses &gt; Edit.)</div>' +
+      '<div class="row-sub" style="margin-bottom:10px;"><b>' + (SHOWCASE.length - removed) + '</b> shown · <b>' + removed + '</b> removed. Remove hides a restaurant from members and visitors right away. Nothing is erased, and Restore brings it back. (Restaurants in the rewards program keep their money records permanently; to hide one of those use Businesses &gt; Edit.)</div>' +
       '<input type="text" id="showQ" placeholder="Search restaurants…" value="' + escapeHtml(showFilter) + '" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font-size:15px;box-sizing:border-box;">' +
       (removed ? '<div style="margin-top:10px;"><button class="btn" id="showRestoreAll">Restore all ' + removed + '</button></div>' : '') + '</div>';
     var match = function(r){ return !q || r[0].toLowerCase().indexOf(q) >= 0 || r[1].toLowerCase().indexOf(q) >= 0; };
@@ -1235,7 +1235,7 @@
     view.innerHTML =
       '<div class="btn" id="backBtn" style="display:inline-block;margin-bottom:14px;">&larr; Back</div>' +
       '<div class="form-box"><div style="margin-bottom:10px;"><b>' + escapeHtml(bizOf(slug)) + '</b> - add credit they have agreed to honor</div>' +
-        '<div class="field"><label>Amount in dollars (1 point = $1)</label><input type="number" id="cAmt" min="1" step="1" value="500"></div>' +
+        '<div class="field"><label>Amount in dollars (1 reward = $1)</label><input type="number" id="cAmt" min="1" step="1" value="500"></div>' +
         '<div class="field"><label>Note (for your records, e.g. "gift credit for police dept")</label><input type="text" id="cNote"></div>' +
         '<div class="form-actions"><button class="btn btn-primary" id="cSave">Add credit</button><button class="btn" id="cCancel">Cancel</button></div></div>';
     document.getElementById('backBtn').addEventListener('click', renderRestaurantsTab);
@@ -1262,7 +1262,7 @@
         '<div class="field"><label>Slug (letters/numbers/dashes, cannot change later)</label><input type="text" id="rSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
         '<div class="field"><label>Restaurant portal PIN (optional - only if they will log in to see/verify redemptions)</label><input type="text" id="rPin" value="' + escapeHtml(r.pin || '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Points earned per $1 spent (1 = 1 point for every $1 spent, 0.5 = 1 point for every $2)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 1) + '"></div>' +
+          '<div class="field"><label>Rewards earned per $1 spent (1 = 1 reward for every $1 spent, 0.5 = 1 reward for every $2)</label><input type="number" step="0.01" min="0" id="rRate" value="' + (d.earnRate != null ? d.earnRate : 1) + '"></div>' +
           '<div class="field"><label>Your commission % of verified spend (private)</label><input type="number" step="0.1" min="0" id="rComm" value="' + (r.commissionPct != null ? r.commissionPct : commissionFor(slug || '')) + '"></div>' +
         '</div>' +
         '<div class="checkbox-row"><input type="checkbox" id="rActive"' + (d.active !== false ? ' checked' : '') + '><label for="rActive">Show to members (they can submit receipts for it)</label></div>' +
@@ -1471,9 +1471,9 @@
         return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(m.name || c.memberKey) + ' ' + escapeHtml(c.handle || m.instagram || '') + '</div>' +
           '<div class="row-sub">' + (c.submittedAt ? new Date(c.submittedAt).toLocaleString() : '') + ' · <a href="' + escapeHtml(c.postUrl) + '" target="_blank" rel="noopener" style="color:var(--key-light);">Open the post</a></div></div>' +
           '<div class="row-num">' + (c.status === 'approved' ? '+' + (c.pointsAwarded || '') : c.status === 'rejected' ? 'No' : '') + '</div></div>' +
-          (c.status === 'pending' ? '<div class="row-sub" style="margin:8px 0;">Check: public account, tags @LasVegas_Restaurants, shows #ad / #LVRPoints, genuinely at a participating restaurant, not a duplicate or someone else\'s photo.</div><div style="display:flex;gap:8px;"><button class="btn btn-primary" data-tag="ok" data-id="' + id + '">Approve +' + pts + '</button><button class="btn btn-ghost" data-tag="no" data-id="' + id + '">Not approved</button></div>' : (c.status === 'approved' && c.pointsApplied === false ? '<button class="btn btn-ghost" data-tag="retry" data-id="' + id + '" style="margin-top:8px;">Points did not land - retry</button>' : '')) + '</div>';
+          (c.status === 'pending' ? '<div class="row-sub" style="margin:8px 0;">Check: public account, tags @LasVegas_Restaurants, shows #ad / #LVRPoints, genuinely at a participating restaurant, not a duplicate or someone else\'s photo.</div><div style="display:flex;gap:8px;"><button class="btn btn-primary" data-tag="ok" data-id="' + id + '">Approve +' + pts + '</button><button class="btn btn-ghost" data-tag="no" data-id="' + id + '">Not approved</button></div>' : (c.status === 'approved' && c.pointsApplied === false ? '<button class="btn btn-ghost" data-tag="retry" data-id="' + id + '" style="margin-top:8px;">Rewards did not land - retry</button>' : '')) + '</div>';
       }
-      view.innerHTML = '<div class="row-sub" style="margin-bottom:12px;">' + (cfg.enabled ? 'Tag bonus is ON (' + pts + ' points).' : 'Tag bonus is OFF. Turn it on in Settings when the rules are deployed.') + ' Each approval adds the points and writes a ledger entry.</div>' +
+      view.innerHTML = '<div class="row-sub" style="margin-bottom:12px;">' + (cfg.enabled ? 'Tag bonus is ON (' + pts + ' rewards).' : 'Tag bonus is OFF. Turn it on in Settings when the rules are deployed.') + ' Each approval adds the rewards and writes a ledger entry.</div>' +
         '<div style="font-weight:800;margin:6px 0;">Waiting to be checked (' + pend.length + ')</div>' + (pend.map(card).join('') || '<div class="empty-note">Nothing waiting.</div>') +
         '<div style="font-weight:800;margin:18px 0 6px;">Recently checked</div>' + (done.map(card).join('') || '<div class="empty-note">Nothing yet.</div>');
       view.querySelectorAll('[data-tag]').forEach(function(b){ b.addEventListener('click', function(){ tagDecide(b.getAttribute('data-id'), b.getAttribute('data-tag'), claims, pts, b); }); });
@@ -1483,7 +1483,7 @@
     var c = claims[id]; if (!c) return;
     btn.disabled = true;
     if (act === 'no') {
-      if (!confirm('Mark this post as not approved? No points are added.')) { btn.disabled = false; return; }
+      if (!confirm('Mark this post as not approved? No rewards are added.')) { btn.disabled = false; return; }
       fbPatch('/lvr_points/tag_claims/' + id, { status: 'rejected', decidedAt: { '.sv': 'timestamp' } }).then(function(r){ if (!r.ok) throw new Error('x'); showToast('Marked not approved'); renderTagsTab(); }).catch(function(){ btn.disabled = false; showToast('Could not save'); });
       return;
     }
@@ -1498,7 +1498,7 @@
         return fbPut('/lvr_points/bonuses/tag-' + id, { memberKey: c.memberKey, token: tok, name: (claims[id].handle || ''), points: n, reason: 'Instagram tag bonus', at: { '.sv': 'timestamp' } }).catch(function(){});
       }).then(function(){ return fbPut(MEMBERS_PATH + '/' + c.memberKey + '/points', { '.sv': { increment: n } }); })
         .then(function(r){ if (!r.ok) throw new Error('credit'); txLog(c.memberKey, 'tag-' + id, 'bonus', n, 'Instagram tag bonus: ' + c.postUrl); return fbPatch('/lvr_points/tag_claims/' + id, { pointsApplied: true }); })
-        .then(function(){ showToast('Approved - ' + n + ' points added'); renderTagsTab(); });
+        .then(function(){ showToast('Approved - ' + n + ' rewards added'); renderTagsTab(); });
     }).catch(function(e){ btn.disabled = false; showToast(e && e.message === 'handled' ? 'Already handled' : 'Something went wrong. Reload, then use retry if it shows.'); renderTagsTab(); });
   }
 
@@ -1531,8 +1531,8 @@
   }
   function renderLedgerBox() {
     var box = document.getElementById('ledgerBox'); if (!box) return;
-    box.innerHTML = '<div class="form-box" style="margin-top:18px;"><div style="font-weight:800;margin-bottom:6px;">Ledger (every point movement)</div>' +
-      '<div class="row-sub" style="margin-bottom:12px;">Every sign-up bonus, spin, approved receipt, referral, manual bonus and redemption is written down once, with the server time, and cannot be edited or deleted. The check compares each member\'s balance with the total of their ledger. A difference means points moved without a record. Run it any time.</div>' +
+    box.innerHTML = '<div class="form-box" style="margin-top:18px;"><div style="font-weight:800;margin-bottom:6px;">Ledger (every reward movement)</div>' +
+      '<div class="row-sub" style="margin-bottom:12px;">Every sign-up bonus, spin, approved receipt, referral, manual bonus and redemption is written down once, with the server time, and cannot be edited or deleted. The check compares each member\'s balance with the total of their ledger. A difference means rewards moved without a record. Run it any time.</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" id="lgRun">Run the ledger check</button><button class="btn btn-ghost" id="lgCsv">Download ledger (CSV)</button><button class="btn btn-ghost" id="lgPkg">Download hand-off package (zip)</button></div>' +
       '<div id="lgOut" style="margin-top:12px;"></div></div>';
     var out = document.getElementById('lgOut');
@@ -1542,7 +1542,7 @@
         var rows = ledgerRows(d), chk = ledgerCheck(d), bad = chk.filter(function(c){ return c.diff !== 0; });
         out.innerHTML = '<div class="row-card"><div class="row-title">' + rows.length + ' transactions · ' + chk.length + ' members · ' + (bad.length ? '<span style="color:#ff9a9a;">' + bad.length + ' do not match</span>' : '<span style="color:#7be3a6;">all match</span>') + '</div></div>' +
           bad.map(function(c){ return '<div class="row-card"><div class="row-title">' + escapeHtml(c.name) + '</div><div class="row-sub">Balance ' + c.balance + ' · ledger total ' + c.ledger + ' · difference ' + (c.diff > 0 ? '+' : '') + c.diff + '</div></div>'; }).join('') +
-          (bad.length ? '<div class="row-sub" style="margin:10px 0;">Members created before the ledger existed will show a difference. "Record opening balances" writes one clearly labelled <b>opening</b> entry for each difference, so from then on the ledger explains every point. Only do this once, after you have looked at the list above.</div><button class="btn btn-ghost" id="lgOpen">Record opening balances</button>' : '');
+          (bad.length ? '<div class="row-sub" style="margin:10px 0;">Members created before the ledger existed will show a difference. "Record opening balances" writes one clearly labelled <b>opening</b> entry for each difference, so from then on the ledger explains every reward. Only do this once, after you have looked at the list above.</div><button class="btn btn-ghost" id="lgOpen">Record opening balances</button>' : '');
         var ob = document.getElementById('lgOpen');
         if (ob) ob.addEventListener('click', function(){
           if (!confirm('Write an opening-balance entry for ' + bad.length + ' member(s)? This is permanent and cannot be edited.')) return;
@@ -1562,7 +1562,7 @@
         zip.file('ledger-transactions.csv', csvText(ledgerRows(d)) || 'no transactions yet\n');
         zip.file('members-and-balances.csv', csvText(chk.map(function(c){ var m = d.members[c.mk] || {}; return { member: c.name, memberKey: c.mk, instagram: m.instagram || '', balance: c.balance, ledgerTotal: c.ledger, difference: c.diff }; })) || 'no members\n');
         zip.file('receipts.csv', csvText(Object.keys(rc).map(function(id){ var x = rc[id]; return { receiptId: id, restaurant: bizOf(x.slug), memberKey: x.memberKey, receiptNo: x.receiptNo, receiptDate: x.receiptDate, amount: x.amount, status: x.status, pointsAwarded: x.pointsAwarded || 0, submitted: x.submittedAt ? new Date(x.submittedAt).toISOString() : '', decided: x.decidedAt ? new Date(x.decidedAt).toISOString() : '' }; })) || 'no receipts\n');
-        zip.file('README.txt', ['LVR POINTS RECORDS - HAND-OFF PACKAGE', 'Created: ' + new Date().toISOString(), '', 'What this is: a complete record of the LVR Points program (Las Vegas Restaurants, @LasVegas_Restaurants), built by Key Technologies.si.', '', 'ledger-transactions.csv  Every point movement (sign-up bonus, free spin, approved receipt, referral, manual bonus, redemption, opening balance), oldest first, with the server time it was written. Entries cannot be edited or deleted once written.', 'members-and-balances.csv  Each member, the points balance, the total of that member\'s ledger and the difference. Zero difference means every point is explained by a transaction. Opening-balance entries mark points that existed before the ledger started.', 'receipts.csv  Every receipt submitted, who/where/how much, and whether points were awarded. Receipt photos are exported separately from the Audit tab (Download package).', '', 'How to verify: for any member, add up their rows in ledger-transactions.csv. It should equal the balance in members-and-balances.csv.', 'Rules of the game (version history): the Spin Terms page, spin-terms.html on the Key Technologies site, lists the terms and the version date each spin agreed to. Points are worth $1 toward a free restaurant offer and cannot be exchanged for cash.', 'Contact for questions: @LasVegas_Restaurants on Instagram.'].join('\n'));
+        zip.file('README.txt', ['LVR REWARDS RECORDS - HAND-OFF PACKAGE', 'Created: ' + new Date().toISOString(), '', 'What this is: a complete record of the LVR Rewards program (Las Vegas Restaurants, @LasVegas_Restaurants), built by Key Technologies.si.', '', 'ledger-transactions.csv  Every reward movement (sign-up bonus, free spin, approved receipt, referral, manual bonus, redemption, opening balance), oldest first, with the server time it was written. Entries cannot be edited or deleted once written.', 'members-and-balances.csv  Each member, the rewards balance, the total of that member\'s ledger and the difference. Zero difference means every reward is explained by a transaction. Opening-balance entries mark rewards that existed before the ledger started.', 'receipts.csv  Every receipt submitted, who/where/how much, and whether rewards were awarded. Receipt photos are exported separately from the Audit tab (Download package).', '', 'How to verify: for any member, add up their rows in ledger-transactions.csv. It should equal the balance in members-and-balances.csv.', 'Rules of the game (version history): the Spin Terms page, spin-terms.html on the Key Technologies site, lists the terms and the version date each spin agreed to. Rewards are worth $1 toward a free restaurant offer and cannot be exchanged for cash.', 'Contact for questions: @LasVegas_Restaurants on Instagram.'].join('\n'));
         return zip.generateAsync({ type: 'blob' }).then(function(blob){ downloadBlob('lvr-handoff-package-' + new Date().toISOString().slice(0, 10) + '.zip', blob); out.innerHTML = '<div class="row-sub">Done - saved to your downloads. Counts: ' + ledgerRows(d).length + ' transactions, ' + chk.length + ' members, ' + Object.keys(rc).length + ' receipts.</div>'; });
       }).catch(function(e){ out.innerHTML = '<div class="empty-note">Could not build the package: ' + escapeHtml(e.message || 'error') + '</div>'; }).then(function(){ btn.disabled = false; });
     });
@@ -1632,7 +1632,7 @@
         '<div class="field"><label>Restaurant portal PIN (for them to view/export their own redemptions)</label><input type="text" id="fRestPin" value="' + escapeHtml(isEdit ? (rest.pin || '') : '') + '" placeholder="e.g. 4 digits"></div>' +
         '<div class="field"><label>Item name</label><input type="text" id="fItemName" value="' + escapeHtml(item ? item.itemName : '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Point cost (1 point = $1, so this is what the offer is worth, at least 15)</label><input type="number" id="fPointCost" min="15" value="' + (item ? item.pointCost : 15) + '"></div>' +
+          '<div class="field"><label>Reward cost (1 reward = $1, so this is what the offer is worth, at least 15)</label><input type="number" id="fPointCost" min="15" value="' + (item ? item.pointCost : 15) + '"></div>' +
           '<div class="field"><label>Max redemptions (required)</label><input type="number" id="fMaxRedemptions" min="1" value="' + (item && item.maxRedemptions ? item.maxRedemptions : 50) + '"></div>' +
         '</div>' +
         '<div class="field"><label>Redemption instructions</label><textarea id="fInstructions">' + escapeHtml(item ? item.instructions : '') + '</textarea></div>' +
@@ -1654,8 +1654,8 @@
       var bizName = document.getElementById('fBizName').value.trim();
       var itemName = document.getElementById('fItemName').value.trim();
       var pointCost = parseInt(document.getElementById('fPointCost').value, 10);
-      if (!newSlug || !bizName || !itemName || !pointCost) { showToast('Restaurant name, slug, item name, and point cost are required'); return; }
-      if (pointCost < 15) { showToast('Every offer must be worth at least $15 (15 points)'); return; }
+      if (!newSlug || !bizName || !itemName || !pointCost) { showToast('Restaurant name, slug, item name, and reward cost are required'); return; }
+      if (pointCost < 15) { showToast('Every offer must be worth at least $15 (15 rewards)'); return; }
 
       var expiresVal = document.getElementById('fExpires').value;
       var maxRedemptionsVal = document.getElementById('fMaxRedemptions').value;

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Menu — LVR Points — Key Technologies.si</title>
-<meta name="description" content="Browse the participating Las Vegas restaurants and the offers you can use with LVR Points.">
+<title>Menu — LVR Rewards — Key Technologies.si</title>
+<meta name="description" content="Browse the participating Las Vegas restaurants and the offers you can use with LVR Rewards.">
 <link rel="canonical" href="https://keytechnologies.si/menu.html">
-<meta property="og:type" content="website"><meta property="og:title" content="Menu — LVR Points — Key Technologies.si"><meta property="og:url" content="https://keytechnologies.si/menu.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:title" content="Menu — LVR Rewards — Key Technologies.si"><meta property="og:url" content="https://keytechnologies.si/menu.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
 
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -154,9 +154,9 @@
 
 <main class="wrap">
   <div class="hero">
-    <div class="eyebrow" id="eyebrow">Points menu</div>
+    <div class="eyebrow" id="eyebrow">Rewards menu</div>
     <h1 id="bizName">Loading the menu…</h1>
-    <p class="lede" id="lede">Specials you can claim with points. Show the code to your server and enjoy.</p>
+    <p class="lede" id="lede">Specials you can claim with rewards. Show the code to your server and enjoy.</p>
     <div id="welcomeBox"></div>
     <div id="sampleBox"></div>
   </div>
@@ -167,8 +167,8 @@
     <h2>How it works</h2>
     <ol>
       <li><b>Join free.</b> It takes a minute and you get your own account link.</li>
-      <li><b>Earn points</b> by sending in your receipt from a participating restaurant.</li>
-      <li><b>Tap Redeem</b> on any item above. Your points come out of your balance and you get a code.</li>
+      <li><b>Earn rewards</b> by sending in your receipt from a participating restaurant.</li>
+      <li><b>Tap Redeem</b> on any item above. Your rewards come out of your balance and you get a code.</li>
       <li><b>Show the code</b> to your server. That is it.</li>
     </ol>
     <p style="margin:14px 0 0;font-size:14px;color:var(--ink-dim);">Each offer has a set number available and an end date, shown above. There is no need to hurry. Plan your visit, and please never rush or drive in a hurry to claim one.</p>
@@ -213,7 +213,7 @@
     var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
     var days = Math.ceil((t - Date.now()) / 86400000);
     var endTxt = left <= 0 ? 'Was good until <b>' + esc(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + esc(fmtDay(exp)));
-    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Rewards are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. No cash value, not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
   var usedPhotos = {};
   var SHOW_PHOTOS = false;   // food photos are switched off for now; set to true to bring them back
@@ -253,7 +253,7 @@
   var VEGAS = [
     { partner: true, cat: "plates", n: "Vanilla Rice's Hibachi House", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146", locs: [{ l: "Charleston location", a: "6300 W Charleston Blvd Ste 170, Las Vegas, NV 89146" }, { l: "Flamingo location (carry-out)", a: "3654 E Flamingo Rd Ste 12, Las Vegas, NV 89121" }], ig: "hibachihouselv", c: "Hibachi", o: { t: "Free Chicken Bowl", p: 20, art: "hibachi", real: true, d: "Grilled teriyaki chicken over rice. Show your code at Vanilla Rice's Hibachi House to redeem." } },
     { partner: true, cat: "plates", n: "Poke Heaven", a: "4747 S Maryland Pkwy, Las Vegas, NV 89119", ph: "(702) 730-3030", ig: "poke.heaven", c: "Poke bowls", o: { t: "Free Poke Bowl", p: 13, art: "pokebowl" } },
-    { partner: true, cat: "sweet", n: "The Tea Terrace", a: "6830 S Rainbow Blvd #140, Las Vegas, NV 89118", ph: "(702) 931-0562", ig: "ttterrace", web: "https://the-tea-terrace.com", c: "Afternoon tea room", o: { t: "Free Afternoon Tea Treats", p: 13, art: "teatier", d: "Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your points." } },
+    { partner: true, cat: "sweet", n: "The Tea Terrace", a: "6830 S Rainbow Blvd #140, Las Vegas, NV 89118", ph: "(702) 931-0562", ig: "ttterrace", web: "https://the-tea-terrace.com", c: "Afternoon tea room", o: { t: "Free Afternoon Tea Treats", p: 13, art: "teatier", d: "Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your rewards." } },
     { cat: "pizza", n: "Pizza Rock", locs: [{"l": "Downtown Grand", "a": "201 N 3rd St, Las Vegas, NV 89101"}, {"l": "Green Valley Ranch (Henderson)", "a": "2300 Paseo Verde Pkwy, Henderson, NV 89052"}], a: "201 N 3rd St, Las Vegas, NV 89101", ph: "(702) 385-0838", c: "Pizza, downtown", o: { t: "Free Personal Pizza", p: 12, art: "minipizza" } },
     { cat: "pizza", n: "Metro Pizza", ig: "metropizzalv", a: "4001 S Decatur Blvd Ste 39, Las Vegas, NV 89103", ph: "(702) 362-7896", web: "https://metropizza.com", c: "Pizza", o: { t: "Free Personal Pizza", p: 12, art: "pizzac" } },
     { cat: "sushi", n: "Yellowtail Japanese Restaurant & Lounge", a: "3600 Las Vegas Blvd S, Bellagio, Las Vegas, NV 89109", ph: "(702) 693-7223", c: "Sushi and Japanese", o: { t: "Free Sashimi Plate", p: 16, art: "sushi3" } },
@@ -418,7 +418,7 @@
     document.title = "Las Vegas Restaurants — Key Technologies.si";
     $("lede").textContent = "Real local restaurants serving pizza, pasta, sushi, burgers, Thai, Mexican and more. Tap an address for the map, a phone number to call, or Instagram, Yelp and Google for more.";
     var removedNames = VEGAS.filter(function (r) { return isHidden(r.n); }).map(function (r) { return r.n; });
-    $("sampleBox").innerHTML = (OWNER ? ownerBarHtml(removedNames) : '') + '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.<div style="margin-top:12px;"><a class="btn btn-primary" href="my-account.html?demo=65">See what a member sees: points, treasure chest and offers</a></div></div>' +
+    $("sampleBox").innerHTML = (OWNER ? ownerBarHtml(removedNames) : '') + '<div class="sample">Demo preview. The three <b>Founding partners</b> are joining the program. The other restaurants are real businesses listed with public information, and none of them has agreed to any offer. Offers marked Sample are examples, and nothing here can be redeemed yet. Food photos are generic.<div style="margin-top:12px;"><a class="btn btn-primary" href="my-account.html?demo=65">See what a member sees: rewards, treasure chest and offers</a></div></div>' +
       '<div class="chips" id="chips">' + CATS.map(function (c, k) { return '<button type="button" class="chip' + (k === 0 ? ' on' : '') + '" data-cat="' + c[0] + '">' + c[1] + '</button>'; }).join("") + '</div>';
     var parts = [], cur = null;
     function open(title, sub) { cur = { title: title, sub: sub, cards: [] }; parts.push(cur); }
@@ -448,7 +448,7 @@
         '</div><p class="vnote">Links open in a new tab. Close it to come back here.</p>' +
         '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(r.o.art) + '</div>' : '') +
           '<div>' + tag + '<div class="name">' + esc(r.o.t) + '</div></div>' +
-          '<div class="cost"><b>' + esc(r.o.p) + '</b><small>points</small></div>' +
+          '<div class="cost"><b>' + esc(r.o.p) + '</b><small>rewards</small></div>' +
           '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
           '<div style="grid-column:1 / -1"' + (r.o.real ? ' id="liveTally"' : '') + '>' + (r.o.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(idx)) + '</div></article></section>');
     });
@@ -491,7 +491,7 @@
     $("eyebrow").textContent = "Demo menu";
     $("bizName").textContent = "Vegas Eats Demo";
     document.title = "Demo Menu — Key Technologies.si";
-    $("lede").textContent = "A sample of what a points menu looks like with five restaurants. Tap any item to see how redeeming works.";
+    $("lede").textContent = "A sample of what a rewards menu looks like with five restaurants. Tap any item to see how redeeming works.";
     $("sampleBox").innerHTML = '<div class="sample">Demo only. Apart from Vanilla Rice\'s Hibachi House, these restaurants are made up to show how the program looks, and the food photos are generic. Nothing here can be redeemed.</div>';
     var html = "", di = 0;
     DEMO.forEach(function (g) {
@@ -499,7 +499,7 @@
       g.items.forEach(function (it) {
         html += '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(it.art) + '</div>' : '') +
           '<div><div class="name">' + esc(it.itemName) + '</div></div>' +
-          '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
+          '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>rewards</small></div>' +
           '<p class="desc">' + esc(it.description) + '</p>' +
           '<div style="grid-column:1 / -1"' + (it.real ? ' id="liveTally"' : '') + '>' + (it.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(di++)) + '</div>' +
           '<div class="act"><a class="btn btn-primary" href="rewards.html">Join free to redeem</a></div></article>';
@@ -514,7 +514,7 @@
     document.title = biz + " — Menu — Key Technologies.si";
     var w = settings && settings.welcome;
     if (w && w.enabled === true && w.amount > 0 && !hasAccount) {
-      $("welcomeBox").innerHTML = '<div class="welcome">New members start with <strong>' + esc(w.amount) + ' points</strong>' +
+      $("welcomeBox").innerHTML = '<div class="welcome">New members start with <strong>' + esc(w.amount) + ' rewards</strong>' +
         (w.when === "receipt" ? ", added when your first receipt is approved." : ", added once your sign-up is approved.") + '</div>';
     }
     if (sample) $("sampleBox").innerHTML = '<div class="sample">These are example items to show how a menu looks. Real specials appear here as soon as a restaurant adds them.</div>';
@@ -531,7 +531,7 @@
         html += '<article class="dish' + (it.photoUrl ? ' has-pic' : '') + '">' +
           (it.photoUrl ? '<img class="photo" src="' + esc(it.photoUrl) + '" alt="" loading="lazy">' : '') +
           '<div><div class="name">' + esc(it.itemName) + '</div></div>' +
-          '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>points</small></div>' +
+          '<div class="cost"><b>' + esc(it.pointCost) + '</b><small>rewards</small></div>' +
           '<p class="desc">' + esc(it.description || it.instructions || "") + '</p>' +
           '<div style="grid-column:1 / -1">' + (it._id ? tallyHtml(Number(it.maxRedemptions) || 0, (Number(it.maxRedemptions) || 0) - (it._used || 0), it.expiresAt) : "") + '</div>' +
           '<div class="act">' + (hasAccount

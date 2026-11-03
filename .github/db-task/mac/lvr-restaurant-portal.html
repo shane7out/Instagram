@@ -224,7 +224,7 @@
       '<div class="stat"><div class="n">' + myRows.length + '</div><div class="l">Redemptions</div></div>' +
       '<div class="stat"><div class="n">' + myRows.filter(function(r){ return !r.usedAt; }).length + '</div><div class="l">Not yet used</div></div>' +
       (myCredit ? '<div class="stat"><div class="n">$' + Number(myCredit.remaining).toLocaleString() + '</div><div class="l">Credit left of $' + Number(myCredit.funded).toLocaleString() + '</div></div>' : '') +
-      '<div class="stat"><div class="n">' + totalPoints.toLocaleString() + '</div><div class="l">Points redeemed</div></div>';
+      '<div class="stat"><div class="n">' + totalPoints.toLocaleString() + '</div><div class="l">Rewards redeemed</div></div>';
 
     var wrap = document.getElementById('tableWrap');
     if (!myRows.length) {
@@ -272,7 +272,7 @@
       return;
     }
     if (row.useBy && Date.now() > row.useBy) {
-      out.innerHTML = '<div class="lk-box lk-bad"><b>Expired</b> on ' + new Date(row.useBy).toLocaleDateString() + '. Do not honor it. The customer\'s points were already used and are not refunded.</div>';
+      out.innerHTML = '<div class="lk-box lk-bad"><b>Expired</b> on ' + new Date(row.useBy).toLocaleDateString() + '. Do not honor it. The customer\'s rewards were already used and are not refunded.</div>';
       return;
     }
     out.innerHTML = '<div class="lk-box lk-ok"><b>Valid</b> — ' + escapeHtml(row.itemName || 'offer') + ' for ' + escapeHtml(row.name || 'customer') +

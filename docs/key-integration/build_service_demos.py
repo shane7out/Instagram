@@ -49,7 +49,7 @@ S = [
  ('php-wordpress-migration', '21', 'PHP & WordPress Migration', 'Move off PHP and WordPress to a modern custom stack.', 'migration', 'Plan a migration', 'Describe the current site to see a plan and an example redirect map.', ['For sites flagged by our free audit, or anyone who wants out', 'Redirects so search rankings are kept', 'Tested, with a rollback ready']),
  ('private-llm', '22', 'Private LLM Setup', 'Your own private AI that knows your business and keeps it private.', 'privatellm', 'Ask the private assistant', 'Sign in as staff or as the owner and ask about a document.', ['Loaded with your own documents and records', 'Isolated, never used to train anyone else\'s model', 'Managed by us with login access, or handed to you']),
  ('cybersecurity', '23', 'Cybersecurity & Network Hardening', 'A full security pass that closes real gaps.', 'hardening', 'Run an example check', 'Run the check on a fictional office and read the fix plan.', ['Passwords, access, networks, backups and exposed systems', 'Findings explained in plain language', 'Backed by 25+ years of hands-on security and networking experience']),
- ('points', 'P', 'LVR Points', 'Earn points at restaurants and use them for food.', 'points', 'Try the points program', 'Earn from a receipt, take the free spin, use points, and see the monthly points share.', ['Earn 1 point per $1 on checked receipts', 'A free spin that comes and goes', 'Points used only for food at participating restaurants']),
+ ('rewards', 'P', 'LVR Rewards', 'Earn rewards at restaurants and use them for food.', 'points', 'Try the rewards program', 'Earn from a receipt, take the free spin, use rewards, and see the monthly rewards share.', ['Earn 1 reward per $1 on checked receipts', 'A free spin that comes and goes', 'Rewards used only for food at participating restaurants']),
 ]
 EXISTING = {'13': ('Email Automation', '../email/index.html', 'Sorts the inbox and drafts replies that a person approves.'), '16': ('AI/SI Phone & Text Answering', '../voice/index.html', 'An AI receptionist that answers calls and captures leads.'), '24': ('Sales Partner Network', '../sales/index.html', 'A catalog, quotes, pipeline and commission calculator for partners.')}
 
@@ -65,8 +65,8 @@ def page(i, s):
     nav += ('<a href="%s.html">&larr; %s</a>' % (prev[0], prev[2])) if prev else '<span></span>'
     nav += ('<a href="%s.html">%s &rarr;</a>' % (nxt[0], nxt[2])) if nxt else '<a href="../index.html#library">All demos &rarr;</a>'
     nav += '</div>'
-    label = 'Service %s' % num if num != 'P' else 'LVR Points'
-    cta = '<a class="btn btn-primary" href="../../index.html#contact">Talk to us about this</a>' if num != 'P' else '<a class="btn btn-primary" href="../../rewards.html">Join LVR Points</a>'
+    label = 'Service %s' % num if num != 'P' else 'LVR Rewards'
+    cta = '<a class="btn btn-primary" href="../../index.html#contact">Talk to us about this</a>' if num != 'P' else '<a class="btn btn-primary" href="../../rewards.html">Join LVR Rewards</a>'
     ghost = '<a class="btn btn-ghost" href="../../index.html#services">See all services</a>' if num != 'P' else '<a class="btn btn-ghost" href="../index.html#library">All demos</a>'
     body = '''<section class="page active" style="display:block;padding-top:6px">
 <a class="kp-back" href="../index.html#library">&larr; All demos</a>
@@ -113,7 +113,7 @@ CAT = {'01': 'Marketing & Content', '09': 'Marketing & Content', '14': 'Marketin
        '02': 'AI Systems & Strategy', '04': 'AI Systems & Strategy', '08': 'AI Systems & Strategy', '11': 'AI Systems & Strategy', '22': 'AI Systems & Strategy',
        '03': 'Operations & Sales', '05': 'Operations & Sales', '07': 'Operations & Sales', '24': 'Operations & Sales',
        '10': 'Websites & Security', '12': 'Websites & Security', '19': 'Websites & Security', '20': 'Websites & Security', '21': 'Websites & Security', '23': 'Websites & Security',
-       '18': 'Training & Points', 'P': 'Training & Points'}
+       '18': 'Training & Rewards', 'P': 'Training & Rewards'}
 lst = [{'slug': s[0], 'num': s[1], 'title': s[2], 'tag': s[3], 'cat': CAT[s[1]], 'thumb': 'demos/thumbs/%s.jpg' % s[0], 'href': 'demos/%s.html' % s[0]} for s in S]
 for n, (t, h, tg) in EXISTING.items():
     lst.append({'slug': h, 'num': n, 'title': t, 'tag': tg, 'cat': CAT[n], 'thumb': 'demos/thumbs/%s.jpg' % h.replace('../', '').split('/')[0], 'href': h.replace('../', '')})

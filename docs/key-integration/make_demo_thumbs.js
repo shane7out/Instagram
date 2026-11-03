@@ -19,7 +19,7 @@ const STEPS={ // optional action so the picture shows the demo doing something
  'social-media':async p=>{await p.click('#sg [data-i="2"]')},
  'booking-scheduling':async p=>{await p.click('[data-t="0"]');await p.fill('#bn','Maria');await p.click('#bk')},
  'reviews-reputation':async p=>{await p.click('[data-d="1"]')},
- 'points':async p=>{await p.click('#pe3')},
+ 'rewards':async p=>{await p.click('#pe3')},
  'voice':async p=>{await p.evaluate(()=>document.querySelector('.kp-tabs [data-page=live-demo]').click());await p.click('#runCall');await p.waitForTimeout(5200)},
  'email':async p=>{await p.evaluate(()=>document.querySelector('.kp-tabs [data-page=inbox]').click());await p.click('#generate');await p.waitForTimeout(600)},
  'sales':async p=>{await p.evaluate(()=>document.querySelector('.kp-tabs [data-page=services]').click());await p.waitForTimeout(300)}

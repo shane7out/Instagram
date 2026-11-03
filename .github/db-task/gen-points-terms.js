@@ -1,4 +1,4 @@
-// Builds sites/key-technologies/points-terms.html from the terms in my-account.html (single source of truth).
+// Builds sites/key-technologies/rewards-terms.html from the terms in my-account.html (single source of truth).
 // Run from the repo root:  node .github/db-task/gen-points-terms.js
 const fs = require('fs');
 const src = fs.readFileSync('sites/key-technologies/my-account.html', 'utf8');
@@ -10,8 +10,8 @@ const list = new Function(fnSrc + '; return programTermsList();')();
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Program Terms — LVR Points</title>
-<meta name="description" content="The Program Terms for LVR Points: a free, fun promotion that we can pause, change or end, and adjust or take back points, at our sole discretion.">
+<title>Program Terms — LVR Rewards</title>
+<meta name="description" content="The Program Terms for LVR Rewards: a free, fun promotion that we can pause, change or end, and adjust or take back rewards, at our sole discretion.">
 <style>
   :root{--bg:#07111f;--card:#11243b;--ink:#eef4fb;--dim:#9fb3c8;--gold:#ffd35c;--blue:#59b5ff;--line:#2c4864;}
   *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
@@ -25,15 +25,15 @@ const html = `<!doctype html>
 </style></head><body>
 <header><a href="index.html">KEY TECHNOLOGIES<span>.SI</span></a></header>
 <main>
-  <h1>LVR Points Program Terms</h1>
+  <h1>LVR Rewards Program Terms</h1>
   <p class="ver">Version ${ver[2]} · Las Vegas Restaurants</p>
-  <div class="short"><b>In short:</b> this is a free, fun promotion. We can pause, change or end it, and adjust or take back points, at any time, at our sole discretion. Points have no cash value.</div>
+  <div class="short"><b>In short:</b> this is a free, fun promotion. We can pause, change or end it, and adjust or take back rewards, at any time, at our sole discretion. Rewards have no cash value.</div>
   <ol>
 ${list.map(t => `    <li><b>${esc(t[0])}.</b> ${esc(t[1])}</li>`).join('\n')}
   </ol>
-  <p class="note">These terms stay on this page, and under the LVR Points menu in the app, for as long as the program exists. The <a href="spin-terms.html" style="color:var(--blue);">Spin Terms</a> also apply to the free spin. Questions? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram.</p>
-  <a class="back" href="my-account.html">&larr; Back to my LVR Points</a>
+  <p class="note">These terms stay on this page, and under the LVR Rewards menu in the app, for as long as the program exists. The <a href="spin-terms.html" style="color:var(--blue);">Spin Terms</a> also apply to the free spin. Questions? Message <a href="https://instagram.com/lasvegas_restaurants" style="color:var(--blue);">@LasVegas_Restaurants</a> on Instagram.</p>
+  <a class="back" href="my-account.html">&larr; Back to my LVR Rewards</a>
 </main></body></html>
 `;
-fs.writeFileSync('sites/key-technologies/points-terms.html', html);
-console.log('wrote points-terms.html, version', ver[1], ',', list.length, 'terms');
+fs.writeFileSync('sites/key-technologies/rewards-terms.html', html);
+console.log('wrote rewards-terms.html, version', ver[1], ',', list.length, 'terms');

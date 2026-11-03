@@ -157,7 +157,7 @@
   "num": "18",
   "title": "AI/SI Training & Custom Training Software",
   "tag": "Teach your team to use AI/SI well, in your own portal.",
-  "cat": "Training & Points",
+  "cat": "Training & Rewards",
   "thumb": "demos/thumbs/ai-training.jpg",
   "href": "demos/ai-training.html"
  },
@@ -216,12 +216,12 @@
   "href": "sales/index.html"
  },
  {
-  "slug": "points",
+  "slug": "rewards",
   "num": "P",
-  "title": "LVR Points",
-  "tag": "Earn points at restaurants and use them for food.",
-  "cat": "Training & Points",
-  "thumb": "demos/thumbs/points.jpg",
-  "href": "demos/points.html"
+  "title": "LVR Rewards",
+  "tag": "Earn rewards at restaurants and use them for food.",
+  "cat": "Training & Rewards",
+  "thumb": "demos/thumbs/rewards.jpg",
+  "href": "demos/rewards.html"
  }
 ]

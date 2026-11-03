@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My LVR Points — Las Vegas Restaurants</title>
-<meta name="description" content="Your LVR Points account: your balance, free spin, offers and activity at participating Las Vegas restaurants.">
+<title>My LVR Rewards — Las Vegas Restaurants</title>
+<meta name="description" content="Your LVR Rewards account: your balance, free spin, offers and activity at participating Las Vegas restaurants.">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="same-origin">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -444,7 +444,7 @@
     </a>
     <div class="nav-cta">
       <div class="lr-wrap">
-        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Points <span aria-hidden="true">&#9662;</span></button>
+        <button type="button" class="btn btn-ghost lr-toggle" id="lrToggle" aria-expanded="false" aria-controls="lrMenu" aria-haspopup="true">LVR Rewards <span aria-hidden="true">&#9662;</span></button>
         <div class="lr-menu" id="lrMenu" hidden></div>
       </div>
     </div>
@@ -453,9 +453,9 @@
 
 <main class="page-wrap" id="main">
   <div class="live-demo-row" id="liveDemoRow"></div>
-  <h1 class="sr-only">Your LVR Points</h1>
+  <h1 class="sr-only">Your LVR Rewards</h1>
   <div id="content"><div class="empty">Loading…</div></div>
-  <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> points</small></span></div>
+  <div class="mini-bal" id="miniBal"><span><b id="miniNum">0</b><small> rewards</small></span></div>
   <div class="soon-back" id="soonBack" role="dialog" aria-modal="true" aria-labelledby="soonTitle">
     <div class="soon-box">
       <div class="demo-tag2" id="demoTagM" hidden style="margin-bottom:8px;">Demo only · no value</div>
@@ -466,7 +466,7 @@
       <div class="chest-big" id="chestBig" hidden></div>
       <p id="chestMsg" aria-live="polite">Your bonus is almost ready. Come back and check this spot soon.</p>
       <div class="fair-box" id="fairBox" hidden><button type="button" class="linkbtn" data-fair>🔒 How the spin works ›</button><button type="button" class="linkbtn snd" id="sndBtn" aria-pressed="false">🔇 Sound off</button></div>
-      <label class="terms-check" id="termsRow" hidden><input type="checkbox" id="termsCb"><span>I have read and agree to the <button type="button" class="linkbtn inl" data-terms>Spin Terms</button>. I understand the number is random and LVR Points has no control over it.</span></label>
+      <label class="terms-check" id="termsRow" hidden><input type="checkbox" id="termsCb"><span>I have read and agree to the <button type="button" class="linkbtn inl" data-terms>Spin Terms</button>. I understand the number is random and LVR Rewards has no control over it.</span></label>
       <label class="terms-check" id="realRow" hidden><input type="checkbox" id="realCb"><span><b>This is my one real spin.</b> I understand it counts and will be recorded, and I can't redo it or spin again until my next spin is ready.</span></label>
       <button type="button" class="btn btn-primary" id="chestOpenBtn" hidden disabled style="margin-bottom:10px;">Spin for real</button>
       <button type="button" class="btn btn-ghost" id="demoSpinGo" hidden style="margin-bottom:10px;">🎡 Try a demo spin · demo only, no value</button>
@@ -475,7 +475,7 @@
     </div>
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
-  <div class="footer-note" id="builtBy"><a href="points-terms.html" data-pterms>Program Terms</a> · <a href="points-privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Points (Las Vegas Restaurant Points) is run by Las Vegas Restaurants, <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram.<br>Own a restaurant and want to be part of this? <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">Send us a DM</a> or <a href="join-restaurant.html">fill out the form</a>.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note" id="builtBy"><a href="rewards-terms.html" data-pterms>Program Terms</a> · <a href="rewards-privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="spin-terms.html" id="termsFoot">Spin Terms</a> · LVR Rewards (Las Vegas Restaurant Rewards) is run by Las Vegas Restaurants, <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram.<br>Own a restaurant and want to be part of this? <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">Send us a DM</a> or <a href="join-restaurant.html">fill out the form</a>.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </main>
 
 <div id="redeemOverlay">
@@ -555,8 +555,8 @@
   function showNoAccount(head, msg) {
     contentEl.innerHTML =
       '<div class="no-account-card">' +
-        '<h1>' + escapeHtml(head || 'Join LVR Points. Earn free food.') + '</h1>' +
-        '<p>' + escapeHtml(msg || 'Join free, earn 1 point for every $1 you spend at local Las Vegas restaurants, and trade your points for free food. Every new sign-up is approved by hand. If you already have an account, paste your link below.') + '</p>' +
+        '<h1>' + escapeHtml(head || 'Join LVR Rewards. Earn free food.') + '</h1>' +
+        '<p>' + escapeHtml(msg || 'Join free, earn 1 reward for every $1 you spend at local Las Vegas restaurants, and trade your rewards for free food. Every new sign-up is approved by hand. If you already have an account, paste your link below.') + '</p>' +
         '<a class="btn btn-primary" href="rewards.html">Join Free</a>' +
         '<div class="paste-field">' +
           '<label for="pasteInput">Already have a link? Paste it here</label>' +
@@ -588,26 +588,26 @@
   function welcomeHtml() {
     var w = welcomeCfg();
     if (w.enabled !== true || w.when === 'signup' || !(w.amount > 0) || (wallet && wallet.welcomeGiven)) return '';
-    return '<div class="notice" style="background:rgba(0,168,225,.1);border:1px solid rgba(0,168,225,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome points are waiting for you. They are added automatically when your first receipt is approved.</div>';
+    return '<div class="notice" style="background:rgba(0,168,225,.1);border:1px solid rgba(0,168,225,.45);color:#7cc0ff;">🎁 ' + w.amount + ' welcome rewards are waiting for you. They are added automatically when your first receipt is approved.</div>';
   }
   function rulesHtml() {
     var c = chestCfg(), w = welcomeCfg();
     var prize = c.prizeMax > 0 ? prizeRange(c) : '';
-    var free = 'LVR Points are free. ' + (w.enabled ? 'You get ' + w.amount + ' points once your sign-up is approved' + (prize ? ', plus a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + cycleText(c.waitDays) + '. ' : '')) + 'Use your points for free food at participating restaurants. No purchase necessary.';
+    var free = 'LVR Rewards are free. ' + (w.enabled ? 'You get ' + w.amount + ' rewards once your sign-up is approved' + (prize ? ', plus a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. ' : (prize ? 'You get a free bonus spin every ' + cycleText(c.waitDays) + '. ' : '')) + 'Use your rewards for free food at participating restaurants. No purchase necessary.';
     var rules = [
       ['Free to join, free to use', free],
-      ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed with points does not count toward your spend.'],
-      ['Use your points', '1 point = $1 toward a free offer at a participating restaurant.' + (giftOn() ? giftTxt() : ' That is the only thing points can be used for.') + ' New restaurants join all the time, so there is always somewhere new to use your points. Try one you have not been to yet.'],
-      ['Spin for free points', prize ? 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.' : 'A bonus for active members is coming soon.'],
+      ['Spend, and earn more', 'Dining out? Add your receipt: take a photo and send us the details. After we check it, we add 1 reward for every $1 you spend. Spend $50 and you earn 50 rewards. A free offer you redeemed with rewards does not count toward your spend.'],
+      ['Use your rewards', '1 reward = $1 toward a free offer at a participating restaurant.' + (giftOn() ? giftTxt() : ' That is the only thing rewards can be used for.') + ' New restaurants join all the time, so there is always somewhere new to use your rewards. Try one you have not been to yet.'],
+      ['Spin for free rewards', prize ? 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Spin it to win ' + prize + ' free rewards. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.' : 'A bonus for active members is coming soon.'],
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
-      ['Fair play', (giftOn() ? 'Points can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Points can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown. LVR Points is a free promotion: we may pause, change or end it, and adjust or take back points, at any time at our sole discretion, with nothing owed (see the Program Terms).']
+      ['Fair play', (giftOn() ? 'Rewards can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Rewards can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown. LVR Rewards is a free promotion: we may pause, change or end it, and adjust or take back rewards, at any time at our sole discretion, with nothing owed (see the Program Terms).']
     ];
     rules = rules.filter(Boolean);
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
     }).join('') + '</ol>' +
-      '<div class="rule-eg"><b>Example.</b> You spend $50 at a restaurant and send in the receipt. We add 50 points. Use them on a free offer at any participating restaurant.</div>' +
-      (decayOn() ? '<details class="rules-dd" style="margin-top:14px;"><summary><b>How the monthly points share works</b> (tap to open or close)</summary><div class="decay-body">' + decayHow() + '</div></details>' : '');
+      '<div class="rule-eg"><b>Example.</b> You spend $50 at a restaurant and send in the receipt. We add 50 rewards. Use them on a free offer at any participating restaurant.</div>' +
+      (decayOn() ? '<details class="rules-dd" style="margin-top:14px;"><summary><b>How the monthly rewards share works</b> (tap to open or close)</summary><div class="decay-body">' + decayHow() + '</div></details>' : '');
   }
   function pausedFlag(k) { return !!(appSettings.paused && appSettings.paused[k]); }
   function limits() { return Object.assign({ maxAmount: 300, maxPerWeek: 5, windowDays: 30 }, appSettings.limits || {}); }
@@ -724,7 +724,7 @@
   // Practice spin: the owner can spin the wheel as many times as they like to show it off. Nothing is saved and no points move.
   function practiceSpin() {
     var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, cur = 0, practiceFrom = 0, busy = false;
-    var d = ownDialog('<div style="text-align:center;"><span class="prac-tag">Practice spin · no points are added</span><h3 style="margin:0 0 4px;">Spin for ' + prizeRange({ prizeMin: min, prizeMax: max }) + ' FREE points</h3>' + wheelHtml(min, max, 'pracWheel') + '<div id="pracRes" role="status" style="min-height:44px;font-size:26px;font-weight:800;color:#7be3a6;margin:2px 0 10px;"></div><p style="font-size:12.5px;line-height:1.4;color:#9fb3c8;margin:0 0 10px;">Real spins use the random number generator built into the member’s browser. We have no control over the result.</p><div class="own-row"><button class="own-no" id="pracClose">Close</button><button class="own-ok" id="pracGo">Spin the wheel</button></div></div>');
+    var d = ownDialog('<div style="text-align:center;"><span class="prac-tag">Practice spin · no rewards are added</span><h3 style="margin:0 0 4px;">Spin for ' + prizeRange({ prizeMin: min, prizeMax: max }) + ' FREE rewards</h3>' + wheelHtml(min, max, 'pracWheel') + '<div id="pracRes" role="status" style="min-height:44px;font-size:26px;font-weight:800;color:#7be3a6;margin:2px 0 10px;"></div><p style="font-size:12.5px;line-height:1.4;color:#9fb3c8;margin:0 0 10px;">Real spins use the random number generator built into the member’s browser. We have no control over the result.</p><div class="own-row"><button class="own-no" id="pracClose">Close</button><button class="own-ok" id="pracGo">Spin the wheel</button></div></div>');
     var wheel = d.el.querySelector('#pracWheel'), res = d.el.querySelector('#pracRes'), go = d.el.querySelector('#pracGo');
     d.el.querySelector('#pracClose').addEventListener('click', function () { if (!busy) d.close(); });
     go.addEventListener('click', function () {
@@ -732,7 +732,7 @@
       var prize = min + secureInt(max - min + 1), N = max - min + 1, seg = 360 / N;
       var F = -((prize - min + 0.5) * seg) + (secureInt(70) / 100 - 0.35) * seg;
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var done = function () { res.textContent = prize === 0 ? '0 · better luck next time' : '+' + prize + ' FREE points'; busy = false; go.disabled = false; go.textContent = 'Spin again'; };
+      var done = function () { res.textContent = prize === 0 ? '0 · better luck next time' : '+' + prize + ' FREE rewards'; busy = false; go.disabled = false; go.textContent = 'Spin again'; };
       if (reduce) { done(); return; }
       unlockAudio(); spinTo(wheel, F, N, 6200, done);
     });
@@ -821,7 +821,7 @@
   function demoCtlHtml() {
     return '<div class="demo-card"><span class="demo-tag2">Demo only · no value</span>' +
       '<div class="demo-card-title">Try the free spin yourself</div>' +
-      '<p>A practice account. Demo points have no value.</p>' +
+      '<p>A practice account. Demo rewards have no value.</p>' +
       '<button type="button" id="demoTry" class="demo-try">🎡 Try the free spin</button>' +
       '<div class="demo-links"><button type="button" data-dview="wait">Waiting view</button><button type="button" data-dview="ready">Ready view</button><button type="button" id="demoWatch">Watch a sample spin</button></div>' +
       '</div>';
@@ -851,7 +851,7 @@
     var w = document.getElementById('tileWheel'), res = document.getElementById('demoWatchRes'); if (!w || demoWatchBusy) return;
     var c = chestCfg(), N = c.prizeMax - c.prizeMin + 1, prize = c.prizeMin + secureInt(N), seg = 360 / N;
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, wrap = w.parentNode;
-    var show = function () { if (res) res.textContent = 'Landed on ' + prize + ' → +' + prize + ' FREE points (demo, nothing saved)'; };
+    var show = function () { if (res) res.textContent = 'Landed on ' + prize + ' → +' + prize + ' FREE rewards (demo, nothing saved)'; };
     if (reduce) { show(); return; }
     demoWatchBusy = true; if (res) res.textContent = '';
     wrap.classList.remove('idle');
@@ -879,7 +879,7 @@
   var LADDER_DEFAULT = "20 | Free meal at a partner restaurant\n250 | $50 gas card\n500 | $100 gas card\n1000 | $200 Amazon gift card\n2500 | $500 Amazon gift card";
   // gift-card wording only shows when the prize ladder is switched on (always in the demo)
   function giftOn() { return ladderCfg().enabled; }
-  function giftTxt() { return giftOn() ? ' You can also save your points for gift cards: for example, 1,000 points = a $200 Amazon gift card, to use on Amazon, not just at restaurants.' : ''; }
+  function giftTxt() { return giftOn() ? ' You can also save your rewards for gift cards: for example, 1,000 rewards = a $200 Amazon gift card, to use on Amazon, not just at restaurants.' : ''; }
   function ladderCfg() {
     var raw = (appSettings && appSettings.prizeLadder) || {};
     return { enabled: false /* prizes/gift cards are off for now: points are for restaurants only */, text: (raw.text && String(raw.text).trim()) || LADDER_DEFAULT };
@@ -898,9 +898,9 @@
   function ladderState() { var tiers = parseLadder(ladderCfg().text), pts = (wallet && wallet.points) || 0, sel = -1; tiers.forEach(function (t, i) { if (sel < 0 && t.pts > pts) sel = i; }); return { tiers: tiers, pts: pts, sel: sel < 0 ? tiers.length - 1 : sel }; }
   function ladderPanel(st, i) {
     var t = st.tiers[i], reached = st.pts >= t.pts, pct = Math.max(4, Math.min(100, Math.round(100 * st.pts / t.pts)));
-    return '<div class="lad-head"><b>' + (i === 0 ? 'Up to ' : '') + t.pts.toLocaleString('en-US') + ' points</b></div>' +
-      (reached ? '<div class="lad-ok">✓ You have enough points for this level</div>'
-               : '<div class="lad-need"><b>' + (t.pts - st.pts).toLocaleString('en-US') + ' more point' + (t.pts - st.pts === 1 ? '' : 's') + '</b> to get here (you have ' + st.pts + ')</div><div class="lad-bar"><i style="width:' + pct + '%"></i></div>') +
+    return '<div class="lad-head"><b>' + (i === 0 ? 'Up to ' : '') + t.pts.toLocaleString('en-US') + ' rewards</b></div>' +
+      (reached ? '<div class="lad-ok">✓ You have enough rewards for this level</div>'
+               : '<div class="lad-need"><b>' + (t.pts - st.pts).toLocaleString('en-US') + ' more reward' + (t.pts - st.pts === 1 ? '' : 's') + '</b> to get here (you have ' + st.pts + ')</div><div class="lad-bar"><i style="width:' + pct + '%"></i></div>') +
       t.items.map(function (x) { return '<div class="lad-item"><span class="ic" aria-hidden="true">' + prizeIcon(x) + '</span><span>' + escapeHtml(x) + '</span></div>'; }).join('');
   }
   function bindLadder(dlg) {
@@ -918,9 +918,9 @@
   function lrListHtml() {
     var recPaused = !DEMO && pausedFlag('receipts');
     var rows = [
-      ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn points on what you paid for', ' primary'],
-      tagCfg().enabled ? ['tag', '📸', 'Tag us, earn ' + tagCfg().points + ' points', 'Post and tag @LasVegas_Restaurants', ''] : null,
-      ['rules', '📜', 'How LVR Points Work', 'The simple rules', ''],
+      ['add', '🧾', 'Add a receipt', recPaused ? 'Paused for a moment' : 'Earn rewards on what you paid for', ' primary'],
+      tagCfg().enabled ? ['tag', '📸', 'Tag us, earn ' + tagCfg().points + ' rewards', 'Post and tag @LasVegas_Restaurants', ''] : null,
+      ['rules', '📜', 'How LVR Rewards Work', 'The simple rules', ''],
       ['pterms', '📃', 'Program Terms', 'Our rights to pause, change or end the program', ''],
       ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''],
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
@@ -938,29 +938,29 @@
   }
   // The full "why we have no control" page, reachable from the spin screen, the menu and the Q&A
   // The Spin Terms. Bump SPIN_TERMS_VERSION when the wording changes, and keep spin-terms.html in step.
-  var SPIN_TERMS_VERSION = '2026-10-30e', SPIN_TERMS_DATE = 'October 30, 2026 (rev. 5)';
+  var SPIN_TERMS_VERSION = '2026-11-03a', SPIN_TERMS_DATE = 'November 3, 2026 (rev. 6)';
   function spinTermsList(c) {
     var range = c.prizeMax > 0 ? (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + ' to ' + c.prizeMax) : '1 to 10';
     return [
-      ['Free to join, free to spin', 'No purchase is necessary to join LVR Points or to spin. Buying food does not improve your chances.'],
+      ['Free to join, free to spin', 'No purchase is necessary to join LVR Rewards or to spin. Buying food does not improve your chances.'],
       ['One free spin at a time', 'You get one free spin every ' + cycleText(c.waitDays) + '. When a spin is ready you have ' + c.claimHours + ' hours to use it. If you do not spin in time, that spin is gone and the wait starts again.'],
-      ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Points, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
+      ['The number is random, and we have no control over it', 'The winning number is picked by the random number generator built into your phone\u2019s web browser at the moment you tap Spin. LVR Rewards, Las Vegas Restaurants, Key Technologies and the restaurants cannot choose the number, see it before you spin, or change it for anyone.'],
       ['The spin comes and goes', 'The free spin is not always turned on or available. It may be paused, changed or switched back on at any time, so keep watching for it. Nothing in the app promises that a spin will be available on any given day.'],
-      ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free LVR Points.'],
-      ['What points are worth', '1 point = $1 toward a free offer at any participating restaurant, including new ones as they join. Every offer is at least 15 LVR Points. Points can only be used for those offers. They cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
+      ['Equal chances', 'Every number on the wheel (' + range + ') has the same chance. You receive the number you land on as free LVR Rewards.'],
+      ['What rewards are worth', '1 reward = $1 toward a free offer at any participating restaurant, including new ones as they join. Every offer is at least 15 LVR Rewards. Rewards can only be used for those offers. They cannot be exchanged for cash, cannot be sold, and are never refunded once used.'],
       ['Who can spin', 'You must be 18 or older, and one person may have only one account. Using more than one account, or trying to interfere with the wheel, the app or the records, voids the spin and may close the account.'],
       ['Records', 'Every spin is recorded with the date, time and number, together with the version of these terms you agreed to. If you think a spin was recorded wrongly, contact us and we will review the record with you.'],
       ['Not gambling', 'The spin is a free promotion. There is nothing to bet or buy and no cash prize.'],
-      ['Changes', 'We may pause, change or end the spin, or these terms, at any time, at our sole discretion. We may also cancel a spin or take back points won from a spin if we suspect fraud, a mistake or a security problem. Points have no cash value. See the Program Terms. The version date on this page tells you which terms apply.']
+      ['Changes', 'We may pause, change or end the spin, or these terms, at any time, at our sole discretion. We may also cancel a spin or take back rewards won from a spin if we suspect fraud, a mistake or a security problem. Rewards have no cash value. See the Program Terms. The version date on this page tells you which terms apply.']
     ];
   }
   function spinTermsModal() {
     var c = chestCfg();
-    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Points (Las Vegas Restaurant Points) · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
+    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Rewards (Las Vegas Restaurant Rewards) · Spin Terms · version ' + SPIN_TERMS_DATE + '</p>' +
       '<div class="tr-intro"><b>In short:</b> the number is random and we have no control over it.</div>' +
       '<ol style="margin:0;padding:0 0 0 20px;display:grid;gap:10px;font-size:15px;line-height:1.5;">' + spinTermsList(c).map(function (t) { return '<li><b>' + t[0] + '.</b> ' + t[1] + '</li>'; }).join('') + '</ol>' +
       '<p style="margin:14px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-fair>How the spin works, and test it yourself ›</button></p>' +
-      '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#00a8e1;">spin-terms.html</a></p>';
+      '<p style="margin:0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Rewards menu, any time you want to read them. Printable page: <a href="spin-terms.html" target="_blank" rel="noopener" style="color:#00a8e1;">spin-terms.html</a></p>';
     return infoModal('Spin Terms', html);
   }
   // ---------- monthly return to the community pool ----------
@@ -976,10 +976,10 @@
   // The same plain explanation (with an example) is used in the main-page note, the rules dropdown, the sign-up page and the Q&A.
   function decayHow() {
     var d = decayCfg(), p = d.percent, ex = 50, back = Math.floor(ex * p / 100);
-    return '<p style="margin:0 0 8px;"><b>Use your points before the 1st.</b> LVR Points is a points game, and the game works best when points keep moving. On the <b>1st of every month</b>, ' + p + '% of the points a player has not used go back into the game.</p>' +
-      '<p style="margin:0 0 8px;">Those points do not disappear. They are <b>handed out at random to other players</b>, a few points at a time, the same way points were first given out to you. So every month some lucky players get a surprise drop.</p>' +
-      '<p style="margin:0 0 8px;"><b>Example:</b> you have ' + ex + ' points on the 1st. ' + back + ' go back into the game and you keep ' + (ex - back) + '. If you spend your points on a free offer before the 1st, nothing goes back.</p>' +
-      '<p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first ' + d.graceDays + ' days. Points are rounded down, so a small balance may return nothing.</p>';
+    return '<p style="margin:0 0 8px;"><b>Use your rewards before the 1st.</b> LVR Rewards is a rewards game, and the game works best when rewards keep moving. On the <b>1st of every month</b>, ' + p + '% of the rewards a player has not used go back into the game.</p>' +
+      '<p style="margin:0 0 8px;">Those rewards do not disappear. They are <b>handed out at random to other players</b>, a few rewards at a time, the same way rewards were first given out to you. So every month some lucky players get a surprise drop.</p>' +
+      '<p style="margin:0 0 8px;"><b>Example:</b> you have ' + ex + ' rewards on the 1st. ' + back + ' go back into the game and you keep ' + (ex - back) + '. If you spend your rewards on a free offer before the 1st, nothing goes back.</p>' +
+      '<p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first ' + d.graceDays + ' days. Rewards are rounded down, so a small balance may return nothing.</p>';
   }
   function decayHtml() {
     var d = decayCfg();
@@ -990,24 +990,24 @@
     var inGrace = joined && next.getTime() < joined + d.graceDays * 86400000;
     var take = Math.floor(pts * d.percent / 100);
     var line;
-    if (inGrace) line = 'You are new, so your points are not affected on ' + nextLabel + '. The monthly share starts after your first ' + d.graceDays + ' days.';
-    else if (take >= 1) line = 'On <b>' + nextLabel + '</b>, about <b>' + take + ' of your ' + pts + ' points</b> will go back into the game if they are still unused.';
+    if (inGrace) line = 'You are new, so your rewards are not affected on ' + nextLabel + '. The monthly share starts after your first ' + d.graceDays + ' days.';
+    else if (take >= 1) line = 'On <b>' + nextLabel + '</b>, about <b>' + take + ' of your ' + pts + ' rewards</b> will go back into the game if they are still unused.';
     else line = 'Nothing is due on ' + nextLabel + '.';
     var last = '';
     if (decayLast) {
       var ks = Object.keys(decayLast).sort(), k = ks[ks.length - 1], r = decayLast[k];
-      if (r && r.amount) last = '<div style="margin-top:6px;opacity:.9;">Last monthly share (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' points went back into the game.</div>';
+      if (r && r.amount) last = '<div style="margin-top:6px;opacity:.9;">Last monthly share (' + escapeHtml(k) + '): ' + r.amount + ' of ' + r.before + ' rewards went back into the game.</div>';
     }
-    var pool = poolTotal > 0 ? '<div style="margin-top:6px;opacity:.9;">Points back in the game so far: <b>' + poolTotal + '</b>.</div>' : '';
+    var pool = poolTotal > 0 ? '<div style="margin-top:6px;opacity:.9;">Rewards back in the game so far: <b>' + poolTotal + '</b>.</div>' : '';
     var closed = false; try { closed = localStorage.getItem('lvrDecayClosed') === '1'; } catch (e) {}
-    return '<details class="decay-note" id="decayNote"' + (closed ? '' : ' open') + '><summary><b>Use your points before the 1st.</b> ' + d.percent + '% of unused points go back into the game for other players</summary><div class="decay-body">' + decayHow() + '<div style="margin-top:10px;">' + line + '</div>' + last + pool + '</div></details>';
+    return '<details class="decay-note" id="decayNote"' + (closed ? '' : ' open') + '><summary><b>Use your rewards before the 1st.</b> ' + d.percent + '% of unused rewards go back into the game for other players</summary><div class="decay-body">' + decayHow() + '<div style="margin-top:10px;">' + line + '</div>' + last + pool + '</div></details>';
   }
   // A green notice for 10 days after the member received a pool drop
   function dropNoticeHtml() {
     if (DEMO || !dropLast) return '';
     var ks = Object.keys(dropLast).sort(), k = ks[ks.length - 1], r = dropLast[k];
     if (!r || !r.amount || !r.at || Date.now() - r.at > 10 * 86400000) return '';
-    return '<div class="notice" role="status" style="background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.45);color:#7be3a6;">\u{1F381} <b>Pool drop!</b> You received <b>+' + r.amount + ' points</b> from the community pool. Points that go back into the game are handed out at random to other players.</div>';
+    return '<div class="notice" role="status" style="background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.45);color:#7be3a6;">\u{1F381} <b>Pool drop!</b> You received <b>+' + r.amount + ' rewards</b> from the community pool. Rewards that go back into the game are handed out at random to other players.</div>';
   }
   function bindDecay() {
     var n = document.getElementById('decayNote'); if (!n) return;
@@ -1051,7 +1051,7 @@
       return;
     }
     contentEl.innerHTML = '<div class="no-account-card pending-card"><span class="pend-tag">Waiting for approval</span><h2 style="font-size:26px;line-height:1.2;margin:6px 0 10px;">Thanks, ' + escapeHtml(first) + '! You are on the list.</h2>' +
-      '<p>We check every sign-up by hand so that only real people join LVR Points. As soon as you are approved, this page opens up' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' and your ' + welcomeCfg().amount + ' free points are added' : '') + '. Keep this page, it checks for approval by itself.</p>' +
+      '<p>We check every sign-up by hand so that only real people join LVR Rewards. As soon as you are approved, this page opens up' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' and your ' + welcomeCfg().amount + ' free rewards are added' : '') + '. Keep this page, it checks for approval by itself.</p>' +
       '<div class="r1-me" id="r1Me"></div>' + (lc ? '<h2 style="margin:18px 0 6px;font-size:18px;">Round One leaderboard</h2><div id="r1Body">Loading…</div>' : '') +
       '<p style="font-size:13px;color:var(--ink-dim);margin-top:14px;">By joining you agreed to the <button type="button" class="linkbtn inl" data-pterms>Program Terms</button>.</p></div>';
     r1Load().then(function (d) {
@@ -1066,35 +1066,35 @@
   }, 30000);
   // The Program Terms: our rights to pause, change, end the program and adjust or take back points.
   // Bump PROGRAM_TERMS_VERSION when the wording changes, and re-run: node .github/db-task/gen-points-terms.js
-  var PROGRAM_TERMS_VERSION = '2026-10-30e', PROGRAM_TERMS_DATE = 'October 30, 2026 (rev. 5)';
+  var PROGRAM_TERMS_VERSION = '2026-11-03a', PROGRAM_TERMS_DATE = 'November 3, 2026 (rev. 6)';
   function programTermsList() {
     return [
-      ["What LVR Points is", "LVR Points (Las Vegas Restaurant Points) is a free, just-for-fun promotion run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram). We are doing our best to promote it for participating restaurants and to make it a good experience, but it is offered as is and we make no promise that it will be available at any time."],
-      ["Points have no cash value", "Points are a promotional perk. They are not money, a deposit, a gift card, stored value, a security or your property. \"1 point = $1\" only describes the discount an offer gives you while the program is running. Points cannot be exchanged for cash, sold or transferred, and nothing is owed to you for a balance."],
-      ["Our rights, at our sole discretion", "At any time, with or without notice, for any reason or no reason, we may in our sole discretion: (a) pause, suspend, change or end the program, the free spin, the invite system, any offer or any restaurant; (b) limit, freeze, suspend or close any account; and (c) adjust, cancel, void, reduce, remove or take back any or all points, including points you earned, were given or won. These rights belong to us alone, and our decisions are final."],
-      ["Examples of reasons", "Suspected fraud or abuse, fake, duplicate or shared accounts, altered or incorrect receipts, a security incident, hacking or being hacked, a vulnerability, a technical error or a points mistake, a participating restaurant leaving or changing its offer, a legal or regulatory reason, protecting members, restaurants or ourselves, the program ending, or any other reason we decide. These are examples, not a limit on our rights."],
-      ["Monthly points share", "On the 1st of every month, a percentage of each member's unused points (currently 20%, rounded down) goes back into the game. We then hand those points out at random to other approved members, a few points at a time (like the free spin), usually once a month. Nobody chooses who gets them: a random number generator picks the members and the amounts. Members whose points went back that month are not part of that month's draw, and any points left over stay in the pool for a later draw. For example, with 50 unused points on the 1st, 10 go back and 40 stay. It is not a fee or a charge, and no money is involved. New members are not affected during their first days (currently 30). We may change the percentage, the timing or how points are handed out, or stop the monthly share, at any time. Use your points before the 1st."],
-      ["Sign-ups are reviewed", "Every sign-up is reviewed by hand. We may approve or decline any sign-up for any reason, including to keep out fake accounts, bots and automated sign-ups. Points, including welcome points, are added only after a sign-up is approved. Round One is limited to the first group of members (currently 25), who are shown on a leaderboard by first name and last initial."],
-      ["If the program changes or ends", "If we pause or end the program or take points back, unused points and unused offers may stop working. You are not owed a refund, payment, replacement or compensation of any kind. We will try to post a notice in the app or on our website when we reasonably can, but we are not required to give notice first."],
+      ["What LVR Rewards is", "LVR Rewards (Las Vegas Restaurant Rewards) is a free, just-for-fun promotion run by Las Vegas Restaurants (@LasVegas_Restaurants on Instagram). We are doing our best to promote it for participating restaurants and to make it a good experience, but it is offered as is and we make no promise that it will be available at any time."],
+      ["Rewards have no cash value", "Rewards are a promotional perk. They are not money, a deposit, a gift card, stored value, a security or your property. \"1 reward = $1\" only describes the discount an offer gives you while the program is running. Rewards cannot be exchanged for cash, sold or transferred, and nothing is owed to you for a balance."],
+      ["Our rights, at our sole discretion", "At any time, with or without notice, for any reason or no reason, we may in our sole discretion: (a) pause, suspend, change or end the program, the free spin, the invite system, any offer or any restaurant; (b) limit, freeze, suspend or close any account; and (c) adjust, cancel, void, reduce, remove or take back any or all rewards, including rewards you earned, were given or won. These rights belong to us alone, and our decisions are final."],
+      ["Examples of reasons", "Suspected fraud or abuse, fake, duplicate or shared accounts, altered or incorrect receipts, a security incident, hacking or being hacked, a vulnerability, a technical error or a rewards mistake, a participating restaurant leaving or changing its offer, a legal or regulatory reason, protecting members, restaurants or ourselves, the program ending, or any other reason we decide. These are examples, not a limit on our rights."],
+      ["Monthly rewards share", "On the 1st of every month, a percentage of each member's unused rewards (currently 20%, rounded down) goes back into the game. We then hand those rewards out at random to other approved members, a few rewards at a time (like the free spin), usually once a month. Nobody chooses who gets them: a random number generator picks the members and the amounts. Members whose rewards went back that month are not part of that month's draw, and any rewards left over stay in the pool for a later draw. For example, with 50 unused rewards on the 1st, 10 go back and 40 stay. It is not a fee or a charge, and no money is involved. New members are not affected during their first days (currently 30). We may change the percentage, the timing or how rewards are handed out, or stop the monthly share, at any time. Use your rewards before the 1st."],
+      ["Sign-ups are reviewed", "Every sign-up is reviewed by hand. We may approve or decline any sign-up for any reason, including to keep out fake accounts, bots and automated sign-ups. Rewards, including welcome rewards, are added only after a sign-up is approved. Round One is limited to the first group of members (currently 25), who are shown on a leaderboard by first name and last initial."],
+      ["If the program changes or ends", "If we pause or end the program or take rewards back, unused rewards and unused offers may stop working. You are not owed a refund, payment, replacement or compensation of any kind. We will try to post a notice in the app or on our website when we reasonably can, but we are not required to give notice first."],
       ["Offers belong to the restaurants", "Each offer is provided by a participating restaurant. Offers may be changed, limited, paused or withdrawn, are available while supplies last, and a restaurant may decline an offer it cannot honor. We are not responsible for a restaurant's food, service or decisions."],
-      ["No reliance", "No purchase is necessary to join or to use the free spin. Do not buy anything, travel or spend money expecting to earn or use points. Points are never guaranteed."],
-      ["Fair play and accuracy", "Points are earned only from genuine receipts that we verify. You may have one account. We can correct mistakes at any time, including by removing points that were added in error. Misuse, fraud or interfering with the program voids the points involved."],
-      ["Limit of our responsibility", "To the fullest extent the law allows, Las Vegas Restaurants, Key Technologies and the participating restaurants are not liable for lost, removed or expired points, a paused or ended program, downtime, hacking or data incidents, or any indirect or other damages. Nothing here limits any right you have by law that cannot be limited."],
-      ["Changes to these terms", "We may change these terms at any time. If you keep using LVR Points after a change, you accept the new terms. The version date on this page tells you which terms apply. The Spin Terms also apply to the free spin."]
+      ["No reliance", "No purchase is necessary to join or to use the free spin. Do not buy anything, travel or spend money expecting to earn or use rewards. Rewards are never guaranteed."],
+      ["Fair play and accuracy", "Rewards are earned only from genuine receipts that we verify. You may have one account. We can correct mistakes at any time, including by removing rewards that were added in error. Misuse, fraud or interfering with the program voids the rewards involved."],
+      ["Limit of our responsibility", "To the fullest extent the law allows, Las Vegas Restaurants, Key Technologies and the participating restaurants are not liable for lost, removed or expired rewards, a paused or ended program, downtime, hacking or data incidents, or any indirect or other damages. Nothing here limits any right you have by law that cannot be limited."],
+      ["Changes to these terms", "We may change these terms at any time. If you keep using LVR Rewards after a change, you accept the new terms. The version date on this page tells you which terms apply. The Spin Terms also apply to the free spin."]
     ];
   }
   function programTermsModal() {
-    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Points (Las Vegas Restaurant Points) \u00b7 Program Terms \u00b7 version ' + PROGRAM_TERMS_DATE + '</p>' +
-      '<div class="tr-intro"><b>In short:</b> this is a free, fun promotion. We can pause, change or end it, and adjust or take back points, at any time, at our sole discretion. Points have no cash value.</div>' +
+    var html = '<p style="margin:0 0 10px;font-size:13.5px;color:#9fb3c8;">LVR Rewards (Las Vegas Restaurant Rewards) \u00b7 Program Terms \u00b7 version ' + PROGRAM_TERMS_DATE + '</p>' +
+      '<div class="tr-intro"><b>In short:</b> this is a free, fun promotion. We can pause, change or end it, and adjust or take back rewards, at any time, at our sole discretion. Rewards have no cash value.</div>' +
       '<ol style="margin:0;padding:0 0 0 20px;display:grid;gap:10px;font-size:15px;line-height:1.5;">' + programTermsList().map(function (t) { return '<li><b>' + t[0] + '.</b> ' + t[1] + '</li>'; }).join('') + '</ol>' +
-      '<p style="margin:14px 0 0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Points menu, any time you want to read them. Printable page: <a href="points-terms.html" target="_blank" rel="noopener">points-terms.html</a></p>';
+      '<p style="margin:14px 0 0;font-size:13px;color:#9fb3c8;">These terms stay here, under the LVR Rewards menu, any time you want to read them. Printable page: <a href="rewards-terms.html" target="_blank" rel="noopener">rewards-terms.html</a></p>';
     return infoModal('Program Terms', html);
   }
   // Existing members: a quiet strip asking them to agree to the Program Terms once (new members agree at sign-up)
   function termsNoticeHtml() {
     if (DEMO || !memberKey || !wallet || wallet.consent_terms === PROGRAM_TERMS_VERSION) return '';
     try { if (localStorage.getItem('lvrTermsAgreed') === PROGRAM_TERMS_VERSION) return ''; } catch (e) {}
-    return '<div class="terms-notice" id="termsNotice" role="region" aria-label="Program Terms"><b>We added Program Terms.</b> LVR Points is a free, fun promotion. We can pause, change or end it, and adjust or take back points, at any time. Points have no cash value. <button type="button" class="linkbtn inl" data-pterms>Read the Program Terms</button> <button type="button" class="own-ok" id="termsAgree" style="margin-top:8px;width:100%;">I agree</button></div>';
+    return '<div class="terms-notice" id="termsNotice" role="region" aria-label="Program Terms"><b>We added Program Terms.</b> LVR Rewards is a free, fun promotion. We can pause, change or end it, and adjust or take back rewards, at any time. Rewards have no cash value. <button type="button" class="linkbtn inl" data-pterms>Read the Program Terms</button> <button type="button" class="own-ok" id="termsAgree" style="margin-top:8px;width:100%;">I agree</button></div>';
   }
   function bindTermsNotice() {
     var b = document.getElementById('termsAgree'); if (!b) return;
@@ -1112,17 +1112,17 @@
   }
   function tagDialog() {
     var c = tagCfg(), tags = '@LasVegas_Restaurants #ad #LVRPoints';
-    var d = ownDialog('<h3>Tag us, earn ' + c.points + ' LVR Points</h3>' +
+    var d = ownDialog('<h3>Tag us, earn ' + c.points + ' LVR Rewards</h3>' +
       '<ol style="margin:0 0 12px;padding-left:20px;display:grid;gap:8px;font-size:15px;line-height:1.5;">' +
       '<li>Post a photo or video from a participating restaurant on your <b>public</b> Instagram.</li>' +
       '<li>Tag <b>@LasVegas_Restaurants</b> and the restaurant.</li>' +
-      '<li>Add <b>#ad #LVRPoints</b> so everyone knows you earn points for posting.</li>' +
-      '<li>Paste the link to your post below. We check it and add <b>' + c.points + ' points</b>.</li></ol>' +
+      '<li>Add <b>#ad #LVRPoints</b> so everyone knows you earn rewards for posting.</li>' +
+      '<li>Paste the link to your post below. We check it and add <b>' + c.points + ' rewards</b>.</li></ol>' +
       '<button type="button" class="linkbtn" id="tagCopy">Copy the tags: ' + tags + '</button>' +
       '<div class="field-lite"><label for="tagUrl" style="display:block;font-weight:700;margin:8px 0 4px;">Link to your post</label><input id="tagUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://www.instagram.com/p/..." style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #5b6d80;background:#0b1b30;color:#eef4fb;font:inherit;"></div>' +
       '<p id="tagMsg" role="status" style="min-height:20px;margin:8px 0;font-size:14px;"></p>' +
       '<div class="own-row"><button class="own-no" id="tagClose">Close</button><button class="own-ok" id="tagGo">Send for checking</button></div>' +
-      '<p style="margin:12px 0 0;font-size:12.5px;line-height:1.45;color:#9fb3c8;">Say what you honestly think. Points are the same for any honest post, and we never pay for positive posts. One tag bonus per week. Your account must stay public until we check it. We never need your password. This is not sponsored, endorsed or administered by, or associated with, Instagram. ' + (DEMO ? '<b>Demo: nothing is sent.</b>' : '') + '</p>' +
+      '<p style="margin:12px 0 0;font-size:12.5px;line-height:1.45;color:#9fb3c8;">Say what you honestly think. Rewards are the same for any honest post, and we never pay for positive posts. One tag bonus per week. Your account must stay public until we check it. We never need your password. This is not sponsored, endorsed or administered by, or associated with, Instagram. ' + (DEMO ? '<b>Demo: nothing is sent.</b>' : '') + '</p>' +
       '<div id="tagMine" style="margin-top:10px;font-size:14px;"></div>');
     var msg = d.el.querySelector('#tagMsg'), url = d.el.querySelector('#tagUrl'), go = d.el.querySelector('#tagGo');
     d.el.querySelector('#tagClose').addEventListener('click', d.close);
@@ -1130,7 +1130,7 @@
     var Q = DB + '/lvr_points/tag_claims.json', mine = [];
     if (!DEMO && memberKey) fetch(Q + '?orderBy="memberKey"&equalTo=' + encodeURIComponent(JSON.stringify(memberKey))).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
       mine = Object.keys(j || {}).map(function (k) { return j[k]; }).sort(function (a, b) { return (b.submittedAt || 0) - (a.submittedAt || 0); });
-      d.el.querySelector('#tagMine').innerHTML = mine.length ? '<b>Your posts</b>' + mine.slice(0, 5).map(function (x) { return '<div style="margin-top:6px;">' + (x.status === 'approved' ? '✅ +' + (x.pointsAwarded || '') + ' points added' : x.status === 'rejected' ? '✖ Not approved' : '⏳ Waiting to be checked') + ' · <span style="color:#9fb3c8;">' + escapeHtml(String(x.postUrl || '').replace('https://www.instagram.com/', '')) + '</span></div>'; }).join('') : '';
+      d.el.querySelector('#tagMine').innerHTML = mine.length ? '<b>Your posts</b>' + mine.slice(0, 5).map(function (x) { return '<div style="margin-top:6px;">' + (x.status === 'approved' ? '✅ +' + (x.pointsAwarded || '') + ' rewards added' : x.status === 'rejected' ? '✖ Not approved' : '⏳ Waiting to be checked') + ' · <span style="color:#9fb3c8;">' + escapeHtml(String(x.postUrl || '').replace('https://www.instagram.com/', '')) + '</span></div>'; }).join('') : '';
     }).catch(function () {});
     function say(t, ok) { msg.textContent = t; msg.style.color = ok ? '#7be3a6' : '#ff9a9a'; }
     go.addEventListener('click', function () {
@@ -1145,7 +1145,7 @@
         if (dup && Object.keys(dup).length) { say('That post was already sent.'); go.disabled = false; return null; }
         return fetch(Q, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ memberKey: memberKey, token: token, handle: wallet.instagram || '', postUrl: clean, status: 'pending', submittedAt: { '.sv': 'timestamp' } }) }).then(function (r) {
           if (!r.ok) throw new Error('send');
-          say('Sent! We will check your post and add ' + c.points + ' points if it qualifies.', true); url.value = ''; go.textContent = 'Sent';
+          say('Sent! We will check your post and add ' + c.points + ' rewards if it qualifies.', true); url.value = ''; go.textContent = 'Sent';
         });
       }).catch(function () { say('That did not work. Please try again in a moment.'); go.disabled = false; });
     });
@@ -1155,15 +1155,15 @@
   function fairnessModal() {
     var c = chestCfg(), min = c.prizeMax > 0 ? c.prizeMin : 1, max = c.prizeMax > 0 ? c.prizeMax : 10, N = max - min + 1, pct = Math.round(1000 / N) / 10, avg = (min + max) / 2;
     var sec = function (q, body, open) { return '<details class="tr-sec"' + (open ? ' open' : '') + '><summary>' + q + '</summary><div class="tr-body">' + body + '</div></details>'; };
-    var html = '<div class="tr-intro"><b>The short answer:</b> we have no control over the number. Not the owner, not LVR Points, not the restaurants. Here is exactly why.</div>' +
+    var html = '<div class="tr-intro"><b>The short answer:</b> we have no control over the number. Not the owner, not LVR Rewards, not the restaurants. Here is exactly why.</div>' +
       sec('Who picks the number?', 'Your phone does, at the moment you tap Spin. The number comes from your web browser\u2019s built-in random number generator (it is called <i>Web Crypto</i>). It is a public, open web standard that Chrome, Safari, Firefox and Edge all include, and it is the same kind of random generator browsers rely on for security. We did not write it and we cannot reach into it.', true) +
-      sec('Does every number have the same chance?', 'Yes. The wheel has ' + N + ' slots, ' + min + ' to ' + max + '. Each slot has the same chance: 1 in ' + N + ' (' + pct + '%). The pick is made with a method that removes the tiny bias some random methods have, so no number is favored. If you land on 5, you get 5. If you land on ' + max + ', you get ' + max + '. Over many spins the average is ' + avg + ' points.') +
+      sec('Does every number have the same chance?', 'Yes. The wheel has ' + N + ' slots, ' + min + ' to ' + max + '. Each slot has the same chance: 1 in ' + N + ' (' + pct + '%). The pick is made with a method that removes the tiny bias some random methods have, so no number is favored. If you land on 5, you get 5. If you land on ' + max + ', you get ' + max + '. Over many spins the average is ' + avg + ' rewards.') +
       sec('Can anyone change my number?', 'No. There is no setting, button or admin screen that picks or changes a person\u2019s number. The only thing we set is the range for everybody (' + min + ' to ' + max + '), and you can see it on the wheel. The spinning wheel is only a picture of the number your phone already picked.') +
-      sec('Do you see the result before I spin?', 'No. The number is created on your phone when you tap Spin. It is sent to us only afterwards, so your points can be recorded.') +
+      sec('Do you see the result before I spin?', 'No. The number is created on your phone when you tap Spin. It is sent to us only afterwards, so your rewards can be recorded.') +
       sec('What gets recorded?', 'Each spin is saved with its date, time and number, and the app cannot edit a saved spin. The database accepts one spin per cycle, only inside your ' + c.claimHours + '-hour window, and only a number inside the range on the wheel.') +
-      sec('Test it yourself', 'Run 10,000 test spins on your own phone and see how even the results are. Test spins are not saved and do not give points.<br><button type="button" class="own-ok" id="trTest" style="margin-top:10px;width:100%;padding:12px;border:0;border-radius:12px;font:inherit;font-weight:800;color:#fff;background:#146eb4;cursor:pointer;">Run 10,000 test spins</button><div id="trOut" role="status" style="margin-top:8px;"></div>') +
+      sec('Test it yourself', 'Run 10,000 test spins on your own phone and see how even the results are. Test spins are not saved and do not give rewards.<br><button type="button" class="own-ok" id="trTest" style="margin-top:10px;width:100%;padding:12px;border:0;border-radius:12px;font:inherit;font-weight:800;color:#fff;background:#146eb4;cursor:pointer;">Run 10,000 test spins</button><div id="trOut" role="status" style="margin-top:8px;"></div>') +
       sec('An honest note', 'A website can\u2019t prove to you what its own code does. That is why we use the browser\u2019s standard generator, show every number\u2019s chance, record every spin and let you test it. If a spin ever looks wrong to you, message us and we will look at the record with you.') +
-      sec('Is there a catch?', 'No purchase is necessary. When the free spin is turned on, you get one free spin every ' + cycleText(c.waitDays) + '. Points are worth $1 toward free offers at participating restaurants, and cannot be exchanged for cash.<br><br><b>The spin comes and goes.</b> The free spin is not always turned on or available, so keep watching for it. We are doing our best to get this going and to sign up as many restaurants as we can.<br><br><b>Own a restaurant?</b> If you would like to be part of this, <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">send us a DM on Instagram</a> or <a href="join-restaurant.html">fill out the form</a>.');
+      sec('Is there a catch?', 'No purchase is necessary. When the free spin is turned on, you get one free spin every ' + cycleText(c.waitDays) + '. Rewards are worth $1 toward free offers at participating restaurants, and cannot be exchanged for cash.<br><br><b>The spin comes and goes.</b> The free spin is not always turned on or available, so keep watching for it. We are doing our best to get this going and to sign up as many restaurants as we can.<br><br><b>Own a restaurant?</b> If you would like to be part of this, <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">send us a DM on Instagram</a> or <a href="join-restaurant.html">fill out the form</a>.');
     var d = infoModal('How the spin works', html + '<p style="margin:12px 0 0;font-size:14px;"><button type="button" class="linkbtn" data-terms>Read the full Spin Terms ›</button></p><p style="margin:0;font-size:14px;">Questions? <a href="' + IG_LINK + '" target="_blank" rel="noopener" style="color:#00a8e1;">Message us on Instagram</a></p>');
     var go = d.el.querySelector('#trTest');
     go.addEventListener('click', function () {
@@ -1174,26 +1174,26 @@
     });
     return d;
   }
-  function openRules() { infoModal('How LVR Points Work', rulesHtml()); }
+  function openRules() { infoModal('How LVR Rewards Work', rulesHtml()); }
   function faqHtml() {
     var c = chestCfg(), prize = c.prizeMax > 0 ? prizeRange(c) : '';
     var qa = [
-      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' points once your sign-up is approved' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. Use your points for free food at participating restaurants.'],
-      ['How do I earn more points?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 point for every $1 you spend. Spend $50 and you earn 50 points. A free offer you redeemed does not count toward your spend.'],
-      ['What is a point worth?', '1 point = $1 toward a free offer at a participating restaurant.' + giftTxt()],
-      ['What can I do with my points?', 'Trade them for free food at participating restaurants.' + (giftOn() ? ' You can also save them for the gift cards we list on the Prizes screen.' : ' That is the only thing points can be used for.') + ' They cannot be exchanged for cash. It is one of each offer per person.'],
+      ['Do I have to spend money?', 'No. No purchase is necessary. ' + (welcomeCfg().enabled ? 'You get ' + welcomeCfg().amount + ' rewards once your sign-up is approved' : 'Joining is free') + (prize ? ', and a free bonus spin every ' + cycleText(c.waitDays) + '' : '') + '. Use your rewards for free food at participating restaurants.'],
+      ['How do I earn more rewards?', 'Eat at a participating restaurant, tap Add a receipt, and send a photo of the receipt with the date and the total you paid. After we check it, we add 1 reward for every $1 you spend. Spend $50 and you earn 50 rewards. A free offer you redeemed does not count toward your spend.'],
+      ['What is a reward worth?', '1 reward = $1 toward a free offer at a participating restaurant.' + giftTxt()],
+      ['What can I do with my rewards?', 'Trade them for free food at participating restaurants.' + (giftOn() ? ' You can also save them for the gift cards we list on the Prizes screen.' : ' That is the only thing rewards can be used for.') + ' They cannot be exchanged for cash. It is one of each offer per person.'],
       ['How do I redeem an offer?', 'Tap Redeem on an offer and confirm. You get a code. Show the code to your server before you order, and be ready to show a valid ID.'],
-      ['Can I give my free offer to a friend?', 'Yes, to one friend. Points themselves cannot be sold or transferred.'],
+      ['Can I give my free offer to a friend?', 'Yes, to one friend. Rewards themselves cannot be sold or transferred.'],
       ['Who can join?', 'You must be 18 or older. The restaurant may ask to see a valid ID when you redeem.'],
       ['Will the free spin always be available?', 'No. The free spin is not always turned on. It comes and goes, so keep watching for it. We are doing our best to get this going and to sign up as many restaurants as we can.'],
       ['I own a restaurant. Can I join?', 'Yes, we would love that. Send a DM to @LasVegas_Restaurants on Instagram, or fill out the form at keytechnologies.si/join-restaurant.html and we will get back to you.'],
-      decayOn() ? ['How does the monthly points share work?', 'Use your points before the 1st. LVR Points is a points game. On the 1st of every month, ' + decayCfg().percent + '% of the points a player has not used go back into the game, and they are handed out at random to other players, a few points at a time, the same way points were first given out. Example: you have 50 points on the 1st. ' + Math.floor(50 * decayCfg().percent / 100) + ' go back into the game and you keep ' + (50 - Math.floor(50 * decayCfg().percent / 100)) + '. If you spend your points on a free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first ' + decayCfg().graceDays + ' days, and points are rounded down.'] : null,
-      ['Can the program change or stop?', 'Yes. LVR Points is a free, fun promotion. We may pause, change or end it at any time, and we may adjust or take back points, for example if we suspect fraud, are hacked, find a vulnerability or a mistake, a restaurant leaves, or for any other reason. Points have no cash value and nothing is owed if that happens. Please read the Program Terms in the menu.'],
-      ['Do my points expire?', decayOn() ? 'Points do not have a set end date. But each month a share of unused points goes back into the game for other players. See "How does the monthly points share work?" below. Each offer also has its own end date, and a code that is not used by the date shown expires.' : 'Points do not have a set end date right now. A monthly points share may be added later (see the Program Terms). Each offer has its own end date, and a code that is not used by the date shown expires.'],
-      ['Can I get my points back after I redeem?', 'No. Points are used when you claim an offer and are not refunded, whether or not you use the code.']
+      decayOn() ? ['How does the monthly rewards share work?', 'Use your rewards before the 1st. LVR Rewards is a rewards game. On the 1st of every month, ' + decayCfg().percent + '% of the rewards a player has not used go back into the game, and they are handed out at random to other players, a few rewards at a time, the same way rewards were first given out. Example: you have 50 rewards on the 1st. ' + Math.floor(50 * decayCfg().percent / 100) + ' go back into the game and you keep ' + (50 - Math.floor(50 * decayCfg().percent / 100)) + '. If you spend your rewards on a free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first ' + decayCfg().graceDays + ' days, and rewards are rounded down.'] : null,
+      ['Can the program change or stop?', 'Yes. LVR Rewards is a free, fun promotion. We may pause, change or end it at any time, and we may adjust or take back rewards, for example if we suspect fraud, are hacked, find a vulnerability or a mistake, a restaurant leaves, or for any other reason. Rewards have no cash value and nothing is owed if that happens. Please read the Program Terms in the menu.'],
+      ['Do my rewards expire?', decayOn() ? 'Rewards do not have a set end date. But each month a share of unused rewards goes back into the game for other players. See "How does the monthly rewards share work?" below. Each offer also has its own end date, and a code that is not used by the date shown expires.' : 'Rewards do not have a set end date right now. A monthly rewards share may be added later (see the Program Terms). Each offer has its own end date, and a code that is not used by the date shown expires.'],
+      ['Can I get my rewards back after I redeem?', 'No. Rewards are used when you claim an offer and are not refunded, whether or not you use the code.']
     ];
-    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). LVR Points and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 point. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
-    if (prize) qa.push(['What is the bonus spin?', 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free points. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.']);
+    if (prize) qa.push(['Is the spin fair?', 'The winning number is picked by a random number generator that is built into your phone\'s web browser (a public, open web standard used for security, not code we wrote). LVR Rewards and the restaurants can\'t see it, choose it or change it. We have no control over it. Every number on the wheel has the same chance, and every spin wins at least 1 reward. Open the menu and tap Is the spin fair? for the full details, and you can even run a 10,000-spin test on your own phone.']);
+    if (prize) qa.push(['What is the bonus spin?', 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free rewards. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.']);
     qa = qa.filter(Boolean);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
@@ -1201,15 +1201,15 @@
   function prizesHtml() {
     var cfg = ladderCfg(), st = ladderState();
     if (cfg.enabled && st.tiers.length) {
-      return '<p style="margin:0 0 10px !important;">You have <b>' + st.pts + '</b> points. Tap a level to see its prizes.</p>' +
+      return '<p style="margin:0 0 10px !important;">You have <b>' + st.pts + '</b> rewards. Tap a level to see its prizes.</p>' +
         '<div class="lad-chips">' + st.tiers.map(function (t, i) { return '<button type="button" class="lad-chip' + (i === st.sel ? ' on' : '') + (st.pts >= t.pts ? ' done' : '') + '" data-i="' + i + '">' + (i === 0 ? 'Up to ' : '') + t.pts.toLocaleString('en-US') + ' pts</button>'; }).join('') + '</div>' +
         '<div id="ladPanel">' + ladderPanel(st, st.sel) + '</div>' +
-        '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:14px;">Earn more points</button>';
+        '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:14px;">Earn more rewards</button>';
     }
     var c = chestCfg(), prize = c.prizeMax > 0 ? prizeRange(c) : '';
 
-    return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your points for free items at partner restaurants, like a free chicken bowl.</p></div></div>' +
-      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Free bonus spin</b><p>Every ' + cycleText(c.waitDays) + ', spin the wheel for ' + prize + ' free points. You have ' + c.claimHours + ' hours to spin it.</p></div></div>' : '') +
+    return '<div class="prz"><div class="prz-row"><span class="ic" aria-hidden="true">🍽️</span><div><b>Free food</b><p>Trade your rewards for free items at partner restaurants, like a free chicken bowl.</p></div></div>' +
+      (prize ? '<div class="prz-row"><span class="ic" aria-hidden="true">🎁</span><div><b>Free bonus spin</b><p>Every ' + cycleText(c.waitDays) + ', spin the wheel for ' + prize + ' free rewards. You have ' + c.claimHours + ' hours to spin it.</p></div></div>' : '') +
       '<div class="prz-row"><span class="ic" aria-hidden="true">➕</span><div><b>More offers coming</b><p>New offers are added as more restaurants join. Check the Redeem list.</p></div></div></div>';
   }
   function contactUsHtml() {
@@ -1359,7 +1359,7 @@
   // Brand tie-in: LVR Points is run by the @LasVegas_Restaurants Instagram account
   function igIcon() { return CICON.ig.replace(/igG/g, 'igG' + (igN++)); }
   function brandStripHtml() {
-    return '<a class="brand-strip" href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener" aria-label="LVR Points by Las Vegas Restaurants. Follow @LasVegas_Restaurants on Instagram"><span class="bs-ic" aria-hidden="true">' + igIcon() + '</span><span class="bs-tx"><b>LVR Points</b><i>by Las Vegas Restaurants</i><em>@LasVegas_Restaurants</em></span><span class="bs-go" aria-hidden="true">Follow ›</span></a>';
+    return '<a class="brand-strip" href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener" aria-label="LVR Rewards by Las Vegas Restaurants. Follow @LasVegas_Restaurants on Instagram"><span class="bs-ic" aria-hidden="true">' + igIcon() + '</span><span class="bs-tx"><b>LVR Rewards</b><i>by Las Vegas Restaurants</i><em>@LasVegas_Restaurants</em></span><span class="bs-go" aria-hidden="true">Follow ›</span></a>';
   }
   function igCardHtml() {
     return '<div class="ig-card"><div class="ig-head"><span class="bs-ic" aria-hidden="true">' + igIcon() + '</span><div><b>Follow @LasVegas_Restaurants</b><p>New restaurants and new free offers show up there first. Follow so you never miss one.</p></div></div><a class="ig-btn" href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">Follow on Instagram</a></div>';
@@ -1384,7 +1384,7 @@
     var rows = [
       ["r0", "Vanilla Rice's Hibachi House", "Free Chicken Bowl", 20, "hibachi", 50, 38, 40, "plates", "Grilled teriyaki chicken over rice."],
       ["r1", "Poke Heaven", "Free Poke Bowl", 13, "pokebowl", 25, 5, 12, "plates"],
-      ["r2", "The Tea Terrace", "Free Afternoon Tea Treats", 13, "teatier", 30, 2, 5, "sweet", "Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your points."],
+      ["r2", "The Tea Terrace", "Free Afternoon Tea Treats", 13, "teatier", 30, 2, 5, "sweet", "Afternoon tea in a garden-style tea room. Reservations are required, so call ahead and mention your rewards."],
       ["r3", "Pizza Rock", "Free Personal Pizza", 12, "minipizza", 40, 16, 21, "pizza"],
       ["r4", "Metro Pizza", "Free Personal Pizza", 12, "pizzac", 30, 4, 8, "pizza"],
       ["r6", "Yellowtail Japanese Restaurant & Lounge", "Free Sashimi Plate", 16, "sushi3", 60, 39, 40, "sushi"],
@@ -1471,12 +1471,12 @@
       '<div class="balance-card">' +
         '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
         '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
-        '<div class="balance-label">points available</div></div>' +
+        '<div class="balance-label">rewards available</div></div>' +
         '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
       '</div>' +
       '</div>' +
       (DEMO ? '' : '<div class="see-demo-row"><a class="live-demo" href="my-account.html?demo=65"><span class="dot" aria-hidden="true"></span>See demo &#9654;</a></div>') +
-      '<div class="pt-note"><b>1 point = $1</b> toward a free offer at any participating restaurant, new ones included. Every offer is at least 15 LVR Points.' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' Everyone starts with <b>' + welcomeCfg().amount + ' free points</b> ($' + welcomeCfg().amount + ').' : '') + ' Points can only be used for those offers, not for anything else or exchanged for cash.</div>' +
+      '<div class="pt-note"><b>1 reward = $1</b> toward a free offer at any participating restaurant, new ones included. Every offer is at least 15 LVR Rewards.' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' Everyone starts with <b>' + welcomeCfg().amount + ' free rewards</b> ($' + welcomeCfg().amount + ').' : '') + ' Rewards can only be used for those offers, not for anything else or exchanged for cash.</div>' +
       decayHtml() +
       igCardHtml() +
       '<h2>Redeem</h2>';
@@ -1499,7 +1499,7 @@
         var first = g.items[0], firstAfford = pts >= first.pointCost && !paused, firstPic = first.photoUrl || first.photo || '';
         return '<div class="rest-group' + (ready ? ' has-ready' : '') + '" data-svc="' + svcMode(g.name) + '" data-cat="' + escapeHtml(g.items[0].cat || '') + '">' +
           '<div class="offer-head">' + escapeHtml(first.itemName || 'Offer') + '</div>' +
-          '<div class="offer-worth">' + first.pointCost + ' LVR Points</div>' +
+          '<div class="offer-worth">' + first.pointCost + ' LVR Rewards</div>' +
           '<div class="rest-head"><div class="rest-name">' + escapeHtml(g.name) + '</div>' +
           ownerBtnHtml(g.name) + '</div>' +
           (SHOW_PHOTOS && firstPic ? '<img class="rest-photo' + (firstAfford ? '' : ' locked') + '" src="' + escapeHtml(firstPic) + '" alt="' + escapeHtml(first.itemName || 'Food') + '" loading="lazy">' : '') +
@@ -1518,21 +1518,21 @@
               ? '<div class="goal need">⏸ Redeeming is paused for a moment. Nothing is being changed while it is paused.</div>'
               : afford
               ? '<div class="goal ok">✓ You can get this now<div class="gbar"><i style="width:100%"></i></div></div>'
-              : '<div class="goal need">🔒 ' + (item.pointCost - pts) + ' more point' + (item.pointCost - pts === 1 ? '' : 's') + ' to unlock · you have ' + pts + ' of ' + item.pointCost + '<div class="gbar"><i style="width:' + Math.min(100, Math.round(100 * pts / item.pointCost)) + '%"></i></div></div>';
+              : '<div class="goal need">🔒 ' + (item.pointCost - pts) + ' more reward' + (item.pointCost - pts === 1 ? '' : 's') + ' to unlock · you have ' + pts + ' of ' + item.pointCost + '<div class="gbar"><i style="width:' + Math.min(100, Math.round(100 * pts / item.pointCost)) + '%"></i></div></div>';
             return '<div class="item-card ' + (afford ? 'ready' : 'locked') + '" data-slug="' + escapeHtml(item.slug) + '" data-item="' + escapeHtml(item.itemId) + '">' +
               (pic ? '<img class="item-photo" src="' + escapeHtml(pic) + '" alt="" loading="lazy">' : '') +
               '<div class="item-top">' +
-                '<div>' + (svcMode(g.name) ? '<span class="pickup">' + SVC_LABEL[svcMode(g.name)] + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + ' · ' + item.pointCost + ' LVR Points</div>') + '</div>' +
+                '<div>' + (svcMode(g.name) ? '<span class="pickup">' + SVC_LABEL[svcMode(g.name)] + '</span>' : '') + (pending ? '<span class="demo-tag">Demo · waiting for approval</span>' : '') + (idx === 0 ? '' : '<div class="item-name">' + escapeHtml(item.itemName || 'Offer') + ' · ' + item.pointCost + ' LVR Rewards</div>') + '</div>' +
               '</div>' +
               (item.instructions ? '<div class="item-note">' + escapeHtml(item.instructions) + '</div>' : '') +
               goal +
               (pending ? '' : tallyHtml(Number(item.maxRedemptions) || 0, (Number(item.maxRedemptions) || 0) - (item._redeemedCount || 0), item.expiresAt)) +
-              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pending ? 'Waiting for approval' : paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' LVR Point' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
-              (pending ? '' : '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more points</small></button>') + '</div>' +
-              (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn points on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
+              '<div class="act-row"><button class="redeem-btn" data-act="redeem"' + (afford ? '' : ' disabled') + '>' + (pending ? 'Waiting for approval' : paused ? 'Paused for now' : (claimed ? 'Already claimed' : 'Redeem ' + item.pointCost + ' LVR Reward' + (Number(item.pointCost) === 1 ? '' : 's'))) + '</button>' +
+              (pending ? '' : '<button type="button" class="rcpt-btn" data-act="addreceipt" data-slug="' + escapeHtml(item.slug) + '"><b>Add receipt</b><small>Earn more rewards</small></button>') + '</div>' +
+              (pending ? '' : '<div class="act-hint">Spent more than the free item? Add your receipt and earn rewards on the rest. The free ' + escapeHtml(String(item.itemName || 'offer').replace(/^Free /i, '')) + ' itself does not count.</div>') +
             '</div>';
           }).join('') + '</div>' + contactHtml(first.contact, g.name) + '</div>';
-      }).join('') + '<div class="fineprint">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Points cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.' + (decayOn() ? ' On the 1st of every month, ' + decayCfg().percent + '% of unused points go back into the game for other players (see the rules).' : '') + '</div>';
+      }).join('') + '<div class="fineprint">One per customer. Rewards are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Rewards cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.' + (decayOn() ? ' On the 1st of every month, ' + decayCfg().percent + '% of unused rewards go back into the game for other players (see the rules).' : '') + '</div>';
     }
 
     var mine = [];
@@ -1566,7 +1566,7 @@
         var r = myReceipts[id];
         var biz = (directory[r.slug] && directory[r.slug].bizName) || r.slug;
         var st = r.status || 'pending';
-        var label = st === 'approved' ? ('+' + (r.pointsAwarded || 0) + ' points') : (st === 'rejected' ? 'Not approved' : 'Pending review');
+        var label = st === 'approved' ? ('+' + (r.pointsAwarded || 0) + ' rewards') : (st === 'rejected' ? 'Not approved' : 'Pending review');
         return '<div class="hist-row"><div class="hist-main"><div class="hist-item">' + escapeHtml(biz) + ' · $' + Number(r.amount || 0).toFixed(2) + '</div>' +
           '<div class="hist-sub">Receipt ' + escapeHtml(r.receiptNo || '') + (r.submittedAt ? ' · ' + new Date(r.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '') + '</div></div>' +
           '<div class="rcpt-badge ' + st + '">' + label + '</div></div>';
@@ -1648,10 +1648,10 @@
     if (!refSettings || refSettings.enabled !== true) return '';
     var extra = refSettings.l2Pct > 0 ? ' and ' + refSettings.l2Pct + '% of what their friends earn' : '';
     return '<div class="invite-card" id="inviteCard"><h2>Invite friends</h2>' +
-      '<div class="earn-sub" style="margin-bottom:0;">Share your link. When a friend joins and earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn' + extra + '. It never reduces their points.</div>' +
+      '<div class="earn-sub" style="margin-bottom:0;">Share your link. When a friend joins and earns rewards from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn' + extra + '. It never reduces their rewards.</div>' +
       '<div class="invite-link" id="inviteLink">Getting your link…</div>' +
       '<button class="btn btn-primary" id="inviteBtn" style="width:100%;" disabled>Share my link</button>' +
-      '<div class="invite-stats"><div><b id="invFriends">–</b>friends joined</div><div><b id="invBonus">' + (wallet.refBonusTotal || 0) + '</b>bonus points earned</div></div></div>';
+      '<div class="invite-stats"><div><b id="invFriends">–</b>friends joined</div><div><b id="invBonus">' + (wallet.refBonusTotal || 0) + '</b>bonus rewards earned</div></div></div>';
   }
   function bindInvite() {
     if (!document.getElementById('inviteCard')) return;
@@ -1665,7 +1665,7 @@
         return fetch(DB + MEMBERS_PATH + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(memberKey)) + '&shallow=true').then(function(r){ return r.json(); }).then(function(f){
           var used = Object.keys(f || {}).filter(function(k){ return !(reg[k] && reg[k].status === 'rejected'); }).length, left = Math.max(0, lc.invites - used);
           document.getElementById('invTitle').textContent = 'Founding Member #' + (rank + 1);
-          document.getElementById('invSub').textContent = 'You are one of the first ' + lc.limit + ' people in LVR Points. Each Founding Member can invite ' + (lc.invites === 1 ? 'one friend' : lc.invites + ' friends') + ', so choose a friend who will really use it. ' + (left > 0 ? 'Share your link below.' : 'You have used ' + (lc.invites === 1 ? 'your invite' : 'all your invites') + '. Thank you for spreading the word.') + (refSettings && refSettings.enabled === true && refSettings.l1Pct > 0 ? ' When your friend earns points from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn. It never reduces their points.' : '');
+          document.getElementById('invSub').textContent = 'You are one of the first ' + lc.limit + ' people in LVR Rewards. Each Founding Member can invite ' + (lc.invites === 1 ? 'one friend' : lc.invites + ' friends') + ', so choose a friend who will really use it. ' + (left > 0 ? 'Share your link below.' : 'You have used ' + (lc.invites === 1 ? 'your invite' : 'all your invites') + '. Thank you for spreading the word.') + (refSettings && refSettings.enabled === true && refSettings.l1Pct > 0 ? ' When your friend earns rewards from verified receipts, you earn a bonus of ' + refSettings.l1Pct + '% of what they earn. It never reduces their rewards.' : '');
           document.getElementById('invFriends').textContent = used;
           document.getElementById('invLeft').textContent = left;
           if (left <= 0) { document.getElementById('inviteLink').style.display = 'none'; document.getElementById('inviteBtn').style.display = 'none'; return; }
@@ -1674,7 +1674,7 @@
             document.getElementById('inviteLink').textContent = url;
             var btn = document.getElementById('inviteBtn'); btn.disabled = false;
             btn.addEventListener('click', function(){
-              var text = 'I am a Founding Member of LVR Points, free food at Las Vegas restaurants. Here is your invite: ' + url;
+              var text = 'I am a Founding Member of LVR Rewards, free food at Las Vegas restaurants. Here is your invite: ' + url;
               if (navigator.share) { navigator.share({ text: text }).catch(function(){}); }
               else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Link copied!'; }); }
               else { btn.textContent = url; }
@@ -1689,7 +1689,7 @@
       document.getElementById('inviteLink').textContent = url;
       var btn = document.getElementById('inviteBtn'); btn.disabled = false;
       btn.addEventListener('click', function(){
-        var text = 'Join LVR Points and earn points at Las Vegas restaurants: ' + url;
+        var text = 'Join LVR Rewards and earn rewards at Las Vegas restaurants: ' + url;
         if (navigator.share) { navigator.share({ text: text }).catch(function(){}); }
         else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Link copied!'; }); }
         else { btn.textContent = url; }
@@ -1715,7 +1715,7 @@
     var t = typeof exp === 'number' ? exp : new Date(String(exp) + 'T23:59:59').getTime();
     var days = Math.ceil((t - Date.now()) / 86400000);
     var endTxt = left <= 0 ? 'Was good until <b>' + escapeHtml(fmtDay(exp)) + '</b>' : (days <= 0 ? '<b>Ends today</b>' : 'Ends in <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b> · ' + escapeHtml(fmtDay(exp)));
-    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Points are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Points cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
+    return '<div class="tally' + cls + '"><div class="trow"><span class="tused"><b>' + used + '</b> of ' + max + ' claimed</span><span class="tflag">' + flag + '</span></div><div class="tbar"><i style="width:' + pct + '%"></i></div><span class="texp' + (days <= 7 && left > 0 ? ' soon' : '') + '">' + endTxt + '</span><div class="fine">One per customer. Rewards are used when you claim an offer and are never refunded, whether or not you use the code. An unused code expires on the date shown. Show your code to your server before you order. Rewards cannot be exchanged for cash. The offer is not transferable, and cannot be combined with other offers. The restaurant may end an offer early once it runs out.</div></div>';
   }
 
   // ---------- treasure chest ----------
@@ -1872,21 +1872,21 @@
     var st = chestInfo(), tile = '', art = '', big = '', fair = false, demoGo = '', title = 'Your free bonus spin', msg = 'Your bonus is almost ready. Come back and check this spot soon.', canOpen = false, show = true;
     if (st.kind === 'wait') {
       var range = prizeRange(st.c);
-      tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Free spin in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">Win ' + range + ' FREE points</span></span>';
+      tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Free spin in</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-unit">Win ' + range + ' FREE rewards</span></span>';
       art = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'prevWheel', 'idle') + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:6px;">until your free bonus spin</div>';
       title = 'Your free bonus spin'; fair = true; demoGo = 'primary';
-      msg = (st.missed ? 'The last spin window closed, so the wait started over. ' : '') + 'When the countdown ends, a wheel appears. Spin it to win ' + range + ' free points. The number is random and we have no control over it. You will have ' + st.c.claimHours + ' hours to spin, or the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
+      msg = (st.missed ? 'The last spin window closed, so the wait started over. ' : '') + 'When the countdown ends, a wheel appears. Spin it to win ' + range + ' free rewards. The number is random and we have no control over it. You will have ' + st.c.claimHours + ' hours to spin, or the spin is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.';
     } else if (st.kind === 'ready') {
       var amt = prizeRange(st.c);
       var cl = fmtLeft(st.ms);
       tile = wheelHtml(st.c.prizeMin, st.c.prizeMax, 'tileWheel', 'mini idle') + '<span class="rw-lab">Spin within</span>' + clockHtml(st.ms) + '<span class="rw-foot"><span class="rw-go">Tap to spin</span></span>';
       art = wheelHtml(st.c.prizeMin, st.c.prizeMax) + clockHtml(st.ms).replace('class="clk"', 'class="clk big"') + '<div class="bn-unit" style="margin-top:2px;font-weight:800;color:#ffd35c;">left to spin</div>';
-      title = 'Spin for ' + amt + ' FREE points';
+      title = 'Spin for ' + amt + ' FREE rewards';
       msg = 'You get one spin and this is it. Spin before the clock runs out, or it is gone and the ' + hrs(st.c.waitDays) + '-hour wait starts again.'; canOpen = true;
       fair = true; demoGo = DEMO ? '' : 'ghost';
     } else { show = false; }
     if (chestBusy) canOpen = false;
-    if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No points this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (DEMO ? 'demo points · no value' : (chestWin.pending ? 'FREE points won' : 'FREE points added to your balance')) + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : (DEMO ? 'Nice spin! (demo)' : 'You won!'); canOpen = false; }
+    if (chestWin) { art = chestWin.n === '+0' ? '<div class="bn-num">0</div><div class="bn-unit">No rewards this spin</div>' : '<div class="bn-num win">' + chestWin.n + '</div><div class="bn-unit">' + (DEMO ? 'demo rewards · no value' : (chestWin.pending ? 'FREE rewards won' : 'FREE rewards added to your balance')) + '</div>'; title = chestWin.n === '+0' ? 'Better luck next time' : (DEMO ? 'Nice spin! (demo)' : 'You won!'); canOpen = false; }
     var btn = document.getElementById('giftBtn');
     if (btn) { btn.hidden = !show; btn.setAttribute('aria-label', st.kind === 'ready' ? 'Your free bonus spin is ready. Tap to spin.' : (st.kind === 'wait' ? 'Your next bonus in ' + clockParts(st.ms)[0] + ' days and ' + clockParts(st.ms)[1] + ' hours' : 'Your bonus')); btn.classList.toggle('ready', st.kind === 'ready'); var cc = btn.querySelector('.chest-count'); var tk = st.kind + '|' + st.n + '|' + (st.c ? prizeRange(st.c) : ''); if (cc && tk !== lastTileKey) { cc.innerHTML = tile; lastTileKey = tk; } }
     var card = document.querySelector('.balance-card'); if (card) card.classList.toggle('solo', !show);
@@ -1958,7 +1958,7 @@
           try { localStorage.setItem('lvrPendingCredit', JSON.stringify({ mk: mk, n: st.n, prize: prize })); } catch (e) {}
           wallet.chestState = { n: st.n, amount: prize, at: Date.now() };
           chestBusy = false; chestWin = { n: '+' + prize, pending: true };
-          var m2 = document.getElementById('chestMsg'); if (m2) m2.textContent = 'Your spin counted. We could not add the points just yet. They will be added automatically in a moment, and nothing is lost.';
+          var m2 = document.getElementById('chestMsg'); if (m2) m2.textContent = 'Your spin counted. We could not add the rewards just yet. They will be added automatically in a moment, and nothing is lost.';
           tickChest(); setTimeout(flushPending, 4000);
         } else {
           chestBusy = false; document.getElementById('chestMsg').textContent = 'That did not work. Please try again in a moment.'; tickChest();
@@ -2002,7 +2002,7 @@
         logTx(pc.mk, 'spin-' + pc.n, 'spin', pc.prize, 'Free spin #' + pc.n + ' (credited late)');
         wallet.points = (wallet.points || 0) + pc.prize;
         var nb = document.getElementById('balanceNum'); if (nb) nb.textContent = wallet.points;
-        var m3 = document.getElementById('chestMsg'); if (m3 && chestWin && chestWin.pending) m3.textContent = 'Your ' + pc.prize + ' free point' + (pc.prize === 1 ? ' was' : 's were') + ' added. Your next free bonus spin arrives in ' + hrs(chestCfg().waitDays) + ' hours.';
+        var m3 = document.getElementById('chestMsg'); if (m3 && chestWin && chestWin.pending) m3.textContent = 'Your ' + pc.prize + ' free reward' + (pc.prize === 1 ? ' was' : 's were') + ' added. Your next free bonus spin arrives in ' + hrs(chestCfg().waitDays) + ' hours.';
         chestWin = chestWin && chestWin.pending ? { n: '+' + pc.prize } : chestWin; tickChest();
       })
       .catch(function () { pendingBusy = false; });
@@ -2032,7 +2032,7 @@
   function bindMini() {
     var card = document.querySelector('.balance-card'), num = document.getElementById('balanceNum'), bar = document.getElementById('miniBal'), mn = document.getElementById('miniNum');
     if (!card || !num || !bar || !('IntersectionObserver' in window)) return;
-    function setMini() { var r = document.querySelectorAll('.item-card.ready').length; mn.textContent = num.textContent; mn.nextSibling.textContent = ' points'; }
+    function setMini() { var r = document.querySelectorAll('.item-card.ready').length; mn.textContent = num.textContent; mn.nextSibling.textContent = ' rewards'; }
     setMini();
     if (miniObs) miniObs.disconnect();
     miniObs = new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { rootMargin: '-60px 0px 0px 0px' });
@@ -2056,7 +2056,7 @@
       if ((r.decidedAt || 0) < weekAgo) { seen[id] = 1; changed = true; return; }
       var biz = (directory[r.slug] && directory[r.slug].bizName) || r.slug;
       out += r.status === 'approved'
-        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' points!' + (r.welcomeAwarded ? ' Plus ' + r.welcomeAwarded + ' welcome points 🎁' : '') + '</div>'
+        ? '<div class="notice ok">🎉 Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' was approved: +' + (r.pointsAwarded || 0) + ' rewards!' + (r.welcomeAwarded ? ' Plus ' + r.welcomeAwarded + ' welcome rewards 🎁' : '') + '</div>'
         : '<div class="notice no">Your $' + Number(r.amount || 0).toFixed(2) + ' receipt at ' + escapeHtml(biz) + ' could not be approved.</div>';
       seen[id] = 1; changed = true;
     });
@@ -2083,7 +2083,7 @@
     }, 15000);
   }
 
-  function earnRule() { return 'Everything you order and pay for earns points. <b>The free offer itself does not count</b>: if you redeemed a free chicken bowl, leave that out and count only what else you paid for.'; }
+  function earnRule() { return 'Everything you order and pay for earns rewards. <b>The free offer itself does not count</b>: if you redeemed a free chicken bowl, leave that out and count only what else you paid for.'; }
   function earnRestaurants() {
     if (DEMO) { var seen = {}, out = []; demoItems().forEach(function (it) { if (!isHidden(it.bizName) && !seen[it.slug]) { seen[it.slug] = 1; out.push([it.slug, it.bizName]); } }); return out; }
     return Object.keys(directory || {}).filter(function(k){ return directory[k] && directory[k].active !== false && inVertical(k) && !isHidden(directory[k].bizName || k); }).map(function (k) { return [k, directory[k].bizName || k]; });
@@ -2095,11 +2095,11 @@
     earnParts = { card: '', modal: '' };
     var rests = earnRestaurants();
     if (!rests.length) return '';
-    if (!DEMO && pausedFlag('receipts')) { earnParts.card = '<div class="earn-card"><h2>Earn more points</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your points are safe.</div></div>'; return earnParts.card; }
+    if (!DEMO && pausedFlag('receipts')) { earnParts.card = '<div class="earn-card"><h2>Earn more rewards</h2><div class="earn-sub" style="margin:0;">Receipt submissions are paused for a moment. Please check back soon - your rewards are safe.</div></div>'; return earnParts.card; }
     var form = '<div class="rcpt-box" id="earnCard" role="document">' +
       '<button type="button" class="rcpt-x" data-act="closereceipt" aria-label="Close">×</button>' +
       '<h2>Add a receipt</h2>' +
-      '<div class="earn-sub">Upload your receipt to earn points. ' + earnRule() + ' <b>Cover your name and card digits</b> before taking the photos.</div>' +
+      '<div class="earn-sub">Upload your receipt to earn rewards. ' + earnRule() + ' <b>Cover your name and card digits</b> before taking the photos.</div>' +
       '<label for="eRest">Restaurant</label>' +
       '<select id="eRest"><option value="">Choose…</option>' + rests.map(function (r) { return '<option value="' + escapeHtml(r[0]) + '">' + escapeHtml(r[1]) + '</option>'; }).join('') + '</select>' +
       '<div class="earn-sub" id="eRate" style="margin:6px 0 0;"></div>' +
@@ -2112,9 +2112,9 @@
       '<label for="eAmt">Total you paid ($), not counting any free offer you redeemed</label><input type="number" id="eAmt" inputmode="decimal" step="0.01" min="0">' +
       '<button class="btn btn-primary" id="eBtn" style="width:100%;margin-top:14px;">Submit receipt</button>' +
       '<div class="earn-msg" id="eMsg"></div></div>';
-    earnParts.card = '<div class="earn-card" id="earnDemo"><h2>Earn more points</h2>' +
+    earnParts.card = '<div class="earn-card" id="earnDemo"><h2>Earn more rewards</h2>' +
       '<div class="earn-sub">Eat at any participating restaurant, then add your receipt. ' + earnRule() + '</div>' +
-      '<div class="earn-eg"><b>Example.</b> You use 20 points for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn points on that $16. The bowl is free, so it adds nothing.</div>' +
+      '<div class="earn-eg"><b>Example.</b> You use 20 rewards for a free chicken bowl and also buy a $12 side and a $4 sauce. Your receipt shows $16 of food you paid for, so you earn rewards on that $16. The bowl is free, so it adds nothing.</div>' +
       '<button type="button" class="btn btn-primary" data-act="addreceipt" style="width:100%;margin-top:12px;">Add a receipt</button></div>';
     earnParts.modal = '<div class="rcpt-back" id="rcptBack">' + form + '</div>';
     return earnParts.card + earnParts.modal;
@@ -2159,7 +2159,7 @@
       el.textContent = (d && d.earnRate) ? earnRateText(d.earnRate) : '';
     });
     document.getElementById('eBtn').addEventListener('click', function () {
-      if (DEMO) { earnMsg('Preview only: in the real app this sends your receipt for checking, and points are added once it is approved. Nothing was sent.', 'ok'); return; }
+      if (DEMO) { earnMsg('Preview only: in the real app this sends your receipt for checking, and rewards are added once it is approved. Nothing was sent.', 'ok'); return; }
       submitReceipt();
     });
     if (!window.__rcptBound) { window.__rcptBound = true;
@@ -2181,9 +2181,9 @@
 
   function earnRateText(rate) {
     rate = Number(rate) || 0;
-    if (rate === 1) return 'You earn 1 point for every $1 you spend.';
-    if (rate > 0 && rate < 1) { var x = 1 / rate; if (Math.abs(x - Math.round(x)) < 0.01) return 'You earn 1 point for every $' + Math.round(x) + ' you spend.'; }
-    return 'You earn about ' + rate + ' point' + (rate === 1 ? '' : 's') + ' per $1 spent.';
+    if (rate === 1) return 'You earn 1 reward for every $1 you spend.';
+    if (rate > 0 && rate < 1) { var x = 1 / rate; if (Math.abs(x - Math.round(x)) < 0.01) return 'You earn 1 reward for every $' + Math.round(x) + ' you spend.'; }
+    return 'You earn about ' + rate + ' reward' + (rate === 1 ? '' : 's') + ' per $1 spent.';
   }
   function earnMsg(text, cls) {
     var m = document.getElementById('eMsg');
@@ -2255,15 +2255,15 @@
     if (card.querySelector('.confirm-box')) return;
     if (DEMO) {
       var d = document.createElement('div'); d.className = 'confirm-box';
-      d.innerHTML = '<div><b>Demo only.</b> Nothing was spent. In the real app this takes ' + item.pointCost + ' points and gives you a code to show your server.</div><div class="confirm-row"><button class="confirm-no" data-act="cancel">Close</button></div>';
+      d.innerHTML = '<div><b>Demo only.</b> Nothing was spent. In the real app this takes ' + item.pointCost + ' rewards and gives you a code to show your server.</div><div class="confirm-row"><button class="confirm-no" data-act="cancel">Close</button></div>';
       card.appendChild(d); d.querySelector('[data-act="cancel"]').addEventListener('click', function(){ d.remove(); });
       return;
     }
     var box = document.createElement('div');
     box.className = 'confirm-box';
     box.innerHTML =
-      '<div>Use <b>' + item.pointCost + ' points</b> for ' + escapeHtml(item.itemName || 'this offer') + ' at ' + escapeHtml(item.bizName || item.slug) + '?</div>' +
-      '<div style="margin-top:8px;font-size:13px;color:#ffb4b4;font-weight:600;">No refunds. Your points are used right away. If you do not use this code by ' + (item.expiresAt ? escapeHtml(new Date(item.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) : 'the offer end date') + ', it expires and the points are not returned.</div>' +
+      '<div>Use <b>' + item.pointCost + ' rewards</b> for ' + escapeHtml(item.itemName || 'this offer') + ' at ' + escapeHtml(item.bizName || item.slug) + '?</div>' +
+      '<div style="margin-top:8px;font-size:13px;color:#ffb4b4;font-weight:600;">No refunds. Your rewards are used right away. If you do not use this code by ' + (item.expiresAt ? escapeHtml(new Date(item.expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) : 'the offer end date') + ', it expires and the rewards are not returned.</div>' +
       '<div class="confirm-row">' +
         '<button class="confirm-no" data-act="cancel">Cancel</button>' +
         '<button class="confirm-yes" data-act="confirm">Yes, Redeem</button>' +
@@ -2306,7 +2306,7 @@
         return;
       }
       if (freshBalance < item.pointCost) {
-        noteDialog("Your balance changed and you no longer have enough points for this.");
+        noteDialog("Your balance changed and you no longer have enough rewards for this.");
         loadWallet();
         return;
       }
@@ -2343,7 +2343,7 @@
       var pointsUrl = DB + MEMBERS_PATH + '/' + encodeURIComponent(memberKey) + '/points.json';
       var change = function(n){ return fetch(pointsUrl, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ '.sv': { increment: n } }) }); };
       return change(-item.pointCost).then(function(taken){
-        if (!taken.ok) { noteDialog('Your balance changed, so we could not use the points. Nothing was spent.'); loadWallet(); return; }
+        if (!taken.ok) { noteDialog('Your balance changed, so we could not use the rewards. Nothing was spent.'); loadWallet(); return; }
         return fbPost(REDEMPTIONS_PATH + encodeURIComponent(item.slug), redemption).then(function(r){
           if (!r.ok) throw new Error('HTTP ' + r.status);
           r.clone().json().then(function (j) { logTx(encodeURIComponent(memberKey), 'redeem-' + ((j && j.name) || Date.now()), 'redeem', -item.pointCost, item.itemName + ' at ' + (item.bizName || item.slug) + ' · code ' + code); }).catch(function () {});
@@ -2354,7 +2354,7 @@
           showRedeemSuccess(item, code, newBalance);
         }).catch(function(){
           return change(item.pointCost).catch(function(){}).then(function(){
-            noteDialog('Something went wrong, so your points were not used. Please try again.');
+            noteDialog('Something went wrong, so your rewards were not used. Please try again.');
             loadWallet();
           });
         });
@@ -2373,7 +2373,7 @@
         '<div class="code-value">' + escapeHtml(code) + '</div>' +
       '</div>' +
       '<div class="overlay-instructions">' + escapeHtml(item.instructions || ('Show this code at ' + (item.bizName || item.slug) + ' to redeem.')) + '</div>' +
-      '<button class="overlay-close" id="overlayCloseBtn">Done — ' + newBalance + ' points left</button>';
+      '<button class="overlay-close" id="overlayCloseBtn">Done — ' + newBalance + ' rewards left</button>';
     document.getElementById('redeemOverlay').classList.add('show');
     document.getElementById('overlayCloseBtn').addEventListener('click', function(){
       document.getElementById('redeemOverlay').classList.remove('show');

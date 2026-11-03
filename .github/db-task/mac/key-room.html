@@ -85,7 +85,7 @@
   function dialog() {
     var back = document.createElement('div');
     back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
-    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and points with this login.</p>' +
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and rewards with this login.</p>' +
       '<label style="display:block;font-weight:700;margin:6px 0 3px;" for="oaEmail">Email</label><input id="oaEmail" type="email" autocomplete="username" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
       '<label style="display:block;font-weight:700;margin:10px 0 3px;" for="oaPw">Password</label><input id="oaPw" type="password" autocomplete="current-password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
       '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13.5px;color:#9fb3c8;"><input id="oaKeep" type="checkbox"> Stay signed in on this Mac</label>' +
@@ -199,8 +199,8 @@
     <div id="stRows"><div class="sw-row"><span>Checking…</span></div></div>
   </div>
   <div class="panel" id="pausePanel">
-    <div class="panel-title">Points program switches</div>
-    <div class="panel-sub">One button to stop the program if anything looks wrong. Members see "paused for a moment" and their points stay safe.</div>
+    <div class="panel-title">Rewards program switches</div>
+    <div class="panel-sub">One button to stop the program if anything looks wrong. Members see "paused for a moment" and their rewards stay safe.</div>
     <div id="swRows"><div class="sw-row"><span>Checking…</span></div></div>
     <button type="button" class="big-btn pause" id="pauseBtn" hidden></button>
     <div class="panel-sub" id="swNote" style="margin:10px 0 0;"></div>
@@ -227,7 +227,7 @@
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://lvr-data-a60c1.web.app/lvr-points-admin.html">
-      <div><div class="tool-name">Points Program<span class="badge" id="bd-points" hidden></span></div><div class="tool-desc">Receipts to approve, businesses and your commission, what members can redeem, and the Restaurants tab to remove ones you do not want.</div></div>
+      <div><div class="tool-name">Rewards Program<span class="badge" id="bd-points" hidden></span></div><div class="tool-desc">Receipts to approve, businesses and your commission, what members can redeem, and the Restaurants tab to remove ones you do not want.</div></div>
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://lvr-data-a60c1.web.app/lvr-invoice.html">
@@ -235,7 +235,7 @@
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://keytechnologies.si/my-account.html?demo=65">
-      <div><div class="tool-name">Customer's Screen</div><div class="tool-desc">What a member sees: points, bonus countdown, offers. Uses a sample member. Tap Owner at the bottom to remove restaurants.</div></div>
+      <div><div class="tool-name">Customer's Screen</div><div class="tool-desc">What a member sees: rewards, bonus countdown, offers. Uses a sample member. Tap Owner at the bottom to remove restaurants.</div></div>
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://keytechnologies.si/menu.html?demo=vegas">
@@ -243,7 +243,7 @@
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://keytechnologies.si/rewards.html">
-      <div><div class="tool-name">Customer Sign-up</div><div class="tool-desc">The page a new customer uses to join the points program.</div></div>
+      <div><div class="tool-name">Customer Sign-up</div><div class="tool-desc">The page a new customer uses to join the rewards program.</div></div>
       <div class="tool-arrow">↗</div>
     </a>
     <a class="tool-card" href="https://keytechnologies.si/key-pageviews.html">
@@ -338,11 +338,11 @@
     b.className = 'big-btn ' + (any ? 'resume' : 'pause');
     b.textContent = any ? 'Resume everything' : 'Pause everything';
     b.setAttribute('data-mode', any ? 'resume' : 'pause');
-    document.getElementById('swNote').textContent = any ? 'To resume just one of them, use Points Program > Settings.' : '';
+    document.getElementById('swNote').textContent = any ? 'To resume just one of them, use Rewards Program > Settings.' : '';
   }
   document.getElementById('pauseBtn').addEventListener('click', function () {
     var b = this, pause = b.getAttribute('data-mode') === 'pause';
-    if (!confirm(pause ? 'Pause the whole points program?\n\nNew sign-ups, receipt uploads and redeeming offers all stop right away. Points are safe, and you can resume with one tap.' : 'Resume the points program?\n\nSign-ups, receipts and redeeming start working again.')) return;
+    if (!confirm(pause ? 'Pause the whole rewards program?\n\nNew sign-ups, receipt uploads and redeeming offers all stop right away. Rewards are safe, and you can resume with one tap.' : 'Resume the rewards program?\n\nSign-ups, receipts and redeeming start working again.')) return;
     b.disabled = true; b.textContent = 'Saving…';
     var body = {}; SW.forEach(function (x) { body[x[0]] = pause; });
     fetch(DB + '/lvr_points/settings/paused.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function (r) {
