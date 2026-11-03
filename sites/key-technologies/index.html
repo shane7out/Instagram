@@ -352,10 +352,10 @@
   /* ---- sticky Book a Call on phones ---- */
   .sticky-cta{display:none;}
   @media (max-width:820px){
-    body{padding-bottom:88px;}
-    .sticky-cta{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;visibility:hidden;transform:translateY(150%);transition:transform .28s ease,visibility 0s .28s;}
+    body{padding-bottom:68px;}
+    .sticky-cta{display:flex;justify-content:center;pointer-events:none;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60;visibility:hidden;transform:translateY(150%);transition:transform .28s ease,visibility 0s .28s;}
     .sticky-cta.on{visibility:visible;transform:none;transition:transform .28s ease;}
-    .sticky-cta .btn{flex:1;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 1px rgba(0,168,225,.5);}
+    .sticky-cta .btn{flex:0 0 auto;pointer-events:auto;text-align:center;min-height:44px;padding:9px 26px;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.5),0 0 0 1px rgba(0,168,225,.5);}
   }
   .demo-strip{margin:0 0 20px;padding:14px 18px;border:1px solid var(--key-blue);border-radius:14px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;}
   .demo-strip a{color:var(--key-light);font-weight:700;}
@@ -533,6 +533,8 @@
   <ul>
     <li><a href="#about">About Shane</a></li>
     <li><a href="las-vegas.html">Las Vegas</a></li>
+    <li><a href="manhattan-beach.html">Manhattan Beach</a></li>
+    <li><a href="los-angeles.html">Los Angeles</a></li>
     <li><a href="#locations">Locations</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="rewards.html">LVR Rewards</a></li>
@@ -1112,6 +1114,8 @@
         <h3>Manhattan Beach, California</h3>
         <p>Serving Manhattan Beach, the South Bay, Los Angeles and Southern California businesses looking
           to apply AI/SI and automation to real operations.</p>
+        <a class="demo-link" href="manhattan-beach.html">Manhattan Beach businesses &rarr;</a>
+        <a class="demo-link" href="los-angeles.html" style="margin-left:18px">Los Angeles businesses &rarr;</a>
       </div>
       <div class="loc-card">
         <h3>Las Vegas, Nevada</h3>
@@ -1333,6 +1337,8 @@
       <li><a href="#about">About</a></li>
       <li><a href="#results">Results</a></li>
       <li><a href="las-vegas.html">Las Vegas</a></li>
+      <li><a href="manhattan-beach.html">Manhattan Beach</a></li>
+      <li><a href="los-angeles.html">Los Angeles</a></li>
     <li><a href="#locations">Locations</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="rewards.html">LVR Rewards</a></li>

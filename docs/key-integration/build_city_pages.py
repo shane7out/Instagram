@@ -60,6 +60,45 @@ CITIES = {
  ),
 }
 
+
+
+def ca_city(name, file, lead, area_phrase):
+    """California cities: only facts already on the site (Manhattan Beach, the South Bay, Los Angeles and Southern California are served; in person around home markets, online anywhere)."""
+    return dict(
+      name=name, state='California', st='CA', file=file,
+      title='AI Consulting and Business Technology in %s, CA | Key Technologies.si' % name,
+      desc='Key Technologies helps %s businesses use AI in practical ways: phone and email assistants, booking, reviews, custom software and security. In person or online. Free review, no obligation.' % name,
+      lead=lead,
+      why_h='Why %s businesses call us' % name,
+      why=[('Calls after hours','Many businesses keep long hours, and a missed call is often a missed customer. An AI receptionist can answer, take details and hand anything urgent to a person.'),
+           ('Reviews decide visits','Many customers check reviews before they choose. Replying to every review quickly, in your own voice, is easier with a drafted reply you approve.'),
+           ('Lean teams','Reminders, follow-ups and booking questions eat the day. Automating the repetitive parts frees your people for the customers in front of them.'),
+           ('A safer website','Websites on PHP and WordPress need attention. We can tell you where you stand and what to ask your host.')],
+      industries=[('Restaurants and hospitality','Shane has worked in the restaurant and hospitality world for a decade.','guides/ai-for-restaurants.html'),
+                  ('Medical and dental','Patient CRM, booking automation and review management.','medical-dental.html'),
+                  ('Law firms','Intake, follow-up and client communication that a person still approves.','law.html'),
+                  ('Real estate','Lead response and follow-up that does not slip.','real-estate.html'),
+                  ('E-commerce','Support, product content and operations for online sellers.','ecommerce.html'),
+                  ('Something else?','Not on the list? Tell us how your business runs and we will say honestly whether AI can help.','book.html')],
+      roots=('Meet Shane Christensen',
+             'Shane Christensen first saw a computer in his junior high school computer lab, back when floppy disks were big, and saw what it could do. He started a computer business while still in high school and has worked with computers and software for more than 42 years. He has been building websites since the early days of the internet.</p><p>Key Technologies brings that hands-on experience to the systems behind your business: the phones, bookings, reviews and email, built around how your work actually happens.'),
+      roots_btn=False,
+      faq=[('Do you work with %s businesses in person?' % name, 'Yes. Key Technologies works in person around its home markets, which include %s, and online anywhere. Most of the work can be done remotely, and we meet in person where it helps.' % area_phrase),
+           ('What happens in the free review?', 'We talk through how your business runs today and point out where AI or automation could realistically help, and where it would not. There is no obligation and no sales pitch about tools you do not need.'),
+           ('Do I need to be technical?', 'No. We explain everything in plain language, and a person on your team stays in charge of anything customer-facing.'),
+           ('Which kinds of businesses do you work with?', 'Restaurants and hospitality, medical and dental practices, law firms, real estate, e-commerce and other small and mid-sized businesses.'),
+           ('What does it cost?', 'It depends on the work, so we do not publish a price list. The first call is free, and we give you a clear quote once we understand your business.'),
+           ('Can I try it before I talk to anyone?', 'Yes. Every service has a free demo with made-up data, so you can see how it behaves before you decide anything.')],
+      cta_h='Ready to see where AI fits in your %s business?' % name)
+
+CITIES['manhattan-beach'] = ca_city('Manhattan Beach', 'manhattan-beach.html',
+  'Key Technologies helps Manhattan Beach and South Bay businesses put AI to work in ways that save time and win customers: answering the phone, handling bookings and reviews, and building custom systems around how your business actually runs. In person around the South Bay, or online.',
+  'Manhattan Beach and the South Bay')
+CITIES['los-angeles'] = ca_city('Los Angeles', 'los-angeles.html',
+  'Key Technologies helps Los Angeles and Southern California businesses put AI to work in ways that save time and win customers: answering the phone, handling bookings and reviews, and building custom systems around how your business actually runs. In person around Southern California, or online.',
+  'Los Angeles and Southern California')
+CITIES['las-vegas']['roots_btn'] = True
+
 def shell(c, body, ld_graph):
     url = BASE + c['file']
     ld = json.dumps({"@context": "https://schema.org", "@graph": ld_graph}, ensure_ascii=False)
@@ -165,6 +204,8 @@ def shell(c, body, ld_graph):
   <ul>
     <li><a href="index.html#about">About Shane</a></li>
     <li><a href="las-vegas.html">Las Vegas</a></li>
+    <li><a href="manhattan-beach.html">Manhattan Beach</a></li>
+    <li><a href="los-angeles.html">Los Angeles</a></li>
     <li><a href="index.html#locations">Locations</a></li>
     <li><a href="index.html#faq">FAQ</a></li>
     <li><a href="rewards.html">LVR Rewards</a></li>
@@ -186,6 +227,8 @@ def shell(c, body, ld_graph):
       <li><a href="key-platform/index.html#library">Demos</a></li>
       <li><a href="guides/index.html">Guides</a></li>
       <li><a href="las-vegas.html">Las Vegas</a></li>
+      <li><a href="manhattan-beach.html">Manhattan Beach</a></li>
+      <li><a href="los-angeles.html">Los Angeles</a></li>
       <li><a href="index.html#about">About</a></li>
       <li><a href="index.html#locations">Locations</a></li>
       <li><a href="index.html#faq">FAQ</a></li>
@@ -236,6 +279,9 @@ def body_for(c):
     faq = ''.join(f'<details class="reveal"><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in c['faq'])
     gui = ''.join(f'<a class="g-card reveal" href="{h}"><h3>{esc(t)}</h3><p>{esc(d)}</p><span class="go">Read the guide &rarr;</span></a>' for h, t, d in GUIDE_CARDS)
     rh, rp = c['roots']
+    roots_more = '<p>Shane first saw a computer in his junior high school computer lab and has worked with computers and software for more than 42 years. He has been building websites since the early days of the internet.</p>' if c.get('roots_btn') else ''
+    roots_btn_html = '<p><a class="btn btn-ghost" href="guides/ai-for-restaurants.html" style="text-decoration:none">AI for restaurants: the guide</a></p>' if c.get('roots_btn') else ''
+    others = ''.join(f'<a class="g-card reveal" href="{o["file"]}"><h3>{o["name"]}, {o["st"]}</h3><p>AI and business technology for {o["name"]} businesses.</p><span class="go">Visit the page &rarr;</span></a>' for k, o in CITIES.items() if o['file'] != c['file'])
     return f'''<section class="wrap city-hero">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> &rsaquo; <a href="index.html#locations">Locations</a> &rsaquo; <span>{cn}</span></nav>
   <div class="city-hero-grid">
@@ -286,8 +332,8 @@ def body_for(c):
 <section class="wrap" id="roots">
   <div class="roots">
     <div class="reveal"><span class="eyebrow">Shane Christensen</span><h2 style="margin:8px 0 14px">{esc(rh)}</h2><p>{rp}</p>
-      <p>Shane first saw a computer in his junior high school computer lab and has worked with computers and software for more than 42 years. He has been building websites since the early days of the internet. <a href="index.html#about">Read more about Shane</a>.</p>
-      <p><a class="btn btn-ghost" href="guides/ai-for-restaurants.html" style="text-decoration:none">AI for restaurants: the guide</a></p></div>
+      {roots_more}
+      <p><a href="index.html#about">Read more about Shane</a>.</p>{roots_btn_html}</div>
     <figure class="about-photo reveal"><img src="images/shane-christensen-320.jpg" srcset="images/shane-christensen-320.jpg 320w, images/shane-christensen.jpg 528w" sizes="300px" width="528" height="594" alt="Shane Christensen, founder of Key Technologies" loading="lazy" decoding="async"></figure>
   </div>
 </section>
@@ -300,6 +346,11 @@ def body_for(c):
 <section class="wrap" id="guides">
   <div class="section-head reveal"><span class="eyebrow">Guides</span><h2>Plain-language help, no jargon</h2></div>
   <div class="g-grid">{gui}</div>
+</section>
+
+<section class="wrap" id="locations-more">
+  <div class="section-head reveal"><span class="eyebrow">Also serving</span><h2>Other locations</h2><p>Key Technologies works in person around its home markets, and online anywhere.</p></div>
+  <div class="g-grid">{others}</div>
 </section>
 
 <section class="wrap" id="faq">
