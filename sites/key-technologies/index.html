@@ -323,6 +323,16 @@
   .trust-grid span{font-size:14px;color:var(--ink-dim);line-height:1.4;}
   @media (max-width:900px){.trust-grid{grid-template-columns:1fr 1fr;}}
   @media (max-width:480px){.trust-grid{gap:10px;}.trust-grid li{padding:13px 14px;}.trust-grid b{font-size:17px;}.trust-grid span{font-size:13px;}}
+  /* ---- testimonials (shown only when real, permitted quotes exist; see build_testimonials.py) ---- */
+  .t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .t-grid.all{grid-template-columns:repeat(2,1fr);}
+  @media (max-width:900px){.t-grid,.t-grid.all{grid-template-columns:1fr;}}
+  .t-card{margin:0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .t-card .mark{font-size:54px;line-height:.6;color:var(--key-light);font-weight:900;height:22px;}
+  .t-card blockquote{font-size:17px;line-height:1.6;color:#dbe4ee;margin:0;}
+  .t-who{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;}
+  .t-who b{display:block;font-size:16px;} .t-who span{display:block;font-size:14px;color:var(--ink-dim);}
+  .t-more{margin-top:22px;text-align:center;}
   /* ---- guides row ---- */
   .g-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
   .g-card{display:block;padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--card);text-decoration:none;color:var(--ink);}
@@ -1128,6 +1138,8 @@
       in the world, they have full access to manage and support your systems, any time, anywhere.</p>
   </section>
 
+  <!--testimonials-home--><!--/testimonials-home-->
+
   <!-- ============ GUIDES ============ -->
   <section class="wrap" id="guides">
     <div class="section-head reveal">
@@ -1331,7 +1343,7 @@
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#platform">Platform</a></li>
       <li><a href="key-platform/index.html#library">Demos</a></li>
-    <li><a href="guides/index.html">Guides</a></li>
+    <li><a href="guides/index.html">Guides</a></li><!--testimonials-foot--><!--/testimonials-foot-->
       <li><a href="#method">How It Works</a></li>
       <li><a href="rewards.html" id="footAccount">Member login</a></li>
       <li><a href="#about">About</a></li>

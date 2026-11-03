@@ -41,3 +41,13 @@
   }
   .about-photo{margin:24px 0 0;max-width:300px;}
   .about-photo img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.5);}
+  /* ---- testimonials (shown only when real, permitted quotes exist; see build_testimonials.py) ---- */
+  .t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .t-grid.all{grid-template-columns:repeat(2,1fr);}
+  @media (max-width:900px){.t-grid,.t-grid.all{grid-template-columns:1fr;}}
+  .t-card{margin:0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .t-card .mark{font-size:54px;line-height:.6;color:var(--key-light);font-weight:900;height:22px;}
+  .t-card blockquote{font-size:17px;line-height:1.6;color:#dbe4ee;margin:0;}
+  .t-who{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;}
+  .t-who b{display:block;font-size:16px;} .t-who span{display:block;font-size:14px;color:var(--ink-dim);}
+  .t-more{margin-top:22px;text-align:center;}
