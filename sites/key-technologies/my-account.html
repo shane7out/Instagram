@@ -1111,12 +1111,12 @@
     return m ? 'https://www.instagram.com/' + m[1] + '/' : '';
   }
   function tagDialog() {
-    var c = tagCfg(), tags = '@LasVegas_Restaurants #ad #LVRPoints';
+    var c = tagCfg(), tags = '@LasVegas_Restaurants #ad #LVRRewards';
     var d = ownDialog('<h3>Tag us, earn ' + c.points + ' LVR Rewards</h3>' +
       '<ol style="margin:0 0 12px;padding-left:20px;display:grid;gap:8px;font-size:15px;line-height:1.5;">' +
       '<li>Post a photo or video from a participating restaurant on your <b>public</b> Instagram.</li>' +
       '<li>Tag <b>@LasVegas_Restaurants</b> and the restaurant.</li>' +
-      '<li>Add <b>#ad #LVRPoints</b> so everyone knows you earn rewards for posting.</li>' +
+      '<li>Add <b>#ad #LVRRewards</b> so everyone knows you earn rewards for posting.</li>' +
       '<li>Paste the link to your post below. We check it and add <b>' + c.points + ' rewards</b>.</li></ol>' +
       '<button type="button" class="linkbtn" id="tagCopy">Copy the tags: ' + tags + '</button>' +
       '<div class="field-lite"><label for="tagUrl" style="display:block;font-weight:700;margin:8px 0 4px;">Link to your post</label><input id="tagUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://www.instagram.com/p/..." style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #5b6d80;background:#0b1b30;color:#eef4fb;font:inherit;"></div>' +
