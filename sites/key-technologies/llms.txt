@@ -34,6 +34,9 @@ Key Technologies does not guarantee results. Interactive demos on this site use 
 - [Private LLM setup](https://keytechnologies.si/key-platform/demos/private-llm.html)
 - [Cybersecurity and network hardening](https://keytechnologies.si/key-platform/demos/cybersecurity.html)
 
+## Locations
+- [Las Vegas businesses](https://keytechnologies.si/las-vegas.html): AI and business technology for Las Vegas, NV businesses, in person or online
+
 ## Guides
 - [PHP2Shell: what small-business website owners should do now](https://keytechnologies.si/guides/php2shell-small-business-websites.html): What the October 2026 PHP security flaws mean for a WordPress or PHP website, and a 10-minute checklist.
 - [How much does an AI receptionist cost? What actually sets the price](https://keytechnologies.si/guides/ai-receptionist-cost.html): What drives the price of an AI phone receptionist, how vendors charge, and the questions to ask before you buy.

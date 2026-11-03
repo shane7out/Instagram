@@ -131,3 +131,6 @@ Demo state is kept only in the visitor's own browser (`localStorage` keys `key.v
 
 ## Founder photo (added 2026-11-03)
 Shane's photo is in the About section (`images/shane-christensen.jpg` 528x600 and `-320.jpg`), lazy-loaded with a small and a full size, and set as the founder's `image` in the page's structured data. To swap it, replace those two files (keep the names) or edit the `<figure class="about-photo">` block.
+
+## City pages (added 2026-11-04)
+`/las-vegas.html`, built by `docs/key-integration/build_city_pages.py` (shared styles in `key-platform/site-extra.css`). Uses only facts already on the site (no invented clients, statistics or rankings): hero with a "what you get in a free call" card, trust strip, why Las Vegas, six demo previews, industries (restaurants guide, medical, law, real estate, e-commerce), Shane's restaurant background with photo, how it works, guides, six FAQs with structured data, and a closing call to action; sticky Book a Free Call on phones. Linked from the homepage Locations card, phone menu and footer, and listed in the sitemap and `llms.txt`. To add Manhattan Beach or Los Angeles, add an entry to `CITIES` with true local details and run the script.
