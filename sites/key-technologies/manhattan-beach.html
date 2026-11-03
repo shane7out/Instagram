@@ -12,7 +12,7 @@
 <style>
   .city-hero{padding-block:56px 36px;border-top:none;}
   .crumbs{font-size:14px;color:var(--ink-dim);margin-bottom:18px;}
-  .crumbs a{color:var(--key-light);text-decoration:none;} .crumbs a:hover{text-decoration:underline;}
+  .crumbs a{color:var(--key-light);text-decoration:underline;text-underline-offset:3px;}
   .city-hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center;}
   @media (max-width:900px){.city-hero-grid{grid-template-columns:1fr;gap:26px;}}
   .city-hero h1{font-size:clamp(34px,5.4vw,54px);line-height:1.08;font-weight:900;}
@@ -39,7 +39,7 @@
   .step h3{font-size:18px;margin-bottom:4px;} .step p{font-size:15px;color:var(--ink-dim);}
   .roots{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center;}
   @media (max-width:860px){.roots{grid-template-columns:1fr;}}
-  .roots p{font-size:17px;line-height:1.7;color:#dbe4ee;margin-bottom:14px;} .roots a{color:var(--key-light);}
+  .roots p{font-size:17px;line-height:1.7;color:#dbe4ee;margin-bottom:14px;} .roots p a:not(.btn){color:var(--key-light);text-decoration:underline;text-underline-offset:3px;}
   .roots .about-photo{margin:0 auto 0 0;}
   .faq-list details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;}
   .faq-list summary{cursor:pointer;padding:16px 18px;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:14px;}
@@ -56,7 +56,7 @@
 <body>
 <header>
   <div class="wrap nav-row">
-    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+    <a class="logo" href="index.html" aria-label="Key Technologies.si — home">
       <svg width="37" height="16" viewBox="0 4 116 50" aria-hidden="true"><defs><linearGradient id="kg1" x1="0" y1="5" x2="0" y2="53" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fffdf0"/><stop offset=".22" stop-color="#ffe45c"/><stop offset=".48" stop-color="#e49a00"/><stop offset=".56" stop-color="#b87300"/><stop offset=".68" stop-color="#ffd23a"/><stop offset=".88" stop-color="#fff2a0"/><stop offset="1" stop-color="#d48f00"/></linearGradient></defs><g fill="none" stroke="url(#kg1)"><circle cx="24" cy="30" r="19" stroke-width="8"/><circle cx="24" cy="30" r="8.5" stroke-width="3"/></g><g fill="url(#kg1)"><rect x="42" y="26.5" width="72" height="7" rx="1"/><rect x="45" y="21" width="6" height="18" rx="2"/><rect x="55" y="23" width="5" height="14" rx="2"/><path d="M90,33H98V45H90ZM102,33H114V51H102Z"/></g><g stroke="#fff" stroke-linecap="round" fill="none"><path d="M9,20A17,17 0 0 1 24,12" stroke-width="3" stroke-opacity=".9"/><path d="M46,28H112" stroke-width="1.6" stroke-opacity=".9"/><path d="M104,35V49" stroke-width="1.4" stroke-opacity=".8"/></g></svg>
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
@@ -193,7 +193,7 @@
 </main>
 <footer>
   <div class="wrap">
-    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+    <a class="logo" href="index.html" aria-label="Key Technologies.si — home">
       <svg width="37" height="16" viewBox="0 4 116 50" aria-hidden="true"><defs><linearGradient id="kg4" x1="0" y1="5" x2="0" y2="53" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fffdf0"/><stop offset=".22" stop-color="#ffe45c"/><stop offset=".48" stop-color="#e49a00"/><stop offset=".56" stop-color="#b87300"/><stop offset=".68" stop-color="#ffd23a"/><stop offset=".88" stop-color="#fff2a0"/><stop offset="1" stop-color="#d48f00"/></linearGradient></defs><g fill="none" stroke="url(#kg4)"><circle cx="24" cy="30" r="19" stroke-width="8"/><circle cx="24" cy="30" r="8.5" stroke-width="3"/></g><g fill="url(#kg4)"><rect x="42" y="26.5" width="72" height="7" rx="1"/><rect x="45" y="21" width="6" height="18" rx="2"/><rect x="55" y="23" width="5" height="14" rx="2"/><path d="M90,33H98V45H90ZM102,33H114V51H102Z"/></g><g stroke="#fff" stroke-linecap="round" fill="none"><path d="M9,20A17,17 0 0 1 24,12" stroke-width="3" stroke-opacity=".9"/><path d="M46,28H112" stroke-width="1.6" stroke-opacity=".9"/><path d="M104,35V49" stroke-width="1.4" stroke-opacity=".8"/></g></svg>
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>

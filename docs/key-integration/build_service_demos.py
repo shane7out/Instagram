@@ -88,7 +88,7 @@ def page(i, s):
 <link rel="stylesheet" href="../site-base.css"><link rel="stylesheet" href="../kp.css"></head><body>
 %s
 %s
-<div class="launch-banner" role="note"><p><span class="launch-tag">Demo</span>Every business, person, message and number here is fictional. Nothing is sent, booked, charged or paid.</p></div>
+<div class="launch-banner" role="region" aria-label="Demo notice"><p><span class="launch-tag">Demo</span>Every business, person, message and number here is fictional. Nothing is sent, booked, charged or paid.</p></div>
 <main id="main" class="wrap kp-main">
 %s
 %s

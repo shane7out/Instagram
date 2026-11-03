@@ -31,7 +31,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
 <style>
   .guide{{max-width:760px;margin:0 auto;padding-top:34px;padding-bottom:64px;}}
   .crumbs{{font-size:14px;color:var(--ink-dim);margin-bottom:18px;}}
-  .crumbs a{{color:var(--key-light);text-decoration:none;}} .crumbs a:hover{{text-decoration:underline;}}
+  .crumbs a{{color:var(--key-light);text-decoration:underline;text-underline-offset:3px;}}
   .guide h1{{font-size:clamp(30px,5vw,44px);line-height:1.12;font-weight:900;margin-bottom:12px;}}
   .byline{{font-size:14px;color:var(--ink-dim);margin-bottom:24px;}}
   .tldr{{background:var(--card);border:1px solid var(--key-blue);border-radius:14px;padding:18px 20px;margin:0 0 28px;font-size:17px;line-height:1.6;color:var(--ink);}}
@@ -41,7 +41,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
   .guide p,.guide li{{font-size:17px;line-height:1.7;color:var(--ink);}}
   .guide p{{margin:0 0 14px;color:#dbe4ee;}}
   .guide ul,.guide ol{{margin:0 0 16px;padding-left:22px;display:grid;gap:8px;}}
-  .guide a{{color:var(--key-light);}}
+  .guide a{{color:var(--key-light);text-decoration:underline;text-underline-offset:3px;}}
   .note{{font-size:15px;color:var(--ink-dim);border-left:3px solid var(--line);padding-left:14px;margin:18px 0;}}
   .msg{{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:16px;line-height:1.6;color:#dbe4ee;margin:0 0 16px;}}
   .guide-cta{{margin-top:40px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);}}
@@ -57,7 +57,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
 <body>
 <header>
   <div class="wrap nav-row">
-    <a class="logo" href="../index.html" aria-label="Key Technologies — home">
+    <a class="logo" href="../index.html" aria-label="Key Technologies.si — home">
       {LOGO_H}
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
@@ -111,7 +111,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
 </main>
 <footer>
   <div class="wrap">
-    <a class="logo" href="../index.html" aria-label="Key Technologies — home">
+    <a class="logo" href="../index.html" aria-label="Key Technologies.si — home">
       {LOGO_F}
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>

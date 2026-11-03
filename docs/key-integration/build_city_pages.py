@@ -118,7 +118,7 @@ def shell(c, body, ld_graph):
 <style>
   .city-hero{{padding-block:56px 36px;border-top:none;}}
   .crumbs{{font-size:14px;color:var(--ink-dim);margin-bottom:18px;}}
-  .crumbs a{{color:var(--key-light);text-decoration:none;}} .crumbs a:hover{{text-decoration:underline;}}
+  .crumbs a{{color:var(--key-light);text-decoration:underline;text-underline-offset:3px;}}
   .city-hero-grid{{display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center;}}
   @media (max-width:900px){{.city-hero-grid{{grid-template-columns:1fr;gap:26px;}}}}
   .city-hero h1{{font-size:clamp(34px,5.4vw,54px);line-height:1.08;font-weight:900;}}
@@ -145,7 +145,7 @@ def shell(c, body, ld_graph):
   .step h3{{font-size:18px;margin-bottom:4px;}} .step p{{font-size:15px;color:var(--ink-dim);}}
   .roots{{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center;}}
   @media (max-width:860px){{.roots{{grid-template-columns:1fr;}}}}
-  .roots p{{font-size:17px;line-height:1.7;color:#dbe4ee;margin-bottom:14px;}} .roots a{{color:var(--key-light);}}
+  .roots p{{font-size:17px;line-height:1.7;color:#dbe4ee;margin-bottom:14px;}} .roots p a:not(.btn){{color:var(--key-light);text-decoration:underline;text-underline-offset:3px;}}
   .roots .about-photo{{margin:0 auto 0 0;}}
   .faq-list details{{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;}}
   .faq-list summary{{cursor:pointer;padding:16px 18px;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:14px;}}
@@ -162,7 +162,7 @@ def shell(c, body, ld_graph):
 <body>
 <header>
   <div class="wrap nav-row">
-    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+    <a class="logo" href="index.html" aria-label="Key Technologies.si — home">
       {LOGO_H}
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
@@ -219,7 +219,7 @@ def shell(c, body, ld_graph):
 </main>
 <footer>
   <div class="wrap">
-    <a class="logo" href="index.html" aria-label="Key Technologies — home">
+    <a class="logo" href="index.html" aria-label="Key Technologies.si — home">
       {LOGO_F}
       <span class="logo-word">KEY TECHNOLOGIES<span class="logo-si">.SI</span></span>
     </a>
