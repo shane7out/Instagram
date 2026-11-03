@@ -55,6 +55,7 @@ CITIES = {
        ('Do I need to be technical?', 'No. We explain everything in plain language, and a person on your team stays in charge of anything customer-facing.'),
        ('Which kinds of businesses do you work with in Las Vegas?', 'Restaurants and hospitality, medical and dental practices, law firms, real estate, e-commerce and other small and mid-sized businesses.'),
        ('What does it cost?', 'It depends on the work, so we do not publish a price list. The first call is free, and we give you a clear quote once we understand your business.'),
+       ('Can you work with me in my language?', 'Yes. Using AI/SI, Key Technologies can communicate in virtually any language, in writing and by voice, so you can work with us in the language you are most comfortable in. For legal or medical documents, we also recommend a certified human translator.'),
        ('Can I try it before I talk to anyone?', 'Yes. Every service has a free demo with made-up data, so you can see how it behaves before you decide anything.')],
   cta_h='Ready to see where AI fits in your Las Vegas business?',
  ),
@@ -88,7 +89,8 @@ def ca_city(name, file, lead, area_phrase):
            ('Do I need to be technical?', 'No. We explain everything in plain language, and a person on your team stays in charge of anything customer-facing.'),
            ('Which kinds of businesses do you work with?', 'Restaurants and hospitality, medical and dental practices, law firms, real estate, e-commerce and other small and mid-sized businesses.'),
            ('What does it cost?', 'It depends on the work, so we do not publish a price list. The first call is free, and we give you a clear quote once we understand your business.'),
-           ('Can I try it before I talk to anyone?', 'Yes. Every service has a free demo with made-up data, so you can see how it behaves before you decide anything.')],
+           ('Can you work with me in my language?', 'Yes. Using AI/SI, Key Technologies can communicate in virtually any language, in writing and by voice, so you can work with us in the language you are most comfortable in. For legal or medical documents, we also recommend a certified human translator.'),
+       ('Can I try it before I talk to anyone?', 'Yes. Every service has a free demo with made-up data, so you can see how it behaves before you decide anything.')],
       cta_h='Ready to see where AI fits in your %s business?' % name)
 
 CITIES['manhattan-beach'] = ca_city('Manhattan Beach', 'manhattan-beach.html',
@@ -237,7 +239,7 @@ def shell(c, body, ld_graph):
       <li><a href="terms.html">Terms</a></li>
     </ul>
     <a class="foot-phone" href="book.html">Book a Call</a>
-    <p class="foot-fine">Manhattan Beach, California &middot; Las Vegas, Nevada &middot; Remote nationwide</p>
+    <p class="foot-fine">Manhattan Beach, California &middot; Las Vegas, Nevada &middot; Remote worldwide &middot; Any language</p>
     <p class="foot-fine">&copy; <span id="kpYear"></span> Key Technologies. All rights reserved.</p>
   </div>
 </footer>
@@ -308,7 +310,7 @@ def body_for(c):
   <ul class="trust-grid">
     <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
     <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don&rsquo;t need</span></li>
-    <li class="reveal"><b>In person or online</b><span>around {cn}, or anywhere remotely</span></li>
+    <li class="reveal"><b>In person or online</b><span>around {cn}, or anywhere remotely, in any language</span></li>
     <li class="reveal"><b>23 services</b><span>each with a live demo you can try</span></li>
   </ul>
 </section>

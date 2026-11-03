@@ -2,7 +2,7 @@
 
 > Key Technologies is an AI/SI consulting company run by Shane Christensen, who has more than 42 years of hands-on experience with computers and software, with a background in security, networking and databases. It helps small and mid-sized businesses use AI in practical, safe ways: strategy, automation, AI agents, phone and email assistants, custom software, security and training. Serving Manhattan Beach and Los Angeles, CA and Las Vegas, NV, and working remotely.
 
-Key Technologies does not guarantee results. Interactive demos on this site use made-up data, are not connected to any real system and do not send, book or charge anything.
+Key Technologies works worldwide and can communicate in any language using AI/SI, in writing and by voice. Key Technologies does not guarantee results. Interactive demos on this site use made-up data, are not connected to any real system and do not send, book or charge anything.
 
 ## Start here
 - [Home: services and free website audit](https://keytechnologies.si/): all 23 services, FAQ and contact

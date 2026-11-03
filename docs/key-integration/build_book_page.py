@@ -31,6 +31,7 @@ body = '''<main id="main" class="wrap kp-main">
 <div class="field"><label for="be">Email <span class="req">*</span></label><input id="be" name="email" type="email" autocomplete="email" required maxlength="120"></div>
 <div class="field"><label for="bp">Phone (for a text confirmation)</label><input id="bp" name="phone" type="tel" autocomplete="tel" maxlength="30"></div>
 <div class="field"><label for="bt">What do you want to talk about?</label><select id="bt" name="topic"><option>Not sure yet</option><option>Phone and text answering</option><option>Email and follow-up</option><option>Website or CRM</option><option>Social media and content</option><option>Security</option><option>Rewards program</option><option>Something else</option></select></div>
+<div class="field"><label for="bl">Preferred language (optional)</label><input id="bl" name="language" maxlength="40" placeholder="English, Español, 中文, العربية, any language"><span class="small muted">We can talk with you in any language.</span></div>
 <div class="field"><label for="bm">Anything we should know first? (optional)</label><textarea id="bm" name="notes" rows="3" maxlength="600"></textarea></div>
 <div class="field" style="position:absolute;left:-9999px" aria-hidden="true"><label for="bw">Leave this empty</label><input id="bw" name="website" tabindex="-1" autocomplete="off"></div>
 <p class="form-note">We use this only to confirm and hold your call. See the <a href="privacy.html">privacy page</a>. Please do not enter bank, tax or ID numbers.</p>
@@ -74,7 +75,7 @@ f.addEventListener("submit",function(e){e.preventDefault();st.className="form-st
  var nm=f.name.value.trim(),em=f.email.value.trim();if(!nm){f.name.focus();st.textContent="Please enter your name.";st.className="form-status err";return}
  if(!/^\\S+@\\S+\\.\\S+$/.test(em)){f.email.focus();st.textContent="Please enter a valid email.";st.className="form-status err";return}
  if(f.website.value){st.textContent="Thank you.";st.className="form-status ok";return}
- var d={source:"book-a-call",interests:["Book a call"],name:nm.slice(0,80),email:em,phone:f.phone.value.trim().slice(0,30),topic:f.topic.value,notes:f.notes.value.trim().slice(0,600),
+ var d={source:"book-a-call",interests:["Book a call"],name:nm.slice(0,80),email:em,phone:f.phone.value.trim().slice(0,30),topic:f.topic.value,language:f.language.value.trim().slice(0,40),notes:f.notes.value.trim().slice(0,600),
   requestedTimeUtc:new Date(selSlot).toISOString(),requestedTimePacific:fmt(selSlot,LA,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+" PT",visitorTimeZone:tzSel.value,
   createdAt:{".sv":"timestamp"},landingPage:location.pathname};
  var b=document.getElementById("bs");b.disabled=true;st.textContent="Sending...";
