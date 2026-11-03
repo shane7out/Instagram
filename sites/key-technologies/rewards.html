@@ -212,6 +212,7 @@
 
   .mobile-menu a.btn-primary{color:#0f171e;}
 </style>
+<script src="key-platform/lead-send.js" defer></script>
 </head>
 <body>
 
@@ -639,9 +640,7 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { st.textContent = "Please enter a valid email."; st.className = "form-status err"; return; }
       var data = { source: "lvr-rewards-waitlist", name: document.getElementById("w-name").value.trim(), email: email, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
       document.getElementById("w-btn").disabled = true;
-      fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) }).then(function(r){
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        fetch("https://formspree.io/f/mzeedbyb", { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify(data) }).catch(function(){});
+      KTLead.send(LEADS_URL, "https://formspree.io/f/mzeedbyb", data).then(function(){
         st.textContent = "Thanks - you're on the list."; st.className = "form-status ok";
       }).catch(function(){ st.textContent = "Something went wrong. Please try again."; st.className = "form-status err"; document.getElementById("w-btn").disabled = false; });
     });

@@ -132,5 +132,5 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape")c()});
 var y=document.getElementById("kpYear");if(y)y.textContent=new Date().getFullYear();
 try{if(localStorage.getItem("lvr_wallet_token")){var a=document.getElementById("mmAccount");if(a){a.href=a.href.replace("rewards.html","my-account.html");a.querySelector("span").textContent="My Account";a.querySelector("small").textContent="Logged in"}var f=document.getElementById("footAccount");if(f){f.href=f.href.replace("rewards.html","my-account.html");f.textContent="My Account"}}}catch(e){}
 })();function toast(t){var e=document.getElementById("toast");if(!e)return;e.textContent=t;e.className="";clearTimeout(window.__t);window.__t=setTimeout(function(){e.textContent=""},3500)}</script>
-<script src="../kp-sound.js" defer></script><script src="../kp-tour.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount('social',document.getElementById("widget"));</script>
+<script src="../kp-sound.js" defer></script><script src="../kp-tour.js"></script><script src="../lead-send.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount('social',document.getElementById("widget"));</script>
 </body></html>

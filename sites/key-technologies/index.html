@@ -515,6 +515,7 @@
   .skip-link:focus{left:0;}
 </style>
 <script>document.documentElement.classList.add("js");</script>
+<script src="key-platform/lead-send.js" defer></script>
 </head>
 <body>
 
@@ -1567,24 +1568,8 @@
       status.textContent = "Sending…";
       status.className = "form-status";
 
-      fetch(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
-      }).then(function(r){
-        if(!r.ok) throw new Error("HTTP " + r.status);
-
-        // The database write succeeded - that's the real save, and the
-        // success message below is honest from this point on regardless
-        // of what happens next. The email alert is a nice-to-have on top
-        // of it, so its failure must never change what the visitor sees.
-        if(KEY_FORMSPREE_URL){
-          fetch(KEY_FORMSPREE_URL, {
-            method: "POST",
-            headers: {"Content-Type": "application/json", "Accept": "application/json"},
-            body: JSON.stringify(data)
-          }).catch(function(){ /* lead is already saved; a missed email alert isn't fatal */ });
-        }
+      KTLead.send(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", KEY_FORMSPREE_URL, data).then(function(){
+        // Saved to the database and/or the email alert went out: the lead is not lost, so the success message is honest.
 
         var msg = "Thanks — we've received this and will follow up soon.";
         if(KEY_CALENDLY_URL){
@@ -1644,24 +1629,7 @@
 
     function logAudit(payload){
       if(!KEY_LEADS_DB_URL) return;
-      fetch(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(payload)
-      }).then(function(r){
-        if(!r.ok) throw new Error("HTTP " + r.status);
-        // Same pattern as the other two forms: the database write is the
-        // real save and already happened by the time this runs, so a
-        // missed or failed email alert here never affects what the
-        // visitor sees - it's purely a notification to Shane.
-        if(KEY_FORMSPREE_URL){
-          fetch(KEY_FORMSPREE_URL, {
-            method: "POST",
-            headers: {"Content-Type": "application/json", "Accept": "application/json"},
-            body: JSON.stringify(payload)
-          }).catch(function(){ /* lead is already saved; a missed email alert isn't fatal */ });
-        }
-      }).catch(function(){ /* result is already on screen; a missed save isn't fatal */ });
+      KTLead.send(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", KEY_FORMSPREE_URL, payload).catch(function(){ /* result is already on screen; a missed save isn't fatal */ });
     }
 
     function analyzeWp(html){

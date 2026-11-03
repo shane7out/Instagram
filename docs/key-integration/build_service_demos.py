@@ -96,7 +96,7 @@ def page(i, s):
 %s
 <div id="toast" role="status" aria-live="polite"></div>
 %s
-<script src="../kp-sound.js" defer></script><script src="../kp-tour.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
+<script src="../kp-sound.js" defer></script><script src="../kp-tour.js"></script><script src="../lead-send.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
 </body></html>''' % (esc(title), esc(tag), '../../', '../../', fix(HEADER, root), fix(MENU, root), switch(), body, fix(FOOTER, root), BURGER, widget)
 
 def esc(t):

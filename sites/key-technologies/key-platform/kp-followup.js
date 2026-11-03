@@ -25,8 +25,7 @@ function init(){
   var d={source:'demo-follow-up',demo:title,demoPage:location.pathname,interests:['Demo: '+title],email:em,createdAt:{'.sv':'timestamp'},landingPage:location.pathname};
   var nm=f.name.value.trim();if(nm)d.name=nm.slice(0,80);
   var b=f.querySelector('#kfs');b.disabled=true;st.textContent='Sending...';
-  fetch(LEADS,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error(r.status);
-   fetch(FS,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(d)}).catch(function(){});
+  KTLead.send(LEADS,FS,d).then(function(){
    st.textContent='Thank you. We will reply about this demo soon.';st.className='form-status ok';f.reset();
   }).catch(function(){st.textContent='Something went wrong. Please try again, or use the Contact button at the top.';st.className='form-status err'}).then(function(){b.disabled=false});
  });

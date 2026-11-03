@@ -231,6 +231,7 @@
 
   .mobile-menu a.btn-primary{color:#0f171e;}
 </style>
+<script src="key-platform/lead-send.js" defer></script>
 </head>
 <body>
 
@@ -596,19 +597,8 @@
       status.textContent = "Sending…";
       status.className = "form-status";
 
-      fetch(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
-      }).then(function(r){
-        if(!r.ok) throw new Error("HTTP " + r.status);
-        if(KEY_FORMSPREE_URL){
-          fetch(KEY_FORMSPREE_URL, {
-            method: "POST",
-            headers: {"Content-Type": "application/json", "Accept": "application/json"},
-            body: JSON.stringify(data)
-          }).catch(function(){});
-        }
+      KTLead.send(KEY_LEADS_DB_URL.replace(/\/$/, "") + "/leads.json", KEY_FORMSPREE_URL, data).then(function(){
+        // Saved to the database and/or the email alert went out: the lead is not lost, so the success message is honest.
         var msg = "Thanks — we've received this and will follow up soon.";
         if(KEY_CALENDLY_URL){
           status.innerHTML = msg + ' <a href="' + KEY_CALENDLY_URL + '" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:10px;">Book a time now</a>';

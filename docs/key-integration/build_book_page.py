@@ -79,8 +79,7 @@ f.addEventListener("submit",function(e){e.preventDefault();st.className="form-st
   requestedTimeUtc:new Date(selSlot).toISOString(),requestedTimePacific:fmt(selSlot,LA,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+" PT",visitorTimeZone:tzSel.value,
   createdAt:{".sv":"timestamp"},landingPage:location.pathname};
  var b=document.getElementById("bs");b.disabled=true;st.textContent="Sending...";
- fetch(LEADS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error(r.status);
-  fetch(FS,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(d)}).catch(function(){});
+ KTLead.send(LEADS,FS,d).then(function(){
   st.textContent="";var url="data:text/calendar;charset=utf-8,"+encodeURIComponent(ics(selSlot));
   document.getElementById("bdone").innerHTML="<div class=\\"note\\" style=\\"margin-top:14px\\"><b>Request received.</b> "+chosenEl.textContent.replace("Requested: ","")+". We will confirm by reply, or suggest a nearby time. It is not booked until we confirm.<br><a href=\\""+url+"\\" download=\\"key-technologies-call-request.ics\\">Add it to my calendar as tentative</a></div>";
   f.querySelectorAll("input,select,textarea,button").forEach(function(x){x.disabled=true});
@@ -94,7 +93,7 @@ page = '''<!doctype html>
 <meta property="og:type" content="website"><meta property="og:title" content="Book a Free Call | Key Technologies.si"><meta property="og:description" content="Thirty minutes, no pitch, no cost. Pick a time and we confirm by reply."><meta property="og:url" content="https://keytechnologies.si/book.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="apple-touch-icon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="/fonts/lato.css">
-<link rel="stylesheet" href="key-platform/site-base.css"><link rel="stylesheet" href="key-platform/kp.css"></head><body>
+<link rel="stylesheet" href="key-platform/site-base.css"><link rel="stylesheet" href="key-platform/kp.css"><script src="key-platform/lead-send.js" defer></script></head><body>
 %s
 %s
 %s

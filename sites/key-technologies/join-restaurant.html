@@ -220,6 +220,7 @@
 
   .mobile-menu a.btn-primary{color:#0f171e;}
 </style>
+<script src="key-platform/lead-send.js" defer></script>
 </head>
 <body>
 
@@ -435,11 +436,7 @@
     Array.prototype.forEach.call(form.querySelectorAll("[aria-invalid]"), function(el){ el.removeAttribute("aria-invalid"); });
     btn.disabled = true;
     st.textContent = "Sending…"; st.className = "form-status";
-    fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) }).then(function(r){
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      var mail = { _subject: "New restaurant wants to join LVR Rewards" };
-      for (var k in data) mail[k] = data[k];
-      fetch(FORMSPREE_URL, { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify(mail) }).catch(function(){});
+    KTLead.send(LEADS_URL, FORMSPREE_URL, data, { _subject: "New restaurant wants to join LVR Rewards" }).then(function(){
       thanks();
     }).catch(function(){
       st.textContent = "Something went wrong. Please try again, or send us a DM on Instagram.";

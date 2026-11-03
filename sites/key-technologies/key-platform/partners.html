@@ -3,7 +3,8 @@
 <title>Sales Partner interest list | Key Technologies.si</title><meta name="description" content="Join the interest list for the Key Technologies Sales Partner Network."><meta name="theme-color" content="#0f171e">
 <link rel="icon" href="../apple-touch-icon.png"><link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
-<link rel="stylesheet" href="site-base.css"><link rel="stylesheet" href="kp.css"></head><body>
+<link rel="stylesheet" href="site-base.css"><link rel="stylesheet" href="kp.css"><script src="lead-send.js" defer></script>
+</head><body>
 <header>
   <div class="wrap nav-row">
     <a class="logo" href="../index.html" aria-label="Key Technologies.si — home">
@@ -138,8 +139,7 @@ if(!/^\S+@\S+\.\S+$/.test(document.getElementById('pemail').value.trim())){docum
 var d={source:'partner-interest-list',interests:['Sales partner network'],createdAt:{'.sv':'timestamp'},landingPage:location.pathname,acknowledgedInterestListOnly:true};
 new FormData(f).forEach(function(v,k){if(k!=='')d[k]=String(v).slice(0,2000)});
 var b=document.getElementById('psend');b.disabled=true;st.textContent='Sending...';
-fetch(LEADS,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error(r.status);
-fetch(FS,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(d)}).catch(function(){});
+KTLead.send(LEADS,FS,d).then(function(){
 st.textContent='Thank you. You are on the interest list. We will be in touch if a pilot opens.';st.className='form-status ok';f.reset()}).catch(function(){st.textContent='Something went wrong. Please try again, or contact us from the main site.';st.className='form-status err'}).then(function(){b.disabled=false});});})();</script>
 <script src="kp-sound.js" defer></script>
 </body></html>
