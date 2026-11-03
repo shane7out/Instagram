@@ -16,7 +16,7 @@ function tick(){
   o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.1);
  }catch(e){}
 }
-var SEL_HOME='a.demo-link,.demo-strip a,#mobileMenu a[href*="key-platform"]';
+var SEL_HOME='a.demo-link,.demo-strip a,a.sw-card,a[data-tap],#mobileMenu a[href*="key-platform"]';
 var SEL='a.demo-tile,.demo-link,a.btn,button.primary,button.outline,button.btn,.kp-tabs .nav,.kp-chip,.kp-switch a,.service-card a';
 document.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest(document.querySelector('.kp-main')?SEL:SEL_HOME);if(!t||t.disabled)return;

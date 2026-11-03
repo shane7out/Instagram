@@ -92,8 +92,7 @@ page = '''<!doctype html>
 <link rel="canonical" href="https://keytechnologies.si/book.html"><meta name="theme-color" content="#0f171e">
 <meta property="og:type" content="website"><meta property="og:title" content="Book a Free Call | Key Technologies.si"><meta property="og:description" content="Thirty minutes, no pitch, no cost. Pick a time and we confirm by reply."><meta property="og:url" content="https://keytechnologies.si/book.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="apple-touch-icon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="/fonts/lato.css">
 <link rel="stylesheet" href="key-platform/site-base.css"><link rel="stylesheet" href="key-platform/kp.css"></head><body>
 %s
 %s

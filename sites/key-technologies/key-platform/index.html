@@ -2,8 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Interactive Demos: AI Receptionist, Email, CRM, Booking and More | Key Technologies.si</title><meta name="description" content="Try interactive demos of AI business tools: phone answering, email, reviews, booking, CRM, content creation and more. Each uses made-up data, so you can explore without connecting anything."><meta name="theme-color" content="#0f171e">
 <link rel="icon" href="../apple-touch-icon.png"><link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="/fonts/lato.css">
 <link rel="stylesheet" href="site-base.css"><link rel="stylesheet" href="kp.css"><!--demo-seo-head-->
 <link rel="canonical" href="https://keytechnologies.si/key-platform/">
 <meta property="og:type" content="website"><meta property="og:title" content="Interactive Demos: AI Receptionist, Email, CRM, Booking and More | Key Technologies.si"><meta property="og:description" content="Try interactive demos of AI business tools: phone answering, email, reviews, booking, CRM, content creation and more. Each uses made-up data, so you can explore without connecting anything."><meta property="og:url" content="https://keytechnologies.si/key-platform/"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
@@ -146,7 +145,7 @@ function esc(t){return String(t).replace(/[&<>"]/g,function(x){return {'&':'&amp
 l.innerHTML=Object.keys(KEY_STATES).map(function(k){return '<span class="tag" title="'+esc(KEY_STATES[k])+'">'+k+'</span>'}).join('')+'<span class="muted" style="font-size:14px">draft = idea, prototype = demo, approved or available = may be quoted</span>';
 var demo={voice:'voice/index.html',email:'email/index.html'};
 c.innerHTML=KEY_CATALOG.map(function(s,i){var d=demo[s.id];return '<article class="service-card"><span class="num"><span class="demo-chip">'+s.state+'</span></span><h3>'+esc(s.name)+'</h3><p>'+esc(s.description)+'</p>'+(d?'<a class="demo-link" href="'+d+'"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>':'<p style="margin-top:12px;font-size:14px">'+(KEY_SELLABLE(s.state)?'Can be quoted':'Not quotable yet')+'</p>')+'</article>'}).join('');})();</script>
-<script src="kp-sound.js"></script>
+<script src="kp-sound.js" defer></script>
 <script src="kp-tour.js"></script>
 <script>(function(){var b=document.getElementById("tourStart");if(b)b.addEventListener("click",function(){if(window.KPTour)window.KPTour.start()})})();</script>
 </body></html>

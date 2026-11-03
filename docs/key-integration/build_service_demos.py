@@ -82,8 +82,7 @@ def page(i, s):
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>%s demo | Key Technologies.si</title><meta name="description" content="%s"><meta name="theme-color" content="#0f171e">
 <link rel="icon" href="%sapple-touch-icon.png"><link rel="apple-touch-icon" href="%sapple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/fonts/lato.css">
 <link rel="stylesheet" href="../site-base.css"><link rel="stylesheet" href="../kp.css"></head><body>
 %s
 %s
@@ -95,7 +94,7 @@ def page(i, s):
 %s
 <div id="toast" role="status" aria-live="polite"></div>
 %s
-<script src="../kp-sound.js"></script><script src="../kp-tour.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
+<script src="../kp-sound.js" defer></script><script src="../kp-tour.js"></script><script src="../kp-followup.js"></script><script src="../demo-widgets.js"></script><script>KPD.mount(%r,document.getElementById("widget"));</script>
 </body></html>''' % (esc(title), esc(tag), '../../', '../../', fix(HEADER, root), fix(MENU, root), switch(), body, fix(FOOTER, root), BURGER, widget)
 
 def esc(t):

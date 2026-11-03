@@ -19,7 +19,7 @@ const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacy — LVR Rewards</title>
 <meta name="description" content="How LVR Rewards handles your information.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet"><style>
+<link rel="stylesheet" href="/fonts/lato.css"><style>
   :root{--bg:#0f171e;--card:#232f3e;--ink:#ffffff;--dim:#aab9ca;--gold:#00a8e1;--blue:#00a8e1;--line:#37475a;}
   *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Lato,Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
   header{background:#232f3e;padding:14px 16px;} header a{color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:.02em;} header span{color:var(--blue);}

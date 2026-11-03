@@ -18,9 +18,8 @@
 <link rel="canonical" href="https://keytechnologies.si/">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap">
+<link rel="preload" href="/fonts/lato-400.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/lato-900.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:Lato;font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/lato-400.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Lato;font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/lato-700.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Lato;font-style:normal;font-weight:900;font-display:swap;src:url(/fonts/lato-900.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f171e'/%3E%3Cg transform='translate(2 17) scale(.5)'%3E%3Cdefs%3E%3ClinearGradient id='kgf' x1='0' y1='5' x2='0' y2='53' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23fffdf0'/%3E%3Cstop offset='.22' stop-color='%23ffe45c'/%3E%3Cstop offset='.48' stop-color='%23e49a00'/%3E%3Cstop offset='.56' stop-color='%23b87300'/%3E%3Cstop offset='.68' stop-color='%23ffd23a'/%3E%3Cstop offset='.88' stop-color='%23fff2a0'/%3E%3Cstop offset='1' stop-color='%23d48f00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke='url(%23kgf)'%3E%3Ccircle cx='24' cy='30' r='19' stroke-width='8'/%3E%3Ccircle cx='24' cy='30' r='8.5' stroke-width='3'/%3E%3C/g%3E%3Cg fill='url(%23kgf)'%3E%3Crect x='42' y='26.5' width='72' height='7' rx='1'/%3E%3Crect x='45' y='21' width='6' height='18' rx='2'/%3E%3Crect x='55' y='23' width='5' height='14' rx='2'/%3E%3Cpath d='M90,33H98V45H90ZM102,33H114V51H102Z'/%3E%3C/g%3E%3Cg stroke='%23fff' stroke-linecap='round' fill='none'%3E%3Cpath d='M9,20A17,17 0 0 1 24,12' stroke-width='3' stroke-opacity='.9'/%3E%3Cpath d='M46,28H112' stroke-width='1.6' stroke-opacity='.9'/%3E%3Cpath d='M104,35V49' stroke-width='1.4' stroke-opacity='.8'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
 <script>
   // Google Analytics (GA4) - not turned on yet. Create a property at
@@ -322,6 +321,42 @@
   .demo-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-weight:700;font-size:14px;color:var(--key-light);text-decoration:none;min-height:44px;}
   .demo-link:hover{text-decoration:underline;}
   .demo-chip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--key-blue);border-radius:999px;padding:2px 8px;color:var(--key-light);}
+  /* ---- trust strip ---- */
+  .trust-band{padding-block:0 12px;border-top:none;}
+  .trust-grid{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0;padding:0;}
+  .trust-grid li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;}
+  .trust-grid b{font-size:20px;font-weight:900;color:#fff;line-height:1.2;}
+  .trust-grid span{font-size:14px;color:var(--ink-dim);line-height:1.4;}
+  @media (max-width:900px){.trust-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:480px){.trust-grid{gap:10px;}.trust-grid li{padding:13px 14px;}.trust-grid b{font-size:17px;}.trust-grid span{font-size:13px;}}
+  /* ---- see it work ---- */
+  .sw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .sw-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--ink);}
+  .sw-card:hover,.sw-card:focus-visible{border-color:var(--key-light);box-shadow:0 10px 30px rgba(0,168,225,.15);}
+  .sw-card img{display:block;width:100%;height:auto;aspect-ratio:660/290;object-fit:cover;object-position:top;background:#121a22;border-bottom:1px solid var(--line);}
+  .sw-card .sw-body{display:block;padding:14px 16px 16px;}
+  .sw-card h3{font-size:18px;margin-bottom:4px;}
+  .sw-card p{font-size:14.5px;color:var(--ink-dim);}
+  .sw-card .go{display:inline-block;margin-top:8px;font-weight:700;font-size:14px;color:var(--key-light);}
+  .sw-more{margin-top:22px;text-align:center;}
+  @media (max-width:900px){.sw-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:600px){.sw-grid{grid-template-columns:1fr;}}
+  /* ---- soft motion as sections scroll into view (off for reduced motion, never hides text from search engines) ---- */
+  .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease;}
+  .js .reveal.in{opacity:1;transform:none;}
+  .js .sw-grid .reveal:nth-child(3n+2),.js .service-grid .reveal:nth-child(3n+2),.js .trust-grid .reveal:nth-child(4n+2){transition-delay:.07s;}
+  .js .sw-grid .reveal:nth-child(3n),.js .service-grid .reveal:nth-child(3n),.js .trust-grid .reveal:nth-child(4n+3){transition-delay:.14s;}
+  .js .trust-grid .reveal:nth-child(4n){transition-delay:.21s;}
+  /* ---- faster first paint: sections far below the screen are drawn only when scrolled near ---- */
+  #industries,#audit,#solutions,#method,#about,#results,#locations,#faq,#contact{content-visibility:auto;contain-intrinsic-size:auto 900px;}
+  /* ---- sticky Book a Call on phones ---- */
+  .sticky-cta{display:none;}
+  @media (max-width:820px){
+    body{padding-bottom:88px;}
+    .sticky-cta{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;visibility:hidden;transform:translateY(150%);transition:transform .28s ease,visibility 0s .28s;}
+    .sticky-cta.on{visibility:visible;transform:none;transition:transform .28s ease;}
+    .sticky-cta .btn{flex:1;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 1px rgba(0,168,225,.5);}
+  }
   .demo-strip{margin:0 0 20px;padding:14px 18px;border:1px solid var(--key-blue);border-radius:14px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;}
   .demo-strip a{color:var(--key-light);font-weight:700;}
 
@@ -430,6 +465,7 @@
   }
   .skip-link:focus{left:0;}
 </style>
+<script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
 
@@ -549,16 +585,45 @@
     </div>
   </section>
 
+  <!-- ============ TRUST STRIP ============
+       To show a real client quote here: write it as a <figure class="quote"> under this list. Only use a quote you have written permission for. -->
+  <section class="wrap trust-band" aria-label="Why Key Technologies">
+    <ul class="trust-grid">
+      <li class="reveal"><b>25+ years</b><span>in security, networking and software</span></li>
+      <li class="reveal"><b>23 services</b><span>each with a live demo you can try</span></li>
+      <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don't need</span></li>
+      <li class="reveal"><b>Local and remote</b><span>Manhattan Beach, Las Vegas and Los Angeles, or anywhere online</span></li>
+    </ul>
+  </section>
+
+  <!-- ============ SEE IT WORK ============ -->
+  <section class="wrap" id="see-it-work">
+    <div class="section-head reveal">
+      <span class="eyebrow">See it work</span>
+      <h2>Try it before you talk to anyone</h2>
+      <p>Every service has a live demo. Everything in them is made up, and nothing is sent, booked or charged.</p>
+    </div>
+    <div class="sw-grid">
+      <a class="sw-card reveal" href="key-platform/voice/"><img src="key-platform/demos/thumbs/voice.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the AI phone receptionist demo"><span class="sw-body"><h3>AI phone receptionist</h3><p>Answers calls, captures the lead and sends anything urgent to a person.</p><span class="go">Try the demo &rarr;</span></span></a>
+      <a class="sw-card reveal" href="key-platform/email/"><img src="key-platform/demos/thumbs/email.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the AI email assistant demo"><span class="sw-body"><h3>AI email assistant</h3><p>Sorts an inbox and drafts replies that a person approves before they go out.</p><span class="go">Try the demo &rarr;</span></span></a>
+      <a class="sw-card reveal" href="key-platform/demos/booking-scheduling.html"><img src="key-platform/demos/thumbs/booking-scheduling.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the booking and scheduling demo"><span class="sw-body"><h3>Booking and scheduling</h3><p>Pick a time, get a confirmation and see the reminders that follow.</p><span class="go">Try the demo &rarr;</span></span></a>
+      <a class="sw-card reveal" href="key-platform/demos/custom-crm.html"><img src="key-platform/demos/thumbs/custom-crm.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the custom CRM demo"><span class="sw-body"><h3>Custom CRM</h3><p>Leads move through your own stages so nothing slips through.</p><span class="go">Try the demo &rarr;</span></span></a>
+      <a class="sw-card reveal" href="key-platform/demos/reviews-reputation.html"><img src="key-platform/demos/thumbs/reviews-reputation.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the review management demo"><span class="sw-body"><h3>Review management</h3><p>Drafted replies in your voice, with bad reviews flagged for you first.</p><span class="go">Try the demo &rarr;</span></span></a>
+      <a class="sw-card reveal" href="key-platform/demos/ai-agents.html"><img src="key-platform/demos/thumbs/ai-agents.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the AI agents demo"><span class="sw-body"><h3>AI agents</h3><p>An assistant that does one job, within limits you set.</p><span class="go">Try the demo &rarr;</span></span></a>
+    </div>
+    <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library" data-tap>See all 25 demos</a></p>
+  </section>
+
   <!-- ============ SERVICES ============ -->
   <section class="wrap" id="services">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Services</span>
       <h2>Where Key Technologies can help</h2>
       <p>Every engagement starts with a business problem, not a tool. Technology comes second.</p>
     </div>
-    <div class="demo-strip"><span><span class="demo-chip">Demos</span>&nbsp; See Voice, Email and Sales working, with clearly labeled fictional data.</span><a href="key-platform/index.html">Open the demos &rarr;</a></div>
+    <div class="demo-strip"><span><span class="demo-chip">Demos</span>&nbsp; Every service below has a live demo, with clearly labeled fictional data.</span><a href="key-platform/index.html">Open all 25 demos &rarr;</a></div>
     <div class="service-grid">
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">01</span>
         <h3>Digital Content Creators</h3>
         <p>We build digital content creators for your business: AI/SI-powered creators with a consistent
@@ -570,14 +635,14 @@
           wherever a platform or the law asks for it.</p>
               <a class="demo-link" href="key-platform/demos/content-creators.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">02</span>
         <h3>AI/SI Strategy</h3>
         <p>Help businesses identify where AI/SI can create the most value — and just as important, where it
           can't yet, so effort goes where it actually pays off.</p>
               <a class="demo-link" href="key-platform/demos/ai-strategy.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">03</span>
         <h3>Business Automation</h3>
         <p>Reduce repetitive manual work and connect business processes that currently run as disconnected,
@@ -585,7 +650,7 @@
           when someone remembers to open a tool.</p>
               <a class="demo-link" href="key-platform/demos/business-automation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">04</span>
         <h3>AI/SI Agents</h3>
         <p>Build intelligent assistants capable of performing defined business tasks — not a generic
@@ -594,7 +659,7 @@
           can do on its own.</p>
               <a class="demo-link" href="key-platform/demos/ai-agents.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">05</span>
         <h3>Custom CRM &amp; Lead Management</h3>
         <p>A CRM built specifically around your business, not a generic tool everyone else uses, stretched
@@ -604,28 +669,28 @@
           for real estate teams &rarr;</a></p>
               <a class="demo-link" href="key-platform/demos/custom-crm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">06</span>
         <h3>Customer Experience</h3>
         <p>Use AI/SI to improve customer communication and response time without making interactions feel
           automated or impersonal.</p>
               <a class="demo-link" href="key-platform/demos/customer-experience.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">07</span>
         <h3>Operations</h3>
         <p>Identify inefficient workflows and the specific rewards where automation or better information
           flow would actually move the needle.</p>
               <a class="demo-link" href="key-platform/demos/operations.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">08</span>
         <h3>Data &amp; Knowledge Systems</h3>
         <p>Make business information easier to find, understand and use — across the tools a business
           already has.</p>
               <a class="demo-link" href="key-platform/demos/data-knowledge.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">09</span>
         <h3>Marketing</h3>
         <p>Use AI/SI to improve marketing workflows, research, customer segmentation and content production —
@@ -633,7 +698,7 @@
           before anything ships.</p>
               <a class="demo-link" href="key-platform/demos/marketing.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">10</span>
         <h3>Security &amp; Technology</h3>
         <p>Evaluate how AI/SI fits into existing networks, databases, permissions and business technology —
@@ -642,13 +707,13 @@
           databases, Key Technologies has never had a client compromised.</p>
               <a class="demo-link" href="key-platform/demos/security-technology.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">11</span>
         <h3>Custom AI/SI Systems</h3>
         <p>Build systems specifically around how your business operates, not a one-size-fits-all package.</p>
               <a class="demo-link" href="key-platform/demos/custom-ai-systems.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">12</span>
         <h3>AI/SI Website Development</h3>
         <p>Build and maintain websites with AI/SI-assisted development and smart built-in features — faster
@@ -657,7 +722,7 @@
           doesn't take control of it.</p>
               <a class="demo-link" href="key-platform/demos/website-development.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">13</span>
         <h3>Email Automation</h3>
         <p>Automate follow-up, nurture sequences and routine email responses, so leads and customers
@@ -665,7 +730,7 @@
           the inbox and drafts replies from your own information, and a person approves before anything is sent.</p>
         <a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> See Email Intelligence &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">14</span>
         <h3>Social Media Management</h3>
         <p>Build and maintain a real social media presence, not a stock content calendar nobody looks at.
@@ -679,14 +744,14 @@
           to your business.</p>
               <a class="demo-link" href="key-platform/demos/social-media.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">15</span>
         <h3>Review &amp; Reputation Management</h3>
         <p>Monitor and respond to Google, Yelp and other reviews quickly, and flag negative reviews
           before they sit unanswered — reputation handled consistently, not reactively.</p>
               <a class="demo-link" href="key-platform/demos/reviews-reputation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">16</span>
         <h3>AI/SI Phone &amp; Text Answering</h3>
         <p>Never miss a call or text. AI/SI-assisted answering handles common questions, takes messages,
@@ -694,14 +759,14 @@
           capturing a lead and proposing an appointment.</p>
         <a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> See Voice Services &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">17</span>
         <h3>Booking &amp; Scheduling Automation</h3>
         <p>Automate appointment and reservation booking, confirmations and reminders, so scheduling
           doesn't eat staff time or lose customers to a missed call.</p>
               <a class="demo-link" href="key-platform/demos/booking-scheduling.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">18</span>
         <h3>AI/SI Training &amp; Custom Training Software</h3>
         <p>Teach your team how to actually use AI/SI tools day to day — training built around how your
@@ -710,14 +775,14 @@
           progress and completion — built around your business, not a generic off-the-shelf LMS.</p>
               <a class="demo-link" href="key-platform/demos/ai-training.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">19</span>
         <h3>Custom Website Programming</h3>
         <p>Full custom-coded websites and web applications, not just a template — built and maintained
           by someone with 25+ years of real software and web development experience.</p>
               <a class="demo-link" href="key-platform/demos/custom-programming.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">20</span>
         <h3>ADA &amp; Accessibility Compliance</h3>
         <p>Build and audit websites to meet ADA/WCAG accessibility standards — reduces a real and
@@ -725,7 +790,7 @@
           every visitor, not just some.</p>
               <a class="demo-link" href="key-platform/demos/accessibility-ada.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">21</span>
         <h3>PHP &amp; WordPress Migration</h3>
         <p>Move a business off PHP and WordPress onto a modern, custom-built stack — for sites that got
@@ -733,7 +798,7 @@
           track record.</p>
               <a class="demo-link" href="key-platform/demos/php-wordpress-migration.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">22</span>
         <h3>Private LLM Setup</h3>
         <p>Set up your own private AI/LLM — not a shared account on someone else's platform. We load in
@@ -743,7 +808,7 @@
           and hand over full control once it's configured — either way, it's yours.</p>
               <a class="demo-link" href="key-platform/demos/private-llm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">23</span>
         <h3>Cybersecurity &amp; Network Hardening</h3>
         <p>A full security pass on the systems you already run — passwords and access controls, networks,
@@ -751,7 +816,7 @@
           25+ years of hands-on security and networking experience, not a generic checklist.</p>
               <a class="demo-link" href="key-platform/demos/cybersecurity.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <span class="num">24</span>
         <h3>Sales Partner Network <span class="demo-chip">Prototype</span></h3>
         <p>A planned program for independent sales partners: a shared service catalog, a quote builder, a
@@ -765,15 +830,15 @@
 
   <!-- ============ KEY PLATFORM ============ -->
   <section class="wrap" id="platform">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>KEY Platform</span>
       <h2>Business Solutions, working together</h2>
       <p>One catalog of business solutions for phones, email, customers and growth. Each one carries an honest status: a demo you can try today, or a plan that is not for sale yet.</p>
     </div>
     <div class="service-grid">
-      <article class="service-card"><span class="num"><span class="demo-chip">Prototype</span></span><h3>AI Voice Receptionist</h3><p>Answers calls around the clock, captures the lead, routes anything urgent to a person and proposes an appointment. Try a scripted sample call. No real phone line is connected.</p><a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> Try the Voice demo &rarr;</a></article>
-      <article class="service-card"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Email Intelligence</h3><p>Sorts an inbox and drafts replies from your own information. A person approves before anything is sent. The demo uses fictional email and sends nothing.</p><a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> Try the Email demo &rarr;</a></article>
-      <article class="service-card"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Sales Partner Network</h3><p>A catalog, quote builder, pipeline and commission calculator for independent partners. Prototype only and not open for enrollment. Nothing here is a promise of income.</p><a class="demo-link" href="key-platform/sales/index.html"><span class="demo-chip">Demo</span> Try the Sales demo &rarr;</a></article>
+      <article class="service-card reveal"><span class="num"><span class="demo-chip">Prototype</span></span><h3>AI Voice Receptionist</h3><p>Answers calls around the clock, captures the lead, routes anything urgent to a person and proposes an appointment. Try a scripted sample call. No real phone line is connected.</p><a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> Try the Voice demo &rarr;</a></article>
+      <article class="service-card reveal"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Email Intelligence</h3><p>Sorts an inbox and drafts replies from your own information. A person approves before anything is sent. The demo uses fictional email and sends nothing.</p><a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> Try the Email demo &rarr;</a></article>
+      <article class="service-card reveal"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Sales Partner Network</h3><p>A catalog, quote builder, pipeline and commission calculator for independent partners. Prototype only and not open for enrollment. Nothing here is a promise of income.</p><a class="demo-link" href="key-platform/sales/index.html"><span class="demo-chip">Demo</span> Try the Sales demo &rarr;</a></article>
     </div>
     <div class="demo-strip" style="margin-top:20px"><span><span class="demo-chip">Planned</span>&nbsp; Also on the plan, not yet for sale: KEY CRM packaging, websites and landing pages, workflow automation, marketing and social growth, scheduling and reminders, reviews, and reporting.</span><a href="key-platform/index.html">See the full catalog &rarr;</a></div>
     <div class="demo-strip"><span><span class="demo-chip">Rewards</span>&nbsp; Try the LVR Rewards demo: earn, spin and use sample rewards at made-up restaurants.</span><a href="key-platform/demos/rewards.html">Try the rewards demo &rarr;</a></div>
@@ -782,7 +847,7 @@
 
   <!-- ============ INDUSTRIES ============ -->
   <section class="wrap" id="industries">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Industries</span>
       <h2>Built for how your industry actually works</h2>
       <p>The same services above, applied specifically to the problems each one actually has. These are a
@@ -818,7 +883,7 @@
 
   <!-- ============ FREE WEBSITE AUDIT ============ -->
   <section class="wrap" id="audit">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Free Tool</span>
       <h2>Get your website's AI/SI Audit Grade</h2>
       <p>A real audit, not a guess — performance, accessibility, best practices and SEO, scored by
@@ -872,24 +937,24 @@
 
   <!-- ============ SOLUTIONS / PROBLEM-FIRST POSITIONING ============ -->
   <section class="wrap" id="solutions">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Solutions</span>
       <h2>Problem first. Technology second.</h2>
       <p>Key Technologies doesn't start by selling AI/SI. It starts by understanding what's actually slowing a business
         down, then figures out whether AI/SI, automation, or a simpler fix solves it.</p>
     </div>
     <div class="service-grid">
-      <article class="service-card">
+      <article class="service-card reveal">
         <h3>"We're losing leads."</h3>
         <p>Often a sales and lead-management problem before it's an AI/SI problem — the fix might be better
           follow-up systems, not a new tool.</p>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <h3>"Our team repeats the same work."</h3>
         <p>A business-automation problem. The goal is connecting the steps that already exist, not adding
           more software on top.</p>
       </article>
-      <article class="service-card">
+      <article class="service-card reveal">
         <h3>"We can't find our own information."</h3>
         <p>A data and knowledge-systems problem — information exists somewhere in the business, it's just
           not organized in a way people can use.</p>
@@ -899,7 +964,7 @@
 
   <!-- ============ THE KEY TECHNOLOGIES METHOD ============ -->
   <section class="wrap" id="method">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>How It Works</span>
       <h2>The Key Technologies Method</h2>
       <p>A straightforward process for figuring out where AI/SI actually helps — and proving it before scaling it.</p>
@@ -973,7 +1038,7 @@
 
   <!-- ============ RESULTS ============ -->
   <section class="wrap" id="results">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Real Results</span>
       <h2>Built real audiences for real businesses — and let the work speak for itself</h2>
       <p>Shane has never had a sales pitch. He showed people what he'd already created, and the
@@ -1029,7 +1094,7 @@
 
   <!-- ============ LOCATIONS ============ -->
   <section class="wrap" id="locations">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Locations</span>
       <h2>Based in California and Nevada</h2>
       <p>Key Technologies works with businesses in person around its home markets, and remotely anywhere in the world.</p>
@@ -1052,7 +1117,7 @@
 
   <!-- ============ FAQ ============ -->
   <section class="wrap" id="faq">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>FAQ</span>
       <h2>Questions, answered</h2>
     </div>
@@ -1152,7 +1217,7 @@
 
   <!-- ============ DETAILED LEAD FORM ============ -->
   <section class="wrap" id="contact">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="30" height="13" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><circle cx="24" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="24" cy="30" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="42" y="26.5" width="72" height="7" rx="1" fill="currentColor"/><rect x="45" y="21" width="6" height="18" rx="2" fill="currentColor"/><rect x="55" y="23" width="5" height="14" rx="2" fill="currentColor"/><path fill="currentColor" d="M90,33H98V45H90ZM102,33H114V51H102Z"/></svg>Get Started</span>
       <h2>Tell us about your business</h2>
       <p>The more we know going in, the more useful the first conversation is.</p>
@@ -2069,6 +2134,27 @@
   ]
 }
 </script>
-<script src="key-platform/kp-sound.js"></script>
+<div class="sticky-cta" id="stickyCta"><a class="btn btn-primary" href="book.html">Book a Free Call</a></div>
+<script>
+  // Sticky "Book a Free Call" on phones: shows after the first screen, hides over the forms and when the menu is open
+  (function(){
+    var bar=document.getElementById("stickyCta"),menu=document.getElementById("mobileMenu");
+    if(!bar||!("IntersectionObserver" in window))return;
+    var inForm={},past=false;
+    function update(){var f=Object.keys(inForm).some(function(k){return inForm[k]});bar.classList.toggle("on",past&&!f&&!menu.classList.contains("open"));}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){inForm[e.target.id]=e.isIntersecting});update();});
+    ["lead-short","contact"].forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el);});
+    window.addEventListener("scroll",function(){past=window.scrollY>640;update();},{passive:true});
+    new MutationObserver(update).observe(menu,{attributes:true,attributeFilter:["class"]});
+  })();
+  // Soft fade-in as things scroll into view
+  (function(){
+    var els=document.querySelectorAll(".reveal");
+    if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("in")});return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{rootMargin:"0px 0px -8% 0px",threshold:0.05});
+    els.forEach(function(e){io.observe(e)});
+  })();
+</script>
+<script src="key-platform/kp-sound.js" defer></script>
 </body>
 </html>
