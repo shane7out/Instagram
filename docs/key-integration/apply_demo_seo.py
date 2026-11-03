@@ -97,6 +97,9 @@ SEO = {
        ('Did this demo post anything?','No. It uses a made-up bakery and nothing is posted anywhere.')]),
 }
 
+from demo_seo_more import MORE
+SEO.update(MORE)
+
 HUB = dict(
  file='key-platform/index.html', path='key-platform/',
  title='Interactive Demos: AI Receptionist, Email, CRM, Booking and More | Key Technologies.si',

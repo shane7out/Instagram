@@ -1,0 +1,41 @@
+# Key Technologies.si
+
+> Key Technologies is an AI/SI consulting company run by Shane Christensen, who has 25+ years of hands-on experience in computer security, networking, databases and business software. It helps small and mid-sized businesses use AI in practical, safe ways: strategy, automation, AI agents, phone and email assistants, custom software, security and training. Serving Manhattan Beach and Los Angeles, CA and Las Vegas, NV, and working remotely.
+
+Key Technologies does not guarantee results. Interactive demos on this site use made-up data, are not connected to any real system and do not send, book or charge anything.
+
+## Start here
+- [Home: services and free website audit](https://keytechnologies.si/): all 23 services, FAQ and contact
+- [Book a free call](https://keytechnologies.si/book.html): request a call time (Mon to Fri, Pacific time); nothing is booked until confirmed
+- [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
+
+## Demos (fictional data)
+- [AI phone receptionist](https://keytechnologies.si/key-platform/voice/)
+- [AI email assistant](https://keytechnologies.si/key-platform/email/)
+- [Review and reputation management](https://keytechnologies.si/key-platform/demos/reviews-reputation.html)
+- [Booking and scheduling automation](https://keytechnologies.si/key-platform/demos/booking-scheduling.html)
+- [Custom CRM and lead management](https://keytechnologies.si/key-platform/demos/custom-crm.html)
+- [Digital content creators](https://keytechnologies.si/key-platform/demos/content-creators.html)
+- [AI strategy](https://keytechnologies.si/key-platform/demos/ai-strategy.html)
+- [Business process automation](https://keytechnologies.si/key-platform/demos/business-automation.html)
+- [AI agents](https://keytechnologies.si/key-platform/demos/ai-agents.html)
+- [Customer experience](https://keytechnologies.si/key-platform/demos/customer-experience.html)
+- [Operations review](https://keytechnologies.si/key-platform/demos/operations.html)
+- [Data and knowledge systems](https://keytechnologies.si/key-platform/demos/data-knowledge.html)
+- [AI-assisted marketing](https://keytechnologies.si/key-platform/demos/marketing.html)
+- [Security and technology review](https://keytechnologies.si/key-platform/demos/security-technology.html)
+- [Custom AI systems](https://keytechnologies.si/key-platform/demos/custom-ai-systems.html)
+- [AI-assisted website development](https://keytechnologies.si/key-platform/demos/website-development.html)
+- [Social media management](https://keytechnologies.si/key-platform/demos/social-media.html)
+- [AI training](https://keytechnologies.si/key-platform/demos/ai-training.html)
+- [Custom website and web application programming](https://keytechnologies.si/key-platform/demos/custom-programming.html)
+- [ADA and website accessibility](https://keytechnologies.si/key-platform/demos/accessibility-ada.html)
+- [PHP and WordPress migration](https://keytechnologies.si/key-platform/demos/php-wordpress-migration.html)
+- [Private LLM setup](https://keytechnologies.si/key-platform/demos/private-llm.html)
+- [Cybersecurity and network hardening](https://keytechnologies.si/key-platform/demos/cybersecurity.html)
+
+## LVR Rewards (Las Vegas Restaurants)
+- [LVR Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.
+- [Rewards demo](https://keytechnologies.si/key-platform/demos/rewards.html)
+- [Program terms](https://keytechnologies.si/rewards-terms.html) and [privacy](https://keytechnologies.si/rewards-privacy.html)
+

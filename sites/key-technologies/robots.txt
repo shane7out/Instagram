@@ -1,4 +1,27 @@
+# Search engines and AI assistants are welcome to read and cite this site.
 User-agent: *
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: Amazonbot
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
 Allow: /
+# Owner-only and account pages, not useful in search
+Disallow: /key-pageviews.html
+Disallow: /my-account.html
 
 Sitemap: https://keytechnologies.si/sitemap.xml
