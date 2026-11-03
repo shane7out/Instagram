@@ -17,6 +17,8 @@ def fix(h, root):
     h = re.sub(r'href="#"', 'href="%sindex.html"' % root, h)
     h = re.sub(r'href="#([a-z-]+)"', lambda m: 'href="%sindex.html#%s"' % (root, m.group(1)), h)
     h = re.sub(r'href="(rewards|my-account|privacy|terms)\.html"', lambda m: 'href="%s%s.html"' % (root, m.group(1)), h)
+    # any other root-relative link in the shared header/menu/footer (guides/, las-vegas.html, ...) must also climb to the site root
+    h = re.sub(r'href="(?!https?:|mailto:|tel:|#|/|\.\./|%s)([A-Za-z0-9_-][^"]*)"' % re.escape(root), lambda m: 'href="%s%s"' % (root, m.group(1)), h)
     h = h.replace('href="key-platform/', 'href="%skey-platform/' % root)
     h = h.replace('href="book.html"', 'href="%sbook.html"' % root)
     return h.replace('<span id="year"></span>', '<span id="kpYear"></span>')

@@ -33,8 +33,8 @@ GUIDE_CARDS = [
 CITIES = {
  'las-vegas': dict(
   name='Las Vegas', state='Nevada', st='NV', file='las-vegas.html',
-  title='AI Consulting and Business Technology in Las Vegas, NV | Key Technologies.si',
-  desc='Key Technologies helps Las Vegas businesses use AI in practical ways: phone and email assistants, booking, reviews, custom software and security. In person or online. Free review, no obligation.',
+  title='AI Consulting in Las Vegas, NV | Key Technologies.si',
+  desc='Key Technologies helps Las Vegas businesses use AI practically: phone and email assistants, booking, reviews, custom software and security. Free review.',
   h1='AI and business technology for Las Vegas businesses',
   lead='Key Technologies helps Las Vegas businesses put AI to work in ways that save time and win customers: answering the phone, handling bookings and reviews, and building custom systems around how your business actually runs. In person around Las Vegas, or online.',
   why_h='Why Las Vegas businesses call us',
@@ -67,8 +67,8 @@ def ca_city(name, file, lead, area_phrase):
     """California cities: only facts already on the site (Manhattan Beach, the South Bay, Los Angeles and Southern California are served; in person around home markets, online anywhere)."""
     return dict(
       name=name, state='California', st='CA', file=file,
-      title='AI Consulting and Business Technology in %s, CA | Key Technologies.si' % name,
-      desc='Key Technologies helps %s businesses use AI in practical ways: phone and email assistants, booking, reviews, custom software and security. In person or online. Free review, no obligation.' % name,
+      title='AI Consulting in %s, CA | Key Technologies.si' % name,
+      desc='Key Technologies helps %s businesses use AI practically: phone and email assistants, booking, reviews, custom software and security. Free review.' % name,
       lead=lead,
       why_h='Why %s businesses call us' % name,
       why=[('Calls after hours','Many businesses keep long hours, and a missed call is often a missed customer. An AI receptionist can answer, take details and hand anything urgent to a person.'),

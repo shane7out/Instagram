@@ -12,6 +12,8 @@ const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Program Terms — LVR Rewards</title>
 <meta name="description" content="The Program Terms for LVR Rewards: a free, fun promotion that we can pause, change or end, and adjust or take back rewards, at our sole discretion.">
+<link rel="canonical" href="https://keytechnologies.si/rewards-terms.html">
+<meta property="og:type" content="website"><meta property="og:title" content="Program Terms — LVR Rewards"><meta property="og:description" content="The Program Terms for LVR Rewards: a free, fun promotion that we can pause, change or end, and adjust or take back rewards, at our sole discretion."><meta property="og:url" content="https://keytechnologies.si/rewards-terms.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/fonts/lato.css"><style>
   :root{--bg:#0f171e;--card:#232f3e;--ink:#ffffff;--dim:#aab9ca;--gold:#00a8e1;--blue:#00a8e1;--line:#37475a;}
   *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Lato,Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}

@@ -173,8 +173,8 @@ GUIDES = {}
 
 # ================= Guide 1: PHP2Shell =================
 G1 = dict(slug='php2shell-small-business-websites',
-  title='PHP2Shell: What Small-Business Website Owners Should Do Now | Key Technologies.si',
-  desc='Two critical flaws in PHP itself were patched on October 21, 2026. Here is what it means for a WordPress or PHP website, how to check your PHP version, and what to ask your host.',
+  title='PHP2Shell: What Website Owners Should Do Now | Key Technologies.si',
+  desc='Two critical PHP flaws were patched on October 21, 2026. How to check your PHP version, what to ask your host and what to do next.',
   h1='PHP2Shell: what small-business website owners should do now',
   short='What the October 2026 PHP security flaws mean for a WordPress or PHP website, and a 10-minute checklist.')
 G1['faq'] = [
@@ -248,8 +248,8 @@ GUIDES['G1'] = G1
 
 # ================= Guide 2: AI receptionist cost =================
 G2 = dict(slug='ai-receptionist-cost',
-  title='How Much Does an AI Receptionist Cost? What Sets the Price | Key Technologies.si',
-  desc='There is no single price for an AI phone receptionist. Here is what actually drives the cost, the pricing models you will see, hidden costs, and questions to ask any vendor.',
+  title='AI Receptionist Cost: What Sets the Price | Key Technologies.si',
+  desc='No single price exists for an AI receptionist. See what drives the cost, how vendors charge, hidden costs and the questions to ask.',
   h1='How much does an AI receptionist cost? What actually sets the price',
   short='What drives the price of an AI phone receptionist, how vendors charge, and the questions to ask before you buy.')
 G2['faq'] = [
@@ -325,7 +325,7 @@ GUIDES['G2'] = G2
 # ================= Guide 3: AI for restaurants =================
 G3 = dict(slug='ai-for-restaurants',
   title='AI for Restaurants: 6 Practical Ways to Save Time | Key Technologies.si',
-  desc='Six practical uses of AI for a restaurant: answering phones, reminders, review replies, catering email, social posts and a menu and policy assistant. With a demo of each and what should stay human.',
+  desc='Six practical uses of AI for a restaurant: phones, reminders, review replies, catering email, social posts and a menu assistant. A demo of each.',
   h1='AI for restaurants: 6 practical ways to save time',
   short='Six practical uses of AI in a restaurant, what it should and should not do, and a demo of each.')
 G3['faq'] = [
@@ -405,8 +405,8 @@ def build():
         open(SITE + path, 'w', encoding='utf-8').write(shell(g['title'], g['desc'], path, g['body'], ldg, cn))
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
-    hub_title = 'Guides: Plain-Language Help on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides from Key Technologies: what the PHP2Shell flaws mean for your website, what an AI receptionist really costs, and how restaurants can use AI.'
+    hub_title = 'Guides on AI and Website Security | Key Technologies.si'
+    hub_desc = 'Short, practical guides: what PHP2Shell means for your website, what an AI receptionist really costs, and how restaurants can use AI.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>
