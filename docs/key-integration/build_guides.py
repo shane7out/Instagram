@@ -179,7 +179,7 @@ G1 = dict(slug='php2shell-small-business-websites',
   short='What the October 2026 PHP security flaws mean for a WordPress or PHP website, and a 10-minute checklist.')
 G1['faq'] = [
  ('Do I need to update WordPress for PHP2Shell?', 'No. The flaws are in PHP, the software the server runs, not in WordPress itself. The fix comes from updating PHP on your hosting. Keep updating WordPress as usual too, but that alone does not close this.'),
- ('Can I wait a few weeks to update PHP?', 'The PHP project rates both flaws 9.2 out of 10 and says they can let an outsider run code without logging in, and it strongly encourages updating right away. Ask your host to apply the update now rather than waiting.'),
+ ('Can I wait a few weeks to update PHP?', 'The PHP project rates both flaws 9.2 out of 10 and says they can let an outsider run code without logging in, and it strongly encourages updating right away. News sites also report attackers trying them. Ask your host to apply the update now rather than waiting.'),
  ('How do I know if my website was already hacked?', 'The announcement alone cannot tell you that. Look for the warning signs listed above, ask your host to check their logs, and consider a professional review if anything looks wrong.'),
  ('Does the Free Website Audit tell me if I am patched?', 'No. It looks at your site from the outside for common PHP and WordPress exposure signs, but it cannot see inside your server. Your host or your hosting control panel is the place to confirm your PHP version.')]
 G1['body'] = f'''<article class="wrap guide">
@@ -197,6 +197,10 @@ G1['body'] = f'''<article class="wrap guide">
 <li>PHP 8.2 is scheduled to reach the end of its official support on December 31, 2026.</li>
 </ul>
 <p class="note">Several technology blogs also report that WordPress.org does not plan a WordPress update, because the problem is in PHP and not in WordPress code. That is a report, so confirm with your host, but it matches how the fix works: it is installed on the server, not in WordPress.</p>
+
+<h2>Are attackers actually using it?</h2>
+<p>Security news sites report that attackers began trying these flaws, in some reports even before the fix was public, and that at least some attempts have worked. Reports differ on how widespread the damage is, so treat the exact numbers with caution. The practical point is the same either way: this is not a purely theoretical problem, and the fix is simple to ask for.</p>
+<p>PHP&rsquo;s developers also reportedly suggested a temporary setting change on servers that could not be updated right away. That is something for your host or developer to apply, not something to edit yourself, so mention it when you ask them.</p>
 
 <h2>Is my website affected?</h2>
 <p>You are in the group to check if your site runs on PHP. WordPress does. So do many other website tools and a lot of custom-built sites. Here is the 10-minute check.</p>
@@ -233,6 +237,7 @@ G1['body'] = f'''<article class="wrap guide">
 <ul class="src">
 <li>PHP project release notes: <a href="https://github.com/php/php-src/releases/tag/php-8.5.12">PHP 8.5.12</a> and <a href="https://github.com/php/php-src/releases/tag/php-8.4.27">PHP 8.4.27</a></li>
 <li>PHP project site: <a href="https://www.php.net/">php.net</a> (check it for the latest advice; details can change)</li>
+<li>News reports on attacks: <a href="https://bleepingcomputer.com/news/security/php2shell-security-flaws-now-sucessfully-exploited-in-the-wild">BleepingComputer</a> and <a href="https://www.recordedfuture.com/blog/php2shell-vulnerability-exploitation">Recorded Future</a> (secondary sources; scale of attacks is reported differently)</li>
 </ul>
 <p class="note">Facts above were checked against the PHP project&rsquo;s release notes on November 3, 2026. Hosting status and recommendations change quickly, so confirm with your host.</p>
 
