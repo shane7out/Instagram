@@ -140,3 +140,10 @@ Testimonials are their own category: a dedicated page (`/testimonials.html`, mea
 
 ## Worldwide and any language (2026-11-03)
 Footer fine print everywhere now reads "Manhattan Beach, California · Las Vegas, Nevada · Remote worldwide · Any language" (it used to say "Remote nationwide"; the link-preview image was remade too). "No language barrier" is pushed on the homepage: a line under the hero buttons, the fourth trust card ("Worldwide, any language"), a dedicated section (`#languages`) with greetings in 16 languages, a FAQ ("Can you work with me in my language?", also in the FAQ structured data), the page's search description, `llms.txt`, a FAQ on each city page, and an optional "Preferred language" box on the Book a Call form (saved with the request as `language`). Wording is deliberately "virtually any language, in writing and by voice" plus a note that legal or medical documents should also get a certified human translator, so the claim stays defensible.
+
+## Home link everywhere (2026-11-03)
+Shane found that on Book a Call and in the KEY Platform tabs there was no obvious way back to the homepage. Now every inner page has a plain **Home** link:
+- first chip in the KEY Platform tab row (Home, Overview, Voice, Email, Sales, Partner list),
+- first item in the desktop header menu,
+- first item in the phone menu (above Demos).
+It is added by `docs/key-integration/add_home_link.py`, which is idempotent and skips the homepage. **Run it last**, after the other generators (`build_book_page.py`, `build_service_demos.py`, `build_guides.py`, `build_city_pages.py`, `build_testimonials.py`), because those rebuild pages from templates that do not contain the Home link. The desktop menus also get slightly tighter spacing between 861 and 1100 px so the extra item never wraps.

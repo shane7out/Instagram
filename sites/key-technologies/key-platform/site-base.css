@@ -370,6 +370,10 @@
     .foot-links a{display:inline-block;padding:10px 2px;}
     a.tap{display:inline-block;padding:10px 0;}
   }
+  @media (min-width:861px) and (max-width:1100px){
+    .nav-links{gap:13px;}
+    .nav-links a{white-space:nowrap;font-size:13.5px;}
+  }
   .foot-fine{font-size:12.5px;color:var(--ink-dim);opacity:.8;margin-top:10px;}
   .foot-phone{display:inline-block;margin-top:14px;font-size:17px;font-weight:700;color:var(--key-light);text-decoration:none;}
   .foot-phone:hover{color:var(--key-blue);}
