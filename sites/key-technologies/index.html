@@ -118,12 +118,14 @@
 
   /* ---- brand watermark (hero / final CTA) ---- */
   .watermark{
-    position:absolute;z-index:-1;top:30px;left:50%;
-    width:min(1050px,104vw);height:auto;
+    position:absolute;z-index:-1;top:70px;left:50%;
+    width:min(525px,60vw);height:auto;
     transform:translateX(-50%) rotate(-7deg);
-    opacity:.18;mix-blend-mode:screen;pointer-events:none;
+    opacity:.2;mix-blend-mode:screen;pointer-events:none;
   }
-  .watermark-alt{top:auto;bottom:-30px;width:min(760px,100vw);transform:translateX(-50%) rotate(6deg);opacity:.16;}
+  @media (min-width:901px){.watermark:not(.watermark-alt){left:calc(50% - 560px);transform:rotate(-7deg);}}
+  @media (min-width:901px){.watermark-alt{left:24%;}}
+  .watermark-alt{top:auto;bottom:-10px;width:min(380px,56vw);transform:translateX(-50%) rotate(6deg);opacity:.16;}
   section{padding-block:56px;border-top:1px solid var(--line);}
   section:first-of-type{border-top:none;}
   .section-head{max-width:640px;margin-bottom:30px;}
