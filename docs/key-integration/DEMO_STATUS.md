@@ -11,6 +11,8 @@ Site-wide palette, in the style of a well-known streaming service's navy and bri
 - Text: white and a cool gray `#aab9ca`
 Font: Lato (free, open license, via Google Fonts) with system sans-serif fallbacks, as the closest free match to Amazon's own typeface "Amazon Ember", which is proprietary and not licensed for general website use. To change the font site-wide, replace `Lato` in the font-family stacks and the Google Fonts link in every page, then re-copy the homepage stylesheet into `key-platform/site-base.css`.
 
+Logo: an old-fashioned (skeleton) key in `#00a8e1`: clover-shaped bow, two collars on the shank, stepped bit. It is drawn inline in the header and footer of every page, in the favicon, in `key-platform/assets/key-logo.svg`, and in the link-preview and home-screen images. To change it, replace the shapes in all of those (search for `cx="13" cy="11.2"`).
+
 Not changed on purpose: the LVR Points gold, green and red status colors, the page `marketplace-demo.html` (deal stuff), and the raster images (`og-image.png`, `apple-touch-icon.png`). The old light blue `#59b5ff` is gone.
 
 ## Layout (rebuilt 2026-11-02)
