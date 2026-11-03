@@ -22,6 +22,12 @@
     }
     if (extra) for (k in extra) m[k] = extra[k];
     m.submittedAt = new Date().toISOString();
+    // a readable email subject so alerts are easy to tell apart in the inbox
+    if (!m._subject) {
+      var who = String(data.name || data.restaurant || data.email || 'someone').slice(0, 60);
+      var what = String(data.source || 'website').replace(/[-_]+/g, ' ');
+      m._subject = 'New lead: ' + who + ' (' + what + ')';
+    }
     return m;
   }
   function send(dbUrl, fsUrl, data, extra) {
