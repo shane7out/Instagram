@@ -323,6 +323,12 @@
   .trust-grid span{font-size:14px;color:var(--ink-dim);line-height:1.4;}
   @media (max-width:900px){.trust-grid{grid-template-columns:1fr 1fr;}}
   @media (max-width:480px){.trust-grid{gap:10px;}.trust-grid li{padding:13px 14px;}.trust-grid b{font-size:17px;}.trust-grid span{font-size:13px;}}
+  /* ---- guides row ---- */
+  .g-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .g-card{display:block;padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--card);text-decoration:none;color:var(--ink);}
+  .g-card:hover,.g-card:focus-visible{border-color:var(--key-light);box-shadow:0 10px 30px rgba(0,168,225,.15);}
+  .g-card h3{font-size:19px;margin-bottom:8px;line-height:1.25;} .g-card p{font-size:14.5px;color:var(--ink-dim);} .g-card .go{display:inline-block;margin-top:10px;font-weight:700;font-size:14px;color:var(--key-light);}
+  @media (max-width:900px){.g-grid{grid-template-columns:1fr;}}
   /* ---- see it work ---- */
   .sw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
   .sw-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--ink);}
@@ -512,6 +518,7 @@
   <p class="mm-group-label">Explore</p>
   <ul>
     <li><a href="key-platform/index.html#library">Demos</a></li>
+    <li><a href="guides/index.html">Guides</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#industries">Industries</a></li>
     <li><a href="#solutions">Solutions</a></li>
@@ -1108,6 +1115,20 @@
       in the world, they have full access to manage and support your systems, any time, anywhere.</p>
   </section>
 
+  <!-- ============ GUIDES ============ -->
+  <section class="wrap" id="guides">
+    <div class="section-head reveal">
+      <span class="eyebrow">Guides</span>
+      <h2>Plain-language help, no jargon</h2>
+      <p>Short guides on the questions business owners ask us most. Each says what is known, what is not, and what to do next.</p>
+    </div>
+    <div class="g-grid">
+      <a class="g-card reveal" href="guides/php2shell-small-business-websites.html"><h3>PHP2Shell: what small-business website owners should do now</h3><p>Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist for your website.</p><span class="go">Read the guide &rarr;</span></a>
+      <a class="g-card reveal" href="guides/ai-receptionist-cost.html"><h3>How much does an AI receptionist cost?</h3><p>What actually sets the price, how vendors charge, and the questions to ask before you buy.</p><span class="go">Read the guide &rarr;</span></a>
+      <a class="g-card reveal" href="guides/ai-for-restaurants.html"><h3>AI for restaurants: 6 practical ways to save time</h3><p>Phones, bookings, reviews, email and social posts, with a demo of each.</p><span class="go">Read the guide &rarr;</span></a>
+    </div>
+  </section>
+
   <!-- ============ FAQ ============ -->
   <section class="wrap" id="faq">
     <div class="section-head reveal">
@@ -1297,6 +1318,7 @@
       <li><a href="#solutions">Solutions</a></li>
       <li><a href="#platform">Platform</a></li>
       <li><a href="key-platform/index.html#library">Demos</a></li>
+    <li><a href="guides/index.html">Guides</a></li>
       <li><a href="#method">How It Works</a></li>
       <li><a href="rewards.html" id="footAccount">Member login</a></li>
       <li><a href="#about">About</a></li>
