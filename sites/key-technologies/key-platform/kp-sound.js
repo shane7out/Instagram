@@ -29,7 +29,7 @@ document.addEventListener('click',function(e){
 function addToggle(){
  var row=document.querySelector('.kp-switch');if(!row||document.getElementById('kpSound'))return;
  var b=document.createElement('button');b.type='button';b.id='kpSound';b.className='kp-soundbtn';
- function paint(){b.setAttribute('aria-pressed',on?'true':'false');b.textContent=on?'Sound: on':'Sound: off';b.setAttribute('aria-label',on?'Turn tap sound off':'Turn tap sound on')}
+ function paint(){b.textContent=on?'Sound: on':'Sound: off';b.setAttribute('aria-label',on?'Sound: on. Press to turn the tap sound off':'Sound: off. Press to turn the tap sound on')}
  b.addEventListener('click',function(e){e.stopPropagation();on=!on;try{localStorage.setItem('kpSound',on?'on':'off')}catch(x){}paint();if(on)tick()});
  paint();row.appendChild(b);
 }

@@ -6,7 +6,7 @@ To add a city, add an entry to CITIES with its own true local details and run th
 import re, json, os, html
 SITE = 'sites/key-technologies/'
 BASE = 'https://keytechnologies.si/'
-DATE = '2026-11-04'
+DATE = '2026-11-03'
 TEMPLATE = SITE + 'key-platform/demos/booking-scheduling.html'
 
 def esc(t): return html.escape(t, quote=True)
