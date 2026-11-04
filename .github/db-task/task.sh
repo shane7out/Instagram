@@ -16,20 +16,22 @@ const numOf = (k, v) => (v && typeof v === 'object' && v.num != null) ? String(v
 const hasIg = r => String((r && r.instagram) || '').trim().length > 0;
 (async () => {
   console.log('DATABASE COUNT (read-only, counts only)');
-  let top;
-  try { top = await get('/', 'shallow=true'); } catch (e) { console.log('ABORT: ' + e.message); return; }
-  const keys = Object.keys(top || {}).sort();
-  console.log('top-level nodes: ' + keys.length);
-  const sizes = [];
-  for (const k of keys) {
-    try {
-      const s = await get('/' + encodeURIComponent(k), 'shallow=true');
-      const n = s && typeof s === 'object' ? Object.keys(s).length : (s == null ? 0 : 1);
-      sizes.push([k, n]);
-    } catch (e) { sizes.push([k, 'unreadable']); }
+  // The database root cannot be listed (HTTP 401, which is the right setting), so count the known nodes one by one (keys only, no data).
+  const KNOWN = ['dashboard_crec', 'dashboard_exp_crec', 'dashboard_adv_crec', 'dashboard_adv_stg_crec', 'dashboard_infl_crec', 'dashboard_rest_stg_crec', 'dashboard_deleted', 'kt_crm', 'key_leads', 'lvr_instagram_index', 'lvr_points', 'lvr_rewards', 'lvr_coupons'];
+  console.log('children per known node (name: count):');
+  for (const k of KNOWN) {
+    try { const sh = await get('/' + k, 'shallow=true'); console.log('  ' + k + ': ' + (sh && typeof sh === 'object' ? Object.keys(sh).length : (sh == null ? 0 : 1))); }
+    catch (e) { console.log('  ' + k + ': not readable (' + e.message.replace(/^GET \S+ -> /, '') + ')'); }
   }
-  console.log('children per top-level node (name: count):');
-  for (const [k, n] of sizes.sort((a, b) => (typeof b[1] === 'number' ? b[1] : -1) - (typeof a[1] === 'number' ? a[1] : -1))) console.log('  ' + k + ': ' + n);
+  try {
+    const dash = await get('/dashboard', 'shallow=true');
+    const names = Object.keys(dash || {}).sort();
+    console.log('\nchildren of /dashboard (' + names.length + ' lists), name: count:');
+    for (const nme of names.slice(0, 70)) {
+      try { const sh = await get('/dashboard/' + encodeURIComponent(nme), 'shallow=true'); console.log('  ' + nme + ': ' + (sh && typeof sh === 'object' ? Object.keys(sh).length : (sh == null ? 0 : 1))); }
+      catch (e) { console.log('  ' + nme + ': not readable'); }
+    }
+  } catch (e) { console.log('/dashboard: ' + e.message); }
   // restaurants: union of dashboard_crec and the dashboard/customrecords mirror, minus tombstoned numbers
   const [crec, custom, del1, del2] = await Promise.all([get('/dashboard_crec'), get('/dashboard/customrecords'), get('/dashboard/deleted'), get('/dashboard_deleted').catch(() => null)]);
   const deleted = new Set([...entries(del1).map(([k, v]) => numOf(k, v)), ...entries(del2).map(([k, v]) => numOf(k, v))]);
