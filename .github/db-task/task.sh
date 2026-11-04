@@ -4,8 +4,9 @@
 set +e
 cat > /tmp/count-db.js <<'NODE'
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-async function get(p) {
-  const r = await fetch(DB + p + '.json', { signal: AbortSignal.timeout(90000) });
+async function get(p, q) {
+  // Firebase REST form: <path>.json?<query>  (the root is /.json)
+  const r = await fetch(DB + (p === '/' ? '/' : p) + '.json' + (q ? '?' + q : ''), { signal: AbortSignal.timeout(90000) });
   if (!r.ok) throw new Error('GET ' + p + ' -> HTTP ' + r.status);
   return r.json();
 }
@@ -16,13 +17,13 @@ const hasIg = r => String((r && r.instagram) || '').trim().length > 0;
 (async () => {
   console.log('DATABASE COUNT (read-only, counts only)');
   let top;
-  try { top = await get('/?shallow=true'); } catch (e) { console.log('ABORT: ' + e.message); return; }
+  try { top = await get('/', 'shallow=true'); } catch (e) { console.log('ABORT: ' + e.message); return; }
   const keys = Object.keys(top || {}).sort();
   console.log('top-level nodes: ' + keys.length);
   const sizes = [];
   for (const k of keys) {
     try {
-      const s = await get('/' + encodeURIComponent(k) + '?shallow=true');
+      const s = await get('/' + encodeURIComponent(k), 'shallow=true');
       const n = s && typeof s === 'object' ? Object.keys(s).length : (s == null ? 0 : 1);
       sizes.push([k, n]);
     } catch (e) { sizes.push([k, 'unreadable']); }
@@ -41,7 +42,7 @@ const hasIg = r => String((r && r.instagram) || '').trim().length > 0;
     catch (e) { console.log(label + ': ' + e.message); }
   }
   try {
-    const idx = await get('/lvr_instagram_index?shallow=true');
+    const idx = await get('/lvr_instagram_index', 'shallow=true');
     console.log('lvr_instagram_index (Instagram handle index): ' + (idx && typeof idx === 'object' ? Object.keys(idx).length : 0) + ' entries');
   } catch (e) { console.log('lvr_instagram_index: ' + e.message); }
   console.log('\nCOUNT DONE (nothing was changed).');
