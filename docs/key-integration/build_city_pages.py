@@ -310,7 +310,7 @@ def body_for(c):
   <ul class="trust-grid">
     <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
     <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don&rsquo;t need</span></li>
-    <li class="reveal"><b>In person or online</b><span>around {cn}, or anywhere remotely, in any language</span></li>
+    <li class="reveal"><b>In person or online</b><span>around {cn}, or anywhere remotely</span></li>
     <li class="reveal"><b>23 services</b><span>each with a live demo you can try</span></li>
   </ul>
 </section>

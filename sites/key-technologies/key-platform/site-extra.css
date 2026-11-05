@@ -51,3 +51,13 @@
   .t-who{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;}
   .t-who b{display:block;font-size:16px;} .t-who span{display:block;font-size:14px;color:var(--ink-dim);}
   .t-more{margin-top:22px;text-align:center;}
+
+/* ---- Languages page ---- */
+.lang-chips{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px;}
+.lang-chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:9px 16px;font-size:18px;font-weight:700;color:#fff;display:inline-flex;flex-direction:column;align-items:center;line-height:1.2;}
+.lang-chip small{font-size:11.5px;font-weight:400;color:var(--ink-dim);letter-spacing:.04em;}
+.lang-points{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;}
+@media (max-width:800px){.lang-points{grid-template-columns:1fr;}}
+.lang-points div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+.lang-points b{display:block;font-size:17px;margin-bottom:4px;} .lang-points span{font-size:15px;color:var(--ink-dim);}
+.lang-note{margin-top:16px;font-size:14.5px;color:var(--ink-dim);max-width:70ch;}

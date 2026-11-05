@@ -35,6 +35,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Cybersecurity and network hardening](https://keytechnologies.si/key-platform/demos/cybersecurity.html)
 
 ## Locations
+- [Languages](https://keytechnologies.si/languages.html): working with Key Technologies in your language, in writing and by voice
 - [Los Angeles businesses](https://keytechnologies.si/los-angeles.html): AI and business technology for Los Angeles, CA businesses, in person or online
 - [Manhattan Beach businesses](https://keytechnologies.si/manhattan-beach.html): AI and business technology for Manhattan Beach, CA businesses, in person or online
 - [Las Vegas businesses](https://keytechnologies.si/las-vegas.html): AI and business technology for Las Vegas, NV businesses, in person or online
