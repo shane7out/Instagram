@@ -17,3 +17,4 @@ Last updated 2026-11-05. Nothing here is urgent except item 1.
 13. **The site publishes from the branch claude/master-file-e6ofy0**, not from main. Fine today; worth moving to main later so it cannot be lost by deleting the branch.
 14. **Contact-form email alerts use Formspree's free plan** (a monthly limit applies). Leads are also saved in the database, so none are lost, but check the limit if volume grows.
 15. **Visitor counter follow-ups:** (a) have an attorney glance at privacy.html now that it describes the counter; (b) deploy the staged key rules with the owner lockdown (item 1) so only you can read the data; (c) after you sign in once on a device, that device stops counting itself (switch on the report page).
+16. **The Owner report is open to anyone who clicks 'Owner' (Shane's choice for now).** It shows only anonymous numbers. Lock it when the owner sign-in (item 1) is done: it then asks for the sign-in by itself.

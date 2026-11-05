@@ -163,7 +163,7 @@
 
 <div id="gate" role="main">
   <h1>Owner sign-in</h1>
-  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">This report opens only when you are signed in as the owner.</p>
+  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">This report is protected. It opens when you are signed in as the owner.</p>
   <button id="ownerBtn" type="button">Sign in as owner</button>
   <div id="gateMsg" role="status"></div>
 </div>
@@ -268,18 +268,17 @@ function country(tz) {
   return c === "UTC" || c === "Etc" ? "Unknown" : "Other (" + tz + ")";
 }
 
-// ---------- owner sign-in (no password in this file) ----------
+// ---------- opening the report ----------
+// For now the report opens straight away (the numbers are anonymous and the data is readable). When the owner lock-down is
+// done later (rules that only answer the signed-in owner) the database will refuse the read, and this page then shows the
+// Owner sign-in box by itself. No password is stored in this file, ever.
 var unlocked = false;
+function showApp() { $("gate").style.display = "none"; $("app").style.display = "block"; }
+function showGate(msg) { $("app").style.display = "none"; $("gate").style.display = ""; $("gateMsg").textContent = msg || ""; }
 function ownerState() {
   var on = !!(window.OWNER_AUTH && window.OWNER_AUTH.signedIn());
-  if (on && !unlocked) {
-    unlocked = true;
-    $("gate").style.display = "none"; $("app").style.display = "block";
-    try { if (localStorage.getItem("kt_owner") === null && !sessionStorage.getItem("kt_owner_asked")) { localStorage.setItem("kt_owner", "1"); } } catch (e) {}
-    syncSkip(); loadData();
-  } else if (!on && unlocked) {
-    unlocked = false; $("app").style.display = "none"; $("gate").style.display = "";
-  }
+  if (on && !unlocked) { unlocked = true; showApp(); loadData(); }
+  else if (!on && unlocked) { unlocked = false; loadData(); }
 }
 $("ownerBtn").addEventListener("click", function () {
   var m = $("gateMsg");
@@ -287,7 +286,6 @@ $("ownerBtn").addEventListener("click", function () {
   else m.textContent = "Owner sign-in is not available on this page.";
 });
 if (window.OWNER_AUTH) window.OWNER_AUTH.onChange(ownerState);
-setTimeout(ownerState, 0);
 
 // "Count this device": the pages do not count browsers that carry the owner flag
 function syncSkip() {
@@ -324,12 +322,16 @@ function loadData() {
     render();
   }).catch(function (err) {
     $("status").textContent = "";
-    $("kpis").innerHTML = (err && err.denied)
-      ? "<div class='empty'>The database did not accept this sign-in. Use the Owner sign-in button at the bottom right, then Refresh.</div>"
-      : "<div class='empty'>Could not load the data. Try Refresh.</div>";
+    if (err && err.denied) { showGate("The visitor data is protected now. Sign in as the owner to see it."); return; }
+    $("kpis").innerHTML = "<div class='empty'>Could not load the data. Try Refresh.</div>";
   });
 }
 $("refreshBtn").addEventListener("click", loadData);
+// first thing: show the report and load it; stop counting this browser (your own visits) the first time it is opened
+showApp();
+try { if (localStorage.getItem("kt_owner") === null && !sessionStorage.getItem("kt_owner_asked")) { localStorage.setItem("kt_owner", "1"); } } catch (e) {}
+syncSkip(); loadData();
+setTimeout(ownerState, 0);
 $("range").addEventListener("change", render);
 $("autoBtn").addEventListener("click", function () {
   var b = this;
