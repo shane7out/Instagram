@@ -93,12 +93,7 @@ def ca_city(name, file, lead, area_phrase):
        ('Can I try it before I talk to anyone?', 'Yes. Every service has a free demo with made-up data, so you can see how it behaves before you decide anything.')],
       cta_h='Ready to see where AI fits in your %s business?' % name)
 
-CITIES['manhattan-beach'] = ca_city('Manhattan Beach', 'manhattan-beach.html',
-  'Key Technologies helps Manhattan Beach and South Bay businesses put AI to work in ways that save time and win customers: answering the phone, handling bookings and reviews, and building custom systems around how your business actually runs. In person around the South Bay, or online.',
-  'Manhattan Beach and the South Bay')
-CITIES['los-angeles'] = ca_city('Los Angeles', 'los-angeles.html',
-  'Key Technologies helps Los Angeles and Southern California businesses put AI to work in ways that save time and win customers: answering the phone, handling bookings and reviews, and building custom systems around how your business actually runs. In person around Southern California, or online.',
-  'Los Angeles and Southern California')
+# Manhattan Beach and Los Angeles pages were taken offline quietly on 2026-11-05 (Shane). Their old addresses redirect to the homepage (see RETIRED).
 CITIES['las-vegas']['roots_btn'] = True
 
 def shell(c, body, ld_graph):
@@ -277,6 +272,7 @@ def body_for(c):
     roots_more = '<p>Shane first saw a computer in his junior high school computer lab and has worked with computers and software for more than 42 years. He has been building websites since the early days of the internet.</p>' if c.get('roots_btn') else ''
     roots_btn_html = '<p><a class="btn btn-ghost" href="guides/ai-for-restaurants.html" style="text-decoration:none">AI for restaurants: the guide</a></p>' if c.get('roots_btn') else ''
     others = ''.join(f'<a class="g-card reveal" href="{o["file"]}"><h3>{o["name"]}, {o["st"]}</h3><p>AI and business technology for {o["name"]} businesses.</p><span class="go">Visit the page &rarr;</span></a>' for k, o in CITIES.items() if o['file'] != c['file'])
+    others_section = ('<section class="wrap" id="locations-more">\n  <div class="section-head reveal"><span class="eyebrow">Also serving</span><h2>Other locations</h2><p>Key Technologies works in person around its home markets, and online anywhere.</p></div>\n  <div class="g-grid">' + others + '</div>\n</section>\n\n') if others else ''
     return f'''<section class="wrap city-hero">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> &rsaquo; <a href="index.html#locations">Locations</a> &rsaquo; <span>{cn}</span></nav>
   <div class="city-hero-grid">
@@ -343,12 +339,7 @@ def body_for(c):
   <div class="g-grid">{gui}</div>
 </section>
 
-<section class="wrap" id="locations-more">
-  <div class="section-head reveal"><span class="eyebrow">Also serving</span><h2>Other locations</h2><p>Key Technologies works in person around its home markets, and online anywhere.</p></div>
-  <div class="g-grid">{others}</div>
-</section>
-
-<section class="wrap" id="faq">
+{others_section}<section class="wrap" id="faq">
   <div class="section-head reveal"><span class="eyebrow">Questions</span><h2>{cn} questions, answered</h2></div>
   <div class="faq-list">{faq}</div>
 </section>
@@ -371,7 +362,25 @@ def graph(c):
      {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": BASE}, {"@type": "ListItem", "position": 2, "name": "Locations", "item": BASE + "#locations"}, {"@type": "ListItem", "position": 3, "name": cn, "item": url}]},
      {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in c['faq']]}]
 
+RETIRED = ['manhattan-beach.html', 'los-angeles.html']
+
+def retire():
+    """Old city pages: quiet redirect to the homepage (not indexed), and no sitemap / llms.txt entries."""
+    stub = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+            '<meta name="robots" content="noindex,follow"><meta http-equiv="refresh" content="0; url=index.html#locations"><title>Key Technologies.si</title>'
+            '<link rel="canonical" href="' + BASE + '"></head><body style="background:#0f171e;color:#eef4fb;font-family:system-ui,sans-serif;padding:24px">'
+            '<p>Taking you to the <a style="color:#00a8e1" href="index.html#locations">Key Technologies.si homepage</a>.</p></body></html>')
+    sm = open(SITE + 'sitemap.xml', encoding='utf-8').read()
+    t = open(SITE + 'llms.txt', encoding='utf-8').read()
+    for f in RETIRED:
+        open(SITE + f, 'w', encoding='utf-8').write(stub)
+        sm = re.sub(r'  <url>\s*<loc>%s</loc>.*?</url>\n' % re.escape(BASE + f), '', sm, flags=re.S)
+        t = re.sub(r'- \[[^\]]*\]\(%s\):[^\n]*\n' % re.escape(BASE + f), '', t)
+    open(SITE + 'sitemap.xml', 'w', encoding='utf-8').write(sm)
+    open(SITE + 'llms.txt', 'w', encoding='utf-8').write(t)
+
 def build():
+    retire()
     for key, c in CITIES.items():
         open(SITE + c['file'], 'w', encoding='utf-8').write(shell(c, body_for(c), graph(c)))
         loc = BASE + c['file']
