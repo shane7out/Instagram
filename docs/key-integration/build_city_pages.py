@@ -243,7 +243,6 @@ def shell(c, body, ld_graph):
     <p class="foot-fine">&copy; <span id="kpYear"></span> Key Technologies. All rights reserved.</p>
   </div>
 </footer>
-<div class="sticky-cta" id="stickyCta"><a class="btn btn-primary" href="book.html">Book a Free Call</a></div>
 <script>(function(){{var b=document.getElementById("burgerBtn"),m=document.getElementById("mobileMenu");if(!b||!m)return;
 function c(){{m.classList.remove("open");b.setAttribute("aria-expanded","false");b.setAttribute("aria-label","Open menu")}}
 function o(){{m.classList.add("open");b.setAttribute("aria-expanded","true");b.setAttribute("aria-label","Close menu")}}
@@ -253,12 +252,6 @@ document.addEventListener("keydown",function(e){{if(e.key==="Escape")c()}});
 var y=document.getElementById("kpYear");if(y)y.textContent=new Date().getFullYear();
 try{{if(localStorage.getItem("lvr_wallet_token")){{var a=document.getElementById("mmAccount");if(a){{a.href=a.href.replace("rewards.html","my-account.html");a.querySelector("span").textContent="My Account";a.querySelector("small").textContent="Logged in"}}}}}}catch(e){{}}
 }})();
-(function(){{var bar=document.getElementById("stickyCta"),menu=document.getElementById("mobileMenu"),cta=document.getElementById("cityCta");
-if(!bar||!("IntersectionObserver" in window))return;var inCta=false,past=false;
-function update(){{bar.classList.toggle("on",past&&!inCta&&!menu.classList.contains("open"));}}
-if(cta)new IntersectionObserver(function(es){{inCta=es[0].isIntersecting;update();}}).observe(cta);
-window.addEventListener("scroll",function(){{past=window.scrollY>520;update();}},{{passive:true}});
-new MutationObserver(update).observe(menu,{{attributes:true,attributeFilter:["class"]}});}})();
 (function(){{var els=document.querySelectorAll(".reveal");
 if(!("IntersectionObserver" in window)){{els.forEach(function(e){{e.classList.add("in")}});return;}}
 var io=new IntersectionObserver(function(es){{es.forEach(function(e){{if(e.isIntersecting){{e.target.classList.add("in");io.unobserve(e.target);}}}})}},{{rootMargin:"0px 0px -8% 0px",threshold:0.05}});

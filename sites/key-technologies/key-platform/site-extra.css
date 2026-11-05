@@ -31,14 +31,6 @@
   .js .sw-grid .reveal:nth-child(3n+2),.js .service-grid .reveal:nth-child(3n+2),.js .trust-grid .reveal:nth-child(4n+2){transition-delay:.07s;}
   .js .sw-grid .reveal:nth-child(3n),.js .service-grid .reveal:nth-child(3n),.js .trust-grid .reveal:nth-child(4n+3){transition-delay:.14s;}
   .js .trust-grid .reveal:nth-child(4n){transition-delay:.21s;}
-  /* ---- sticky Book a Call on phones ---- */
-  .sticky-cta{display:none;}
-  @media (max-width:820px){
-    body{padding-bottom:68px;}
-    .sticky-cta{display:flex;justify-content:center;pointer-events:none;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60;visibility:hidden;transform:translateY(150%);transition:transform .28s ease,visibility 0s .28s;}
-    .sticky-cta.on{visibility:visible;transform:none;transition:transform .28s ease;}
-    .sticky-cta .btn{flex:0 0 auto;pointer-events:auto;text-align:center;min-height:44px;padding:9px 26px;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.5),0 0 0 1px rgba(0,168,225,.5);}
-  }
   .about-photo{margin:24px 0 0;max-width:300px;}
   .about-photo img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.5);}
   /* ---- testimonials (shown only when real, permitted quotes exist; see build_testimonials.py) ---- */
