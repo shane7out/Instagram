@@ -327,8 +327,16 @@
     background:var(--card);border:1px solid var(--line);border-radius:14px;
     padding:22px;display:flex;flex-direction:column;gap:10px;
   }
+  @media (max-width:600px){.service-grid{gap:12px;}.service-card{padding:18px;gap:6px;}.service-card .demo-link{margin-top:0;min-height:40px;}}
   .service-card .num{font-size:13px;font-weight:700;color:var(--key-light);letter-spacing:.06em;}
   .service-card p{font-size:15px;}
+  .service-card details.more{margin:2px 0 0;padding:0;border:0;background:none;border-radius:0;}
+  .service-card details.more summary{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0;position:static;cursor:pointer;color:var(--key-light);font-size:14px;font-weight:700;list-style:none;}
+  .service-card details.more summary::-webkit-details-marker{display:none;}
+  .service-card details.more summary::after{content:"+";position:static;font-size:16px;font-weight:700;transform:none;transition:none;}
+  .service-card details.more[open] summary::after{content:"\2212";transform:none;}
+  .service-card details.more summary:focus-visible{outline:2px solid var(--key-blue);outline-offset:3px;border-radius:4px;}
+  .service-card details.more p{margin:2px 0 0;padding:0;}
   .demo-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-weight:700;font-size:14px;color:var(--key-light);text-decoration:none;min-height:44px;}
   .demo-link:hover{text-decoration:underline;}
   .demo-chip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--key-blue);border-radius:999px;padding:2px 8px;color:var(--key-light);}
@@ -676,11 +684,12 @@
         <h3>Digital Content Creators</h3>
         <p>We build digital content creators for your business: AI/SI-powered creators with a consistent
           look, voice and style that make posts, captions, graphics, short-form video and email content
-          around the clock, every day of the year, so your business is never silent. Each one is built around
+          around the clock, every day of the year, so your business is never silent.</p>
+        <details class="more"><summary>Read more</summary><p>Each one is built around
           your brand, your products and your tone, and runs on a schedule. You decide how much freedom it has:
           publish on its own, or wait for your approval first. Behind it sits a content system that tracks
           what was made, what is scheduled next and what is performing, and AI-made content is labeled
-          wherever a platform or the law asks for it.</p>
+          wherever a platform or the law asks for it.</p></details>
               <a class="demo-link" href="key-platform/demos/content-creators.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
@@ -694,27 +703,30 @@
         <span class="num">03</span>
         <h3>Business Automation</h3>
         <p>Reduce repetitive manual work and connect business processes that currently run as disconnected,
-          manual steps. Built to run on its own schedule and triggers — working in the background, not just
-          when someone remembers to open a tool.</p>
+          manual steps.</p>
+        <details class="more"><summary>Read more</summary><p>Built to run on its own schedule and triggers — working in the background, not just
+          when someone remembers to open a tool.</p></details>
               <a class="demo-link" href="key-platform/demos/business-automation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
         <span class="num">04</span>
         <h3>AI/SI Agents</h3>
         <p>Build intelligent assistants capable of performing defined business tasks — not a generic
-          chatbot, a system built around how your business actually works. Every agent runs inside clear
+          chatbot, a system built around how your business actually works.</p>
+        <details class="more"><summary>Read more</summary><p>Every agent runs inside clear
           permission levels — read-only, approval-required, or fully autonomous — so you decide how much it
-          can do on its own.</p>
+          can do on its own.</p></details>
               <a class="demo-link" href="key-platform/demos/ai-agents.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
         <span class="num">05</span>
         <h3>Custom CRM &amp; Lead Management</h3>
         <p>A CRM built specifically around your business, not a generic tool everyone else uses, stretched
-          to fit. Capture, qualify, organize and follow up with leads inside a system designed for how your
+          to fit.</p>
+        <details class="more"><summary>Read more</summary><p>Capture, qualify, organize and follow up with leads inside a system designed for how your
           business actually works — built and proven the same way Shane designed and runs his own CRM
           platform today, not assembled from a template. <a href="real-estate.html">See what this looks like
-          for real estate teams &rarr;</a></p>
+          for real estate teams &rarr;</a></p></details>
               <a class="demo-link" href="key-platform/demos/custom-crm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
@@ -750,9 +762,10 @@
         <span class="num">10</span>
         <h3>Security &amp; Technology</h3>
         <p>Evaluate how AI/SI fits into existing networks, databases, permissions and business technology —
-          without widening the attack surface. Every automated action stays logged and reversible, so
+          without widening the attack surface.</p>
+        <details class="more"><summary>Read more</summary><p>Every automated action stays logged and reversible, so
           nothing runs as an unaccountable black box. In decades of having access to client systems and
-          databases, Key Technologies has never had a client compromised.</p>
+          databases, Key Technologies has never had a client compromised.</p></details>
               <a class="demo-link" href="key-platform/demos/security-technology.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
@@ -765,31 +778,33 @@
         <span class="num">12</span>
         <h3>AI/SI Website Development</h3>
         <p>Build and maintain websites with AI/SI-assisted development and smart built-in features — faster
-          turnaround, plus on-site chat, personalization and intelligent lead capture baked in. Your
+          turnaround, plus on-site chat, personalization and intelligent lead capture baked in.</p>
+        <details class="more"><summary>Read more</summary><p>Your
           hosting, domain and data stay in your name — Key Technologies manages and updates the site, it
-          doesn't take control of it.</p>
+          doesn't take control of it.</p></details>
               <a class="demo-link" href="key-platform/demos/website-development.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
         <span class="num">13</span>
         <h3>Email Automation</h3>
         <p>Automate follow-up, nurture sequences and routine email responses, so leads and customers
-          hear back quickly without someone writing every message by hand. Our Email Intelligence service sorts
-          the inbox and drafts replies from your own information, and a person approves before anything is sent.</p>
+          hear back quickly without someone writing every message by hand.</p>
+        <details class="more"><summary>Read more</summary><p>Our Email Intelligence service sorts
+          the inbox and drafts replies from your own information, and a person approves before anything is sent.</p></details>
         <a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> See Email Intelligence &rarr;</a>
       </article>
       <article class="service-card reveal">
         <span class="num">14</span>
         <h3>Social Media Management</h3>
-        <p>Build and maintain a real social media presence, not a stock content calendar nobody looks at.
-          That starts with an automated system: scheduled, consistent posting that runs on its own instead
+        <p>Build and maintain a real social media presence, not a stock content calendar nobody looks at.</p>
+        <details class="more"><summary>Read more</summary><p>That starts with an automated system: scheduled, consistent posting that runs on its own instead
           of depending on someone remembering to log in. Content itself is AI-assisted — captions, graphics,
           product shots and short-form video drafted fast, then reviewed by a person before anything goes
           live, so volume doesn't come at the cost of quality or start looking obviously AI-made. Behind it
           sits real content management software to track what's posted, what's scheduled next, and what's
           actually performing, instead of losing it in a notes app or a group chat. This is the same
           discipline behind LasVegas_Restaurants, OrangeCounty_Restaurants and SanDiego_Restaurants, applied
-          to your business.</p>
+          to your business.</p></details>
               <a class="demo-link" href="key-platform/demos/social-media.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
@@ -803,8 +818,9 @@
         <span class="num">16</span>
         <h3>AI/SI Phone &amp; Text Answering</h3>
         <p>Never miss a call or text. AI/SI-assisted answering handles common questions, takes messages,
-          and routes anything urgent to a real person. Our Voice Services demo shows a fictional receptionist
-          capturing a lead and proposing an appointment.</p>
+          and routes anything urgent to a real person.</p>
+        <details class="more"><summary>Read more</summary><p>Our Voice Services demo shows a fictional receptionist
+          capturing a lead and proposing an appointment.</p></details>
         <a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> See Voice Services &rarr;</a>
       </article>
       <article class="service-card reveal">
@@ -818,9 +834,10 @@
         <span class="num">18</span>
         <h3>AI/SI Training &amp; Custom Training Software</h3>
         <p>Teach your team how to actually use AI/SI tools day to day — training built around how your
-          business already works, not a one-size-fits-all course. For ongoing or larger teams, that can
+          business already works, not a one-size-fits-all course.</p>
+        <details class="more"><summary>Read more</summary><p>For ongoing or larger teams, that can
           include custom-built training software: your own internal portal with your own material, tracked
-          progress and completion — built around your business, not a generic off-the-shelf LMS.</p>
+          progress and completion — built around your business, not a generic off-the-shelf LMS.</p></details>
               <a class="demo-link" href="key-platform/demos/ai-training.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
@@ -850,28 +867,31 @@
       <article class="service-card reveal">
         <span class="num">22</span>
         <h3>Private LLM Setup</h3>
-        <p>Set up your own private AI/LLM — not a shared account on someone else's platform. We load in
+        <p>Set up your own private AI/LLM — not a shared account on someone else's platform.</p>
+        <details class="more"><summary>Read more</summary><p>We load in
           your business's own documents, records and knowledge so the AI actually knows your business,
           while that data stays isolated and is never used to train anyone else's model. Key Technologies
           can manage it going forward with login access, the same way we manage a website, or set it up
-          and hand over full control once it's configured — either way, it's yours.</p>
+          and hand over full control once it's configured — either way, it's yours.</p></details>
               <a class="demo-link" href="key-platform/demos/private-llm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
         <span class="num">23</span>
         <h3>Cybersecurity &amp; Network Hardening</h3>
         <p>A full security pass on the systems you already run — passwords and access controls, networks,
-          backups and exposed vulnerabilities — closing real gaps before they become a breach. Backed by
-          a decade of hands-on security experience, not a generic checklist.</p>
+          backups and exposed vulnerabilities — closing real gaps before they become a breach.</p>
+        <details class="more"><summary>Read more</summary><p>Backed by
+          a decade of hands-on security experience, not a generic checklist.</p></details>
               <a class="demo-link" href="key-platform/demos/cybersecurity.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
       </article>
       <article class="service-card reveal">
         <span class="num">24</span>
         <h3>Sales Partner Network <span class="demo-chip">Prototype</span></h3>
         <p>A planned program for independent sales partners: a shared service catalog, a quote builder, a
-          pipeline and a transparent commission model. It is a prototype only and is not open for
+          pipeline and a transparent commission model.</p>
+        <details class="more"><summary>Read more</summary><p>It is a prototype only and is not open for
           enrollment. Any terms would be set in a written agreement after legal review, and nothing here is
-          a promise of income.</p>
+          a promise of income.</p></details>
         <a class="demo-link" href="key-platform/sales/index.html"><span class="demo-chip">Demo</span> See the Sales demo &rarr;</a>
       </article>
     </div>
