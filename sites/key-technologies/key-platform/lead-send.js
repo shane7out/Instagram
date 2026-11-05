@@ -38,6 +38,8 @@
       al.then(function () { return true; }, function () { return false; })
     ]).then(function (res) {
       if (!res[0] && !res[1]) throw new Error('could not send');
+      // visitor counter: record only THAT a form was sent and which one (its name), never what was typed
+      try { if (window.KTTrack) window.KTTrack.lead(String(data.source || 'form')); } catch (e) {}
       return { saved: res[0], alerted: res[1] };
     });
   }

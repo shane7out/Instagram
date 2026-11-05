@@ -10,22 +10,6 @@
 <link rel="canonical" href="https://keytechnologies.si/terms.html">
 <link rel="stylesheet" href="/fonts/lato.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f171e'/%3E%3Cg transform='translate(2 17) scale(.5)'%3E%3Cdefs%3E%3ClinearGradient id='kgf' x1='0' y1='5' x2='0' y2='53' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23fffdf0'/%3E%3Cstop offset='.22' stop-color='%23ffe45c'/%3E%3Cstop offset='.48' stop-color='%23e49a00'/%3E%3Cstop offset='.56' stop-color='%23b87300'/%3E%3Cstop offset='.68' stop-color='%23ffd23a'/%3E%3Cstop offset='.88' stop-color='%23fff2a0'/%3E%3Cstop offset='1' stop-color='%23d48f00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke='url(%23kgf)'%3E%3Ccircle cx='24' cy='30' r='19' stroke-width='8'/%3E%3Ccircle cx='24' cy='30' r='8.5' stroke-width='3'/%3E%3C/g%3E%3Cg fill='url(%23kgf)'%3E%3Crect x='42' y='26.5' width='72' height='7' rx='1'/%3E%3Crect x='45' y='21' width='6' height='18' rx='2'/%3E%3Crect x='55' y='23' width='5' height='14' rx='2'/%3E%3Cpath d='M90,33H98V45H90ZM102,33H114V51H102Z'/%3E%3C/g%3E%3Cg stroke='%23fff' stroke-linecap='round' fill='none'%3E%3Cpath d='M9,20A17,17 0 0 1 24,12' stroke-width='3' stroke-opacity='.9'/%3E%3Cpath d='M46,28H112' stroke-width='1.6' stroke-opacity='.9'/%3E%3Cpath d='M104,35V49' stroke-width='1.4' stroke-opacity='.8'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
-<script>
-  // Lightweight page-view counter - logs one record per visit to this
-  // site's own database. No cookies, no personal data: just which page,
-  // when, and what page linked here. Viewed at key-pageviews.html (PIN-gated).
-  (function () {
-    try {
-      var page = location.pathname.split("/").pop() || "index.html";
-      var url = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews/hits/" + encodeURIComponent(page.replace(/\./g, "_")) + ".json";
-      fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ t: Date.now(), ref: (document.referrer || "").split(/[?#]/)[0].slice(0, 200), w: window.innerWidth })
-      }).catch(function () {});
-    } catch (e) {}
-  })();
-</script>
 <style>
   :root{
     --bg:#0f171e; --bg-2:#121a22; --card:#232f3e; --line:#37475a;
@@ -129,5 +113,6 @@
 </div>
 <div class="kt-built-by" role="contentinfo" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
 <script src="key-platform/home-pop.js" defer></script>
+<script src="key-platform/pv.js" defer></script>
 </body>
 </html>

@@ -110,268 +110,351 @@
 <!--OWNER-AUTH-END-->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page Views — Key Technologies</title>
+<title>Visitors — Key Technologies</title>
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="/fonts/lato.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f171e'/%3E%3Cg transform='translate(2 17) scale(.5)'%3E%3Cdefs%3E%3ClinearGradient id='kgf' x1='0' y1='5' x2='0' y2='53' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23fffdf0'/%3E%3Cstop offset='.22' stop-color='%23ffe45c'/%3E%3Cstop offset='.48' stop-color='%23e49a00'/%3E%3Cstop offset='.56' stop-color='%23b87300'/%3E%3Cstop offset='.68' stop-color='%23ffd23a'/%3E%3Cstop offset='.88' stop-color='%23fff2a0'/%3E%3Cstop offset='1' stop-color='%23d48f00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke='url(%23kgf)'%3E%3Ccircle cx='24' cy='30' r='19' stroke-width='8'/%3E%3Ccircle cx='24' cy='30' r='8.5' stroke-width='3'/%3E%3C/g%3E%3Cg fill='url(%23kgf)'%3E%3Crect x='42' y='26.5' width='72' height='7' rx='1'/%3E%3Crect x='45' y='21' width='6' height='18' rx='2'/%3E%3Crect x='55' y='23' width='5' height='14' rx='2'/%3E%3Cpath d='M90,33H98V45H90ZM102,33H114V51H102Z'/%3E%3C/g%3E%3Cg stroke='%23fff' stroke-linecap='round' fill='none'%3E%3Cpath d='M9,20A17,17 0 0 1 24,12' stroke-width='3' stroke-opacity='.9'/%3E%3Cpath d='M46,28H112' stroke-width='1.6' stroke-opacity='.9'/%3E%3Cpath d='M104,35V49' stroke-width='1.4' stroke-opacity='.8'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
 <style>
-  :root{
-    --bg:#0f171e; --bg-2:#121a22; --card:#232f3e; --line:#37475a;
-    --ink:#f6f8fb; --ink-dim:#aab9ca; --key-light:#00a8e1; --key-blue:#00a8e1;
-    --good:#3ddc97; --warn:#ffb84d;
-    color-scheme: dark;
-  }
+  :root{--bg:#0f171e;--bg-2:#121a22;--card:#232f3e;--line:#37475a;--ink:#f6f8fb;--ink-dim:#aab9ca;--key-light:#00a8e1;--key-blue:#00a8e1;--good:#3ddc97;--warn:#ffb84d;color-scheme:dark;}
   *{box-sizing:border-box;}
-  body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font-family:Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-    font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:900px;margin:0 auto;padding:40px 20px 80px;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 70px;}
   a{color:var(--key-light);}
-  h1{font-size:clamp(22px,4vw,28px);font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;}
-  .sub{font-size:14px;color:var(--ink-dim);margin:0 0 28px;}
-
-  /* PIN gate */
-  #gate{max-width:360px;margin:80px auto;text-align:center;}
-  #gate h1{font-size:20px;margin-bottom:18px;}
-  #gate input{
-    width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);
-    background:var(--card);color:var(--ink);font-size:16px;text-align:center;
-    letter-spacing:0.2em;margin-bottom:12px;
-  }
-  #gate button{
-    width:100%;padding:13px 14px;border-radius:10px;border:none;
-    background:var(--key-blue);color:#0f171e;font-size:15px;font-weight:700;cursor:pointer;
-  }
-  #gate button:hover{background:#146eb4;color:#fff;}
+  h1{font-size:clamp(22px,4vw,30px);font-weight:800;margin:0 0 4px;letter-spacing:-.01em;}
+  h2{font-size:16px;font-weight:700;margin:0 0 10px;}
+  .sub{font-size:14px;color:var(--ink-dim);margin:0 0 18px;}
+  #gate{max-width:360px;margin:80px auto;text-align:center;padding:0 16px;}
+  #gate h1{font-size:20px;margin-bottom:14px;}
+  #gate button{width:100%;padding:13px 14px;border-radius:10px;border:none;background:var(--key-blue);color:#0f171e;font-size:15px;font-weight:700;cursor:pointer;}
   #gateMsg{min-height:20px;font-size:13.5px;color:var(--warn);margin-top:10px;}
-
   #app{display:none;}
-
-  .stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px;}
-  .stat{
-    background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:16px 20px;min-width:140px;flex:1;
-  }
-  .stat .n{font-size:26px;font-weight:800;}
-  .stat .l{font-size:12.5px;color:var(--ink-dim);margin-top:2px;}
-
-  table{width:100%;border-collapse:collapse;margin-bottom:36px;}
-  th{
-    text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;
-    color:var(--ink-dim);padding:0 12px 8px;border-bottom:1px solid var(--line);
-  }
-  td{padding:12px;border-bottom:1px solid var(--line);font-size:14.5px;}
-  td.num{font-weight:700;}
-  tr:last-child td{border-bottom:none;}
-  .page-name{font-weight:600;}
-
-  h2{font-size:16px;font-weight:700;margin:0 0 14px;}
-  .activity{list-style:none;margin:0;padding:0;}
-  .activity li{
-    display:flex;justify-content:space-between;gap:12px;padding:10px 0;
-    border-bottom:1px solid var(--line);font-size:14px;
-  }
-  .activity li:last-child{border-bottom:none;}
-  .activity .pg{font-weight:600;}
-  .activity .ref{color:var(--ink-dim);font-size:12.5px;}
-  .activity .when{color:var(--ink-dim);font-size:12.5px;white-space:nowrap;}
-
-  .empty{color:var(--ink-dim);font-size:14.5px;padding:20px 0;}
-  .refresh{
-    display:inline-block;margin-bottom:20px;padding:9px 16px;border-radius:9px;
-    border:1px solid var(--line);background:var(--card);color:var(--ink);
-    font-size:13.5px;font-weight:600;cursor:pointer;
-  }
-  .refresh:hover{border-color:var(--key-blue);}
-  .back{display:inline-block;margin-bottom:24px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink-dim);}
+  .back{display:inline-block;margin:0 0 14px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink-dim);}
   .back:hover{color:var(--ink);}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 18px;}
+  .bar select,.bar button{min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer;}
+  .bar button:hover,.bar select:hover{border-color:var(--key-blue);}
+  .bar button[aria-pressed=true]{background:var(--key-blue);color:#0b1220;border-color:var(--key-blue);}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 18px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi .n{font-size:26px;font-weight:800;line-height:1.15;}
+  .kpi .l{font-size:12.5px;color:var(--ink-dim);margin-top:2px;}
+  .kpi.live .n{color:var(--good);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:820px){.grid{grid-template-columns:1fr;}}
+  .grid .card{margin:0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim);padding:0 8px 6px 0;border-bottom:1px solid var(--line);font-weight:700;}
+  td{padding:7px 8px 7px 0;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word;}
+  tr:last-child td{border-bottom:none;}
+  td.n,th.n{text-align:right;white-space:nowrap;padding-right:0;padding-left:8px;}
+  .tw{overflow-x:auto;}
+  .bartrack{height:6px;background:#17212c;border-radius:4px;margin-top:4px;}
+  .bartrack i{display:block;height:6px;border-radius:4px;background:var(--key-blue);}
+  .empty{color:var(--ink-dim);font-size:14px;padding:10px 0;}
+  .note{font-size:12.5px;color:var(--ink-dim);margin:8px 0 0;}
+  #chart{width:100%;height:150px;display:block;}
+  .legend{font-size:12.5px;color:var(--ink-dim);display:flex;justify-content:space-between;margin-top:4px;}
+  .pill{display:inline-block;font-size:11.5px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--ink-dim);}
+  .good{color:var(--good);}
 </style>
 </head>
 <body>
 
 <div id="gate" role="main">
   <h1>Owner sign-in</h1>
-  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim,#9fb3c8);margin:0 0 18px;">This report opens only when you are signed in as the owner.</p>
-  <button id="pinBtn" type="button">Sign in as owner</button>
+  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">This report opens only when you are signed in as the owner.</p>
+  <button id="ownerBtn" type="button">Sign in as owner</button>
   <div id="gateMsg" role="status"></div>
 </div>
 
-<div id="app" role="main">
+<main id="app">
   <div class="wrap">
     <a class="kt-brand" href="index.html" aria-label="Key Technologies.si — home" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:800;letter-spacing:.02em;margin:0 0 14px"><svg width="37" height="16" viewBox="0 4 116 50" aria-hidden="true" style="display:block;flex:none;filter:drop-shadow(0 0 4px rgba(255,200,40,.6)) drop-shadow(0 0 11px rgba(255,200,40,.35))"><defs><linearGradient id="kgq" x1="0" y1="5" x2="0" y2="53" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fffdf0"/><stop offset=".22" stop-color="#ffe45c"/><stop offset=".48" stop-color="#e49a00"/><stop offset=".56" stop-color="#b87300"/><stop offset=".68" stop-color="#ffd23a"/><stop offset=".88" stop-color="#fff2a0"/><stop offset="1" stop-color="#d48f00"/></linearGradient></defs><g fill="none" stroke="url(#kgq)"><circle cx="24" cy="30" r="19" stroke-width="8"/><circle cx="24" cy="30" r="8.5" stroke-width="3"/></g><g fill="url(#kgq)"><rect x="42" y="26.5" width="72" height="7" rx="1"/><rect x="45" y="21" width="6" height="18" rx="2"/><rect x="55" y="23" width="5" height="14" rx="2"/><path d="M90,33H98V45H90ZM102,33H114V51H102Z"/></g><g stroke="#fff" stroke-linecap="round" fill="none"><path d="M9,20A17,17 0 0 1 24,12" stroke-width="3" stroke-opacity=".9"/><path d="M46,28H112" stroke-width="1.6" stroke-opacity=".9"/><path d="M104,35V49" stroke-width="1.4" stroke-opacity=".8"/></g></svg><span>KEY TECHNOLOGIES<span style="color:#00a8e1">.SI</span></span></a>
     <a class="back" href="index.html">&larr; Back to Key Technologies</a>
-    <h1>Page Views</h1>
-    <p class="sub">Who's looking at what, across every page on keytechnologies.si.</p>
-    <button class="refresh" id="refreshBtn">Refresh</button>
+    <h1>Visitors</h1>
+    <p class="sub">Who is looking at keytechnologies.si, what they read, how long they stay and what they press. Anonymous by design: no names, no IP addresses, no cookies.</p>
 
-    <div class="stats-row" id="statsRow"></div>
+    <div class="bar">
+      <label for="range" class="sr" style="position:absolute;left:-9999px">Time range</label>
+      <select id="range">
+        <option value="1">Last 24 hours</option>
+        <option value="7" selected>Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="0">All time</option>
+      </select>
+      <button type="button" id="refreshBtn">Refresh</button>
+      <button type="button" id="autoBtn" aria-pressed="false">Auto-refresh: off</button>
+      <button type="button" id="csvViews">Download visits (CSV)</button>
+      <button type="button" id="csvEvents">Download clicks (CSV)</button>
+      <button type="button" id="skipBtn" aria-pressed="false">Count this device</button>
+    </div>
+    <p class="note" id="status" role="status" style="margin:-8px 0 14px"></p>
 
-    <h2>By page</h2>
-    <div id="byPageWrap"></div>
+    <div class="kpis" id="kpis"></div>
 
-    <h2>Recent activity</h2>
-    <ul class="activity" id="activityList"></ul>
+    <div class="card"><h2>Visits per day</h2><div id="chartWrap"></div></div>
+
+    <div class="grid">
+      <div class="card"><h2>Live now <span class="pill">last 5 minutes</span></h2><div id="live"></div></div>
+      <div class="card"><h2>Where visitors come from</h2><div id="sources"></div></div>
+      <div class="card"><h2>Pages</h2><div class="tw" id="pages" tabindex="0" role="region" aria-label="Pages table"></div></div>
+      <div class="card"><h2>Countries <span class="pill">from the time zone</span></h2><div id="countries"></div><p class="note">Approximate: the country is worked out from the visitor&rsquo;s time zone setting. A traveler or a VPN can show up in the wrong place.</p></div>
+      <div class="card"><h2>Buttons and links pressed</h2><div id="clicks"></div></div>
+      <div class="card"><h2>Forms sent</h2><div id="leads"></div><p class="note">Counts only. Open Leads to see who sent what.</p></div>
+      <div class="card"><h2>Devices</h2><div id="devices"></div></div>
+      <div class="card"><h2>Browser languages</h2><div id="langs"></div></div>
+      <div class="card"><h2>Time zones</h2><div id="tzs"></div></div>
+      <div class="card"><h2>Broken links <span class="pill">page not found</span></h2><div id="broken"></div></div>
+    </div>
+
+    <div class="card" style="margin-top:14px"><h2>Recent visits</h2><div class="tw" id="recent" tabindex="0" role="region" aria-label="Recent visits table"></div></div>
+
+    <div class="card"><h2>What this report does and does not collect</h2>
+      <p class="note" style="font-size:13.5px;margin:0">Collected: page, time, the page that linked here, screen width and device type, browser language, time zone, a campaign tag if the link had one, a random tab code that is forgotten when the tab closes, how long the page was in view, how far it was scrolled, and the names of main buttons and forms. Never collected: IP address, name, email, phone, anything typed into a form, cookies, fingerprints or a permanent visitor ID. It is off for visitors who turn on Do Not Track or Global Privacy Control, and for robots.</p></div>
   </div>
-</div>
+</main>
 
 <script>
 var PV_DB = "https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_pageviews";
+var $ = function (id) { return document.getElementById(id); };
+// EVERYTHING that came from the database is escaped before it goes on the page (anyone can add a record, so a record is
+// never trusted as HTML).
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
 var PAGE_LABELS = {
-  "index.html": "Home",
-  "": "Home",
-  "real-estate.html": "Real Estate",
-  "law.html": "Law",
-  "medical-dental.html": "Medical / Dental",
-  "ecommerce.html": "E-commerce",
-  "privacy.html": "Privacy Policy",
-  "terms.html": "Terms of Service",
-  "rewards.html": "LVR Rewards",
-  "my-account.html": "My Account",
-  "marketplace-demo.html": "Marketplace Demo",
-  "menu.html": "Rewards Menu"
+  "index.html": "Home", "restaurants.html": "Restaurants", "las-vegas.html": "Las Vegas", "languages.html": "Languages",
+  "book.html": "Book a Call", "real-estate.html": "Real Estate", "law.html": "Law", "medical-dental.html": "Medical / Dental",
+  "ecommerce.html": "E-commerce", "privacy.html": "Privacy Policy", "terms.html": "Terms of Service", "404.html": "Page not found",
+  "guides/index.html": "Guides (list)", "key-platform/index.html": "Demos (list)", "key-platform/partners.html": "Partner interest list",
+  "key-platform/voice/index.html": "Voice demo", "key-platform/email/index.html": "Email demo", "testimonials.html": "Testimonials",
+  "rewards.html": "LVR Rewards", "my-account.html": "My Account", "menu.html": "Rewards Menu", "join-restaurant.html": "Join (restaurants)"
 };
+function pageName(key) {
+  var p = String(key).replace(/__/g, "/").replace(/_html$/, ".html");
+  if (PAGE_LABELS[p]) return PAGE_LABELS[p];
+  var m = /^key-platform\/demos\/(.+)\.html$/.exec(p); if (m) return "Demo: " + m[1].replace(/-/g, " ");
+  m = /^guides\/(.+)\.html$/.exec(p); if (m) return "Guide: " + m[1].replace(/-/g, " ");
+  return p;
+}
 
-// Database keys cannot contain a period, so trackers store "index.html" as
-// "index_html"; accept both spellings here.
-Object.keys(PAGE_LABELS).forEach(function (k) {
-  if (k.indexOf(".") > -1) PAGE_LABELS[k.replace(/\./g, "_")] = PAGE_LABELS[k];
-});
+// time zone -> country (approximate: a traveler or a VPN can differ)
+var TZC = {};
+(function () {
+  function add(c, list) { list.split(",").forEach(function (z) { TZC[z.trim()] = c; }); }
+  add("United States", "America/New_York,America/Chicago,America/Denver,America/Los_Angeles,America/Phoenix,America/Anchorage,America/Detroit,America/Boise,America/Indiana/Indianapolis,America/Kentucky/Louisville,America/Adak,Pacific/Honolulu,US/Pacific,US/Eastern,US/Central,US/Mountain");
+  add("Canada", "America/Toronto,America/Vancouver,America/Edmonton,America/Winnipeg,America/Halifax,America/St_Johns,America/Regina,America/Montreal");
+  add("Mexico", "America/Mexico_City,America/Cancun,America/Tijuana,America/Monterrey,America/Merida,America/Chihuahua,America/Mazatlan,America/Hermosillo");
+  add("United Kingdom", "Europe/London"); add("Ireland", "Europe/Dublin"); add("France", "Europe/Paris"); add("Germany", "Europe/Berlin,Europe/Busingen");
+  add("Spain", "Europe/Madrid"); add("Italy", "Europe/Rome"); add("Netherlands", "Europe/Amsterdam"); add("Belgium", "Europe/Brussels");
+  add("Switzerland", "Europe/Zurich"); add("Austria", "Europe/Vienna"); add("Sweden", "Europe/Stockholm"); add("Norway", "Europe/Oslo");
+  add("Denmark", "Europe/Copenhagen"); add("Finland", "Europe/Helsinki"); add("Portugal", "Europe/Lisbon,Atlantic/Azores"); add("Poland", "Europe/Warsaw");
+  add("Czechia", "Europe/Prague"); add("Greece", "Europe/Athens"); add("Turkey", "Europe/Istanbul,Asia/Istanbul"); add("Russia", "Europe/Moscow,Asia/Yekaterinburg,Asia/Novosibirsk,Asia/Vladivostok");
+  add("Ukraine", "Europe/Kyiv,Europe/Kiev"); add("Slovenia", "Europe/Ljubljana"); add("Croatia", "Europe/Zagreb"); add("Hungary", "Europe/Budapest"); add("Romania", "Europe/Bucharest");
+  add("Japan", "Asia/Tokyo"); add("South Korea", "Asia/Seoul"); add("China", "Asia/Shanghai,Asia/Chongqing"); add("Hong Kong", "Asia/Hong_Kong"); add("Singapore", "Asia/Singapore");
+  add("India", "Asia/Kolkata,Asia/Calcutta"); add("United Arab Emirates", "Asia/Dubai"); add("Philippines", "Asia/Manila"); add("Thailand", "Asia/Bangkok"); add("Vietnam", "Asia/Ho_Chi_Minh,Asia/Saigon");
+  add("Indonesia", "Asia/Jakarta"); add("Malaysia", "Asia/Kuala_Lumpur"); add("Pakistan", "Asia/Karachi"); add("Bangladesh", "Asia/Dhaka"); add("Taiwan", "Asia/Taipei");
+  add("Israel", "Asia/Jerusalem,Asia/Tel_Aviv"); add("Saudi Arabia", "Asia/Riyadh");
+  add("Australia", "Australia/Sydney,Australia/Melbourne,Australia/Brisbane,Australia/Perth,Australia/Adelaide,Australia/Hobart,Australia/Darwin"); add("New Zealand", "Pacific/Auckland");
+  add("Brazil", "America/Sao_Paulo,America/Bahia,America/Fortaleza,America/Manaus"); add("Argentina", "America/Argentina/Buenos_Aires,America/Buenos_Aires");
+  add("Colombia", "America/Bogota"); add("Peru", "America/Lima"); add("Chile", "America/Santiago"); add("Venezuela", "America/Caracas");
+  add("South Africa", "Africa/Johannesburg"); add("Nigeria", "Africa/Lagos"); add("Egypt", "Africa/Cairo"); add("Kenya", "Africa/Nairobi"); add("Morocco", "Africa/Casablanca");
+})();
+function country(tz) {
+  if (!tz) return "Unknown";
+  if (TZC[tz]) return TZC[tz];
+  var c = String(tz).split("/")[0];
+  return c === "UTC" || c === "Etc" ? "Unknown" : "Other (" + tz + ")";
+}
 
-// Owner sign-in (no PIN): the database only answers the signed-in owner (rules: key-rules-owner.json), and this
-// report opens only while the owner is signed in. The sign-in box comes from the snippet at the top of this file.
+// ---------- owner sign-in (no password in this file) ----------
 var unlocked = false;
 function ownerState() {
   var on = !!(window.OWNER_AUTH && window.OWNER_AUTH.signedIn());
   if (on && !unlocked) {
     unlocked = true;
-    document.getElementById("gate").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    loadData();
+    $("gate").style.display = "none"; $("app").style.display = "block";
+    try { if (localStorage.getItem("kt_owner") === null && !sessionStorage.getItem("kt_owner_asked")) { localStorage.setItem("kt_owner", "1"); } } catch (e) {}
+    syncSkip(); loadData();
   } else if (!on && unlocked) {
-    unlocked = false;
-    document.getElementById("app").style.display = "none";
-    document.getElementById("gate").style.display = "";
+    unlocked = false; $("app").style.display = "none"; $("gate").style.display = "";
   }
 }
-document.getElementById("pinBtn").addEventListener("click", function () {
-  var m = document.getElementById("gateMsg");
+$("ownerBtn").addEventListener("click", function () {
+  var m = $("gateMsg");
   if (window.OWNER_AUTH) { m.textContent = ""; window.OWNER_AUTH.dialog(); }
   else m.textContent = "Owner sign-in is not available on this page.";
 });
 if (window.OWNER_AUTH) window.OWNER_AUTH.onChange(ownerState);
 setTimeout(ownerState, 0);
 
-document.getElementById("refreshBtn").addEventListener("click", loadData);
-
-function timeAgo(ts) {
-  var diff = Date.now() - ts;
-  var mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return mins + "m ago";
-  var hrs = Math.floor(mins / 60);
-  if (hrs < 24) return hrs + "h ago";
-  var days = Math.floor(hrs / 24);
-  return days + "d ago";
+// "Count this device": the pages do not count browsers that carry the owner flag
+function syncSkip() {
+  var on = false; try { on = !localStorage.getItem("kt_owner"); } catch (e) {}
+  var b = $("skipBtn"); b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.textContent = on ? "Counting this device" : "Not counting this device";
 }
+$("skipBtn").addEventListener("click", function () {
+  try { if (localStorage.getItem("kt_owner")) localStorage.removeItem("kt_owner"); else localStorage.setItem("kt_owner", "1"); sessionStorage.setItem("kt_owner_asked", "1"); } catch (e) {}
+  syncSkip();
+});
 
-function refDomain(ref) {
-  if (!ref) return "(direct)";
-  try {
-    var u = new URL(ref);
-    if (u.hostname.indexOf("keytechnologies.si") !== -1) return "(internal link)";
-    return u.hostname.replace(/^www\./, "");
-  } catch (e) {
-    return "(direct)";
-  }
-}
-
-function loadData() {
-  document.getElementById("statsRow").innerHTML = "<div class='empty'>Loading…</div>";
-  document.getElementById("byPageWrap").innerHTML = "";
-  document.getElementById("activityList").innerHTML = "";
-
-  fetch(PV_DB + "/hits.json")
-    .then(function (r) {
-      if (r.status === 401 || r.status === 403) { var e = new Error("denied"); e.denied = true; throw e; }
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    })
-    .then(function (data) {
-      render(data || {});
-    })
-    .catch(function (err) {
-      document.getElementById("statsRow").innerHTML = (err && err.denied)
-        ? "<div class='empty'>The database did not accept this sign-in. Use the Owner sign-in button at the bottom right, then Refresh.</div>"
-        : "<div class='empty'>Couldn't load data. Try refreshing.</div>";
-    });
-}
-
-function render(data) {
-  // Only show known real pages - filters out test/junk entries (e.g. a
-  // leftover diagnostic-test key) that aren't an actual site page.
-  var pages = Object.keys(data).filter(function (p) { return PAGE_LABELS.hasOwnProperty(p); });
-  var allHits = [];
-  var totalCount = 0;
-  var last7Count = 0;
-  var cutoff7 = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
-  var byPage = pages.map(function (page) {
-    var hits = data[page] || {};
-    var records = Object.keys(hits).map(function (id) { return hits[id]; });
-    records.forEach(function (rec) {
-      allHits.push({ page: page, t: rec.t, ref: rec.ref });
-      totalCount++;
-      if (rec.t >= cutoff7) last7Count++;
-    });
-    var last7 = records.filter(function (r) { return r.t >= cutoff7; }).length;
-    var lastT = records.reduce(function (max, r) { return r.t > max ? r.t : max; }, 0);
-    return {
-      page: page,
-      label: PAGE_LABELS[page] || page,
-      total: records.length,
-      last7: last7,
-      lastT: lastT
-    };
+// ---------- data ----------
+var RAW = { views: [], events: [] }, auto = null;
+function getJSON(path) {
+  return fetch(PV_DB + path + ".json").then(function (r) {
+    if (r.status === 401 || r.status === 403) { var e = new Error("denied"); e.denied = true; throw e; }
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
   });
-
-  byPage.sort(function (a, b) { return b.total - a.total; });
-
-  var statsHtml =
-    "<div class='stat'><div class='n'>" + totalCount + "</div><div class='l'>Total views</div></div>" +
-    "<div class='stat'><div class='n'>" + last7Count + "</div><div class='l'>Last 7 days</div></div>" +
-    "<div class='stat'><div class='n'>" + pages.length + "</div><div class='l'>Pages tracked</div></div>";
-  document.getElementById("statsRow").innerHTML = statsHtml;
-
-  if (!byPage.length) {
-    document.getElementById("byPageWrap").innerHTML = "<div class='empty'>No visits recorded yet — check back once the site's had some traffic.</div>";
-  } else {
-    var rows = byPage.map(function (p) {
-      return "<tr><td class='page-name'>" + p.label + "</td>" +
-        "<td class='num'>" + p.total + "</td>" +
-        "<td>" + p.last7 + "</td>" +
-        "<td>" + (p.lastT ? timeAgo(p.lastT) : "—") + "</td></tr>";
-    }).join("");
-    document.getElementById("byPageWrap").innerHTML =
-      "<table><thead><tr><th>Page</th><th>Total</th><th>Last 7 days</th><th>Last viewed</th></tr></thead><tbody>" +
-      rows + "</tbody></table>";
-  }
-
-  allHits.sort(function (a, b) { return b.t - a.t; });
-  var recent = allHits.slice(0, 30);
-  if (!recent.length) {
-    document.getElementById("activityList").innerHTML = "<li class='empty' style='border:none;'>No activity yet.</li>";
-  } else {
-    document.getElementById("activityList").innerHTML = recent.map(function (h) {
-      var label = PAGE_LABELS[h.page] || h.page;
-      return "<li><span class='pg'>" + label + "</span>" +
-        "<span class='ref'>" + refDomain(h.ref) + "</span>" +
-        "<span class='when'>" + timeAgo(h.t) + "</span></li>";
-    }).join("");
-  }
 }
+function loadData() {
+  $("status").textContent = "Loading…";
+  Promise.all([getJSON("/hits"), getJSON("/events")]).then(function (res) {
+    var hits = res[0] || {}, evs = res[1] || {}, views = [], events = [];
+    Object.keys(hits).forEach(function (page) {
+      if (!/^[A-Za-z0-9_\-]+$/.test(page) || /^zz_/.test(page)) return;
+      var o = hits[page] || {};
+      Object.keys(o).forEach(function (id) { var r = o[id]; if (r && typeof r.t === "number") { r = Object.assign({}, r); r.page = page; views.push(r); } });
+    });
+    Object.keys(evs).forEach(function (id) { var r = evs[id]; if (r && typeof r.t === "number" && typeof r.k === "string") events.push(r); });
+    RAW = { views: views, events: events };
+    $("status").textContent = "Updated " + new Date().toLocaleTimeString() + " · " + views.length + " visits and " + events.length + " events stored in total";
+    render();
+  }).catch(function (err) {
+    $("status").textContent = "";
+    $("kpis").innerHTML = (err && err.denied)
+      ? "<div class='empty'>The database did not accept this sign-in. Use the Owner sign-in button at the bottom right, then Refresh.</div>"
+      : "<div class='empty'>Could not load the data. Try Refresh.</div>";
+  });
+}
+$("refreshBtn").addEventListener("click", loadData);
+$("range").addEventListener("change", render);
+$("autoBtn").addEventListener("click", function () {
+  var b = this;
+  if (auto) { clearInterval(auto); auto = null; b.setAttribute("aria-pressed", "false"); b.textContent = "Auto-refresh: off"; }
+  else { auto = setInterval(loadData, 30000); b.setAttribute("aria-pressed", "true"); b.textContent = "Auto-refresh: every 30 s"; }
+});
+
+// ---------- helpers ----------
+function refDomain(ref) {
+  if (!ref) return "(direct or unknown)";
+  try { var u = new URL(ref); if (/keytechnologies\.si$/.test(u.hostname)) return "(this site)"; return u.hostname.replace(/^www\./, ""); } catch (e) { return "(direct or unknown)"; }
+}
+function ago(ts) {
+  var m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return "just now"; if (m < 60) return m + " min ago";
+  var h = Math.floor(m / 60); if (h < 24) return h + " h ago";
+  return Math.floor(h / 24) + " d ago";
+}
+function dur(s) { s = Math.round(s); if (s < 60) return s + " s"; return Math.floor(s / 60) + " min " + (s % 60) + " s"; }
+function count(arr, fn) { var o = {}; arr.forEach(function (x) { var k = fn(x); o[k] = (o[k] || 0) + 1; }); return Object.keys(o).map(function (k) { return [k, o[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
+function listTable(rows, total, emptyMsg, label) {
+  if (!rows.length) return "<div class='empty'>" + esc(emptyMsg || "Nothing yet.") + "</div>";
+  return "<table><tbody>" + rows.slice(0, 12).map(function (r) {
+    var pct = total ? Math.round(r[1] / total * 100) : 0;
+    return "<tr><td>" + esc(label ? label(r[0]) : r[0]) + "<div class='bartrack'><i style='width:" + pct + "%'></i></div></td><td class='n'>" + r[1] + "</td></tr>";
+  }).join("") + "</tbody></table>";
+}
+function csv(rows) { return rows.map(function (r) { return r.map(function (c) { c = String(c == null ? "" : c); if (/^[=+\-@]/.test(c)) c = "'" + c; return '"' + c.replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n"); }
+function download(name, text) {
+  var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "text/csv" })); a.download = name; a.textContent = "download"; a.style.display = "none"; document.body.appendChild(a); a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+var CUR = { views: [], events: [], d: {} };
+function render() {
+  var days = Number($("range").value), cutoff = days ? Date.now() - days * 86400000 : 0;
+  var views = RAW.views.filter(function (v) { return v.t >= cutoff; });
+  var events = RAW.events.filter(function (e) { return e.t >= cutoff; });
+  // time on page and scroll depth, matched to a view by its code (keep the biggest value per view)
+  var eng = {};
+  events.forEach(function (e) { if (e.k === "d" && e.v) { var c = eng[e.v]; if (!c || (e.dur || 0) > c.dur) eng[e.v] = { dur: e.dur || 0, sc: e.sc || 0 }; } });
+  views.forEach(function (v) { var g = v.v && eng[v.v]; v.dur = g ? g.dur : null; v.sc = g ? g.sc : null; });
+  CUR = { views: views, events: events, d: eng };
+
+  var sessions = {}; views.forEach(function (v) { if (v.s) sessions[v.s] = 1; });
+  var withDur = views.filter(function (v) { return v.dur != null; });
+  var avgDur = withDur.length ? withDur.reduce(function (a, v) { return a + v.dur; }, 0) / withDur.length : 0;
+  var avgSc = withDur.length ? withDur.reduce(function (a, v) { return a + v.sc; }, 0) / withDur.length : 0;
+  var leads = events.filter(function (e) { return e.k === "l"; }).length, clicks = events.filter(function (e) { return e.k === "c"; }).length;
+  var live = RAW.views.filter(function (v) { return v.t >= Date.now() - 300000; }), liveS = {}; live.forEach(function (v) { liveS[v.s || v.v || Math.random()] = 1; });
+  $("kpis").innerHTML =
+    "<div class='kpi live'><div class='n'>" + Object.keys(liveS).length + "</div><div class='l'>On the site now (5 min)</div></div>" +
+    "<div class='kpi'><div class='n'>" + views.length + "</div><div class='l'>Page views</div></div>" +
+    "<div class='kpi'><div class='n'>" + Object.keys(sessions).length + "</div><div class='l'>Visits (tabs)</div></div>" +
+    "<div class='kpi'><div class='n'>" + (withDur.length ? dur(avgDur) : "—") + "</div><div class='l'>Average time on a page</div></div>" +
+    "<div class='kpi'><div class='n'>" + (withDur.length ? Math.round(avgSc) + "%" : "—") + "</div><div class='l'>Average scroll depth</div></div>" +
+    "<div class='kpi'><div class='n'>" + clicks + "</div><div class='l'>Buttons pressed</div></div>" +
+    "<div class='kpi'><div class='n'>" + leads + "</div><div class='l'>Forms sent</div></div>";
+
+  chart(views, days);
+
+  // live
+  $("live").innerHTML = live.length ? "<table><tbody>" + live.sort(function (a, b) { return b.t - a.t; }).slice(0, 8).map(function (v) {
+    return "<tr><td>" + esc(pageName(v.page)) + "<div class='note' style='margin:0'>" + esc(country(v.tz)) + " · " + esc(v.dev || "") + "</div></td><td class='n'>" + esc(ago(v.t)) + "</td></tr>";
+  }).join("") + "</tbody></table>" : "<div class='empty'>Nobody in the last 5 minutes.</div>";
+
+  // sources (campaign tag beats referrer)
+  $("sources").innerHTML = listTable(count(views, function (v) { return v.src ? "campaign: " + v.src : refDomain(v.ref); }), views.length, "No visits in this range yet.");
+
+  // pages
+  var byPage = {}; views.forEach(function (v) { var p = byPage[v.page] || (byPage[v.page] = { n: 0, d: 0, dn: 0, s: 0 }); p.n++; if (v.dur != null) { p.d += v.dur; p.s += v.sc; p.dn++; } });
+  var prow = Object.keys(byPage).sort(function (a, b) { return byPage[b].n - byPage[a].n; }).slice(0, 25);
+  $("pages").innerHTML = prow.length ? "<table><thead><tr><th>Page</th><th class='n'>Views</th><th class='n'>Avg time</th><th class='n'>Scrolled</th></tr></thead><tbody>" + prow.map(function (k) {
+    var p = byPage[k]; return "<tr><td>" + esc(pageName(k)) + "</td><td class='n'>" + p.n + "</td><td class='n'>" + (p.dn ? esc(dur(p.d / p.dn)) : "—") + "</td><td class='n'>" + (p.dn ? Math.round(p.s / p.dn) + "%" : "—") + "</td></tr>";
+  }).join("") + "</tbody></table>" : "<div class='empty'>No visits in this range yet.</div>";
+
+  $("countries").innerHTML = listTable(count(views, function (v) { return country(v.tz); }), views.length, "No visits in this range yet.");
+  $("tzs").innerHTML = listTable(count(views.filter(function (v) { return v.tz; }), function (v) { return v.tz; }), views.length, "No time zones recorded yet.");
+  $("devices").innerHTML = listTable(count(views, function (v) { return v.dev || "unknown"; }), views.length, "No visits in this range yet.", function (k) { return k.charAt(0).toUpperCase() + k.slice(1); });
+  $("langs").innerHTML = listTable(count(views.filter(function (v) { return v.lang; }), function (v) { return v.lang; }), views.length, "No languages recorded yet.");
+
+  var ce = events.filter(function (e) { return e.k === "c"; });
+  $("clicks").innerHTML = listTable(count(ce, function (e) { return String(e.n || "").replace(/^click:/, ""); }), ce.length, "No buttons pressed in this range yet.");
+  var le = events.filter(function (e) { return e.k === "l"; });
+  $("leads").innerHTML = listTable(count(le, function (e) { return String(e.n || "").replace(/^lead:/, ""); }), le.length, "No forms sent in this range yet.");
+  var ne = events.filter(function (e) { return e.k === "n"; });
+  $("broken").innerHTML = listTable(count(ne, function (e) { return e.n || "?"; }), ne.length, "No broken links found. Good.");
+
+  var rec = views.slice().sort(function (a, b) { return b.t - a.t; }).slice(0, 40);
+  $("recent").innerHTML = rec.length ? "<table><thead><tr><th>When</th><th>Page</th><th>From</th><th>Country</th><th>Device</th><th class='n'>Time</th><th class='n'>Scrolled</th></tr></thead><tbody>" + rec.map(function (v) {
+    return "<tr><td>" + esc(ago(v.t)) + "</td><td>" + esc(pageName(v.page)) + "</td><td>" + esc(v.src ? "campaign: " + v.src : refDomain(v.ref)) + "</td><td>" + esc(country(v.tz)) + "</td><td>" + esc(v.dev || "") + "</td><td class='n'>" + (v.dur != null ? esc(dur(v.dur)) : "—") + "</td><td class='n'>" + (v.sc != null ? v.sc + "%" : "—") + "</td></tr>";
+  }).join("") + "</tbody></table>" : "<div class='empty'>No visits in this range yet.</div>";
+}
+
+function chart(views, days) {
+  var n = days || 30; if (days === 0) { var first = views.reduce(function (m, v) { return Math.min(m, v.t); }, Date.now()); n = Math.min(120, Math.max(7, Math.ceil((Date.now() - first) / 86400000) + 1)); }
+  if (days === 1) n = 24;
+  var buckets = [], i, now = new Date(), labels = [];
+  if (days === 1) {
+    for (i = 0; i < 24; i++) buckets.push(0);
+    views.forEach(function (v) { var h = Math.floor((Date.now() - v.t) / 3600000); if (h >= 0 && h < 24) buckets[23 - h]++; });
+    labels = ["24 h ago", "now"];
+  } else {
+    var start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() - (n - 1) * 86400000;
+    for (i = 0; i < n; i++) buckets.push(0);
+    views.forEach(function (v) { var d = Math.floor((v.t - start) / 86400000); if (d >= 0 && d < n) buckets[d]++; });
+    labels = [new Date(start).toLocaleDateString(undefined, { month: "short", day: "numeric" }), "today"];
+  }
+  var max = Math.max.apply(null, buckets.concat([1])), W = 1000, H = 150, bw = W / buckets.length;
+  var bars = buckets.map(function (c, i) {
+    var h = Math.round(c / max * (H - 24)); return "<rect x='" + (i * bw + 1) + "' y='" + (H - 18 - h) + "' width='" + Math.max(1, bw - 2) + "' height='" + Math.max(h, c ? 2 : 0) + "' rx='2' fill='#00a8e1'><title>" + c + " views</title></rect>";
+  }).join("");
+  $("chartWrap").innerHTML = "<svg id='chart' viewBox='0 0 " + W + " " + H + "' preserveAspectRatio='none' role='img' aria-label='Visits per " + (days === 1 ? "hour" : "day") + ", most " + max + "'>" + bars + "<text x='4' y='12' fill='#aab9ca' font-size='13'>" + max + " most in one " + (days === 1 ? "hour" : "day") + "</text></svg><div class='legend'><span>" + esc(labels[0]) + "</span><span>" + esc(labels[1]) + "</span></div>";
+}
+
+$("csvViews").addEventListener("click", function () {
+  var rows = [["time (UTC)", "page", "from", "campaign", "country (from time zone)", "time zone", "language", "device", "screen width", "tab code", "seconds on page", "scrolled %"]];
+  CUR.views.slice().sort(function (a, b) { return a.t - b.t; }).forEach(function (v) { rows.push([new Date(v.t).toISOString(), pageName(v.page), refDomain(v.ref), v.src || "", country(v.tz), v.tz || "", v.lang || "", v.dev || "", v.w || "", v.s || "", v.dur == null ? "" : v.dur, v.sc == null ? "" : v.sc]); });
+  download("visits-" + new Date().toISOString().slice(0, 10) + ".csv", csv(rows));
+});
+$("csvEvents").addEventListener("click", function () {
+  var rows = [["time (UTC)", "kind", "name", "page", "tab code"]];
+  CUR.events.slice().sort(function (a, b) { return a.t - b.t; }).forEach(function (e) { if (e.k !== "d") rows.push([new Date(e.t).toISOString(), { c: "button", l: "form sent", n: "page not found" }[e.k] || e.k, e.n || "", pageName(e.p || ""), e.s || ""]); });
+  download("clicks-" + new Date().toISOString().slice(0, 10) + ".csv", csv(rows));
+});
 </script>
 <div class="kt-built-by" role="contentinfo" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
 </body>
