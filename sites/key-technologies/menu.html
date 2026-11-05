@@ -449,7 +449,7 @@
         '<article class="dish' + (SHOW_PHOTOS ? ' has-pic' : '') + '">' + (SHOW_PHOTOS ? '<div class="art">' + photo(r.o.art) + '</div>' : '') +
           '<div>' + tag + '<div class="name">' + esc(r.o.t) + '</div></div>' +
           '<div class="cost"><b>' + esc(r.o.p) + '</b><small>rewards</small></div>' +
-          '<p class="desc">' + esc(r.o.d || "Example only, to show how a points offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
+          '<p class="desc">' + esc(r.o.d || "Example only, to show how a rewards offer looks on this restaurant\'s listing. Generic food photo.") + '</p>' +
           '<div style="grid-column:1 / -1"' + (r.o.real ? ' id="liveTally"' : '') + '>' + (r.o.real ? '<div class="tally unset">Checking availability…</div>' : sampleTally(idx)) + '</div></article></section>');
     });
     $("menu").innerHTML = parts.map(function (g) { return '<div class="grp"><div class="rest"><b>' + esc(g.title) + '</b><span>' + esc(g.sub) + '</span></div>' + g.cards.join("") + '</div>'; }).join("") + '<div class="empty" id="noMatch" hidden>No restaurants in this group yet.</div>' + creditsHtml();

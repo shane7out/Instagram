@@ -36,7 +36,8 @@
   .demo-bar .wrap{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
   .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;}
   .seg button{background:transparent;border:0;color:var(--ink-dim);font:inherit;font-weight:700;padding:6px 13px;cursor:pointer;}
-  .seg button.on{background:var(--key-blue);color:#fff;}
+  .seg button.on{background:var(--key-blue);color:#0b1220;}
+  .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0;}
 
   header.app{padding:22px 0 8px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;}
   .brand{font-size:24px;font-weight:800;letter-spacing:.01em;}
@@ -49,7 +50,7 @@
   .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none;}
   .chips::-webkit-scrollbar{display:none;}
   .chip{flex:none;background:var(--card);border:1px solid var(--line);color:var(--ink-dim);border-radius:999px;padding:8px 15px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
-  .chip.on{background:var(--key-blue);border-color:var(--key-blue);color:#fff;}
+  .chip.on{background:var(--key-blue);border-color:var(--key-blue);color:#0b1220;}
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:12px 0 60px;}
   .offer{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;}
@@ -79,7 +80,7 @@
 </head>
 <body>
 
-<div class="demo-bar" id="demoBar">
+<div class="demo-bar" id="demoBar" role="region" aria-label="Demo notice">
   <div class="wrap">
     <span><b style="color:var(--gold);">DEMO</b> — every business and offer here is made up.</span>
     <span class="seg" role="group" aria-label="Preview mode">
@@ -89,17 +90,18 @@
   </div>
 </div>
 
-<div class="wrap">
+<main class="wrap" id="main">
+  <h1 class="sr">Marketplace demo with made-up offers</h1>
   <header class="app">
     <div class="brand" id="brand"></div>
-    <div class="bal"><b id="balNum">120</b><span>demo points</span></div>
+    <div class="bal"><b id="balNum">120</b><span>demo rewards</span></div>
   </header>
   <input class="search" id="q" type="search" placeholder="Search offers…" aria-label="Search offers">
   <div class="chips" id="chips"></div>
   <div class="grid" id="grid"></div>
   <div class="foot" id="foot"></div>
-  <div class="foot" id="builtBy" style="padding-bottom:50px;">Built by <a href="index.html" style="color:var(--key-light);">Key Technologies.si</a> — want a marketplace or points program for your business? <a href="index.html#contact" style="color:var(--key-light);">Book a free review</a>.</div>
-</div>
+  <div class="foot" id="builtBy" style="padding-bottom:50px;">Built by <a href="index.html" style="color:var(--key-light);">Key Technologies.si</a> — want a marketplace or rewards program for your business? <a href="index.html#contact" style="color:var(--key-light);">Book a free review</a>.</div>
+</main>
 
 <div id="ov"><div class="ov-card" id="ovCard"></div></div>
 
@@ -184,7 +186,7 @@
           '<span aria-hidden="true">' + o.icon + '</span></div>' +
         '<div class="body"><div class="biz">' + esc(o.biz) + '</div><div class="title">' + esc(o.title) + '</div><div class="tag">' + esc(o.tag) + ' · ' + esc(o.value) + '</div>' +
           '<div class="row"><div class="cost">' + o.cost + ' pts<small>1 pt = $1</small></div>' +
-          '<button type="button" class="go" data-i="' + i + '"' + (afford ? "" : " disabled") + '>' + (afford ? "Redeem" : "Need more points") + '</button></div></div></div>';
+          '<button type="button" class="go" data-i="' + i + '"' + (afford ? "" : " disabled") + '>' + (afford ? "Redeem" : "Need more rewards") + '</button></div></div></div>';
     }).join("") : '<div class="none">No offers match. Try another search.</div>';
     document.querySelectorAll(".go[data-i]").forEach(function(b){
       b.addEventListener("click", function(){ redeem(OFFERS[parseInt(b.getAttribute("data-i"), 10)]); });
@@ -209,7 +211,7 @@
       '<div class="fine" style="margin-top:4px;">' + esc(o.title) + ' · ' + esc(o.biz) + '</div>' +
       '<div class="code-box"><small>Your redemption code</small><div>' + makeCode() + '</div></div>' +
       '<div class="fine">Demo only — this code is not real and nothing was saved.</div>' +
-      '<button type="button" class="go" id="ovClose" style="margin-top:16px;width:100%;">Done — ' + balance + ' points left</button>';
+      '<button type="button" class="go" id="ovClose" style="margin-top:16px;width:100%;">Done — ' + balance + ' rewards left</button>';
     document.getElementById("ov").className = "show";
     document.getElementById("ovClose").addEventListener("click", function(){ document.getElementById("ov").className = ""; render(); });
   }
