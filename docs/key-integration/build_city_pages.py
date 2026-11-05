@@ -26,6 +26,7 @@ SERVICE_CARDS = [  # (href, thumb, title, text)
 
 GUIDE_CARDS = [
  ('guides/ai-for-restaurants.html', 'AI for restaurants: 6 practical ways to save time', 'Phones, bookings, reviews, email and social posts, with a demo of each.'),
+ ('guides/what-is-ai-si.html', 'What is AI/SI? A plain-English guide', 'What AI and superintelligence mean, and how to tell real help from hype.'),
  ('guides/php2shell-small-business-websites.html', 'PHP2Shell: what small-business website owners should do now', 'Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.'),
 ]
 

@@ -18,3 +18,4 @@ Last updated 2026-11-05. Nothing here is urgent except item 1.
 14. **Contact-form email alerts use Formspree's free plan** (a monthly limit applies). Leads are also saved in the database, so none are lost, but check the limit if volume grows.
 15. **Visitor counter follow-ups:** (a) have an attorney glance at privacy.html now that it describes the counter; (b) deploy the staged key rules with the owner lockdown (item 1) so only you can read the data; (c) after you sign in once on a device, that device stops counting itself (switch on the report page).
 16. **The Owner report is open to anyone who clicks 'Owner' (Shane's choice for now).** It shows only anonymous numbers. Lock it when the owner sign-in (item 1) is done: it then asks for the sign-in by itself.
+17. **SEO roadmap:** see docs/key-integration/SEO_PLAN.md (Search Console and Bing Webmaster Tools are the two biggest steps; Claude works one item per check-in).

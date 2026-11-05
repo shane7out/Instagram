@@ -147,10 +147,11 @@ try{{if(localStorage.getItem("lvr_wallet_token")){{var a=document.getElementById
 def crumbs_html(items):
     return '<nav class="crumbs" aria-label="Breadcrumb">' + ' &rsaquo; '.join(f'<a href="{h}">{esc(n)}</a>' for n, h in items[:-1]) + (' &rsaquo; ' if len(items) > 1 else '') + f'<span>{esc(items[-1][0])}</span></nav>'
 
-def graph(title, desc, path, headline, faq, crumb_names):
+def graph(title, desc, path, headline, faq, crumb_names, date=None):
+    date = date or DATE
     url = BASE + path
     g = [{"@type": "Article", "headline": headline, "description": desc, "mainEntityOfPage": url, "url": url,
-          "datePublished": DATE, "dateModified": DATE, "image": BASE + "og-image.png",
+          "datePublished": date, "dateModified": date, "image": BASE + "og-image.png",
           "author": {"@type": "Organization", "name": "Key Technologies", "url": BASE},
           "publisher": {"@type": "Organization", "name": "Key Technologies", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "icon-512.png"}}},
          {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumb_names)]}]
@@ -173,7 +174,7 @@ GUIDES = {}
 
 # ================= Guide 1: PHP2Shell =================
 G1 = dict(slug='php2shell-small-business-websites',
-  title='PHP2Shell: What Website Owners Should Do Now | Key Technologies.si',
+  title='PHP2Shell: What Website Owners Do Now | Key Technologies.si',
   desc='Two critical PHP flaws were patched on October 21, 2026. How to check your PHP version, what to ask your host and what to do next.',
   h1='PHP2Shell: what small-business website owners should do now',
   short='What the October 2026 PHP security flaws mean for a WordPress or PHP website, and a 10-minute checklist.')
@@ -242,7 +243,7 @@ G1['body'] = f'''<article class="wrap guide">
 <p class="note">Facts above were checked against the PHP project&rsquo;s release notes on November 3, 2026. Hosting status and recommendations change quickly, so confirm with your host.</p>
 
 {cta()}
-{more([('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
+{more([('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html'),('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
 </article>'''
 GUIDES['G1'] = G1
 
@@ -318,13 +319,13 @@ G2['body'] = f'''<article class="wrap guide">
 <div class="guide-cta"><h2>Want a real quote for your business?</h2>
 <p>Try the demo first, then book a free call. We will ask about your calls and tell you honestly if an AI receptionist is worth it for you.</p>
 <div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/voice/">Try the receptionist demo</a></div></div>
-{more([('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
+{more([('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html'),('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
 </article>'''
 RETIRED_GUIDES = ['ai-receptionist-cost']  # taken down at Shane's request (2026-11-05): anything to do with pricing
 
 # ================= Guide 3: AI for restaurants =================
 G3 = dict(slug='ai-for-restaurants',
-  title='AI for Restaurants: 6 Practical Ways to Save Time | Key Technologies.si',
+  title='AI for Restaurants: 6 Practical Uses | Key Technologies.si',
   desc='Six practical uses of AI for a restaurant: phones, reminders, review replies, catering email, social posts and a menu assistant. A demo of each.',
   h1='AI for restaurants: 6 practical ways to save time',
   short='Six practical uses of AI in a restaurant, what it should and should not do, and a demo of each.')
@@ -392,16 +393,139 @@ G3['body'] = f'''<article class="wrap guide">
 <div class="guide-cta"><h2>Want to talk about your restaurant?</h2>
 <p>Tell us where your time goes and we will say honestly whether AI can help and where to start. The first call is free.</p>
 <div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/index.html#library">See all the demos</a></div></div>
-{more([('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html')])}
+{more([('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html'),('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
 </article>'''
 GUIDES['G3'] = G3
+
+# ================= Guide 4: What is AI/SI? =================
+G4 = dict(slug='what-is-ai-si', date='2026-11-05',
+  title='What Is AI/SI? Plain-English Guide | Key Technologies.si',
+  desc='AI/SI explained without hype: what AI and superintelligence mean, what AI can and cannot do for a small business today, and how to tell real from hype.',
+  h1='What is AI/SI? A plain-English guide for business owners',
+  short='What AI and superintelligence mean, what AI can and cannot do for a small business today, and how to tell real help from hype.')
+G4['faq'] = [
+ ('What does AI/SI stand for?', 'AI/SI stands for Artificial Intelligence / Super Intelligence. Key Technologies uses it as its name for putting the most advanced AI available to work as a practical business tool. It is not a claim that anyone has built superintelligence.'),
+ ('Is AI/SI the same as AGI?', 'No. AGI usually means an AI as capable as a person across most tasks. Superintelligence means beyond the best humans. Neither is a product you can buy today, and Key Technologies does not claim to sell either one.'),
+ ('Is Key Technologies building superintelligent AI?', 'No. We build practical systems for businesses (phone answering, content, CRM, automation) using the strongest AI tools available, with a person approving anything important.'),
+ ('Can AI make mistakes?', 'Yes. AI can write a confident answer that is wrong, so anything that goes to a customer, touches money, or involves legal or medical matters should be checked by a person. Good systems are built with that in mind.'),
+ ('Do I need to know which AI tools I need?', 'No. Start from the problem (missed calls, slow follow-up, repetitive work), not the tool. A free conversation is enough to find out whether AI helps and where.'),
+ ('Where should a small business start?', 'Pick one repetitive job that costs you time or customers, try a small version, and measure the result before doing more. Our free Website Audit and a free call are two easy first steps.')]
+G4['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('What is AI/SI?','')])}
+<h1>{esc(G4['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 5, 2026</p>
+<div class="tldr"><b>Short answer:</b> <b>AI/SI</b> stands for <b>Artificial Intelligence / Super Intelligence</b>. It is how Key Technologies describes putting the most advanced AI available to work as a <b>practical business tool</b>. It is <b>not</b> a claim that superintelligent AI exists today. This guide explains the terms in plain language, what AI can and cannot do for a small business right now, and how to tell real help from hype.</div>
+
+<h2>What &ldquo;AI&rdquo; means</h2>
+<p>Artificial intelligence, or AI, is software that can do tasks that normally need human judgment: writing and summarizing text, answering questions, sorting messages, spotting patterns, understanding speech. The tools in the news today, such as chatbots and voice assistants, are AI.</p>
+
+<h2>What &ldquo;superintelligence&rdquo; means</h2>
+<p>In research, <b>superintelligence</b> is a hypothetical AI that is better than the best humans at almost every thinking task. It is a topic of serious debate, and it does <b>not</b> exist today. Related words you may see: <b>AGI</b> (artificial general intelligence), usually meaning an AI as capable as a person across most tasks. Be wary of anyone who says they are selling either one.</p>
+
+<h2>Why we write &ldquo;AI/SI&rdquo;</h2>
+<p>At Key Technologies the two letters work as a pair. The <b>AI</b> side is the strategy and automation we build around how your business actually works. The <b>SI</b> side is the tool itself: the most advanced, frontier-level AI we put to work for you, backed by real security and infrastructure basics so the result holds up and is not just a demo that looks good once. It is also built into our own address, keytechnologies.si.</p>
+
+<h2>What it looks like in a small business</h2>
+<ul>
+<li><b>Phones and texts:</b> an assistant answers common questions, takes details and passes anything urgent to a person.</li>
+<li><b>Reviews and email:</b> drafts replies in your own voice that you approve before anything is sent.</li>
+<li><b>Content:</b> posts, captions and graphics made on a schedule, with you deciding how much freedom it has.</li>
+<li><b>Customer list (CRM):</b> leads captured, sorted and followed up so nobody goes cold.</li>
+<li><b>Busywork:</b> connecting the steps that already exist so people stop re-typing the same information.</li>
+</ul>
+<p>You can try each of these in our <a href="../key-platform/">interactive demos</a>. They use made-up data and nothing is sent, booked or charged.</p>
+
+<h2>What AI is good at today, and where it needs a person</h2>
+<ul>
+<li><b>Good at:</b> drafting, summarizing, sorting, answering from information you approved, and doing the same small job the same way every time.</li>
+<li><b>Needs a person:</b> anything that goes to a customer for the first time, anything involving money, contracts, or legal or medical matters, and any decision that depends on judgment about your relationships.</li>
+<li><b>Can be wrong:</b> AI can write a confident answer that is false. A well-built system limits what the AI may do and keeps a person in charge of the rest.</li>
+</ul>
+
+<h2>How to tell real help from hype</h2>
+<ol>
+<li><b>Does it start with a problem or a tool?</b> A good provider asks what is going wrong in your business first.</li>
+<li><b>Can you see it working?</b> Ask for a demo or a live example, not only slides.</li>
+<li><b>Are the limits stated?</b> Honest providers say what AI will not do and where a person stays in charge.</li>
+<li><b>Who owns your accounts and data?</b> They should stay in your name.</li>
+<li><b>Are the claims believable?</b> Be careful with promises of guaranteed results, instant revenue or &ldquo;replacing your whole team.&rdquo;</li>
+</ol>
+
+<h2>Where Key Technologies fits</h2>
+<p>We help small and mid-sized businesses use AI in practical, safe ways: strategy, automation, AI assistants, phone and email help, custom software, security and training. The first conversation is free, with no obligation and no sales pitch about tools you do not need. Key Technologies does not guarantee results.</p>
+
+{faq_html(G4['faq'])}
+
+<div class="guide-cta"><h2>Curious what AI could do for your business?</h2>
+<p>Book a free call and we will talk it through, or run the Free Website Audit to see where your site stands.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../index.html#audit">Run the Free Website Audit</a></div></div>
+{more([('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html'),('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
+</article>"""
+GUIDES['G4'] = G4
+
+# ================= Guide 5: choosing an AI consultant =================
+G5 = dict(slug='choose-an-ai-consultant', date='2026-11-05',
+  title='Choose an AI Consultant: 10 Questions | Key Technologies.si',
+  desc='Ten plain questions to ask before hiring an AI consultant or agency, what a good answer sounds like, and the warning signs to watch for.',
+  h1='How to choose an AI consultant: 10 questions to ask',
+  short='A plain checklist for small-business owners: ten questions to ask, what good answers sound like, and the warning signs.')
+G5['faq'] = [
+ ('Do I need an AI consultant, or can I use a chatbot myself?', 'You can start on your own for drafting and brainstorming. A consultant helps when AI has to connect to your phones, customer list or website, when customers will see the output, or when security and accuracy matter.'),
+ ('What should I prepare before the first call?', 'Write down the one or two jobs that cost you the most time or customers, the tools you use today, and what a good result would look like. You do not need to know which AI tools you want.'),
+ ('Should I be worried if a consultant will not name a price on the first call?', 'No. A fair quote needs to know what you want built. Be careful if there is no written scope afterwards, or if the price keeps changing without a change in what you asked for.'),
+ ('Who should own the accounts and data?', 'You. Your accounts, domain, customer list and data should stay in your name. A good consultant needs login access to do the work, but should never become the owner.'),
+ ('How can I check a consultant is real?', 'Ask to see work you can try yourself, such as a demo or a system they run for their own business, and talk to them directly, not only to a sales form.')]
+G5['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('How to choose an AI consultant','')])}
+<h1>{esc(G5['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 5, 2026</p>
+<div class="tldr"><b>Short answer:</b> choose the consultant who <b>starts with your problem, shows you something real, says what AI will not do, and leaves you owning your accounts and data</b>. The ten questions below help you check each of those. We are an AI consultancy ourselves, so we have written this to be useful whoever you hire.</div>
+
+<h2>The ten questions</h2>
+<ol>
+<li><b>What problem do you think I should solve first?</b> A good answer comes from questions about your business. A weak answer starts with a tool or a product name.</li>
+<li><b>Can I see something working?</b> Look for a demo you can try or a live system they run themselves. Slides are not proof.</li>
+<li><b>What will the AI not do on its own?</b> You want a clear line: what is automatic, what needs your approval, and what stays with a person.</li>
+<li><b>What happens when the AI is wrong?</b> AI can be confidently wrong. Ask how mistakes are caught, logged and fixed.</li>
+<li><b>Who owns my accounts, domain, customer list and data?</b> The answer should be you, in your name.</li>
+<li><b>What access do you need, and how is it kept safe?</b> Real work needs login access. Ask about passwords, who has access, and what happens if something goes wrong.</li>
+<li><b>How will we know it is working?</b> Agree on one or two simple measures before you start, such as missed calls or hours saved, and check them after.</li>
+<li><b>What will it cost, in writing?</b> Ask for a written scope that says what is included, what is extra, and what ongoing costs there are.</li>
+<li><b>What rules apply to my business?</b> Telling callers they are speaking to an AI, recording calls, privacy, and advertising rules differ by place and industry. A good consultant raises these, and you should check with a lawyer where it matters.</li>
+<li><b>Can I leave, and what do I keep?</b> You should be able to take your systems, data and phone number with you.</li>
+</ol>
+
+<h2>Warning signs</h2>
+<ul>
+<li>Promises of guaranteed results, instant revenue, or replacing your whole team.</li>
+<li>No written scope, or a price that changes without your request changing.</li>
+<li>Pressure to decide on the first call.</li>
+<li>Reluctance to show anything you can try yourself.</li>
+<li>Asking to own or hold your accounts instead of using access you grant.</li>
+<li>Skipping the limits: no word about mistakes, privacy or when a person steps in.</li>
+</ul>
+
+<h2>What a good first conversation looks like</h2>
+<p>It should feel like a diagnosis: questions about how your business runs today, where time or customers are lost, and what has been tried. You should leave knowing whether AI helps, where it helps first, and what a small first step looks like. Sometimes the honest answer is that a simpler fix works better.</p>
+
+<h2>Where Key Technologies fits</h2>
+<p>Key Technologies helps small and mid-sized businesses with AI strategy, automation, assistants, custom software, security and training. Our <a href="../key-platform/">demos</a> let you try each service with made-up data, and the founder, Shane Christensen, runs his own custom customer-tracking system. The first conversation is free, with no obligation. We do not guarantee results.</p>
+
+{faq_html(G5['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call and bring your questions, including these ten.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/">Try the demos</a></div></div>
+{more([('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
+</article>"""
+GUIDES['G5'] = G5
 
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
         path = 'guides/%s.html' % g['slug']
         cn = [("Home", BASE), ("Guides", BASE + 'guides/'), (g['h1'].split(':')[0] if ':' in g['h1'] and len(g['h1']) > 60 else g['h1'], BASE + path)]
-        ldg = graph(g['title'], g['desc'], path, g['h1'], g['faq'], cn)
+        ldg = graph(g['title'], g['desc'], path, g['h1'], g['faq'], cn, g.get('date'))
         open(SITE + path, 'w', encoding='utf-8').write(shell(g['title'], g['desc'], path, g['body'], ldg, cn))
     # retired guides: quiet redirect to the guides hub, not indexed, no sitemap / llms.txt entry
     stub = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
@@ -413,7 +537,7 @@ def build():
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
     hub_title = 'Guides on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides: what PHP2Shell means for your website, and how restaurants can use AI.'
+    hub_desc = 'Short, practical guides: what AI/SI means, how to choose an AI consultant, what PHP2Shell means for your website, and how restaurants can use AI.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>
@@ -429,11 +553,11 @@ def build():
     open(SITE + 'guides/index.html', 'w', encoding='utf-8').write(shell(hub_title, hub_desc, 'guides/', body, ldg, []).replace('<meta property="og:type" content="article">', '<meta property="og:type" content="website">'))
     # sitemap
     sm = open(SITE + 'sitemap.xml', encoding='utf-8').read()
-    urls = ['guides/'] + ['guides/%s.html' % g['slug'] for g in GUIDES.values()]
-    for u in urls:
+    urls = [('guides/', DATE)] + [('guides/%s.html' % g['slug'], g.get('date', DATE)) for g in GUIDES.values()]
+    for u, lm in urls:
         loc = BASE + u
         if loc not in sm:
-            sm = sm.replace('</urlset>', '  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n</urlset>' % (loc, DATE))
+            sm = sm.replace('</urlset>', '  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n</urlset>' % (loc, lm))
     for slug in RETIRED_GUIDES:
         sm = re.sub(r'  <url>\s*<loc>%s</loc>.*?</url>\n' % re.escape(BASE + 'guides/%s.html' % slug), '', sm, flags=re.S)
     open(SITE + 'sitemap.xml', 'w', encoding='utf-8').write(sm)
@@ -443,7 +567,13 @@ def build():
     if '## Guides' not in t:
         block = '## Guides\n' + '\n'.join(f'- [{g["h1"][0].upper() + g["h1"][1:]}]({BASE}guides/{g["slug"]}.html): {g["short"]}' for g in GUIDES.values()) + '\n\n'
         t = t.replace('## LVR Rewards', block + '## LVR Rewards', 1)
-        open(p, 'w', encoding='utf-8').write(t)
+    for g in GUIDES.values():
+        url = f'{BASE}guides/{g["slug"]}.html'
+        if url not in t:
+            line = f'- [{g["h1"][0].upper() + g["h1"][1:]}]({url}): {g["short"]}\n'
+            i = t.index('## Guides'); j = t.index('\n\n', i)
+            t = t[:j + 1] + line + t[j + 1:]
+    open(p, 'w', encoding='utf-8').write(t)
     t = open(p, encoding='utf-8').read()
     for slug in RETIRED_GUIDES:
         t = re.sub(r'- \[[^\]]*\]\(%s\):[^\n]*\n' % re.escape(BASE + 'guides/%s.html' % slug), '', t)

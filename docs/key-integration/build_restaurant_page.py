@@ -18,12 +18,12 @@ def section(start_marker, end_marker, new):
     s = s[:i] + new + s[j:]
 
 # head
-sub('<title>AI Automation and Intake CRM for Law Firms | Key Technologies.si</title>',
-    '<title>AI Automation and Guest CRM for Restaurants | Key Technologies.si</title>')
+sub('<title>AI and Intake CRM for Law Firms | Key Technologies.si</title>',
+    '<title>AI and Guest CRM for Restaurants | Key Technologies.si</title>')
 sub('content="Custom intake CRM, document automation and phone and text answering for law firms in Manhattan Beach, the South Bay and Las Vegas."',
     'content="Custom guest CRM, phone and text answering, review replies and social content for restaurants in Las Vegas and Southern California."')
-sub('<meta property="og:title" content="AI Automation and Intake CRM for Law Firms | Key Technologies.si">',
-    '<meta property="og:title" content="AI Automation and Guest CRM for Restaurants | Key Technologies.si">')
+sub('<meta property="og:title" content="AI and Intake CRM for Law Firms | Key Technologies.si">',
+    '<meta property="og:title" content="AI and Guest CRM for Restaurants | Key Technologies.si">')
 sub('content="Stop losing retainers to a slow intake process. Custom intake CRM and automation built around how your firm actually works."',
     'content="Stop losing tables to unanswered calls, messages and reviews. Custom systems built around how your restaurant actually runs."')
 s = s.replace('https://keytechnologies.si/law.html', 'https://keytechnologies.si/restaurants.html')
