@@ -8,6 +8,8 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Home: services and free website audit](https://keytechnologies.si/): all 23 services, FAQ and contact
 - [Book a free call](https://keytechnologies.si/book.html): request a call time (Mon to Fri, Pacific time); nothing is booked until confirmed
 - [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
+- [For restaurants](https://keytechnologies.si/restaurants.html): guest CRM, phone and text answering, review replies and social content for restaurants, with typical project pricing
+- [Pricing](https://keytechnologies.si/#pricing): most projects fall between $2,000 and $15,000; every project gets a written quote after a free call
 
 ## Demos (fictional data)
 - [AI phone receptionist](https://keytechnologies.si/key-platform/voice/)
