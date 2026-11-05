@@ -201,6 +201,10 @@
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px;}
   .duo .card{margin:0;padding:10px 11px;}
   .duo td{font-size:13px;}
+  #toasts{position:fixed;left:12px;right:12px;bottom:14px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center;}
+  .toast{pointer-events:auto;width:100%;max-width:520px;background:#12303f;border:1px solid var(--key-blue);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600;box-shadow:0 10px 28px rgba(0,0,0,.55);cursor:pointer;}
+  .toast.lead{background:#103d2c;border-color:var(--good);font-size:15px;}
+  .toast small{display:block;font-weight:400;color:var(--ink-dim);margin-top:2px;}
   @media (max-width:899px){.two{grid-template-columns:1fr;}.full.hide-phone{display:none;}}
   /* computer: everything on one screen, no tabs */
   @media (min-width:900px){
@@ -220,6 +224,8 @@
 </style>
 </head>
 <body>
+
+<div id="toasts" aria-live="polite"></div>
 
 <div id="gate" role="main">
   <h1>Owner sign-in</h1>
@@ -245,6 +251,7 @@
         <details class="menu" id="menu">
           <summary class="btn sq" aria-label="More options">&#8943;</summary>
           <div class="menubox">
+            <button type="button" class="btn" id="alertBtn" aria-pressed="false">Alerts: off</button>
             <button type="button" class="btn" id="autoBtn" aria-pressed="false">Auto-refresh: off</button>
             <button type="button" class="btn" id="csvViews">Download visits (CSV)</button>
             <button type="button" class="btn" id="csvEvents">Download clicks (CSV)</button>
@@ -414,12 +421,13 @@ function loadData() {
     Object.keys(hits).forEach(function (page) {
       if (!/^[A-Za-z0-9_\-]+$/.test(page) || /^zz_/.test(page)) return;
       var o = hits[page] || {};
-      Object.keys(o).forEach(function (id) { var r = o[id]; if (r && typeof r.t === "number") { r = Object.assign({}, r); r.page = page; views.push(r); } });
+      Object.keys(o).forEach(function (id) { var r = o[id]; if (r && typeof r.t === "number") { r = Object.assign({}, r); r.page = page; r.id = page + "/" + id; views.push(r); } });
     });
-    Object.keys(evs).forEach(function (id) { var r = evs[id]; if (r && typeof r.t === "number" && typeof r.k === "string") events.push(r); });
+    Object.keys(evs).forEach(function (id) { var r = evs[id]; if (r && typeof r.t === "number" && typeof r.k === "string") { r = Object.assign({}, r); r.id = id; events.push(r); } });
     RAW = { views: views, events: events };
     $("status").textContent = "Updated " + new Date().toLocaleTimeString() + " · " + views.length + " visits and " + events.length + " events stored in total";
     render();
+    checkNew();
   }).catch(function (err) {
     $("status").textContent = "";
     if (err && err.denied) { showGate("The visitor data is protected now. Sign in as the owner to see it."); return; }
@@ -434,6 +442,68 @@ $("autoBtn").addEventListener("click", function () {
   if (auto) { clearInterval(auto); auto = null; b.setAttribute("aria-pressed", "false"); b.textContent = "Auto-refresh: off"; }
   else { auto = setInterval(loadData, 30000); b.setAttribute("aria-pressed", "true"); b.textContent = "Auto-refresh: every 30 s"; }
 });
+
+// ---------- alerts: while this page is open, tell me when someone visits or sends a form ----------
+var ALERTS = false, seenViews = null, seenEvents = null, unread = 0, alertTimer = null, audioCtx = null;
+function tone(freq, start, len) {
+  var o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime + start;
+  o.type = "sine"; o.frequency.value = freq; o.connect(g); g.connect(audioCtx.destination);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  o.start(t); o.stop(t + len + 0.05);
+}
+function beep(strong) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    if (strong) { tone(660, 0, 0.18); tone(880, 0.2, 0.18); tone(1175, 0.4, 0.3); } else { tone(740, 0, 0.18); }
+  } catch (e) {}
+}
+function toast(text, sub, cls) {
+  var d = document.createElement("div"); d.className = "toast" + (cls ? " " + cls : ""); d.setAttribute("role", "status");
+  d.textContent = text; if (sub) { var s = document.createElement("small"); s.textContent = sub; d.appendChild(s); }
+  d.addEventListener("click", function () { d.remove(); });
+  var box = $("toasts"); box.appendChild(d); while (box.children.length > 4) box.removeChild(box.firstChild);
+  setTimeout(function () { d.remove(); }, cls === "lead" ? 20000 : 8000);
+}
+function systemNote(title, body) {
+  try { if (window.Notification && Notification.permission === "granted" && document.hidden) new Notification(title, { body: body }); } catch (e) {}
+}
+function checkNew() {
+  if (!ALERTS) return;
+  if (seenViews === null) { seenViews = {}; seenEvents = {}; RAW.views.forEach(function (v) { seenViews[v.id] = 1; }); RAW.events.forEach(function (e) { seenEvents[e.id] = 1; }); return; }
+  var nv = RAW.views.filter(function (v) { return !seenViews[v.id]; }), ne = RAW.events.filter(function (e) { return !seenEvents[e.id]; });
+  nv.forEach(function (v) { seenViews[v.id] = 1; }); ne.forEach(function (e) { seenEvents[e.id] = 1; });
+  var leads = ne.filter(function (e) { return e.k === "l"; });
+  var asks = ne.filter(function (e) { return e.k === "c" && /book-a-call|phone/.test(e.n || ""); });
+  if (leads.length) {
+    var names = leads.map(function (e) { return String(e.n || "").replace(/^lead:/, ""); }).join(", ");
+    toast("A form was sent", names, "lead"); beep(true); systemNote("A form was sent on keytechnologies.si", names);
+  } else if (asks.length) {
+    toast("Someone pressed Book a Call", "They may be about to ask for a time.", "lead"); beep(true); systemNote("Someone pressed Book a Call", "keytechnologies.si");
+  }
+  if (nv.length) {
+    var v0 = nv[0], t = nv.length === 1 ? "New visit: " + pageName(v0.page) : nv.length + " new visits";
+    var sub = nv.length === 1 ? [srcName(v0), country(v0.tz), v0.dev || ""].filter(Boolean).join(" · ") : "";
+    toast(t, sub); if (!leads.length && !asks.length) beep(false); systemNote(t, sub);
+  }
+  if ((nv.length || ne.length) && document.hidden) { unread += nv.length + leads.length; document.title = "(" + unread + ") Visitors — Key Technologies"; try { navigator.vibrate && navigator.vibrate(150); } catch (e) {} }
+}
+document.addEventListener("visibilitychange", function () { if (!document.hidden) { unread = 0; document.title = "Visitors — Key Technologies"; } });
+function setAlerts(on, fromClick) {
+  ALERTS = on; seenViews = null; seenEvents = null;
+  var b = $("alertBtn"); b.setAttribute("aria-pressed", on ? "true" : "false"); b.textContent = on ? "Alerts: on (checks every 20 s)" : "Alerts: off";
+  if (alertTimer) { clearInterval(alertTimer); alertTimer = null; }
+  try { localStorage.setItem("kt_alerts", on ? "1" : "0"); } catch (e) {}
+  if (!on) return;
+  alertTimer = setInterval(loadData, 20000);
+  loadData(); // sets the starting point: only NEW activity after this moment raises an alert
+  if (fromClick) {
+    beep(false);
+    try { if (window.Notification && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
+    toast("Alerts are on", (window.Notification ? "Keep this page open." : "Keep this page open. On an iPhone, add it to your Home Screen to also get phone notifications."));
+  }
+}
+$("alertBtn").addEventListener("click", function () { setAlerts(!ALERTS, true); });
 
 // ---------- helpers ----------
 function refDomain(ref) {
@@ -576,6 +646,7 @@ $("csvEvents").addEventListener("click", function () {
 showApp();
 try { if (localStorage.getItem("kt_owner") === null && !sessionStorage.getItem("kt_owner_asked")) { localStorage.setItem("kt_owner", "1"); } } catch (e) {}
 syncSkip(); loadData();
+try { if (localStorage.getItem("kt_alerts") === "1") setAlerts(true, false); } catch (e) {}
 setTimeout(ownerState, 0);
 </script>
 <div class="kt-built-by" role="contentinfo" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
