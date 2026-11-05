@@ -86,14 +86,13 @@ sub('''<div class="stat-number">200,000+</div>''', '''<div class="stat-number">~
 sub('<div class="stat-label">Combined audience built and grown from scratch across the brands Shane runs</div>',
     '<div class="stat-label">Restaurants Shane tracks in his own custom CRM, mainly in Las Vegas and Orange County</div>')
 sub('<a class="tap" href="index.html#results">See the full track record &rarr;</a>',
-    '<a class="tap" href="index.html#results">See the full track record &rarr;</a> &nbsp; <a class="tap" href="index.html#pricing">What it costs &rarr;</a>')
+    '<a class="tap" href="index.html#results">See the full track record &rarr;</a>')
 
 # FAQ
 faq = [
  ('Do you work with a single restaurant or with groups?', 'Both. The system is sized to you. A single-location owner needs different automation than a group with several kitchens, and the build reflects that.'),
  ('Can this work with my reservation or point-of-sale system?', 'It depends on the tool. Some connect directly, others are better left alone, and in some cases replacing one is the better fit. That is worked out in the first conversation, not assumed beforehand.'),
  ('Will it talk to my guests without me knowing?', 'Only as much as you allow. Every assistant runs inside permission levels you set: read-only, approval-required, or fully on its own. Anything sensitive can wait for a person.'),
- ('How much does it cost?', 'Most projects fall between $2,000 and $15,000, depending on how much is built. That is a typical range, not a quote. Every project gets a written quote after a free call. The full breakdown is on the homepage under Pricing.'),
  ('Who owns our accounts and guest information?', 'Your accounts, your guest list and your systems stay in your name. Key Technologies does not host or own them. Doing the work does mean trusting Key Technologies with real login access, the same as hiring any contractor.'),
 ]
 fh = ''.join('    <details>\n      <summary>%s</summary>\n      <p>%s</p>\n    </details>\n' % f for f in faq)
