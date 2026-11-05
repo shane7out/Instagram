@@ -311,7 +311,7 @@ def body_for(c):
 <section class="wrap" id="services">
   <div class="section-head reveal"><span class="eyebrow">See it work</span><h2>Try it before you talk to anyone</h2><p>Every service has a live demo with made-up data. Nothing is sent, booked or charged.</p></div>
   <div class="sw-grid">{svc}</div>
-  <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library">See all 25 demos</a></p>
+  <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library">See all 24 demos</a></p>
 </section>
 
 <section class="wrap" id="industries">

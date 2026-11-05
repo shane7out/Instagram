@@ -10,5 +10,5 @@ Last updated 2026-11-05. Nothing here is urgent except item 1.
 6. **Orange County beach city pages** (later; the Las Vegas page is the model).
 7. **Case studies:** none yet. Idea: a "proof" page from Shane's own numbers (about 10,000 restaurants watched).
 8. **Pricing:** deliberately OFF the site (Shane, 2026-11-05). Revisit only with real client numbers. Shane wants a number in mind for free calls.
-9. **Open question:** the Sales Partner Network demo pages (key-platform/sales, key-platform/email) still show fictional example prices and a 50% commission calculator, labeled "example only". Keep or take down?
+9. **Sales Partner Network demo: TAKEN DOWN (Shane, 2026-11-05).** The demo page, its cards and links, and the commission calculator on the Email demo are gone (old addresses quietly redirect to the demos hub). Open question: the separate Partner interest list page (key-platform/partners.html) is still up; keep or take down?
 10. Ideas not yet decided: a Services-page "read more" tidy-up is done; add the founder card to city pages; footer "Book a Call" link.

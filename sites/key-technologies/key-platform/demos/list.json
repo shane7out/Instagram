@@ -207,15 +207,6 @@
   "href": "demos/cybersecurity.html"
  },
  {
-  "slug": "../sales/index.html",
-  "num": "24",
-  "title": "Sales Partner Network",
-  "tag": "A catalog, quotes, pipeline and commission calculator for partners.",
-  "cat": "Operations & Sales",
-  "thumb": "demos/thumbs/sales.jpg",
-  "href": "sales/index.html"
- },
- {
   "slug": "rewards",
   "num": "P",
   "title": "LVR Rewards",

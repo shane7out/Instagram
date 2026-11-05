@@ -53,10 +53,10 @@ S = [
  ('cybersecurity', '23', 'Cybersecurity & Network Hardening', 'A full security pass that closes real gaps.', 'hardening', 'Run an example check', 'Run the check on a fictional office and read the fix plan.', ['Passwords, access, networks, backups and exposed systems', 'Findings explained in plain language', 'Backed by a decade of hands-on security experience']),
  ('rewards', 'P', 'LVR Rewards', 'Earn rewards at restaurants and use them for food.', 'points', 'Try the rewards program', 'Earn from a receipt, take the free spin, use rewards, and see the monthly rewards share.', ['Earn 1 reward per $1 on checked receipts', 'A free spin that comes and goes', 'Rewards used only for food at participating restaurants']),
 ]
-EXISTING = {'13': ('Email Automation', '../email/index.html', 'Sorts the inbox and drafts replies that a person approves.'), '16': ('AI/SI Phone & Text Answering', '../voice/index.html', 'An AI receptionist that answers calls and captures leads.'), '24': ('Sales Partner Network', '../sales/index.html', 'A catalog, quotes, pipeline and commission calculator for partners.')}
+EXISTING = {'13': ('Email Automation', '../email/index.html', 'Sorts the inbox and drafts replies that a person approves.'), '16': ('AI/SI Phone & Text Answering', '../voice/index.html', 'An AI receptionist that answers calls and captures leads.')}  # '24' Sales Partner Network demo taken down at Shane's request (2026-11-05)
 
 def switch():
-    items = [('Overview', '../index.html'), ('Voice Services', '../voice/index.html'), ('Email Intelligence', '../email/index.html'), ('Sales Partner Network', '../sales/index.html'), ('All demos', '../index.html#library')]
+    items = [('Overview', '../index.html'), ('Voice Services', '../voice/index.html'), ('Email Intelligence', '../email/index.html'), ('All demos', '../index.html#library')]
     return '<nav class="kp-switch" aria-label="KEY Platform demos"><span class="lbl">KEY Platform</span>' + ''.join('<a href="%s">%s</a>' % (h, t) for t, h in items) + '</nav>'
 
 def page(i, s):
@@ -112,7 +112,7 @@ import json
 CAT = {'01': 'Marketing & Content', '09': 'Marketing & Content', '14': 'Marketing & Content',
        '13': 'Customers & Communication', '16': 'Customers & Communication', '06': 'Customers & Communication', '15': 'Customers & Communication', '17': 'Customers & Communication',
        '02': 'AI Systems & Strategy', '04': 'AI Systems & Strategy', '08': 'AI Systems & Strategy', '11': 'AI Systems & Strategy', '22': 'AI Systems & Strategy',
-       '03': 'Operations & Sales', '05': 'Operations & Sales', '07': 'Operations & Sales', '24': 'Operations & Sales',
+       '03': 'Operations & Sales', '05': 'Operations & Sales', '07': 'Operations & Sales',
        '10': 'Websites & Security', '12': 'Websites & Security', '19': 'Websites & Security', '20': 'Websites & Security', '21': 'Websites & Security', '23': 'Websites & Security',
        '18': 'Training & Rewards', 'P': 'Training & Rewards'}
 lst = [{'slug': s[0], 'num': s[1], 'title': s[2], 'tag': s[3], 'cat': CAT[s[1]], 'thumb': 'demos/thumbs/%s.jpg' % s[0], 'href': 'demos/%s.html' % s[0]} for s in S]
