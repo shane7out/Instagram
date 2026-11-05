@@ -41,7 +41,6 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 
 ## Guides
 - [PHP2Shell: what small-business website owners should do now](https://keytechnologies.si/guides/php2shell-small-business-websites.html): What the October 2026 PHP security flaws mean for a WordPress or PHP website, and a 10-minute checklist.
-- [How much does an AI receptionist cost? What actually sets the price](https://keytechnologies.si/guides/ai-receptionist-cost.html): What drives the price of an AI phone receptionist, how vendors charge, and the questions to ask before you buy.
 - [AI for restaurants: 6 practical ways to save time](https://keytechnologies.si/guides/ai-for-restaurants.html): Six practical uses of AI in a restaurant, what it should and should not do, and a demo of each.
 
 ## LVR Rewards (Las Vegas Restaurants)

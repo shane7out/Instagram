@@ -242,7 +242,7 @@ G1['body'] = f'''<article class="wrap guide">
 <p class="note">Facts above were checked against the PHP project&rsquo;s release notes on November 3, 2026. Hosting status and recommendations change quickly, so confirm with your host.</p>
 
 {cta()}
-{more([('How much does an AI receptionist cost?','What actually sets the price, and what to ask before you buy.','ai-receptionist-cost.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
+{more([('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
 </article>'''
 GUIDES['G1'] = G1
 
@@ -320,7 +320,7 @@ G2['body'] = f'''<article class="wrap guide">
 <div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/voice/">Try the receptionist demo</a></div></div>
 {more([('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
 </article>'''
-GUIDES['G2'] = G2
+RETIRED_GUIDES = ['ai-receptionist-cost']  # taken down at Shane's request (2026-11-05): anything to do with pricing
 
 # ================= Guide 3: AI for restaurants =================
 G3 = dict(slug='ai-for-restaurants',
@@ -392,7 +392,7 @@ G3['body'] = f'''<article class="wrap guide">
 <div class="guide-cta"><h2>Want to talk about your restaurant?</h2>
 <p>Tell us where your time goes and we will say honestly whether AI can help and where to start. The first call is free.</p>
 <div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/index.html#library">See all the demos</a></div></div>
-{more([('How much does an AI receptionist cost?','What actually sets the price, and what to ask before you buy.','ai-receptionist-cost.html'),('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html')])}
+{more([('PHP2Shell: what small-business website owners should do now','Two critical PHP flaws were patched on October 21, 2026. A 10-minute checklist.','php2shell-small-business-websites.html')])}
 </article>'''
 GUIDES['G3'] = G3
 
@@ -403,10 +403,17 @@ def build():
         cn = [("Home", BASE), ("Guides", BASE + 'guides/'), (g['h1'].split(':')[0] if ':' in g['h1'] and len(g['h1']) > 60 else g['h1'], BASE + path)]
         ldg = graph(g['title'], g['desc'], path, g['h1'], g['faq'], cn)
         open(SITE + path, 'w', encoding='utf-8').write(shell(g['title'], g['desc'], path, g['body'], ldg, cn))
+    # retired guides: quiet redirect to the guides hub, not indexed, no sitemap / llms.txt entry
+    stub = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+            '<meta name="robots" content="noindex,follow"><meta http-equiv="refresh" content="0; url=index.html"><title>Key Technologies.si</title>'
+            '<link rel="canonical" href="' + BASE + 'guides/"></head><body style="background:#0f171e;color:#eef4fb;font-family:system-ui,sans-serif;padding:24px">'
+            '<p>Taking you to the <a style="color:#00a8e1" href="index.html">guides</a>.</p></body></html>')
+    for slug in RETIRED_GUIDES:
+        open(SITE + 'guides/%s.html' % slug, 'w', encoding='utf-8').write(stub)
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
     hub_title = 'Guides on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides: what PHP2Shell means for your website, what an AI receptionist really costs, and how restaurants can use AI.'
+    hub_desc = 'Short, practical guides: what PHP2Shell means for your website, and how restaurants can use AI.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>
@@ -427,6 +434,8 @@ def build():
         loc = BASE + u
         if loc not in sm:
             sm = sm.replace('</urlset>', '  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n</urlset>' % (loc, DATE))
+    for slug in RETIRED_GUIDES:
+        sm = re.sub(r'  <url>\s*<loc>%s</loc>.*?</url>\n' % re.escape(BASE + 'guides/%s.html' % slug), '', sm, flags=re.S)
     open(SITE + 'sitemap.xml', 'w', encoding='utf-8').write(sm)
     # llms.txt
     p = SITE + 'llms.txt'
@@ -435,6 +444,10 @@ def build():
         block = '## Guides\n' + '\n'.join(f'- [{g["h1"][0].upper() + g["h1"][1:]}]({BASE}guides/{g["slug"]}.html): {g["short"]}' for g in GUIDES.values()) + '\n\n'
         t = t.replace('## LVR Rewards', block + '## LVR Rewards', 1)
         open(p, 'w', encoding='utf-8').write(t)
+    t = open(p, encoding='utf-8').read()
+    for slug in RETIRED_GUIDES:
+        t = re.sub(r'- \[[^\]]*\]\(%s\):[^\n]*\n' % re.escape(BASE + 'guides/%s.html' % slug), '', t)
+    open(p, 'w', encoding='utf-8').write(t)
     print('guides built:', len(GUIDES) + 1, 'pages')
 
 if __name__ == '__main__':
