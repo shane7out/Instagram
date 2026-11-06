@@ -232,3 +232,4 @@ A small card sits right under the two main buttons in the homepage top section: 
 - SEO check-in 2026-11-06 10:35 UTC: new guide 'AI for law firms' (build_guides.py G7; general information, 'not legal advice', no invented cases or stats); linked from law.html, the guides hub, sitemap, llms.txt; hub description shortened to 160 characters or fewer; axe clean; click-through 300 clicks / 0 errors; deploy #320 (glossary) succeeded.
 - About text: 'He has been working with computers and software ever since' (Shane: put computers and software in).
 - About text: first business described as a computer and software business that handled software, networks, security, upgrades and training at company offices (Shane's own words, 2026-11-06).
+- About text: removed the 'walking into company offices' phrase at Shane's request; the first business reads: computer and software business doing software, networks, security, upgrades and training.
