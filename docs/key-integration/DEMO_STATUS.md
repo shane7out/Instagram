@@ -230,3 +230,4 @@ A small card sits right under the two main buttons in the homepage top section: 
 - SEO check-in 2026-11-06 02:35 UTC: new guide 'AI terms in plain English' (build_guides.py G6, 19 terms; 'token' entry removed on purpose); homepage guides row now has 5 cards; sitemap/llms updated by the generator; axe clean, click-through 300 clicks / 0 errors; deploy #319 (SEO pass) succeeded.
 
 - SEO check-in 2026-11-06 10:35 UTC: new guide 'AI for law firms' (build_guides.py G7; general information, 'not legal advice', no invented cases or stats); linked from law.html, the guides hub, sitemap, llms.txt; hub description shortened to 160 characters or fewer; axe clean; click-through 300 clicks / 0 errors; deploy #320 (glossary) succeeded.
+- About text: 'He has been working with computers and software ever since' (Shane: put computers and software in).
