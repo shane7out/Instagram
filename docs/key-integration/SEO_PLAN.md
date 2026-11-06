@@ -1,6 +1,6 @@
 # SEO and "AI/SI" plan (a running list; Claude works on it every check-in, Shane tackles his part a little at a time)
 
-Last updated 2026-11-05. Honest note: nobody can promise rank #1. Ranking takes time, useful content and links from other sites. What we CAN do is be the clearest, most trustworthy answer for the term, and make the site easy for search engines and AI assistants to read.
+Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes time, useful content and links from other sites. What we CAN do is be the clearest, most trustworthy answer for the term, and make the site easy for search engines and AI assistants to read.
 
 ## Done (on the site)
 - Every page has a unique title (60 characters or fewer), meta description, canonical address, social-share tags and structured data (Organization/Service/FAQ/Article/Breadcrumb/ContactPage).
@@ -9,6 +9,8 @@ Last updated 2026-11-05. Honest note: nobody can promise rank #1. Ranking takes 
 - Glossary guide "AI terms in plain English" (2026-11-06): about 19 short definitions (AI, AI/SI, LLM, agent, CRM, hallucination, RAG...), linked from the homepage guides row, the guides page, sitemap and llms.txt. Deliberately leaves out the word "token" (standing rule).
 - Guide "AI for law firms: where it helps and what a person must still approve" (2026-11-06): general information, no legal advice, linked from the law page, guides page, sitemap and llms.txt.
 - Guide "AI for medical and dental offices" (2026-11-06): general information; not legal or medical advice; does not certify any tool as compliant; linked from the medical-dental page, guides page, sitemap, llms.txt.
+- Guide "What a business dashboard should show (and what to leave off)" (2026-11-06): general guidance with restaurant, practice and law examples, links to the dashboard demos and the restaurant and chiropractor pages; sitemap and llms.txt auto-added. No prices, no stats.
+- Business Dashboards demo (indexable), Chiropractors & Specialists page, dashboard sections on the restaurant, law and medical pages (2026-11-06).
 - Restaurant page (the strongest vertical: Shane keeps watch on about 10,000 restaurants), Las Vegas page, languages page.
 - Visitor counter + Owner report (Sources tab shows which pages and sites bring visitors).
 

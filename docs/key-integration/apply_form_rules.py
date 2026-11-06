@@ -24,6 +24,7 @@ def edit(rel, pairs):
     f = SITE / rel; s = f.read_text(encoding='utf-8')
     for a, b in pairs:
         if b in s: continue
+        if a in b and b.replace(a, '', 1).strip() and b.replace(a, '', 1) in s: continue   # inserted text already there (idempotent)
         if s.count(a) == 0:
             print('  (already applied, skipped)', rel, a[:40].replace('\n',' ')); continue
         assert s.count(a) == 1, (rel, a[:60], s.count(a))

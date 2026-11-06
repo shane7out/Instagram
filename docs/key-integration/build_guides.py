@@ -687,6 +687,66 @@ G8['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G8'] = G8
 
+# ================= Guide 9: business dashboards =================
+G9 = dict(slug='business-dashboard-what-to-track', date='2026-11-06',
+  title='What a Business Dashboard Should Show | Key Technologies.si',
+  desc='What a small-business dashboard should show for a restaurant, a practice or a firm, how to tell a useful one from a pretty one, and how to start.',
+  h1='What a business dashboard should show (and what to leave off)',
+  short='A plain guide to what belongs on a small-business dashboard, with examples for restaurants, practices and firms, and how to start.')
+G9['faq'] = [
+ ('What is a business dashboard?', 'A single screen that pulls numbers from the systems you already use (sales, appointments, reviews, calls) so you can see how the business is doing without opening five different tools.'),
+ ('How many numbers should a dashboard show?', 'Fewer than you think. Six to eight numbers you actually act on beat thirty you glance at. If nobody would change a decision because of a number, leave it off.'),
+ ('Can a dashboard connect to my point-of-sale or practice software?', 'Often yes, but it depends on the software. Some systems offer a connection, some only let you export a report, and some do neither. Ask the vendor what they support before you plan around it.'),
+ ('How often should I look at it?', 'Pick a rhythm and keep it: a quick look each morning for the day ahead, and a longer look weekly for trends. A dashboard nobody opens is just decoration.'),
+ ('Where should I start?', 'Write down the three questions you ask most often about the business, such as "how was last night?" or "how many new patients this week?", and build the first screen to answer only those.')]
+G9['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('What a business dashboard should show','')])}
+<h1>{esc(G9['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 6, 2026</p>
+<div class="tldr"><b>Short answer:</b> a good dashboard answers the few questions you ask every day, in one glance, using numbers you would actually act on. Start with six to eight, add more only when you miss one.</div>
+
+<h2>What makes a dashboard useful</h2>
+<ul>
+<li><b>It answers real questions.</b> "Did we have a good night?" or "Are new patients coming in?" Not "what can the software chart?"</li>
+<li><b>It compares.</b> A number alone means little. Today against the same day last week, or this week against the one before, tells you whether to worry.</li>
+<li><b>It is current and trusted.</b> If the numbers are a week old or often wrong, people stop looking.</li>
+<li><b>It fits one screen on a phone.</b> You will mostly check it away from a desk.</li>
+</ul>
+
+<h2>Examples of what to track</h2>
+<p>These are common starting points, not a rule. Pick what matches how you run things.</p>
+<ul>
+<li><b>Restaurant:</b> net sales, number of checks, average check, labor as a share of sales, comps and voids, online orders, busiest hours, new reviews.</li>
+<li><b>Medical or dental practice:</b> appointments, new patients, no-shows, open slots, patients due for a recall visit, new reviews, missed calls.</li>
+<li><b>Chiropractor or specialist clinic:</b> visits, new patients, no-shows, referrals received, follow-ups due.</li>
+<li><b>Law firm:</b> new inquiries, consultations booked, how many became clients, follow-ups waiting, response time to a new inquiry.</li>
+</ul>
+
+<h2>What to leave off</h2>
+<ol>
+<li><b>Numbers nobody acts on.</b> If no decision would change, it is clutter.</li>
+<li><b>Anything you cannot trust.</b> A wrong number is worse than a missing one.</li>
+<li><b>Personal details you do not need.</b> Especially for patients and clients, a dashboard rarely needs names. Counts and trends are enough, and showing less keeps it safer.</li>
+</ol>
+
+<h2>Where the numbers come from</h2>
+<p>Most dashboards pull from systems you already pay for: a point-of-sale or ordering system, a scheduling or practice-management tool, a review site, a phone system. Whether a given tool can be connected depends on that tool, so ask the vendor what it supports and whether there is a cost. If a system cannot connect, a regular export of its report is often enough to start.</p>
+
+<h2>A sensible way to start</h2>
+<p>Write down the three questions you ask most about the business. Build one screen that answers just those, check it for a few weeks against what you already know to be true, and only then add more.</p>
+
+<h2>Where Key Technologies fits</h2>
+<p>We build dashboards around the systems you already use, with real connections set up with you and depending on the systems involved. You can try a demo with made-up numbers for a <a href="../key-platform/demos/business-dashboards.html?i=restaurant">restaurant</a>, a <a href="../key-platform/demos/business-dashboards.html?i=dental">dental office</a>, a <a href="../key-platform/demos/business-dashboards.html?i=law">law firm</a> or a <a href="../key-platform/demos/business-dashboards.html?i=chiro">chiropractor</a>. See also our <a href="../restaurants.html">restaurant</a> and <a href="../chiropractors-specialists.html">chiropractor and specialist</a> pages.</p>
+
+{faq_html(G9['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call. Tell us the three questions you ask most about your business and we will tell you honestly what a dashboard for it could look like.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/demos/business-dashboards.html">Try the dashboard demo</a></div></div>
+{more([('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html'),('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html')])}
+</article>"""
+GUIDES['G9'] = G9
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
