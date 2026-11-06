@@ -738,6 +738,17 @@ none invented), assign proper nums, write status/attempts, and move the
 advertiser into the staging node where it belongs. See the git log around
 this date on `claude/master-file-e6ofy0` for the exact corrective commits.
 
+### 10a. ⚠️ STANDING RULE (Shane, 2026-11-06): every restaurant screenshot goes into the LVR restaurant database
+
+**Shane's words: "every time I send you a screenshot of a restaurant, always add it to the LVR database, restaurant database."**
+This is standing permission to ADD, with no need to ask each time. How: dedup first (by Instagram handle and name), then write
+`dashboard_crec/<num>` with a num computed from the live data and claimed atomically, the real Instagram handle from the screenshot
+(look it up if it is not shown), `dashboard/status/<num>` = "pending" and `dashboard/attempts/<num>`, exactly as in section 10. The
+template is `.github/db-task/task.sh` from commit 37964f7 (DTS Kitchen) and the 2026-11-06 Significant Other add. Put what the screenshot
+shows (bio, followers, address, website) in `notes`, and do not invent phone, email or owner. This permission is ADD-ONLY: deleting or
+changing existing records still needs Shane's explicit OK in the conversation. Tell Shane afterward what was added (name, handle, num).
+Added so far under this rule: Significant Other Kitchen & Cocktails (@significantvegas), 2026-11-06.
+
 ---
 
 ## 11. Status as of 2026-10-08 (3-hour check-in routine running since 2026-10-07)
