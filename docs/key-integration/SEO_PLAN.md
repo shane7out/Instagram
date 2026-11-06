@@ -12,6 +12,7 @@ Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes 
 - Guide "What a business dashboard should show (and what to leave off)" (2026-11-06): general guidance with restaurant, practice and law examples, links to the dashboard demos and the restaurant and chiropractor pages; sitemap and llms.txt auto-added. No prices, no stats.
 - Business Dashboards demo (indexable), Chiropractors & Specialists page, dashboard sections on the restaurant, law and medical pages (2026-11-06).
 - Guide "How Key Technologies works with a business, step by step" (2026-11-06): the process from the free call to a working system, what stays yours, what we will not do; FAQ schema; sitemap and llms.txt auto-added. Uses only claims already on the site (free 30-minute call, permission levels, accounts stay in your name).
+- Guide "AI phone answering for dental and law offices: what it should and should not do" (2026-11-06): general information, no legal, medical or compliance claims, links to the phone demo and the dental and law pages; sitemap and llms.txt auto-added.
 - Restaurant page (the strongest vertical: Shane keeps watch on about 10,000 restaurants), Las Vegas page, languages page.
 - Visitor counter + Owner report (Sources tab shows which pages and sites bring visitors).
 
@@ -24,7 +25,7 @@ Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes 
 6. Write or record one short answer a week (a post, a reel caption) that links to the matching guide.
 
 ## Claude's standing list (one item per check-in)
-- Content ideas, in order: "AI phone answering for restaurants" (no prices), Orange County beach pages (when Shane says go), (done: How we work guide). Next: a short "Frequently asked questions" hub, and a guide on AI phone answering for dental and law offices.
+- Content ideas, in order: "AI phone answering for restaurants" (no prices), Orange County beach pages (when Shane says go), (done: How we work guide). Next: a short "Frequently asked questions" hub, (done: AI phone answering guide). Next: a "Frequently asked questions" hub, then Orange County pages when Shane says go.
 - Keep titles/descriptions honest and unique; no keyword stuffing; no made-up stats, clients, reviews or rankings.
 - Check Core Web Vitals (speed) after every change; keep images sized and compressed.
 - Re-run the generators in this order after any change: build_* scripts, add_home_link.py, tidy_nav.py, add_analytics.py (Home button and the counter come from the last two).

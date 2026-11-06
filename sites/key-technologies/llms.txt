@@ -51,6 +51,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [AI for medical and dental offices: where it helps and the privacy questions to ask first](https://keytechnologies.si/guides/ai-for-medical-dental-offices.html): Where AI helps a medical or dental office, what staff and clinicians must still handle, and the privacy questions to ask first.
 - [What a business dashboard should show (and what to leave off)](https://keytechnologies.si/guides/business-dashboard-what-to-track.html): A plain guide to what belongs on a small-business dashboard, with examples for restaurants, practices and firms, and how to start.
 - [How Key Technologies works with a business, step by step](https://keytechnologies.si/guides/how-we-work.html): What happens from the first free call to a working system, and how you stay in control at every step.
+- [AI phone answering for dental and law offices: what it should and should not do](https://keytechnologies.si/guides/ai-phone-answering-dental-law.html): How AI phone answering works for a dental or law office, what it should hand to a person, and what to check before turning it on.
 
 ## LVR Rewards (Las Vegas Restaurants)
 - [LVR Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.

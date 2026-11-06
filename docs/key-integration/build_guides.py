@@ -798,6 +798,70 @@ G10['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G10'] = G10
 
+# ================= Guide 11: AI phone answering for dental and law offices =================
+G11 = dict(slug='ai-phone-answering-dental-law', date='2026-11-06',
+  title='AI Phone Answering for Dental and Law Offices | Key Technologies.si',
+  desc='How AI phone answering works for a dental or law office, what it should and should not do, and what to check before you turn it on.',
+  h1='AI phone answering for dental and law offices: what it should and should not do',
+  short='How AI phone answering works for a dental or law office, what it should hand to a person, and what to check before turning it on.')
+G11['faq'] = [
+ ('What can an AI phone assistant do for a dental or law office?', 'Answer when the front desk is busy or the office is closed, give approved information such as hours, location and how to prepare for a visit, collect a name, number and reason for the call, and offer appointment or consultation times for staff to confirm.'),
+ ('What should it never do?', 'It should not give medical, dental or legal advice, quote outcomes, handle an emergency on its own, or promise anything on behalf of the office. Those go to a person, and a good assistant says so plainly.'),
+ ('Does the caller know it is an AI?', 'They should. Telling callers they are talking to an automated assistant is the honest approach, and in some places rules about recording and automated calls apply. Check the rules where you operate and with your attorney or compliance advisor.'),
+ ('Is it safe to let it hear patient or client details?', 'It depends on the tool, its agreement with you, and your obligations. Many useful jobs need only a name, a callback number and a reason for the call. Ask your compliance advisor or attorney before sensitive details go into any new tool.'),
+ ('How do I start?', 'Begin with after-hours calls only, give it a short list of approved answers, route anything urgent or sensitive to a person, and review every call it handled for the first few weeks before widening its role.')]
+G11['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('AI phone answering for dental and law offices','')])}
+<h1>{esc(G11['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 6, 2026</p>
+<div class="tldr"><b>Short answer:</b> an AI phone assistant is best at the calls nobody can pick up: after hours, at lunch, or while the front desk is with a patient or client. It collects who called and why, answers a short list of approved questions, and hands anything urgent or sensitive to a person.</div>
+
+<h2>Why calls get missed</h2>
+<p>In a dental office the front desk is often with a patient. In a law office the attorney is in a meeting or in court. A caller who reaches voicemail often tries the next office on the list, so a missed first call can be a lost new patient or a lost new client. Most practice software tracks appointments and matters after they exist. It does not catch the call that never became one.</p>
+
+<h2>What it can handle</h2>
+<ul>
+<li><b>After-hours and overflow calls:</b> answer, say it is an automated assistant, and take a message.</li>
+<li><b>Approved information:</b> hours, location, parking, what to bring, how to prepare for a visit or a consultation.</li>
+<li><b>A clean message:</b> name, callback number and the reason for the call, sent to the right person.</li>
+<li><b>Appointment or consultation requests:</b> offer times from a schedule you control, for staff to confirm.</li>
+<li><b>Routing:</b> anything urgent goes straight to a person or to emergency instructions.</li>
+</ul>
+
+<h2>What it should hand to a person</h2>
+<ol>
+<li><b>Anything clinical or legal.</b> Symptoms, treatment, medication, case strategy, deadlines and outcomes are for a clinician or an attorney.</li>
+<li><b>Emergencies.</b> A caller with a dental or medical emergency should be told to call emergency services, and the office should be alerted.</li>
+<li><b>Upset or distressed callers.</b> A person should call back quickly.</li>
+<li><b>Billing disputes, consent questions and complaints.</b></li>
+<li><b>Anything the assistant is unsure about.</b> Handing off is the correct answer.</li>
+</ol>
+
+<h2>Questions to settle before turning it on</h2>
+<ol>
+<li>Will callers be told clearly that they are speaking to an automated assistant?</li>
+<li>Are calls recorded or transcribed, and what do the rules where you operate require?</li>
+<li>Where do messages and recordings go, who can see them, and for how long are they kept?</li>
+<li>Does the job really need patient or client details, or only a name, a number and a reason?</li>
+<li>Who is alerted when something urgent comes in, and how fast?</li>
+</ol>
+<p>Rules differ by country, state and profession. Check with your compliance advisor or attorney. Nothing here certifies a tool or an office as compliant.</p>
+
+<h2>A sensible way to start</h2>
+<p>Begin with after-hours calls only. Give the assistant a short list of approved answers, set clear hand-off rules, and read or listen to every call it handled for the first few weeks. Widen its role only when the results are right.</p>
+
+<h2>Where Key Technologies fits</h2>
+<p>We build phone and text answering for dental, medical and law offices around how your office works, with permission levels you set. Hear how it sounds in the <a href="../key-platform/voice.html">AI phone receptionist demo</a> (fictional business, made-up data), or see our <a href="../medical-dental.html">medical and dental page</a> and <a href="../law.html">law firm page</a>.</p>
+
+{faq_html(G11['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call. We will ask how your front desk handles calls today and tell you honestly where an assistant helps and where it does not.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/voice.html">Try the phone demo</a></div></div>
+{more([('AI for medical and dental offices: where it helps and the privacy questions to ask first','Where AI helps a medical or dental office, what staff must still handle, and privacy questions.','ai-for-medical-dental-offices.html'),('AI for law firms: where it helps and what a person must still approve','Where AI helps a law office, what a lawyer must still approve, and confidentiality questions.','ai-for-law-firms.html')])}
+</article>"""
+GUIDES['G11'] = G11
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
