@@ -565,6 +565,67 @@ G6['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G6'] = G6
 
+# ================= Guide 7: AI for law firms =================
+G7 = dict(slug='ai-for-law-firms', date='2026-11-06',
+  title='AI for Law Firms: Where It Helps | Key Technologies.si',
+  desc='Where AI helps a law office (intake, scheduling, routine drafts), what a lawyer must still approve, and the confidentiality questions to ask.',
+  h1='AI for law firms: where it helps and what a person must still approve',
+  short='Where AI helps a law office, what a lawyer must still approve, and the confidentiality questions to ask before using it.')
+G7['faq'] = [
+ ('Can AI give legal advice to my clients?', 'It should not. Legal advice is the lawyer\'s job. AI can collect details, answer routine office questions from information you approved, and route anything that needs a lawyer to a lawyer.'),
+ ('Is it safe to put client information into an AI tool?', 'It depends on the tool and its terms. Ask where the data goes, whether it is used to train the provider\'s models, who can see it, and how it is deleted. Check your state bar\'s guidance and, if unsure, your ethics counsel.'),
+ ('Can AI draft documents?', 'It can produce a first draft of routine letters and summaries. A lawyer must review every word before it goes out, and must verify every citation, because AI can invent sources that do not exist.'),
+ ('How can AI help with intake?', 'It can answer calls and texts after hours, collect the basics, and flag urgent matters, so a prospective client is not left waiting. A person decides whether to take the matter.'),
+ ('Where should a small firm start?', 'Pick one low-risk, repetitive job, such as after-hours call capture or appointment reminders, keep a person in charge, and measure the result before adding more.')]
+G7['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('AI for law firms','')])}
+<h1>{esc(G7['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 6, 2026</p>
+<div class="tldr"><b>Short answer:</b> AI is useful in a law office for the <b>routine, repetitive work around the law</b>: intake, scheduling, reminders and first drafts of routine messages. It should not replace the lawyer&rsquo;s judgment. A person must approve anything that is legal advice, anything filed or sent for the first time, and anything that touches client confidences. This guide is general information, not legal advice.</div>
+
+<h2>Where AI helps a law office</h2>
+<ul>
+<li><b>Intake:</b> answer calls and texts after hours, collect the basics, and flag urgent matters, so a prospective client is not left waiting. The firm that answers first often gets the call.</li>
+<li><b>Scheduling and reminders:</b> consultation booking, confirmations and reminders without staff re-typing.</li>
+<li><b>Follow-up:</b> messages to people who have not yet signed, so a lead does not go cold.</li>
+<li><b>Routine drafts:</b> a first draft of a standard letter or a summary of a long email thread, for a person to review and rewrite.</li>
+<li><b>Reviews and reputation:</b> drafted replies to online reviews that you approve before posting.</li>
+</ul>
+
+<h2>What a person must still approve</h2>
+<ol>
+<li><b>Legal advice.</b> The assistant may answer office questions (hours, how to get documents to you). Legal questions go to a lawyer.</li>
+<li><b>Anything filed or sent for the first time.</b> Read it, and check every citation yourself. AI can produce sources that sound real and are not, and courts have criticized filings that contained them.</li>
+<li><b>Conflicts and taking the matter.</b> Whether to take a case is a decision for the firm, not the tool.</li>
+<li><b>Fees and engagement terms.</b> These come from a person.</li>
+<li><b>Anything involving client confidences</b> until you are satisfied how the tool handles them.</li>
+</ol>
+
+<h2>Confidentiality questions to ask any vendor</h2>
+<ol>
+<li>Where does my data go, and who can see it?</li>
+<li>Is it used to train the provider&rsquo;s models?</li>
+<li>How is it stored, and how is it deleted when I leave?</li>
+<li>Can I limit what the assistant may see and do?</li>
+<li>What does your agreement say if something goes wrong?</li>
+</ol>
+<p>Rules on technology and client information differ by state and by matter. Check your state bar&rsquo;s guidance, and ask your ethics counsel if you are unsure.</p>
+
+<h2>A sensible way to start</h2>
+<p>Pick one low-risk, repetitive job (after-hours call capture is common), keep a person in charge, and decide in advance how you will measure it. Review what the assistant did each week at the start and correct it. Add more only when the first job is working.</p>
+
+<h2>Where Key Technologies fits</h2>
+<p>We build custom intake systems and automation for law firms around how your firm actually works, with permission levels you set so you decide how much runs on its own. See our <a href="../law.html">law firm page</a>, try the <a href="../key-platform/">interactive demos</a> (made-up data), or book a free call. We do not guarantee results and we do not give legal advice.</p>
+
+{faq_html(G7['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call. We will ask how your intake works today and tell you honestly where AI helps and where it does not.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../law.html">See the law firm page</a></div></div>
+{more([('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html'),('AI terms in plain English: a glossary','Short, jargon-free definitions of the AI words business owners hear most.','ai-terms-plain-english.html')])}
+</article>"""
+GUIDES['G7'] = G7
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
@@ -582,7 +643,7 @@ def build():
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
     hub_title = 'Guides on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides: what AI/SI means, how to choose an AI consultant, what PHP2Shell means for your website, and how restaurants can use AI.'
+    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, AI for law firms, PHP2Shell and website security, and AI for restaurants.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>
