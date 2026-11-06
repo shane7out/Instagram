@@ -278,16 +278,20 @@
         <form id="signupForm" novalidate>
           <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required. Every new sign-up is approved by hand, so you will see a short waiting page first.</p>
           <div class="field">
-            <label for="r-name">Name <span class="req" aria-hidden="true">*</span></label>
-            <input id="r-name" name="name" type="text" autocomplete="name" required>
+            <label for="r-name-first">First name <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40">
+          </div>
+          <div class="field">
+            <label for="r-name-last">Last name <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40">
           </div>
           <div class="field">
             <label for="r-email">Email <span class="req" aria-hidden="true">*</span></label>
             <input id="r-email" name="email" type="email" autocomplete="email" required>
           </div>
           <div class="field">
-            <label for="r-phone">Phone (optional)</label>
-            <input id="r-phone" name="phone" type="tel" autocomplete="tel">
+            <label for="r-phone">Phone <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-phone" name="phone" type="tel" autocomplete="tel" required>
           </div>
           <details id="decayBox" hidden style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:0 13px;margin:2px 0 12px;font-size:13.5px;line-height:1.45;color:var(--ink-dim);"><summary style="cursor:pointer;padding:11px 0;color:#ffe08a;"><b style="color:#ffd35c;">How the monthly rewards share works</b> (tap to open or close)</summary><div style="padding:0 0 11px;"><p style="margin:0 0 8px;"><b>Use your rewards before the 1st.</b> LVR Rewards is a rewards game, and the game works best when rewards keep moving. On the <b>1st of every month</b>, <span class="decayPct">20</span>% of the rewards a player has not used go back into the game.</p><p style="margin:0 0 8px;">Those rewards do not disappear. They are <b>handed out at random to other players</b>, a few rewards at a time, the same way rewards were first given out to you.</p><p style="margin:0 0 8px;"><b>Example:</b> you have 50 rewards on the 1st. <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your rewards on a free offer before the 1st, nothing goes back.</p><p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first 30 days.</p></div></details>
           <label for="r-rules" style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--ink-dim);margin:2px 0 14px;cursor:pointer;">
@@ -631,14 +635,16 @@
     if (!card) return;
     card.innerHTML = '<span class="eyebrow">' + (eyebrow || "Launching soon") + '</span><h2>' + (title || "Sign-ups are paused for a moment") + '</h2>' +
       '<p class="form-note">' + (blurb || ((banner ? banner.replace(/</g, "&lt;") : "We are getting ready to welcome new members.") + ' Leave your email and we will let you know the moment it opens.')) + '</p>' +
-      '<form id="waitForm" novalidate><div class="field"><label for="w-name">Name</label><input id="w-name" type="text" autocomplete="name"></div>' +
-      '<div class="field"><label for="w-email">Email <span class="req" aria-hidden="true">*</span></label><input id="w-email" type="email" autocomplete="email" required></div>' +
+      '<form id="waitForm" novalidate><div class="field"><label for="w-first">First name <span class="req" aria-hidden="true">*</span></label><input id="w-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div>' +
+      '<div class="field"><label for="w-last">Last name <span class="req" aria-hidden="true">*</span></label><input id="w-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40"></div>' +
+      '<div class="field"><label for="w-email">Email <span class="req" aria-hidden="true">*</span></label><input id="w-email" name="email" type="email" autocomplete="email" required></div>' +
+      '<div class="field"><label for="w-phone">Phone <span class="req" aria-hidden="true">*</span></label><input id="w-phone" name="phone" type="tel" autocomplete="tel" required></div>' +
       '<button class="btn btn-primary" type="submit" id="w-btn">Notify me</button><p class="form-status" id="w-status" role="status"></p></form>';
     document.getElementById("waitForm").addEventListener("submit", function(e){
       e.preventDefault();
       var email = document.getElementById("w-email").value.trim(), st = document.getElementById("w-status");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { st.textContent = "Please enter a valid email."; st.className = "form-status err"; return; }
-      var data = { source: "lvr-rewards-waitlist", name: document.getElementById("w-name").value.trim(), email: email, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
+      var data = { source: "lvr-rewards-waitlist", name: (document.getElementById("w-first").value.trim() + " " + document.getElementById("w-last").value.trim()).trim(), phone: document.getElementById("w-phone").value.trim(), email: email, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
       document.getElementById("w-btn").disabled = true;
       KTLead.send(LEADS_URL, "https://formspree.io/f/mzeedbyb", data).then(function(){
         st.textContent = "Thanks - you're on the list."; st.className = "form-status ok";
@@ -685,7 +691,7 @@
       status.className = "form-status err";
       return;
     }
-    var name = document.getElementById("r-name").value.trim();
+    var name = (document.getElementById("r-name-first").value.trim() + " " + document.getElementById("r-name-last").value.trim()).trim();
     var email = document.getElementById("r-email").value.trim();
     var phone = document.getElementById("r-phone").value.trim();
     var token = genToken();

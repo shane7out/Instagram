@@ -24,6 +24,8 @@ def edit(rel, pairs):
     f = SITE / rel; s = f.read_text(encoding='utf-8')
     for a, b in pairs:
         if b in s: continue
+        if s.count(a) == 0:
+            print('  (already applied, skipped)', rel, a[:40].replace('\n',' ')); continue
         assert s.count(a) == 1, (rel, a[:60], s.count(a))
         s = s.replace(a, b)
     f.write_text(s, encoding='utf-8')
@@ -95,3 +97,85 @@ edit('index.html', [
           url: target,'''),
 ])
 print('done')
+
+# ===================================================================================================================
+# PHASE 2 (Shane, 2026-11-06): the BUSINESS NAME is required too, on every lead form; and the same required fields on the
+# rewards-side forms (member sign-up, rewards waiting list, restaurant join form). On the rewards side the saved record keeps
+# the SAME fields as before (one combined "name", the same phone field); no new fields are added to member records.
+# ===================================================================================================================
+BIZ = ('<div class="field"><label for="{i}-business">Business name <span class="req" aria-hidden="true">*</span></label>'
+       '<input id="{i}-business" name="business" type="text" autocomplete="organization" required maxlength="100"></div>')
+ROWRX = re.compile(r'(<div class="name-row"[^>]*>.*?name="lastName"[^>]*></div></div>)', re.S)
+for rel in PAGES:
+    f = SITE / rel; s = f.read_text(encoding='utf-8'); o = s
+    out = []; pos = 0
+    for m in ROWRX.finditer(s):
+        out.append(s[pos:m.end()]); pos = m.end()
+        base = re.search(r'id="([\w-]+)-first"', m.group(1)).group(1)
+        tail = s[m.end():m.end() + 700]
+        if 'name="business"' in tail:
+            continue                      # the form already has its own business field (made required below)
+        out.append('\n' + BIZ.format(i=base))
+    out.append(s[pos:]); s = ''.join(out)
+    if s != o: f.write_text(s, encoding='utf-8')
+    print(rel, 'business field added' if s != o else 'business: nothing to add')
+
+edit('index.html', [
+ ('<label for="f-business">Business Name</label>\n          <input id="f-business" name="business" type="text" autocomplete="organization">',
+  '<label for="f-business">Business Name <span class="req" aria-hidden="true">*</span></label>\n          <input id="f-business" name="business" type="text" autocomplete="organization" required>'),
+ ('''      if(!target){
+        urlEl.focus();''','''      if(!business){
+        businessEl.focus();
+        status.textContent = "Please enter your business name.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!target){
+        urlEl.focus();'''),
+ ('      var phoneEl = document.getElementById("au-phone");\n','      var phoneEl = document.getElementById("au-phone"), businessEl = document.getElementById("au-name-business");\n'),
+ ('phone = phoneEl.value.trim();\n','phone = phoneEl.value.trim(), business = businessEl.value.trim();\n'),
+ ('          phone: phone,\n          url: target,','          phone: phone,\n          business: business,\n          url: target,'),
+])
+edit('book.html', [('lastName:f.lastName.value.trim().slice(0,40),email:em,','lastName:f.lastName.value.trim().slice(0,40),business:f.business.value.trim().slice(0,100),email:em,')])
+
+# ---- rewards side ----
+edit('rewards.html', [
+ ('''            <label for="r-name">Name <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required>''',
+  '''            <label for="r-name-first">First name <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40">
+          </div>
+          <div class="field">
+            <label for="r-name-last">Last name <span class="req" aria-hidden="true">*</span></label>
+            <input id="r-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40">'''),
+ ('<label for="r-phone">Phone (optional)</label>','<label for="r-phone">Phone <span class="req" aria-hidden="true">*</span></label>'),
+ ('<input id="r-phone" name="phone" type="tel" autocomplete="tel">','<input id="r-phone" name="phone" type="tel" autocomplete="tel" required>'),
+ ('    var name = document.getElementById("r-name").value.trim();','    var name = (document.getElementById("r-name-first").value.trim() + " " + document.getElementById("r-name-last").value.trim()).trim();'),
+ ('''<div class="field"><label for="w-name">Name</label><input id="w-name" type="text" autocomplete="name"></div>' +''',
+  '''<div class="field"><label for="w-first">First name <span class="req" aria-hidden="true">*</span></label><input id="w-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div>' +
+      '<div class="field"><label for="w-last">Last name <span class="req" aria-hidden="true">*</span></label><input id="w-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40"></div>' +'''),
+ ('''<input id="w-email" type="email" autocomplete="email" required></div>' +''',
+  '''<input id="w-email" name="email" type="email" autocomplete="email" required></div>' +
+      '<div class="field"><label for="w-phone">Phone <span class="req" aria-hidden="true">*</span></label><input id="w-phone" name="phone" type="tel" autocomplete="tel" required></div>' +'''),
+ ('name: document.getElementById("w-name").value.trim(), email: email,','name: (document.getElementById("w-first").value.trim() + " " + document.getElementById("w-last").value.trim()).trim(), phone: document.getElementById("w-phone").value.trim(), email: email,'),
+])
+edit('join-restaurant.html', [
+ ('''            <label for="j-name">Your name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-name" name="name" type="text" autocomplete="name" required>''',
+  '''            <label for="j-name-first">First name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40">
+          </div>
+          <div class="field">
+            <label for="j-name-last">Last name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40">'''),
+ ('<label for="j-phone">Phone <span class="opt">(optional)</span></label>','<label for="j-phone">Phone <span class="req" aria-hidden="true">*</span></label>'),
+ ('<input id="j-phone" name="phone" type="tel" autocomplete="tel">','<input id="j-phone" name="phone" type="tel" autocomplete="tel" required>'),
+ ('    var name = $("j-name").value.trim();','    var first = $("j-name-first").value.trim(), last = $("j-name-last").value.trim(), name = (first + " " + last).trim();'),
+ ('    if (!name) { fail("Please enter your name.", $("j-name")); return; }','    if (!first) { fail("Please enter your first name.", $("j-name-first")); return; }\n    if (!last) { fail("Please enter your last name.", $("j-name-last")); return; }'),
+ ('''    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) { fail("Please enter a valid email.", $("j-email")); return; }''',
+  '''    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) { fail("Please enter a valid email.", $("j-email")); return; }
+    if (($("j-phone").value.replace(/\\D/g, "")).length < 7 || ($("j-phone").value.replace(/\\D/g, "")).length > 15) { fail("Please enter a phone number we can reach you on (with area code).", $("j-phone")); return; }'''),
+ ('      name: name,\n      email: email,\n      phone: $("j-phone").value.trim(),','      name: name,\n      firstName: first,\n      lastName: last,\n      email: email,\n      phone: $("j-phone").value.trim(),'),
+])
+edit('rewards-privacy.html', [("your name, email address and, if you choose to give it, your phone number","your name, email address and phone number")])
+print('phase 2 done')

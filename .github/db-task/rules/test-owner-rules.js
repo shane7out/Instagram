@@ -668,6 +668,8 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('key leads: a visitor cannot create under a different key_leads child', 'anon', 'PUT', '/key_leads/other', { a: 1 }, false);
   await t('key leads: a signed-in stranger cannot edit a lead', 'other', 'PATCH', '/key_leads/leads/L1', { email: 'evil@example.com' }, false);
   await t('key leads: a lead with first and last name is accepted', 'anon', 'POST', '/key_leads/leads', { source: 'law-landing', name: 'Pat Example', firstName: 'Pat', lastName: 'Example', email: 'pat@example.com', phone: '(702) 555-0142' }, true);
+  await t('key leads: a lead with a business name is accepted', 'anon', 'POST', '/key_leads/leads', { source: 'law-landing', name: 'Pat Example', business: 'Example Diner', email: 'pat@example.com' }, true);
+  await t('key leads: a 300-character business name is refused', 'anon', 'POST', '/key_leads/leads', { source: 'law-landing', business: bigStr(300) }, false);
   await t('key leads: a 200-character first name is refused', 'anon', 'POST', '/key_leads/leads', { source: 'law-landing', firstName: bigStr(200) }, false);
   await t('key leads: a last name that is not text is refused', 'anon', 'POST', '/key_leads/leads', { source: 'law-landing', lastName: 12345 }, false);
   await t('key leads: the owner can read the leads', 'owner', 'GET', '/key_leads/leads', undefined, true);

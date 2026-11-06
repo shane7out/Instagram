@@ -46,13 +46,14 @@
     });
   }
 
-  // Shared rules for every lead form that has First name / Last name fields: first name, last name, email and phone are
-  // all required. Runs before the form's own handler and stops the send, saying which field to fix.
+  // Shared rules for every lead form that has First name / Last name fields: first name, last name, business name (where the form has the field), email and
+  // phone are all required. Runs before the form's own handler and stops the send, saying which field to fix.
   function phoneOk(v) { var d = String(v || '').replace(/\D/g, ''); return d.length >= 7 && d.length <= 15; }
   function emailOk(v) { return /^\S+@\S+\.\S+$/.test(String(v || '').trim()); }
   function problem(f) {
     var chk = [['firstName', function (v) { return !!v.trim(); }, 'Please enter your first name.'],
                ['lastName', function (v) { return !!v.trim(); }, 'Please enter your last name.'],
+               ['business', function (v) { return !!v.trim(); }, 'Please enter your business name.'],
                ['email', emailOk, 'Please enter a valid email.'],
                ['phone', phoneOk, 'Please enter a phone number we can reach you on (with area code).']];
     for (var i = 0; i < chk.length; i++) {

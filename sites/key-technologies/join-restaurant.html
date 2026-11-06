@@ -287,8 +287,12 @@
             <input id="j-restaurant" name="restaurant" type="text" autocomplete="organization" required>
           </div>
           <div class="field">
-            <label for="j-name">Your name <span class="req" aria-hidden="true">*</span></label>
-            <input id="j-name" name="name" type="text" autocomplete="name" required>
+            <label for="j-name-first">First name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40">
+          </div>
+          <div class="field">
+            <label for="j-name-last">Last name <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40">
           </div>
           <div class="field">
             <label for="j-role">Your role</label>
@@ -305,8 +309,8 @@
             <input id="j-email" name="email" type="email" autocomplete="email" required>
           </div>
           <div class="field">
-            <label for="j-phone">Phone <span class="opt">(optional)</span></label>
-            <input id="j-phone" name="phone" type="tel" autocomplete="tel">
+            <label for="j-phone">Phone <span class="req" aria-hidden="true">*</span></label>
+            <input id="j-phone" name="phone" type="tel" autocomplete="tel" required>
           </div>
           <div class="field">
             <label for="j-ig">Restaurant Instagram handle <span class="opt">(optional)</span></label>
@@ -409,12 +413,14 @@
   form.addEventListener("submit", function(e){
     e.preventDefault();
     var restaurant = $("j-restaurant").value.trim();
-    var name = $("j-name").value.trim();
+    var first = $("j-name-first").value.trim(), last = $("j-name-last").value.trim(), name = (first + " " + last).trim();
     var email = $("j-email").value.trim();
     if (!restaurant) { fail("Please enter your restaurant name.", $("j-restaurant")); return; }
-    if (!name) { fail("Please enter your name.", $("j-name")); return; }
+    if (!first) { fail("Please enter your first name.", $("j-name-first")); return; }
+    if (!last) { fail("Please enter your last name.", $("j-name-last")); return; }
     if (!email) { fail("Please enter your email.", $("j-email")); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fail("Please enter a valid email.", $("j-email")); return; }
+    if (($("j-phone").value.replace(/\D/g, "")).length < 7 || ($("j-phone").value.replace(/\D/g, "")).length > 15) { fail("Please enter a phone number we can reach you on (with area code).", $("j-phone")); return; }
     if (!$("j-agree").checked) { fail("Please tick the box to confirm before sending.", $("j-agree")); return; }
 
     // Honeypot: real people never see this field. Pretend success, send nothing.
@@ -423,6 +429,8 @@
     var data = {
       source: "lvr-restaurant-join",
       name: name,
+      firstName: first,
+      lastName: last,
       email: email,
       phone: $("j-phone").value.trim(),
       restaurant: restaurant,
