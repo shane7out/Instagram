@@ -7,6 +7,20 @@ def e(file, path, title, desc, name, h2, steps, before, faq):
 D = lambda slug: ('key-platform/demos/%s.html' % slug, 'key-platform/demos/%s.html' % slug)
 
 MORE = {
+ 'business-dashboards': e(*D('business-dashboards'),
+  title='Business Dashboard Demo | Key Technologies.si',
+  desc='Try a demo business dashboard for restaurants, dental and medical offices, law firms, chiropractors and specialists: sales or visits, busiest times and what needs attention. Made-up data.',
+  name='Business dashboards and suites',
+  h2='How a business dashboard works',
+  steps=['We start with the questions you ask every day: how are sales or visits, what is selling, what needs attention.',
+         'The dashboard is built around the systems you already use, such as your point-of-sale system or practice software, with the connection set up with you.',
+         'You see today, this week and this month on one screen, compared with the period before.',
+         'Alerts point to what needs a person: a slow day, a missed call, a review waiting for a reply.'],
+  before='A dashboard is only as good as the data behind it, so we begin with what you already record and keep the first version small. Which systems can be connected depends on the systems you use. Sensitive information, such as patient or client details, is kept out unless you decide it belongs and the privacy side is checked.',
+  faq=[('Can it connect to my point-of-sale or practice software?','Often yes, and we set the connection up with you. What is possible depends on the system you use, so we check that first.'),
+       ('Is this for restaurants only?','No. The demo shows restaurants, dental and medical offices, law firms, chiropractors and specialists, and the same idea fits other businesses.'),
+       ('Are the numbers in this demo real?','No. Every business and number here is made up and runs in your browser.'),
+       ('Do I have to buy everything at once?','No. Many businesses start with one dashboard and add more later.')]),
  'ai-strategy': e(*D('ai-strategy'),
   title='AI Strategy for Small Business: Find Where AI Pays Off | Key Technologies.si',
   desc='Try a demo that sorts your business tasks into good fits for AI, tasks to pilot first and work to keep with a person. Sample data, and honest about where AI does not help yet.',

@@ -6,7 +6,7 @@ shows which field is missing; the combined "name" is still saved so the lead lis
 NOT touched on purpose: the LVR forms (rewards sign-up, join-restaurant): that is the rewards/deal side, left alone."""
 import re, pathlib
 SITE = pathlib.Path('sites/key-technologies')
-PAGES = ['index.html','law.html','medical-dental.html','real-estate.html','ecommerce.html','restaurants.html','book.html','key-platform/partners.html']
+PAGES = ['index.html','law.html','medical-dental.html','real-estate.html','ecommerce.html','restaurants.html','chiropractors-specialists.html','book.html','key-platform/partners.html']
 ROW = ('<div class="name-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
        '<div class="field"><label for="{i}-first">First name <span class="req" aria-hidden="true">*</span></label>'
        '<input id="{i}-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div>'

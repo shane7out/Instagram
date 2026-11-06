@@ -96,7 +96,7 @@
     else if (/key-platform\/demos\/([a-z0-9-]+)\.html/.test(h)) name = 'click:demo:' + RegExp.$1;
     else if (/key-platform\/(voice|email)/.test(h)) name = 'click:demo:' + RegExp.$1;
     else if (/^https?:\/\//i.test(h) && a.hostname && a.hostname !== loc.hostname) name = 'click:out:' + a.hostname.replace(/^www\./, '');
-    else if (/(^|\/)(restaurants|law|real-estate|medical-dental|ecommerce|las-vegas|languages)\.html/.test(h)) name = 'click:page:' + h.replace(/^.*\//, '').replace(/\.html.*$/, '');
+    else if (/(^|\/)(restaurants|law|real-estate|medical-dental|chiropractors-specialists|ecommerce|las-vegas|languages)\.html/.test(h)) name = 'click:page:' + h.replace(/^.*\//, '').replace(/\.html.*$/, '');
     if (!name || seen[name]) return;
     seen[name] = 1;
     event('c', name);

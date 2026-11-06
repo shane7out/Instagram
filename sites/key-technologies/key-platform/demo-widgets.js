@@ -277,4 +277,100 @@ T.points=function(root){
  q('#pq1',root).oninput=function(){var v=+this.value,s=Math.round(v*.2);q('#pql',root).textContent=v;q('#pq2',root).textContent=s;q('#pq3',root).textContent=v-s};
  setBal();
 };
+/* ---------- 00 Business Dashboards & Suites ---------- */
+T.dashboards=function(root){
+ // Every business, number and name below is made up. The numbers are generated in the browser from a fixed seed.
+ var IND={
+  restaurant:{label:'Restaurant',biz:'Harbor Table',sub:'Fictional seafood restaurant',hours:[11,22],src:['Square','Clover','Toast','Otter','Reservations','Review sites','Phone calls'],
+   m:[['Net sales','money',4200,'sum'],['Checks','int',140,'sum'],['Average check','avg',0,'avg'],['Labor cost','pct',29,'avgdown'],['Comps and voids','pct',1.6,'avgdown'],['Online orders','pct',24,'avg']],
+   topTitle:'Top sellers',top:[['Fish tacos',31],['Harbor burger',24],['Lobster roll',17],['Caesar salad',15],['Chowder bowl',13]],
+   alerts:[['Watch','Friday labor is running above your 30% target.'],['Reply','3 new reviews are waiting for an answer.'],['Idea','Tuesday lunch is your quietest slot. A lunch special could fill it.'],['Good','Online orders are up this week.']]},
+  dental:{label:'Dental',biz:'Willow Dental',sub:'Fictional dental practice',hours:[8,17],src:['Practice software','Scheduling','Phone calls','Review sites','Recall lists'],
+   m:[['Production','money',6800,'sum'],['Appointments','int',26,'sum'],['New patients','int',3,'sum'],['No-show rate','pct',6,'avgdown'],['Chair use','pct',82,'avg'],['Open slots, next 7 days','int',9,'avgdown']],
+   topTitle:'Top procedures',top:[['Cleanings',34],['Exams and X-rays',26],['Fillings',18],['Crowns',12],['Whitening',10]],
+   alerts:[['Watch','No-shows are highest on Monday mornings.'],['Reply','2 review replies are waiting for approval.'],['Idea','14 patients are due for a recall reminder.'],['Good','Chair use is above last week.']]},
+  medical:{label:'Medical',biz:'Lakeside Family Medicine',sub:'Fictional family practice',hours:[8,17],src:['Practice software','Scheduling','Phone and text','Patient messages','Review sites'],
+   m:[['Visits','int',62,'sum'],['New patients','int',4,'sum'],['Collections','money',11800,'sum'],['Average wait','min',14,'avgdown'],['No-show rate','pct',7,'avgdown'],['Messages waiting','int',6,'avgdown']],
+   topTitle:'Top visit types',top:[['Annual physical',28],['Follow-up',24],['Sick visit',22],['Lab review',14],['Vaccination',12]],
+   alerts:[['Watch','Wednesday waits are running longer than the rest of the week.'],['Reply','6 patient messages need a staff reply today.'],['Idea','Send reminders earlier for Monday appointments.'],['Good','New patients are up this week.']]},
+  law:{label:'Law firm',biz:'Hart and Vale Law',sub:'Fictional law firm',hours:[8,18],src:['Intake forms','Phone and text','Calendar','Case software','Review sites'],
+   m:[['New inquiries','int',9,'sum'],['Consultations booked','int',5,'sum'],['Retainers signed','int',2,'sum'],['Average reply time','min',22,'avgdown'],['After-hours calls missed','int',3,'sumdown'],['Open pipeline','money',48000,'avg']],
+   topTitle:'Inquiries by practice area',top:[['Family law',30],['Estate planning',24],['Personal injury',20],['Business',16],['Immigration',10]],
+   alerts:[['Watch','3 after-hours calls came in with no answer.'],['Reply','4 new inquiries have not had a first reply.'],['Idea','Follow up with the 6 consultations that have not signed.'],['Good','Reply time is faster than last week.']]},
+  chiro:{label:'Chiropractic',biz:'Summit Chiropractic',sub:'Fictional chiropractic office',hours:[8,18],src:['Practice software','Scheduling','Phone and text','Review sites','Care-plan tracker'],
+   m:[['Visits','int',45,'sum'],['New patients','int',4,'sum'],['Revenue','money',4800,'sum'],['Care plans completed','pct',68,'avg'],['Cancellations','pct',8,'avgdown'],['New reviews','int',3,'sum']],
+   topTitle:'Top services',top:[['Adjustments',42],['Exams',20],['Therapy',16],['Massage',13],['Rehab',9]],
+   alerts:[['Watch','Care-plan completion dipped on Fridays.'],['Reply','2 new reviews are waiting for a reply.'],['Idea','8 patients stopped mid-plan. A check-in message could bring them back.'],['Good','New patients are up this week.']]},
+  specialist:{label:'Specialist',biz:'Cedar Specialty Clinic',sub:'Fictional specialty clinic',hours:[8,17],src:['Referral inbox','Scheduling','Practice software','Phone and fax-to-email','Review sites'],
+   m:[['Referrals received','int',12,'sum'],['Consults held','int',9,'sum'],['Procedures scheduled','int',6,'sum'],['Referral reply time','min',38,'avgdown'],['Revenue','money',14500,'sum'],['No-show rate','pct',5,'avgdown']],
+   topTitle:'Top referring offices',top:[['North Valley Primary Care',28],['Eastside Family Clinic',22],['Canyon Pediatrics',18],['Desert Internal Medicine',17],['Walk-in referrals',15]],
+   alerts:[['Watch','5 referrals have not been answered in 24 hours.'],['Reply','2 referring offices are waiting on records.'],['Idea','Thank the top referring office with a short summary of outcomes.'],['Good','Procedures scheduled are up this week.']]}
+ };
+ var ORDER=['restaurant','dental','medical','law','chiro','specialist'],RANGES=[['1','Today'],['7','7 days'],['30','30 days']];
+ var cur=ORDER[0],range='7';
+ try{var p=new URLSearchParams(location.search).get('i');if(p&&IND[p])cur=p}catch(e){}
+ function rng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+ function seedOf(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+ var DOW=[0.78,0.9,0.92,0.98,1.12,1.18,1.0];
+ function series(k){ // 60 days, oldest first
+  var d=IND[k],r=rng(seedOf(k)),out=[],i,j;
+  for(j=0;j<d.m.length;j++){var m=d.m[j],a=[];for(i=0;i<60;i++){var dow=(i+3)%7,v=m[2]*(0.82+0.36*r())*(m[1]==='pct'||m[1]==='min'?1:DOW[dow])*(1+i*0.0015);if(m[1]==='pct')v=Math.min(v,m[2]>=60?96:99);a.push(m[1]==='int'?Math.max(0,Math.round(v)):v)}out.push(a)}
+  return out}
+ function agg(a,from,to,mode){var s=0,n=to-from;for(var i=from;i<to;i++)s+=a[i];return(mode==='sum'||mode==='sumdown')?s:s/n}
+ function money(n,dec){return '$'+n.toLocaleString('en-US',{maximumFractionDigits:dec||0,minimumFractionDigits:dec||0})}
+ function fmt(type,v){return type==='money'?money(v):type==='pct'?(Math.round(v*10)/10)+'%':type==='min'?Math.round(v)+' min':type==='avg'?money(v,2):Math.round(v).toLocaleString('en-US')}
+ function delta(cur,prev,down){if(!prev)return '';var p=(cur-prev)/prev*100,good=down?p<=0:p>=0;return '<span class="kd-d '+(good?'ok':'bad')+'">'+(p>=0?'&#9650; ':'&#9660; ')+Math.abs(Math.round(p*10)/10)+'%</span>'}
+ root.innerHTML='<style>'+
+  '.kd-bar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.kd-bar button{min-height:44px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-dim);font:inherit;font-weight:700;font-size:14.5px;cursor:pointer}.kd-bar button[aria-pressed=true]{background:var(--key-blue);border-color:var(--key-blue);color:#0b1220}'+
+  '.kd-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:0 0 12px}.kd-head h3{margin:0;font-size:22px}.kd-head p{margin:2px 0 0;color:var(--ink-dim);font-size:14px}'+
+  '.kd-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 14px}.kd-k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px}.kd-k b{display:block;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}.kd-k strong{display:block;font-size:26px;line-height:1.15;margin:4px 0}.kd-d{font-size:13px;font-weight:700}.kd-d.ok{color:#3ddc97}.kd-d.bad{color:#ffb84d}.kd-k small{color:var(--ink-dim);font-size:12px}'+
+  '@media(max-width:600px){.kd-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kd-k{padding:10px 11px}.kd-k strong{font-size:21px}.kd-k b{font-size:11px}}'+
+  '.kd-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start}@media(max-width:860px){.kd-grid{grid-template-columns:1fr}}'+
+  '.kd-chart{width:100%;height:150px;display:block}.kd-leg{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-dim);margin-top:4px}'+
+  '.kd-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14.5px}.kd-row:last-child{border:0}.kd-bt{height:5px;background:#17212c;border-radius:4px;margin-top:4px}.kd-bt i{display:block;height:5px;border-radius:4px;background:var(--key-blue)}'+
+  '.kd-al{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}.kd-al:last-child{border:0}.kd-t{flex:none;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:2px 9px;border:1px solid var(--line);color:var(--ink-dim)}.kd-t.Watch{color:#ffb84d;border-color:#ffb84d}.kd-t.Good{color:#3ddc97;border-color:#3ddc97}.kd-t.Reply{color:#7cc6ff;border-color:#7cc6ff}.kd-t.Idea{color:#d6b3ff;border-color:#d6b3ff}'+
+  '.kd-src{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}.kd-src span{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink)}'+
+  '</style>'+
+  '<div class="kd-bar" role="group" aria-label="Choose a business type">'+ORDER.map(function(k){return '<button type="button" data-i="'+k+'" aria-pressed="'+(k===cur)+'">'+esc(IND[k].label)+'</button>'}).join('')+'</div>'+
+  '<div class="panel"><div class="kd-head"><div><h3 id="kdName"></h3><p id="kdSub"></p></div><div class="kd-bar" role="group" aria-label="Time range" style="margin:0">'+RANGES.map(function(r){return '<button type="button" data-r="'+r[0]+'" aria-pressed="'+(r[0]===range)+'">'+r[1]+'</button>'}).join('')+'</div></div>'+
+  '<div class="kd-kpis" id="kdK"></div>'+
+  '<div class="kd-grid"><div><div class="panel" style="margin:0"><div class="panel-heading"><h3 id="kdCt">Trend</h3>'+tag('Made-up numbers','outline')+'</div><div id="kdChart"></div><div class="kd-leg" id="kdLeg"></div></div></div>'+
+  '<div class="panel" style="margin:0"><h3 id="kdTt">Top</h3><div id="kdTop"></div></div></div>'+
+  '<div class="kd-grid" style="margin-top:14px"><div class="panel" style="margin:0"><h3>What needs attention</h3><div id="kdAl"></div></div>'+
+  '<div class="panel" style="margin:0"><h3>Where the numbers come from</h3><p class="muted" style="margin:6px 0 0;font-size:14px">Examples of systems a dashboard like this can be built around. Real connections are set up with you and depend on the systems you use.</p><div class="kd-src" id="kdSrc"></div></div></div></div>';
+ function draw(){
+  var d=IND[cur],S=series(cur),days=+range,N=days,end=60,i,j;
+  q('#kdName',root).textContent=d.biz;q('#kdSub',root).textContent=d.sub+'. Every number is made up.';
+  // sales (or the main money line) per day
+  var main=0;for(j=0;j<d.m.length;j++){if(d.m[j][1]==='money'){main=j;break}}if(d.m[0][1]!=='money')main=0;
+  var kp='';
+  d.m.forEach(function(m,j){
+   var a=S[j],type=m[1],mode=m[3],v,pv;
+   if(type==='avg'){var sa=S[0],ca=S[1];v=agg(sa,end-N,end,'sum')/Math.max(1,agg(ca,end-N,end,'sum'));pv=agg(sa,end-2*N,end-N,'sum')/Math.max(1,agg(ca,end-2*N,end-N,'sum'))}
+   else{v=agg(a,end-N,end,mode);pv=agg(a,end-2*N,end-N,mode)}
+   var down=/down/.test(mode);
+   kp+='<div class="kd-k"><b>'+esc(m[0])+'</b><strong>'+fmt(type,v)+'</strong>'+delta(v,pv,down)+' <small>vs prior</small></div>'});
+  q('#kdK',root).innerHTML=kp;
+  // chart: hourly for Today, daily otherwise
+  var vals=[],labels=[],mt=d.m[main];
+  if(N===1){var h0=d.hours[0],h1=d.hours[1],r2=rng(seedOf(cur+'h')),total=S[main][59],w=[],tw=0;
+   for(i=h0;i<h1;i++){var peak=(cur==='restaurant')?(i===12||i===13||i===19||i===20?1.9:(i>=18?1.3:0.8)):(i===9||i===10||i===14?1.5:0.9);var x=peak*(0.7+0.6*r2());w.push(x);tw+=x}
+   w.forEach(function(x,k){vals.push(total*x/tw)});labels=[h0+':00',h1+':00'];q('#kdCt',root).textContent=(mt[1]==='money'?mt[0]:mt[0])+' by hour, today'}
+  else{for(i=end-N;i<end;i++)vals.push(S[main][i]);labels=[N+' days ago','today'];q('#kdCt',root).textContent=mt[0]+' by day'}
+  var mx=Math.max.apply(null,vals.concat([1])),W=1000,H=150,bw=W/vals.length,bars=vals.map(function(v,k){var h=Math.round(v/mx*(H-6));return '<rect x="'+(k*bw+2)+'" y="'+(H-h)+'" width="'+Math.max(2,bw-4)+'" height="'+h+'" rx="3" fill="#00a8e1"><title>'+fmt(mt[1],v)+'</title></rect>'}).join('');
+  q('#kdChart',root).innerHTML='<svg class="kd-chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="'+esc(mt[0])+' chart, highest '+fmt(mt[1],mx)+'">'+bars+'</svg>';
+  q('#kdLeg',root).innerHTML='<span>'+esc(labels[0])+'</span><span>highest '+fmt(mt[1],mx)+'</span><span>'+esc(labels[1])+'</span>';
+  q('#kdTt',root).textContent=d.topTitle;
+  var tot=0;d.top.forEach(function(t){tot+=t[1]});
+  q('#kdTop',root).innerHTML=d.top.map(function(t){return '<div class="kd-row"><div style="flex:1"><span>'+esc(t[0])+'</span><div class="kd-bt"><i style="width:'+Math.round(t[1]/tot*100*2.2)+'%"></i></div></div><b>'+Math.round(t[1]/tot*100)+'%</b></div>'}).join('');
+  q('#kdAl',root).innerHTML=d.alerts.map(function(a){return '<div class="kd-al"><span class="kd-t '+a[0]+'">'+a[0]+'</span><span>'+esc(a[1])+'</span></div>'}).join('');
+  q('#kdSrc',root).innerHTML=d.src.map(function(s){return '<span>'+esc(s)+'</span>'}).join('');
+  qa('[data-i]',root).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-i')===cur?'true':'false')});
+  qa('[data-r]',root).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-r')===range?'true':'false')});
+ }
+ on(root,'[data-i]','click',function(){cur=this.getAttribute('data-i');draw()});
+ on(root,'[data-r]','click',function(){range=this.getAttribute('data-r');draw()});
+ draw();
+};
+
 })();

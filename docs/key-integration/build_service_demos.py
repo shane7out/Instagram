@@ -30,6 +30,7 @@ BURGER = _hub[_a:_hub.index('</script>', _a) + 9]
 
 # slug, number, title, tagline, widget, heading, how-to, bullets, section anchor on main page
 S = [
+ ('business-dashboards', '00', 'Business Dashboards & Suites', 'Your sales, customers, busiest hours, reviews and follow-ups on one screen, built around the systems you already use.', 'dashboards', 'Pick a business and explore its dashboard', 'Choose a type of business, then a time range. Every business and number here is made up.', ['A dashboard built around your business: sales or visits, busiest times, what is selling, and what needs attention', 'Built around the systems you already use, with real connections set up with you', 'Restaurants, dental and medical offices, law firms, chiropractors, specialists and more', 'Start with one dashboard or a full suite, and add more as you grow']),
  ('content-creators', '01', 'Digital Content Creators', 'AI/SI creators with a consistent brand voice that make posts around the clock.', 'content', 'Make a post for a fictional bakery', 'Pick a voice and a post type, then decide how much freedom the creator has.', ['A creator built around your brand, products and tone', 'Posts, captions, graphics and short video on a schedule', 'You choose: publish on its own, or wait for your approval', 'AI-made content is labeled wherever a platform or the law asks']),
  ('ai-strategy', '02', 'AI/SI Strategy', 'Find where AI/SI pays off, and where it can not yet.', 'fit', 'Where would AI/SI help most?', 'Tick the tasks your business does and set the hours. The table sorts them into good fit, pilot first, or keep with a person.', ['A plain-language review of how your business actually works', 'A ranked list of where AI/SI helps and where it does not', 'Effort goes where it pays off, not where it sounds exciting']),
  ('business-automation', '03', 'Business Automation', 'Connect steps that run by hand today so they run on their own.', 'workflow', 'Build and run a workflow', 'Choose a trigger and the steps that should follow. Try making a step fail to see how it is handled.', ['Workflows that run on their own schedule and triggers', 'Failed steps are retried, then handed to a person with the details', 'Built to work in the background, not when someone remembers']),
@@ -67,7 +68,7 @@ def page(i, s):
     nav += ('<a href="%s.html">&larr; %s</a>' % (prev[0], prev[2])) if prev else '<span></span>'
     nav += ('<a href="%s.html">%s &rarr;</a>' % (nxt[0], nxt[2])) if nxt else '<a href="../index.html#library">All demos &rarr;</a>'
     nav += '</div>'
-    label = 'Service %s' % num if num != 'P' else 'LVR Rewards'
+    label = ('New' if num == '00' else 'Service %s' % num) if num != 'P' else 'LVR Rewards'
     cta = '<a class="btn btn-primary" href="../../index.html#contact">Talk to us about this</a>' if num != 'P' else '<a class="btn btn-primary" href="../../rewards.html">Join LVR Rewards</a>'
     ghost = '<a class="btn btn-ghost" href="../../index.html#services">See all services</a>' if num != 'P' else '<a class="btn btn-ghost" href="../index.html#library">All demos</a>'
     body = '''<section class="page active" style="display:block;padding-top:6px">
@@ -109,7 +110,7 @@ print('wrote', len(S), 'pages')
 
 # machine-readable list for the hub and the homepage
 import json
-CAT = {'01': 'Marketing & Content', '09': 'Marketing & Content', '14': 'Marketing & Content',
+CAT = {'00': 'Dashboards & Reporting', '01': 'Marketing & Content', '09': 'Marketing & Content', '14': 'Marketing & Content',
        '13': 'Customers & Communication', '16': 'Customers & Communication', '06': 'Customers & Communication', '15': 'Customers & Communication', '17': 'Customers & Communication',
        '02': 'AI Systems & Strategy', '04': 'AI Systems & Strategy', '08': 'AI Systems & Strategy', '11': 'AI Systems & Strategy', '22': 'AI Systems & Strategy',
        '03': 'Operations & Sales', '05': 'Operations & Sales', '07': 'Operations & Sales',

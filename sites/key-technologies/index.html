@@ -413,7 +413,7 @@
   .stat-label{margin-top:8px;font-size:14.5px;color:var(--ink-dim);}
 
   /* ---- industries ---- */
-  .industry-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+  .industry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
   @media (max-width:1100px){.industry-grid{grid-template-columns:repeat(3,1fr);}}
   @media (max-width:900px){.industry-grid{grid-template-columns:1fr 1fr;}.industry-grid .industry-card:last-child:nth-child(odd){grid-column:1/-1;}}
   @media (max-width:560px){.industry-grid{grid-template-columns:1fr;}}
@@ -628,7 +628,7 @@
   <section class="wrap trust-band" aria-label="Why Key Technologies">
     <ul class="trust-grid">
       <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
-      <li class="reveal"><b>23 services</b><span>each with a live demo you can try</span></li>
+      <li class="reveal"><b>24 services</b><span>each with a live demo you can try</span></li>
       <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don't need</span></li>
       <li class="reveal"><b>Worldwide</b><span>In person around our home markets, online anywhere</span></li>
     </ul>
@@ -650,7 +650,7 @@
       <a class="sw-card reveal" href="key-platform/demos/reviews-reputation.html"><img src="key-platform/demos/thumbs/reviews-reputation.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the review management demo"><span class="sw-body"><h3>Review management</h3><p>Drafted replies in your voice, with bad reviews flagged for you first.</p><span class="go">Try the demo &rarr;</span></span></a>
       <a class="sw-card reveal" href="key-platform/demos/ai-agents.html"><img src="key-platform/demos/thumbs/ai-agents.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the AI agents demo"><span class="sw-body"><h3>AI agents</h3><p>An assistant that does one job, within limits you set.</p><span class="go">Try the demo &rarr;</span></span></a>
     </div>
-    <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library" data-tap>See all 24 demos</a></p>
+    <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library" data-tap>See all 25 demos</a></p>
   </section>
 
   <!-- ============ SERVICES ============ -->
@@ -660,8 +660,21 @@
       <h2>Where Key Technologies can help</h2>
       <p>Every engagement starts with a business problem, not a tool. Technology comes second.</p>
     </div>
-    <div class="demo-strip"><span><span class="demo-chip">Demos</span>&nbsp; Every service below has a live demo, with clearly labeled fictional data.</span><a href="key-platform/index.html">Open all 24 demos &rarr;</a></div>
+    <div class="demo-strip"><span><span class="demo-chip">Demos</span>&nbsp; Every service below has a live demo, with clearly labeled fictional data.</span><a href="key-platform/index.html">Open all 25 demos &rarr;</a></div>
     <div class="service-grid">
+      <article class="service-card reveal">
+        <span class="num">NEW</span>
+        <h3>Business Dashboards &amp; Suites</h3>
+        <p>Your sales, customers, busiest hours, reviews and follow-ups on one screen. We build a dashboard
+          suite around the systems you already use, for restaurants, dental and medical practices, law firms,
+          chiropractors, specialists and just about any other business.</p>
+        <details class="more"><summary>Read more</summary><p>For a restaurant that means sales and covers from
+          the point-of-sale and ordering systems you run, such as Square, Clover, Toast or Otter, next to
+          reservations, reviews and phone calls. For a practice it means visits, new patients, no-shows and
+          recall follow-ups. Real connections are set up with you and depend on the systems you use. Start
+          with one dashboard and add more as it earns its place.</p></details>
+              <a class="demo-link" href="key-platform/demos/business-dashboards.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
+      </article>
       <article class="service-card reveal">
         <span class="num">01</span>
         <h3>Digital Content Creators</h3>
@@ -899,7 +912,7 @@
     <div class="industry-grid">
       <a class="industry-card" href="restaurants.html">
         <h3>Restaurants</h3>
-        <p>Guest CRM, phone and text answering, review replies and social content, so a call or message never goes unanswered.</p>
+        <p>Guest CRM, phone and text answering, review replies and a sales dashboard, so a call or message never goes unanswered.</p>
         <span class="arrow">Learn more &rarr;</span>
       </a>
       <a class="industry-card" href="real-estate.html">
@@ -909,12 +922,17 @@
       </a>
       <a class="industry-card" href="medical-dental.html">
         <h3>Medical, Dental &amp; Aesthetic</h3>
-        <p>Patient CRM, booking automation and review management, built on real security fundamentals.</p>
+        <p>Patient CRM, booking automation, review management and a practice dashboard, built on real security fundamentals.</p>
         <span class="arrow">Learn more &rarr;</span>
       </a>
       <a class="industry-card" href="law.html">
         <h3>Law Firms</h3>
-        <p>Intake CRM and automation so no lead sits untouched before it becomes a retainer.</p>
+        <p>Intake CRM, automation and a firm dashboard so no lead sits untouched before it becomes a retainer.</p>
+        <span class="arrow">Learn more &rarr;</span>
+      </a>
+      <a class="industry-card" href="chiropractors-specialists.html">
+        <h3>Chiropractors &amp; Specialists</h3>
+        <p>Patient CRM, appointment reminders and a practice dashboard, so fewer calls are missed and fewer slots sit empty.</p>
         <span class="arrow">Learn more &rarr;</span>
       </a>
       <a class="industry-card" href="ecommerce.html">
@@ -1706,6 +1724,18 @@
       if(!email){
         emailEl.focus();
         status.textContent = "Please enter your email.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!phone){
+        phoneEl.focus();
+        status.textContent = "Please enter your phone number.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!business){
+        businessEl.focus();
+        status.textContent = "Please enter your business name.";
         status.className = "form-status err";
         return;
       }
