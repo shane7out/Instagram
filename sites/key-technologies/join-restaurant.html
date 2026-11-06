@@ -283,7 +283,7 @@
         <form id="joinForm" novalidate>
           <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required. This only tells us you are interested. It is not a sign-up or a contract.</p>
           <div class="field">
-            <label for="j-restaurant">Restaurant name <span class="req" aria-hidden="true">*</span></label>
+            <label for="j-restaurant">Company name <span class="req" aria-hidden="true">*</span></label>
             <input id="j-restaurant" name="restaurant" type="text" autocomplete="organization" required>
           </div>
           <div class="field">
@@ -415,7 +415,7 @@
     var restaurant = $("j-restaurant").value.trim();
     var first = $("j-name-first").value.trim(), last = $("j-name-last").value.trim(), name = (first + " " + last).trim();
     var email = $("j-email").value.trim();
-    if (!restaurant) { fail("Please enter your restaurant name.", $("j-restaurant")); return; }
+    if (!restaurant) { fail("Please enter your company name.", $("j-restaurant")); return; }
     if (!first) { fail("Please enter your first name.", $("j-name-first")); return; }
     if (!last) { fail("Please enter your last name.", $("j-name-last")); return; }
     if (!email) { fail("Please enter your email.", $("j-email")); return; }
