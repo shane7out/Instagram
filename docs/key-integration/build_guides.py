@@ -747,6 +747,57 @@ G9['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G9'] = G9
 
+# ================= Guide 10: how we work =================
+G10 = dict(slug='how-we-work', date='2026-11-06',
+  title='How Key Technologies Works With a Business | Key Technologies.si',
+  desc='What happens from the first free call to a working system: how Key Technologies starts small, sets permission levels, and keeps you in control.',
+  h1='How Key Technologies works with a business, step by step',
+  short='What happens from the first free call to a working system, and how you stay in control at every step.')
+G10['faq'] = [
+ ('Is the first call really free?', 'Yes. The first call is a free, no-obligation conversation about your business and where AI/SI could help. If it is not a fit, we will say so.'),
+ ('Do I have to change the software I already use?', 'Not necessarily. We look at what you already use first. Some tools can be connected, some are better left alone, and occasionally replacing one is the better fit. That is worked out with you, not assumed.'),
+ ('Who owns my accounts and customer information?', 'You do. Your accounts, customer lists and systems stay in your name. Key Technologies does not host or own them. Doing the work does mean trusting us with real access, the same as hiring any contractor, so we limit access to what a job needs.'),
+ ('Will AI act on its own without my approval?', 'Only as much as you allow. Each assistant runs inside permission levels you set: read-only, approval required, or fully on its own. Anything sensitive can wait for a person.'),
+ ('Where do we start?', 'With one small, useful piece, such as answering missed calls, following up with new inquiries, or a dashboard for the numbers you check every day. You add more once the first piece is working.')]
+G10['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('How we work','')])}
+<h1>{esc(G10['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 6, 2026</p>
+<div class="tldr"><b>Short answer:</b> we start with a free conversation, pick one small useful piece, build it around how your business already works, keep a person in charge of anything important, and only then add more.</div>
+
+<h2>The steps</h2>
+<ol>
+<li><b>A free call.</b> Thirty minutes about your business: what takes time, where customers or leads slip through, and what you already use. No obligation, and no sales pitch about tools you do not need.</li>
+<li><b>A plain-language look at where AI/SI helps and where it does not.</b> Some jobs are a good fit, some should start as a small trial, and some should stay with a person. You get an honest answer, including &ldquo;not yet.&rdquo;</li>
+<li><b>One small piece first.</b> Common starting points are answering missed calls and texts, following up with new inquiries, replies to reviews, or a dashboard for the numbers you check every day.</li>
+<li><b>Built around your business.</b> We work from how you actually operate, using the systems you already have where that makes sense, instead of fitting you to a generic template.</li>
+<li><b>Permission levels you set.</b> Each assistant is read-only, needs your approval, or runs on its own. You decide how much freedom it gets, and anything sensitive can wait for a person.</li>
+<li><b>Check it before relying on it.</b> You see what it does on real examples first. AI-made content is labeled wherever a platform or the law asks for it.</li>
+<li><b>Add more when it earns its place.</b> Once the first piece works, we add the next one. You can stop at any step.</li>
+</ol>
+
+<h2>What stays yours</h2>
+<p>Your accounts, customer information and systems stay in your name. Key Technologies does not host or own them. Doing the work means trusting us with real access, the same as hiring any contractor, so access is limited to what each job needs.</p>
+
+<h2>What we will not do</h2>
+<ul>
+<li>Promise results we cannot show, or invent numbers, clients or reviews.</li>
+<li>Recommend a tool just because it is new.</li>
+<li>Let an AI send something sensitive without a person approving it, unless you have chosen that.</li>
+</ul>
+
+<h2>See it first</h2>
+<p>Every service has a live demo with made-up data, so you can see how it behaves before you talk to anyone. Start with the <a href="../key-platform/index.html">demo library</a>, or read our plain-English guides on <a href="what-is-ai-si.html">what AI/SI is</a> and <a href="choose-an-ai-consultant.html">how to choose an AI consultant</a>.</p>
+
+{faq_html(G10['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call. Tell us what takes the most time in your week and we will tell you honestly where AI/SI helps.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/index.html">Try the demos</a></div></div>
+{more([('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html'),('What a business dashboard should show (and what to leave off)','A plain guide to what belongs on a small-business dashboard, with examples.','business-dashboard-what-to-track.html')])}
+</article>"""
+GUIDES['G10'] = G10
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
