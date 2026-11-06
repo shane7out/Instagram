@@ -6,6 +6,7 @@ Last updated 2026-11-05. Honest note: nobody can promise rank #1. Ranking takes 
 - Every page has a unique title (60 characters or fewer), meta description, canonical address, social-share tags and structured data (Organization/Service/FAQ/Article/Breadcrumb/ContactPage).
 - Sitemap (42+ addresses, real dates), robots.txt, llms.txt (a plain summary for AI assistants), retired pages quietly redirected and kept out of the index.
 - NEW guides built to be the clear answer for the brand term: "What is AI/SI? A plain-English guide" and "How to choose an AI consultant: 10 questions to ask". Both are linked from the homepage, the guides page, the Las Vegas page, the sitemap and llms.txt.
+- Glossary guide "AI terms in plain English" (2026-11-06): about 19 short definitions (AI, AI/SI, LLM, agent, CRM, hallucination, RAG...), linked from the homepage guides row, the guides page, sitemap and llms.txt. Deliberately leaves out the word "token" (standing rule).
 - Restaurant page (the strongest vertical: Shane keeps watch on about 10,000 restaurants), Las Vegas page, languages page.
 - Visitor counter + Owner report (Sources tab shows which pages and sites bring visitors).
 
@@ -18,7 +19,7 @@ Last updated 2026-11-05. Honest note: nobody can promise rank #1. Ranking takes 
 6. Write or record one short answer a week (a post, a reel caption) that links to the matching guide.
 
 ## Claude's standing list (one item per check-in)
-- Content ideas, in order: "AI for law firms: what a person should still approve", "AI for medical and dental offices: privacy basics", "AI phone answering for restaurants" (no prices), Orange County beach pages (when Shane says go), a glossary page for AI terms, a "How we work" page.
+- Content ideas, in order: "AI for law firms: what a person should still approve", "AI for medical and dental offices: privacy basics", "AI phone answering for restaurants" (no prices), Orange County beach pages (when Shane says go), a "How we work" page.
 - Keep titles/descriptions honest and unique; no keyword stuffing; no made-up stats, clients, reviews or rankings.
 - Check Core Web Vitals (speed) after every change; keep images sized and compressed.
 - Re-run the generators in this order after any change: build_* scripts, add_home_link.py, tidy_nav.py, add_analytics.py (Home button and the counter come from the last two).

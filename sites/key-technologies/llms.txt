@@ -44,6 +44,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [AI for restaurants: 6 practical ways to save time](https://keytechnologies.si/guides/ai-for-restaurants.html): Six practical uses of AI in a restaurant, what it should and should not do, and a demo of each.
 - [What is AI/SI? A plain-English guide for business owners](https://keytechnologies.si/guides/what-is-ai-si.html): What AI and superintelligence mean, what AI can and cannot do for a small business today, and how to tell real help from hype.
 - [How to choose an AI consultant: 10 questions to ask](https://keytechnologies.si/guides/choose-an-ai-consultant.html): A plain checklist for small-business owners: ten questions to ask, what good answers sound like, and the warning signs.
+- [AI terms in plain English: a glossary for business owners](https://keytechnologies.si/guides/ai-terms-plain-english.html): Short, jargon-free definitions of the AI words business owners hear most, with a note on what each means for you.
 
 ## LVR Rewards (Las Vegas Restaurants)
 - [LVR Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.

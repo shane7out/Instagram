@@ -36,6 +36,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
   .byline{{font-size:14px;color:var(--ink-dim);margin-bottom:24px;}}
   .tldr{{background:var(--card);border:1px solid var(--key-blue);border-radius:14px;padding:18px 20px;margin:0 0 28px;font-size:17px;line-height:1.6;color:var(--ink);}}
   .tldr b{{color:#fff;}}
+  .glossary dt{{margin-top:18px;font-size:18px;color:#fff;}} .glossary dd{{margin:4px 0 0;color:var(--ink-dim);line-height:1.6;}}
   .guide h2{{font-size:clamp(23px,3.4vw,29px);margin:38px 0 10px;line-height:1.2;}}
   .guide h3{{font-size:19px;margin:22px 0 6px;}}
   .guide p,.guide li{{font-size:17px;line-height:1.7;color:var(--ink);}}
@@ -519,6 +520,50 @@ G5['body'] = f"""<article class="wrap guide">
 {more([('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html')])}
 </article>"""
 GUIDES['G5'] = G5
+
+# ================= Guide 6: AI glossary =================
+G6 = dict(slug='ai-terms-plain-english', date='2026-11-06',
+  title='AI Terms in Plain English: A Glossary | Key Technologies.si',
+  desc='A plain-English glossary of AI terms for business owners: AI, AI/SI, LLM, AI agent, automation, CRM, hallucination, prompt and more.',
+  h1='AI terms in plain English: a glossary for business owners',
+  short='Short, jargon-free definitions of the AI words business owners hear most, with a note on what each means for you.')
+TERMS = [
+ ('AI (artificial intelligence)', 'Software that can do tasks that normally need human judgment, such as writing, summarizing, answering questions, sorting messages or understanding speech.'),
+ ('AI/SI', 'Artificial Intelligence / Super Intelligence. Key Technologies uses it as its name for putting the most advanced AI available to work as a practical business tool. It is not a claim that superintelligence exists. See <a href="what-is-ai-si.html">What is AI/SI?</a>'),
+ ('Superintelligence', 'A hypothetical AI that is better than the best humans at almost every thinking task. It does not exist today.'),
+ ('AGI (artificial general intelligence)', 'A hypothetical AI as capable as a person across most tasks. It is a research goal, not a product you can buy today.'),
+ ('LLM (large language model)', 'The kind of AI behind many chatbots. It is trained on large amounts of text and predicts useful words, which is why it can write, summarize and answer questions. It can also be wrong.'),
+ ('Chatbot', 'A program you talk to by typing. Some are simple scripts; others use an LLM.'),
+ ('AI assistant', 'An AI tool set up for a specific job, such as answering your business phone or drafting replies to reviews, usually with limits on what it may do.'),
+ ('AI agent', 'An AI assistant that can take steps on its own, such as looking up information or filling in a form, inside permission levels you set. A good agent asks a person before anything important.'),
+ ('Automation', 'Software that does a repeated job on its own, such as sending a reminder or copying details from one system to another. Automation does not need AI, and AI can make it more flexible.'),
+ ('CRM (customer relationship management)', 'The system where you keep your customers and leads, and note what happened with each one, so follow-ups do not slip.'),
+ ('Prompt', 'The instruction you give an AI. Clear instructions with examples usually get better results.'),
+ ('Hallucination', 'When an AI writes something that sounds confident but is false. It is the main reason a person should check anything important.'),
+ ('Human in the loop', 'A setup where a person approves what the AI does before it goes out or takes effect.'),
+ ('Training data', 'The material an AI learned from. A private AI for your business is set up to use your documents without sharing them with others.'),
+ ('RAG (retrieval-augmented generation)', 'A way to let an AI answer from your own documents: it looks up the right passage first, then writes the answer from it. It helps keep answers tied to what you approved.'),
+ ('API', 'A way for two programs to talk to each other, such as your website sending a form to your customer list.'),
+ ('Voice AI / AI receptionist', 'An AI that answers phone calls, takes details and passes anything urgent to a person. It should tell callers it is an AI.'),
+ ('Workflow', 'The steps a job goes through from start to finish, such as inquiry, reply, booking, reminder. Mapping the workflow is the first step in deciding what to automate.'),
+ ('Fine-tuning', 'Extra training that adapts an AI to a style or task. Many business jobs do not need it; giving the AI good instructions and your documents is often enough.'),
+]
+G6['faq'] = [(f'What is {t.split(" (")[0]}?', re.sub(r'<[^>]+>', '', d)) for t, d in TERMS[:6]]
+_items = ''.join(f'<dt><b>{esc(t)}</b></dt><dd>{d}</dd>' for t, d in TERMS)
+G6['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('AI terms in plain English','')])}
+<h1>{esc(G6['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 6, 2026</p>
+<div class="tldr"><b>Short answer:</b> here are the AI words business owners hear most, each in one or two plain sentences. Skim for the one you just heard, or read it top to bottom. If a term is not here, <a href="../book.html">ask us on a free call</a>.</div>
+<dl class="glossary">{_items}</dl>
+<h2>Where to go next</h2>
+<p>If you are deciding whether AI can help your business, start with <a href="choose-an-ai-consultant.html">ten questions to ask any AI consultant</a>, then try our <a href="../key-platform/">interactive demos</a> (made-up data, nothing is sent or charged). The first conversation with us is free, with no obligation. Key Technologies does not guarantee results.</p>
+<div class="guide-cta"><h2>Have a question about an AI term or tool?</h2>
+<p>Book a free call and ask. We will tell you honestly what we know.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../index.html#audit">Run the Free Website Audit</a></div></div>
+{more([('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
+</article>"""
+GUIDES['G6'] = G6
 
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
