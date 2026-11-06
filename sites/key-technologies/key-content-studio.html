@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Content Studio | Key Technologies.si</title>
+<meta name="theme-color" content="#0f171e">
+<link rel="icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:#0f171e;--card:#232f3e;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--blue:#00a8e1;--good:#3ddc97;--warn:#ffb84d;color-scheme:dark;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  a{color:var(--blue);}
+  .in{max-width:900px;margin:0 auto;padding:0 14px;}
+  header{position:sticky;top:0;z-index:20;background:rgba(15,23,30,.97);border-bottom:1px solid var(--line);}
+  .bar{display:flex;align-items:center;gap:10px;padding:10px 0 6px;}
+  .bar h1{font-size:18px;margin:0 auto 0 0;}
+  .bar a.back{font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);}
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tabs button{flex:none;min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--dim);font:inherit;font-weight:600;cursor:pointer;}
+  .tabs button[aria-selected=true]{background:var(--blue);color:#0b1220;border-color:var(--blue);font-weight:800;}
+  main{padding:14px 0 70px;}
+  .panel{display:none;} .panel.on{display:block;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 12px;}
+  h2{font-size:17px;margin:0 0 8px;} h3{font-size:15px;margin:14px 0 6px;}
+  p{margin:0 0 10px;} ul,ol{margin:0 0 10px;padding-left:20px;} li{margin:0 0 5px;}
+  .dim{color:var(--dim);font-size:13.5px;}
+  label{display:block;font-size:13px;color:var(--dim);margin:0 0 3px;}
+  input,select,textarea,button.b{font:inherit;color:var(--ink);background:#17212c;border:1px solid var(--line);border-radius:10px;min-height:42px;padding:0 10px;width:100%;}
+  textarea{padding:8px 10px;min-height:90px;}
+  button.b{width:auto;cursor:pointer;font-weight:700;padding:0 16px;}
+  button.b.p{background:var(--blue);color:#0b1220;border-color:var(--blue);}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+  .row>*{flex:1 1 140px;}
+  .row>button{flex:0 0 auto;}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px;}
+  .kpi div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;}
+  .kpi b{display:block;font-size:24px;line-height:1.1;} .kpi span{font-size:11.5px;color:var(--dim);}
+  .bar2{height:8px;background:#17212c;border-radius:6px;overflow:hidden;margin:0 0 12px;} .bar2 i{display:block;height:8px;background:var(--good);width:0;transition:width .25s;}
+  .slot{border:1px solid var(--line);border-radius:12px;padding:10px;margin:0 0 8px;background:#1a2531;}
+  .slot.done{border-color:var(--good);}
+  .slot .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--dim);margin:0 0 6px;}
+  .slot .g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;} th,td{text-align:left;padding:7px 6px 7px 0;border-bottom:1px solid var(--line);vertical-align:top;} th{font-size:11.5px;text-transform:uppercase;color:var(--dim);}
+  .note{border-left:3px solid var(--warn);background:#2a2518;border-radius:0 10px 10px 0;padding:10px 12px;margin:0 0 12px;font-size:14px;}
+  .chk label{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:14.5px;margin:0 0 8px;} .chk input{width:20px;min-height:20px;margin-top:2px;flex:none;}
+  .idea{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:7px 0;} .idea span{flex:1;} .idea button{min-height:34px;padding:0 10px;}
+  .pill{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--dim);margin-right:6px;}
+  .out{background:#17212c;border:1px dashed var(--line);border-radius:10px;padding:10px;word-break:break-all;font-size:13.5px;margin:8px 0;}
+  .sr{position:absolute;left:-9999px;}
+  @media(min-width:700px){.slot .g{grid-template-columns:1fr 1fr 1fr;}}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <div class="bar"><h1>Content Studio</h1><a class="back" href="key-pageviews.html">Visitors</a><a class="back" href="index.html">Website</a></div>
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="t-today" data-tab="today" aria-selected="true" aria-controls="p-today">Today</button>
+    <button role="tab" id="t-week" data-tab="week" aria-selected="false" aria-controls="p-week">Week</button>
+    <button role="tab" id="t-plan" data-tab="plan" aria-selected="false" aria-controls="p-plan">Game plan</button>
+    <button role="tab" id="t-ideas" data-tab="ideas" aria-selected="false" aria-controls="p-ideas">Ideas</button>
+    <button role="tab" id="t-links" data-tab="links" aria-selected="false" aria-controls="p-links">Links</button>
+  </div>
+</div></header>
+
+<main class="in">
+
+<!-- ================= TODAY ================= -->
+<section class="panel on" id="p-today" role="tabpanel" aria-labelledby="t-today">
+  <div class="kpi"><div><b id="kPosted">0</b><span>posted today</span></div><div><b id="kTarget">0</b><span>goal for today</span></div><div><b id="kStreak">0</b><span>days in a row at goal</span></div></div>
+  <div class="bar2" aria-hidden="true"><i id="prog"></i></div>
+  <div class="card">
+    <div class="row">
+      <div><label for="goal">Videos to post today</label><select id="goal"></select></div>
+      <button class="b" id="fill" type="button">Fill today from my ideas</button>
+    </div>
+    <p class="dim" style="margin:10px 0 0" id="pillar"></p>
+  </div>
+  <div id="slots"></div>
+  <p class="dim">Mark a video <b>Posted</b> once it is live. Your list is saved on this device only. Use the Links tab to move it to another device.</p>
+</section>
+
+<!-- ================= WEEK ================= -->
+<section class="panel" id="p-week" role="tabpanel" aria-labelledby="t-week">
+  <div class="card">
+    <h2>Weekly layout</h2>
+    <p class="dim">One theme a day keeps the ideas coming and the channel easy to understand. Every video points to one matching page or demo on the site.</p>
+    <table><thead><tr><th>Day</th><th>Theme</th><th>Send viewers to</th></tr></thead><tbody id="weekTable"></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Mix of video types</h2>
+    <ul>
+      <li><b>Short (under about a minute):</b> about 6 of every 10. One idea, one tip.</li>
+      <li><b>How-to (2 to 5 minutes):</b> about 2 of every 10. Walk through one task step by step.</li>
+      <li><b>Demo walkthrough:</b> about 1 of every 10. Screen-record a demo from the site with the made-up data.</li>
+      <li><b>Long-form (8 to 15 minutes):</b> about 1 a week. Combine the week's best Shorts into one deeper video.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Layout of a Short</h2>
+    <table><tbody>
+      <tr><td><b>0 to 3 sec</b></td><td>Hook: the problem in one sentence ("Your phone rings during the dinner rush. Who answers?").</td></tr>
+      <tr><td><b>3 to 25 sec</b></td><td>The one point. Plain words. Show it on screen.</td></tr>
+      <tr><td><b>25 to 45 sec</b></td><td>Show it working in a demo (made-up data, labeled).</td></tr>
+      <tr><td><b>Last 5 sec</b></td><td>One call to action: "Free call, link below" or "Try the demo, link below."</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <h2>Suggested posting times</h2>
+    <p class="dim">Starting points only, in Pacific time. After a few weeks, open YouTube Studio and see when your own viewers are on.</p>
+    <p id="times"></p>
+  </div>
+</section>
+
+<!-- ================= GAME PLAN ================= -->
+<section class="panel" id="p-plan" role="tabpanel" aria-labelledby="t-plan">
+  <div class="note"><b>Honest first.</b> Nobody can promise views or customers from posting a lot. What works is videos that are clearly useful to a business owner, posted steadily, with one clear next step. Volume only helps if each video is good. So the plan ramps up instead of starting at ten a day.</div>
+
+  <div class="card">
+    <h2>The goal</h2>
+    <p>Business owners (restaurants, dental and medical offices, chiropractors, law firms) watch a short, useful video, then click through to the site and book a free call.</p>
+  </div>
+
+  <div class="card">
+    <h2>Phases</h2>
+    <ol>
+      <li><b>Weeks 1 to 2: 3 a day.</b> Two Shorts and one how-to. Goal: prove the routine and the quality, and set up the channel (name, banner, about text, playlists per theme).</li>
+      <li><b>Weeks 3 to 6: 5 a day.</b> Add a demo walkthrough and one more Short. Look at the numbers every Sunday and make more of whatever people finish watching.</li>
+      <li><b>Week 7 on: up to 10 a day,</b> only if every video still passes the checklist below and the numbers show people watching. If quality slips, drop back to 5.</li>
+    </ol>
+    <p class="dim">You can go faster. Just know the main risk of high volume is repeating yourself, which viewers and YouTube both notice.</p>
+  </div>
+
+  <div class="card">
+    <h2>How each video gets made</h2>
+    <ol>
+      <li><b>Idea</b> from the Ideas tab, matching the day's theme.</li>
+      <li><b>Script</b> (AI can draft it): hook, one point, demo, call to action.</li>
+      <li><b>Make it:</b> your own voice or an AI voice, screen recordings of the demos, simple captions.</li>
+      <li><b>Review:</b> a person watches it start to finish and runs the checklist.</li>
+      <li><b>Schedule or post</b> with the tracked link in the description (Links tab).</li>
+      <li><b>Mark it Posted</b> here.</li>
+    </ol>
+  </div>
+
+  <div class="card chk">
+    <h2>Check before every video goes live</h2>
+    <p class="dim">Tick as you go. The ticks reset each day.</p>
+    <div id="checklist"></div>
+  </div>
+
+  <div class="card">
+    <h2>Things to know about YouTube</h2>
+    <ul>
+      <li><b>Repetitive, mass-produced videos can lose monetization or reach.</b> Templates are fine. Each video still needs its own useful point. Read YouTube's current policy on "inauthentic content" before ramping up, because the rules change.</li>
+      <li><b>Label realistic AI-made content.</b> YouTube asks you to say when realistic video or audio is altered or synthetic. Use the setting in YouTube Studio's upload form, and say so in the description.</li>
+      <li><b>Automated uploading is limited.</b> Uploading through YouTube's developer connection has a daily cap by default and an approval step. Uploading by hand or with YouTube's own scheduler has no such problem. Check before building automation on it.</li>
+      <li><b>New channels start slow.</b> Expect weeks before the numbers mean much. Judge by watch time and clicks, not by views alone.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>What to watch each Sunday</h2>
+    <ul>
+      <li><b>Average view duration and retention</b> (YouTube Studio): do people stay past the first few seconds?</li>
+      <li><b>Which videos get clicks to the site:</b> the <a href="key-pageviews.html">Visitors</a> report, Sources tab, will show "youtube" for tracked links.</li>
+      <li><b>Forms sent</b> (Actions tab). That is the number that matters most.</li>
+      <li>Make more of the top 3 videos' themes. Drop what nobody finishes.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Ground rules for this channel</h2>
+    <ul>
+      <li>No made-up numbers, clients, reviews or rankings. Demos say their data is made up.</li>
+      <li>No prices and no promises of results.</li>
+      <li>Do not clone anyone's face or voice without their permission. Your own, with your OK, is fine.</li>
+      <li>Do not put an email address in descriptions. Send people to the site and the free-call page.</li>
+      <li>Do not claim a system "connects to" a specific tool unless it really does.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= IDEAS ================= -->
+<section class="panel" id="p-ideas" role="tabpanel" aria-labelledby="t-ideas">
+  <div class="card">
+    <h2>Add an idea</h2>
+    <div class="row">
+      <div><label for="newIdea">Idea</label><input id="newIdea" maxlength="120"></div>
+      <div><label for="newTheme">Theme</label><select id="newTheme"></select></div>
+      <button class="b p" id="addIdea" type="button">Add</button>
+    </div>
+  </div>
+  <div class="card"><h2>Idea list</h2><div id="ideaList"></div></div>
+</section>
+
+<!-- ================= LINKS ================= -->
+<section class="panel" id="p-links" role="tabpanel" aria-labelledby="t-links">
+  <div class="card">
+    <h2>Tracked link for a video</h2>
+    <p class="dim">Put this link in the video description. The Visitors report will then show which video sent people.</p>
+    <div class="row">
+      <div><label for="lkPage">Send viewers to</label><select id="lkPage"></select></div>
+      <div><label for="lkSlug">Short name for this video</label><input id="lkSlug" placeholder="missed-calls-dinner-rush" maxlength="50"></div>
+    </div>
+    <div class="out" id="lkOut">https://keytechnologies.si/</div>
+    <button class="b p" id="lkCopy" type="button">Copy link</button> <span class="dim" id="lkMsg" role="status"></span>
+  </div>
+  <div class="card">
+    <h2>Description template</h2>
+    <label class="sr" for="descT">Description text</label><textarea id="descT" readonly></textarea>
+    <p><button class="b" id="descCopy" type="button">Copy description</button></p>
+  </div>
+  <div class="card">
+    <h2>Move this list to another device</h2>
+    <p class="dim">Your list lives in this browser only. To use it on another device: copy the text below here, then paste it into the same box there and press Load.</p>
+    <textarea id="backup" aria-label="Backup text"></textarea>
+    <p><button class="b" id="bkMake" type="button">Make backup text</button> <button class="b" id="bkLoad" type="button">Load pasted text</button> <span class="dim" id="bkMsg" role="status"></span></p>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+var KEY='kt_studio_v1', SITE='https://keytechnologies.si/';
+var THEMES=[['Mon','Restaurants','restaurants.html'],['Tue','Dental, medical and chiropractic offices','medical-dental.html'],['Wed','Law firms','law.html'],['Thu','Demo day','key-platform/index.html'],['Fri','AI explained in plain English','guides/what-is-ai-si.html'],['Sat','Dashboards and numbers','key-platform/demos/business-dashboards.html'],['Sun','Q&A and the best of the week','guides/index.html']];
+var TYPES=['Short','Short','How-to','Short','Demo walkthrough','Short','Short','Short','How-to','Short'];
+var TIMES=['7:00 am','9:30 am','12:00 pm','2:30 pm','4:30 pm','6:00 pm','7:30 pm','8:30 pm','9:30 pm','10:30 pm'];
+var STAT=['Idea','Script','Made','Reviewed','Scheduled','Posted'];
+var CHECK=['The first 3 seconds make the point or name the problem.','Everything said is true and could be shown. No made-up numbers, clients, reviews or rankings.','Realistic AI voice, face or video is labeled (the YouTube Studio setting and a line in the description).','No one’s face or voice is copied without their permission.','Music and footage are ones we may use.','Captions are accurate.','One call to action, with the tracked link in the description.','No prices, no promises of results, no email address.','Title and thumbnail match what the video really shows.','A person watched it start to finish.'];
+var IDEAS=[
+['Restaurants','Your phone rings during the dinner rush. Who answers?'],['Restaurants','Three reviews to answer first, and how to answer them'],['Restaurants','Why a guest who asked about a private event never hears back'],['Restaurants','What a restaurant dashboard should show at a glance'],['Restaurants','Slow Tuesday? A follow-up message that goes out on its own'],['Restaurants','Reply to a bad review without making it worse'],
+['Dental, medical and chiropractic offices','The after-hours call your front desk never hears'],['Dental, medical and chiropractic offices','Appointment reminders that cut down on no-shows'],['Dental, medical and chiropractic offices','What AI should never do in a medical office'],['Dental, medical and chiropractic offices','New patient inquiries: how fast is fast enough?'],['Dental, medical and chiropractic offices','A practice dashboard in 30 seconds (demo)'],['Dental, medical and chiropractic offices','Questions to ask before patient details go into any tool'],
+['Law firms','The lead who called two firms and signed with the first to call back'],['Law firms','Intake in four steps: capture, qualify, route, follow up'],['Law firms','What a lawyer must still approve when AI helps'],['Law firms','Follow-up for people who did not sign yet'],['Law firms','A firm dashboard: inquiries to clients (demo)'],['Law firms','Reply to a review without breaking confidentiality'],
+['Demo day','Screen-record: the business dashboard demo, restaurant view'],['Demo day','Screen-record: AI phone receptionist demo'],['Demo day','Screen-record: the content creator demo'],['Demo day','Screen-record: the customer follow-up demo'],['Demo day','Screen-record: the booking demo'],['Demo day','Screen-record: the review replies demo'],
+['AI explained in plain English','What is AI/SI, in 60 seconds'],['AI explained in plain English','AI hallucination: why it makes things up and how to catch it'],['AI explained in plain English','What is an AI agent, really?'],['AI explained in plain English','10 questions to ask before hiring an AI consultant'],['AI explained in plain English','Automation vs AI: which do you need?'],['AI explained in plain English','What is a CRM and do you need one?'],
+['Dashboards and numbers','The 3 questions every owner asks about the business'],['Dashboards and numbers','Six numbers worth watching, and ones to ignore'],['Dashboards and numbers','Why a number alone means nothing without a comparison'],['Dashboards and numbers','What to leave off a dashboard'],['Dashboards and numbers','Where a dashboard’s numbers come from'],['Dashboards and numbers','Check it every morning: a 2-minute routine'],
+['Q&A and the best of the week','Answer one question a business owner asked this week'],['Q&A and the best of the week','The week’s best three tips in one video'],['Q&A and the best of the week','A myth about AI for small business'],['Q&A and the best of the week','What I would do first if I ran a small business']];
+var $=function(s){return document.querySelector(s)}, esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')return v}catch(e){}return null}
+var S=load()||{goal:3,days:{},ideas:null,used:{}};
+if(!S.ideas)S.ideas=IDEAS.map(function(x){return {th:x[0],t:x[1]}});
+S.days=S.days||{};S.used=S.used||{};S.goals=S.goals||{};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function dayIdx(){return (new Date().getDay()+6)%7}
+var TD=today();
+function slots(){return S.days[TD]||(S.days[TD]=[])}
+function ensure(){var a=slots();while(a.length<S.goal)a.push({type:TYPES[a.length]||'Short',title:'',status:'Idea'});}
+function posted(a){return a.filter(function(x){return x.status==='Posted'}).length}
+function streak(){var n=0,d=new Date();for(var i=0;i<400;i++){var k=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);var a=S.days[k];var g=S.goals[k]||null;if(i===0){if(a&&g&&posted(a)>=g)n++;}else{if(a&&g&&posted(a)>=g)n++;else break}d.setDate(d.getDate()-1)}return n}
+function renderToday(){
+  ensure();var a=slots();S.goals[TD]=S.goal;
+  var sel=$('#goal');if(!sel.options.length){for(var i=1;i<=10;i++){var o=document.createElement('option');o.value=i;o.textContent=i;sel.appendChild(o)}}
+  sel.value=S.goal;
+  var p=posted(a);$('#kPosted').textContent=p;$('#kTarget').textContent=S.goal;$('#kStreak').textContent=streak();
+  $('#prog').style.width=Math.min(100,Math.round(p/S.goal*100))+'%';
+  $('#pillar').innerHTML='<b>Today’s theme:</b> '+esc(THEMES[dayIdx()][1]);
+  $('#slots').innerHTML=a.slice(0,S.goal).map(function(s,i){return '<div class="slot'+(s.status==='Posted'?' done':'')+'"><div class="t"><span><b>Video '+(i+1)+'</b> &middot; '+TIMES[i]+'</span><span>'+esc(s.status)+'</span></div>'+
+   '<label class="sr" for="ti'+i+'">Title of video '+(i+1)+'</label><input id="ti'+i+'" data-i="'+i+'" data-f="title" value="'+esc(s.title)+'" placeholder="Title or idea" maxlength="120">'+
+   '<div class="g"><div><label for="ty'+i+'">Type</label><select id="ty'+i+'" data-i="'+i+'" data-f="type">'+['Short','How-to','Demo walkthrough','Long-form'].map(function(t){return '<option'+(t===s.type?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div>'+
+   '<div><label for="st'+i+'">Status</label><select id="st'+i+'" data-i="'+i+'" data-f="status">'+STAT.map(function(t){return '<option'+(t===s.status?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div></div></div>'}).join('');
+}
+$('#slots').addEventListener('change',function(e){var t=e.target;if(!t.dataset||t.dataset.i==null)return;slots()[+t.dataset.i][t.dataset.f]=t.value;save();renderToday()});
+$('#slots').addEventListener('input',function(e){var t=e.target;if(t.dataset&&t.dataset.f==='title'){slots()[+t.dataset.i].title=t.value;save()}});
+$('#goal').addEventListener('change',function(){S.goal=+this.value;save();renderToday()});
+$('#fill').addEventListener('click',function(){
+  var th=THEMES[dayIdx()][1],a=slots(),pool=S.ideas.filter(function(x){return x.th===th&&!S.used[x.t]}),rest=S.ideas.filter(function(x){return x.th!==th&&!S.used[x.t]});
+  a.slice(0,S.goal).forEach(function(s){if(s.title)return;var x=pool.shift()||rest.shift();if(x){s.title=x.t;S.used[x.t]=1}});
+  save();renderToday()});
+// week
+$('#weekTable').innerHTML=THEMES.map(function(t){return '<tr><td><b>'+t[0]+'</b></td><td>'+esc(t[1])+'</td><td><a href="'+t[2]+'">'+esc(t[2].replace(/^.*\//,'')||t[2])+'</a></td></tr>'}).join('');
+$('#times').innerHTML=TIMES.map(function(t,i){return '<span class="pill">'+(i+1)+': '+t+'</span>'}).join('');
+// checklist (resets daily)
+function renderCheck(){var done=(S.check&&S.check.d===TD)?S.check.v:{};$('#checklist').innerHTML=CHECK.map(function(c,i){return '<label><input type="checkbox" data-c="'+i+'"'+(done[i]?' checked':'')+'><span>'+esc(c)+'</span></label>'}).join('')}
+$('#checklist').addEventListener('change',function(e){var t=e.target;if(t.dataset.c==null)return;if(!S.check||S.check.d!==TD)S.check={d:TD,v:{}};S.check.v[t.dataset.c]=t.checked;save()});
+// ideas
+THEMES.forEach(function(t){var o=document.createElement('option');o.textContent=t[1];$('#newTheme').appendChild(o)});
+function renderIdeas(){$('#ideaList').innerHTML=S.ideas.length?S.ideas.map(function(x,i){return '<div class="idea"><span><span class="pill">'+esc(x.th)+'</span>'+esc(x.t)+(S.used[x.t]?' <span class="pill">used</span>':'')+'</span><button class="b" data-rm="'+i+'" type="button" aria-label="Remove idea">Remove</button></div>'}).join(''):'<p class="dim">No ideas yet.</p>'}
+$('#ideaList').addEventListener('click',function(e){var i=e.target.dataset.rm;if(i==null)return;S.ideas.splice(+i,1);save();renderIdeas()});
+$('#addIdea').addEventListener('click',function(){var v=$('#newIdea').value.trim();if(!v)return;S.ideas.unshift({th:$('#newTheme').value,t:v});$('#newIdea').value='';save();renderIdeas()});
+// links
+THEMES.forEach(function(t){var o=document.createElement('option');o.value=t[2];o.textContent=t[1]+' ('+t[2].replace(/^.*\//,'')+')';$('#lkPage').appendChild(o)});
+[['Free call page','book.html'],['Home page','index.html'],['Restaurants page','restaurants.html'],['Chiropractors and specialists page','chiropractors-specialists.html'],['Business dashboard demo','key-platform/demos/business-dashboards.html']].forEach(function(t){var o=document.createElement('option');o.value=t[1];o.textContent=t[0];$('#lkPage').appendChild(o)});
+function link(){var slug=($('#lkSlug').value||'video').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||'video';var pg=$('#lkPage').value;return SITE+(pg==='index.html'?'':pg)+'?utm_source=youtube&utm_medium=video&utm_campaign='+slug}
+function showLink(){$('#lkOut').textContent=link();$('#descT').value=['One plain-English tip for business owners.','','Try it yourself (made-up data): '+link(),'Free call: '+SITE+'book.html?utm_source=youtube&utm_medium=video','','AI-assisted: parts of this video use AI-generated voice or visuals. Demo numbers are made up.','Key Technologies.si'].join('\n')}
+$('#lkPage').addEventListener('change',showLink);$('#lkSlug').addEventListener('input',showLink);
+function copy(txt,msgEl){function ok(){msgEl.textContent='Copied.';setTimeout(function(){msgEl.textContent=''},2000)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,function(){msgEl.textContent='Press and hold to copy.'})}else{msgEl.textContent='Press and hold to copy.'}}
+$('#lkCopy').addEventListener('click',function(){copy(link(),$('#lkMsg'))});
+$('#descCopy').addEventListener('click',function(){copy($('#descT').value,$('#lkMsg'))});
+$('#bkMake').addEventListener('click',function(){$('#backup').value=JSON.stringify(S);$('#bkMsg').textContent='Copy the text in the box.'});
+$('#bkLoad').addEventListener('click',function(){try{var v=JSON.parse($('#backup').value);if(!v||typeof v!=='object'||!Array.isArray(v.ideas)||typeof v.days!=='object')throw 0;S=v;S.used=S.used||{};S.goals=S.goals||{};save();renderToday();renderIdeas();renderCheck();$('#bkMsg').textContent='Loaded.'}catch(e){$('#bkMsg').textContent='That text did not look right.'}});
+// tabs
+var tabs=[].slice.call(document.querySelectorAll('.tabs button'));
+function show(n){tabs.forEach(function(b){var on=b.dataset.tab===n;b.setAttribute('aria-selected',on);document.getElementById('p-'+b.dataset.tab).classList.toggle('on',on)});window.scrollTo(0,0)}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab)})});
+renderToday();renderIdeas();renderCheck();showLink();
+})();
+</script>
+</body>
+</html>

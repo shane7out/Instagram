@@ -28,3 +28,5 @@ Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes 
 - Check Core Web Vitals (speed) after every change; keep images sized and compressed.
 - Re-run the generators in this order after any change: build_* scripts, add_home_link.py, tidy_nav.py, add_analytics.py (Home button and the counter come from the last two).
 - Watch the Owner report's Sources and Pages tabs; double down on what works.
+
+- YouTube (2026-11-06): game plan and tracker live in key-content-studio.html. Tracked links use utm_source=youtube so the Owner report shows which videos send visitors. Later: embed the best videos on the matching guide pages (VideoObject schema), and link the channel from the site's sameAs once the channel exists (needs Shane's channel address).
