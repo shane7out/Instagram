@@ -1,0 +1,84 @@
+{
+ "key_rewards": {
+  ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+  "restaurants": {
+   "$rid": {
+    ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".validate": "newData.hasChildren(['name','active','createdAt']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 80 && newData.child('active').isBoolean() && newData.child('createdAt').isNumber() && (!newData.child('city').exists() || (newData.child('city').isString() && newData.child('city').val().length <= 60)) && (!newData.child('country').exists() || (newData.child('country').isString() && newData.child('country').val().length == 2))",
+    "name": {},
+    "city": {},
+    "country": {},
+    "active": {},
+    "createdAt": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "events": {
+   "$eid": {
+    ".read": true,
+    ".write": "auth != null && auth.uid == '__OWNER_UID__' && (!data.exists() || data.child('status').val() != 'closed')",
+    ".validate": "newData.hasChildren(['rid','title','pool','cap','opensAt','closesAt','status','createdAt']) && newData.child('rid').isString() && newData.child('title').isString() && newData.child('title').val().length <= 80 && newData.child('pool').isNumber() && newData.child('pool').val() >= 1 && newData.child('pool').val() <= 1000000 && newData.child('pool').val() % 1 == 0 && newData.child('cap').isNumber() && newData.child('cap').val() >= 1 && newData.child('cap').val() <= newData.child('pool').val() && newData.child('cap').val() % 1 == 0 && newData.child('opensAt').isNumber() && newData.child('closesAt').isNumber() && newData.child('closesAt').val() > newData.child('opensAt').val() && (newData.child('status').val() == 'draft' || newData.child('status').val() == 'open' || newData.child('status').val() == 'closed') && (!data.exists() || (newData.child('pool').val() == data.child('pool').val() && newData.child('cap').val() == data.child('cap').val() && newData.child('rid').val() == data.child('rid').val())) && (newData.child('status').val() != 'closed' || (newData.child('issued').isNumber() && newData.child('issued').val() >= 0 && newData.child('issued').val() <= newData.child('pool').val() && newData.child('share').isNumber() && newData.child('share').val() >= 0 && newData.child('share').val() <= newData.child('cap').val() && newData.child('leftover').isNumber() && newData.child('leftover').val() >= 0 && newData.child('approvedCount').isNumber() && newData.child('closedAt').isNumber() && newData.child('issued').val() + newData.child('leftover').val() == newData.child('pool').val())) && (!data.exists() || data.child('status').val() == newData.child('status').val() || (data.child('status').val() == 'draft' && newData.child('status').val() == 'open') || (data.child('status').val() == 'open' && newData.child('status').val() == 'closed')) && (data.exists() || newData.child('status').val() == 'draft')",
+    "rid": {},
+    "title": {},
+    "pool": {},
+    "cap": {},
+    "opensAt": {},
+    "closesAt": {},
+    "status": {},
+    "createdAt": {},
+    "approvedCount": {},
+    "share": {},
+    "issued": {},
+    "leftover": {},
+    "closedAt": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "checkins": {
+   "$eid": {
+    "$mkey": {
+     ".write": "($mkey.matches(/^[A-Za-z0-9]{12,40}$/) && !data.exists() && newData.exists() && root.child('key_rewards/events/'+$eid).child('status').val() == 'open' && now >= root.child('key_rewards/events/'+$eid).child('opensAt').val() && now <= root.child('key_rewards/events/'+$eid).child('closesAt').val()) || (auth != null && auth.uid == '__OWNER_UID__' && data.exists() && newData.exists() && root.child('key_rewards/events/'+$eid).child('status').val() != 'closed')",
+     ".validate": "newData.hasChildren(['t','name','status']) && newData.child('t').isNumber() && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 40 && (newData.child('status').val() == 'pending' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected') && (data.exists() ? (newData.child('t').val() == data.child('t').val() && newData.child('name').val() == data.child('name').val()) : (newData.child('status').val() == 'pending' && newData.child('t').val() <= now + 600000 && newData.child('t').val() >= now - 600000))",
+     "t": {},
+     "name": {},
+     "status": {},
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "shares": {
+   "$eid": {
+    "$mkey": {
+     ".read": true,
+     ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists() && root.child('key_rewards/events/'+$eid).child('status').val() == 'open'",
+     ".validate": "newData.hasChildren(['rewards','at']) && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() % 1 == 0 && newData.child('rewards').val() <= root.child('key_rewards/events/'+$eid).child('cap').val() && newData.child('rewards').val() <= root.child('key_rewards/events/'+$eid).child('pool').val() && newData.child('at').isNumber()",
+     "rewards": {},
+     "at": {},
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "redemptions": {
+   "$id": {
+    ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists()",
+    ".validate": "newData.hasChildren(['mkey','rid','rewards','at']) && newData.child('mkey').isString() && newData.child('rid').isString() && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 15 && newData.child('rewards').val() <= 100000 && newData.child('rewards').val() % 1 == 0 && newData.child('at').isNumber() && (!newData.child('offer').exists() || (newData.child('offer').isString() && newData.child('offer').val().length <= 80))",
+    "mkey": {},
+    "rid": {},
+    "offer": {},
+    "rewards": {},
+    "at": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  }
+ }
+}

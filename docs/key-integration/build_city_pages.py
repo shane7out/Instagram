@@ -302,7 +302,7 @@ def body_for(c):
     <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
     <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don&rsquo;t need</span></li>
     <li class="reveal"><b>In person or online</b><span>around {cn}, or anywhere remotely</span></li>
-    <li class="reveal"><b>24 services</b><span>each with a live demo you can try</span></li>
+    <li class="reveal"><b>25 services</b><span>each with a live demo you can try</span></li>
   </ul>
 </section>
 
@@ -314,7 +314,7 @@ def body_for(c):
 <section class="wrap" id="services">
   <div class="section-head reveal"><span class="eyebrow">See it work</span><h2>Try it before you talk to anyone</h2><p>Every service has a live demo with made-up data. Nothing is sent, booked or charged.</p></div>
   <div class="sw-grid">{svc}</div>
-  <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library">See all 25 demos</a></p>
+  <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library">See all 26 demos</a></p>
 </section>
 
 <section class="wrap" id="industries">

@@ -6,7 +6,7 @@ Left alone on purpose: the LVR member/deal pages (rewards, menu, my-account, joi
 rewards terms), the owner pages, and redirect stubs."""
 import re, pathlib
 SITE = pathlib.Path('sites/key-technologies')
-SKIP = {'key-pageviews.html', 'key-content-studio.html', 'rewards-layout-preview.html', 'rewards.html', 'menu.html', 'my-account.html', 'join-restaurant.html', 'marketplace-demo.html',
+SKIP = {'key-pageviews.html', 'key-content-studio.html', 'rewards-layout-preview.html', 'key-rewards-dashboard.html', 'key-rewards-checkin.html', 'rewards.html', 'menu.html', 'my-account.html', 'join-restaurant.html', 'marketplace-demo.html',
         'spin-terms.html', 'points-terms.html', 'points-privacy.html', 'rewards-terms.html', 'rewards-privacy.html'}
 OLD = re.compile(r'<script>\s*// Lightweight page-view counter.*?</script>\n?', re.S)
 done = 0

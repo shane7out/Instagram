@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Key Rewards Dashboard | Key Technologies.si</title>
+<meta name="theme-color" content="#0b1219">
+<link rel="icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:#0b1219;--card:#1b2735;--card2:#223142;--line:#304256;--ink:#f6f8fb;--dim:#9fb0c3;--blue:#00a8e1;--blue2:#4fc8f0;--good:#3ddc97;--warn:#ffb84d;--bad:#ff7b7b;--gold:#f0c24a;color-scheme:dark;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:radial-gradient(1200px 500px at 50% -120px,#13314a 0%,transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:15px/1.5 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom));}
+  a{color:var(--blue2);}
+  .in{max-width:1000px;margin:0 auto;padding:0 14px;}
+  .banner{background:#2a2518;border-bottom:1px solid rgba(255,184,77,.45);color:#ffd99a;text-align:center;font-size:13px;font-weight:700;padding:8px 14px;}
+  header.top{position:sticky;top:0;z-index:30;background:rgba(11,18,25,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .bar{display:flex;align-items:center;gap:10px;padding:10px 0;}
+  .logo{height:40px;width:74px;border-radius:12px;background:#0a1a4f;display:grid;place-items:center;flex:none;}
+  .bar h1{font-size:17px;margin:0 auto 0 0;line-height:1.15;} .bar h1 small{display:block;font-size:11.5px;font-weight:600;color:var(--dim);}
+  .bar a.back{font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:7px 11px;color:var(--ink);background:var(--card);}
+  main{padding:14px 0 20px;}
+  .panel{display:none;} .panel.on{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 12px;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+  .card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  p{margin:0 0 10px;} .dim{color:var(--dim);font-size:13.5px;} ul,ol{margin:0 0 10px;padding-left:20px;} li{margin:0 0 6px;}
+  label{display:block;font-size:12.5px;color:var(--dim);margin:0 0 4px;font-weight:600;}
+  input,select,textarea{font:inherit;color:var(--ink);background:#111b26;border:1px solid var(--line);border-radius:12px;min-height:44px;padding:0 12px;width:100%;}
+  input:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--blue2);outline-offset:2px;}
+  select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px;}
+  button.b{font:inherit;font-weight:700;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:12px;min-height:44px;padding:0 16px;cursor:pointer;}
+  button.b:active{transform:scale(.98);} button.b:disabled{opacity:.5;cursor:not-allowed;}
+  button.b.p{background:linear-gradient(135deg,#00a8e1,#0a86c0);border-color:transparent;color:#04121b;}
+  button.b.g{background:linear-gradient(135deg,#3ddc97,#1fb579);border-color:transparent;color:#04170f;}
+  button.b.sm{min-height:36px;padding:0 12px;font-size:13.5px;}
+  .grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));} .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;} .row>*{flex:1 1 150px;} .row>button{flex:0 0 auto;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 10px;text-align:center;}
+  .kpi b{display:block;font-size:26px;line-height:1.1;} .kpi span{font-size:12px;color:var(--dim);} .kpi small{display:block;font-size:11px;color:var(--dim);margin-top:2px;}
+  .kpi.good b{color:var(--good);} .kpi.gold b{color:var(--gold);}
+  table{width:100%;border-collapse:collapse;font-size:14px;} th,td{text-align:left;padding:8px 8px 8px 0;border-bottom:1px solid var(--line);vertical-align:middle;} th{font-size:11.5px;text-transform:uppercase;color:var(--dim);letter-spacing:.04em;} tr:last-child td{border-bottom:none;} td.n,th.n{text-align:right;white-space:nowrap;}
+  .tw{overflow-x:auto;}
+  .chip{display:inline-block;font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 10px;border:1px solid var(--line);color:var(--dim);white-space:nowrap;}
+  .chip.draft{color:#c7d2e0;} .chip.open{color:var(--good);border-color:rgba(61,220,151,.55);background:rgba(61,220,151,.1);} .chip.closed{color:var(--blue2);border-color:rgba(79,200,240,.5);} .chip.pending{color:var(--warn);border-color:rgba(255,184,77,.5);} .chip.approved{color:var(--good);border-color:rgba(61,220,151,.55);} .chip.rejected{color:var(--bad);border-color:rgba(255,123,123,.5);}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:130px;padding-top:6px;overflow-x:auto;} .bars div{flex:1 0 34px;max-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;font-size:11px;color:var(--dim);text-align:center;}
+  .bars i{display:block;width:100%;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#4fc8f0,#0a86c0);min-height:3px;} .bars em{font-style:normal;color:var(--ink);font-weight:700;font-size:12px;}
+  .note{border:1px solid rgba(255,184,77,.45);background:rgba(255,184,77,.08);border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px;}
+  .ok{border:1px solid rgba(61,220,151,.5);background:rgba(61,220,151,.08);border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px;}
+  .out{background:#111b26;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;word-break:break-all;font-size:13.5px;margin:8px 0;}
+  #qr{background:#fff;border-radius:14px;padding:10px;display:inline-block;} #qr svg,#qr img{display:block;width:180px;height:180px;}
+  .msg{min-height:20px;font-size:13.5px;color:var(--warn);margin:6px 0 0;} .msg.good{color:var(--good);}
+  dialog{width:min(520px,calc(100vw - 20px));background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:18px;} dialog::backdrop{background:rgba(0,0,0,.62);} dialog h2{margin:0 0 8px;font-size:18px;}
+  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:space-around;background:rgba(11,18,25,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));}
+  nav.tabs button{flex:1;max-width:130px;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--dim);font:inherit;font-size:11.5px;font-weight:700;padding:6px 2px;cursor:pointer;border-radius:12px;min-height:52px;}
+  nav.tabs svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  nav.tabs button[aria-selected=true]{color:var(--blue2);background:rgba(0,168,225,.12);}
+  .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="banner" role="region" aria-label="Sandbox notice">SANDBOX: test data saved on this device only. Nothing is issued, sent or paid. Live mode is not switched on.</div>
+<header class="top"><div class="in"><div class="bar">
+  <span class="logo" aria-hidden="true"><img src="key-platform/assets/key-logo.svg" alt="" width="60" height="26"></span>
+  <h1>Key Rewards<small>Events dashboard</small></h1>
+  <a class="back" href="key-content-studio.html">Studio</a><a class="back" href="index.html">Site</a>
+</div></div></header>
+
+<main class="in">
+
+<section class="panel on" id="p-overview" role="tabpanel" aria-labelledby="t-overview">
+  <div id="firstRun" class="note" hidden><b>Nothing here yet.</b> Load made-up demo data to look around, or add your first restaurant on the Restaurants tab. <p style="margin:10px 0 0"><button class="b p sm" id="seedBtn" type="button">Load demo data</button></p></div>
+  <div class="grid" id="kpis"></div>
+  <div class="card" style="margin-top:12px"><h2>Rewards issued per event</h2><div class="bars" id="bars" role="img" aria-label="Rewards issued per closed event"></div><p class="dim" id="barsNote" style="margin:8px 0 0"></p></div>
+  <div class="card"><h2>By restaurant</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Restaurant</th><th class="n">Events</th><th class="n">Issued</th><th class="n">Redeemed</th><th class="n">Outstanding</th></tr></thead><tbody id="byRest"></tbody></table></div>
+    <p class="dim" style="margin:8px 0 0">Outstanding = issued minus redeemed. At 1 reward = $1 toward a free offer, it is the most free food that restaurant could still be asked to honor.</p></div>
+</section>
+
+<section class="panel" id="p-events" role="tabpanel" aria-labelledby="t-events">
+  <div class="card"><h2>New event</h2>
+    <div class="row"><div><label for="evRest">Restaurant</label><select id="evRest"></select></div><div><label for="evTitle">Name of the event</label><input id="evTitle" maxlength="80" value="Guest night"></div></div>
+    <div class="row" style="margin-top:10px"><div><label for="evPool">Pool (rewards to share)</label><input id="evPool" type="number" inputmode="numeric" min="1" step="1" value="2000"></div><div><label for="evCap">Most one person can get</label><input id="evCap" type="number" inputmode="numeric" min="1" step="1" value="25"></div></div>
+    <div class="row" style="margin-top:10px"><div><label for="evStart">Check-in opens</label><input id="evStart" type="datetime-local"></div><div><label for="evEnd">Check-in closes</label><input id="evEnd" type="datetime-local"></div></div>
+    <div class="out" id="evPreview" style="margin-top:12px"></div>
+    <p><button class="b p" id="evCreate" type="button">Create event</button></p><div class="msg" id="evMsg" role="status"></div></div>
+  <div class="card"><h2>Events</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Event</th><th>Status</th><th class="n">Pool</th><th class="n">Each</th><th class="n">Issued</th><th><span class="sr">Actions</span></th></tr></thead><tbody id="evList"></tbody></table></div></div>
+</section>
+
+<section class="panel" id="p-live" role="tabpanel" aria-labelledby="t-live">
+  <div class="card"><h2>Event check-in</h2>
+    <div class="row"><div><label for="liveEv">Event</label><select id="liveEv"></select></div></div>
+    <div id="liveBody"></div></div>
+</section>
+
+<section class="panel" id="p-redeem" role="tabpanel" aria-labelledby="t-redeem">
+  <div class="card"><h2>Record a free-food redemption</h2>
+    <p class="dim">When a member uses rewards for a free offer, staff confirm it here. Every offer is at least 15 rewards. Rewards have no cash value, cannot be sold or exchanged, and are never refunded once used.</p>
+    <div class="row"><div><label for="rdMember">Member</label><select id="rdMember"></select></div><div><label for="rdRest">Restaurant</label><select id="rdRest"></select></div></div>
+    <div class="row" style="margin-top:10px"><div><label for="rdOffer">Offer</label><input id="rdOffer" maxlength="80" placeholder="Chicken bowl"></div><div><label for="rdAmt">Rewards used</label><input id="rdAmt" type="number" inputmode="numeric" min="15" step="1" value="15"></div></div>
+    <p id="rdBal" class="dim" style="margin:10px 0 0"></p>
+    <p><button class="b g" id="rdGo" type="button">Record redemption</button></p><div class="msg" id="rdMsg" role="status"></div></div>
+  <div class="card"><h2>Redemptions</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>When</th><th>Member</th><th>Restaurant</th><th>Offer</th><th class="n">Rewards</th></tr></thead><tbody id="rdList"></tbody></table></div></div>
+</section>
+
+<section class="panel" id="p-rest" role="tabpanel" aria-labelledby="t-rest">
+  <div class="card"><h2>Add a restaurant</h2>
+    <div class="row"><div><label for="rName">Name</label><input id="rName" maxlength="80"></div><div><label for="rCity">City</label><input id="rCity" maxlength="60"></div><div><label for="rCountry">Country (2 letters)</label><input id="rCountry" maxlength="2" value="US"></div></div>
+    <p style="margin-top:10px"><button class="b p" id="rAdd" type="button">Add restaurant</button></p><div class="msg" id="rMsg" role="status"></div></div>
+  <div class="card"><h2>Restaurants</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Name</th><th>City</th><th class="n">Events</th><th class="n">Issued</th><th class="n">Outstanding</th></tr></thead><tbody id="rList"></tbody></table></div></div>
+</section>
+
+<section class="panel" id="p-rules" role="tabpanel" aria-labelledby="t-rules">
+  <div class="card"><h2>How an event works</h2>
+    <ol>
+      <li>The restaurant and Key Technologies agree the <b>pool</b> (rewards to share), the <b>most one person can get</b>, and the check-in window. The restaurant covers the free food through its deal.</li>
+      <li>Guests scan the event QR code and enter a first name. Each phone checks in once.</li>
+      <li>Staff <b>approve</b> the guests who are really there and reject the rest.</li>
+      <li>When you close the event, the pool is split equally among approved guests: the lesser of <b>pool divided by guests</b> (rounded down) and the <b>per-person cap</b>. Whatever is left over is never issued.</li>
+      <li>Members use rewards for free food offers (at least 15 rewards each) at participating restaurants. Staff record each redemption.</li>
+    </ol>
+    <p class="dim">Rewards are whole numbers. They have no cash value, cannot be sold or exchanged for cash, and are never refunded once used.</p></div>
+  <div class="card"><h2>Before this goes live</h2>
+    <p>Live mode is <b>off</b>. This sandbox is for trying the flow. Turning it on needs, in this order:</p>
+    <ol>
+      <li>Your attorney reviews the program terms, privacy policy and the restaurant agreement (see KEY_REWARDS_PLAN.md).</li>
+      <li>The owner sign-in is set up, then the staged database rules for Key Rewards are deployed.</li>
+      <li>A short written deal with each restaurant.</li>
+      <li>The live switch is turned on and tested with one real event with a friendly restaurant.</li>
+    </ol></div>
+  <div class="card"><h2>Sandbox tools</h2>
+    <p class="dim">These only touch test data on this device.</p>
+    <p><button class="b" id="seedBtn2" type="button">Load demo data</button> <button class="b" id="resetBtn" type="button">Erase all sandbox data</button></p><div class="msg" id="toolMsg" role="status"></div></div>
+</section>
+
+</main>
+
+<nav class="tabs" aria-label="Sections"><div role="tablist" style="display:contents">
+  <button role="tab" id="t-overview" data-tab="overview" aria-selected="true" aria-controls="p-overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Overview</button>
+  <button role="tab" id="t-events" data-tab="events" aria-selected="false" aria-controls="p-events"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Events</button>
+  <button role="tab" id="t-live" data-tab="live" aria-selected="false" aria-controls="p-live"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg>Check-in</button>
+  <button role="tab" id="t-redeem" data-tab="redeem" aria-selected="false" aria-controls="p-redeem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8a3 3 0 0 0 3 3v7M13 3v18M17 3c-2 1.5-3 4-3 7h3v11"/></svg>Redeem</button>
+  <button role="tab" id="t-rest" data-tab="rest" aria-selected="false" aria-controls="p-rest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>Places</button>
+  <button role="tab" id="t-rules" data-tab="rules" aria-selected="false" aria-controls="p-rules"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h6M9 13h6"/></svg>Rules</button>
+</div></nav>
+
+<dialog id="confirm" aria-labelledby="cf-t"><h2 id="cf-t">Close this event?</h2><div id="cfBody"></div>
+  <p class="dim">Once closed, the shares are issued and cannot be changed.</p>
+  <p><button class="b g" id="cfYes" type="button">Close and issue</button> <button class="b" id="cfNo" type="button">Cancel</button></p></dialog>
+
+<script src="key-platform/kr-engine.js"></script>
+<script src="key-platform/qrcode.js"></script>
+<script>
+(function(){
+var KR_LIVE = false; // live mode is OFF: needs the attorney review, the staged database rules and the owner sign-in (see the Rules tab)
+var store = KR.localStore('main'), kr = KR.create(store);
+var $=function(s){return document.querySelector(s)}, esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var fmt=function(n){return Number(n||0).toLocaleString()};
+var when=function(t){return new Date(t).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})};
+var toLocal=function(d){var p=function(n){return ('0'+n).slice(-2)};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())};
+var cache={rests:[],events:[],sum:null};
+
+function refresh(){
+  return Promise.all([kr.listRestaurants(),kr.listEvents(),kr.summary()]).then(function(r){cache.rests=r[0];cache.events=r[1];cache.sum=r[2];drawAll()});
+}
+function drawAll(){drawOverview();drawEvents();drawRest();drawLiveSelect();drawRedeem()}
+
+function drawOverview(){
+  var t=cache.sum.totals, empty=!t.restaurants&&!t.events;
+  $('#firstRun').hidden=!empty;
+  var k=function(v,l,s,c){return '<div class="kpi '+(c||'')+'"><b>'+fmt(v)+'</b><span>'+l+'</span>'+(s?'<small>'+s+'</small>':'')+'</div>'};
+  $('#kpis').innerHTML=k(t.events,'Events',t.open+' open now')+k(t.checkins,'Check-ins',t.approved+' approved')+k(t.issued,'Rewards issued','from '+fmt(t.pools)+' in closed pools','good')+k(t.redeemed,'Rewards used','for free food')+k(t.outstanding,'Outstanding','up to $'+fmt(t.outstanding)+' of free food','gold')+k(t.leftover,'Never issued','left in the pool');
+  var closed=cache.events.filter(function(e){return e.status==='closed'}).slice(0,12).reverse(), mx=Math.max(1,Math.max.apply(null,closed.map(function(e){return e.issued||0})));
+  $('#bars').innerHTML=closed.length?closed.map(function(e){var r=cache.rests.filter(function(x){return x.id===e.rid})[0];return '<div title="'+esc(e.title)+'"><em>'+fmt(e.issued)+'</em><i style="height:'+Math.max(3,Math.round((e.issued||0)/mx*90))+'px"></i>'+esc((r?r.name:'').split(' ')[0])+'</div>'}).join(''):'<p class="dim">No closed events yet.</p>';
+  $('#barsNote').textContent=closed.length?'Last '+closed.length+' closed events, oldest first.':'';
+  $('#byRest').innerHTML=cache.sum.restaurants.length?cache.sum.restaurants.map(function(r){return '<tr><td>'+esc(r.name)+'<div class="dim" style="font-size:12px">'+esc(r.city)+'</div></td><td class="n">'+r.events+'</td><td class="n">'+fmt(r.issued)+'</td><td class="n">'+fmt(r.redeemed)+'</td><td class="n"><b>'+fmt(r.outstanding)+'</b></td></tr>'}).join(''):'<tr><td colspan="5" class="dim">No restaurants yet.</td></tr>';
+}
+
+function splitPreview(){
+  var pool=+$('#evPool').value,cap=+$('#evCap').value,rows=[10,50,100,200,500].map(function(n){var s=KR.split(pool,cap,n);return n+' guests: '+s.share+' each ('+fmt(s.issued)+' issued, '+fmt(s.leftover)+' left)'});
+  $('#evPreview').innerHTML=(pool>=1&&cap>=1)?'<b>If this many guests are approved:</b><br>'+rows.join('<br>'):'Enter a pool and a per-person cap to see the split.';
+}
+['#evPool','#evCap'].forEach(function(s){$(s).addEventListener('input',splitPreview)});
+function defaults(){var a=new Date();$('#evStart').value=toLocal(a);$('#evEnd').value=toLocal(new Date(a.getTime()+3*3600000));splitPreview()}
+$('#evCreate').addEventListener('click',function(){
+  var m=$('#evMsg');m.className='msg';m.textContent='';
+  kr.createEvent({rid:$('#evRest').value,title:$('#evTitle').value,pool:+$('#evPool').value,cap:+$('#evCap').value,opensAt:new Date($('#evStart').value).getTime(),closesAt:new Date($('#evEnd').value).getTime()})
+   .then(function(e){return kr.openEvent(e.id)}).then(function(){m.className='msg good';m.textContent='Event created and open for check-in.';return refresh()}).catch(function(e){m.textContent=e.message});
+});
+function drawEvents(){
+  $('#evRest').innerHTML=cache.rests.length?cache.rests.map(function(r){return '<option value="'+esc(r.id)+'">'+esc(r.name)+'</option>'}).join(''):'<option value="">Add a restaurant first</option>';
+  var nm={};cache.rests.forEach(function(r){nm[r.id]=r.name});
+  $('#evList').innerHTML=cache.events.length?cache.events.map(function(e){return '<tr><td>'+esc(e.title)+'<div class="dim" style="font-size:12px">'+esc(nm[e.rid]||'')+' &middot; '+when(e.opensAt)+'</div></td><td><span class="chip '+e.status+'">'+e.status+'</span></td><td class="n">'+fmt(e.pool)+'</td><td class="n">'+(e.status==='closed'?e.share:'cap '+e.cap)+'</td><td class="n">'+(e.status==='closed'?fmt(e.issued):'-')+'</td><td class="n">'+(e.status!=='closed'?'<button class="b sm" data-go="'+esc(e.id)+'" type="button">Manage</button>':'')+'</td></tr>'}).join(''):'<tr><td colspan="6" class="dim">No events yet.</td></tr>';
+}
+$('#evList').addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(!b)return;$('#liveEv').value=b.dataset.go;show('live');drawLive()});
+
+function drawRest(){
+  $('#rList').innerHTML=cache.sum.restaurants.length?cache.sum.restaurants.map(function(r){return '<tr><td>'+esc(r.name)+'</td><td>'+esc(r.city)+'</td><td class="n">'+r.events+'</td><td class="n">'+fmt(r.issued)+'</td><td class="n">'+fmt(r.outstanding)+'</td></tr>'}).join(''):'<tr><td colspan="5" class="dim">No restaurants yet.</td></tr>';
+}
+$('#rAdd').addEventListener('click',function(){var m=$('#rMsg');m.className='msg';m.textContent='';
+  kr.addRestaurant({name:$('#rName').value,city:$('#rCity').value,country:$('#rCountry').value}).then(function(){$('#rName').value='';$('#rCity').value='';m.className='msg good';m.textContent='Added.';return refresh()}).catch(function(e){m.textContent=e.message})});
+
+// ---------- live check-in tab ----------
+var liveId='';
+function drawLiveSelect(){
+  var sel=$('#liveEv'),open=cache.events.filter(function(e){return e.status!=='closed'});
+  var cur=sel.value;sel.innerHTML=open.length?open.map(function(e){return '<option value="'+esc(e.id)+'">'+esc(e.title)+' ('+e.status+')</option>'}).join(''):'<option value="">No open events</option>';
+  if(cur&&open.some(function(e){return e.id===cur}))sel.value=cur;drawLive();
+}
+$('#liveEv').addEventListener('change',drawLive);
+function drawLive(){
+  var id=$('#liveEv').value,body=$('#liveBody');liveId=id;
+  if(!id){body.innerHTML='<p class="dim" style="margin-top:12px">Create an event on the Events tab first.</p>';return}
+  Promise.all([kr.getEvent(id),kr.listCheckins(id)]).then(function(r){
+    var ev=r[0],ck=r[1];if(!ev)return;
+    var link=location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-rewards-checkin.html?e='+encodeURIComponent(id);
+    var cnt={pending:0,approved:0,rejected:0};ck.forEach(function(c){cnt[c.status]++});
+    var s=KR.split(ev.pool,ev.cap,cnt.approved);
+    body.innerHTML='<div class="grid" style="margin:12px 0"><div class="kpi"><b>'+cnt.pending+'</b><span>waiting for approval</span></div><div class="kpi good"><b>'+cnt.approved+'</b><span>approved</span></div><div class="kpi"><b>'+cnt.rejected+'</b><span>rejected</span></div><div class="kpi gold"><b>'+s.share+'</b><span>each, if closed now</span><small>'+fmt(s.issued)+' issued &middot; '+fmt(s.leftover)+' left</small></div></div>'+
+     '<div class="row" style="align-items:center"><div><p class="dim" style="margin:0 0 4px">Guests scan this to check in:</p><div id="qr" aria-label="QR code for the check-in page" role="img"></div></div><div><p class="dim" style="margin:0 0 4px">Or open the link:</p><div class="out">'+esc(link)+'</div><button class="b sm" id="cpLink" type="button">Copy link</button> <a class="b sm" style="display:inline-flex;align-items:center;text-decoration:none;color:var(--ink);padding:0 12px;border:1px solid var(--line);border-radius:12px;min-height:36px" href="'+esc(link)+'" target="_blank" rel="noopener">Open member page</a></div></div>'+
+     '<h2 style="margin:16px 0 8px;font-size:15px">Guests</h2>'+
+     (ev.status==='draft'?'<p><button class="b p" id="openEv" type="button">Open check-in now</button></p>':'')+
+     '<div class="row" style="margin:0 0 8px"><button class="b sm g" id="apAll" type="button"'+(cnt.pending?'':' disabled')+'>Approve all waiting ('+cnt.pending+')</button><button class="b sm" id="addTest" type="button">Add 10 test guests</button></div>'+
+     '<div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>First name</th><th>Time</th><th>Status</th><th><span class="sr">Actions</span></th></tr></thead><tbody>'+(ck.length?ck.map(function(c){return '<tr><td>'+esc(c.name)+'</td><td>'+when(c.t)+'</td><td><span class="chip '+c.status+'">'+c.status+'</span></td><td class="n"><button class="b sm" data-ap="'+esc(c.mkey)+'" type="button"'+(c.status==='approved'?' disabled':'')+'>Approve</button> <button class="b sm" data-rj="'+esc(c.mkey)+'" type="button"'+(c.status==='rejected'?' disabled':'')+'>Reject</button></td></tr>'}).join(''):'<tr><td colspan="4" class="dim">No guests yet.</td></tr>')+'</tbody></table></div>'+
+     '<p style="margin-top:14px"><button class="b g" id="closeEv" type="button"'+(ev.status==='open'?'':' disabled')+'>Close event and issue rewards</button></p><div class="msg" id="liveMsg" role="status"></div>';
+    var qrEl=$('#qr');
+    if(window.qrcode){var q=qrcode(0,'M');q.addData(link);q.make();qrEl.innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true})}else qrEl.innerHTML='<span style="color:#0a1a4f;font-size:12px;padding:8px;display:block;max-width:160px">QR code could not load. Use the link.</span>';
+    var msg=function(t,good){var m=$('#liveMsg');m.className='msg'+(good?' good':'');m.textContent=t};
+    $('#cpLink').onclick=function(){try{navigator.clipboard.writeText(link).then(function(){msg('Link copied.',true)})}catch(e){msg('Press and hold the link to copy.')}};
+    var op=$('#openEv');if(op)op.onclick=function(){kr.openEvent(id).then(refresh).catch(function(e){msg(e.message)})};
+    $('#apAll').onclick=function(){kr.approveAll(id).then(drawLive).then(refresh)};
+    $('#addTest').onclick=function(){var names=['Ava','Ben','Cora','Dev','Eli','Fay','Gus','Hana','Ian','Jo'],ps=names.map(function(n){return kr.checkIn(id,{name:n,mkey:'test'+KR.newKey(12)})});Promise.all(ps).then(function(rs){var ok=rs.filter(function(x){return x.ok}).length;msg(ok?ok+' test guests added (sandbox).':rs[0].reason,!!ok);drawLive()})};
+    body.onclick=function(e){var a=e.target.closest('[data-ap]'),r=e.target.closest('[data-rj]');if(a)kr.review(id,[a.dataset.ap],'approved').then(drawLive).then(refresh);if(r)kr.review(id,[r.dataset.rj],'rejected').then(drawLive).then(refresh)};
+    $('#closeEv').onclick=function(){
+      var pend=cnt.pending;
+      $('#cfBody').innerHTML='<p><b>'+esc(ev.title)+'</b></p><div class="out">'+cnt.approved+' approved guests share '+fmt(ev.pool)+' rewards.<br>Each gets <b>'+s.share+'</b> (cap '+ev.cap+').<br>Issued: <b>'+fmt(s.issued)+'</b> &middot; never issued: '+fmt(s.leftover)+'</div>'+(pend?'<p class="note">'+pend+' guest'+(pend===1?' is':'s are')+' still waiting and will not get rewards. Approve or reject them first.</p>':'');
+      $('#confirm').showModal();
+      $('#cfYes').onclick=function(){$('#confirm').close();kr.closeEvent(id).then(function(res){msg('Closed. '+res.approved+' guests received '+res.share+' each ('+fmt(res.issued)+' issued).',true);return refresh()}).catch(function(e){msg(e.message)})};
+      $('#cfNo').onclick=function(){$('#confirm').close()};
+    };
+  });
+}
+
+// ---------- redemptions ----------
+var members=[];
+function drawRedeem(){
+  var closed=cache.events.filter(function(e){return e.status==='closed'&&e.issued>0});
+  Promise.all(closed.map(function(e){return kr.listCheckins(e.id).then(function(c){return c.filter(function(x){return x.status==='approved'})})})).then(function(lists){
+    var seen={};members=[];lists.forEach(function(l){l.forEach(function(c){if(!seen[c.mkey]){seen[c.mkey]=1;members.push(c)}})});
+    var cur=$('#rdMember').value;$('#rdMember').innerHTML=members.length?members.map(function(m){return '<option value="'+esc(m.mkey)+'">'+esc(m.name)+' ('+esc(m.mkey.slice(0,4))+')</option>'}).join(''):'<option value="">No members with rewards yet</option>';
+    if(cur&&seen[cur])$('#rdMember').value=cur;showBal();
+  });
+  $('#rdRest').innerHTML=cache.rests.map(function(r){return '<option value="'+esc(r.id)+'">'+esc(r.name)+'</option>'}).join('');
+  var nm={};cache.rests.forEach(function(r){nm[r.id]=r.name});
+  $('#rdList').innerHTML=cache.sum.redemptions.length?cache.sum.redemptions.slice(0,50).map(function(x){return '<tr><td>'+when(x.at)+'</td><td>'+esc(x.mkey.slice(0,4))+'&hellip;</td><td>'+esc(nm[x.rid]||'')+'</td><td>'+esc(x.offer)+'</td><td class="n">'+x.rewards+'</td></tr>'}).join(''):'<tr><td colspan="5" class="dim">No redemptions yet.</td></tr>';
+}
+function showBal(){var m=$('#rdMember').value;if(!m){$('#rdBal').textContent='';return}kr.balanceOf(m).then(function(b){$('#rdBal').textContent='This member has received '+b.received+', used '+b.redeemed+', and has '+b.available+' available.'})}
+$('#rdMember').addEventListener('change',showBal);
+$('#rdGo').addEventListener('click',function(){var m=$('#rdMsg');m.className='msg';m.textContent='';
+  kr.redeem({mkey:$('#rdMember').value,rid:$('#rdRest').value,offer:$('#rdOffer').value,rewards:+$('#rdAmt').value}).then(function(){m.className='msg good';m.textContent='Recorded.';return refresh()}).catch(function(e){m.textContent=e.message})});
+
+// ---------- sandbox tools ----------
+function seed(){return kr.seedDemo().then(refresh).then(function(){$('#toolMsg').className='msg good';$('#toolMsg').textContent='Demo data loaded (made up).'})}
+$('#seedBtn').addEventListener('click',seed);$('#seedBtn2').addEventListener('click',seed);
+$('#resetBtn').addEventListener('click',function(){if(confirm('Erase all sandbox data on this device?'))store.clear().then(refresh).then(function(){$('#toolMsg').className='msg good';$('#toolMsg').textContent='Sandbox erased.'})});
+
+// ---------- tabs ----------
+var tabs=[].slice.call(document.querySelectorAll('nav.tabs button'));
+function show(n){tabs.forEach(function(b){var on=b.dataset.tab===n;b.setAttribute('aria-selected',on);document.getElementById('p-'+b.dataset.tab).classList.toggle('on',on)});window.scrollTo(0,0)}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab)})});
+defaults();refresh();
+})();
+</script>
+</body>
+</html>

@@ -4,9 +4,18 @@
   "num": "00",
   "title": "Business Dashboards & Suites",
   "tag": "Your sales, customers, busiest hours, reviews and follow-ups on one screen, built around the systems you already use.",
-  "cat": "Dashboards & Reporting",
+  "cat": "Dashboards & Rewards",
   "thumb": "demos/thumbs/business-dashboards.jpg",
   "href": "demos/business-dashboards.html"
+ },
+ {
+  "slug": "key-rewards-events",
+  "num": "00",
+  "title": "Key Rewards: Guest Events & Loyalty",
+  "tag": "Share a pool of rewards equally among the guests who are really there, with check-in, approval and a dashboard.",
+  "cat": "Dashboards & Rewards",
+  "thumb": "demos/thumbs/key-rewards-events.jpg",
+  "href": "demos/key-rewards-events.html"
  },
  {
   "slug": "content-creators",

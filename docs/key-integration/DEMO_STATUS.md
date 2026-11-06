@@ -249,3 +249,8 @@ A small card sits right under the two main buttons in the homepage top section: 
 - No pricing and no "affordable/budget" wording. The only soft line is "Start with one piece and add more as it earns its place."
 - New industry page chiropractors-specialists.html (built by build_chiro_page.py from law.html). add_dashboard_band.py puts a dashboard band on restaurants, law, medical-dental and chiropractors-specialists pages (run it after build_restaurant_page and build_chiro_page; it replaces an inherited band).
 - Counts now: 24 services, 25 demos.
+
+## Key Rewards: Guest Events & Loyalty (added 2026-11-06)
+- New service and demo #00 (second): key-platform/demos/key-rewards-events.html (widget T.krevents in demo-widgets.js). Fictional restaurant, sliders, close button; nothing issued.
+- Sandbox app pages (noindex, no counter): key-rewards-dashboard.html and key-rewards-checkin.html; engine key-platform/kr-engine.js; vendored QR library key-platform/qrcode.js (MIT, qrcode-generator 1.4.4).
+- Counts: 25 services, 26 demos.

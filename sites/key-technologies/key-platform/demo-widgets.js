@@ -376,4 +376,33 @@ T.dashboards=function(root){
  draw();
 };
 
+/* ---------- Key Rewards events (equal split of a pool among the guests who are really there) ---------- */
+T.krevents=function(root){
+ var st={pool:2000,cap:25,scanned:200,fake:10,closed:false};
+ function split(pool,cap,n){n=Math.floor(n);if(n<1)return {share:0,issued:0,left:pool};var s=Math.min(Math.floor(pool/n),cap);return {share:s,issued:s*n,left:pool-s*n}}
+ root.innerHTML='<div class="two-columns"><div class="panel"><div class="panel-heading"><h3>Harbor Table guest night</h3>'+tag('Fictional restaurant','outline')+'</div>'+
+ '<label for="kp">Rewards the restaurant puts up (the pool): <b id="kpv"></b></label><input id="kp" type="range" min="200" max="5000" step="100">'+
+ '<label for="kc">Most one person can get: <b id="kcv"></b></label><input id="kc" type="range" min="5" max="100" step="5">'+
+ '<label for="ks">Guests who scan the QR code: <b id="ksv"></b></label><input id="ks" type="range" min="0" max="500" step="10">'+
+ '<label for="kf">Scans staff reject (not really there): <b id="kfv"></b></label><input id="kf" type="range" min="0" max="40" step="5">'+
+ '<div class="action-row"><button class="primary" id="kclose" type="button"></button></div><p class="micro" style="margin-top:8px">Fictional data. Nothing is issued, sent or paid.</p></div>'+
+ '<div class="panel"><div class="panel-heading"><h3 id="kh"></h3><span class="tag" id="kst"></span></div><div id="kres"></div></div></div>'+
+ '<div class="panel" style="margin-top:16px"><div class="panel-heading"><h3>What a guest sees</h3>'+tag('Member view','outline')+'</div><div id="kmember"></div></div>';
+ function draw(){
+  var appr=Math.round(st.scanned*(1-st.fake/100)),r=split(st.pool,st.cap,appr),rej=st.scanned-appr;
+  q('#kpv',root).textContent=st.pool.toLocaleString();q('#kcv',root).textContent=st.cap;q('#ksv',root).textContent=st.scanned;q('#kfv',root).textContent=st.fake+'%';
+  q('#kh',root).textContent=st.closed?'Event closed':'If the event closed now';q('#kst',root).textContent=st.closed?'Rewards issued':'Open';
+  q('#kclose',root).textContent=st.closed?'Reopen the demo':'Close event and issue';
+  q('#kres',root).innerHTML='<div class="rowstat"><span>Scanned</span><span>'+st.scanned+'</span></div><div class="rowstat"><span>Rejected by staff</span><span>'+rej+'</span></div><div class="rowstat"><span>Approved guests</span><span><b>'+appr+'</b></span></div>'+
+   '<div class="rowstat"><span>Each approved guest gets</span><span><b>'+r.share+'</b></span></div><div class="rowstat"><span>Rewards issued</span><span>'+r.issued.toLocaleString()+'</span></div><div class="rowstat"><span>Never issued (left in the pool)</span><span>'+r.left.toLocaleString()+'</span></div>'+
+   '<p class="micro" style="margin-top:10px">The share is the pool divided by approved guests, rounded down, and never more than the cap. The restaurant covers the free food through its deal, so the most it could be asked to honor is the rewards issued, and only for free-food offers.</p>';
+  var pct=Math.min(100,Math.round(r.share/15*100));
+  q('#kmember',root).innerHTML=appr<1?'<p class="muted">Nobody was approved, so nothing was issued.</p>':'<div class="business-preview" style="margin-top:0"><div class="symbol">&#9733;</div><div><strong>'+(st.closed?'You received '+r.share+' Key Rewards':'You will receive '+r.share+' Key Rewards if the event closed now')+'</strong><small>Every free-food offer is at least 15 rewards. '+(r.share>=15?'You can use these on an offer now.':'Keep collecting; '+r.share+' of 15 toward your first offer.')+'</small></div></div><div style="height:10px;background:var(--line,#304256);border-radius:6px;overflow:hidden;margin-top:10px"><div style="height:10px;width:'+pct+'%;background:#3ddc97"></div></div><p class="micro" style="margin-top:8px">Rewards can only be used for free food at participating restaurants. No cash value.</p>';
+ }
+ [['kp','pool'],['kc','cap'],['ks','scanned'],['kf','fake']].forEach(function(x){var el=q('#'+x[0],root);el.value=st[x[1]];el.oninput=function(){st[x[1]]=+this.value;if(st.cap>st.pool)st.cap=st.pool;draw()}});
+ q('#kclose',root).onclick=function(){st.closed=!st.closed;draw();say(st.closed?'Demo: event closed, shares issued (nothing real)':'Demo reopened')};
+ draw();
+};
+
+
 })();
