@@ -233,3 +233,4 @@ A small card sits right under the two main buttons in the homepage top section: 
 - About text: 'He has been working with computers and software ever since' (Shane: put computers and software in).
 - About text: first business described as a computer and software business that handled software, networks, security, upgrades and training at company offices (Shane's own words, 2026-11-06).
 - About text: removed the 'walking into company offices' phrase at Shane's request; the first business reads: computer and software business doing software, networks, security, upgrades and training.
+- Demo follow-up form ('Want this for your business?', key-platform/kp-followup.js, on every demo page): name is now required along with email (Shane, 2026-11-06); tested: email only -> asks for name, name only -> asks for email, both -> sends with the name. The site's other forms already required a name.
