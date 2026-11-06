@@ -46,6 +46,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [How to choose an AI consultant: 10 questions to ask](https://keytechnologies.si/guides/choose-an-ai-consultant.html): A plain checklist for small-business owners: ten questions to ask, what good answers sound like, and the warning signs.
 - [AI terms in plain English: a glossary for business owners](https://keytechnologies.si/guides/ai-terms-plain-english.html): Short, jargon-free definitions of the AI words business owners hear most, with a note on what each means for you.
 - [AI for law firms: where it helps and what a person must still approve](https://keytechnologies.si/guides/ai-for-law-firms.html): Where AI helps a law office, what a lawyer must still approve, and the confidentiality questions to ask before using it.
+- [AI for medical and dental offices: where it helps and the privacy questions to ask first](https://keytechnologies.si/guides/ai-for-medical-dental-offices.html): Where AI helps a medical or dental office, what staff and clinicians must still handle, and the privacy questions to ask first.
 
 ## LVR Rewards (Las Vegas Restaurants)
 - [LVR Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.

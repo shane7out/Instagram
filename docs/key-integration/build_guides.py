@@ -626,6 +626,67 @@ G7['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G7'] = G7
 
+# ================= Guide 8: AI for medical and dental offices =================
+G8 = dict(slug='ai-for-medical-dental-offices', date='2026-11-06',
+  title='AI for Medical and Dental Offices | Key Technologies.si',
+  desc='Where AI helps a medical or dental office (calls, booking, reminders), what staff must still handle, and privacy questions to ask first.',
+  h1='AI for medical and dental offices: where it helps and the privacy questions to ask first',
+  short='Where AI helps a medical or dental office, what staff and clinicians must still handle, and the privacy questions to ask first.')
+G8['faq'] = [
+ ('Can AI give medical or dental advice to patients?', 'It should not. Clinical advice is for the clinician. AI can answer office questions from information you approved (hours, location, how to prepare for a visit) and route anything clinical to a person.'),
+ ('Is it safe to put patient information into an AI tool?', 'Only if the tool and its agreement meet your obligations. In the United States, providers that handle protected health information generally need the right agreements and safeguards in place. Ask your compliance advisor or attorney before any patient information goes into a new tool.'),
+ ('What can AI do without touching patient records?', 'Many useful jobs need no patient records: answering general questions, collecting a name and callback number, sending appointment reminders from a schedule you control, and drafting replies to public reviews.'),
+ ('How can AI help with missed calls?', 'It can answer after hours, collect a name and number and the reason for the call, flag anything urgent for a person, and propose appointment times for staff to confirm.'),
+ ('Where should a practice start?', 'Pick one low-risk job that does not involve clinical decisions, such as after-hours call capture or reminders, keep a person in charge, and check the results weekly before adding more.')]
+G8['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('AI for medical and dental offices','')])}
+<h1>{esc(G8['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 6, 2026</p>
+<div class="tldr"><b>Short answer:</b> AI is most useful in a medical or dental office for the <b>front-desk work around care</b>: answering calls, booking, reminders and replies to reviews. It should not give clinical advice, and patient information should only go into a tool after you have checked the privacy and legal side. This guide is general information, not legal or medical advice, and it does not certify any tool as compliant.</div>
+
+<h2>Where AI helps</h2>
+<ul>
+<li><b>Calls and texts:</b> answer after hours, take a name, number and reason for the call, and flag anything urgent for a person.</li>
+<li><b>Booking and reminders:</b> propose appointment times, send confirmations and reminders from a schedule you control, and reduce no-shows.</li>
+<li><b>Patient follow-up messages:</b> general reminders and practice news that a person approves.</li>
+<li><b>Reviews and reputation:</b> drafted replies to public reviews for you to edit and approve. Never confirm that someone is a patient in a public reply.</li>
+<li><b>Staff time:</b> summaries of long email threads and first drafts of routine office letters, reviewed by a person.</li>
+</ul>
+
+<h2>What people must still handle</h2>
+<ol>
+<li><b>Clinical advice and triage.</b> Anything about symptoms, treatment, medication or urgency goes to a clinician. A good assistant says so and hands off.</li>
+<li><b>Emergencies.</b> The assistant should tell callers with an emergency to call emergency services, and route urgent calls to a person.</li>
+<li><b>Anything that goes into a patient record.</b> A person reviews and enters it.</li>
+<li><b>Anything involving consent, billing disputes or complaints.</b></li>
+<li><b>Final say on every message sent to a patient for the first time.</b></li>
+</ol>
+
+<h2>Privacy questions to ask first</h2>
+<ol>
+<li>Will patient information go into this tool, and does the job really need it? Often it does not.</li>
+<li>Where does the data go, who can see it, and is it used to train the provider&rsquo;s models?</li>
+<li>Does the provider sign the agreements your situation requires (for example, a business associate agreement in the United States where it applies)?</li>
+<li>How is data stored, protected and deleted when you leave?</li>
+<li>Can you limit what the assistant can see and do, and is there a log of what it did?</li>
+</ol>
+<p>Rules differ by country, state and type of practice. Check with your compliance advisor or attorney before using any tool with patient information. Nothing here certifies a tool or a practice as compliant.</p>
+
+<h2>A sensible way to start</h2>
+<p>Pick one low-risk job that involves no clinical decisions (after-hours call capture is common), keep a person in charge, and review what the assistant did each week at the start. Add more only when the first job is working and your privacy questions are answered.</p>
+
+<h2>Where Key Technologies fits</h2>
+<p>We build patient-communication systems and automation for medical and dental offices around how your office actually works, with permission levels you set. See our <a href="../medical-dental.html">medical and dental page</a>, try the <a href="../key-platform/">interactive demos</a> (made-up data), or book a free call. We do not guarantee results, and we do not give legal or medical advice.</p>
+
+{faq_html(G8['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call. We will ask how your front desk works today and tell you honestly where AI helps and where it does not.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../medical-dental.html">See the medical and dental page</a></div></div>
+{more([('AI for law firms: where it helps and what a person must still approve','Where AI helps a law office, what a lawyer must still approve, and confidentiality questions.','ai-for-law-firms.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
+</article>"""
+GUIDES['G8'] = G8
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
@@ -643,7 +704,7 @@ def build():
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
     hub_title = 'Guides on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, AI for law firms, PHP2Shell and website security, and AI for restaurants.'
+    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, AI for law firms and medical offices, PHP2Shell, and AI for restaurants.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>
