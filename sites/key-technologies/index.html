@@ -606,10 +606,7 @@
         <h2>Get a Free AI/SI Opportunity Review</h2>
         <form id="shortLeadForm" novalidate>
           <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required.</p>
-          <div class="field">
-            <label for="s-name">Full Name <span class="req" aria-hidden="true">*</span></label>
-            <input id="s-name" name="name" type="text" autocomplete="name" required>
-          </div>
+          <div class="name-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label for="s-name-first">First name <span class="req" aria-hidden="true">*</span></label><input id="s-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div><div class="field"><label for="s-name-last">Last name <span class="req" aria-hidden="true">*</span></label><input id="s-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40"></div></div>
           <div class="field">
             <label for="s-email">Email <span class="req" aria-hidden="true">*</span></label>
             <input id="s-email" name="email" type="email" autocomplete="email" required>
@@ -945,13 +942,14 @@
       <h3>Audit your website</h3>
       <form id="auditForm" novalidate>
         <p class="form-note">All fields are required.</p>
+        <div class="name-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label for="au-name-first">First name <span class="req" aria-hidden="true">*</span></label><input id="au-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div><div class="field"><label for="au-name-last">Last name <span class="req" aria-hidden="true">*</span></label><input id="au-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40"></div></div>
         <div class="field">
-          <label for="au-name">Full Name</label>
-          <input id="au-name" name="name" type="text" autocomplete="name" required>
+          <label for="au-email">Email <span class="req" aria-hidden="true">*</span></label>
+          <input id="au-email" name="email" type="email" autocomplete="email" required>
         </div>
         <div class="field">
-          <label for="au-email">Email</label>
-          <input id="au-email" name="email" type="email" autocomplete="email" required>
+          <label for="au-phone">Phone <span class="req" aria-hidden="true">*</span></label>
+          <input id="au-phone" name="phone" type="tel" autocomplete="tel" required>
         </div>
         <div class="field">
           <label for="au-url">Website address</label>
@@ -1304,10 +1302,7 @@
     <div class="lead-card" style="max-width:640px;">
       <form id="fullLeadForm" novalidate>
         <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span> are required.</p>
-        <div class="field">
-          <label for="f-name">Full Name <span class="req" aria-hidden="true">*</span></label>
-          <input id="f-name" name="name" type="text" autocomplete="name" required>
-        </div>
+        <div class="name-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label for="f-name-first">First name <span class="req" aria-hidden="true">*</span></label><input id="f-name-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div><div class="field"><label for="f-name-last">Last name <span class="req" aria-hidden="true">*</span></label><input id="f-name-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40"></div></div>
         <div class="field">
           <label for="f-business">Business Name</label>
           <input id="f-business" name="business" type="text" autocomplete="organization">
@@ -1683,25 +1678,38 @@
 
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      var nameEl = document.getElementById("au-name");
+      var firstEl = document.getElementById("au-name-first"), lastEl = document.getElementById("au-name-last");
+      var phoneEl = document.getElementById("au-phone");
       var emailEl = document.getElementById("au-email");
       var urlEl = document.getElementById("au-url");
-      var name = nameEl.value.trim();
+      var first = firstEl.value.trim(), last = lastEl.value.trim(), name = (first + " " + last).trim(), phone = phoneEl.value.trim();
       var email = emailEl.value.trim();
       var target = normalizeUrl(urlEl.value);
 
       // Identify and focus the specific problem field, same pattern as the
       // other two forms - a generic combined error leaves a screen reader
       // user to guess which field needs fixing.
-      if(!name){
-        nameEl.focus();
-        status.textContent = "Please enter your name.";
+      if(!first){
+        firstEl.focus();
+        status.textContent = "Please enter your first name.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!last){
+        lastEl.focus();
+        status.textContent = "Please enter your last name.";
         status.className = "form-status err";
         return;
       }
       if(!email){
         emailEl.focus();
         status.textContent = "Please enter your email.";
+        status.className = "form-status err";
+        return;
+      }
+      if(!phone){
+        phoneEl.focus();
+        status.textContent = "Please enter your phone number.";
         status.className = "form-status err";
         return;
       }
@@ -1801,7 +1809,10 @@
         logAudit({
           source: "homepage-website-audit",
           name: name,
+          firstName: first,
+          lastName: last,
           email: email,
+          phone: phone,
           url: target,
           createdAt: {".sv": "timestamp"},
           landingPage: location.pathname,

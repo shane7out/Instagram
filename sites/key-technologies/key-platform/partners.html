@@ -78,9 +78,9 @@
 <div class="two-columns" style="margin-top:26px">
 <div class="lead-card"><span class="eyebrow">Your details</span><h2 style="margin-top:6px">Join the interest list</h2>
 <form id="pform" novalidate>
-<div class="field"><label for="pname">Full name <span class="req">*</span></label><input id="pname" name="name" autocomplete="name" required></div>
+<div class="name-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label for="pname-first">First name <span class="req" aria-hidden="true">*</span></label><input id="pname-first" name="firstName" type="text" autocomplete="given-name" required maxlength="40"></div><div class="field"><label for="pname-last">Last name <span class="req" aria-hidden="true">*</span></label><input id="pname-last" name="lastName" type="text" autocomplete="family-name" required maxlength="40"></div></div>
 <div class="field"><label for="pemail">Email <span class="req">*</span></label><input id="pemail" name="email" type="email" autocomplete="email" required></div>
-<div class="field"><label for="pphone">Phone (optional)</label><input id="pphone" name="phone" type="tel" autocomplete="tel"></div>
+<div class="field"><label for="pphone">Phone <span class="req" aria-hidden="true">*</span></label><input id="pphone" name="phone" type="tel" autocomplete="tel" required></div>
 <div class="field"><label for="pcity">City and state <span class="req">*</span></label><input id="pcity" name="location" required></div>
 <div class="field"><label for="pexp">Sales experience</label><select id="pexp" name="experience"><option value="">Choose one</option><option>None yet</option><option>Under 2 years</option><option>2 to 5 years</option><option>5+ years</option></select></div>
 <div class="field"><label for="pabout">What kinds of businesses do you know? <span class="req">*</span></label><textarea id="pabout" name="about" rows="4" required></textarea></div>
