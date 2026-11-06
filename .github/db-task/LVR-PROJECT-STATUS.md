@@ -747,7 +747,7 @@ This is standing permission to ADD, with no need to ask each time. How: dedup fi
 template is `.github/db-task/task.sh` from commit 37964f7 (DTS Kitchen) and the 2026-11-06 Significant Other add. Put what the screenshot
 shows (bio, followers, address, website) in `notes`, and do not invent phone, email or owner. This permission is ADD-ONLY: deleting or
 changing existing records still needs Shane's explicit OK in the conversation. Tell Shane afterward what was added (name, handle, num).
-Added so far under this rule: Significant Other Kitchen & Cocktails (@significantvegas), 2026-11-06.
+Added so far under this rule: Significant Other Kitchen & Cocktails (@significantvegas), num 60062, 2026-11-06 (verified written: record, status "pending", attempts; template script in commit 3031cbb).
 
 ---
 
