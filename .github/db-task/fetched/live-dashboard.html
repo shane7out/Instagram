@@ -889,6 +889,17 @@ body {
             color:rgba(255,255,255,0.55);font-size:14px;letter-spacing:0.01em;
             border:1px solid rgba(255,255,255,0.25);border-radius:10px;
             padding:8px 20px;">Deals</a>
+  <!-- Key Technologies link (AI consulting site, intended domain
+       keytechnologies.si, not yet confirmed registered) — KEYPILL01,
+       added 2026-10-07. URL only resolves once GitHub Pages is
+       enabled for claude/key-website (folder /docs) - update to
+       https://keytechnologies.si/ once that domain is registered and
+       attached there. -->
+  <a href="/key-room.html" target="_blank" rel="noopener"
+     style="display:inline-block;text-decoration:none;
+            color:rgba(255,255,255,0.55);font-size:14px;letter-spacing:0.01em;
+            border:1px solid rgba(255,255,255,0.25);border-radius:10px;
+            padding:8px 20px;"><!-- KEYPILL03 -->&#128273; Key Tech</a>
   <!-- CC: private credit-card manager (client-side encrypted) -->
   <a href="https://lvr-cc.web.app" target="_blank" rel="noopener"
      style="display:inline-block;text-decoration:none;
@@ -965,7 +976,7 @@ body {
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
         <span aria-hidden="true" style="padding:12px 18px;font-size:26px;font-weight:900;line-height:1;visibility:hidden;flex-shrink:0;">✕</span>
         <span id="fb-msg" style="color:#fff !important;font-size:15px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;">Ready</span>
-        <script>var APP_VERSION=446;</script><script>(function(){/* v425 auto-update: stale open tabs reload themselves when a new version deploys — prevents old-code tabs (the root of cross-device weirdness) */var _l=0;function chk(){if(document.visibilityState!=="visible")return;var n=Date.now();if(n-_l<60000)return;_l=n;fetch("version.json?t="+n,{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}).then(function(j){if(!j||!j.v||j.v<=APP_VERSION)return;try{if(window._fbUnsaved||window._fbSaveTimer||window._fbSyncing)return;}catch(e){}location.reload();}).catch(function(){});}setInterval(chk,5*60*1000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")setTimeout(chk,1500);});setTimeout(chk,20000);})();</script><script>(function(){ var t=new Date(),h=t.getHours(),mi=t.getMinutes(),ap=h>=12?'PM':'AM'; h=h%12||12; var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; var ds=days[t.getDay()]+' '+(t.getMonth()+1)+'/'+t.getDate(); var txt=ds+' · '+h+':'+(mi<10?'0'+mi:mi)+' '+ap+' · v'+(typeof APP_VERSION!=='undefined'?APP_VERSION:7); var el=document.getElementById('fb-msg'); if(el){el.textContent=txt;el.style.color='#fff';el.style.fontSize='15px';el.style.textAlign='center';} var pv=document.getElementById('pin-version'); if(pv){pv.textContent=txt;pv.style.color='#fff';pv.style.fontSize='15px';pv.style.textAlign='center';} })();</script>
+        <script>var APP_VERSION=472;</script><script>(function(){/* v425 auto-update: stale open tabs reload themselves when a new version deploys — prevents old-code tabs (the root of cross-device weirdness) */var _l=0;function chk(){if(document.visibilityState!=="visible")return;var n=Date.now();if(n-_l<60000)return;_l=n;fetch("version.json?t="+n,{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}).then(function(j){if(!j||!j.v||j.v<=APP_VERSION)return;try{if(window._fbUnsaved||window._fbSaveTimer||window._fbSyncing)return;}catch(e){}location.reload();}).catch(function(){});}setInterval(chk,5*60*1000);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")setTimeout(chk,1500);});setTimeout(chk,20000);})();</script><script>(function(){ var t=new Date(),h=t.getHours(),mi=t.getMinutes(),ap=h>=12?'PM':'AM'; h=h%12||12; var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; var ds=days[t.getDay()]+' '+(t.getMonth()+1)+'/'+t.getDate(); var txt=ds+' · '+h+':'+(mi<10?'0'+mi:mi)+' '+ap+' · v'+(typeof APP_VERSION!=='undefined'?APP_VERSION:7); var el=document.getElementById('fb-msg'); if(el){el.textContent=txt;el.style.color='#fff';el.style.fontSize='15px';el.style.textAlign='center';} var pv=document.getElementById('pin-version'); if(pv){pv.textContent=txt;pv.style.color='#fff';pv.style.fontSize='15px';pv.style.textAlign='center';} })();</script>
         <button id="logout-btn" onclick="logOut()" ontouchstart="_logoutTouchStart()" ontouchend="_logoutTouchEnd()" onmousedown="_logoutTouchStart()" onmouseup="_logoutTouchEnd()" onmouseleave="_logoutTouchEnd()" style="background:transparent;color:rgba(255,255,255,0.7);border:none;border-radius:10px;padding:12px 18px;font-size:26px;font-weight:900;cursor:pointer;flex-shrink:0;line-height:1;">✕</button>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
@@ -975,7 +986,7 @@ body {
         <button onclick="openRewardsCRM()" id="rewards-tab-btn" style="background:#1348C8;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Rewards</button>
         <button onclick="openStaffView()" ontouchend="event.preventDefault();openStaffView();" id="staff-tab-btn" style="background:#2E7D32;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">👔 Staff</button>
         <button onclick="openTimeClockView()" ontouchend="event.preventDefault();openTimeClockView();" id="timeclock-tab-btn" style="background:#00695C;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">⏱ Time</button>
-        <button id="teams-tab-btn" onclick="window.open('https://lvr-data-a60c1.web.app/lvr-teams.html','_blank')" style="background:#F97316;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🍽 Teams</button>
+        <button id="teams-tab-btn" onclick="window.open('https://lvr-data-a60c1.web.app/lvr-teams.html','_blank')" style="background:#F97316;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🍽 Teams</button><!-- KEYROOM-PILL-v1 --><button id="keyroom-tab-btn" onclick="window.open('https://lvr-data-a60c1.web.app/key-room.html','_blank')" style="background:#0F766E;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🔑 Key Tech</button><!-- /KEYROOM-PILL-v1 -->
         <button onclick="showExperiencesView()" ontouchend="event.preventDefault();showExperiencesView();" id="experiences-tab-btn" style="background:#7B1FA2;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Experiences</button>
         <button id="restore-btn" onclick="openRestoreModal()" style="background:#455A64;color:#fff;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🛟 Restore</button>
         <input type="file" id="import-file-input" accept=".json,application/json,text/plain,*/*" onchange="importBackup(event)" style="display:none;">
@@ -1001,13 +1012,17 @@ body {
     <div class="badge b-ghosted" onclick="dashSetFilter('ghosted')">👻 <span id="s-ghosted">0</span></div>
     <div class="badge b-sunny" onclick="dashSetFilter('sunny')">☀️ Sunny: <span id="s-sunny">0</span></div>
     <div class="badge b-rs-priority" onclick="dashSetFilter('rspriority')">⭐ Priority: <span id="s-rs-priority">0</span></div>
+      <!--IGSUG03--><div class="badge" style="background:#2E7D32;" onclick="dashSetFilter('igsuggest')">IG found: <span id="s-badig-sug">0</span></div>
 
   </div>
 
   <!-- ── Main content tabs ──────────────────────────────────── -->
   <!-- Outreach/Staging tab row removed per owner request (dashboard defaults to the outreach view).
        To restore: re-add the #main-tab-row div with the #mtab-outreach and #mtab-staging buttons. -->
-  <div id="main-tab-row" style="display:none;"></div>
+  <!--STGTAB01--><div id="main-tab-row" style="display:flex;overflow-x:auto;gap:2px;border-bottom:1px solid rgba(20,147,255,0.12);padding:0 8px;">
+      <button class="main-tab active" id="mtab-outreach" type="button" onclick="rsShowMain()">Outreach</button>
+      <button class="main-tab" id="mtab-staging" type="button" onclick="rsShowStaging()">Staging <span id="mtab-stg-cnt" style="background:rgba(20,147,255,0.16);border-radius:5px;padding:1px 7px;margin-left:4px;font-size:12px;">0</span></button>
+    </div>
   <!-- Hidden compat elements referenced by JS -->
   <div id="rs-staging-bar" style="display:none;">
     <button id="rs-stg-btn" style="display:none;"></button>
@@ -1051,7 +1066,7 @@ body {
   <div class="hdr">
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
       <div id="crm-dot" style="width:8px;height:8px;border-radius:50%;background:#F57F17;flex-shrink:0;"></div>
-      <span id="crm-title" style="color:#fff;font-size:16px;font-weight:800;flex:1;">Customer CRM Demo</span>
+      <!--CRMFIX23--><span id="crm-title" style="color:#fff;font-size:16px;font-weight:800;flex:1;">Customer CRM</span>
       <button id="crm-back-btn" onclick="closeRewardsCRM()" style="display:none;background:#1565C0;color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;margin-right:6px;">← Dashboard</button>
       <button id="crm-logout-btn" onclick="logOut()" ontouchstart="_logoutTouchStart()" ontouchend="_logoutTouchEnd()" onmousedown="_logoutTouchStart()" onmouseup="_logoutTouchEnd()" onmouseleave="_logoutTouchEnd()" style="background:transparent;color:rgba(255,255,255,0.7);border:none;border-radius:10px;padding:12px 18px;font-size:26px;font-weight:900;cursor:pointer;flex-shrink:0;line-height:1;">✕</button>
     </div>
@@ -1073,9 +1088,11 @@ body {
     <div class="badge b-followup"    onclick="crmSetFilter('followup')">Follow Up: <span id="cs-followup">0</span></div>
     <div class="badge b-notes"       onclick="crmSetFilter('notes')">Notes: <span id="cs-notes">0</span></div>
     <div class="badge b-problem"     onclick="crmSetFilter('optout')">Opt-Out: <span id="cs-optout">0</span></div>
+    <!--CRMFIX14--><div class="badge" style="background:#5A6572;" onclick="crmSetFilter('never')">No visits yet: <span id="cs-never">0</span></div>
   </div>
 
   <div class="search-wrap" style="display:flex;gap:8px;align-items:center;">
+    <!--CRMFIX15--><select id="crm-sort" onchange="crmSetSort(this.value)" aria-label="Sort customers" style="flex:0 0 auto;max-width:44%;padding:9px 10px;border:1.5px solid #ccc;border-radius:10px;font-size:14px;background:#fff;color:#1B2E4A;"><option value="none">Sort: default</option><option value="recent">Recent visit</option><option value="points">Most points</option><option value="spend">Top spend</option><option value="name">Name A&ndash;Z</option><option value="newest">Newest added</option></select>
     <input type="text" id="crm-search" placeholder="Search customers..." autocomplete="new-password" spellcheck="false" autocorrect="off" autocapitalize="none" style="flex:1;">
     <button class="btn-add-record" onclick="openAddCustomer()">+ Add</button>
   </div>
@@ -1379,6 +1396,7 @@ body {
 var DEMO_PIN = '123456';
 var isDemo   = false;
 var FRIEND_PIN = '232323'; // co-editor re-enabled 2026-07-17 with a fresh PIN (12312 retired 7/09)
+var ZACH_PIN = '223344'; // ZACHPIN01: full co-editor PIN for Zach, added 2026-10-07
 // ── 998811: limited co-editor (owner 2026-07-24). Clone of 232323 but sees ONLY 10 restaurants.
 // GUEST10_NUMS: fill with specific record nums to hand-pick the 10; empty = first 10 by num.
 var GUEST10_PIN = '998811';
@@ -3641,6 +3659,8 @@ var _rsStagingNums = Object.create(null); // tracks which nums are from staging
 function _rsUpdateCount() {
   var el = document.getElementById('rs-stg-cnt');
   if (el) el.textContent = RESTAURANTS_STAGING.length;
+  /*STGTAB02*/ var _mt = document.getElementById('mtab-stg-cnt');
+  if (_mt) _mt.textContent = RESTAURANTS_STAGING.length;
   // Refresh dupes badge count without opening modal
   _rsUpdateDupesCount();
 }
@@ -3664,6 +3684,84 @@ function _rsUpdateDupesCount() {
     if (sKey && baseMap[sKey]) count++;
   }
   cntEl.textContent = count;
+}
+
+/*RSFB01*/
+// ── Restaurant staging, remote half ──────────────────────────────────────
+// Seeded staging lives in seed-data.js; this pulls anything queued into
+// Firebase since, so restaurants can be staged without a redeploy.
+var RS_STG_FB_URL = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/dashboard_rest_stg_crec.json';
+var _rsFbLoaded = false, _rsFbInFlight = false;
+
+function _rsRemovedMap() {
+  try { return JSON.parse(localStorage.getItem(LS_RS_REMOVED)) || {}; } catch (e) { return {}; }
+}
+
+// Fold a batch of remote records into both the working list and the master copy.
+// Returns how many were newly added.
+function _rsMergeRemote(rows) {
+  if (!rows || !rows.length) return 0;
+  var rm = _rsRemovedMap();
+  var seen = Object.create(null);
+  var i;
+  for (i = 0; i < RESTAURANTS_STAGING_MASTER.length; i++) seen[RESTAURANTS_STAGING_MASTER[i].num] = true;
+  var added = 0;
+  for (i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    if (!r || r.num == null) continue;
+    var n = parseInt(r.num, 10);
+    if (isNaN(n) || seen[n]) continue;
+    var rec = {
+      num: n,
+      name: String(r.name || ''),
+      ig: String(r.ig || r.instagram || '').replace(/^@/, ''),
+      phone: String(r.phone || ''),
+      email: String(r.email || ''),
+      cuisine: String(r.cuisine || ''),
+      address: String(r.address || ''),
+      defaultStatus: String(r.defaultStatus || 'pending')
+    };
+    if (!rec.name) continue;
+    seen[n] = true;
+    RESTAURANTS_STAGING_MASTER.push(rec);
+    if (!rm[n]) { RESTAURANTS_STAGING.push(rec); added++; }
+  }
+  return added;
+}
+
+function rsLoadFirebaseStaging(cb) {
+  // demo must never show real prospects
+  if (typeof isDemo !== 'undefined' && isDemo) { if (cb) cb(0); return; }
+  if (_rsFbInFlight) { if (cb) cb(0); return; }
+  _rsFbInFlight = true;
+  fetch(RS_STG_FB_URL).then(function (r) { return r.json(); }).then(function (data) {
+    _rsFbInFlight = false;
+    _rsFbLoaded = true;
+    if (!data) { if (cb) cb(0); return; }
+    var rows = [];
+    if (Array.isArray(data)) {
+      rows = data.filter(Boolean);
+    } else {
+      Object.keys(data).forEach(function (k) {
+        var v = data[k];
+        if (v && typeof v === 'object') { if (v.num == null) v.num = parseInt(k, 10); rows.push(v); }
+      });
+    }
+    var n = _rsMergeRemote(rows);
+    if (typeof _rsUpdateCount === 'function') _rsUpdateCount();
+    if (n && typeof _rsIsStaging !== 'undefined' && _rsIsStaging && typeof rsRender === 'function') rsRender();
+    if (cb) cb(n);
+  }).catch(function () {
+    _rsFbInFlight = false;
+    if (cb) cb(0);
+  });
+}
+
+// pull once the page is up, then again whenever the Staging tab is opened
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(rsLoadFirebaseStaging, 1200); });
+} else {
+  setTimeout(rsLoadFirebaseStaging, 1200);
 }
 
 function _rsRegisterStaging() {
@@ -3704,6 +3802,7 @@ function _setMainTab(tab) {
   });
   var extras = document.getElementById('rs-staging-extras');
   if (extras) extras.style.display = (tab === 'staging') ? '' : 'none';
+  /*STGTAB03*/ if (typeof _rsUpdateCount === 'function') _rsUpdateCount();
 }
 
 function switchMainTab(tab) {
@@ -3716,6 +3815,7 @@ function switchMainTab(tab) {
 }
 
 function rsShowStaging() {
+  /*RSFB02*/ if (typeof rsLoadFirebaseStaging === 'function') rsLoadFirebaseStaging();
   _rsIsStaging = true;
   _setMainTab('staging');
   // Hide stats + search bar
@@ -4918,6 +5018,88 @@ function saveIG() {
 // ══════════════════════════════════════════════════════
 // DM TRACKING
 // ══════════════════════════════════════════════════════
+/*IGSUG01*/
+// ── Suggested Instagram handles for Bad IG records ───────────────────────
+// Filled in from research and parked in Firebase; the owner accepts or
+// dismisses each one. Nothing here changes a record on its own.
+var IG_SUGGEST = Object.create(null);
+var IG_SUGGEST_URL = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com/dashboard/igsuggest';
+
+function igSuggestLoad() {
+  if (typeof isDemo !== 'undefined' && isDemo) return;
+  fetch(IG_SUGGEST_URL + '.json').then(function (r) { return r.json(); }).then(function (d) {
+    IG_SUGGEST = Object.create(null);
+    if (d && typeof d === 'object') {
+      Object.keys(d).forEach(function (k) {
+        var v = d[k];
+        if (v && typeof v === 'object' && v.ig) IG_SUGGEST[parseInt(k, 10)] = v;
+      });
+    }
+    if (typeof _dashDirty !== 'undefined') _dashDirty = true;
+    if (typeof igSuggestUpdateCount === 'function') igSuggestUpdateCount();
+    if (typeof rsRender === 'function') rsRender();
+  }).catch(function () {});
+}
+
+function igSuggestCount() {
+  var n = 0;
+  for (var k in IG_SUGGEST) { if (badIGMap[k]) n++; }
+  return n;
+}
+
+function igSuggestUpdateCount() {
+  var el = document.getElementById('s-badig-sug');
+  if (el) el.textContent = igSuggestCount();
+}
+
+function _igSuggestDrop(num) {
+  delete IG_SUGGEST[num];
+  try {
+    fetch(IG_SUGGEST_URL + '/' + num + '.json', { method: 'DELETE' });
+  } catch (e) {}
+}
+
+function igSuggestAccept(num) {
+  var sug = IG_SUGGEST[num];
+  if (!sug || !sug.ig) return;
+  var val = String(sug.ig).trim();
+  if (val.charAt(0) !== '@') val = '@' + val;
+  if (!confirm('Set ' + val + ' as the Instagram handle and clear the Bad IG flag?')) return;
+
+  igOverrideMap[num] = val;
+  try { localStorage.setItem(LS_IG_OVERRIDE, JSON.stringify(igOverrideMap)); } catch (e) {}
+  if (typeof _fbPatch === 'function') _fbPatch('igovr/' + num, val);
+
+  if (badIGMap[num]) {
+    delete badIGMap[num];
+    if (typeof saveBadIG === 'function') saveBadIG();
+    if (typeof _fbPatch === 'function') _fbPatch('badig/' + num, null);
+  }
+  _igSuggestDrop(num);
+  if (typeof fbSave === 'function') fbSave();
+  if (typeof _invalidatePending === 'function') _invalidatePending();
+  _dashDirty = true;
+  if (typeof dashRefreshCard === 'function') dashRefreshCard(num);
+  if (typeof dashUpdateStats === 'function') dashUpdateStats();
+  igSuggestUpdateCount();
+  if (typeof showDMToast === 'function') showDMToast('Set to ' + val);
+}
+
+function igSuggestReject(num) {
+  if (!IG_SUGGEST[num]) return;
+  _igSuggestDrop(num);
+  _dashDirty = true;
+  if (typeof dashRefreshCard === 'function') dashRefreshCard(num);
+  igSuggestUpdateCount();
+  if (typeof showDMToast === 'function') showDMToast('Suggestion dismissed');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(igSuggestLoad, 1500); });
+} else {
+  setTimeout(igSuggestLoad, 1500);
+}
+
 function toggleBadIG(num) {
   if (badIGMap[num]) {
     delete badIGMap[num];
@@ -5047,6 +5229,24 @@ function _buildCard(r, displayNum) {
     +((isCompany||_hideCoEd)?'':_buildAttemptHistory(r.num))
     +(r.address?'<div class="addr-line"><a href="https://maps.google.com/?q='+encodeURIComponent(r.address)+'" target="_blank" style="color:#1565C0;text-decoration:none;">'+_esc(r.address)+'</a></div>':'')
     +((!_hideCoEd&&userNotesMap[r.num])?'<div class="note-preview">'+_esc((userNotesMap[r.num].trim().split('\n')[0]||userNotesMap[r.num].trim()).slice(0,80))+'</div>':'')
+    /*IGSUG02*/
+    +((!_hideCoEd && isBadIG && typeof IG_SUGGEST!=='undefined' && IG_SUGGEST[r.num]) ? (function(_g){
+        var _c = _g.conf==='high' ? '#2E7D32' : (_g.conf==='low' ? '#8D6E63' : '#E65100');
+        return '<div class="ig-suggest" style="margin-top:8px;padding:9px 11px;border:1px solid '+_c+
+          ';border-left-width:4px;border-radius:9px;background:rgba(46,125,50,0.05);">'
+          +'<div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:'+_c+
+            ';font-weight:800;margin-bottom:3px;">Suggested handle &middot; '+_esc(_g.conf||'')+'</div>'
+          +'<div style="font-size:15px;font-weight:800;color:#1B2E4A;word-break:break-all;">'
+          +'<a href="https://instagram.com/'+encodeURIComponent(String(_g.ig).replace(/^@/,''))+
+            '" target="_blank" rel="noopener" style="color:#1565C0;text-decoration:none;">@'
+          +_esc(String(_g.ig).replace(/^@/,''))+'</a></div>'
+          +(_g.note?'<div style="font-size:12px;color:#5A6572;margin-top:3px;">'+_esc(_g.note)+'</div>':'')
+          +(_g.src?'<div style="font-size:11px;color:#8D8578;margin-top:2px;word-break:break-all;">'+_esc(_g.src)+'</div>':'')
+          +'<div style="display:flex;gap:6px;margin-top:8px;">'
+          +'<button onclick="igSuggestAccept('+r.num+')" class="btn" style="background:#2E7D32;color:#fff;">Use this</button>'
+          +'<button onclick="igSuggestReject('+r.num+')" class="btn" style="background:#78909C;color:#fff;">Not it</button>'
+          +'</div></div>';
+      })(IG_SUGGEST[r.num]) : '')
     +'</div>';
   return html;
 }
@@ -5141,6 +5341,7 @@ function _refilter(){
     if(f==='sent' &&s!=='sent')                          continue;
     if(f==='bounced' &&s!=='bounced')                       continue;
     if(f==='badig' &&!badIGMap[r.num])      continue;
+      /*IGSUG04*/ if(f==='igsuggest' && !(typeof IG_SUGGEST!=='undefined' && IG_SUGGEST[r.num])) continue;
     if(f==='interested' &&!interestedMap[r.num])    continue;
     if(f==='notinterested' &&!notInterestedMap[r.num]) continue;
     if(f==='notes' &&!userNotesMap[r.num])     continue;
@@ -6063,9 +6264,23 @@ function _pinCheck() {
     _coeDmLoad();
     return;
   }
+  if (_pinEntry === ZACH_PIN) {
+    // ZACHPIN02: Zach's full co-editor PIN (223344), added 2026-10-07.
+    // Same behavior as FRIEND_PIN (232323) — full live data, shared coeditor_dm node.
+    _coEditor = true;
+    try { sessionStorage.setItem('lv_coeditor','1'); sessionStorage.removeItem('lv_inflonly'); } catch(e) {}
+    _applyCoEditorDmKey();
+    _pinAttempts = 0; _pinEntry = ''; _pinUpdateDots(false);
+    _bioUnlock();
+    _coeDmLoad();
+    return;
+  }
   var _dynPin=(function(){try{return localStorage.getItem('lv_pin')||'137900';}catch(e){return '137900';}})();
   if (_pinEntry === _dynPin) {
     // Owner PIN. (Co-editor PIN is 232323 — handled in its own branch above.)
+    /* KEYROOM-SESSION-v1 */
+    try { localStorage.setItem('lv_owner_session', String(Date.now())); } catch(e) {}
+    /* /KEYROOM-SESSION-v1 */
     _coEditor = false;
     try { if(_coEditor) sessionStorage.setItem('lv_coeditor','1'); else sessionStorage.removeItem('lv_coeditor'); } catch(e) {}
     _applyCoEditorDmKey(); // co-editor login: switch DM to its private local key before data loads
@@ -6718,6 +6933,7 @@ function savePinChange() {
   if (nw === FRIEND_PIN)    { msg.textContent = 'Cannot use that PIN — it is reserved.'; return; }
   if (nw === COMPANY_PIN)   { msg.textContent = 'Cannot use that PIN — it is reserved.'; return; }
   if (nw === INFL_PIN)      { msg.textContent = 'Cannot use that PIN — it is reserved.'; return; }
+  if (nw === ZACH_PIN)      { msg.textContent = 'Cannot use that PIN — it is reserved.'; return; } // ZACHPIN03
   if (FRIEND_PIN && FRIEND_PIN.length < 6 && nw.indexOf(FRIEND_PIN) === 0) {
     msg.textContent = 'Cannot use a PIN that starts with the friend access code.'; return;
   }
@@ -7468,7 +7684,12 @@ function crmLoadCustomers() {
     // v142 Bug 8 fix: on fresh device (no localStorage), owner/friend get empty list — not demo data
     var _c = (saved && saved.length) ? saved : (isDemo ? JSON.parse(JSON.stringify(CRM_DEMO_CUSTOMERS)) : []);
     // Bug 6: backfill avatarColor for any customers that were saved without one
-    _c.forEach(function(cu){ if (!cu.avatarColor) cu.avatarColor = _rwdAvatarColor(cu.name); });
+    /*CRMFIX06*/ // ids must be numbers - every card button looks its customer up with ===
+    (function(){ var _m = 0;
+      _c.forEach(function(cu){ var n = parseInt(cu.id, 10); if (!isNaN(n) && n > _m) _m = n; });
+      _c.forEach(function(cu){ var n = parseInt(cu.id, 10); cu.id = isNaN(n) ? (++_m) : n; });
+    })();
+    _c.forEach(function(cu){ if (!cu.avatarColor) cu.avatarColor = _rwdAvatarColor(cu.name || ''); });
     return _c;
   } catch(e) { return isDemo ? JSON.parse(JSON.stringify(CRM_DEMO_CUSTOMERS)) : []; }
 }
@@ -7476,6 +7697,32 @@ function crmSaveCustomers() {
   try { localStorage.setItem(LS_CRM_CUSTOMERS, JSON.stringify(CRM_CUSTOMERS)); } catch(e) {}
   if (!isDemo) lsSaved();
 }
+/*CRMFIX02*/
+function _crmKeys(c) {
+  if (!c) return {};
+  return {
+    phone: String(c.phone || '').replace(/\D/g, ''),
+    email: String(c.email || '').trim().toLowerCase(),
+    ig:    String(c.instagram || '').trim().toLowerCase().replace(/^@/, ''),
+    name:  String(c.name || '').trim().toLowerCase().replace(/\s+/g, ' ')
+  };
+}
+// A match on phone, email or instagram is the same person. Name alone is not
+// enough - two different Maria Garcias are perfectly possible.
+function _crmFindDupe(cand, skipId) {
+  var k = _crmKeys(cand);
+  if (!k.phone && !k.email && !k.ig) return null;
+  for (var i = 0; i < CRM_CUSTOMERS.length; i++) {
+    var e = CRM_CUSTOMERS[i];
+    if (skipId != null && e.id === skipId) continue;
+    var ek = _crmKeys(e);
+    if (k.phone && ek.phone && k.phone === ek.phone) return e;
+    if (k.email && ek.email && k.email === ek.email) return e;
+    if (k.ig    && ek.ig    && k.ig    === ek.ig)    return e;
+  }
+  return null;
+}
+
 function crmGetNextId() {
   var max = 0;
   for (var i=0; i<CRM_CUSTOMERS.length; i++) { if (CRM_CUSTOMERS[i].id > max) max = CRM_CUSTOMERS[i].id; }
@@ -7508,8 +7755,11 @@ function _crmCurrentAge(raw) {
   if (now < new Date(now.getFullYear(), mo-1, da)) age--;
   return (age >= 0 && age <= 130) ? age : null;
 }
+/*CRMFIX09*/ // Someone who has never recorded a visit hasn't lapsed - they've never started.
+// Counting them as lapsed made the badge read as the whole database after an import.
+function _crmNeverVisited(c) { return !c || !c.lastVisit; }
 function _isLapsed(lastVisit) {
-  if (!lastVisit) return true;
+  if (!lastVisit) return false;
   var d = new Date(lastVisit);
   return (Date.now() - d.getTime()) > 60 * 24 * 60 * 60 * 1000;
 }
@@ -7540,6 +7790,20 @@ function crmSetFilter(f) {
   crmRender();
 }
 
+/*CRMFIX11*/ var crmSort = 'none';
+function crmSetSort(v) { crmSort = v; _crmDirty = true; var sc=document.getElementById('view-crm'); if(sc)sc.scrollTop=0; crmRender(); }
+function _crmSortApply(idxs) {
+  if (crmSort === 'none') return idxs;
+  var C = CRM_CUSTOMERS;
+  var cmp = {
+    recent: function(a,b){ return String(C[b].lastVisit||'').localeCompare(String(C[a].lastVisit||'')); },
+    points: function(a,b){ return (C[b].points||0) - (C[a].points||0); },
+    spend:  function(a,b){ return ((C[b].visits||0)*(C[b].avgSpend||0)) - ((C[a].visits||0)*(C[a].avgSpend||0)); },
+    name:   function(a,b){ return String(C[a].name||'').localeCompare(String(C[b].name||'')); },
+    newest: function(a,b){ return (C[b].id||0) - (C[a].id||0); }
+  }[crmSort];
+  return cmp ? idxs.slice().sort(cmp) : idxs;
+}
 function _crmRefilter() {
   if (!_crmDirty) return; _crmDirty = false; _crmFiltered = [];
   var q = crmSearch.toLowerCase();
@@ -7553,8 +7817,9 @@ function _crmRefilter() {
     if (crmFilter === 'followup' && !c.followup) continue;
     if (crmFilter === 'notes' && !c.notes) continue;
     if (crmFilter === 'optout' && !c.optout) continue;
+    /*CRMFIX13*/ if (crmFilter === 'never' && !_crmNeverVisited(c)) continue;
     if (q) {
-      var nm = c.name.toLowerCase();
+      /*CRMFIX05*/ var nm = String(c.name || '').toLowerCase();
       var ig = (c.instagram||'').toLowerCase().replace(/^@/,'');
       var em = (c.email||'').toLowerCase();
       var ph = (c.phone||'').replace(/\D/g,'');
@@ -7562,10 +7827,11 @@ function _crmRefilter() {
     }
     _crmFiltered.push(i);
   }
+  /*CRMFIX12*/ _crmFiltered = _crmSortApply(_crmFiltered);
 }
 
 function crmUpdateStats() {
-  var total=CRM_CUSTOMERS.length, vip=0, bday=0, ann=0, lapsed=0, followup=0, notes=0, optout=0;
+  /*CRMFIX17*/ var total=CRM_CUSTOMERS.length, vip=0, bday=0, ann=0, lapsed=0, followup=0, notes=0, optout=0, never=0;
   for (var i=0; i<total; i++) {
     var c = CRM_CUSTOMERS[i];
     if (c.vip) vip++;
@@ -7575,6 +7841,7 @@ function crmUpdateStats() {
     if (c.followup) followup++;
     if (c.notes) notes++;
     if (c.optout) optout++;
+    /*CRMFIX16*/ if (_crmNeverVisited(c)) never++;
   }
   document.getElementById('cs-total').textContent = total;
   document.getElementById('cs-vip').textContent = vip;
@@ -7584,6 +7851,7 @@ function crmUpdateStats() {
   document.getElementById('cs-followup').textContent = followup;
   document.getElementById('cs-notes').textContent = notes;
   document.getElementById('cs-optout').textContent = optout;
+  /*CRMFIX18*/ var _nv = document.getElementById('cs-never'); if (_nv) _nv.textContent = never;
 }
 
 function crmBuildCard(c) {
@@ -7591,10 +7859,10 @@ function crmBuildCard(c) {
   var lapsedFlag = _isLapsed(c.lastVisit);
   var bdayThis = _thisMonth(c.birthday);
   var annThis  = _thisMonth(c.anniversary);
-  var initials = c.name.split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
+  /*CRMFIX04*/ var initials = String(c.name || '?').split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
   var avatarColor = c.avatarColor || '#1565C0';
   var cardClass = 'crm-card' + (c.vip?' crm-vip':'') + (bdayThis?' crm-birthday':'') + (!c.vip&&lapsedFlag?' crm-lapsed':'');
-  var tierColor = c.points>=500?'#FFD600':c.points>=200?'#90CAF9':c.points>=50?'#E65100':'transparent';
+  /*CRMFIX07*/ var tierColor = c.points>=500?'#F9A825':c.points>=200?'#1565C0':c.points>=50?'#E65100':'#5A6572';
 
   var html = '<div class="'+cardClass+'" id="cdc'+c.id+'">';
 
@@ -7632,7 +7900,16 @@ function crmBuildCard(c) {
   html += '<div class="crm-stat"><div class="crm-stat-val" style="color:'+tierColor+';">'+(c.points||0)+(tier?' '+tier:'')+'</div><div class="crm-stat-lbl">Points</div></div>';
   html += '<div class="crm-stat"><div class="crm-stat-val">'+(c.visits||0)+'</div><div class="crm-stat-lbl">Visits</div></div>';
   html += '<div class="crm-stat"><div class="crm-stat-val" style="color:#1565C0;">'+(c.avgSpend?('$'+c.avgSpend):'—')+'</div><div class="crm-stat-lbl">Avg/Visit</div></div>';
-  var lastVisitShort = c.lastVisit ? c.lastVisit.slice(5).replace('-','/') : '—';
+  /*CRMFIX08*/ // MM/DD reads the same for 2024 and 2026 - show the year unless it's this one
+  var lastVisitShort = '—';
+  if (c.lastVisit) {
+    var _lv = String(c.lastVisit);
+    var _lvm = _lv.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (_lvm) {
+      lastVisitShort = _lvm[2] + '/' + _lvm[3];
+      if (_lvm[1] !== String(new Date().getFullYear())) lastVisitShort += '/' + _lvm[1].slice(2);
+    } else { lastVisitShort = _lv; }
+  }
   html += '<div class="crm-stat"><div class="crm-stat-val" style="font-size:13px;color:'+(lapsedFlag?'#C62828':'#1B2E4A')+';">'+lastVisitShort+'</div><div class="crm-stat-lbl">Last Visit</div></div>';
   html += '</div>';
 
@@ -7814,6 +8091,12 @@ function closeCrmAdd() {
 function saveCrmCustomer() {
   var name = document.getElementById('crm-f-name').value.trim();
   if (!name) { alert('Name is required.'); return; }
+  /*CRMFIX21*/ // same phone, email or instagram as somebody already on file
+  var _dupe = _crmFindDupe({ name: name,
+    phone: document.getElementById('crm-f-phone').value.trim(),
+    email: document.getElementById('crm-f-email').value.trim(),
+    instagram: document.getElementById('crm-f-instagram').value.trim() }, _crmEditId || null);
+  if (_dupe && !confirm(_dupe.name + ' already has that phone, email or Instagram.\n\nAdd this one anyway?')) return;
   var bdayRaw = document.getElementById('crm-f-birthday').value.trim();
   var annRaw  = document.getElementById('crm-f-anniversary').value.trim();
   // v226 Bug 5 fix: parse MM/DD, MM/DD/YYYY, MM-DD, and ISO YYYY-MM-DD (previously split on '/' only,
@@ -7912,7 +8195,29 @@ function crmImport(event) {
     if (file.name.endsWith('.json')) {
       try {
         var parsed = JSON.parse(text);
-        if (Array.isArray(parsed)) { CRM_CUSTOMERS = parsed; (function(){var _m=0;CRM_CUSTOMERS.forEach(function(cu){var _n=parseInt(cu.id,10);if(!isNaN(_n)&&_n>_m)_m=_n;});CRM_CUSTOMERS.forEach(function(cu){var _n=parseInt(cu.id,10);cu.id=isNaN(_n)?(++_m):_n;});})(); /* normalize ids to numbers so strict === card handlers match */ CRM_CUSTOMERS.forEach(function(cu){if(!cu.avatarColor)cu.avatarColor=_rwdAvatarColor(cu.name);}); /* v143 Bug 20 fix */ crmSaveCustomers(); _crmDirty=true; crmRender(); showDMToast('Imported '+parsed.length+' customers!'); return; }
+        if (Array.isArray(parsed)) { /*CRMFIX01*/
+          var _have = CRM_CUSTOMERS.length, _incoming = parsed.length;
+          if (_have > 0) {
+            var _ans = prompt('You have ' + _have + ' customers. This file has ' + _incoming + '.\n\n' +
+              'Type MERGE to add the new ones and keep yours,\n' +
+              'or REPLACE to throw yours away and use the file.\n\n' +
+              'Anything else cancels.', 'MERGE');
+            if (!_ans) { showDMToast('Import cancelled.'); return; }
+            _ans = _ans.trim().toUpperCase();
+            if (_ans === 'MERGE') {
+              var _added = 0, _dupes = 0;
+              for (var _pi = 0; _pi < parsed.length; _pi++) {
+                if (_crmFindDupe(parsed[_pi])) { _dupes++; continue; }
+                var _cp = parsed[_pi]; _cp.id = crmGetNextId(); CRM_CUSTOMERS.push(_cp); _added++;
+              }
+              CRM_CUSTOMERS.forEach(function(cu){if(!cu.avatarColor)cu.avatarColor=_rwdAvatarColor(cu.name||'');});
+              crmSaveCustomers(); _crmDirty=true; crmRender();
+              showDMToast('Added ' + _added + (_dupes ? ', skipped ' + _dupes + ' already here' : ''));
+              return;
+            }
+            if (_ans !== 'REPLACE') { showDMToast('Import cancelled.'); return; }
+          }
+          CRM_CUSTOMERS = parsed; (function(){var _m=0;CRM_CUSTOMERS.forEach(function(cu){var _n=parseInt(cu.id,10);if(!isNaN(_n)&&_n>_m)_m=_n;});CRM_CUSTOMERS.forEach(function(cu){var _n=parseInt(cu.id,10);cu.id=isNaN(_n)?(++_m):_n;});})(); /* normalize ids to numbers so strict === card handlers match */ CRM_CUSTOMERS.forEach(function(cu){if(!cu.avatarColor)cu.avatarColor=_rwdAvatarColor(cu.name);}); /* v143 Bug 20 fix */ crmSaveCustomers(); _crmDirty=true; crmRender(); showDMToast('Imported '+parsed.length+' customers!'); return; }
       } catch(err) {}
     }
     // CSV parse
@@ -7976,6 +8281,7 @@ function crmImport(event) {
       var now = new Date(); if (now < new Date(now.getFullYear(), m, day)) age--;
       return age >= 0 && age <= 130 ? age : null;
     }
+    /*CRMFIX22*/ var _crmSkipped = 0;
     var imported = 0;
     var maxId = crmGetNextId();
     for (var i=1; i<lines.length; i++) {
@@ -7985,6 +8291,11 @@ function crmImport(event) {
       var last  = _col(cols,['last name','lastname','surname']);
       if (!name && first) name = (first+' '+last).trim(); // build full name from separate first/last columns
       if (!name) continue;
+      /*CRMFIX03*/ // don't add somebody who is already here
+      if (_crmFindDupe({ name: name,
+            phone: _col(cols,['phone','mobile','cell','telephone']),
+            email: _col(cols,['email','e-mail','email address']),
+            instagram: _col(cols,['instagram','ig','handle']) })) { _crmSkipped++; continue; }
       var _bd = _crmNormDate(_col(cols,['birthday','birth date','dob','date of birth']));
       var _an = _crmNormDate(_col(cols,['anniversary','anniversary date']));
       CRM_CUSTOMERS.push({
@@ -8036,11 +8347,13 @@ function crmExportBackup() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); }, 1000); // v143 Bug 7 fix
 }
 function crmExportCSV() {
-  var headers = ['ID','Name','Phone','Email','Instagram','Birthday','Anniversary','First Visit','Last Visit','Visits','Points','VIP','Opt-Out','Follow Up','Source','Tags','Notes'];
+  /*CRMFIX19*/ // Avg Spend and Preferred Contact are read by the importer but were never
+  // written out, so an export/re-import round trip zeroed every customer's spend.
+  var headers = ['ID','Name','Phone','Email','Instagram','Birthday','Anniversary','First Visit','Last Visit','Visits','Points','Avg Spend','Preferred Contact','VIP','Opt-Out','Follow Up','Source','Tags','Notes'];
   var rows = [headers];
   for (var i=0; i<CRM_CUSTOMERS.length; i++) {
     var c = CRM_CUSTOMERS[i];
-    rows.push([c.id,c.name,c.phone,c.email,c.instagram,c.birthday,c.anniversary,c.firstVisit,c.lastVisit,c.visits,c.points,c.vip?'Yes':'No',c.optout?'Yes':'No',c.followup?'Yes':'No',c.source,c.tags,c.notes]);
+    /*CRMFIX20*/ rows.push([c.id,c.name,c.phone,c.email,c.instagram,c.birthday,c.anniversary,c.firstVisit,c.lastVisit,c.visits,c.points,c.avgSpend,c.preferredContact,c.vip?'Yes':'No',c.optout?'Yes':'No',c.followup?'Yes':'No',c.source,c.tags,c.notes]);
   }
   var csv = rows.map(function(r){return r.map(function(v){return '"'+(v||'').toString().replace(/"/g,'""')+'"';}).join(',');}).join('\n');
   var blob = new Blob([csv],{type:'text/csv'});
@@ -8130,9 +8443,20 @@ function _rewardsRender() {
             (m.anniversary ? '<div style="flex:1;min-width:120px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.06);border-radius:10px;box-sizing:border-box;"><span style="font-size:18px;"></span><div><div style="font-size:10px;color:#7EB8FF;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Anniversary</div><div style="font-size:14px;color:#fff;font-weight:700;margin-top:2px;">' + _rwdEsc(m.anniversary) + '</div></div></div>' : '') +
             (joinDate ? '<div style="width:100%;font-size:12px;color:rgba(255,255,255,0.35);text-align:right;">Member since ' + joinDate + '</div>' : '') +
           '</div>' +
+          /* KEYROOM-MEMBERLINK-v1 */
+          '<div style="background:rgba(94,181,255,0.07);border:1.5px solid rgba(94,181,255,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;">' +
+            '<div style="font-size:11px;font-weight:800;letter-spacing:0.15em;color:#7EB8FF;text-transform:uppercase;margin-bottom:8px;">Member Link</div>' +
+            '<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5;">This is what they see — their balance and what they can redeem. No password.</div>' +
+            (m.token ?
+              '<button onclick="event.stopPropagation();_rewardsCopyLink(\'' + key + '\')" style="background:#168fff;color:#fff;border:none;border-radius:9px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;">Copy Their Link</button>' :
+              '<button onclick="event.stopPropagation();_rewardsMakeLink(\'' + key + '\')" style="background:#168fff;color:#fff;border:none;border-radius:9px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;">Generate Link</button>'
+            ) +
+            '<span id="rwd-link-msg-' + key + '" style="margin-left:10px;font-size:12px;color:#4ADE80;"></span>' +
+          '</div>' +
+          /* /KEYROOM-MEMBERLINK-v1 */
           // token award section
           '<div style="background:rgba(255,214,0,0.07);border:1.5px solid rgba(255,214,0,0.25);border-radius:12px;padding:16px;">' +
-            '<div style="font-size:11px;font-weight:800;letter-spacing:0.2em;color:#FFD600;text-transform:uppercase;margin-bottom:13px;">Award Tokens</div>' +
+            /* KEYROOM-POINTS-LABELS-v1 */ '<div style="font-size:11px;font-weight:800;letter-spacing:0.2em;color:#FFD600;text-transform:uppercase;margin-bottom:13px;">Award Points</div>' +
             // quick-add row
             '<div style="display:flex;gap:8px;margin-bottom:11px;">' +
               '<button onclick="event.stopPropagation();_rewardsAdd(\'' + key + '\',10)"  style="flex:1;background:#1348C8;color:#fff;border:none;border-radius:10px;padding:13px 4px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:0.01em;box-shadow:0 2px 8px rgba(0,0,0,0.3);">+10</button>' +
@@ -8143,7 +8467,7 @@ function _rewardsRender() {
             // manual input + voice row
             '<div style="display:flex;gap:8px;align-items:center;">' +
               '<input type="number" id="rwd-inp-' + key + '" placeholder="Type any amount…" min="0" onclick="event.stopPropagation()" style="flex:1;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;padding:12px 14px;font-size:14px;outline:none;-webkit-appearance:none;">' +
-              '<button id="rwd-mic-' + key + '" onclick="event.stopPropagation();_rewardsVoiceAdd(\'' + key + '\')" style="background:#4527A0;color:#fff;border:none;border-radius:10px;padding:12px 14px;font-size:18px;cursor:pointer;flex-shrink:0;" title="Say a number to add tokens"></button>' +
+              '<button id="rwd-mic-' + key + '" onclick="event.stopPropagation();_rewardsVoiceAdd(\'' + key + '\')" style="background:#4527A0;color:#fff;border:none;border-radius:10px;padding:12px 14px;font-size:18px;cursor:pointer;flex-shrink:0;" title="Say a number to add points"></button>' +
               '<button onclick="event.stopPropagation();_rewardsSet(\'' + key + '\')" style="background:#2E7D32;color:#fff;border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.3);">Set</button>' +
             '</div>' +
             '<div id="rwd-msg-' + key + '" style="font-size:13px;color:#4ADE80;text-align:center;margin-top:10px;min-height:20px;font-weight:700;letter-spacing:0.03em;"></div>' +
@@ -8158,7 +8482,7 @@ function _rewardsRender() {
         '</div>' +
         '<div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">' +
           '<div style="text-align:right;">' +
-            '<div style="font-size:10px;color:#FFD600;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px;">Tokens</div>' +
+            '<div style="font-size:10px;color:#FFD600;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px;">Points</div>' +
             '<div style="font-size:34px;font-weight:800;color:#FFD600;line-height:1;letter-spacing:-0.01em;">' + pts + '</div>' +
           '</div>' +
           '<div style="font-size:12px;color:rgba(255,255,255,0.25);width:14px;text-align:center;">' + (isExp ? '▲' : '▼') + '</div>' +
@@ -8230,6 +8554,28 @@ function _rewardsVoiceAdd(key) {
   };
 }
 
+/* KEYROOM-MEMBERLINK-FNS-v1 */
+function _rewardsAcctUrl(token) { return 'https://keytechnologies.si/my-account.html?t=' + token; }
+function _rewardsCopyLink(key) {
+  var m = _rewardsFbData[key]; if (!m || !m.token) return;
+  var url = _rewardsAcctUrl(m.token);
+  var msg = document.getElementById('rwd-link-msg-' + key);
+  if (navigator.clipboard) { navigator.clipboard.writeText(url).then(function(){ if (msg) msg.textContent = "Copied!"; }); }
+  else if (msg) { msg.textContent = url; }
+}
+function _rewardsMakeLink(key) {
+  var m = _rewardsFbData[key]; if (!m) return;
+  if (typeof isDemo !== 'undefined' && isDemo) { showDMToast('View only in demo mode'); return; }
+  if (typeof isFriend !== 'undefined' && isFriend) { showDMToast('Owner only'); return; }
+  var bytes = new Uint8Array(16);
+  (window.crypto || window.msCrypto).getRandomValues(bytes);
+  var token = Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+  var msg = document.getElementById('rwd-link-msg-' + key);
+  if (msg) msg.textContent = 'Generating…';
+  fetch(_rwdFbBase() + key + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ token: token }) })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); m.token = token; _rewardsRender(); })
+    .catch(function(){ if (msg) msg.textContent = 'Failed — try again'; });
+}
 function _rewardsAdd(key, delta) {
   if (!_rewardsFbData[key]) return;
   // v230 fix: use a Firebase server-side atomic increment instead of read-cached-total +
@@ -8467,7 +8813,7 @@ function initCRM() {
     if (si) {
       si.addEventListener('input', function(){
         crmSearch = this.value.toLowerCase().trim();
-        crmFilter = 'all';
+        /*CRMFIX10*/ // keep the filter - searching within VIPs is the point
         _crmDirty = true;
         _debounceSearch('crm', function(){ var _csc=document.getElementById('view-crm'); if(_csc)_csc.scrollTop=0; crmRender(); }, 80);
       });
