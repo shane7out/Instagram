@@ -184,7 +184,7 @@
   <div class="bigbal"><b id="dpBal">0</b><span>rewards available</span></div>
   <div class="mini3"><div><b id="dpR">0</b><span>from events</span></div><div><b id="dpG">0</b><span>added by you</span></div><div><b id="dpU">0</b><span>used</span></div></div>
   <div class="warnline" id="dpExp" hidden></div>
-  <div class="lab">Recent</div><div class="act" id="dpHist" style="min-height:102px"></div>
+  <div class="lab">Expiry breakdown</div><div class="act" id="dpHist" style="min-height:102px"></div>
   <div class="two"><button class="btn g" id="dpAdd" type="button">Add rewards</button><button class="btn" id="dpUse" type="button">Free food use</button></div>
   <button class="btn" id="dpMsg" type="button">Message</button>
   <a class="dimline" id="dpView" href="#" target="_blank" rel="noopener" style="color:var(--key2)">Open their member view (demo)</a>
@@ -211,7 +211,7 @@
 <!-- menu -->
 <dialog id="dMenu" class="short" aria-labelledby="dmT"><div class="dh"><h3 id="dmT">More</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
   <p style="margin:0;color:var(--dim);font-size:13px">This is a test version. Everything is saved on this device only, and nothing is issued, sent or paid.</p>
-  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
+  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><button class="btn" id="mWallet" type="button">See a member wallet (demo: Dana)</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
 </dialog>
 
 <script src="key-platform/kr-engine.js"></script>
@@ -287,7 +287,8 @@ function openPerson(k){
   $('#dpView').href='key-rewards-me.html?m='+encodeURIComponent(k);
   var xe=$('#dpExp');xe.hidden=!(m.expiringSoon||m.expired);xe.textContent=(m.expiringSoon?m.expiringSoon+' expire '+dshort(m.nextExpiry)+'. ':'')+(m.expired?m.expired+' have expired.':'');
   $('#dPerson').showModal();
-  kr.historyOf(k).then(function(h){var box=$('#dpHist'),n=3;box.innerHTML=h.length?h.slice(0,n).map(function(i){return '<div class="arow"><span class="dot '+(i.rewards<0?'u':'')+'" aria-hidden="true">'+(i.rewards<0?'&minus;':'+')+'</span><span>'+esc(i.text)+'</span><b class="'+(i.rewards>=0?'pos':'neg')+'">'+(i.rewards>=0?'+':'')+i.rewards+'</b></div>'}).join(''):'<div class="empty">No activity yet.</div>'});
+  var box=$('#dpHist'),L=m.lots||[],n=3,show=L.length>n?L.slice(0,n-1):L,rest=L.length>n?L.slice(n-1):null;
+  box.innerHTML=L.length?show.map(function(l){var soon=l.expiresAt&&l.expiresAt-Date.now()<=KR.SOON_DAYS*KR.DAY;return '<div class="arow"><span class="dot '+(soon?'u':'')+'" aria-hidden="true">'+(l.expiresAt?'&#9201;':'&infin;')+'</span><span>'+(l.expiresAt?'Use by '+dshort(l.expiresAt):'No expiry date')+'</span><b class="'+(soon?'neg':'pos')+'">'+l.rewards+'</b></div>'}).join('')+(rest?'<div class="arow"><span style="color:var(--dim)">+ '+rest.length+' later batches</span><b>'+rest.reduce(function(a,l){return a+l.rewards},0)+'</b></div>':''):'<div class="empty">No rewards right now.</div>';
 }
 $('#dpAdd').onclick=function(){S.who=S.person;S.mode='ex';$('#dPerson').close();show('add')};
 $('#dpMsg').onclick=function(){$('#dPerson').close();openThread(S.person)};
@@ -395,6 +396,7 @@ setInterval(function(){loadInbox()},3000);
 $('#mDemoMsg').onclick=function(){var ms=S.ledger.filter(function(x){return x.name!=='Unknown'});if(!ms.length){$('#mMsg').className='msg err';$('#mMsg').textContent='Load demo data first.';return}
   var m=ms[Math.floor(Math.random()*ms.length)],texts=['Hi! How long do my rewards last?','Can I use my rewards at the restaurant tonight?','Thank you for the welcome rewards!','When is the next guest night?'];
   kr.sendMessage(m.mkey,{from:'member',text:texts[Math.floor(Math.random()*texts.length)],name:m.name}).then(function(){$('#dMenu').close();return loadInbox()})};
+$('#mWallet').onclick=function(){kr.seedWalletDemo().then(function(m){return load().then(function(){location.href='key-rewards-me.html?m='+encodeURIComponent(m.mkey)})})};
 $('#mAlerts').onclick=function(){var m=$('#mMsg');if(!window.Notification){m.className='msg err';m.textContent='This browser cannot show alerts.';return}
   Notification.requestPermission().then(function(r){m.className='msg'+(r==='granted'?' good':' err');m.textContent=r==='granted'?'Alerts are on while the app is open.':'Alerts were not allowed.'})};
 

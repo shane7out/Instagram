@@ -14,7 +14,7 @@ database rules deployed, and Shane saying go. Nothing here changes the live LVR 
 | Public demo / service | `key-platform/demos/key-rewards-events.html`, homepage card "Key Rewards: Guest Events & Loyalty" | Sliders and a close button, made-up data. |
 | Database rules (staged) | `.github/db-task/rules/key-rewards-rules.json` | Section `key_rewards`. Placeholder `__OWNER_UID__` (the deploy script fills it). |
 | Deploy script (NOT run) | `.github/db-task/mac/deploy-key-rewards-rules.sh` | Backs up current rules, adds only `key_rewards`, runs live checks, restores the old rules if any check fails. |
-| Tests | `.github/db-task/rewards-tests/test-kr-engine.js` (80 checks, pure logic) and `.github/db-task/rules/test-key-rewards.js` (161 checks: the rules plus the engine through the Firebase store, in the emulator) | Run the second with `env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY NO_PROXY='*' bash .github/db-task/rules/run-kr-rules-test.sh` |
+| Tests | `.github/db-task/rewards-tests/test-kr-engine.js` (86 checks, pure logic) and `.github/db-task/rules/test-key-rewards.js` (161 checks: the rules plus the engine through the Firebase store, in the emulator) | Run the second with `env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY NO_PROXY='*' bash .github/db-task/rules/run-kr-rules-test.sh` |
 
 ## Data (all under `key_rewards/`)
 - `restaurants/<rid>`: name, city, country, active, createdAt. Owner only.
@@ -54,3 +54,9 @@ share = the smaller of (pool divided by approved guests, rounded down) and the p
 - Sandbox: the owner app shows a badge on the message button and a banner when a new message arrives (instantly across tabs of the same browser, otherwise within 3 seconds), and optional browser alerts while the app is open (More, Turn on alerts). "Demo: receive a test message" in More fakes a member message.
 - NOT built: alerts while the app is closed. That needs either a push-notification service (a server) or an email alert (the site already sends lead alerts through Formspree's free plan; the same could be used for member messages once live). Decide before going live.
 - Limits: no spam filter beyond the people-list requirement; messages are plain text, no photos; threads show the latest 14 messages on screen.
+
+## Breakdown by expiry date (added 2026-11-07, Shane)
+- The member wallet (key-rewards-me.html) shows the grand total on top, then one line per expiry date ("25, use by Nov 13, 6 days left", "30, use by Nov 28", ...), soonest first, with the first line tagged "Used first" and amber when it expires within 14 days, plus a banner "25 of your rewards expire on Nov 13. Use these first." Rewards with no expiry date come last.
+- Rule, always: when rewards are used, the ones that expire soonest are used first (the person does not choose). Expired rewards are not in the total.
+- Same breakdown in the owner phone app's person sheet. More, "See a member wallet (demo: Dana)" opens the demo member: 25 + 30 + 36 + 45 = 136.
+- Engine: `KR.computeBalance(...).lots` (grouped by expiry day, soonest first); `api.seedWalletDemo()` (sandbox only, safe to run twice).

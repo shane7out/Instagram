@@ -42,13 +42,15 @@
       var need = u.n, ok = lots.filter(function (l) { return l.at <= u.at && l.rem > 0 && (!l.exp || l.exp > u.at); }).sort(function (a, b) { return (a.exp || 9e15) - (b.exp || 9e15); });
       for (i = 0; i < ok.length && need > 0; i++) { var take = Math.min(ok[i].rem, need); ok[i].rem -= take; need -= take; }
     });
-    var out = { received: received, granted: granted, redeemed: used, expired: 0, available: 0, expiringSoon: 0, nextExpiry: 0 };
+    var out = { received: received, granted: granted, redeemed: used, expired: 0, available: 0, expiringSoon: 0, nextExpiry: 0, lots: [] }, by = {};
     lots.forEach(function (l) {
       if (l.rem <= 0) return;
       if (l.exp && l.exp <= now) { out.expired += l.rem; return; }
       out.available += l.rem;
+      var key = l.exp ? new Date(l.exp).toISOString().slice(0, 10) : 'none'; if (!by[key]) { by[key] = { rewards: 0, expiresAt: l.exp || 0 }; out.lots.push(by[key]); } by[key].rewards += l.rem; if (l.exp && l.exp < by[key].expiresAt) by[key].expiresAt = l.exp;
       if (l.exp) { if (!out.nextExpiry || l.exp < out.nextExpiry) out.nextExpiry = l.exp; if (l.exp - now <= KR.SOON_DAYS * KR.DAY) out.expiringSoon += l.rem; }
     });
+    out.lots.sort(function (a, b) { return (a.expiresAt || 9e15) - (b.expiresAt || 9e15); });   // the soonest-expiring come first, and are the first to be used
     return out;
   };
   KR.newKey = function (len) {
@@ -322,6 +324,7 @@
       });
       // a few people the owner added by hand, with welcome rewards
       chain = chain.then(function () { var nm = ['Maria', 'Chris', 'Priya', 'Tom', 'Zoe', 'Luis', 'Nina'], c3 = Promise.resolve(); nm.forEach(function (n, i) { c3 = c3.then(function () { return api.addMember({ name: n }); }).then(function (m) { return store.update(P('members/' + m.mkey), { createdAt: t0 - i * 5 * D - H }).then(function () { return api.grant({ mkey: m.mkey, rewards: 10 + i * 5, reason: 'Welcome', at: t0 - i * 5 * D, expiresDays: i === 2 ? 20 : i === 4 ? 7 : 90 }); }); }); }); return c3; });
+      chain = chain.then(function () { return api.seedWalletDemo(); });
       // one event that is open right now, with pending check-ins to approve
       return chain.then(function () {
         return api.createEvent({ rid: made['Harbor Table'].id, title: 'Friday dinner rush', pool: 2000, cap: 15, opensAt: t0 - H, closesAt: t0 + 3 * H });
@@ -329,6 +332,19 @@
         return api.openEvent(e.id).then(function () {
           var ps = [], k; for (k = 0; k < 7; k++) { (function (k) { ps.push(store.set(P('checkins/' + e.id + '/live' + KR.newKey(12)), { t: t0 - 50 * 60000 + k * 240000, name: firsts[(k + 3) % firsts.length] + ' ' + String.fromCharCode(66 + k), status: k < 3 ? 'approved' : 'pending' })); })(k); }
           return Promise.all(ps);
+        });
+      });
+    };
+    // SANDBOX ONLY: a member with rewards that expire on four different dates (25 + 30 + 36 + 45 = 136).
+    api.seedWalletDemo = function () {
+      var t0 = now(), D = KR.DAY;
+      return api.listMembers().then(function (ms) {
+        var have = ms.filter(function (m) { return m.name === 'Dana' && m.source === 'owner'; })[0];
+        if (have) return have;
+        return api.addMember({ name: 'Dana' }).then(function (m) {
+          var lots = [[25, 84, 90], [30, 69, 90], [36, 30, 90], [45, 60, 180]], c = store.update(P('members/' + m.mkey), { createdAt: t0 - 85 * D });
+          lots.forEach(function (l) { c = c.then(function () { return api.grant({ mkey: m.mkey, rewards: l[0], reason: l[0] === 25 ? 'Welcome' : l[0] === 30 ? 'Thank you' : l[0] === 36 ? 'Event' : 'Thank you', at: t0 - l[1] * D, expiresDays: l[2] }); }); });
+          return c.then(function () { return m; });
         });
       });
     };

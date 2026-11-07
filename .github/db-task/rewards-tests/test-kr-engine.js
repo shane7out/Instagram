@@ -126,6 +126,18 @@ const rej = async (name, p) => { try { await p; ok(name, false, 'did not reject'
   const led = await ke.ledger();
   ok('the list of everybody shows who is expiring soon (the event guest, 5 days left)', led.filter(m => m.mkey === 'leeleeleelee1')[0].expiringSoon === 20, led);
 
+  // ---- breakdown by expiry date
+  const bd = bal([{ kind: 'grant', rewards: 25, at: N0, expiresAt: N0 + 20 * DAY }, { kind: 'grant', rewards: 30, at: N0, expiresAt: N0 + 40 * DAY }, { kind: 'grant', rewards: 36, at: N0, expiresAt: N0 + 70 * DAY }, { kind: 'grant', rewards: 45, at: N0 }], N0 + 5 * DAY);
+  eq('breakdown: 25 + 30 + 36 + 45 = 136, soonest-expiring first, no-expiry last', [bd.available, bd.lots.map(l => l.rewards), bd.lots.map(l => l.expiresAt ? Math.round((l.expiresAt - N0) / DAY) : 0)], [136, [25, 30, 36, 45], [20, 40, 70, 0]]);
+  const bd2 = bal([{ kind: 'grant', rewards: 25, at: N0, expiresAt: N0 + 20 * DAY }, { kind: 'grant', rewards: 30, at: N0, expiresAt: N0 + 40 * DAY }, { kind: 'use', rewards: 35, at: N0 + 1 * DAY }], N0 + 5 * DAY);
+  eq('breakdown after using 35: the 25 that expire first are used up, 20 of the 30 remain (total 20)', [bd2.available, bd2.lots.map(l => l.rewards)], [20, [20]]);
+  eq('two grants with the same expiry date show as one line', bal([{ kind: 'grant', rewards: 10, at: N0, expiresAt: N0 + 30 * DAY }, { kind: 'grant', rewards: 5, at: N0 + 1000, expiresAt: N0 + 30 * DAY }], N0).lots.map(l => l.rewards), [15]);
+  eq('expired rewards are not in the breakdown', bal([{ kind: 'grant', rewards: 10, at: N0, expiresAt: N0 + 2 * DAY }, { kind: 'grant', rewards: 5, at: N0, expiresAt: N0 + 30 * DAY }], N0 + 3 * DAY).lots.map(l => l.rewards), [5]);
+  const kd = KR.create(KR.memoryStore(), () => N0 + 100 * DAY); await kd.seedWalletDemo(); await kd.seedWalletDemo();
+  const dana = (await kd.ledger()).filter(m => m.name === 'Dana');
+  eq('the demo wallet: one Dana, 136 in four batches (25, 30, 36, 45)', [dana.length, dana[0].available, dana[0].lots.map(l => l.rewards)], [1, 136, [25, 30, 36, 45]]);
+  eq('the demo wallet: the first batch expires in 6 days and is flagged as expiring soon', [Math.round((dana[0].lots[0].expiresAt - (N0 + 100 * DAY)) / DAY), dana[0].expiringSoon], [6, 25]);
+
   // ---- messages
   T2 = N0 + 100 * DAY;
   await rej('an empty message is refused', ke.sendMessage(lm.mkey, { from: 'member', text: '  ' }));
