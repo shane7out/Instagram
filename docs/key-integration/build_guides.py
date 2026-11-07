@@ -862,6 +862,58 @@ G11['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G11'] = G11
 
+# ================= Guide 12: restaurant rewards programs =================
+G12 = dict(slug='restaurant-rewards-program', date='2026-11-07',
+  title='How a Restaurant Rewards Program Works | Key Technologies.si',
+  desc='A plain guide to restaurant rewards programs: how points or rewards work, what expiry dates mean, who covers the cost, and what to check before you start.',
+  h1='How a restaurant rewards program works, and what to check before you start',
+  short='A plain guide to restaurant rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.')
+G12['faq'] = [
+ ('What is a restaurant rewards program?', 'A way for guests to earn something for coming back, usually points or rewards they can trade for free food. The restaurant decides what a reward is worth, where it can be used and how long it lasts.'),
+ ('Who pays for the free food?', 'The restaurant that honors the offer. Before you start, decide how many rewards you are willing to honor and put a cap on it, so you always know the most the program could cost.'),
+ ('Should rewards expire?', 'Many programs use an expiry date so rewards do not pile up forever. If you use one, tell guests the date when they earn the rewards and do not shorten it afterward. Rules about expiring rewards differ by place, so check with an attorney.'),
+ ('Can rewards be exchanged for cash?', 'Most programs say no: rewards can only be used for free food at the participating restaurants and have no cash value. Keeping them food-only keeps the program simple and avoids stored-value questions.'),
+ ('How do you stop people gaming it?', 'Confirm who is really there before rewards are given out, allow one check-in per person per event, and set a cap on what one person can receive. A person on staff approving the guest list is the simplest control.')]
+G12['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('How a restaurant rewards program works','')])}
+<h1>{esc(G12['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 7, 2026</p>
+<div class="tldr"><b>Short answer:</b> a rewards program gives guests a reason to return. Decide what a reward can be used for, who covers it, when it expires and how you stop abuse, and write it down in plain terms before the first guest earns anything.</div>
+
+<h2>The pieces of a simple program</h2>
+<ul>
+<li><b>Earning:</b> how a guest gets rewards, for example by checking in at a guest night or by being thanked for a visit.</li>
+<li><b>Using:</b> what the rewards buy. Free food at participating restaurants is the simplest answer.</li>
+<li><b>A minimum offer:</b> a smallest reward amount that can be used, so each free offer is worth the restaurant honoring.</li>
+<li><b>An expiry date:</b> optional, set when the rewards are issued and shown to the guest.</li>
+<li><b>A record:</b> who has how many rewards, when they expire, and what was used.</li>
+</ul>
+
+<h2>Sharing a pool at an event</h2>
+<p>One easy way to start is a guest night. The restaurant sets aside a pool of rewards. Guests check in, staff confirm who is really there, and the pool is divided equally among confirmed guests, with a cap per person. Whatever is left over is simply not issued.</p>
+
+<h2>What to settle before you start</h2>
+<ol>
+<li><b>The cost.</b> How many rewards will you honor in total, and per event? Put a ceiling on it.</li>
+<li><b>The rules in writing.</b> What rewards can be used for, that they have no cash value, when they expire, and that you can end or change the program.</li>
+<li><b>Fairness.</b> How you confirm who is there and prevent a person from claiming twice.</li>
+<li><b>Privacy.</b> Collect as little as you need, such as a first name, and say what you keep.</li>
+<li><b>The law where you operate.</b> Promotions, loyalty programs and expiry dates are regulated differently by place. Check with an attorney before you launch.</li>
+</ol>
+<p>Nothing here is legal advice.</p>
+
+<h2>Where Key Technologies fits</h2>
+<p>We build rewards systems for restaurants, with guest check-in, staff approval, a dashboard and a message line between you and your guests. You can try a made-up demo in the <a href="../key-platform/demos/key-rewards-events.html">Key Rewards demo</a>. It is a test version until the terms have been reviewed and a restaurant has signed on.</p>
+
+{faq_html(G12['faq'])}
+
+<div class="guide-cta"><h2>Want to talk it through?</h2>
+<p>Book a free call. Tell us what you would want a rewards program to do and we will tell you honestly what it would take.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/demos/key-rewards-events.html">Try the demo</a></div></div>
+{more([('AI for restaurants: 6 practical ways to save time','Phones, bookings, reviews, email and social posts, with a demo of each.','ai-for-restaurants.html'),('What a business dashboard should show (and what to leave off)','A plain guide to what belongs on a small-business dashboard.','business-dashboard-what-to-track.html')])}
+</article>"""
+GUIDES['G12'] = G12
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():

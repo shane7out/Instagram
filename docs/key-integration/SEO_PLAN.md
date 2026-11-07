@@ -13,6 +13,7 @@ Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes 
 - Business Dashboards demo (indexable), Chiropractors & Specialists page, dashboard sections on the restaurant, law and medical pages (2026-11-06).
 - Guide "How Key Technologies works with a business, step by step" (2026-11-06): the process from the free call to a working system, what stays yours, what we will not do; FAQ schema; sitemap and llms.txt auto-added. Uses only claims already on the site (free 30-minute call, permission levels, accounts stay in your name).
 - Guide "AI phone answering for dental and law offices: what it should and should not do" (2026-11-06): general information, no legal, medical or compliance claims, links to the phone demo and the dental and law pages; sitemap and llms.txt auto-added.
+- Guide "How a restaurant rewards program works, and what to check before you start" (2026-11-07): general information, not legal advice; mentions the Key Rewards demo; no prices, no stats.
 - Restaurant page (the strongest vertical: Shane keeps watch on about 10,000 restaurants), Las Vegas page, languages page.
 - Visitor counter + Owner report (Sources tab shows which pages and sites bring visitors).
 
