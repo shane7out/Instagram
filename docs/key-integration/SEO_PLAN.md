@@ -26,7 +26,7 @@ Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes 
 6. Write or record one short answer a week (a post, a reel caption) that links to the matching guide.
 
 ## Claude's standing list (one item per check-in)
-- Content ideas, in order: "AI phone answering for restaurants" (no prices), Orange County beach pages (when Shane says go), (done: How we work guide). Next: a short "Frequently asked questions" hub, (done: AI phone answering guide). Next: a "Frequently asked questions" hub, then Orange County pages when Shane says go.
+- Content ideas, in order: "AI phone answering for restaurants" (no prices), Orange County beach pages (when Shane says go), (done: How we work guide). Next: a short "Frequently asked questions" hub, (done: AI phone answering guide). (done 2026-11-07: Frequently asked questions guide). Next: Orange County pages when Shane says go; otherwise a Key Rewards explainer guide (no cash value, no expiry) once the legal review is done.
 - Keep titles/descriptions honest and unique; no keyword stuffing; no made-up stats, clients, reviews or rankings.
 - Check Core Web Vitals (speed) after every change; keep images sized and compressed.
 - Re-run the generators in this order after any change: build_* scripts, add_home_link.py, tidy_nav.py, add_analytics.py (Home button and the counter come from the last two).
