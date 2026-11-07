@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("kr_theme")||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
+<script>document.documentElement.setAttribute("data-theme","light");document.documentElement.setAttribute("data-look","cash");</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="robots" content="noindex,nofollow">
 <title>Key Rewards App | Key Technologies.si</title>
-<meta name="theme-color" content="#0f171e">
+<meta name="theme-color" content="#17181a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Key Rewards">
@@ -114,26 +114,30 @@
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
 <link rel="stylesheet" href="key-platform/kr-light.css">
+<link rel="stylesheet" href="key-platform/kr-cash.css">
 </head>
 <body>
 <div id="rot" role="alert">Please hold your phone upright.</div>
 <div id="toast" role="status" aria-live="polite"></div>
-<div id="app">
+<div id="app" data-tab="home">
 <header>
-  <a class="brand" href="key-rewards-app.html" aria-label="Key Rewards"><img class="kd" src="key-platform/assets/key-logo.svg" alt="" width="42" height="18"><img class="kl" src="key-platform/assets/key-logo-light.svg" alt="" width="42" height="18"><span class="word">KEY <i>REWARDS</i></span></a>
-  <button class="ibtn" id="chatBtn" type="button" aria-label="Messages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span class="bdg" id="chatBdg" hidden>0</span></button>
+  <h1 class="ctitle" id="cTitle">Rewards</h1>
+  <div class="hbtns">
+    <button class="ibtn" id="searchBtn" type="button" aria-label="Search people"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
+    <button class="ibtn" id="chatBtn" type="button" aria-label="Messages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span class="bdg" id="chatBdg" hidden>0</span></button>
+  </div>
 </header>
+<div class="peek" aria-hidden="true"><span class="pk"><img src="key-platform/assets/key-logo.svg" alt="" width="34" height="14"><b>KEY</b></span><span class="pkw">Key Rewards</span></div>
 
 <main>
   <!-- HOME -->
   <section class="screen on" id="s-home" role="tabpanel" aria-labelledby="t-home">
-    <h1 class="hi">Hello, Shane</h1>
-    <div id="firstRun" class="note" hidden><b>Nothing here yet.</b> Load made-up demo people and events to try the app.<div style="margin-top:8px"><button class="btn p" id="seed1" type="button" style="width:100%">Load demo data</button></div></div>
+        <div id="firstRun" class="note" hidden><b>Nothing here yet.</b> Load made-up demo people and events to try the app.<div style="margin-top:8px"><button class="btn p" id="seed1" type="button" style="width:100%">Load demo data</button></div></div>
     <div class="hero" id="hero"></div>
     <button class="btn" id="invRow" type="button" hidden style="border-color:rgba(79,200,240,.5);background:rgba(0,168,225,.12);min-height:46px"></button>
     <div class="two"><button class="btn g" id="goAdd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add rewards</button><button class="btn" id="goPeople" type="button">Everyone</button></div>
-    <div class="lab" style="margin-top:2px">Recent</div>
-    <div class="grow act" id="recent"></div>
+    <div id="cards"></div>
+    <div class="grow act cardbox" id="recent"></div>
   </section>
 
   <!-- PEOPLE -->
@@ -174,12 +178,12 @@
 </main>
 
 <nav aria-label="Sections"><div role="tablist" style="display:contents">
-  <button role="tab" id="t-home" data-tab="home" aria-selected="true" aria-controls="s-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</button>
-  <button role="tab" id="t-people" data-tab="people" aria-selected="false" aria-controls="s-people"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg>Everyone</button>
-  <button role="tab" id="t-add" class="add" data-tab="add" aria-selected="false" aria-controls="s-add"><span class="c"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="t">Add</span></button>
-  <button role="tab" id="t-events" data-tab="events" aria-selected="false" aria-controls="s-events"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Events</button>
+  <button role="tab" id="t-home" data-tab="home" aria-selected="true" aria-controls="s-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="sr">Home</span></button>
+  <button role="tab" id="t-people" data-tab="people" aria-selected="false" aria-controls="s-people"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg><span class="sr">Everyone</span></button>
+  <button role="tab" id="t-add" class="add" data-tab="add" aria-selected="false" aria-controls="s-add"><span class="c"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="t sr">Add</span></button>
+  <button role="tab" id="t-events" data-tab="events" aria-selected="false" aria-controls="s-events"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span class="sr">Events</span></button>
 </div>
-  <button id="menuBtn" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>More</button>
+  <button id="menuBtn" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span class="sr">More</span></button>
 </nav>
 </div>
 
@@ -220,7 +224,7 @@
 <!-- menu -->
 <dialog id="dMenu" class="short" aria-labelledby="dmT"><div class="dh"><h3 id="dmT">More</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
   <p style="margin:0;color:var(--dim);font-size:13px">This is a test version. Everything is saved on this device only, and nothing is issued, sent or paid.</p>
-  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><button class="btn" id="mWallet" type="button">See a member wallet (demo: Dana)</button><button class="btn" id="mTheme" type="button">Switch to dark theme</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
+  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><button class="btn" id="mWallet" type="button">See a member wallet (demo: Dana)</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
 </dialog>
 
 <script src="key-platform/kr-engine.js"></script>
@@ -256,15 +260,19 @@ function drawHome(){
   S.events.forEach(function(e){if(e.status==='closed')add(e.closedAt||e.createdAt,e.issued||0)});
   Object.keys(S.grants).forEach(function(k){add(S.grants[k].at,S.grants[k].rewards)});
   var ir=$('#invRow'),np=(S.pending||[]).length;ir.hidden=!np;ir.textContent=np?(np+' invite'+(np===1?'':'s')+' waiting. Review'):'';
-  var exps=S.ledger.reduce(function(a,m){return a+(m.expiringSoon||0)},0),mx=Math.max(1,Math.max.apply(null,wk)),h=small()?36:44;
-  $('#hero').innerHTML='<div class="hrow"><div><div class="lab">Rewards given</div><div class="hnum">'+fmt(t.issued+t.granted)+'</div><div class="hsub">all time</div></div><div class="spark" role="img" aria-label="Rewards given per week, last 6 weeks: '+wk.join(', ')+'">'+wk.map(function(v,i){return '<i class="'+(i===5?'cur':'')+'" style="height:'+Math.max(3,Math.round(v/mx*h))+'px"></i>'}).join('')+'</div></div>'+
-   '<div class="hstats"><div><b>'+fmt(t.members)+'</b><span>People</span></div><div><b>'+fmt(t.outstanding)+'</b><span>Not used yet</span></div><div><b'+(exps?' style="color:var(--warn)"':'')+'>'+fmt(exps)+'</b><span>Expiring soon</span></div></div>';
+  var exps=S.ledger.reduce(function(a,m){return a+(m.expiringSoon||0)},0),mx=Math.max(1,Math.max.apply(null,wk)),h=small()?30:38;
+  var wkNow=wk[5],out=t.outstanding||0,frac=out?Math.min(1,exps/out):0;
+  $('#hero').innerHTML='<div class="clab">Rewards given<span>all time</span></div><div class="hrow"><div class="hnum">'+fmt(t.issued+t.granted)+'</div><div class="spark" role="img" aria-label="Rewards given per week, last 6 weeks: '+wk.join(', ')+'">'+wk.map(function(v,i){return '<i class="'+(i===5?'cur':'')+'" style="height:'+Math.max(3,Math.round(v/mx*h))+'px"></i>'}).join('')+'</div></div>';
+  $('#cards').innerHTML='<div class="ccard"><div class="crow"><span class="cic" aria-hidden="true"></span><b>Expiring soon</b><span class="cr">'+fmt(exps)+' rewards</span></div><div class="cbar" role="img" aria-label="'+fmt(exps)+' of '+fmt(out)+' unused rewards expire soon"><i style="width:'+Math.max(2,Math.round(frac*100))+'%"></i></div></div>'
+    +'<button class="ccard cbtn" id="cPeople" type="button"><span class="cl"><span class="cs">People</span><b class="cn">'+fmt(t.members)+'</b><span class="cs">'+fmt(out)+' rewards not used yet</span></span><span class="cbig" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></button>'
+    +'<div class="ccard"><div class="crow"><span class="cic g" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><b>'+(wkNow?'+'+fmt(wkNow):'0')+' this week</b></div></div>';
+  $('#cPeople').onclick=function(){show('people')};
   var items=[];
   S.sum.redemptions.forEach(function(x){var p=S.ledger.filter(function(m){return m.mkey===x.mkey})[0];items.push({at:x.at,t:(p?p.name:'Someone')+' used rewards',v:-x.rewards,k:'u'})});
   S.events.forEach(function(e){if(e.status==='closed')items.push({at:e.closedAt||e.createdAt,t:'Event closed: '+e.title,v:e.issued,k:'e'})});
   Object.keys(S.grants).forEach(function(k){var g=S.grants[k],p=S.ledger.filter(function(m){return m.mkey===g.mkey})[0];items.push({at:g.at,t:'Added to '+(p?p.name:'someone')+': '+g.reason,v:g.rewards,k:'g'})});
   items.sort(function(a,b){return b.at-a.at});
-  var box=$('#recent'),rowH=small()?30:34,n=Math.max(1,Math.floor(box.clientHeight/rowH));
+  var box=$('#recent'),rowH=small()?30:34,n=Math.floor((box.clientHeight-20)/rowH);box.style.visibility=n<1?'hidden':'';n=Math.max(1,n);
   box.innerHTML=items.length?items.slice(0,n).map(function(i){return '<div class="arow"><span class="dot '+(i.k==='u'?'u':i.k==='e'?'e':'')+'" aria-hidden="true">'+(i.k==='u'?'&minus;':i.k==='e'?'&#9733;':'+')+'</span><span>'+esc(i.t)+'</span><b class="'+(i.v>=0?'pos':'neg')+'">'+(i.v>=0?'+':'')+fmt(i.v)+'</b></div>'}).join(''):'<div class="empty">Nothing yet.</div>';
 }
 $('#invRow').onclick=function(){drawInv();$('#dInv').showModal()};
@@ -273,6 +281,7 @@ function drawInv(){var arr=(S.pending||[]).slice(0,3),more=(S.pending||[]).lengt
 $('#diList').onclick=function(e){var y=e.target.closest('[data-iy]'),n=e.target.closest('[data-in]'),m=$('#diMsg');m.className='msg';m.textContent='';
   if(y)kr.approveInvite(y.dataset.iy).then(function(r){return load().then(function(){drawInv();m.className='msg good';m.textContent=r.friend+' and '+r.inviter+' each got 20 rewards.';if(!S.pending.length)$('#dInv').close()})}).catch(function(x){m.className='msg err';m.textContent=x.message});
   if(n)kr.rejectInvite(n.dataset.in).then(function(){return load().then(function(){drawInv();if(!S.pending.length)$('#dInv').close()})}).catch(function(x){m.className='msg err';m.textContent=x.message})};
+$('#searchBtn').onclick=function(){show('people');setTimeout(function(){var q=$('#pq');if(q)q.focus()},30)};
 $('#goAdd').onclick=function(){show('add')};$('#goPeople').onclick=function(){show('people')};
 
 // ---------- people list (paged, nothing scrolls) ----------
@@ -413,9 +422,6 @@ $('#mDemoMsg').onclick=function(){var ms=S.ledger.filter(function(x){return x.na
   var m=ms[Math.floor(Math.random()*ms.length)],texts=['Hi! How long do my rewards last?','Can I use my rewards at the restaurant tonight?','Thank you for the welcome rewards!','When is the next guest night?'];
   kr.sendMessage(m.mkey,{from:'member',text:texts[Math.floor(Math.random()*texts.length)],name:m.name}).then(function(){$('#dMenu').close();return loadInbox()})};
 $('#mWallet').onclick=function(){kr.seedWalletDemo().then(function(m){return load().then(function(){location.href='key-rewards-me.html?m='+encodeURIComponent(m.mkey)})})};
-function themeLabel(){$('#mTheme').textContent=document.documentElement.getAttribute('data-theme')==='light'?'Switch to dark theme':'Switch to light theme'}
-$('#mTheme').onclick=function(){var n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('kr_theme',n)}catch(e){}themeLabel();drawAll()};
-themeLabel();
 $('#mAlerts').onclick=function(){var m=$('#mMsg');if(!window.Notification){m.className='msg err';m.textContent='This browser cannot show alerts.';return}
   Notification.requestPermission().then(function(r){m.className='msg'+(r==='granted'?' good':' err');m.textContent=r==='granted'?'Alerts are on while the app is open.':'Alerts were not allowed.'})};
 
@@ -426,7 +432,7 @@ $('#seed1').onclick=seed;$('#mSeed').onclick=seed;
 $('#mReset').onclick=function(){if(confirm('Erase all test data on this device?'))store.clear().then(load).then(function(){$('#mMsg').className='msg good';$('#mMsg').textContent='Erased.'})};
 document.addEventListener('click',function(e){if(e.target.closest('[data-close]')){var d=e.target.closest('dialog');if(d)d.close()}});
 var tabs=[].slice.call(document.querySelectorAll('nav [role=tab]'));
-function show(n){if(S.tab!=='chat'&&S.tab!=='thread')S.prev=S.tab;S.tab=n;tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===n)});[].forEach.call(document.querySelectorAll('.screen'),function(el){el.classList.toggle('on',el.id==='s-'+n)});
+function show(n){if(S.tab!=='chat'&&S.tab!=='thread')S.prev=S.tab;S.tab=n;$('#app').dataset.tab=n;$('#cTitle').textContent={home:'Rewards',people:'Everyone',add:'Add rewards',events:'Events',chat:'Messages',thread:'Messages'}[n]||'Rewards';tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===n)});[].forEach.call(document.querySelectorAll('.screen'),function(el){el.classList.toggle('on',el.id==='s-'+n)});
   if(n==='home')drawHome();if(n==='people')drawPeople();if(n==='add')drawAdd();if(n==='events')drawEvents();if(n==='chat')drawChat()}
 tabs.forEach(function(b){b.onclick=function(){show(b.dataset.tab)}});
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(S.sum){drawAll();if($('#dPick').open)drawPick()}},120)});
