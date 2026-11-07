@@ -914,6 +914,36 @@ G12['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G12'] = G12
 
+# ================= Guide 13: frequently asked questions =================
+G13 = dict(slug='frequently-asked-questions', date='2026-11-07',
+  title='Frequently Asked Questions | Key Technologies.si',
+  desc='Plain answers to common questions about Key Technologies: the free call, what AI/SI means, who owns your accounts, permission levels, demos and Key Rewards.',
+  h1='Frequently asked questions about Key Technologies',
+  short='Plain answers about the free call, what AI/SI means, who owns your accounts, permission levels, the demos and Key Rewards.')
+G13['faq'] = [
+ ('What does Key Technologies do?', 'We help small businesses use AI/SI for the work that takes time: answering missed calls and texts, following up with new inquiries, replying to reviews, dashboards for the numbers you check every day, and guest rewards systems for restaurants. We start with one small, useful piece and add more once it works.'),
+ ('What does AI/SI mean?', 'AI is artificial intelligence, software that can read, write, summarize and answer. SI is superintelligence, a word for AI that would be far more capable than any person. Today, nearly all useful business tools are AI. Our plain-English guide, What is AI/SI, goes into more detail.'),
+ ('Is the first call really free?', 'Yes. The first call is a free, 30-minute, no-obligation conversation about your business and where AI/SI could help. If it is not a fit, we will say so.'),
+ ('Do I have to replace the software I already use?', 'Not necessarily. We look at what you already use first. Some tools can be connected, some are better left alone, and occasionally replacing one is the better fit. That is worked out with you, not assumed.'),
+ ('Who owns my accounts and customer information?', 'You do. Your accounts, customer lists and systems stay in your name, and Key Technologies does not host or own them. Doing the work does mean trusting us with real access, the same as hiring any contractor, so access is limited to what each job needs.'),
+ ('Will AI act on its own without my approval?', 'Only as much as you allow. Each assistant runs inside permission levels you set: read-only, approval required, or fully on its own. Anything sensitive can wait for a person.'),
+ ('Are the demos real?', 'The demos are working examples with made-up data, so you can see how each service behaves before you talk to anyone. They never use real customer information. You can find them in the demo library.'),
+ ('Do you work with restaurants, law offices and medical offices?', 'Yes. We have pages and guides for restaurants, law firms, medical and dental offices and specialists. General information on those pages is not legal or medical advice, and rules differ by place, so check with your own attorney or compliance advisor.'),
+ ('What is Key Rewards?', 'Key Rewards is a rewards system we are building: guests check in at an event or restaurant night, staff approve who was really there, and a pool of rewards is shared equally. Rewards have no cash value, cannot be sold or exchanged for cash, and do not expire. The version on this site is a demo with made-up data, and the terms are reviewed by an attorney before anything goes live.'),
+ ('How do I get started?', 'Book the free call and tell us what takes the most time in your week. We will tell you honestly where AI/SI helps and where it does not.')]
+G13['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('Frequently asked questions','')])}
+<h1>{esc(G13['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Updated November 7, 2026</p>
+<div class="tldr"><b>Short answer:</b> start with a free call, pick one small piece, keep your accounts in your name, and decide how much freedom each assistant gets. The answers below go into more detail.</div>
+{faq_html(G13['faq'])}
+<div class="guide-cta"><h2>Have a question that is not here?</h2>
+<p>Book a free call and ask. We will tell you honestly what we know.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/index.html">Try the demos</a></div></div>
+{more([('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How Key Technologies works with a business, step by step','From the free call to a working system, and how you stay in control.','how-we-work.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
+</article>"""
+GUIDES['G13'] = G13
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
