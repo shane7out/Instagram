@@ -238,7 +238,7 @@ const K = '/key_rewards/';
   eq('engine: a guest cannot redeem for themselves', guestRedeem, true);
   // engine: wallet + messages through the rules
   const gw = await guestKr.walletOf(guests[0]);
-  eq('engine: a guest reads their own wallet (20 from the event, with an expiry date)', [gw.balance.available, gw.entries.filter(x => x.kind === 'event').every(x => x.expiresAt > x.at)], [5, true]);
+  eq('engine: a guest reads their own wallet (from the event, no expiry date)', [gw.balance.available, gw.entries.filter(x => x.kind === 'event').every(x => !x.expiresAt)], [5, true]);
   eq('engine: a guest on the list can message the owner', (await guestKr.sendMessage(guests[0], { from: 'member', text: 'Thanks for the night!', name: 'Guest1' })).from, 'member');
   let strangerMsg = false; try { await guestKr.sendMessage('nobodyxxxxxxx1', { from: 'member', text: 'spam' }); } catch (e) { strangerMsg = true; }
   eq('engine: someone not on the list cannot message', strangerMsg, true);

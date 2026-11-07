@@ -10,7 +10,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
 - [For restaurants](https://keytechnologies.si/restaurants.html): guest CRM, phone and text answering, review replies and social content for restaurants
 - [For chiropractors and specialists](https://keytechnologies.si/chiropractors-specialists.html): patient CRM, appointment reminders, phone and text answering and a practice dashboard
-- [Key Rewards guest events demo](https://keytechnologies.si/key-platform/demos/key-rewards-events.html): share a pool of rewards equally among guests at a restaurant; free food only, made-up data
+- [Key Rewards guest events demo](https://keytechnologies.si/key-platform/demos/key-rewards-events.html): share a pool of rewards equally among guests at a restaurant; no cash value, never expire, made-up data
 - [Business dashboards demo](https://keytechnologies.si/key-platform/demos/business-dashboards.html): dashboards built around the systems you already use, with made-up data
 
 ## Demos (fictional data)

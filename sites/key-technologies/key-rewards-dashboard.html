@@ -76,7 +76,7 @@
   <div class="grid" id="kpis"></div>
   <div class="card" style="margin-top:12px"><h2>Rewards issued per event</h2><div class="bars" id="bars" role="img" aria-label="Rewards issued per closed event"></div><p class="dim" id="barsNote" style="margin:8px 0 0"></p></div>
   <div class="card"><h2>By restaurant</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Restaurant</th><th class="n">Events</th><th class="n">Issued</th><th class="n">Redeemed</th><th class="n">Outstanding</th></tr></thead><tbody id="byRest"></tbody></table></div>
-    <p class="dim" style="margin:8px 0 0">Outstanding = issued minus redeemed. At 1 reward = $1 toward a free offer, it is the most free food that restaurant could still be asked to honor.</p></div>
+    <p class="dim" style="margin:8px 0 0">Outstanding = issued minus used. Rewards never expire, so this number stays until members use them. Rewards have no cash value.</p></div>
 </section>
 
 <section class="panel" id="p-events" role="tabpanel" aria-labelledby="t-events">
@@ -84,7 +84,7 @@
     <div class="row"><div><label for="evRest">Restaurant</label><select id="evRest"></select></div><div><label for="evTitle">Name of the event</label><input id="evTitle" maxlength="80" value="Guest night"></div></div>
     <div class="row" style="margin-top:10px"><div><label for="evPool">Pool (rewards to share)</label><input id="evPool" type="number" inputmode="numeric" min="1" step="1" value="2000"></div><div><label for="evCap">Most one person can get</label><input id="evCap" type="number" inputmode="numeric" min="1" step="1" value="25"></div></div>
     <div class="row" style="margin-top:10px"><div><label for="evStart">Check-in opens</label><input id="evStart" type="datetime-local"></div><div><label for="evEnd">Check-in closes</label><input id="evEnd" type="datetime-local"></div></div>
-    <div class="row" style="margin-top:10px"><div><label for="evExp">Rewards expire after (days, 0 = never)</label><input id="evExp" type="number" inputmode="numeric" min="0" max="3650" step="1" value="90"></div></div>
+    <div class="row" style="margin-top:10px"><div><label for="evExp">Rewards expire after (days). 0 = never, the default</label><input id="evExp" type="number" inputmode="numeric" min="0" max="3650" step="1" value="0"></div></div>
     <div class="out" id="evPreview" style="margin-top:12px"></div>
     <p><button class="b p" id="evCreate" type="button">Create event</button></p><div class="msg" id="evMsg" role="status"></div></div>
   <div class="card"><h2>Events</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Event</th><th>Status</th><th class="n">Pool</th><th class="n">Each</th><th class="n">Issued</th><th><span class="sr">Actions</span></th></tr></thead><tbody id="evList"></tbody></table></div></div>
@@ -97,7 +97,7 @@
 </section>
 
 <section class="panel" id="p-redeem" role="tabpanel" aria-labelledby="t-redeem">
-  <div class="card"><h2>Record a free-food redemption</h2>
+  <div class="card"><h2>Record rewards being used</h2>
     <p class="dim">When a member uses rewards for a free offer, staff confirm it here. Every offer is at least 15 rewards. Rewards have no cash value, cannot be sold or exchanged, and are never refunded once used.</p>
     <div class="row"><div><label for="rdMember">Member</label><select id="rdMember"></select></div><div><label for="rdRest">Restaurant</label><select id="rdRest"></select></div></div>
     <div class="row" style="margin-top:10px"><div><label for="rdOffer">Offer</label><input id="rdOffer" maxlength="80" placeholder="Chicken bowl"></div><div><label for="rdAmt">Rewards used</label><input id="rdAmt" type="number" inputmode="numeric" min="15" step="1" value="15"></div></div>
@@ -116,11 +116,11 @@
 <section class="panel" id="p-rules" role="tabpanel" aria-labelledby="t-rules">
   <div class="card"><h2>How an event works</h2>
     <ol>
-      <li>The restaurant and Key Technologies agree the <b>pool</b> (rewards to share), the <b>most one person can get</b>, and the check-in window. The restaurant covers the free food through its deal.</li>
+      <li>The restaurant and Key Technologies agree the <b>pool</b> (rewards to share), the <b>most one person can get</b>, and the check-in window. The venue or restaurant agrees to take part in the event.</li>
       <li>Guests scan the event QR code and enter a first name. Each phone checks in once.</li>
       <li>Staff <b>approve</b> the guests who are really there and reject the rest.</li>
       <li>When you close the event, the pool is split equally among approved guests: the lesser of <b>pool divided by guests</b> (rounded down) and the <b>per-person cap</b>. Whatever is left over is never issued.</li>
-      <li>Members use rewards for free food offers (at least 15 rewards each) at participating restaurants. Staff record each redemption.</li>
+      <li>Members use rewards (at least 15 each) at parties, events, meet-and-greets and participating restaurants. Staff record each use. Rewards never expire.</li>
     </ol>
     <p class="dim">Rewards are whole numbers. They have no cash value, cannot be sold or exchanged for cash, and are never refunded once used.</p></div>
   <div class="card"><h2>Before this goes live</h2>
@@ -172,7 +172,7 @@ function drawOverview(){
   var t=cache.sum.totals, empty=!t.restaurants&&!t.events;
   $('#firstRun').hidden=!empty;
   var k=function(v,l,s,c){return '<div class="kpi '+(c||'')+'"><b>'+fmt(v)+'</b><span>'+l+'</span>'+(s?'<small>'+s+'</small>':'')+'</div>'};
-  $('#kpis').innerHTML=k(t.events,'Events',t.open+' open now')+k(t.checkins,'Check-ins',t.approved+' approved')+k(t.issued,'Rewards issued','from '+fmt(t.pools)+' in closed pools','good')+k(t.redeemed,'Rewards used','for free food')+k(t.outstanding,'Outstanding','up to $'+fmt(t.outstanding)+' of free food','gold')+k(t.leftover,'Never issued','left in the pool');
+  $('#kpis').innerHTML=k(t.events,'Events',t.open+' open now')+k(t.checkins,'Check-ins',t.approved+' approved')+k(t.issued,'Rewards issued','from '+fmt(t.pools)+' in closed pools','good')+k(t.redeemed,'Rewards used','at events and restaurants')+k(t.outstanding,'Outstanding','not used yet','gold')+k(t.leftover,'Never issued','left in the pool');
   var closed=cache.events.filter(function(e){return e.status==='closed'}).slice(0,12).reverse(), mx=Math.max(1,Math.max.apply(null,closed.map(function(e){return e.issued||0})));
   $('#bars').innerHTML=closed.length?closed.map(function(e){var r=cache.rests.filter(function(x){return x.id===e.rid})[0];return '<div title="'+esc(e.title)+'"><em>'+fmt(e.issued)+'</em><i style="height:'+Math.max(3,Math.round((e.issued||0)/mx*90))+'px"></i>'+esc((r?r.name:'').split(' ')[0])+'</div>'}).join(''):'<p class="dim">No closed events yet.</p>';
   $('#barsNote').textContent=closed.length?'Last '+closed.length+' closed events, oldest first.':'';

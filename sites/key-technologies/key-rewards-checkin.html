@@ -37,7 +37,7 @@
 <div class="wrap">
 <header><a class="brand" href="index.html" aria-label="Key Rewards"><img class="kd" src="key-platform/assets/key-logo.svg" alt="" width="44" height="19"><img class="kl" src="key-platform/assets/key-logo-light.svg" alt="" width="44" height="19"><span class="word">KEY <i>REWARDS</i></span></a></header>
 <main id="app"><div class="card"><p class="dim">Loading&hellip;</p></div></main>
-<footer><p class="fine">Rewards can only be used for free food offers at participating restaurants. They have no cash value, cannot be sold or exchanged for cash, and are never refunded once used. Every offer is at least 15 rewards. Only your first name is saved with a check-in.</p></footer>
+<footer><p class="fine">Rewards can be used at Key Rewards parties, events, meet-and-greets and participating restaurants as they are announced. They never expire, have no cash value, cannot be sold or exchanged for cash, and are never refunded once used. Every use is at least 15 rewards. Only your first name is saved with a check-in.</p></footer>
 </div>
 <script src="key-platform/kr-engine.js"></script>
 <script>
@@ -51,7 +51,7 @@ var app=$('#app');
 function card(h){app.innerHTML='<div class="card">'+(h.indexOf('<h1')<0?'<h1 class="sr">Your Key Rewards</h1>':'')+h+'</div>'}
 function rewards(ev){
   kr.getShare(eid,mkey).then(function(s){
-    if(s){card('<span class="pill">Rewards received</span><p class="big" style="margin:10px 0 4px">'+s.rewards+'</p><p>Key Rewards from <b>'+esc(ev.title)+'</b>.</p><p class="dim">Every free-food offer is at least 15 rewards. Keep collecting and use them for free food at participating restaurants.</p><p><a href="key-rewards-me.html">My rewards, expiry dates and messages</a></p><div class="bar" aria-hidden="true"><i style="width:'+Math.min(100,Math.round(s.rewards/15*100))+'%"></i></div><p class="dim">'+s.rewards+' of 15 toward your first offer.</p>')}
+    if(s){card('<span class="pill">Rewards received</span><p class="big" style="margin:10px 0 4px">'+s.rewards+'</p><p>Key Rewards from <b>'+esc(ev.title)+'</b>.</p><p class="dim">Every use is at least 15 rewards, and your rewards never expire. Keep collecting.</p><p><a href="key-rewards-me.html">My rewards and messages</a></p><div class="bar" aria-hidden="true"><i style="width:'+Math.min(100,Math.round(s.rewards/15*100))+'%"></i></div><p class="dim">'+s.rewards+' of 15 toward your first use.</p>')}
     else card('<h1>This event has ended</h1><p>You did not receive rewards from <b>'+esc(ev.title)+'</b>. Staff confirm who was there before rewards are shared.</p>');
   });
 }

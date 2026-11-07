@@ -65,13 +65,13 @@
 <main>
   <section class="screen on" id="s-wallet" aria-label="My rewards">
     <h1 class="sr">My Key Rewards</h1>
-    <div class="hero"><div class="lab" style="position:relative;z-index:1">Total rewards</div><div class="hnum" id="bal">0</div><div class="hsub" id="barT">available to use for free food</div></div>
+    <div class="hero"><div class="lab" style="position:relative;z-index:1">Total rewards</div><div class="hnum" id="bal">0</div><div class="hsub" id="barT">available to use at events and restaurants</div></div>
     <div id="expLine" class="ok"></div>
-    <div class="lab">Breakdown by expiry date</div>
+    <div class="lab">Recent activity</div>
     <div class="grow lots" id="lots"></div>
-    <div class="auto">When you use rewards, the ones that expire first are used first. You do not need to choose.</div>
+    <div class="auto">Use them at Key Rewards parties, private events, meet-and-greets and participating restaurants as they are announced.</div>
     <div class="two"><button class="btn p" id="goChat" type="button">Message Shane<span class="bdg" id="bdg" hidden>0</span></button><button class="btn" id="goInvite" type="button">Invite a friend</button></div>
-    <p class="fine">Rewards can only be used for free food at participating restaurants. No cash value; cannot be sold or exchanged for cash. Every offer is at least 15 rewards.</p>
+    <p class="fine">Rewards have no cash value and cannot be sold or exchanged for cash. Every use is at least 15 rewards.</p>
   </section>
   <section class="screen" id="s-chat" aria-label="Messages">
     <div class="top2"><button class="ibtn" id="back" type="button" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Shane</h2></div>
@@ -105,15 +105,14 @@ function dl(t){var n=Math.ceil((t-Date.now())/KR.DAY);return n<=0?'today':n===1?
 function drawWallet(){
   return kr.walletOf(mk).then(function(w){var b=w.balance;
     $('#bal').textContent=b.available.toLocaleString();
-    $('#barT').textContent=b.available>=KR.MIN_OFFER?'available to use for free food':(b.available?b.available+' of '+KR.MIN_OFFER+' toward your first offer':'available to use for free food');
+    $('#barT').textContent=b.available>=KR.MIN_OFFER?'available to use at events and restaurants':(b.available?b.available+' of '+KR.MIN_OFFER+' toward your first use':'available to use at events and restaurants');
     var e=$('#expLine');
-    if(b.expiringSoon){e.className='warn';e.textContent=b.expiringSoon+' of your rewards expire on '+d(b.nextExpiry)+'. Use these first.'}
-    else if(b.expired&&!b.available){e.className='ok';e.textContent=b.expired+' rewards have expired.'}
-    else{e.className='ok';e.textContent=b.available?(b.nextExpiry?'Nothing expires in the next '+KR.SOON_DAYS+' days.':'Your rewards have no expiry date.')+(b.expired?' '+b.expired+' have expired.':''):'No rewards yet. Check in at a guest night to earn some.'}
-    var box=$('#lots'),rowH=(window.matchMedia('(max-height:720px)').matches?48:58)+6,n=Math.max(1,Math.floor(box.clientHeight/rowH)),L=b.lots,show=L,rest=null;
-    if(L.length>n){show=L.slice(0,Math.max(1,n-1));rest=L.slice(Math.max(1,n-1))}
-    box.innerHTML=L.length?show.map(function(l,i){var soon=l.expiresAt&&l.expiresAt-Date.now()<=KR.SOON_DAYS*KR.DAY;
-      return '<div class="lot '+(l.expiresAt?(soon?'soon':''):'none')+'" style="height:'+(rowH-6)+'px"><span class="n">'+l.rewards+'</span><span class="t"><b>'+(l.expiresAt?'Use by '+d(l.expiresAt):'No expiry date')+'</b><small>'+(l.expiresAt?dl(l.expiresAt)+(soon?' &middot; expiring soon':''):'Never expires')+'</small></span>'+(i===0&&L.length>1?'<span class="tag">Used first</span>':'')+'</div>'}).join('')+(rest?'<div class="more">+ '+rest.reduce(function(a,l){return a+l.rewards},0)+' more rewards in '+rest.length+' later batches</div>':''):'<div class="empty">No rewards to use right now.</div>';
+    if(b.expiringSoon){e.className='warn';e.textContent=b.expiringSoon+' of your older rewards expire on '+d(b.nextExpiry)+'.'}
+    else{e.className='ok';e.textContent=b.available?'Your rewards never expire.':'No rewards yet. Check in at a guest night to earn some.'}
+    var box=$('#lots'),rowH=(window.matchMedia('(max-height:720px)').matches?48:58)+6,n=Math.max(1,Math.floor(box.clientHeight/rowH));
+    return kr.historyOf(mk).then(function(h){
+      box.innerHTML=h.length?h.slice(0,n).map(function(x){
+        return '<div class="lot none" style="height:'+(rowH-6)+'px"><span class="n">'+(x.rewards>0?'+':'')+x.rewards+'</span><span class="t"><b>'+esc(x.text)+'</b><small>'+d(x.at)+'</small></span></div>'}).join(''):'<div class="empty">No activity yet.</div>'});
   });
 }
 function toast(text){var el=$('#toast');el.innerHTML='<b>New message from Shane</b><span>'+esc(text)+'</span>';el.classList.add('on');el.onclick=function(){el.classList.remove('on');show('chat');drawChat()};setTimeout(function(){el.classList.remove('on')},5000)}

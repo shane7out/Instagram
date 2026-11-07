@@ -25,7 +25,7 @@
    The split rule: share = min( floor(pool / approved), cap ); issued = share * approved; the leftover is never issued. */
 (function (root) {
   'use strict';
-  var KR = { INVITE_REWARDS: 20, INVITE_DAYS: 30, MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000, DAY: 86400000, SOON_DAYS: 14, DEFAULT_EXPIRY_DAYS: 90, MAX_TEXT: 500 };
+  var KR = { INVITE_REWARDS: 20, INVITE_DAYS: 0, MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000, DAY: 86400000, SOON_DAYS: 14, DEFAULT_EXPIRY_DAYS: 0, MAX_TEXT: 500 };
   var BASE = 'key_rewards';
 
   // ---------- pure helpers ----------
@@ -250,7 +250,7 @@
     };
     // A person's recent activity (newest first)
     api.historyOf = function (mkey) {
-      return api.walletOf(mkey).then(function (w) { return w.entries.map(function (e) { return { at: e.at, rewards: e.kind === 'use' ? -e.rewards : e.rewards, text: e.note || (e.kind === 'event' ? 'Event' : e.kind === 'grant' ? 'Added' : 'Free food use'), expiresAt: e.expiresAt || 0 }; }); });
+      return api.walletOf(mkey).then(function (w) { return w.entries.map(function (e) { return { at: e.at, rewards: e.kind === 'use' ? -e.rewards : e.rewards, text: e.note || (e.kind === 'event' ? 'Event' : e.kind === 'grant' ? 'Added' : 'Used'), expiresAt: e.expiresAt || 0 }; }); });
     };
     api.redeem = function (o) {
       var rewards = +o.rewards;
@@ -307,10 +307,10 @@
         if (inv.status !== 'open') throw new Error('This invite was already decided.');
         return Promise.all([store.get(P('members/' + cl.key)), store.get(P('members/' + pv.from))]).then(function (m) {
           if (m[0]) throw new Error('That person is already a member.');
-          var t = now(), exp = t + KR.INVITE_DAYS * KR.DAY, up = {}, friendName = cl.name, fromName = (m[1] && m[1].name) || inv.fromName || 'a friend';
+          var t = now(), exp = KR.INVITE_DAYS ? t + KR.INVITE_DAYS * KR.DAY : 0, up = {}, friendName = cl.name, fromName = (m[1] && m[1].name) || inv.fromName || 'a friend';
           up['members/' + cl.key] = { name: friendName, createdAt: t, source: 'invite' };
-          up['wallet/' + cl.key + '/inv' + code] = { kind: 'invite', rewards: KR.INVITE_REWARDS, at: t, expiresAt: exp, note: 'Invited by ' + fromName };
-          up['wallet/' + pv.from + '/inv' + code] = { kind: 'invite', rewards: KR.INVITE_REWARDS, at: t, expiresAt: exp, note: 'Friend joined: ' + friendName };
+          up['wallet/' + cl.key + '/inv' + code] = { kind: 'invite', rewards: KR.INVITE_REWARDS, at: t, note: 'Invited by ' + fromName }; if (exp) up['wallet/' + cl.key + '/inv' + code].expiresAt = exp;
+          up['wallet/' + pv.from + '/inv' + code] = { kind: 'invite', rewards: KR.INVITE_REWARDS, at: t, note: 'Friend joined: ' + friendName }; if (exp) up['wallet/' + pv.from + '/inv' + code].expiresAt = exp;
           up['invites/' + code + '/status'] = 'approved'; up['invites/' + code + '/approvedAt'] = t;
           return store.update(BASE, up).then(function () { return { friend: friendName, inviter: fromName, rewards: KR.INVITE_REWARDS, expiresAt: exp }; });
         });
@@ -397,14 +397,14 @@
         });
       });
     };
-    // SANDBOX ONLY: a member with rewards that expire on four different dates (25 + 30 + 36 + 45 = 136).
+    // SANDBOX ONLY: a member with four batches that never expire (25 + 30 + 36 + 45 = 136).
     api.seedWalletDemo = function () {
       var t0 = now(), D = KR.DAY;
       return api.listMembers().then(function (ms) {
         var have = ms.filter(function (m) { return m.name === 'Dana' && m.source === 'owner'; })[0];
         if (have) return have;
         return api.addMember({ name: 'Dana' }).then(function (m) {
-          var lots = [[25, 84, 90], [30, 69, 90], [36, 30, 90], [45, 60, 180]], c = store.update(P('members/' + m.mkey), { createdAt: t0 - 85 * D });
+          var lots = [[25, 84, 0], [30, 69, 0], [36, 30, 0], [45, 60, 0]], c = store.update(P('members/' + m.mkey), { createdAt: t0 - 85 * D });
           lots.forEach(function (l) { c = c.then(function () { return api.grant({ mkey: m.mkey, rewards: l[0], reason: l[0] === 25 ? 'Welcome' : l[0] === 30 ? 'Thank you' : l[0] === 36 ? 'Event' : 'Thank you', at: t0 - l[1] * D, expiresDays: l[2] }); }); });
           return c.then(function () { return m; });
         });

@@ -41,3 +41,6 @@ Event example: 200 people are at a restaurant, the restaurant puts up 2,000 rewa
 
 ## Not decided yet
 Name of the live program (LVR Rewards vs Key Rewards); per-person cap; how staff confirm headcount; which countries and when.
+
+## Update 2026-11-07: no food, no expiry
+Shane: leave food out of it, and rewards never expire. They are used for parties, events, private events, meet-and-greets, meetups and restaurants ("going back to analog"). Still true: no cash value, cannot be sold or exchanged for cash, minimum use 15, each venue agrees its pool in advance. Ideas raised but not built or approved: members sending points to each other, trust networks, a prize wheel. See NEXT_STEPS item 35. Attorney questions to add: are non-expiring points a liability to the venues; do transfers between members create value or money-transmission issues; does any wheel for prizes count as a lottery.

@@ -33,7 +33,7 @@
 <div class="wrap">
 <header><a class="brand" href="index.html" aria-label="Key Rewards"><img class="kd" src="key-platform/assets/key-logo.svg" alt="" width="44" height="19"><img class="kl" src="key-platform/assets/key-logo-light.svg" alt="" width="44" height="19"><span class="word">KEY <i>REWARDS</i></span></a></header>
 <main id="app"><div class="card"><h1 class="sr">Join Key Rewards</h1><p class="dim">Loading&hellip;</p></div></main>
-<footer><p class="fine">Rewards can only be used for free food at participating restaurants. They have no cash value, cannot be sold or exchanged for cash, and expire on the date shown. Only your first name is saved. You earn the rewards once Key Rewards confirms you are new and joined.</p></footer>
+<footer><p class="fine">Rewards can be used at Key Rewards parties, events, meet-and-greets and participating restaurants as they are announced. They have no cash value, cannot be sold or exchanged for cash, and do not expire. Only your first name is saved. You earn the rewards once Key Rewards confirms you are new and joined.</p></footer>
 </div>
 <script src="key-platform/kr-engine.js"></script>
 <script>
@@ -47,7 +47,7 @@ if(!code){card('<h1>Join Key Rewards</h1><p class="dim">Open the invite link you
 kr.getInvite(code).then(function(inv){
   if(!inv){card('<h1>We could not find that invite</h1><p class="dim">Ask your friend to send the link again.</p>');return}
   if(inv.status!=='open'){card('<h1>This invite has been used</h1><p class="dim">Ask your friend to check their invite, or ask Shane for help.</p>');return}
-  card('<span class="pill">Invited by '+esc(inv.fromName)+'</span><div class="big" style="margin-top:12px">20</div><h1 style="margin-top:4px">rewards for you, and 20 for '+esc(inv.fromName)+'</h1><p class="dim">Your rewards expire 30 days after you join. Use them for free food at participating restaurants.</p><form id="f" novalidate><label for="nm">Your first name</label><input id="nm" autocomplete="given-name" maxlength="40" placeholder="First name"><button class="btn" type="submit">Join Key Rewards</button></form><div class="msg" id="m" role="status"></div>');
+  card('<span class="pill">Invited by '+esc(inv.fromName)+'</span><div class="big" style="margin-top:12px">20</div><h1 style="margin-top:4px">rewards for you, and 20 for '+esc(inv.fromName)+'</h1><p class="dim">Your rewards never expire. Use them at Key Rewards parties, events, meet-and-greets and participating restaurants as they are announced.</p><form id="f" novalidate><label for="nm">Your first name</label><input id="nm" autocomplete="given-name" maxlength="40" placeholder="First name"><button class="btn" type="submit">Join Key Rewards</button></form><div class="msg" id="m" role="status"></div>');
   $('#f').onsubmit=function(e){e.preventDefault();var n=KR.cleanName($('#nm').value),m=$('#m');m.textContent='';if(!n){m.textContent='Please enter your first name.';$('#nm').focus();return}
     try{localStorage.setItem('kr_member_name',n)}catch(x){}
     kr.claimInvite(code,{name:n,key:key}).then(function(r){
