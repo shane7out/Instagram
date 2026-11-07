@@ -258,7 +258,7 @@
       if (!o.mkey || !o.rid) return Promise.reject(new Error('Choose a member and a restaurant.'));
       return api.balanceOf(o.mkey).then(function (b) {
         if (b.available < rewards) throw new Error('Not enough rewards: this person has ' + b.available + ' that have not expired.');
-        var id = 'x' + KR.newKey(10), t = now(), offer = String(o.offer || 'Free food offer').slice(0, 80), rec = { mkey: o.mkey, rid: o.rid, offer: offer, rewards: rewards, at: t };
+        var id = 'x' + KR.newKey(10), t = now(), offer = String(o.offer || 'Reward use').slice(0, 80), rec = { mkey: o.mkey, rid: o.rid, offer: offer, rewards: rewards, at: t };
         var up = {}; up['redemptions/' + id] = rec; up['wallet/' + o.mkey + '/' + id] = { kind: 'use', rewards: rewards, at: t, note: 'Free food: ' + offer.slice(0, 60) };
         return store.update(BASE, up).then(function () { return Object.assign({ id: id }, rec); });
       });
