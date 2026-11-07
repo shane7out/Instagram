@@ -85,7 +85,7 @@
   "members": {
    "$mkey": {
     ".write": "auth != null && auth.uid == '__OWNER_UID__'",
-    ".validate": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && newData.hasChildren(['name','createdAt','source']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 40 && newData.child('createdAt').isNumber() && (newData.child('source').val() == 'owner' || newData.child('source').val() == 'event') && (!data.exists() || (newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('source').val() == data.child('source').val()))",
+    ".validate": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && newData.hasChildren(['name','createdAt','source']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 40 && newData.child('createdAt').isNumber() && (newData.child('source').val() == 'owner' || newData.child('source').val() == 'event' || newData.child('source').val() == 'invite') && (!data.exists() || (newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('source').val() == data.child('source').val()))",
     "name": {},
     "createdAt": {},
     "source": {},
@@ -113,7 +113,7 @@
     ".read": true,
     "$id": {
      ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists()",
-     ".validate": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && newData.hasChildren(['kind','rewards','at']) && (newData.child('kind').val() == 'event' || newData.child('kind').val() == 'grant' || newData.child('kind').val() == 'use') && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() <= 1000000 && newData.child('rewards').val() % 1 == 0 && newData.child('at').isNumber() && (newData.child('kind').val() != 'grant' || newData.child('rewards').val() <= 1000) && (newData.child('kind').val() != 'use' || (newData.child('rewards').val() >= 15 && !newData.child('expiresAt').exists())) && (!newData.child('expiresAt').exists() || (newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > newData.child('at').val())) && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 80))",
+     ".validate": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && newData.hasChildren(['kind','rewards','at']) && (newData.child('kind').val() == 'event' || newData.child('kind').val() == 'grant' || newData.child('kind').val() == 'invite' || newData.child('kind').val() == 'use') && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() <= 1000000 && newData.child('rewards').val() % 1 == 0 && newData.child('at').isNumber() && ((newData.child('kind').val() != 'grant' && newData.child('kind').val() != 'invite') || newData.child('rewards').val() <= 1000) && (newData.child('kind').val() != 'use' || (newData.child('rewards').val() >= 15 && !newData.child('expiresAt').exists())) && (!newData.child('expiresAt').exists() || (newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > newData.child('at').val())) && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 80))",
      "kind": {},
      "rewards": {},
      "at": {},
@@ -149,6 +149,49 @@
      ".write": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && root.child('key_rewards/members/'+$mkey).exists()",
      ".validate": "newData.isNumber() && newData.val() <= now + 600000"
     },
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "invitesBy": {
+   "$mkey": {
+    ".read": true,
+    ".write": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && root.child('key_rewards/members/'+$mkey).exists() && !data.exists() && newData.isString()",
+    ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9]{8}$/)"
+   }
+  },
+  "invitesPrivate": {
+   "$code": {
+    ".write": "$code.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.child('from').isString() && root.child('key_rewards/invitesBy/'+newData.child('from').val()).val() == $code",
+    ".validate": "newData.hasChildren(['from']) && newData.child('from').val().matches(/^[A-Za-z0-9]{12,40}$/)",
+    "from": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "invites": {
+   "$code": {
+    ".read": true,
+    ".write": "($code.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && root.child('key_rewards/invitesPrivate/'+$code).exists()) || (auth != null && auth.uid == '__OWNER_UID__' && data.exists() && data.child('status').val() == 'open')",
+    ".validate": "newData.hasChildren(['fromName','createdAt','status']) && newData.child('fromName').isString() && newData.child('fromName').val().length >= 1 && newData.child('fromName').val().length <= 40 && newData.child('createdAt').isNumber() && (newData.child('status').val() == 'open' || newData.child('status').val() == 'approved' || newData.child('status').val() == 'rejected') && (!newData.child('approvedAt').exists() || newData.child('approvedAt').isNumber()) && (data.exists() ? (newData.child('fromName').val() == data.child('fromName').val() && newData.child('createdAt').val() == data.child('createdAt').val()) : (newData.child('status').val() == 'open' && !newData.child('approvedAt').exists()))",
+    "fromName": {},
+    "createdAt": {},
+    "status": {},
+    "approvedAt": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "inviteClaims": {
+   "$code": {
+    ".write": "!data.exists() && newData.exists() && root.child('key_rewards/invites/'+$code+'/status').val() == 'open' && newData.child('key').val() != root.child('key_rewards/invitesPrivate/'+$code+'/from').val() && !root.child('key_rewards/members/'+newData.child('key').val()).exists()",
+    ".validate": "newData.hasChildren(['name','key','t']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 40 && newData.child('key').isString() && newData.child('key').val().matches(/^[A-Za-z0-9]{12,40}$/) && newData.child('t').isNumber() && newData.child('t').val() <= now + 600000 && newData.child('t').val() >= now - 600000",
+    "name": {},
+    "key": {},
+    "t": {},
     "$other": {
      ".validate": false
     }

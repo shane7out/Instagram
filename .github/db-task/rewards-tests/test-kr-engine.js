@@ -138,6 +138,34 @@ const rej = async (name, p) => { try { await p; ok(name, false, 'did not reject'
   eq('the demo wallet: one Dana, 136 in four batches (25, 30, 36, 45)', [dana.length, dana[0].available, dana[0].lots.map(l => l.rewards)], [1, 136, [25, 30, 36, 45]]);
   eq('the demo wallet: the first batch expires in 6 days and is flagged as expiring soon', [Math.round((dana[0].lots[0].expiresAt - (N0 + 100 * DAY)) / DAY), dana[0].expiringSoon], [6, 25]);
 
+  // ---- invite a friend (one free invite each; 20 + 20, expiring in 30 days, after approval)
+  let T3 = N0 + 200 * DAY; const ki = KR.create(KR.memoryStore(), () => T3);
+  const inviter = await ki.addMember({ name: 'Maria', mkey: 'mariamariamar1' });
+  const iv = await ki.createInvite(inviter.mkey, 'Maria');
+  eq('a person gets one invite code (8 characters), open', [iv.code.length, iv.status], [8, 'open']);
+  eq('asking again returns the same invite (one free invite each)', (await ki.createInvite(inviter.mkey, 'Maria')).code, iv.code);
+  eq('a friend can look up the invite by code and see who invited them', (await ki.getInvite(iv.code)).fromName, 'Maria');
+  eq('a bad name is refused', (await ki.claimInvite(iv.code, { name: ' ', key: 'friendfriend01' })).ok, false);
+  eq('a short member code is refused', (await ki.claimInvite(iv.code, { name: 'Alex', key: 'x' })).ok, false);
+  eq('an unknown invite is refused', (await ki.claimInvite('zzzzzzzz', { name: 'Alex', key: 'friendfriend01' })).ok, false);
+  eq('the friend joins through the link', (await ki.claimInvite(iv.code, { name: 'Alex', key: 'friendfriend01' })).ok, true);
+  eq('nothing is earned until Shane approves', [(await ki.balanceOf('friendfriend01')).available, (await ki.balanceOf(inviter.mkey)).available], [0, 0]);
+  eq('the invite is waiting for approval', (await ki.pendingInvites()).map(p => [p.fromName, p.friendName]), [['Maria', 'Alex']]);
+  eq('a second friend cannot use the same invite', (await ki.claimInvite(iv.code, { name: 'Sam', key: 'friendfriend02' })).ok, false);
+  const ap = await ki.approveInvite(iv.code);
+  eq('approval gives both 20 rewards that expire in 30 days', [ap.rewards, Math.round((ap.expiresAt - T3) / DAY)], [20, 30]);
+  const wa = await ki.walletOf('friendfriend01'), wm = await ki.walletOf(inviter.mkey);
+  eq('the friend has 20 and the inviter has 20, with notes', [wa.balance.available, wm.balance.available, wa.entries[0].note, wm.entries[0].note], [20, 20, 'Invited by Maria', 'Friend joined: Alex']);
+  eq('the friend is now on the list of people (source invite)', (await ki.listMembers()).filter(m => m.name === 'Alex').map(m => m.source), ['invite']);
+  eq('an approved invite is no longer pending, and cannot be approved twice', [(await ki.pendingInvites()).length, await ki.approveInvite(iv.code).then(() => 'no error', () => 'refused')], [0, 'refused']);
+  eq('an invite that was used cannot take another friend', (await ki.claimInvite(iv.code, { name: 'Sam', key: 'friendfriend02' })).ok, false);
+  T3 += 31 * DAY;
+  eq('30 days later the invite rewards have expired', [(await ki.balanceOf('friendfriend01')).available, (await ki.balanceOf('friendfriend01')).expired], [0, 20]);
+  const inv2 = await ki.createInvite('friendfriend01', 'Alex');
+  await ki.claimInvite(inv2.code, { name: 'Pat', key: 'friendfriend03' }); await ki.rejectInvite(inv2.code);
+  eq('a rejected invite earns nothing and leaves the list', [(await ki.pendingInvites()).length, (await ki.balanceOf('friendfriend03')).available, (await ki.getInvite(inv2.code)).status], [0, 0, 'rejected']);
+  eq('the summary counts the invite rewards (40) as given', (await ki.summary()).totals.invited, 40);
+
   // ---- messages
   T2 = N0 + 100 * DAY;
   await rej('an empty message is refused', ke.sendMessage(lm.mkey, { from: 'member', text: '  ' }));

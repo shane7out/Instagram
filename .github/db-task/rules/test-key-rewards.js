@@ -182,6 +182,36 @@ const K = '/key_rewards/';
   await t('a stranger marks a conversation read', 'anon', 'PUT', K + 'chats/strangerxxxxx1/memberSeen', now, false);
   await t('an unknown field on a conversation', 'owner', 'PUT', K + 'chats/mmmmmmmmmmmm1/secret', 'x', false);
 
+  // ---- invite a friend
+  await t('make an invite for someone who is not a person on the list', 'anon', 'PUT', K + 'invitesBy/strangerxxxxx1', 'abcd2345', false);
+  await t('make an invite code with the wrong shape', 'anon', 'PUT', K + 'invitesBy/mmmmmmmmmmmm1', 'ABC', false);
+  await t('make an invite code (person on the list)', 'anon', 'PUT', K + 'invitesBy/mmmmmmmmmmmm1', 'abcd2345', true);
+  await t('make a second invite for the same person (one each)', 'anon', 'PUT', K + 'invitesBy/mmmmmmmmmmmm1', 'zzzz2345', false);
+  await t('read my own invite code by my code', 'anon', 'GET', K + 'invitesBy/mmmmmmmmmmmm1', undefined, true);
+  await t('list everyone\'s invite codes', 'anon', 'GET', K + 'invitesBy', undefined, false);
+  await t('claim ownership of an invite that is not mine', 'anon', 'PUT', K + 'invitesPrivate/zzzz2345', { from: 'mmmmmmmmmmmm1' }, false);
+  await t('save who an invite belongs to', 'anon', 'PUT', K + 'invitesPrivate/abcd2345', { from: 'mmmmmmmmmmmm1' }, true);
+  await t('read who an invite belongs to', 'anon', 'GET', K + 'invitesPrivate/abcd2345', undefined, false);
+  await t('publish an invite with an unknown field', 'anon', 'PUT', K + 'invites/abcd2345', { fromName: 'Maria', createdAt: now, status: 'open', bonus: 1 }, false);
+  await t('publish an invite that is already approved', 'anon', 'PUT', K + 'invites/abcd2345', { fromName: 'Maria', createdAt: now, status: 'approved' }, false);
+  await t('publish an invite for a code that has no owner record', 'anon', 'PUT', K + 'invites/qqqq2345', { fromName: 'Maria', createdAt: now, status: 'open' }, false);
+  await t('publish the invite', 'anon', 'PUT', K + 'invites/abcd2345', { fromName: 'Maria', createdAt: now, status: 'open' }, true);
+  await t('anyone can read an invite by its code', 'anon', 'GET', K + 'invites/abcd2345', undefined, true);
+  await t('a stranger approves an invite', 'anon', 'PATCH', K + 'invites/abcd2345', { status: 'approved' }, false);
+  await t('a friend claims the invite with a name that is too long', 'anon', 'PUT', K + 'inviteClaims/abcd2345', { name: 'x'.repeat(60), key: 'friendfriend01', t: now }, false);
+  await t('a person claims their own invite', 'anon', 'PUT', K + 'inviteClaims/abcd2345', { name: 'Maria', key: 'mmmmmmmmmmmm1', t: now }, false);
+  await call('admin', 'PUT', K + 'members/existingmember1', { name: 'Old', createdAt: now, source: 'owner' });
+  await t('someone who is already a person on the list claims an invite', 'anon', 'PUT', K + 'inviteClaims/abcd2345', { name: 'Old', key: 'existingmember1', t: now }, false);
+  await t('claim an invite that does not exist', 'anon', 'PUT', K + 'inviteClaims/qqqq2345', { name: 'Alex', key: 'friendfriend01', t: now }, false);
+  await t('a friend claims the invite', 'anon', 'PUT', K + 'inviteClaims/abcd2345', { name: 'Alex', key: 'friendfriend01', t: now }, true);
+  await t('a second friend claims the same invite', 'anon', 'PUT', K + 'inviteClaims/abcd2345', { name: 'Sam', key: 'friendfriend02', t: now }, false);
+  await t('read the claims (they hold private codes)', 'anon', 'GET', K + 'inviteClaims/abcd2345', undefined, false);
+  await t('the owner reads the claims', 'owner', 'GET', K + 'inviteClaims', undefined, true);
+  await t('approve an invite: friend becomes a person, both wallets get 20, invite marked approved', 'owner', 'PATCH', K + '', { 'members/friendfriend01': { name: 'Alex', createdAt: now, source: 'invite' }, 'wallet/friendfriend01/invabcd2345': { kind: 'invite', rewards: 20, at: now, expiresAt: now + 30 * 86400000, note: 'Invited by Maria' }, 'wallet/mmmmmmmmmmmm1/invabcd2345': { kind: 'invite', rewards: 20, at: now, expiresAt: now + 30 * 86400000, note: 'Friend joined: Alex' }, 'invites/abcd2345/status': 'approved', 'invites/abcd2345/approvedAt': now }, true);
+  await t('approve the same invite again', 'owner', 'PATCH', K + '', { 'invites/abcd2345/status': 'rejected' }, false);
+  await t('an invite wallet entry of 1001', 'owner', 'PUT', K + 'wallet/friendfriend01/inv2', { kind: 'invite', rewards: 1001, at: now }, false);
+  await t('the friend can now message the owner (they are on the list)', 'anon', 'PUT', K + 'chats/friendfriend01/messages/m1', { from: 'member', text: 'Thanks for the invite!', t: now, name: 'Alex' }, true);
+
   // ---- the engine, end to end, through the Firebase store (anonymous guests, owner dashboard)
   const q = 'ns=' + NS;
   const ownerKr = KR.create(KR.firebaseStore(BASE, () => OWNER, { query: q }));
@@ -222,6 +252,18 @@ const K = '/key_rewards/';
   eq('engine: the guest sees 1 unread reply, and can read the thread', [await guestKr.memberUnread(guests[0]), (await guestKr.listThread(guests[0])).length], [1, 2]);
   let guestThreads = false; try { await guestKr.threads(); } catch (e) { guestThreads = true; }
   eq('engine: a guest cannot list all conversations', guestThreads, true);
+  // engine: invite a friend through the rules
+  const iv = await guestKr.createInvite(guests[0], 'Guest1');
+  eq('engine: a person on the list makes an invite; asking again gives the same one', [iv.code.length, (await guestKr.createInvite(guests[0], 'Guest1')).code === iv.code], [8, true]);
+  eq('engine: a friend joins through the invite', (await guestKr.claimInvite(iv.code, { name: 'Newfriend', key: 'newfriendkey001' })).ok, true);
+  eq('engine: a second friend is refused (live: the database refuses)', (await guestKr.claimInvite(iv.code, { name: 'Other', key: 'newfriendkey002' })).ok, false);
+  let pend = false; try { await guestKr.pendingInvites(); } catch (e) { pend = true; }
+  eq('engine: a guest cannot list the waiting invites', pend, true);
+  eq('engine: the owner sees one invite waiting', (await ownerKr.pendingInvites()).map(x => x.friendName), ['Newfriend']);
+  let selfApprove = false; try { await guestKr.approveInvite(iv.code); } catch (e) { selfApprove = true; }
+  eq('engine: a guest cannot approve an invite', selfApprove, true);
+  await ownerKr.approveInvite(iv.code);
+  eq('engine: after approval both have 20 more (the inviter had 5 left)', [(await ownerKr.balanceOf('newfriendkey001')).available, (await ownerKr.balanceOf(guests[0])).available], [20, 25]);
   const pm = await ownerKr.addMember({ name: 'Priya' });
   await ownerKr.grant({ mkey: pm.mkey, rewards: 40, reason: 'Thank you' });
   eq('engine: a person added by hand has what was added', (await ownerKr.balanceOf(pm.mkey)).available, 40);
@@ -231,7 +273,7 @@ const K = '/key_rewards/';
   let gGuest = false; try { await guestKr.grant({ mkey: pm.mkey, rewards: 500, reason: 'x' }); } catch (e) { gGuest = true; }
   eq('engine: a guest cannot add rewards to anyone', gGuest, true);
   const sum = await ownerKr.summary();
-  eq('engine: summary totals match (events 30 + 60 issued, grants 20 + 40, redemptions 15 x 3)', [sum.totals.issued + sum.totals.granted, sum.totals.redeemed, sum.totals.outstanding], [90 + 20 + 40, 30 + 15, 150 - 45]);
+  eq('engine: summary totals match (events 30 + 60 issued, grants 20 + 40, invites 40 + 40, redemptions 15 x 3)', [sum.totals.issued + sum.totals.granted, sum.totals.redeemed, sum.totals.outstanding], [90 + 20 + 40, 30 + 15, 150 + 80 - 45]);
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.log('ERROR ' + e.stack); process.exit(2); });

@@ -17,11 +17,15 @@
      grants/<id>              { mkey, rewards, reason, at }   rewards the owner adds to a person by hand (write once, owner only)
      wallet/<mkey>/<id>       { kind: event|grant|use, rewards, at, expiresAt?, note }   each person's own ledger (a person reads theirs by their private code)
      chats/<mkey>/messages/<id> { from: member|owner, text, t, name? }   two-way messages; chats/<mkey>/ownerSeen and memberSeen mark what was read
+     invitesBy/<mkey>         <code>   each person's one free invite (write once)
+     invitesPrivate/<code>    { from: mkey }   who the invite belongs to (owner only)
+     invites/<code>           { fromName, createdAt, status: open|approved|rejected, approvedAt? }   public by code
+     inviteClaims/<code>      { name, key, t }   a friend joining through the invite (owner only; the friend's private code is in here)
      redemptions/<id>         { mkey, rid, offer, rewards, at }   written once, owner only
    The split rule: share = min( floor(pool / approved), cap ); issued = share * approved; the leftover is never issued. */
 (function (root) {
   'use strict';
-  var KR = { MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000, DAY: 86400000, SOON_DAYS: 14, DEFAULT_EXPIRY_DAYS: 90, MAX_TEXT: 500 };
+  var KR = { INVITE_REWARDS: 20, INVITE_DAYS: 30, MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000, DAY: 86400000, SOON_DAYS: 14, DEFAULT_EXPIRY_DAYS: 90, MAX_TEXT: 500 };
   var BASE = 'key_rewards';
 
   // ---------- pure helpers ----------
@@ -36,13 +40,14 @@
   KR.computeBalance = function (entries, now) {
     now = now == null ? Date.now() : now;
     var lots = [], uses = [], received = 0, granted = 0, used = 0, i;
-    (entries || []).forEach(function (e) { if (e.kind === 'use') uses.push({ at: e.at, n: e.rewards }); else lots.push({ at: e.at, exp: e.expiresAt || 0, rem: e.rewards }); if (e.kind === 'event') received += e.rewards; if (e.kind === 'grant') granted += e.rewards; if (e.kind === 'use') used += e.rewards; });
+    var invited = 0;
+    (entries || []).forEach(function (e) { if (e.kind === 'use') uses.push({ at: e.at, n: e.rewards }); else lots.push({ at: e.at, exp: e.expiresAt || 0, rem: e.rewards }); if (e.kind === 'event') received += e.rewards; if (e.kind === 'grant') granted += e.rewards; if (e.kind === 'invite') invited += e.rewards; if (e.kind === 'use') used += e.rewards; });
     lots.sort(function (a, b) { return a.at - b.at; }); uses.sort(function (a, b) { return a.at - b.at; });
     uses.forEach(function (u) {
       var need = u.n, ok = lots.filter(function (l) { return l.at <= u.at && l.rem > 0 && (!l.exp || l.exp > u.at); }).sort(function (a, b) { return (a.exp || 9e15) - (b.exp || 9e15); });
       for (i = 0; i < ok.length && need > 0; i++) { var take = Math.min(ok[i].rem, need); ok[i].rem -= take; need -= take; }
     });
-    var out = { received: received, granted: granted, redeemed: used, expired: 0, available: 0, expiringSoon: 0, nextExpiry: 0, lots: [] }, by = {};
+    var out = { received: received, granted: granted, invited: invited, redeemed: used, expired: 0, available: 0, expiringSoon: 0, nextExpiry: 0, lots: [] }, by = {};
     lots.forEach(function (l) {
       if (l.rem <= 0) return;
       if (l.exp && l.exp <= now) { out.expired += l.rem; return; }
@@ -259,6 +264,62 @@
       });
     };
 
+    // ---------- invite a friend (one free invite each; both earn INVITE_REWARDS that expire in INVITE_DAYS days once Shane approves) ----------
+    api.myInvite = function (mkey) {
+      return store.get(P('invitesBy/' + mkey)).then(function (code) { return code ? store.get(P('invites/' + code)).then(function (inv) { return inv ? Object.assign({ code: code }, inv) : null; }) : null; });
+    };
+    api.createInvite = function (mkey, fromName) {
+      return api.myInvite(mkey).then(function (ex) {
+        if (ex) return ex;
+        var code = KR.newKey(8), nm = KR.cleanName(fromName) || 'A friend', rec = { fromName: nm, createdAt: now(), status: 'open' };
+        return store.set(P('invitesBy/' + mkey), code)
+          .then(function () { return store.set(P('invitesPrivate/' + code), { from: mkey }); })
+          .then(function () { return store.set(P('invites/' + code), rec); })
+          .then(function () { return Object.assign({ code: code }, rec); });
+      });
+    };
+    api.getInvite = function (code) { return store.get(P('invites/' + code)).then(function (v) { return v ? Object.assign({ code: code }, v) : null; }); };
+    // The friend joins through the link. Nothing is earned until Shane approves.
+    api.claimInvite = function (code, who) {
+      var name = KR.cleanName(who && who.name), key = String((who && who.key) || '');
+      if (!name) return Promise.resolve({ ok: false, reason: 'Please enter your first name.' });
+      if (!/^[A-Za-z0-9]{12,40}$/.test(key)) return Promise.resolve({ ok: false, reason: 'Your member code is not valid.' });
+      return api.getInvite(code).then(function (inv) {
+        if (!inv) return { ok: false, reason: 'We could not find that invite.' };
+        if (inv.status !== 'open') return { ok: false, reason: 'This invite has already been used.' };
+        var put = function () { return store.set(P('inviteClaims/' + code), { name: name, key: key, t: now() }).then(function () { return { ok: true }; }, function () { return { ok: false, reason: 'This invite may already be used, or you may already be a member.' }; }); };
+        // Live: the database itself refuses a second claim (write once) and refuses someone who is already a member. In the sandbox we check here.
+        if (!store.sandbox) return put();
+        return Promise.all([store.get(P('inviteClaims/' + code)), store.get(P('members/' + key)), store.get(P('invitesPrivate/' + code))]).then(function (r) { if (r[0]) return { ok: false, reason: 'Someone has already joined with this invite.' }; if (r[1] || (r[2] && r[2].from === key)) return { ok: false, reason: 'You are already a member, so this invite cannot be used.' }; return put(); });
+      });
+    };
+    // Owner: invites with a friend waiting for approval.
+    api.pendingInvites = function () {
+      return Promise.all([store.get(P('inviteClaims')), store.get(P('invites'))]).then(function (r) {
+        var cl = r[0] || {}, inv = r[1] || {};
+        return Object.keys(cl).filter(function (c) { return inv[c] && inv[c].status === 'open'; }).map(function (c) { return { code: c, fromName: inv[c].fromName, friendName: cl[c].name, t: cl[c].t }; }).sort(function (a, b) { return a.t - b.t; });
+      });
+    };
+    api.approveInvite = function (code) {
+      return Promise.all([store.get(P('inviteClaims/' + code)), store.get(P('invitesPrivate/' + code)), store.get(P('invites/' + code))]).then(function (r) {
+        var cl = r[0], pv = r[1], inv = r[2];
+        if (!cl || !pv || !inv) throw new Error('Invite not found.');
+        if (inv.status !== 'open') throw new Error('This invite was already decided.');
+        return Promise.all([store.get(P('members/' + cl.key)), store.get(P('members/' + pv.from))]).then(function (m) {
+          if (m[0]) throw new Error('That person is already a member.');
+          var t = now(), exp = t + KR.INVITE_DAYS * KR.DAY, up = {}, friendName = cl.name, fromName = (m[1] && m[1].name) || inv.fromName || 'a friend';
+          up['members/' + cl.key] = { name: friendName, createdAt: t, source: 'invite' };
+          up['wallet/' + cl.key + '/inv' + code] = { kind: 'invite', rewards: KR.INVITE_REWARDS, at: t, expiresAt: exp, note: 'Invited by ' + fromName };
+          up['wallet/' + pv.from + '/inv' + code] = { kind: 'invite', rewards: KR.INVITE_REWARDS, at: t, expiresAt: exp, note: 'Friend joined: ' + friendName };
+          up['invites/' + code + '/status'] = 'approved'; up['invites/' + code + '/approvedAt'] = t;
+          return store.update(BASE, up).then(function () { return { friend: friendName, inviter: fromName, rewards: KR.INVITE_REWARDS, expiresAt: exp }; });
+        });
+      });
+    };
+    api.rejectInvite = function (code) {
+      return store.get(P('invites/' + code)).then(function (inv) { if (!inv || inv.status !== 'open') throw new Error('This invite was already decided.'); var up = {}; up['invites/' + code + '/status'] = 'rejected'; up['invites/' + code + '/approvedAt'] = now(); return store.update(BASE, up); });
+    };
+
     // ---------- messages (two-way) ----------
     api.sendMessage = function (mkey, m) {
       var text = String((m && m.text) || '').trim().slice(0, KR.MAX_TEXT), from = m && m.from;
@@ -285,15 +346,16 @@
     api.listRedemptions = function () { return store.get(P('redemptions')).then(list).then(function (a) { return a.sort(function (x, y) { return y.at - x.at; }); }); };
 
     api.summary = function () {
-      return Promise.all([api.listRestaurants(), api.listEvents(), store.get(P('checkins')), api.listRedemptions(), api.listMembers(), store.get(P('grants'))]).then(function (r) {
-        var rests = r[0], evs = r[1], ck = r[2] || {}, reds = r[3], gr = r[5] || {};
-        var tot = { members: r[4].length, granted: Object.keys(gr).reduce(function (a, k) { return a + gr[k].rewards; }, 0), restaurants: rests.length, events: evs.length, open: 0, closed: 0, checkins: 0, approved: 0, pending: 0, rejected: 0, issued: 0, leftover: 0, redeemed: 0, outstanding: 0, pools: 0 };
+      return Promise.all([api.listRestaurants(), api.listEvents(), store.get(P('checkins')), api.listRedemptions(), api.listMembers(), store.get(P('grants')), store.get(P('wallet'))]).then(function (r) {
+        var rests = r[0], evs = r[1], ck = r[2] || {}, reds = r[3], gr = r[5] || {}, wal = r[6] || {};
+        var inv = 0; Object.keys(wal).forEach(function (k) { Object.keys(wal[k]).forEach(function (i) { if (wal[k][i].kind === 'invite') inv += wal[k][i].rewards; }); });
+        var tot = { invited: inv, members: r[4].length, granted: Object.keys(gr).reduce(function (a, k) { return a + gr[k].rewards; }, 0), restaurants: rests.length, events: evs.length, open: 0, closed: 0, checkins: 0, approved: 0, pending: 0, rejected: 0, issued: 0, leftover: 0, redeemed: 0, outstanding: 0, pools: 0 };
         evs.forEach(function (e) {
           if (e.status === 'open') tot.open++; if (e.status === 'closed') { tot.closed++; tot.issued += e.issued || 0; tot.leftover += e.leftover || 0; tot.pools += e.pool; }
           var c = ck[e.id] || {}; Object.keys(c).forEach(function (k) { tot.checkins++; tot[c[k].status] = (tot[c[k].status] || 0) + 1; });
         });
         reds.forEach(function (x) { tot.redeemed += x.rewards; });
-        tot.outstanding = Math.max(0, tot.issued + tot.granted - tot.redeemed);
+        tot.outstanding = Math.max(0, tot.issued + tot.granted + tot.invited - tot.redeemed);
         var by = {};
         rests.forEach(function (x) { by[x.id] = { id: x.id, name: x.name, city: x.city, events: 0, issued: 0, redeemed: 0 }; });
         evs.forEach(function (e) { if (by[e.rid] && e.status === 'closed') { by[e.rid].events++; by[e.rid].issued += e.issued || 0; } });

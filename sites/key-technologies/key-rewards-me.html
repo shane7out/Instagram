@@ -50,6 +50,7 @@
   input::placeholder{color:#6f8499;}
   #toast{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 8px);z-index:90;background:linear-gradient(135deg,#17324a,#10243a);border:1px solid rgba(79,200,240,.45);border-radius:16px;padding:10px 14px;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;cursor:pointer;} #toast.on{display:block;} #toast b{display:block;font-size:14.5px;} #toast span{font-size:13px;color:var(--dim);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .msg{font-size:13.5px;font-weight:700;min-height:18px;text-align:center;color:var(--warn);}
+  .two{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;} .out{background:#111b26;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;word-break:break-all;font-size:13.5px;} .istat{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:10px 12px;font-size:14px;text-align:center;} .istat.good{border-color:rgba(79,200,240,.5);background:rgba(0,168,225,.1);color:var(--ink);font-weight:700;}
   .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
   @media (max-height:720px){.hnum{font-size:40px;margin:2px 0;} .hero{padding:8px 12px;} .arow{height:34px;} .screen{gap:6px;} .lot .n{font-size:22px;min-width:44px;} .lot .t b{font-size:14px;} .btn{min-height:46px;} .fine{display:none;} .warn,.ok{padding:7px 10px;font-size:13.5px;} .auto{font-size:12px;}}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
@@ -67,7 +68,7 @@
     <div class="lab">Breakdown by expiry date</div>
     <div class="grow lots" id="lots"></div>
     <div class="auto">When you use rewards, the ones that expire first are used first. You do not need to choose.</div>
-    <button class="btn p" id="goChat" type="button">Message Shane<span class="bdg" id="bdg" hidden>0</span></button>
+    <div class="two"><button class="btn p" id="goChat" type="button">Message Shane<span class="bdg" id="bdg" hidden>0</span></button><button class="btn" id="goInvite" type="button">Invite a friend</button></div>
     <p class="fine">Rewards can only be used for free food at participating restaurants. No cash value; cannot be sold or exchanged for cash. Every offer is at least 15 rewards.</p>
   </section>
   <section class="screen" id="s-chat" aria-label="Messages">
@@ -75,6 +76,12 @@
     <div class="msgs grow" id="msgs" aria-live="polite"></div>
     <div class="msg" id="err" role="status"></div>
     <form id="tForm"><label class="sr" for="tText">Message</label><input type="text" id="tText" maxlength="500" placeholder="Write a message" autocomplete="off"><button class="btn p" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form>
+  </section>
+  <section class="screen" id="s-invite" aria-label="Invite a friend">
+    <div class="top2"><button class="ibtn" id="iBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Invite a friend</h2></div>
+    <div class="hero"><div class="lab" style="position:relative;z-index:1">You and your friend each get</div><div class="hnum" style="font-size:52px">20</div><div class="hsub">rewards that expire in 30 days</div></div>
+    <div id="iBody"></div>
+    <p class="fine">You have one free invite. Your friend must be new to Key Rewards. Both of you get the rewards once Shane confirms your friend joined.</p>
   </section>
   <section class="screen" id="s-none" aria-label="No code"><h1 style="font-size:22px;margin:8px 0 0">Open your own link</h1><p style="color:var(--dim)">To see your rewards and message us, open this page from the restaurant check-in page on the phone you used.</p></section>
 </main>
@@ -91,6 +98,7 @@ var tf=function(t){var x=new Date(t);return x.toDateString()===new Date().toDate
 var tab='wallet',lastUnread=-1;
 function show(n){tab=n;[].forEach.call(document.querySelectorAll('.screen'),function(el){el.classList.toggle('on',el.id==='s-'+n)})}
 if(!/^[A-Za-z0-9]{12,40}$/.test(mk)){show('none');return}
+if(!name&&kr.store.sandbox)kr.store.get('key_rewards/members/'+mk).then(function(m){if(m&&m.name)name=m.name});
 function dl(t){var n=Math.ceil((t-Date.now())/KR.DAY);return n<=0?'today':n===1?'1 day left':n+' days left'}
 function drawWallet(){
   return kr.walletOf(mk).then(function(w){var b=w.balance;
@@ -108,7 +116,7 @@ function drawWallet(){
 }
 function toast(text){var el=$('#toast');el.innerHTML='<b>New message from Shane</b><span>'+esc(text)+'</span>';el.classList.add('on');el.onclick=function(){el.classList.remove('on');show('chat');drawChat()};setTimeout(function(){el.classList.remove('on')},5000)}
 function badge(u){var b=$('#bdg');b.hidden=!u;b.textContent=u>9?'9+':u}
-function poll(){return kr.memberUnread(mk).then(function(u){if(lastUnread>=0&&u>lastUnread&&tab!=='chat'){kr.listThread(mk).then(function(ms){var l=ms.filter(function(m){return m.from==='owner'}).pop();if(l)toast(l.text)})}lastUnread=u;badge(tab==='chat'?0:u);if(tab==='chat')drawChat();else drawWallet()})}
+function poll(){if(tab==='invite')return drawInvite();return kr.memberUnread(mk).then(function(u){if(lastUnread>=0&&u>lastUnread&&tab!=='chat'){kr.listThread(mk).then(function(ms){var l=ms.filter(function(m){return m.from==='owner'}).pop();if(l)toast(l.text)})}lastUnread=u;badge(tab==='chat'?0:u);if(tab==='chat')drawChat();else drawWallet()})}
 function drawChat(){return kr.listThread(mk).then(function(ms){
   $('#msgs').innerHTML=ms.length?ms.slice(-14).map(function(m){return '<div class="bub '+(m.from==='member'?'me':'them')+'">'+esc(m.text)+'<small>'+tf(m.t)+'</small></div>'}).join(''):'<div class="empty" style="text-align:center">Write to us about your rewards. We will reply here.</div>';
   if(tab==='chat'){kr.markSeen(mk,'member');lastUnread=0;badge(0)}});}
@@ -116,6 +124,22 @@ $('#goChat').onclick=function(){show('chat');drawChat();setTimeout(function(){$(
 $('#back').onclick=function(){show('wallet');poll()};
 $('#tForm').onsubmit=function(e){e.preventDefault();var v=$('#tText').value.trim();if(!v)return;$('#err').textContent='';
   kr.sendMessage(mk,{from:'member',text:v,name:name}).then(function(){$('#tText').value='';drawChat()},function(){$('#err').textContent='We could not send that. Please ask staff for help.'})};
+function drawInvite(){
+  var body=$('#iBody');
+  return kr.myInvite(mk).then(function(inv){
+    if(!inv){body.innerHTML=(name?'':'<label class="sr" for="iName">Your first name</label><input id="iName" maxlength="40" placeholder="Your first name, so your friend knows it is you" autocomplete="given-name" style="width:100%;height:50px;border-radius:14px;padding:0 14px;font:inherit;color:var(--ink);background:#111b26;border:1px solid var(--line);margin-bottom:8px">')+'<button class="btn p" id="mkInv" type="button" style="width:100%">Create my invite link</button><div class="msg" id="iMsg" role="status"></div>';
+      $('#mkInv').onclick=function(){var nm=name||KR.cleanName(($('#iName')||{}).value);if(!nm){$('#iMsg').textContent='Please enter your first name.';return}name=nm;try{localStorage.setItem('kr_member_name',nm)}catch(e){}
+        kr.createInvite(mk,nm).then(function(){drawInvite()},function(){$('#iMsg').textContent='We could not make your invite. Please ask staff for help.'})};return}
+    var link=location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-rewards-join.html?i='+inv.code;
+    if(inv.status==='approved'){body.innerHTML='<div class="istat good">Your friend joined. You each earned 20 rewards. Check your breakdown for the date they expire.</div>';return}
+    if(inv.status==='rejected'){body.innerHTML='<div class="istat">This invite was not approved.</div>';return}
+    body.innerHTML='<div class="out" id="iLink"></div><div class="two" style="margin-top:8px"><button class="btn p" id="iShare" type="button">Share</button><button class="btn" id="iCopy" type="button">Copy link</button></div><div class="istat" style="margin-top:8px">Waiting for your friend to join.</div><div class="msg" id="iMsg" role="status"></div>';
+    $('#iLink').textContent=link;
+    $('#iShare').onclick=function(){var data={title:'Key Rewards',text:'Join Key Rewards with my invite. We each get 20 rewards.',url:link};if(navigator.share){navigator.share(data).catch(function(){})}else{$('#iMsg').textContent='Copy the link and send it to your friend.'}};
+    $('#iCopy').onclick=function(){try{navigator.clipboard.writeText(link).then(function(){$('#iMsg').style.color='var(--key2)';$('#iMsg').textContent='Link copied.'})}catch(e){$('#iMsg').textContent='Press and hold the link to copy.'}};
+  });
+}
+$('#goInvite').onclick=function(){show('invite');drawInvite()};$('#iBack').onclick=function(){show('wallet');poll()};
 window.addEventListener('storage',function(e){if(e.key&&e.key.indexOf('kr_sandbox_')===0)poll()});
 setInterval(poll,3000);
 drawWallet().then(poll);

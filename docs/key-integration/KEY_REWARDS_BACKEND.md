@@ -10,11 +10,12 @@ database rules deployed, and Shane saying go. Nothing here changes the live LVR 
 | Owner / restaurant dashboard | `sites/key-technologies/key-rewards-dashboard.html` | Overview KPIs and chart, create events, check-in tab with QR code and approve/reject, close and issue (with a confirm step), redemptions, restaurants, rules. Sandbox banner on top. noindex, no visitor counter. |
 | Phone app (owner) | `sites/key-technologies/key-rewards-app.html` (+ `rewards-app.webmanifest`) | Built to fit one phone screen with no scrolling (checked at 320x568, 360x640, 375x667, 390x844, 412x915, 430x932). Home, Everyone (searchable, sortable, paged list), Add (pick or create a person, amount, reason), Events (approve all, close). Person sheet: balance, history, add rewards, record a free-food use. Landscape shows a hold-upright notice. |
 | Member wallet and chat | `sites/key-technologies/key-rewards-me.html` | What a member sees: rewards available, expiry dates (a warning when some expire within 14 days), recent activity, and a message thread with Shane. Fits one phone screen. In the sandbox it is opened from a person's sheet in the phone app ("Open their member view"). |
+| Friend invite page | `sites/key-technologies/key-rewards-join.html?i=<code>` | The page a friend opens from an invite link: "Invited by Maria, 20 rewards for you and 20 for Maria", first name, Join. |
 | Member check-in page | `sites/key-technologies/key-rewards-checkin.html?e=<event id>` | Guest enters a first name; the phone gets a private random member code. After the event it shows the member's rewards. |
 | Public demo / service | `key-platform/demos/key-rewards-events.html`, homepage card "Key Rewards: Guest Events & Loyalty" | Sliders and a close button, made-up data. |
 | Database rules (staged) | `.github/db-task/rules/key-rewards-rules.json` | Section `key_rewards`. Placeholder `__OWNER_UID__` (the deploy script fills it). |
 | Deploy script (NOT run) | `.github/db-task/mac/deploy-key-rewards-rules.sh` | Backs up current rules, adds only `key_rewards`, runs live checks, restores the old rules if any check fails. |
-| Tests | `.github/db-task/rewards-tests/test-kr-engine.js` (86 checks, pure logic) and `.github/db-task/rules/test-key-rewards.js` (161 checks: the rules plus the engine through the Firebase store, in the emulator) | Run the second with `env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY NO_PROXY='*' bash .github/db-task/rules/run-kr-rules-test.sh` |
+| Tests | `.github/db-task/rewards-tests/test-kr-engine.js` (104 checks, pure logic) and `.github/db-task/rules/test-key-rewards.js` (195 checks: the rules plus the engine through the Firebase store, in the emulator) | Run the second with `env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY NO_PROXY='*' bash .github/db-task/rules/run-kr-rules-test.sh` |
 
 ## Data (all under `key_rewards/`)
 - `restaurants/<rid>`: name, city, country, active, createdAt. Owner only.
@@ -60,3 +61,10 @@ share = the smaller of (pool divided by approved guests, rounded down) and the p
 - Rule, always: when rewards are used, the ones that expire soonest are used first (the person does not choose). Expired rewards are not in the total.
 - Same breakdown in the owner phone app's person sheet. More, "See a member wallet (demo: Dana)" opens the demo member: 25 + 30 + 36 + 45 = 136.
 - Engine: `KR.computeBalance(...).lots` (grouped by expiry day, soonest first); `api.seedWalletDemo()` (sandbox only, safe to run twice).
+
+## Invite a friend (added 2026-11-07, Shane: everybody gets one free invite; the friend earns 20 and the inviter earns 20, expiring in 30 days)
+- Each person on the list gets ONE invite (a private `invitesBy/<mkey>` record that can be written once). They share the link from their wallet (Invite a friend, Share or Copy link).
+- The friend opens the link, enters a first name and joins. Nothing is earned yet.
+- Shane sees "N invites waiting. Review" on the phone app's Home screen and approves or rejects each one. Approving, in one atomic update: adds the friend to the people list (source "invite"), gives BOTH a wallet entry of 20 rewards that expires 30 days later (notes "Invited by Maria" and "Friend joined: Alex"), and marks the invite approved.
+- Protections: only someone already on the list can make an invite; the friend must be new (not already on the list) and cannot be the inviter; the invite can be claimed once; strangers cannot read the claim (it holds the friend's private code); the inviter's private code is never shown in the link. Shane's approval is the control against fake friends. Rewards are the same kind as any other (food only, no cash value, expire on the date shown, usually used soonest-expiring first).
+- NEEDS ATTORNEY REVIEW before going live: referral rewards are a promotion; the terms must say how an invite works, that approval is required, and that rewards expire in 30 days.

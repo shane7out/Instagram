@@ -99,7 +99,7 @@
   @media (max-width:340px){.word{font-size:13.5px;letter-spacing:.07em;} .brand img{width:36px;} .hnum{font-size:34px;}}
   .ibtn{position:relative;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;} .ibtn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
   .bdg{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--warn);color:#2a1a00;font-size:11.5px;font-weight:900;display:grid;place-items:center;padding:0 5px;box-shadow:0 0 0 3px var(--bg);}
-  .bdg[hidden]{display:none;}
+  .bdg[hidden],.btn[hidden]{display:none;}
   .top2{display:flex;align-items:center;gap:10px;} .top2 h2{flex:1;min-width:0;margin:0;font-size:19px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);text-transform:none;letter-spacing:0;} .top2 .ibtn{width:40px;height:40px;border-radius:12px;flex:none;}
   .trow{height:64px;flex:none;display:flex;align-items:center;gap:12px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;padding:0 2px;cursor:pointer;}
   .trow .pn small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .trow .pn b.u{color:var(--ink);} .tmeta{text-align:right;flex:none;font-size:11.5px;color:var(--dim);} .tmeta i{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--key);color:#04121b;font-style:normal;font-weight:900;font-size:11.5px;margin-top:4px;padding:0 5px;}
@@ -128,6 +128,7 @@
     <h1 class="hi">Hello, Shane</h1>
     <div id="firstRun" class="note" hidden><b>Nothing here yet.</b> Load made-up demo people and events to try the app.<div style="margin-top:8px"><button class="btn p" id="seed1" type="button" style="width:100%">Load demo data</button></div></div>
     <div class="hero" id="hero"></div>
+    <button class="btn" id="invRow" type="button" hidden style="border-color:rgba(79,200,240,.5);background:rgba(0,168,225,.12);min-height:46px"></button>
     <div class="two"><button class="btn g" id="goAdd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add rewards</button><button class="btn" id="goPeople" type="button">Everyone</button></div>
     <div class="lab" style="margin-top:2px">Recent</div>
     <div class="grow act" id="recent"></div>
@@ -209,6 +210,11 @@
   <div id="dcBody"></div><p style="margin:0;color:var(--dim);font-size:13px">Once closed, the rewards are issued and cannot be changed.</p>
   <div class="two"><button class="btn g" id="dcYes" type="button">Close and issue</button><button class="btn" id="dcNo" type="button">Cancel</button></div>
 </dialog>
+<!-- invites waiting -->
+<dialog id="dInv" class="short" aria-labelledby="diT"><div class="dh"><h3 id="diT">Invites waiting</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
+  <p style="margin:0;color:var(--dim);font-size:13px">Approving gives both people 20 rewards that expire in 30 days. Approve only if the friend is really new.</p>
+  <div id="diList"></div><div class="msg" id="diMsg" role="status"></div>
+</dialog>
 <!-- menu -->
 <dialog id="dMenu" class="short" aria-labelledby="dmT"><div class="dh"><h3 id="dmT">More</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
   <p style="margin:0;color:var(--dim);font-size:13px">This is a test version. Everything is saved on this device only, and nothing is issued, sent or paid.</p>
@@ -230,7 +236,7 @@ var S={exp:90,tab:'home',threads:[],unread:0,lastUnread:-1,thread:'',cPage:0,tab
 var SORTS=[['az','A to Z'],['most','Most'],['new','Newest']];
 var REASONS=['Welcome','Thank you','Event','Other'];
 
-function load(){return Promise.all([kr.ledger(),kr.listEvents(),kr.listRestaurants(),kr.summary(),kr.store.get('key_rewards/grants')]).then(function(r){S.ledger=r[0];S.events=r[1];S.rests=r[2];S.sum=r[3];S.grants=r[4]||{};drawAll();return loadInbox()})}
+function load(){return Promise.all([kr.ledger(),kr.listEvents(),kr.listRestaurants(),kr.summary(),kr.store.get('key_rewards/grants')]).then(function(r){S.ledger=r[0];S.events=r[1];S.rests=r[2];S.sum=r[3];S.grants=r[4]||{};return kr.pendingInvites().then(function(pi){S.pending=pi;drawAll();return loadInbox()})})}
 function drawAll(){drawHome();drawPeople();drawAdd();drawEvents()}
 function byName(a,b){return a.name.localeCompare(b.name)}
 function sorted(list){var a=list.slice();if(S.sort==='az')a.sort(byName);else if(S.sort==='most')a.sort(function(x,y){return y.available-x.available||byName(x,y)});else a.sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)||byName(x,y)});return a}
@@ -247,6 +253,7 @@ function drawHome(){
   var W=7*86400000,now=Date.now(),wk=[0,0,0,0,0,0],add=function(at,v){var i=5-Math.floor((now-at)/W);if(i>=0&&i<=5)wk[i]+=v};
   S.events.forEach(function(e){if(e.status==='closed')add(e.closedAt||e.createdAt,e.issued||0)});
   Object.keys(S.grants).forEach(function(k){add(S.grants[k].at,S.grants[k].rewards)});
+  var ir=$('#invRow'),np=(S.pending||[]).length;ir.hidden=!np;ir.textContent=np?(np+' invite'+(np===1?'':'s')+' waiting. Review'):'';
   var exps=S.ledger.reduce(function(a,m){return a+(m.expiringSoon||0)},0),mx=Math.max(1,Math.max.apply(null,wk)),h=small()?36:44;
   $('#hero').innerHTML='<div class="hrow"><div><div class="lab">Rewards given</div><div class="hnum">'+fmt(t.issued+t.granted)+'</div><div class="hsub">all time</div></div><div class="spark" role="img" aria-label="Rewards given per week, last 6 weeks: '+wk.join(', ')+'">'+wk.map(function(v,i){return '<i class="'+(i===5?'cur':'')+'" style="height:'+Math.max(3,Math.round(v/mx*h))+'px"></i>'}).join('')+'</div></div>'+
    '<div class="hstats"><div><b>'+fmt(t.members)+'</b><span>People</span></div><div><b>'+fmt(t.outstanding)+'</b><span>Not used yet</span></div><div><b'+(exps?' style="color:var(--warn)"':'')+'>'+fmt(exps)+'</b><span>Expiring soon</span></div></div>';
@@ -258,6 +265,12 @@ function drawHome(){
   var box=$('#recent'),rowH=small()?30:34,n=Math.max(1,Math.floor(box.clientHeight/rowH));
   box.innerHTML=items.length?items.slice(0,n).map(function(i){return '<div class="arow"><span class="dot '+(i.k==='u'?'u':i.k==='e'?'e':'')+'" aria-hidden="true">'+(i.k==='u'?'&minus;':i.k==='e'?'&#9733;':'+')+'</span><span>'+esc(i.t)+'</span><b class="'+(i.v>=0?'pos':'neg')+'">'+(i.v>=0?'+':'')+fmt(i.v)+'</b></div>'}).join(''):'<div class="empty">Nothing yet.</div>';
 }
+$('#invRow').onclick=function(){drawInv();$('#dInv').showModal()};
+function drawInv(){var arr=(S.pending||[]).slice(0,3),more=(S.pending||[]).length-arr.length;
+  $('#diList').innerHTML=arr.length?arr.map(function(x){return '<div class="erow" style="margin-bottom:8px"><div class="top"><b>'+esc(x.friendName)+' joined '+esc(x.fromName)+'&rsquo;s invite</b></div><div class="acts"><button class="btn g" type="button" data-iy="'+esc(x.code)+'">Approve</button><button class="btn" type="button" data-in="'+esc(x.code)+'">Reject</button></div></div>'}).join('')+(more>0?'<div class="empty">+ '+more+' more after these</div>':''):'<div class="empty">No invites waiting.</div>';}
+$('#diList').onclick=function(e){var y=e.target.closest('[data-iy]'),n=e.target.closest('[data-in]'),m=$('#diMsg');m.className='msg';m.textContent='';
+  if(y)kr.approveInvite(y.dataset.iy).then(function(r){return load().then(function(){drawInv();m.className='msg good';m.textContent=r.friend+' and '+r.inviter+' each got 20 rewards.';if(!S.pending.length)$('#dInv').close()})}).catch(function(x){m.className='msg err';m.textContent=x.message});
+  if(n)kr.rejectInvite(n.dataset.in).then(function(){return load().then(function(){drawInv();if(!S.pending.length)$('#dInv').close()})}).catch(function(x){m.className='msg err';m.textContent=x.message})};
 $('#goAdd').onclick=function(){show('add')};$('#goPeople').onclick=function(){show('people')};
 
 // ---------- people list (paged, nothing scrolls) ----------
