@@ -67,3 +67,8 @@ html[data-theme="light"] th{color:#566a94;} html[data-theme="light"] td,html[dat
 html[data-theme="light"] .bars i{background:linear-gradient(180deg,#4fb3ff,#0a8de6);}
 html[data-theme="light"] .chip.draft{color:#566a94;} html[data-theme="light"] .chip.pending{color:#a85f00;border-color:rgba(184,106,0,.45);} html[data-theme="light"] .chip.approved{color:#0a6fb8;border-color:rgba(10,141,230,.5);} html[data-theme="light"] .chip.rejected{color:#b3302a;border-color:rgba(179,48,42,.45);}
 html[data-theme="light"] .win{background:#e6f3fe;border-color:#9cc9f3;}
+/* send and circle screens (member wallet) */
+html[data-theme="light"] .achips button{background:#fff;color:#3f5380;border-color:#d0def3;} html[data-theme="light"] .achips button[aria-pressed=true]{background:rgba(10,141,230,.12);border-color:#0a8de6;color:var(--ink);}
+html[data-theme="light"] .crow{border-bottom-color:#dbe6f6;} html[data-theme="light"] .lvl{color:#566a94;border-color:#d0def3;} html[data-theme="light"] .lvl.k{color:#0a6fb8;border-color:#9cc9f3;background:#e6f3fe;} html[data-theme="light"] .lvl.t{background:#0a6fb8;color:#fff;border-color:transparent;}
+html[data-theme="light"] .crow .av{background:#bfe0fb;color:#0b1b4d;}
+html[data-theme="light"] .sub{color:#43578a;}

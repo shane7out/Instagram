@@ -103,7 +103,8 @@
     <div class="row" style="margin-top:10px"><div><label for="rdOffer">Offer</label><input id="rdOffer" maxlength="80" placeholder="Chicken bowl"></div><div><label for="rdAmt">Rewards used</label><input id="rdAmt" type="number" inputmode="numeric" min="15" step="1" value="15"></div></div>
     <p id="rdBal" class="dim" style="margin:10px 0 0"></p>
     <p><button class="b g" id="rdGo" type="button">Record redemption</button></p><div class="msg" id="rdMsg" role="status"></div></div>
-  <div class="card"><h2>Redemptions</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>When</th><th>Member</th><th>Restaurant</th><th>Offer</th><th class="n">Rewards</th></tr></thead><tbody id="rdList"></tbody></table></div></div>
+  <div class="card"><h2>Redemptions</h2><div class="tw" tabindex="0" role="region" aria-label="Redemptions, scrolls sideways"><table><thead><tr><th>When</th><th>Member</th><th>Restaurant</th><th>Offer</th><th class="n">Rewards</th></tr></thead><tbody id="rdList"></tbody></table></div></div>
+  <div class="card"><h2>Sends between members (log)</h2><p class="dim">Every time one member sends rewards to another it is recorded here. Up to 50 per send, 100 per day and 10 sends per day for each member. Rewards cannot be bought or sold, and this log is how you would spot anyone trying. Test version only.</p><div class="tw" tabindex="0" role="region" aria-label="Sends between members, scrolls sideways"><table><thead><tr><th>When</th><th>From</th><th>To</th><th class="n">Rewards</th><th>Note</th></tr></thead><tbody id="txList"></tbody></table></div></div>
 </section>
 
 <section class="panel" id="p-rest" role="tabpanel" aria-labelledby="t-rest">
@@ -255,6 +256,7 @@ function drawRedeem(){
   });
   $('#rdRest').innerHTML=cache.rests.map(function(r){return '<option value="'+esc(r.id)+'">'+esc(r.name)+'</option>'}).join('');
   var nm={};cache.rests.forEach(function(r){nm[r.id]=r.name});
+  kr.transfers().then(function(t){$('#txList').innerHTML=t.length?t.slice(0,50).map(function(x){return '<tr><td>'+when(x.at)+'</td><td>'+esc(x.fromName)+'</td><td>'+esc(x.toName)+'</td><td class="n">'+x.rewards+'</td><td>'+esc(x.note)+'</td></tr>'}).join(''):'<tr><td colspan="5" class="dim">No sends yet.</td></tr>'});
   $('#rdList').innerHTML=cache.sum.redemptions.length?cache.sum.redemptions.slice(0,50).map(function(x){return '<tr><td>'+when(x.at)+'</td><td>'+esc(x.mkey.slice(0,4))+'&hellip;</td><td>'+esc(nm[x.rid]||'')+'</td><td>'+esc(x.offer)+'</td><td class="n">'+x.rewards+'</td></tr>'}).join(''):'<tr><td colspan="5" class="dim">No redemptions yet.</td></tr>';
 }
 function showBal(){var m=$('#rdMember').value;if(!m){$('#rdBal').textContent='';return}kr.balanceOf(m).then(function(b){$('#rdBal').textContent='This member has received '+b.received+', used '+b.redeemed+', and has '+b.available+' available.'})}

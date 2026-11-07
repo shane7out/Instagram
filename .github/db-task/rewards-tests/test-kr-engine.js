@@ -186,6 +186,39 @@ const rej = async (name, p) => { try { await p; ok(name, false, 'did not reject'
   eq('a thread lists messages oldest first', (await ke.listThread(lm.mkey)).map(m => m.from), ['member', 'owner']);
   eq('a message is cut at 500 characters', (await ke.sendMessage(lm.mkey, { from: 'member', text: 'x'.repeat(900) })).text.length, 500);
 
+  // ---- member to member sends (test version only)
+  let T4 = N0 + 300 * DAY; const kx = KR.create(KR.memoryStore(), () => T4);
+  const ma = await kx.addMember({ name: 'Ana' }), mb = await kx.addMember({ name: 'Ben' }), mc = await kx.addMember({ name: 'Cy' });
+  await kx.grant({ mkey: ma.mkey, rewards: 200, reason: 'Welcome' }); await kx.grant({ mkey: mb.mkey, rewards: 5, reason: 'Welcome' });
+  T4 += 1000; const s1 = await kx.send({ from: ma.mkey, to: mb.mkey, rewards: 20, note: 'Thanks for <b>dinner</b>' });
+  eq('a send moves rewards: Ana 180, Ben 25', [(await kx.balanceOf(ma.mkey)).available, (await kx.balanceOf(mb.mkey)).available], [180, 25]);
+  eq('the send is in both histories with names, and the note has no markup', [(await kx.historyOf(ma.mkey))[0].text, (await kx.historyOf(ma.mkey))[0].rewards, (await kx.historyOf(mb.mkey))[0].text, (await kx.historyOf(mb.mkey))[0].rewards], ['Sent to Ben', -20, 'From Ana: Thanks for bdinner/b', 20]);
+  eq('a send is not a redemption and does not change what is outstanding', [(await kx.summary()).totals.redeemed, (await kx.summary()).totals.outstanding], [0, 205]);
+  eq('the wallet shows sent and gifted separately', [(await kx.walletOf(ma.mkey)).balance.sent, (await kx.walletOf(mb.mkey)).balance.gifted, (await kx.walletOf(mb.mkey)).balance.received], [20, 20, 0]);
+  await rej('cannot send to yourself', kx.send({ from: ma.mkey, to: ma.mkey, rewards: 5 }));
+  await rej('cannot send to someone who is not on the list', kx.send({ from: ma.mkey, to: 'nobodynobody1', rewards: 5 }));
+  await rej('cannot send more than 50 at once', kx.send({ from: ma.mkey, to: mb.mkey, rewards: 51 }));
+  await rej('cannot send 0, a fraction or a negative', Promise.all([kx.send({ from: ma.mkey, to: mb.mkey, rewards: 0 }), kx.send({ from: ma.mkey, to: mb.mkey, rewards: 2.5 }), kx.send({ from: ma.mkey, to: mb.mkey, rewards: -5 })]).then(r => r) );
+  await rej('cannot send more than you have', kx.send({ from: mb.mkey, to: ma.mkey, rewards: 30 }));
+  eq('refused sends changed nothing', [(await kx.balanceOf(ma.mkey)).available, (await kx.balanceOf(mb.mkey)).available, (await kx.transfers()).length], [180, 25, 1]);
+  T4 += 1000; await kx.send({ from: ma.mkey, to: mc.mkey, rewards: 50 }); T4 += 1000; await kx.send({ from: ma.mkey, to: mc.mkey, rewards: 30 });
+  await rej('a day limit of 100 rewards', kx.send({ from: ma.mkey, to: mb.mkey, rewards: 10 }));
+  T4 += 25 * 3600000;
+  eq('a day later the limit resets', (await kx.send({ from: ma.mkey, to: mb.mkey, rewards: 10 })).rewards, 10);
+  const kn = KR.create(KR.memoryStore(), () => T4), na = await kn.addMember({ name: 'A' }), nb = await kn.addMember({ name: 'B' });
+  await kn.grant({ mkey: na.mkey, rewards: 500, reason: 'Welcome' }); await kn.grant({ mkey: nb.mkey, rewards: 500, reason: 'Welcome' });
+  for (let i = 0; i < 10; i++) await kn.send({ from: na.mkey, to: nb.mkey, rewards: 1 });
+  await rej('at most 10 sends a day', kn.send({ from: na.mkey, to: nb.mkey, rewards: 1 }));
+  eq('circle: after 10 one-way sends they are Known, not Trusted', (await kn.circleOf(na.mkey)).map(c => [c.name, c.level, c.count, c.sent, c.received]), [['B', 'Known', 10, 10, 0]]);
+  T4 += 25 * 3600000; for (let i = 0; i < 3; i++) await kn.send({ from: nb.mkey, to: na.mkey, rewards: 1 });
+  eq('circle: sends in both directions and 6 or more exchanges make them Trusted', (await kn.circleOf(nb.mkey)).map(c => [c.name, c.level, c.sent, c.received]), [['A', 'Trusted', 3, 10]]);
+  eq('circle: Ana has Cy (2 sends) and Ben (2 sends), most recent first', (await kx.circleOf(ma.mkey)).map(c => [c.name, c.level, c.count]), [['Ben', 'New', 2], ['Cy', 'New', 2]]);
+  eq('the log lists every send, newest first', (await kx.transfers()).map(x => x.rewards), [10, 30, 50, 20]);
+  const live = KR.create({ get: async () => null, set: async () => {}, update: async () => {}, sandbox: false }, () => T4);
+  await rej('a live database refuses sends for now', live.send({ from: 'aaaaaaaaaaaa1', to: 'bbbbbbbbbbbb1', rewards: 5 }));
+  const kd2 = KR.create(KR.memoryStore(), () => N0 + 100 * DAY); await kd2.seedWalletDemo();
+  eq('the demo has Sam and Jordan to send to', (await kd2.listMembers()).map(m => m.name).sort(), ['Dana', 'Jordan', 'Sam']);
+
   // ---- sandbox demo data
   const kr2 = KR.create(KR.memoryStore(), clock); await kr2.seedDemo(); const s2 = await kr2.summary();
   ok('demo data: 3 restaurants, 5 events (4 closed, 1 open)', s2.totals.restaurants === 3 && s2.totals.events === 5 && s2.totals.closed === 4 && s2.totals.open === 1, s2.totals);

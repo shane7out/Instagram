@@ -25,7 +25,7 @@
    The split rule: share = min( floor(pool / approved), cap ); issued = share * approved; the leftover is never issued. */
 (function (root) {
   'use strict';
-  var KR = { INVITE_REWARDS: 20, INVITE_DAYS: 0, MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000, DAY: 86400000, SOON_DAYS: 14, DEFAULT_EXPIRY_DAYS: 0, MAX_TEXT: 500 };
+  var KR = { INVITE_REWARDS: 20, INVITE_DAYS: 0, MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000, SEND_MAX: 50, SEND_DAY_MAX: 100, SEND_DAY_COUNT: 10, DAY: 86400000, SOON_DAYS: 14, DEFAULT_EXPIRY_DAYS: 0, MAX_TEXT: 500 };
   var BASE = 'key_rewards';
 
   // ---------- pure helpers ----------
@@ -40,14 +40,14 @@
   KR.computeBalance = function (entries, now) {
     now = now == null ? Date.now() : now;
     var lots = [], uses = [], received = 0, granted = 0, used = 0, i;
-    var invited = 0;
-    (entries || []).forEach(function (e) { if (e.kind === 'use') uses.push({ at: e.at, n: e.rewards }); else lots.push({ at: e.at, exp: e.expiresAt || 0, rem: e.rewards }); if (e.kind === 'event') received += e.rewards; if (e.kind === 'grant') granted += e.rewards; if (e.kind === 'invite') invited += e.rewards; if (e.kind === 'use') used += e.rewards; });
+    var invited = 0, sent = 0, gifted = 0;
+    (entries || []).forEach(function (e) { if (e.kind === 'use' || e.kind === 'send') uses.push({ at: e.at, n: e.rewards }); else lots.push({ at: e.at, exp: e.expiresAt || 0, rem: e.rewards }); if (e.kind === 'event') received += e.rewards; if (e.kind === 'grant') granted += e.rewards; if (e.kind === 'invite') invited += e.rewards; if (e.kind === 'use') used += e.rewards; if (e.kind === 'send') sent += e.rewards; if (e.kind === 'gift') gifted += e.rewards; });
     lots.sort(function (a, b) { return a.at - b.at; }); uses.sort(function (a, b) { return a.at - b.at; });
     uses.forEach(function (u) {
       var need = u.n, ok = lots.filter(function (l) { return l.at <= u.at && l.rem > 0 && (!l.exp || l.exp > u.at); }).sort(function (a, b) { return (a.exp || 9e15) - (b.exp || 9e15); });
       for (i = 0; i < ok.length && need > 0; i++) { var take = Math.min(ok[i].rem, need); ok[i].rem -= take; need -= take; }
     });
-    var out = { received: received, granted: granted, invited: invited, redeemed: used, expired: 0, available: 0, expiringSoon: 0, nextExpiry: 0, lots: [] }, by = {};
+    var out = { received: received, granted: granted, invited: invited, sent: sent, gifted: gifted, redeemed: used, expired: 0, available: 0, expiringSoon: 0, nextExpiry: 0, lots: [] }, by = {};
     lots.forEach(function (l) {
       if (l.rem <= 0) return;
       if (l.exp && l.exp <= now) { out.expired += l.rem; return; }
@@ -228,6 +228,50 @@
         return store.update(BASE, up).then(function () { return Object.assign({ id: id }, rec); });
       });
     };
+    // ---------- member to member sends (TEST VERSION ONLY: refused on a live database until the rules and an attorney's review are done) ----------
+    // Rewards have no cash value and cannot be bought or sold. A send moves whole rewards from one person's balance to another's,
+    // never more than SEND_MAX at a time, SEND_DAY_MAX and SEND_DAY_COUNT sends in any 24 hours, and every send is logged.
+    api.send = function (o) {
+      if (!store.sandbox) return Promise.reject(new Error('Sending between members is only in the test version for now.'));
+      var rewards = +o.rewards, note = String(o.note || '').replace(/[<>"&]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+      if (!o.from || !o.to || o.from === o.to) return Promise.reject(new Error('Choose someone else to send to.'));
+      if (!isInt(rewards) || rewards < 1 || rewards > KR.SEND_MAX) return Promise.reject(new Error('Send a whole number of rewards from 1 to ' + KR.SEND_MAX + '.'));
+      return Promise.all([store.get(P('members/' + o.from)), store.get(P('members/' + o.to)), store.get(P('transfers')), api.walletOf(o.from)]).then(function (r) {
+        if (!r[0]) throw new Error('We could not find your account.');
+        if (!r[1]) throw new Error('Choose someone from the list.');
+        var t = o.at || now(), tr = r[2] || {}, since = t - KR.DAY, n = 0, tot = 0;
+        Object.keys(tr).forEach(function (k) { if (tr[k].from === o.from && tr[k].at > since) { n++; tot += tr[k].rewards; } });
+        if (n >= KR.SEND_DAY_COUNT) throw new Error('You can send up to ' + KR.SEND_DAY_COUNT + ' times a day. Try again tomorrow.');
+        if (tot + rewards > KR.SEND_DAY_MAX) throw new Error('You can send up to ' + KR.SEND_DAY_MAX + ' rewards a day. You have ' + Math.max(0, KR.SEND_DAY_MAX - tot) + ' left today.');
+        if (r[3].balance.available < rewards) throw new Error('You have ' + r[3].balance.available + ' rewards available.');
+        var id = 'x' + KR.newKey(10), up = {};
+        up['transfers/' + id] = { from: o.from, to: o.to, rewards: rewards, at: t, note: note };
+        up['wallet/' + o.from + '/' + id] = { kind: 'send', rewards: rewards, at: t, note: 'Sent to ' + r[1].name, with: o.to };
+        up['wallet/' + o.to + '/' + id] = { kind: 'gift', rewards: rewards, at: t, note: 'From ' + r[0].name + (note ? ': ' + note : ''), with: o.from };
+        return store.update(BASE, up).then(function () { return { id: id, to: r[1].name, from: r[0].name, rewards: rewards }; });
+      });
+    };
+    api.transfers = function () {
+      return Promise.all([store.get(P('transfers')), api.listMembers()]).then(function (r) {
+        var nm = {}; r[1].forEach(function (m) { nm[m.mkey] = m.name; });
+        return Object.keys(r[0] || {}).map(function (k) { var x = r[0][k]; return { id: k, from: x.from, to: x.to, fromName: nm[x.from] || 'Unknown', toName: nm[x.to] || 'Unknown', rewards: x.rewards, at: x.at, note: x.note || '' }; }).sort(function (a, b) { return b.at - a.at; });
+      });
+    };
+    // A person's circle: everyone they have exchanged rewards with. New = 1-2 exchanges, Known = 3-5, Trusted = 6 or more with sends in both directions.
+    api.circleOf = function (mkey) {
+      return api.transfers().then(function (all) {
+        var by = {};
+        all.forEach(function (x) {
+          if (x.from !== mkey && x.to !== mkey) return;
+          var other = x.from === mkey ? x.to : x.from, nm = x.from === mkey ? x.toName : x.fromName;
+          if (!by[other]) by[other] = { mkey: other, name: nm, sent: 0, received: 0, count: 0, last: 0 };
+          var b = by[other]; b.count++; b.last = Math.max(b.last, x.at); if (x.from === mkey) b.sent += x.rewards; else b.received += x.rewards;
+          b.out = (b.out || 0) + (x.from === mkey ? 1 : 0); b.inn = (b.inn || 0) + (x.to === mkey ? 1 : 0);
+        });
+        return Object.keys(by).map(function (k) { var b = by[k]; b.level = b.count >= 6 && b.out > 0 && b.inn > 0 ? 'Trusted' : b.count >= 3 ? 'Known' : 'New'; delete b.out; delete b.inn; return b; })
+          .sort(function (a, b) { return b.count - a.count || b.last - a.last; });
+      });
+    };
     // Everybody's totals in one pass (from each person's own wallet).
     api.ledger = function () {
       return Promise.all([api.listMembers(), store.get(P('wallet'))]).then(function (r) {
@@ -250,7 +294,7 @@
     };
     // A person's recent activity (newest first)
     api.historyOf = function (mkey) {
-      return api.walletOf(mkey).then(function (w) { return w.entries.map(function (e) { return { at: e.at, rewards: e.kind === 'use' ? -e.rewards : e.rewards, text: e.note || (e.kind === 'event' ? 'Event' : e.kind === 'grant' ? 'Added' : 'Used'), expiresAt: e.expiresAt || 0 }; }); });
+      return api.walletOf(mkey).then(function (w) { return w.entries.map(function (e) { return { at: e.at, rewards: (e.kind === 'use' || e.kind === 'send') ? -e.rewards : e.rewards, text: e.note || (e.kind === 'event' ? 'Event' : e.kind === 'grant' ? 'Added' : e.kind === 'send' ? 'Sent' : e.kind === 'gift' ? 'Received' : 'Used'), expiresAt: e.expiresAt || 0 }; }); });
     };
     api.redeem = function (o) {
       var rewards = +o.rewards;
@@ -406,6 +450,7 @@
         return api.addMember({ name: 'Dana' }).then(function (m) {
           var lots = [[25, 84, 0], [30, 69, 0], [36, 30, 0], [45, 60, 0]], c = store.update(P('members/' + m.mkey), { createdAt: t0 - 85 * D });
           lots.forEach(function (l) { c = c.then(function () { return api.grant({ mkey: m.mkey, rewards: l[0], reason: l[0] === 25 ? 'Welcome' : l[0] === 30 ? 'Thank you' : l[0] === 36 ? 'Event' : 'Thank you', at: t0 - l[1] * D, expiresDays: l[2] }); }); });
+          ['Sam', 'Jordan'].forEach(function (nm) { c = c.then(function () { return api.addMember({ name: nm }); }).then(function (f) { return api.grant({ mkey: f.mkey, rewards: 40, reason: 'Welcome', at: t0 - 20 * D, expiresDays: 0 }); }); });
           return c.then(function () { return m; });
         });
       });
