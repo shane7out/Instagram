@@ -1,0 +1,69 @@
+/* Key Rewards light theme (white header, light-blue sheet, white cards, navy hero card). Used by the phone app, the member wallet,
+   the friend join page, the check-in page and the dashboard. Dark remains available: More > Switch theme (kept in localStorage kr_theme). */
+html[data-theme="light"]{--bg:#eef4fc;--card:#ffffff;--card2:#e8f0fb;--line:#d5e1f3;--ink:#0b1b4d;--dim:#566a94;--key:#0a8de6;--key2:#0a6fb8;--blue:#0a8de6;--blue2:#0a6fb8;--good:#0a6fb8;--warn:#a85f00;--gold:#b97a00;color-scheme:light;}
+html[data-theme="light"] .kd{display:none;} html[data-theme="dark"] .kl,html:not([data-theme]) .kl{display:none;}
+html[data-theme="light"] body,html[data-theme="light"] html{background:#fff;color:var(--ink);}
+html[data-theme="light"] #app{background:#fff;}
+html[data-theme="light"] main{background:var(--bg);border-radius:26px 26px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.9);}
+html[data-theme="light"] header{background:#fff;}
+html[data-theme="light"] .brand{color:var(--ink);} html[data-theme="light"] .brand img{filter:drop-shadow(0 1px 1px rgba(110,70,0,.35));}
+html[data-theme="light"] .word i{color:#0a6fb8;}
+/* inputs, chips, segments */
+html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:#f6f9fe;color:var(--ink);border-color:#c9d9f1;}
+html[data-theme="light"] input::placeholder{color:#8a9bbd;}
+html[data-theme="light"] .seg{background:#dfe9f8;border-color:#d0def3;} html[data-theme="light"] .seg button{color:#3f5380;} html[data-theme="light"] .seg button[aria-pressed=true]{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(20,60,140,.14);}
+html[data-theme="light"] .chips button{background:#fff;color:#566a94;border-color:#d0def3;} html[data-theme="light"] .chips button[aria-pressed=true]{background:rgba(10,141,230,.12);border-color:#0a8de6;color:var(--ink);}
+html[data-theme="light"] .mini3 div{background:#f3f8ff;border-color:#d8e5f6;}
+html[data-theme="light"] .out{background:#f3f8ff;border-color:#c3d5ef;}
+/* buttons */
+html[data-theme="light"] .btn{background:#fff;color:var(--ink);border-color:#cbdaf0;box-shadow:0 1px 2px rgba(20,60,140,.06);}
+html[data-theme="light"] .btn.p,html[data-theme="light"] .btn.g,html[data-theme="light"] button.b.p,html[data-theme="light"] button.b.g{background:linear-gradient(135deg,#0a8de6,#0a6fb8);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(10,111,184,.28);}
+html[data-theme="light"] .x,html[data-theme="light"] .ibtn,html[data-theme="light"] .pill{background:#fff;border-color:#cbdaf0;color:var(--ink);}
+html[data-theme="light"] button.b{background:#fff;color:var(--ink);border-color:#cbdaf0;}
+html[data-theme="light"] .amt button{background:#f3f8ff;color:var(--ink);border-color:#cbdaf0;}
+/* cards */
+html[data-theme="light"] .tile,html[data-theme="light"] .who,html[data-theme="light"] .amt,html[data-theme="light"] .erow,html[data-theme="light"] .lot,html[data-theme="light"] .card,html[data-theme="light"] .kpi,html[data-theme="light"] .istat,html[data-theme="light"] .ok{background:#fff;border-color:#d8e5f6;box-shadow:0 4px 14px rgba(20,60,140,.07);}
+html[data-theme="light"] .lot.soon{background:linear-gradient(90deg,#fff1d6,#fff 62%);} html[data-theme="light"] .lot.soon .t small{color:#8a5200;}
+html[data-theme="light"] .istat.good{background:#e6f3fe;border-color:#9cc9f3;color:var(--ink);}
+html[data-theme="light"] .warn,html[data-theme="light"] .note{background:#fff4dc;border-color:#f0c878;color:#6e4300;}
+html[data-theme="light"] .arow,html[data-theme="light"] .prow,html[data-theme="light"] .trow{border-color:#dbe6f6;} html[data-theme="light"] .prow:active{background:#f1f6fd;}
+html[data-theme="light"] .chev{stroke:#9db0cf;}
+html[data-theme="light"] .dot{background:rgba(10,141,230,.12);color:#0a6fb8;} html[data-theme="light"] .dot.u{background:rgba(184,106,0,.14);color:#a85f00;} html[data-theme="light"] .dot.e{background:rgba(10,141,230,.12);color:#0a6fb8;}
+html[data-theme="light"] .pos{color:#0a6fb8;} html[data-theme="light"] .neg{color:#a85f00;}
+html[data-theme="light"] .tag,html[data-theme="light"] .chip.open,html[data-theme="light"] .chip.closed{background:rgba(10,141,230,.1);color:#0a6fb8;border-color:rgba(10,141,230,.4);} html[data-theme="light"] .lot.soon .tag{background:rgba(184,106,0,.12);color:#8a5200;border-color:rgba(184,106,0,.4);}
+html[data-theme="light"] .chip{color:#566a94;border-color:#d0def3;}
+html[data-theme="light"] .tmeta i{background:#0a8de6;color:#fff;} html[data-theme="light"] .bdg{background:#ff9d2e;color:#2a1a00;box-shadow:0 0 0 3px #fff;}
+html[data-theme="light"] .auto{color:#0a6fb8;}
+/* hero: stays a dark navy card, like the wallet */
+html[data-theme="light"] .hero{--ink:#fff;--dim:#bcd0f2;background:linear-gradient(155deg,#12388a 0%,#0c2a6b 55%,#0a1f50 100%);border-color:rgba(255,255,255,.12);box-shadow:0 12px 26px rgba(12,42,107,.3),inset 0 1px 0 rgba(255,255,255,.12);color:#fff;}
+html[data-theme="light"] .hero::after{background:radial-gradient(circle,rgba(80,170,255,.35),transparent 70%);}
+html[data-theme="light"] .hero .bar{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.18);}
+html[data-theme="light"] .hero .lab{color:#bcd0f2;}
+html[data-theme="light"] .spark i{background:linear-gradient(180deg,#8fd0ff,#2f8fe8);} html[data-theme="light"] .spark i.cur{background:linear-gradient(180deg,#bfe6ff,#4fb3ff);}
+/* h1 greeting etc */
+html[data-theme="light"] h1,html[data-theme="light"] h2,html[data-theme="light"] h3{color:var(--ink);} html[data-theme="light"] .lab{color:#566a94;}
+/* navigation */
+html[data-theme="light"] nav,html[data-theme="light"] nav.tabs{background:#fff;border-top-color:#d8e5f6;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 -6px 20px rgba(20,60,140,.06);}
+html[data-theme="light"] nav button{color:#4a5f8a;} html[data-theme="light"] nav button[aria-selected=true]{color:#0a6fb8;} html[data-theme="light"] nav button[aria-selected=true]::before{background:#0a8de6;}
+html[data-theme="light"] nav button.add{color:var(--ink);} html[data-theme="light"] nav button.add .c{background:linear-gradient(135deg,#0a8de6,#0a6fb8);box-shadow:0 8px 18px rgba(10,111,184,.4),0 0 0 5px #fff;} html[data-theme="light"] nav button.add svg{stroke:#fff;}
+html[data-theme="light"] nav button.add[aria-selected=true] .c{box-shadow:0 8px 18px rgba(10,111,184,.5),0 0 0 5px #fff,0 0 0 7px rgba(10,141,230,.45);}
+/* dialogs and toast */
+html[data-theme="light"] dialog{background:#fff;color:var(--ink);border-color:#d3e0f3;box-shadow:0 24px 60px rgba(10,30,80,.3);} html[data-theme="light"] dialog::backdrop{background:rgba(8,20,50,.55);}
+html[data-theme="light"] .bigbal b{color:#0a6fb8;}
+/* chat bubbles */
+html[data-theme="light"] .bub.me{background:linear-gradient(135deg,#0a8de6,#0a6fb8);color:#fff;} html[data-theme="light"] .bub.them{background:#fff;border-color:#d5e2f5;color:var(--ink);}
+html[data-theme="light"] #tForm input{background:#fff;}
+html[data-theme="light"] .msg.good{color:#0a6fb8;} html[data-theme="light"] .msg.err,html[data-theme="light"] .msg{color:#a85f00;}
+html[data-theme="light"] .empty,html[data-theme="light"] .fine,html[data-theme="light"] .dim{color:#566a94;}
+/* member-facing pages (check-in, join) */
+html[data-theme="light"] body{background:#eef4fc;}
+html[data-theme="light"] .wrap .card{background:#fff;border-color:#d8e5f6;box-shadow:0 14px 34px rgba(20,60,140,.1);}
+html[data-theme="light"] .big{color:#0a6fb8;} html[data-theme="light"] .btn{box-shadow:0 1px 2px rgba(20,60,140,.06);} html[data-theme="light"] .wrap .btn{background:linear-gradient(135deg,#0a8de6,#0a6fb8);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(10,111,184,.3);}
+html[data-theme="light"] .bar{background:#dfe9f8;border-color:#d0def3;} html[data-theme="light"] .bar i{background:linear-gradient(90deg,#0a8de6,#4fb3ff);}
+html[data-theme="light"] .pill{background:#e6f3fe;color:#0a6fb8;border-color:#9cc9f3;}
+/* dashboard */
+html[data-theme="light"] header.top{background:rgba(255,255,255,.95);border-bottom-color:#d8e5f6;} html[data-theme="light"] .bar a.back{background:#fff;color:var(--ink);border-color:#cbdaf0;}
+html[data-theme="light"] th{color:#566a94;} html[data-theme="light"] td,html[data-theme="light"] th{border-bottom-color:#dbe6f6;}
+html[data-theme="light"] .bars i{background:linear-gradient(180deg,#4fb3ff,#0a8de6);}
+html[data-theme="light"] .chip.draft{color:#566a94;} html[data-theme="light"] .chip.pending{color:#a85f00;border-color:rgba(184,106,0,.45);} html[data-theme="light"] .chip.approved{color:#0a6fb8;border-color:rgba(10,141,230,.5);} html[data-theme="light"] .chip.rejected{color:#b3302a;border-color:rgba(179,48,42,.45);}
+html[data-theme="light"] .win{background:#e6f3fe;border-color:#9cc9f3;}

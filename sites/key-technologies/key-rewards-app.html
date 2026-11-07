@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("kr_theme")||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="robots" content="noindex,nofollow">
 <title>Key Rewards App | Key Technologies.si</title>
@@ -112,13 +113,14 @@
   .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
+<link rel="stylesheet" href="key-platform/kr-light.css">
 </head>
 <body>
 <div id="rot" role="alert">Please hold your phone upright.</div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="app">
 <header>
-  <a class="brand" href="key-rewards-app.html" aria-label="Key Rewards"><img src="key-platform/assets/key-logo.svg" alt="" width="42" height="18"><span class="word">KEY <i>REWARDS</i></span></a>
+  <a class="brand" href="key-rewards-app.html" aria-label="Key Rewards"><img class="kd" src="key-platform/assets/key-logo.svg" alt="" width="42" height="18"><img class="kl" src="key-platform/assets/key-logo-light.svg" alt="" width="42" height="18"><span class="word">KEY <i>REWARDS</i></span></a>
   <button class="ibtn" id="chatBtn" type="button" aria-label="Messages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span class="bdg" id="chatBdg" hidden>0</span></button>
 </header>
 
@@ -218,7 +220,7 @@
 <!-- menu -->
 <dialog id="dMenu" class="short" aria-labelledby="dmT"><div class="dh"><h3 id="dmT">More</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
   <p style="margin:0;color:var(--dim);font-size:13px">This is a test version. Everything is saved on this device only, and nothing is issued, sent or paid.</p>
-  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><button class="btn" id="mWallet" type="button">See a member wallet (demo: Dana)</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
+  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><button class="btn" id="mWallet" type="button">See a member wallet (demo: Dana)</button><button class="btn" id="mTheme" type="button">Switch to dark theme</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
 </dialog>
 
 <script src="key-platform/kr-engine.js"></script>
@@ -411,6 +413,9 @@ $('#mDemoMsg').onclick=function(){var ms=S.ledger.filter(function(x){return x.na
   var m=ms[Math.floor(Math.random()*ms.length)],texts=['Hi! How long do my rewards last?','Can I use my rewards at the restaurant tonight?','Thank you for the welcome rewards!','When is the next guest night?'];
   kr.sendMessage(m.mkey,{from:'member',text:texts[Math.floor(Math.random()*texts.length)],name:m.name}).then(function(){$('#dMenu').close();return loadInbox()})};
 $('#mWallet').onclick=function(){kr.seedWalletDemo().then(function(m){return load().then(function(){location.href='key-rewards-me.html?m='+encodeURIComponent(m.mkey)})})};
+function themeLabel(){$('#mTheme').textContent=document.documentElement.getAttribute('data-theme')==='light'?'Switch to dark theme':'Switch to light theme'}
+$('#mTheme').onclick=function(){var n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('kr_theme',n)}catch(e){}themeLabel();drawAll()};
+themeLabel();
 $('#mAlerts').onclick=function(){var m=$('#mMsg');if(!window.Notification){m.className='msg err';m.textContent='This browser cannot show alerts.';return}
   Notification.requestPermission().then(function(r){m.className='msg'+(r==='granted'?' good':' err');m.textContent=r==='granted'?'Alerts are on while the app is open.':'Alerts were not allowed.'})};
 
