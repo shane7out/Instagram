@@ -79,6 +79,31 @@
      ".validate": false
     }
    }
+  },
+  "members": {
+   "$mkey": {
+    ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".validate": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && newData.hasChildren(['name','createdAt','source']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 40 && newData.child('createdAt').isNumber() && (newData.child('source').val() == 'owner' || newData.child('source').val() == 'event') && (!data.exists() || (newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('source').val() == data.child('source').val()))",
+    "name": {},
+    "createdAt": {},
+    "source": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "grants": {
+   "$id": {
+    ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists()",
+    ".validate": "newData.hasChildren(['mkey','rewards','reason','at']) && newData.child('mkey').isString() && root.child('key_rewards/members/'+newData.child('mkey').val()).exists() && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() <= 1000 && newData.child('rewards').val() % 1 == 0 && newData.child('reason').isString() && newData.child('reason').val().length >= 1 && newData.child('reason').val().length <= 80 && newData.child('at').isNumber()",
+    "mkey": {},
+    "rewards": {},
+    "reason": {},
+    "at": {},
+    "$other": {
+     ".validate": false
+    }
+   }
   }
  }
 }

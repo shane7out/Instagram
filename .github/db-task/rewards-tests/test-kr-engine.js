@@ -71,9 +71,33 @@ const rej = async (name, p) => { try { await p; ok(name, false, 'did not reject'
   await kr.openEvent(e2.id); const c2 = await kr.closeEvent(e2.id);
   eq('no check-ins: nothing issued, all 500 left over', [c2.issued, c2.leftover], [0, 500]);
 
+  // ---- people and hand-added rewards
+  const led0 = await kr.ledger();
+  ok('closing the event made people of the approved guests (3), with their names', led0.filter(m => m.source === 'event').length === 3 && led0.some(m => m.name === 'Ava'), led0);
+  const pm = await kr.addMember({ name: 'Maria<b>' });
+  eq('a person can be added by hand (markup characters stripped)', pm.name, 'Mariab');
+  await rej('a person needs a name', kr.addMember({ name: ' ' }));
+  await rej('rewards cannot be added to someone who is not in the list', kr.grant({ mkey: 'nobodyxxxxxxx', rewards: 10, reason: 'Welcome' }));
+  await rej('0 rewards cannot be added', kr.grant({ mkey: pm.mkey, rewards: 0, reason: 'Welcome' }));
+  await rej('1001 rewards cannot be added (limit 1000)', kr.grant({ mkey: pm.mkey, rewards: 1001, reason: 'Welcome' }));
+  await rej('a fraction cannot be added', kr.grant({ mkey: pm.mkey, rewards: 2.5, reason: 'Welcome' }));
+  await rej('a reason is required', kr.grant({ mkey: pm.mkey, rewards: 10, reason: '' }));
+  await kr.grant({ mkey: pm.mkey, rewards: 25, reason: 'Welcome' });
+  eq('the person has 25', (await kr.balanceOf(pm.mkey)).available, 25);
+  await kr.redeem({ mkey: pm.mkey, rid: r.id, offer: 'Salad', rewards: 15 });
+  eq('after a free-food use of 15 they have 10', (await kr.balanceOf(pm.mkey)).available, 10);
+  await rej('10 left cannot be used (offers start at 15)', kr.redeem({ mkey: pm.mkey, rid: r.id, rewards: 15 }));
+  const hist = await kr.historyOf(pm.mkey);
+  eq('history shows the free-food use and the welcome, newest first', hist.map(h => h.rewards).sort((a, b) => a - b), [-15, 25]);
+  await kr.renameMember(pm.mkey, 'Maria L');
+  eq('a person can be renamed', (await kr.listMembers()).filter(m => m.mkey === pm.mkey)[0].name, 'Maria L');
+  const sum2 = await kr.summary();
+  eq('summary counts the hand-added rewards: granted 25, outstanding = 60 + 25 - 30', [sum2.totals.granted, sum2.totals.outstanding], [25, 55]);
+
   // ---- sandbox demo data
   const kr2 = KR.create(KR.memoryStore(), clock); await kr2.seedDemo(); const s2 = await kr2.summary();
   ok('demo data: 3 restaurants, 5 events (4 closed, 1 open)', s2.totals.restaurants === 3 && s2.totals.events === 5 && s2.totals.closed === 4 && s2.totals.open === 1, s2.totals);
+  ok('demo data: 7 people added by hand with welcome rewards, and people from the events', s2.totals.granted > 0 && s2.totals.members >= 7, s2.totals);
   ok('demo data: issued never exceeds the pools', s2.totals.issued <= s2.totals.pools, s2.totals);
   console.log('\n' + pass + ' passed, ' + fail + ' failed'); process.exit(fail ? 1 : 0);
 })().catch(e => { console.log('ERROR ' + e.stack); process.exit(2); });

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="robots" content="noindex,nofollow">
+<title>Key Rewards App | Key Technologies.si</title>
+<meta name="theme-color" content="#0b1219">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Key Rewards">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="rewards-app.webmanifest">
+<link rel="icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:#0b1219;--card:#1b2735;--card2:#223142;--line:#304256;--ink:#f6f8fb;--dim:#9fb0c3;--blue:#00a8e1;--blue2:#4fc8f0;--good:#3ddc97;--warn:#ffb84d;--bad:#ff7b7b;--gold:#f0c24a;--row:54px;color-scheme:dark;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:var(--ink);font:15px/1.35 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  #app{height:100vh;height:-webkit-fill-available;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:radial-gradient(900px 380px at 50% -100px,#13314a 0%,transparent 60%),var(--bg);padding-top:env(safe-area-inset-top);}
+  button{font:inherit;color:inherit;}
+  a{color:var(--blue2);}
+  :focus-visible{outline:2px solid var(--blue2);outline-offset:2px;}
+  /* header */
+  header{display:flex;align-items:center;gap:8px;padding:6px 12px;min-height:50px;border-bottom:1px solid var(--line);}
+  .logo{width:56px;height:32px;border-radius:10px;background:#0a1a4f;display:grid;place-items:center;flex:none;} .logo img{width:46px;height:20px;display:block;}
+  header h1{font-size:16px;margin:0 auto 0 0;line-height:1.1;}
+  .badge{font-size:10.5px;font-weight:800;letter-spacing:.04em;color:#ffd99a;border:1px solid rgba(255,184,77,.5);background:rgba(255,184,77,.1);border-radius:999px;padding:2px 8px;white-space:nowrap;}
+  .ibtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;} .ibtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+  /* screens */
+  main{min-height:0;position:relative;}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;gap:8px;padding:10px 12px;min-height:0;overflow:hidden;} .screen.on{display:flex;}
+  h2{font-size:14px;margin:0;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+  .grow{flex:1;min-height:0;overflow:hidden;}
+  /* tiles and buttons */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 8px;text-align:center;} .tile b{display:block;font-size:26px;line-height:1.05;} .tile span{font-size:12px;color:var(--dim);} .tile.good b{color:var(--good);} .tile.gold b{color:var(--gold);}
+  .btn{min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card2);font-weight:800;cursor:pointer;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:var(--ink);}
+  .btn:active{transform:scale(.98);} .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn.p{background:linear-gradient(135deg,#00a8e1,#0a86c0);border-color:transparent;color:#04121b;} .btn.g{background:linear-gradient(135deg,#3ddc97,#1fb579);border-color:transparent;color:#04170f;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  /* activity */
+  .act{display:flex;flex-direction:column;} .arow{height:34px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);font-size:14px;} .arow:last-child{border:none;} .arow span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .arow b{flex:none;} .pos{color:var(--good);} .neg{color:var(--warn);}
+  .note{border:1px solid rgba(255,184,77,.45);background:rgba(255,184,77,.08);border-radius:14px;padding:10px 12px;font-size:14px;}
+  /* people list */
+  .sbar{display:flex;gap:8px;} input[type=search],input[type=text]{font:inherit;color:var(--ink);background:#111b26;border:1px solid var(--line);border-radius:12px;height:44px;padding:0 12px;width:100%;min-width:0;}
+  .list{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;}
+  .prow{height:var(--row);flex:none;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;text-align:left;width:100%;padding:0 2px;}
+  .av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#06121b;flex:none;}
+  .pn{flex:1;min-width:0;} .pn b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:16px;} .pn small{color:var(--dim);font-size:12px;} .bal{text-align:right;flex:none;} .bal b{font-size:20px;display:block;line-height:1;} .bal small{font-size:11px;color:var(--dim);}
+  .pager{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;} .pager .btn{min-height:40px;padding:0 14px;} .pager span{font-size:13px;color:var(--dim);}
+  .empty{color:var(--dim);padding:14px 4px;font-size:14px;}
+  /* add screen */
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#111b26;border:1px solid var(--line);border-radius:12px;padding:3px;} .seg button{border:none;background:none;border-radius:9px;height:36px;font-weight:800;color:var(--dim);cursor:pointer;} .seg button[aria-pressed=true]{background:var(--card2);color:var(--ink);}
+  .who{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:0 12px;cursor:pointer;text-align:left;}
+  .amt{display:grid;grid-template-columns:52px 1fr 52px;gap:8px;align-items:center;} .amt .big{text-align:center;} .amt .big b{font-size:44px;line-height:1;display:block;} .amt .big span{font-size:12px;color:var(--dim);}
+  .amt button{height:52px;font-size:26px;font-weight:900;border-radius:14px;border:1px solid var(--line);background:var(--card2);cursor:pointer;}
+  .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;} .chips button{height:40px;border-radius:12px;border:1px solid var(--line);background:#111b26;color:var(--dim);font-weight:800;cursor:pointer;font-size:13.5px;padding:0 2px;} .chips button[aria-pressed=true]{background:rgba(0,168,225,.18);border-color:var(--blue2);color:var(--ink);}
+  .msg{font-size:14px;font-weight:700;min-height:20px;text-align:center;} .msg.good{color:var(--good);} .msg.err{color:var(--warn);}
+  /* events */
+  .erow{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;flex:none;} .erow .top{display:flex;align-items:center;gap:8px;} .erow .top b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .erow small{color:var(--dim);font-size:12px;}
+  .chip{font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;border:1px solid var(--line);color:var(--dim);} .chip.open{color:var(--good);border-color:rgba(61,220,151,.55);} .chip.closed{color:var(--blue2);border-color:rgba(79,200,240,.5);}
+  .erow .acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;} .erow .acts .btn{min-height:40px;font-size:13.5px;}
+  /* nav */
+  nav{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(11,18,25,.97);border-top:1px solid var(--line);padding:4px 6px calc(4px + env(safe-area-inset-bottom));}
+  nav button{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:var(--dim);font-size:11.5px;font-weight:700;min-height:50px;border-radius:12px;cursor:pointer;} nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  nav button[aria-selected=true]{color:var(--blue2);background:rgba(0,168,225,.12);} nav button.add svg{stroke:var(--good);}
+  /* dialogs */
+  dialog{width:min(420px,calc(100vw - 16px));height:min(540px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);margin:auto;padding:14px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:18px;overflow:hidden;} dialog[open]{display:flex;flex-direction:column;gap:8px;} dialog::backdrop{background:rgba(0,0,0,.62);}
+  dialog.short{height:auto;}
+  .dh{display:flex;align-items:center;gap:8px;} .dh h3{margin:0;font-size:18px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .x{height:40px;min-width:40px;border-radius:12px;border:1px solid var(--line);background:var(--card2);cursor:pointer;font-weight:800;}
+  .bigbal{text-align:center;} .bigbal b{font-size:46px;line-height:1;display:block;color:var(--good);} .bigbal span{color:var(--dim);font-size:13px;}
+  .mini3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;} .mini3 div{background:#111b26;border:1px solid var(--line);border-radius:12px;padding:6px 4px;text-align:center;} .mini3 b{display:block;font-size:18px;} .mini3 span{font-size:11px;color:var(--dim);}
+  label{display:block;font-size:12.5px;color:var(--dim);margin:0 0 3px;font-weight:600;}
+  select{font:inherit;color:var(--ink);background:#111b26;border:1px solid var(--line);border-radius:12px;height:44px;padding:0 10px;width:100%;}
+  .menu{display:flex;flex-direction:column;gap:8px;}
+  /* rotate notice: this app is made for an upright phone */
+  #rot{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:center;justify-content:center;text-align:center;padding:24px;font-weight:800;font-size:18px;}
+  @media (orientation:landscape) and (max-height:520px){#rot{display:flex;}}
+  @media (max-height:640px){:root{--row:48px;} .tile b{font-size:22px;} .tile{padding:7px 6px;} .bigbal b{font-size:38px;} .amt .big b{font-size:36px;} .arow{height:30px;}}
+  @media (max-width:340px){.tile b{font-size:21px;} header h1{font-size:15px;}}
+  .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+<div id="rot" role="alert">Please hold your phone upright.</div>
+<div id="app">
+<header>
+  <span class="logo" aria-hidden="true"><img src="key-platform/assets/key-logo.svg" alt=""></span>
+  <h1>Key Rewards</h1><span class="badge">SANDBOX</span>
+  <button class="ibtn" id="menuBtn" type="button" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="screen on" id="s-home" role="tabpanel" aria-labelledby="t-home">
+    <div id="firstRun" class="note" hidden><b>Nothing here yet.</b> Load made-up demo people and events to try the app.<div style="margin-top:8px"><button class="btn p" id="seed1" type="button" style="width:100%">Load demo data</button></div></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="two"><button class="btn g" id="goAdd" type="button">Add rewards</button><button class="btn" id="goPeople" type="button">Everyone</button></div>
+    <h2>Recent</h2>
+    <div class="grow act" id="recent"></div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section class="screen" id="s-people" role="tabpanel" aria-labelledby="t-people">
+    <div class="sbar"><input type="search" id="pq" placeholder="Search names" aria-label="Search names" autocomplete="off" enterkeyhint="search"><button class="btn" id="pSort" type="button" style="min-height:44px;width:96px;padding:0 6px;font-size:13px"></button></div>
+    <div class="list" id="pList"></div>
+    <div class="pager"><button class="btn" id="pPrev" type="button">&lsaquo; Prev</button><span id="pInfo" role="status"></span><button class="btn" id="pNext" type="button">Next &rsaquo;</button></div>
+  </section>
+
+  <!-- ADD -->
+  <section class="screen" id="s-add" role="tabpanel" aria-labelledby="t-add" style="justify-content:space-between">
+    <div class="seg" role="group" aria-label="Who"><button type="button" id="mEx" aria-pressed="true">Someone on the list</button><button type="button" id="mNew" aria-pressed="false">New person</button></div>
+    <div id="whoBox"></div>
+    <div class="amt"><button type="button" id="aMinus" aria-label="Less">&minus;</button><div class="big"><b id="aVal">10</b><span>rewards to add</span></div><button type="button" id="aPlus" aria-label="More">+</button></div>
+    <div class="chips" id="aChips" role="group" aria-label="Quick amounts"></div>
+    <div><label>Reason</label><div class="chips" id="rChips" role="group" aria-label="Reason"></div></div>
+    <button class="btn g" id="aGo" type="button" style="min-height:52px">Add rewards</button>
+    <div class="msg" id="aMsg" role="status"></div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="screen" id="s-events" role="tabpanel" aria-labelledby="t-events">
+    <div class="list" id="eList"></div>
+    <div class="pager"><button class="btn" id="ePrev" type="button">&lsaquo; Prev</button><span id="eInfo" role="status"></span><button class="btn" id="eNext" type="button">Next &rsaquo;</button></div>
+  </section>
+</main>
+
+<nav aria-label="Sections"><div role="tablist" style="display:contents">
+  <button role="tab" id="t-home" data-tab="home" aria-selected="true" aria-controls="s-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</button>
+  <button role="tab" id="t-people" data-tab="people" aria-selected="false" aria-controls="s-people"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg>Everyone</button>
+  <button role="tab" id="t-add" class="add" data-tab="add" aria-selected="false" aria-controls="s-add"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add</button>
+  <button role="tab" id="t-events" data-tab="events" aria-selected="false" aria-controls="s-events"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Events</button>
+</div></nav>
+</div>
+
+<!-- person -->
+<dialog id="dPerson" class="short" aria-labelledby="dpT"><div class="dh"><h3 id="dpT"></h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
+  <div class="bigbal"><b id="dpBal">0</b><span>rewards available</span></div>
+  <div class="mini3"><div><b id="dpR">0</b><span>from events</span></div><div><b id="dpG">0</b><span>added by you</span></div><div><b id="dpU">0</b><span>used</span></div></div>
+  <h2>Recent</h2><div class="act" id="dpHist" style="min-height:102px"></div>
+  <div class="two"><button class="btn g" id="dpAdd" type="button">Add rewards</button><button class="btn" id="dpUse" type="button">Free food use</button></div>
+</dialog>
+<!-- picker -->
+<dialog id="dPick" aria-labelledby="dkT"><div class="dh"><h3 id="dkT">Choose a person</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
+  <input type="search" id="kq" placeholder="Search names" aria-label="Search names" autocomplete="off">
+  <div class="list" id="kList"></div>
+  <div class="pager"><button class="btn" id="kPrev" type="button">&lsaquo;</button><span id="kInfo" role="status"></span><button class="btn" id="kNext" type="button">&rsaquo;</button></div>
+</dialog>
+<!-- use rewards -->
+<dialog id="dUse" class="short" aria-labelledby="duT"><div class="dh"><h3 id="duT">Free food use</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
+  <p class="dim" id="duWho" style="margin:0;color:var(--dim);font-size:14px"></p>
+  <div><label for="duRest">Restaurant</label><select id="duRest"></select></div>
+  <div><label for="duOffer">Offer</label><input type="text" id="duOffer" maxlength="80" placeholder="Chicken bowl"></div>
+  <div class="amt"><button type="button" id="uMinus" aria-label="Less">&minus;</button><div class="big"><b id="uVal">15</b><span>rewards used (at least 15)</span></div><button type="button" id="uPlus" aria-label="More">+</button></div>
+  <button class="btn g" id="uGo" type="button">Record use</button><div class="msg" id="uMsg" role="status"></div>
+</dialog>
+<!-- confirm close -->
+<dialog id="dClose" class="short" aria-labelledby="dcT"><div class="dh"><h3 id="dcT">Close this event?</h3></div>
+  <div id="dcBody"></div><p style="margin:0;color:var(--dim);font-size:13px">Once closed, the rewards are issued and cannot be changed.</p>
+  <div class="two"><button class="btn g" id="dcYes" type="button">Close and issue</button><button class="btn" id="dcNo" type="button">Cancel</button></div>
+</dialog>
+<!-- menu -->
+<dialog id="dMenu" class="short" aria-labelledby="dmT"><div class="dh"><h3 id="dmT">Menu</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
+  <p style="margin:0;color:var(--dim);font-size:13px">Sandbox: test data saved on this device only. Nothing is issued, sent or paid. Live mode is not switched on.</p>
+  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase sandbox data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
+</dialog>
+
+<script src="key-platform/kr-engine.js"></script>
+<script>
+(function(){
+var store=KR.localStore('main'), kr=KR.create(store);
+var $=function(s){return document.querySelector(s)}, esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var fmt=function(n){return Number(n||0).toLocaleString()};
+var ago=function(t){if(!t)return '';var d=Math.floor((Date.now()-t)/86400000);return d<1?'today':d===1?'yesterday':d<30?d+' days ago':new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'})};
+var COLS=['#4fc8f0','#3ddc97','#f0c24a','#f59a6b','#9a86f5','#ff9bb4','#7fd1c7'];
+var colorOf=function(k){var h=0,i;for(i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))|0;return COLS[Math.abs(h)%COLS.length]};
+var S={tab:'home',ledger:[],events:[],rests:[],sum:null,q:'',sort:'az',page:0,pickQ:'',pickPage:0,ePage:0,mode:'ex',who:'',amt:10,reason:'',person:'',useAmt:15,closeId:''};
+var SORTS=[['az','A to Z'],['most','Most'],['new','Newest']];
+var REASONS=['Welcome','Thank you','Event','Other'];
+
+function load(){return Promise.all([kr.ledger(),kr.listEvents(),kr.listRestaurants(),kr.summary()]).then(function(r){S.ledger=r[0];S.events=r[1];S.rests=r[2];S.sum=r[3];drawAll()})}
+function drawAll(){drawHome();drawPeople();drawAdd();drawEvents()}
+function byName(a,b){return a.name.localeCompare(b.name)}
+function sorted(list){var a=list.slice();if(S.sort==='az')a.sort(byName);else if(S.sort==='most')a.sort(function(x,y){return y.available-x.available||byName(x,y)});else a.sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)||byName(x,y)});return a}
+function filt(list,q){q=(q||'').trim().toLowerCase();return q?list.filter(function(m){return m.name.toLowerCase().indexOf(q)>=0}):list}
+// rows that fit in a container, so nothing ever needs scrolling
+function rowsFit(el,h){var v=Math.floor(el.clientHeight/h);return Math.max(1,v)}
+var ROWH=function(){return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--row'))||54};
+
+// ---------- home ----------
+function drawHome(){
+  var t=S.sum.totals,empty=!t.members&&!t.events&&!t.restaurants;
+  $('#firstRun').hidden=!empty;
+  $('#tiles').innerHTML='<div class="tile"><b>'+fmt(t.members)+'</b><span>People</span></div><div class="tile good"><b>'+fmt(t.issued+t.granted)+'</b><span>Rewards given</span></div><div class="tile gold"><b>'+fmt(t.outstanding)+'</b><span>Not used yet</span></div><div class="tile"><b>'+fmt(t.open)+'</b><span>Events open</span></div>';
+  var items=[];
+  S.sum.redemptions.forEach(function(x){var p=S.ledger.filter(function(m){return m.mkey===x.mkey})[0];items.push({at:x.at,t:(p?p.name:'Someone')+' used rewards',v:-x.rewards})});
+  S.events.forEach(function(e){if(e.status==='closed')items.push({at:e.closedAt||e.createdAt,t:'Event closed: '+e.title,v:e.issued})});
+  kr.store.get('key_rewards/grants').then(function(g){
+    Object.keys(g||{}).forEach(function(k){var p=S.ledger.filter(function(m){return m.mkey===g[k].mkey})[0];items.push({at:g[k].at,t:'Added to '+(p?p.name:'someone')+': '+g[k].reason,v:g[k].rewards})});
+    items.sort(function(a,b){return b.at-a.at});
+    var box=$('#recent'),n=Math.max(0,Math.floor(box.clientHeight/(parseFloat(getComputedStyle($('.arow')||box).height)||34)));
+    var rowH=window.matchMedia('(max-height:640px)').matches?30:34;n=Math.max(1,Math.floor(box.clientHeight/rowH));
+    box.innerHTML=items.length?items.slice(0,n).map(function(i){return '<div class="arow"><span>'+esc(i.t)+'</span><b class="'+(i.v>=0?'pos':'neg')+'">'+(i.v>=0?'+':'')+fmt(i.v)+'</b></div>'}).join(''):'<div class="empty">Nothing yet.</div>';
+  });
+}
+$('#goAdd').onclick=function(){show('add')};$('#goPeople').onclick=function(){show('people')};
+
+// ---------- people list (paged, nothing scrolls) ----------
+function listHtml(arr,page,rows){
+  var start=page*rows;return arr.slice(start,start+rows).map(function(m){
+    return '<button class="prow" type="button" data-k="'+esc(m.mkey)+'"><span class="av" style="background:'+colorOf(m.mkey)+'" aria-hidden="true">'+esc((m.name[0]||'?').toUpperCase())+'</span><span class="pn"><b>'+esc(m.name)+'</b><small>'+(m.source==='owner'?'Added by you':m.source==='event'?'Event guest':'Guest')+(m.last?' &middot; '+ago(m.last):'')+'</small></span><span class="bal"><b>'+fmt(m.available)+'</b><small>rewards</small></span></button>'}).join('');
+}
+function drawPeople(){
+  $('#pSort').textContent='Sort: '+SORTS.filter(function(s){return s[0]===S.sort})[0][1];
+  var arr=sorted(filt(S.ledger,S.q)),list=$('#pList'),rows=3;
+  list.innerHTML='<div class="prow" style="visibility:hidden"></div>';rows=rowsFit(list,ROWH());
+  var pages=Math.max(1,Math.ceil(arr.length/rows));if(S.page>=pages)S.page=pages-1;if(S.page<0)S.page=0;
+  list.innerHTML=arr.length?listHtml(arr,S.page,rows):'<div class="empty">'+(S.q?'No one matches that name.':'No one yet. Add a person on the Add tab, or load demo data from the menu.')+'</div>';
+  var a=S.page*rows+1,b=Math.min(arr.length,(S.page+1)*rows);
+  $('#pInfo').textContent=arr.length?a+'-'+b+' of '+arr.length:'0 people';
+  $('#pPrev').disabled=S.page<=0;$('#pNext').disabled=S.page>=pages-1;
+}
+$('#pq').oninput=function(){S.q=this.value;S.page=0;drawPeople()};
+$('#pSort').onclick=function(){var i=SORTS.map(function(s){return s[0]}).indexOf(S.sort);S.sort=SORTS[(i+1)%SORTS.length][0];S.page=0;drawPeople()};
+$('#pPrev').onclick=function(){S.page--;drawPeople()};$('#pNext').onclick=function(){S.page++;drawPeople()};
+$('#pList').onclick=function(e){var b=e.target.closest('[data-k]');if(b)openPerson(b.dataset.k)};
+
+// ---------- person sheet ----------
+function openPerson(k){
+  var m=S.ledger.filter(function(x){return x.mkey===k})[0];if(!m)return;S.person=k;
+  $('#dpT').textContent=m.name;$('#dpBal').textContent=fmt(m.available);$('#dpR').textContent=fmt(m.received);$('#dpG').textContent=fmt(m.granted);$('#dpU').textContent=fmt(m.redeemed);
+  $('#dpUse').disabled=m.available<KR.MIN_OFFER;
+  $('#dPerson').showModal();
+  kr.historyOf(k).then(function(h){var box=$('#dpHist'),n=3;box.innerHTML=h.length?h.slice(0,n).map(function(i){return '<div class="arow"><span>'+esc(i.text)+'</span><b class="'+(i.rewards>=0?'pos':'neg')+'">'+(i.rewards>=0?'+':'')+i.rewards+'</b></div>'}).join(''):'<div class="empty">No activity yet.</div>'});
+}
+$('#dpAdd').onclick=function(){S.who=S.person;S.mode='ex';$('#dPerson').close();show('add')};
+$('#dpUse').onclick=function(){var m=S.ledger.filter(function(x){return x.mkey===S.person})[0];if(!m)return;$('#duWho').textContent=m.name+' has '+m.available+' rewards.';$('#duRest').innerHTML=S.rests.map(function(r){return '<option value="'+esc(r.id)+'">'+esc(r.name)+'</option>'}).join('');S.useAmt=Math.min(Math.max(15,KR.MIN_OFFER),m.available);$('#uVal').textContent=S.useAmt;$('#uMsg').textContent='';$('#dPerson').close();$('#dUse').showModal()};
+function stepUse(d){var m=S.ledger.filter(function(x){return x.mkey===S.person})[0];S.useAmt=Math.max(KR.MIN_OFFER,Math.min(m?m.available:15,S.useAmt+d));$('#uVal').textContent=S.useAmt}
+$('#uMinus').onclick=function(){stepUse(-5)};$('#uPlus').onclick=function(){stepUse(5)};
+$('#uGo').onclick=function(){var m=$('#uMsg');m.className='msg';m.textContent='';
+  kr.redeem({mkey:S.person,rid:$('#duRest').value,offer:$('#duOffer').value,rewards:S.useAmt}).then(function(){$('#dUse').close();return load().then(function(){openPerson(S.person)})}).catch(function(e){m.className='msg err';m.textContent=e.message})};
+
+// ---------- add ----------
+function drawAdd(){
+  $('#mEx').setAttribute('aria-pressed',S.mode==='ex');$('#mNew').setAttribute('aria-pressed',S.mode==='new');
+  var m=S.ledger.filter(function(x){return x.mkey===S.who})[0];
+  if(S.mode==='ex')$('#whoBox').innerHTML='<button class="who" id="pickBtn" type="button">'+(m?'<span class="av" style="background:'+colorOf(m.mkey)+'" aria-hidden="true">'+esc(m.name[0].toUpperCase())+'</span><span class="pn"><b>'+esc(m.name)+'</b><small>'+fmt(m.available)+' rewards now</small></span><span style="color:var(--dim)">Change</span>':'<span class="pn"><b style="color:var(--dim)">Choose a person</b></span><span style="color:var(--blue2);font-weight:800">Choose</span>')+'</button>';
+  else $('#whoBox').innerHTML='<label class="sr" for="newName">First name</label><input type="text" id="newName" maxlength="40" placeholder="First name of the new person" autocomplete="off" value="'+esc(S.newName||'')+'">';
+  $('#aVal').textContent=S.amt;
+  $('#aChips').innerHTML=[5,10,20,50].map(function(v){return '<button type="button" data-v="'+v+'" aria-pressed="'+(S.amt===v)+'">'+v+'</button>'}).join('');
+  $('#rChips').innerHTML=REASONS.map(function(r){return '<button type="button" data-r="'+r+'" aria-pressed="'+(S.reason===r)+'">'+r+'</button>'}).join('');
+  var name=S.mode==='ex'?(m?m.name:''):(S.newName||'').trim(),ready=!!name&&!!S.reason;
+  $('#aGo').disabled=!ready;$('#aGo').textContent=ready?('Add '+S.amt+' to '+name):'Add rewards';
+}
+$('#mEx').onclick=function(){S.mode='ex';$('#aMsg').textContent='';drawAdd()};$('#mNew').onclick=function(){S.mode='new';$('#aMsg').textContent='';drawAdd();var n=$('#newName');if(n)n.focus()};
+$('#whoBox').onclick=function(e){if(e.target.closest('#pickBtn'))openPick()};
+$('#whoBox').oninput=function(e){if(e.target.id==='newName'){S.newName=e.target.value;var name=(S.newName||'').trim(),ready=!!name&&!!S.reason;$('#aGo').disabled=!ready;$('#aGo').textContent=ready?('Add '+S.amt+' to '+name):'Add rewards'}};
+$('#aMinus').onclick=function(){S.amt=Math.max(1,S.amt-5<1?1:S.amt-5);drawAdd()};$('#aPlus').onclick=function(){S.amt=Math.min(KR.MAX_GRANT,S.amt+5);drawAdd()};
+$('#aChips').onclick=function(e){var b=e.target.closest('[data-v]');if(b){S.amt=+b.dataset.v;drawAdd()}};
+$('#rChips').onclick=function(e){var b=e.target.closest('[data-r]');if(b){S.reason=b.dataset.r;drawAdd()}};
+$('#aGo').onclick=function(){
+  var msg=$('#aMsg');msg.className='msg';msg.textContent='';
+  var p=S.mode==='new'?kr.addMember({name:S.newName}).then(function(m){return m.mkey}):Promise.resolve(S.who);
+  p.then(function(k){return kr.grant({mkey:k,rewards:S.amt,reason:S.reason}).then(function(){return k})}).then(function(k){
+    var wasNew=S.mode==='new';S.who=k;S.mode='ex';S.newName='';
+    return load().then(function(){var m=S.ledger.filter(function(x){return x.mkey===k})[0];msg.className='msg good';msg.textContent='Added '+S.amt+' to '+(m?m.name:'')+(wasNew?' (new). ':'. ')+'Now has '+(m?m.available:'')+'.'});
+  }).catch(function(e){msg.className='msg err';msg.textContent=e.message});
+};
+// picker dialog
+function openPick(){S.pickQ='';S.pickPage=0;$('#kq').value='';$('#dPick').showModal();drawPick()}
+function drawPick(){
+  var arr=sorted(filt(S.ledger,S.pickQ)),list=$('#kList'),rows=3;
+  list.innerHTML='<div class="prow" style="visibility:hidden"></div>';rows=rowsFit(list,ROWH());
+  var pages=Math.max(1,Math.ceil(arr.length/rows));if(S.pickPage>=pages)S.pickPage=pages-1;
+  list.innerHTML=arr.length?listHtml(arr,S.pickPage,rows):'<div class="empty">No one matches. Use "New person" to add them.</div>';
+  var a=S.pickPage*rows+1,b=Math.min(arr.length,(S.pickPage+1)*rows);$('#kInfo').textContent=arr.length?a+'-'+b+' of '+arr.length:'0';
+  $('#kPrev').disabled=S.pickPage<=0;$('#kNext').disabled=S.pickPage>=pages-1;
+}
+$('#kq').oninput=function(){S.pickQ=this.value;S.pickPage=0;drawPick()};$('#kPrev').onclick=function(){S.pickPage--;drawPick()};$('#kNext').onclick=function(){S.pickPage++;drawPick()};
+$('#kList').onclick=function(e){var b=e.target.closest('[data-k]');if(b){S.who=b.dataset.k;$('#dPick').close();$('#aMsg').textContent='';drawAdd()}};
+
+// ---------- events ----------
+function drawEvents(){
+  var list=$('#eList'),H=96,rows;list.innerHTML='<div style="height:'+H+'px;visibility:hidden"></div>';rows=Math.max(1,Math.floor(list.clientHeight/(H+8)));
+  var arr=S.events.slice().sort(function(a,b){var o={open:0,draft:1,closed:2};return o[a.status]-o[b.status]||b.createdAt-a.createdAt}),pages=Math.max(1,Math.ceil(arr.length/rows));
+  if(S.ePage>=pages)S.ePage=pages-1;
+  var nm={};S.rests.forEach(function(r){nm[r.id]=r.name});
+  Promise.all(arr.slice(S.ePage*rows,S.ePage*rows+rows).map(function(e){return e.status==='closed'?Promise.resolve(null):kr.listCheckins(e.id)})).then(function(cks){
+    list.style.gap='8px';
+    list.innerHTML=arr.length?arr.slice(S.ePage*rows,S.ePage*rows+rows).map(function(e,i){var c=cks[i],pend=c?c.filter(function(x){return x.status==='pending'}).length:0,ap=c?c.filter(function(x){return x.status==='approved'}).length:0;
+      return '<div class="erow"><div class="top"><b>'+esc(e.title)+'</b><span class="chip '+e.status+'">'+e.status+'</span></div><small>'+esc(nm[e.rid]||'')+' &middot; '+(e.status==='closed'?fmt(e.issued)+' of '+fmt(e.pool)+' issued, '+e.share+' each':fmt(e.pool)+' pool, up to '+e.cap+' each'+(c?' &middot; '+ap+' approved, '+pend+' waiting':''))+'</small>'+
+      (e.status==='open'?'<div class="acts"><button class="btn" type="button" data-ap="'+esc(e.id)+'"'+(pend?'':' disabled')+'>Approve all ('+pend+')</button><button class="btn g" type="button" data-cl="'+esc(e.id)+'">Close</button></div>':'')+'</div>'}).join(''):'<div class="empty">No events yet. Create one in the full dashboard.</div>';
+    $('#eInfo').textContent=arr.length?(S.ePage+1)+' of '+pages:'0 events';$('#ePrev').disabled=S.ePage<=0;$('#eNext').disabled=S.ePage>=pages-1;
+  });
+}
+$('#ePrev').onclick=function(){S.ePage--;drawEvents()};$('#eNext').onclick=function(){S.ePage++;drawEvents()};
+$('#eList').onclick=function(e){var a=e.target.closest('[data-ap]'),c=e.target.closest('[data-cl]');
+  if(a)kr.approveAll(a.dataset.ap).then(load);
+  if(c){S.closeId=c.dataset.cl;Promise.all([kr.getEvent(S.closeId),kr.listCheckins(S.closeId)]).then(function(r){var ev=r[0],ap=r[1].filter(function(x){return x.status==='approved'}).length,pend=r[1].filter(function(x){return x.status==='pending'}).length,s=KR.split(ev.pool,ev.cap,ap);
+    $('#dcBody').innerHTML='<p style="margin:0 0 6px"><b>'+esc(ev.title)+'</b></p><p style="margin:0 0 6px">'+ap+' approved guests share '+fmt(ev.pool)+'. Each gets <b>'+s.share+'</b> (up to '+ev.cap+'). Issued '+fmt(s.issued)+', never issued '+fmt(s.leftover)+'.</p>'+(pend?'<p style="margin:0 0 6px;color:var(--warn)">'+pend+' still waiting; they will not get rewards.</p>':'');$('#dClose').showModal()})}};
+$('#dcNo').onclick=function(){$('#dClose').close()};
+$('#dcYes').onclick=function(){$('#dClose').close();kr.closeEvent(S.closeId).then(load).catch(function(e){alert(e.message)})};
+
+// ---------- menu, tabs, dialogs ----------
+$('#menuBtn').onclick=function(){$('#mMsg').textContent='';$('#dMenu').showModal()};
+function seed(){return kr.seedDemo().then(load).then(function(){$('#mMsg').className='msg good';$('#mMsg').textContent='Demo data loaded.'})}
+$('#seed1').onclick=seed;$('#mSeed').onclick=seed;
+$('#mReset').onclick=function(){if(confirm('Erase all sandbox data on this device?'))store.clear().then(load).then(function(){$('#mMsg').className='msg good';$('#mMsg').textContent='Erased.'})};
+document.addEventListener('click',function(e){if(e.target.closest('[data-close]')){var d=e.target.closest('dialog');if(d)d.close()}});
+var tabs=[].slice.call(document.querySelectorAll('nav button'));
+function show(n){S.tab=n;tabs.forEach(function(b){var on=b.dataset.tab===n;b.setAttribute('aria-selected',on);document.getElementById('s-'+b.dataset.tab).classList.toggle('on',on)});
+  if(n==='home')drawHome();if(n==='people')drawPeople();if(n==='add')drawAdd();if(n==='events')drawEvents()}
+tabs.forEach(function(b){b.onclick=function(){show(b.dataset.tab)}});
+var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(S.sum){drawAll();if($('#dPick').open)drawPick()}},120)});
+load();
+})();
+</script>
+</body>
+</html>

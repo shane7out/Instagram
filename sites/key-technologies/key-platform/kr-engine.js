@@ -13,11 +13,13 @@
                                 approvedCount, share, issued, leftover, closedAt }          (members may read one by id)
      checkins/<eid>/<mkey>    { t, name (first name only), status: pending|approved|rejected }   (anyone may create; owner reads)
      shares/<eid>/<mkey>      { rewards, at }   written once when an event closes (a member may read their own by key)
+     members/<mkey>           { name, createdAt, source: owner|event }   everybody who has a ledger (owner only)
+     grants/<id>              { mkey, rewards, reason, at }   rewards the owner adds to a person by hand (write once, owner only)
      redemptions/<id>         { mkey, rid, offer, rewards, at }   written once, owner only
    The split rule: share = min( floor(pool / approved), cap ); issued = share * approved; the leftover is never issued. */
 (function (root) {
   'use strict';
-  var KR = { MIN_OFFER: 15, MAX_POOL: 1000000 };
+  var KR = { MIN_OFFER: 15, MAX_POOL: 1000000, MAX_GRANT: 1000 };
   var BASE = 'key_rewards';
 
   // ---------- pure helpers ----------
@@ -149,14 +151,17 @@
 
     // Close an event and issue the shares. Only approved check-ins count. One atomic update; shares are written once.
     api.closeEvent = function (eid) {
-      return Promise.all([api.getEvent(eid), api.listCheckins(eid)]).then(function (r) {
-        var ev = r[0], cks = r[1];
+      return Promise.all([api.getEvent(eid), api.listCheckins(eid), store.get(P('members'))]).then(function (r) {
+        var ev = r[0], cks = r[1], have = r[2] || {};
         if (!ev) throw new Error('Event not found.');
         if (ev.status === 'closed') throw new Error('This event is already closed.');
         if (ev.status !== 'open') throw new Error('Open the event before closing it.');
         var ok = cks.filter(function (x) { return x.status === 'approved'; });
         var s = KR.split(ev.pool, ev.cap, ok.length), t = now(), up = {};
-        ok.forEach(function (x) { if (s.share > 0) up['shares/' + eid + '/' + x.mkey] = { rewards: s.share, at: t }; });
+        ok.forEach(function (x) {
+          if (s.share > 0) up['shares/' + eid + '/' + x.mkey] = { rewards: s.share, at: t };
+          if (!have[x.mkey]) up['members/' + x.mkey] = { name: x.name, createdAt: t, source: 'event' };
+        });
         up['events/' + eid + '/status'] = 'closed'; up['events/' + eid + '/closedAt'] = t;
         up['events/' + eid + '/approvedCount'] = s.approved; up['events/' + eid + '/share'] = s.share;
         up['events/' + eid + '/issued'] = s.issued; up['events/' + eid + '/leftover'] = s.leftover;
@@ -165,15 +170,53 @@
     };
     api.getShare = function (eid, mkey) { return store.get(P('shares/' + eid + '/' + mkey)); };
 
-    // A member's balance in this ledger = shares received - redemptions (owner/staff view; needs the owner to read all events)
+    // People: owner-added or created when an event closes. A person's balance = event shares + hand-added grants - redemptions.
+    api.addMember = function (m) {
+      var name = KR.cleanName(m && m.name);
+      if (!name) return Promise.reject(new Error('Please enter a first name.'));
+      var mkey = (m && m.mkey) || KR.newKey(16), rec = { name: name, createdAt: now(), source: 'owner' };
+      return store.set(P('members/' + mkey), rec).then(function () { return Object.assign({ mkey: mkey }, rec); });
+    };
+    api.renameMember = function (mkey, name) {
+      name = KR.cleanName(name); if (!name) return Promise.reject(new Error('Please enter a first name.'));
+      return store.get(P('members/' + mkey)).then(function (m) { if (!m) throw new Error('Person not found.'); return store.update(P('members/' + mkey), { name: name }); });
+    };
+    api.listMembers = function () { return store.get(P('members')).then(function (o) { return o ? Object.keys(o).map(function (k) { return Object.assign({ mkey: k }, o[k]); }) : []; }); };
+    api.grant = function (g) {
+      var rewards = +g.rewards, reason = String(g.reason || '').trim().slice(0, 80);
+      if (!isInt(rewards) || rewards < 1 || rewards > KR.MAX_GRANT) return Promise.reject(new Error('Add a whole number of rewards from 1 to ' + KR.MAX_GRANT + '.'));
+      if (!reason) return Promise.reject(new Error('Choose a reason.'));
+      return store.get(P('members/' + g.mkey)).then(function (m) {
+        if (!m) throw new Error('Choose a person first.');
+        var id = 'g' + KR.newKey(10), rec = { mkey: g.mkey, rewards: rewards, reason: reason, at: now() };
+        return store.set(P('grants/' + id), rec).then(function () { return Object.assign({ id: id }, rec); });
+      });
+    };
+    // Everybody's totals in one pass.
+    api.ledger = function () {
+      return Promise.all([api.listMembers(), store.get(P('shares')), store.get(P('grants')), store.get(P('redemptions'))]).then(function (r) {
+        var by = {}, sh = r[1] || {}, gr = r[2] || {}, rd = r[3] || {};
+        r[0].forEach(function (m) { by[m.mkey] = { mkey: m.mkey, name: m.name, createdAt: m.createdAt, source: m.source, received: 0, granted: 0, redeemed: 0, available: 0, last: m.createdAt }; });
+        var get = function (k) { return by[k] || (by[k] = { mkey: k, name: 'Unknown', createdAt: 0, source: '', received: 0, granted: 0, redeemed: 0, available: 0, last: 0 }); };
+        Object.keys(sh).forEach(function (eid) { Object.keys(sh[eid] || {}).forEach(function (k) { var x = get(k); x.received += sh[eid][k].rewards; x.last = Math.max(x.last, sh[eid][k].at || 0); }); });
+        Object.keys(gr).forEach(function (id) { var g = gr[id], x = get(g.mkey); x.granted += g.rewards; x.last = Math.max(x.last, g.at || 0); });
+        Object.keys(rd).forEach(function (id) { var d = rd[id], x = get(d.mkey); x.redeemed += d.rewards; x.last = Math.max(x.last, d.at || 0); });
+        var arr = Object.keys(by).map(function (k) { var x = by[k]; x.available = x.received + x.granted - x.redeemed; return x; });
+        return arr;
+      });
+    };
     api.balanceOf = function (mkey) {
-      return Promise.all([api.listEvents(), store.get(P('redemptions'))]).then(function (r) {
-        var closed = r[0].filter(function (e) { return e.status === 'closed' && e.issued > 0; });
-        return Promise.all(closed.map(function (e) { return api.getShare(e.id, mkey); })).then(function (sh) {
-          var got = sh.reduce(function (a, s) { return a + (s ? s.rewards : 0); }, 0);
-          var used = list(r[1]).filter(function (x) { return x.mkey === mkey; }).reduce(function (a, x) { return a + x.rewards; }, 0);
-          return { received: got, redeemed: used, available: got - used };
-        });
+      return api.ledger().then(function (a) { var x = a.filter(function (m) { return m.mkey === mkey; })[0]; return x ? { received: x.received + x.granted, redeemed: x.redeemed, available: x.available } : { received: 0, redeemed: 0, available: 0 }; });
+    };
+    // A person's recent activity (newest first): event shares, hand-added rewards and free-food uses.
+    api.historyOf = function (mkey) {
+      return Promise.all([api.listEvents(), store.get(P('shares')), store.get(P('grants')), store.get(P('redemptions')), api.listRestaurants()]).then(function (r) {
+        var out = [], ev = {}, rn = {}, sh = r[1] || {}, gr = r[2] || {}, rd = r[3] || {};
+        r[0].forEach(function (e) { ev[e.id] = e; }); r[4].forEach(function (x) { rn[x.id] = x.name; });
+        Object.keys(sh).forEach(function (eid) { if (sh[eid] && sh[eid][mkey]) out.push({ at: sh[eid][mkey].at, rewards: sh[eid][mkey].rewards, text: 'Event: ' + (ev[eid] ? ev[eid].title : 'event') }); });
+        Object.keys(gr).forEach(function (id) { if (gr[id].mkey === mkey) out.push({ at: gr[id].at, rewards: gr[id].rewards, text: gr[id].reason }); });
+        Object.keys(rd).forEach(function (id) { if (rd[id].mkey === mkey) out.push({ at: rd[id].at, rewards: -rd[id].rewards, text: 'Free food: ' + (rd[id].offer || '') + (rn[rd[id].rid] ? ' at ' + rn[rd[id].rid] : '') }); });
+        return out.sort(function (a, b) { return b.at - a.at; });
       });
     };
     api.redeem = function (o) {
@@ -181,7 +224,7 @@
       if (!isInt(rewards) || rewards < KR.MIN_OFFER) return Promise.reject(new Error('Every offer is at least ' + KR.MIN_OFFER + ' rewards.'));
       if (!o.mkey || !o.rid) return Promise.reject(new Error('Choose a member and a restaurant.'));
       return api.balanceOf(o.mkey).then(function (b) {
-        if (b.available < rewards) throw new Error('Not enough rewards: this member has ' + b.available + '.');
+        if (b.available < rewards) throw new Error('Not enough rewards: this person has ' + b.available + '.');
         var id = 'x' + KR.newKey(10), rec = { mkey: o.mkey, rid: o.rid, offer: String(o.offer || 'Free food offer').slice(0, 80), rewards: rewards, at: now() };
         return store.set(P('redemptions/' + id), rec).then(function () { return Object.assign({ id: id }, rec); });
       });
@@ -189,15 +232,15 @@
     api.listRedemptions = function () { return store.get(P('redemptions')).then(list).then(function (a) { return a.sort(function (x, y) { return y.at - x.at; }); }); };
 
     api.summary = function () {
-      return Promise.all([api.listRestaurants(), api.listEvents(), store.get(P('checkins')), api.listRedemptions()]).then(function (r) {
-        var rests = r[0], evs = r[1], ck = r[2] || {}, reds = r[3];
-        var tot = { restaurants: rests.length, events: evs.length, open: 0, closed: 0, checkins: 0, approved: 0, pending: 0, rejected: 0, issued: 0, leftover: 0, redeemed: 0, outstanding: 0, pools: 0 };
+      return Promise.all([api.listRestaurants(), api.listEvents(), store.get(P('checkins')), api.listRedemptions(), api.listMembers(), store.get(P('grants'))]).then(function (r) {
+        var rests = r[0], evs = r[1], ck = r[2] || {}, reds = r[3], gr = r[5] || {};
+        var tot = { members: r[4].length, granted: Object.keys(gr).reduce(function (a, k) { return a + gr[k].rewards; }, 0), restaurants: rests.length, events: evs.length, open: 0, closed: 0, checkins: 0, approved: 0, pending: 0, rejected: 0, issued: 0, leftover: 0, redeemed: 0, outstanding: 0, pools: 0 };
         evs.forEach(function (e) {
           if (e.status === 'open') tot.open++; if (e.status === 'closed') { tot.closed++; tot.issued += e.issued || 0; tot.leftover += e.leftover || 0; tot.pools += e.pool; }
           var c = ck[e.id] || {}; Object.keys(c).forEach(function (k) { tot.checkins++; tot[c[k].status] = (tot[c[k].status] || 0) + 1; });
         });
         reds.forEach(function (x) { tot.redeemed += x.rewards; });
-        tot.outstanding = Math.max(0, tot.issued - tot.redeemed);
+        tot.outstanding = Math.max(0, tot.issued + tot.granted - tot.redeemed);
         var by = {};
         rests.forEach(function (x) { by[x.id] = { id: x.id, name: x.name, city: x.city, events: 0, issued: 0, redeemed: 0 }; });
         evs.forEach(function (e) { if (by[e.rid] && e.status === 'closed') { by[e.rid].events++; by[e.rid].issued += e.issued || 0; } });
@@ -226,6 +269,8 @@
           return c2.then(function () { return rest; });
         }).then(function (rest) { made[rest.name] = rest; });
       });
+      // a few people the owner added by hand, with welcome rewards
+      chain = chain.then(function () { var nm = ['Maria', 'Chris', 'Priya', 'Tom', 'Zoe', 'Luis', 'Nina'], c3 = Promise.resolve(); nm.forEach(function (n, i) { c3 = c3.then(function () { return api.addMember({ name: n }); }).then(function (m) { return api.grant({ mkey: m.mkey, rewards: 10 + i * 5, reason: 'Welcome' }); }); }); return c3; });
       // one event that is open right now, with pending check-ins to approve
       return chain.then(function () {
         return api.createEvent({ rid: made['Harbor Table'].id, title: 'Friday dinner rush', pool: 2000, cap: 15, opensAt: t0 - H, closesAt: t0 + 3 * H });

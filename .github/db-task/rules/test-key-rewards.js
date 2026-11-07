@@ -111,6 +111,33 @@ const K = '/key_rewards/';
   await t('write at an unknown place inside key_rewards', 'owner', 'PUT', K + 'secret', { a: 1 }, false);
   await t('the owner may read the whole tree', 'owner', 'GET', K.slice(0, -1), undefined, true);
 
+  // ---- people (members) and hand-added rewards (grants)
+  const MM = { name: 'Maria', createdAt: now, source: 'owner' };
+  await t('add a person', 'anon', 'PUT', K + 'members/' + MK, MM, false);
+  await t('add a person', 'other', 'PUT', K + 'members/' + MK, MM, false);
+  await t('add a person with a short code', 'owner', 'PUT', K + 'members/short', MM, false);
+  await t('add a person with a 60-character name', 'owner', 'PUT', K + 'members/mmmmmmmmmmmm1', Object.assign({}, MM, { name: 'x'.repeat(60) }), false);
+  await t('add a person with an unknown field (phone)', 'owner', 'PUT', K + 'members/mmmmmmmmmmmm1', Object.assign({}, MM, { phone: '555' }), false);
+  await t('add a person with a made-up source', 'owner', 'PUT', K + 'members/mmmmmmmmmmmm1', Object.assign({}, MM, { source: 'admin' }), false);
+  await t('add a person', 'owner', 'PUT', K + 'members/mmmmmmmmmmmm1', MM, true);
+  await t('rename a person', 'owner', 'PATCH', K + 'members/mmmmmmmmmmmm1', { name: 'Maria L' }, true);
+  await t('change when a person joined', 'owner', 'PATCH', K + 'members/mmmmmmmmmmmm1', { createdAt: 1 }, false);
+  await t('read the list of people', 'anon', 'GET', K + 'members', undefined, false);
+  await t('read the list of people', 'owner', 'GET', K + 'members', undefined, true);
+  const GR = { mkey: 'mmmmmmmmmmmm1', rewards: 20, reason: 'Welcome', at: now };
+  await t('add rewards to a person', 'anon', 'PUT', K + 'grants/g1', GR, false);
+  await t('add rewards to a person', 'other', 'PUT', K + 'grants/g1', GR, false);
+  await t('add rewards to someone who is not a person in the list', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { mkey: 'nobodyxxxxxx1' }), false);
+  await t('add 0 rewards', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { rewards: 0 }), false);
+  await t('add 1001 rewards (above the 1000 limit)', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { rewards: 1001 }), false);
+  await t('add 7.5 rewards', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { rewards: 7.5 }), false);
+  await t('add rewards with no reason', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { reason: '' }), false);
+  await t('add rewards with an unknown field', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { note: 'x' }), false);
+  await t('add rewards to a person', 'owner', 'PUT', K + 'grants/g1', GR, true);
+  await t('change a hand-added grant afterwards', 'owner', 'PUT', K + 'grants/g1', Object.assign({}, GR, { rewards: 900 }), false);
+  await t('delete a grant', 'owner', 'DELETE', K + 'grants/g1', undefined, false);
+  await t('read grants', 'anon', 'GET', K + 'grants', undefined, false);
+
   // ---- the engine, end to end, through the Firebase store (anonymous guests, owner dashboard)
   const q = 'ns=' + NS;
   const ownerKr = KR.create(KR.firebaseStore(BASE, () => OWNER, { query: q }));
@@ -135,8 +162,16 @@ const K = '/key_rewards/';
   eq('engine: balance after a redemption', await ownerKr.balanceOf(guests[0]), { received: 20, redeemed: 15, available: 5 });
   let guestRedeem = false; try { await guestKr.redeem({ mkey: guests[1], rid: rest.id, rewards: 15 }); } catch (e) { guestRedeem = true; }
   eq('engine: a guest cannot redeem for themselves', guestRedeem, true);
+  const pm = await ownerKr.addMember({ name: 'Priya' });
+  await ownerKr.grant({ mkey: pm.mkey, rewards: 40, reason: 'Thank you' });
+  eq('engine: a person added by hand has what was added', (await ownerKr.balanceOf(pm.mkey)).available, 40);
+  await ownerKr.redeem({ mkey: pm.mkey, rid: rest.id, offer: 'Salad', rewards: 15 });
+  const led = await ownerKr.ledger();
+  eq('engine: the list of everybody has the event guests and the added person', led.filter(m => m.name.startsWith('Guest') || m.name === 'Priya').length, 4);
+  let gGuest = false; try { await guestKr.grant({ mkey: pm.mkey, rewards: 500, reason: 'x' }); } catch (e) { gGuest = true; }
+  eq('engine: a guest cannot add rewards to anyone', gGuest, true);
   const sum = await ownerKr.summary();
-  eq('engine: summary totals match (two closed events: 30 + 60 issued; two redemptions of 15)', [sum.totals.issued, sum.totals.redeemed, sum.totals.outstanding], [90, 30, 60]);
+  eq('engine: summary totals match (events 30 + 60 issued, grants 20 + 40, redemptions 15 x 3)', [sum.totals.issued + sum.totals.granted, sum.totals.redeemed, sum.totals.outstanding], [90 + 20 + 40, 30 + 15, 150 - 45]);
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.log('ERROR ' + e.stack); process.exit(2); });
