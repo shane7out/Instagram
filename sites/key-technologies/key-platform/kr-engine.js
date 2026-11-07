@@ -262,21 +262,24 @@
               .then(function (e) { return api.openEvent(e.id).then(function () { return e; }); })
               .then(function (e) {
                 var n = ev[2], ps = [], k;
-                for (k = 0; k < n; k++) { (function (k) { var mk = 'demo' + KR.newKey(12); ps.push(store.set(P('checkins/' + e.id + '/' + mk), { t: e.opensAt + 60000 * (k + 1), name: firsts[k % firsts.length], status: k % 9 === 8 ? 'rejected' : 'approved' })); })(k); }
-                return Promise.all(ps).then(function () { return api.closeEvent(e.id); });
+                for (k = 0; k < n; k++) { (function (k) { var mk = 'demo' + KR.newKey(12); ps.push(store.set(P('checkins/' + e.id + '/' + mk), { t: e.opensAt + 60000 * (k + 1), name: firsts[k % firsts.length] + ' ' + String.fromCharCode(65 + ((Math.floor(k / firsts.length) * 7 + k * 3) % 26)), status: k % 9 === 8 ? 'rejected' : 'approved' })); })(k); }
+                return Promise.all(ps).then(function () { return api.closeEvent(e.id); }).then(function (res) {
+                  // sandbox demo only: make the event look like it closed when its window ended
+                  return store.get(P('shares/' + e.id)).then(function (sh) { var up = {}; Object.keys(sh || {}).forEach(function (k) { up['shares/' + e.id + '/' + k + '/at'] = e.closesAt; }); up['events/' + e.id + '/closedAt'] = e.closesAt; return store.update(BASE, up); }).then(function () { return res; });
+                });
               });
           });
           return c2.then(function () { return rest; });
         }).then(function (rest) { made[rest.name] = rest; });
       });
       // a few people the owner added by hand, with welcome rewards
-      chain = chain.then(function () { var nm = ['Maria', 'Chris', 'Priya', 'Tom', 'Zoe', 'Luis', 'Nina'], c3 = Promise.resolve(); nm.forEach(function (n, i) { c3 = c3.then(function () { return api.addMember({ name: n }); }).then(function (m) { return api.grant({ mkey: m.mkey, rewards: 10 + i * 5, reason: 'Welcome' }); }); }); return c3; });
+      chain = chain.then(function () { var nm = ['Maria', 'Chris', 'Priya', 'Tom', 'Zoe', 'Luis', 'Nina'], c3 = Promise.resolve(); nm.forEach(function (n, i) { c3 = c3.then(function () { return api.addMember({ name: n }); }).then(function (m) { return api.grant({ mkey: m.mkey, rewards: 10 + i * 5, reason: 'Welcome' }); }).then(function (g) { var up = {}; up['grants/' + g.id + '/at'] = t0 - i * 5 * D; up['members/' + g.mkey + '/createdAt'] = t0 - i * 5 * D - H; return store.update(BASE, up); }); }); return c3; });
       // one event that is open right now, with pending check-ins to approve
       return chain.then(function () {
         return api.createEvent({ rid: made['Harbor Table'].id, title: 'Friday dinner rush', pool: 2000, cap: 15, opensAt: t0 - H, closesAt: t0 + 3 * H });
       }).then(function (e) {
         return api.openEvent(e.id).then(function () {
-          var ps = [], k; for (k = 0; k < 7; k++) { (function (k) { ps.push(store.set(P('checkins/' + e.id + '/live' + KR.newKey(12)), { t: t0 - 50 * 60000 + k * 240000, name: firsts[(k + 3) % firsts.length], status: k < 3 ? 'approved' : 'pending' })); })(k); }
+          var ps = [], k; for (k = 0; k < 7; k++) { (function (k) { ps.push(store.set(P('checkins/' + e.id + '/live' + KR.newKey(12)), { t: t0 - 50 * 60000 + k * 240000, name: firsts[(k + 3) % firsts.length] + ' ' + String.fromCharCode(66 + k), status: k < 3 ? 'approved' : 'pending' })); })(k); }
           return Promise.all(ps);
         });
       });
