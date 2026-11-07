@@ -55,12 +55,12 @@ const rej = async (name, p) => { try { await p; ok(name, false, 'did not reject'
   eq('the event records what was issued', (await kr.getEvent(ev.id)).issued, 60);
 
   // ---- redemptions
-  eq('balance before redeeming', await kr.balanceOf('abcdefghijkl'), { received: 20, redeemed: 0, available: 20 });
+  { const b = await kr.balanceOf('abcdefghijkl'); eq('balance before redeeming', [b.received, b.redeemed, b.available], [20, 0, 20]); }
   await rej('an offer below 15 rewards is refused', kr.redeem({ mkey: 'abcdefghijkl', rid: r.id, rewards: 10 }));
   await rej('cannot redeem more than the balance', kr.redeem({ mkey: 'abcdefghijkl', rid: r.id, rewards: 25 }));
   await rej('a member with no rewards cannot redeem', kr.redeem({ mkey: 'ddddddddddddd', rid: r.id, rewards: 15 }));
   await kr.redeem({ mkey: 'abcdefghijkl', rid: r.id, offer: 'Chicken bowl', rewards: 15 });
-  eq('balance after redeeming 15', await kr.balanceOf('abcdefghijkl'), { received: 20, redeemed: 15, available: 5 });
+  { const b = await kr.balanceOf('abcdefghijkl'); eq('balance after redeeming 15', [b.received, b.redeemed, b.available], [20, 15, 5]); }
   await rej('the remaining 5 cannot be redeemed (offers start at 15)', kr.redeem({ mkey: 'abcdefghijkl', rid: r.id, rewards: 5 }));
   const sum = await kr.summary();
   eq('summary: issued 60, redeemed 15, outstanding 45, leftover 40', [sum.totals.issued, sum.totals.redeemed, sum.totals.outstanding, sum.totals.leftover], [60, 15, 45, 40]);
@@ -93,6 +93,58 @@ const rej = async (name, p) => { try { await p; ok(name, false, 'did not reject'
   eq('a person can be renamed', (await kr.listMembers()).filter(m => m.mkey === pm.mkey)[0].name, 'Maria L');
   const sum2 = await kr.summary();
   eq('summary counts the hand-added rewards: granted 25, outstanding = 60 + 25 - 30', [sum2.totals.granted, sum2.totals.outstanding], [25, 55]);
+
+  // ---- expiry (rewards expire on a date set when they are issued; nothing is taken back)
+  const DAY = 86400000, N0 = 1800000000000;
+  const bal = (ents, now) => KR.computeBalance(ents, now);
+  eq('rewards before their expiry date are available', [bal([{ kind: 'grant', rewards: 20, at: N0, expiresAt: N0 + 30 * DAY }], N0 + 10 * DAY).available, bal([{ kind: 'grant', rewards: 20, at: N0, expiresAt: N0 + 30 * DAY }], N0 + 10 * DAY).expired], [20, 0]);
+  eq('rewards after their expiry date are expired, not available', [bal([{ kind: 'grant', rewards: 20, at: N0, expiresAt: N0 + 30 * DAY }], N0 + 31 * DAY).available, bal([{ kind: 'grant', rewards: 20, at: N0, expiresAt: N0 + 30 * DAY }], N0 + 31 * DAY).expired], [0, 20]);
+  eq('rewards with no expiry date never expire', bal([{ kind: 'grant', rewards: 20, at: N0 }], N0 + 4000 * DAY).available, 20);
+  const two = [{ kind: 'grant', rewards: 10, at: N0, expiresAt: N0 + 20 * DAY }, { kind: 'grant', rewards: 30, at: N0, expiresAt: N0 + 90 * DAY }];
+  eq('using rewards uses the soonest-expiring first (use 15 of 40: the 10 that expire first, then 5)', (() => { const b = bal(two.concat([{ kind: 'use', rewards: 15, at: N0 + 1 * DAY }]), N0 + 30 * DAY); return [b.available, b.expired]; })(), [25, 0]);
+  eq('the soonest-expiring were used, so nothing is left to expire at day 30', bal(two.concat([{ kind: 'use', rewards: 15, at: N0 + 1 * DAY }]), N0 + 30 * DAY).expired, 0);
+  eq('without a use, the 10 expire at day 30', [bal(two, N0 + 30 * DAY).available, bal(two, N0 + 30 * DAY).expired], [30, 10]);
+  eq('rewards expiring within 14 days are flagged', [bal(two, N0 + 10 * DAY).expiringSoon, bal(two, N0 + 10 * DAY).nextExpiry], [10, N0 + 20 * DAY]);
+  eq('a use after expiry cannot take expired rewards', (() => { const b = bal([{ kind: 'grant', rewards: 20, at: N0, expiresAt: N0 + 10 * DAY }, { kind: 'use', rewards: 15, at: N0 + 12 * DAY }], N0 + 13 * DAY); return [b.available, b.expired]; })(), [0, 20]);
+  // end to end with a moving clock
+  let T2 = N0; const ke = KR.create(KR.memoryStore(), () => T2);
+  const rr = await ke.addRestaurant({ name: 'Expiry Cafe', city: 'LV', country: 'US' });
+  const ee = await ke.createEvent({ rid: rr.id, title: 'Night', pool: 200, cap: 20, opensAt: T2, closesAt: T2 + 3600000, expiresDays: 30 });
+  eq('an event keeps how many days its rewards last', ee.expiresDays, 30);
+  await rej('expiry above 3650 days is refused', ke.createEvent({ rid: rr.id, title: 'x', pool: 100, cap: 10, opensAt: T2, closesAt: T2 + 1000, expiresDays: 4000 }));
+  await ke.openEvent(ee.id); await ke.checkIn(ee.id, { name: 'Lee', mkey: 'leeleeleelee1' }); await ke.approveAll(ee.id); await ke.closeEvent(ee.id);
+  const w1 = await ke.walletOf('leeleeleelee1');
+  eq('the event rewards sit in the person\'s wallet with an expiry date 30 days out', [w1.entries[0].rewards, w1.entries[0].expiresAt - w1.entries[0].at], [20, 30 * DAY]);
+  const lm = await ke.addMember({ name: 'Kim', mkey: 'kimkimkimkim1' });
+  await ke.grant({ mkey: lm.mkey, rewards: 50, reason: 'Welcome', expiresDays: 60 });
+  await ke.grant({ mkey: lm.mkey, rewards: 5, reason: 'Thank you', expiresDays: 0 });
+  eq('a grant with 0 days never expires; a 60-day grant expires', (await ke.walletOf(lm.mkey)).entries.map(e => e.expiresAt ? e.expiresAt - e.at : 0).sort((a, b) => a - b), [0, 60 * DAY]);
+  T2 = N0 + 61 * DAY;
+  eq('61 days later the 50 have expired and the 5 are still there', [(await ke.balanceOf(lm.mkey)).available, (await ke.balanceOf(lm.mkey)).expired], [5, 50]);
+  await rej('expired rewards cannot be used', ke.redeem({ mkey: lm.mkey, rid: rr.id, rewards: 15 }));
+  T2 = N0 + 25 * DAY;
+  const led = await ke.ledger();
+  ok('the list of everybody shows who is expiring soon (the event guest, 5 days left)', led.filter(m => m.mkey === 'leeleeleelee1')[0].expiringSoon === 20, led);
+
+  // ---- messages
+  T2 = N0 + 100 * DAY;
+  await rej('an empty message is refused', ke.sendMessage(lm.mkey, { from: 'member', text: '  ' }));
+  await rej('an unknown sender is refused', ke.sendMessage(lm.mkey, { from: 'admin', text: 'hi' }));
+  await ke.sendMessage(lm.mkey, { from: 'member', text: 'Hi, how long do my rewards last?', name: 'Kim' });
+  T2 += 1000;
+  await ke.sendMessage(lm.mkey, { from: 'owner', text: 'Hi Kim! Check your Wallet for the date.' });
+  T2 += 1000;
+  await ke.sendMessage('leeleeleelee1', { from: 'member', text: 'Thanks for the night!' });
+  const th = await ke.threads();
+  eq('the owner sees both conversations, newest first', th.map(x => x.name), ['Lee', 'Kim']);
+  eq('unread counts: Lee 1, Kim 1 (owner has not seen them)', th.map(x => x.unread), [1, 1]);
+  T2 += 1000; await ke.markSeen(lm.mkey, 'owner');
+  eq('after the owner reads Kim\'s chat it has 0 unread', (await ke.threads()).filter(x => x.name === 'Kim')[0].unread, 0);
+  eq('the member sees 1 unread reply from the owner', await ke.memberUnread(lm.mkey), 1);
+  T2 += 1000; await ke.markSeen(lm.mkey, 'member');
+  eq('after the member reads it, 0 unread', await ke.memberUnread(lm.mkey), 0);
+  eq('a thread lists messages oldest first', (await ke.listThread(lm.mkey)).map(m => m.from), ['member', 'owner']);
+  eq('a message is cut at 500 characters', (await ke.sendMessage(lm.mkey, { from: 'member', text: 'x'.repeat(900) })).text.length, 500);
 
   // ---- sandbox demo data
   const kr2 = KR.create(KR.memoryStore(), clock); await kr2.seedDemo(); const s2 = await kr2.summary();

@@ -138,6 +138,50 @@ const K = '/key_rewards/';
   await t('delete a grant', 'owner', 'DELETE', K + 'grants/g1', undefined, false);
   await t('read grants', 'anon', 'GET', K + 'grants', undefined, false);
 
+  // ---- wallet (each person's own ledger) and messages
+  const W = { kind: 'grant', rewards: 20, at: now, expiresAt: now + 30 * 86400000, note: 'Welcome' };
+  await t('write a wallet entry', 'anon', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', W, false);
+  await t('write a wallet entry', 'other', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', W, false);
+  await t('a wallet entry whose expiry is before it was issued', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', Object.assign({}, W, { expiresAt: now - 1 }), false);
+  await t('a grant of 1001 in a wallet', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', Object.assign({}, W, { rewards: 1001 }), false);
+  await t('a free-food use below 15', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', { kind: 'use', rewards: 10, at: now }, false);
+  await t('a free-food use with an expiry date', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', { kind: 'use', rewards: 15, at: now, expiresAt: now + 5 }, false);
+  await t('a wallet entry of an unknown kind', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', Object.assign({}, W, { kind: 'bonus' }), false);
+  await t('a wallet entry with an unknown field', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', Object.assign({}, W, { cash: 5 }), false);
+  await t('a wallet entry for a short code', 'owner', 'PUT', K + 'wallet/short/w1', W, false);
+  await t('write a wallet entry', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', W, true);
+  await t('change the expiry date afterwards (no shortening)', 'owner', 'PUT', K + 'wallet/mmmmmmmmmmmm1/w1', Object.assign({}, W, { expiresAt: now + 1000 }), false);
+  await t('delete a wallet entry', 'owner', 'DELETE', K + 'wallet/mmmmmmmmmmmm1/w1', undefined, false);
+  await t('a person reads their own wallet by their code', 'anon', 'GET', K + 'wallet/mmmmmmmmmmmm1', undefined, true);
+  await t('nobody can list all wallets', 'anon', 'GET', K + 'wallet', undefined, false);
+  await t('the owner can list all wallets', 'owner', 'GET', K + 'wallet', undefined, true);
+  await t('shares with an expiry date', 'owner', 'PUT', K + 'shares/eold1234567/mmmmmmmmmmmm1', { rewards: 1, at: now, expiresAt: now - 5 }, false);
+  await t('an event with expiry days set', 'owner', 'PUT', K + 'events/eexp1234567', Object.assign({}, EV, { expiresDays: 60 }), true);
+  await t('an event with 4000 expiry days', 'owner', 'PUT', K + 'events/eexp7654321', Object.assign({}, EV, { expiresDays: 4000 }), false);
+  await t('change the expiry days of an event afterwards', 'owner', 'PATCH', K + 'events/eexp1234567', { expiresDays: 1 }, false);
+  const MSG = { from: 'member', text: 'Hi, how long do my rewards last?', t: now, name: 'Maria' };
+  await t('a person on the list sends a message', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m1', MSG, true);
+  await t('a stranger (not on the list) sends a message', 'anon', 'PUT', K + 'chats/strangerxxxxx1/messages/m1', MSG, false);
+  await t('a message claiming to be from the owner, sent anonymously', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m2', Object.assign({}, MSG, { from: 'owner' }), false);
+  await t('a message claiming to be from the owner, sent by another user', 'other', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m2', Object.assign({}, MSG, { from: 'owner' }), false);
+  await t('a 501-character message', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m3', Object.assign({}, MSG, { text: 'x'.repeat(501) }), false);
+  await t('an empty message', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m3', Object.assign({}, MSG, { text: '' }), false);
+  await t('a message with a time far in the past', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m3', Object.assign({}, MSG, { t: now - 3 * H }), false);
+  await t('a message with an unknown field', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m3', Object.assign({}, MSG, { points: 99 }), false);
+  await t('overwrite a sent message', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m1', Object.assign({}, MSG, { text: 'changed' }), false);
+  await t('owner replies', 'owner', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m4', { from: 'owner', text: 'Check your wallet for the date.', t: now }, true);
+  await t('the owner (trusted) can also post into a person\'s conversation', 'owner', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m5', { from: 'member', text: 'x', t: now }, true);
+  await t('owner overwrites a message', 'owner', 'PUT', K + 'chats/mmmmmmmmmmmm1/messages/m4', { from: 'owner', text: 'edited', t: now }, false);
+  await t('delete a message', 'owner', 'DELETE', K + 'chats/mmmmmmmmmmmm1/messages/m4', undefined, false);
+  await t('a person reads their own conversation by their code', 'anon', 'GET', K + 'chats/mmmmmmmmmmmm1', undefined, true);
+  await t('nobody can list all conversations', 'anon', 'GET', K + 'chats', undefined, false);
+  await t('the owner can list all conversations', 'owner', 'GET', K + 'chats', undefined, true);
+  await t('the owner marks a conversation read', 'owner', 'PUT', K + 'chats/mmmmmmmmmmmm1/ownerSeen', now, true);
+  await t('a stranger marks the owner as having read', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/ownerSeen', now, false);
+  await t('a person marks their own replies read', 'anon', 'PUT', K + 'chats/mmmmmmmmmmmm1/memberSeen', now, true);
+  await t('a stranger marks a conversation read', 'anon', 'PUT', K + 'chats/strangerxxxxx1/memberSeen', now, false);
+  await t('an unknown field on a conversation', 'owner', 'PUT', K + 'chats/mmmmmmmmmmmm1/secret', 'x', false);
+
   // ---- the engine, end to end, through the Firebase store (anonymous guests, owner dashboard)
   const q = 'ns=' + NS;
   const ownerKr = KR.create(KR.firebaseStore(BASE, () => OWNER, { query: q }));
@@ -159,9 +203,25 @@ const K = '/key_rewards/';
   let closeErr = false; try { await ownerKr.closeEvent(ev.id); } catch (e) { closeErr = true; }
   eq('engine: closing twice is refused', closeErr, true);
   await ownerKr.redeem({ mkey: guests[0], rid: rest.id, offer: 'Burger', rewards: 15 });
-  eq('engine: balance after a redemption', await ownerKr.balanceOf(guests[0]), { received: 20, redeemed: 15, available: 5 });
+  { const b = await ownerKr.balanceOf(guests[0]); eq('engine: balance after a redemption', [b.received, b.redeemed, b.available], [20, 15, 5]); }
   let guestRedeem = false; try { await guestKr.redeem({ mkey: guests[1], rid: rest.id, rewards: 15 }); } catch (e) { guestRedeem = true; }
   eq('engine: a guest cannot redeem for themselves', guestRedeem, true);
+  // engine: wallet + messages through the rules
+  const gw = await guestKr.walletOf(guests[0]);
+  eq('engine: a guest reads their own wallet (20 from the event, with an expiry date)', [gw.balance.available, gw.entries.filter(x => x.kind === 'event').every(x => x.expiresAt > x.at)], [5, true]);
+  eq('engine: a guest on the list can message the owner', (await guestKr.sendMessage(guests[0], { from: 'member', text: 'Thanks for the night!', name: 'Guest1' })).from, 'member');
+  let strangerMsg = false; try { await guestKr.sendMessage('nobodyxxxxxxx1', { from: 'member', text: 'spam' }); } catch (e) { strangerMsg = true; }
+  eq('engine: someone not on the list cannot message', strangerMsg, true);
+  let fakeOwner = false; try { await guestKr.sendMessage(guests[0], { from: 'owner', text: 'I am the owner' }); } catch (e) { fakeOwner = true; }
+  eq('engine: a guest cannot send a message as the owner', fakeOwner, true);
+  const th = await ownerKr.threads();
+  eq('engine: the owner sees the conversation with 1 unread', th.filter(x => x.mkey === guests[0]).map(x => x.unread), [1]);
+  await ownerKr.sendMessage(guests[0], { from: 'owner', text: 'You are welcome!' });
+  await ownerKr.markSeen(guests[0], 'owner');
+  eq('engine: after reading, 0 unread for the owner', (await ownerKr.threads()).filter(x => x.mkey === guests[0])[0].unread, 0);
+  eq('engine: the guest sees 1 unread reply, and can read the thread', [await guestKr.memberUnread(guests[0]), (await guestKr.listThread(guests[0])).length], [1, 2]);
+  let guestThreads = false; try { await guestKr.threads(); } catch (e) { guestThreads = true; }
+  eq('engine: a guest cannot list all conversations', guestThreads, true);
   const pm = await ownerKr.addMember({ name: 'Priya' });
   await ownerKr.grant({ mkey: pm.mkey, rewards: 40, reason: 'Thank you' });
   eq('engine: a person added by hand has what was added', (await ownerKr.balanceOf(pm.mkey)).available, 40);

@@ -82,6 +82,7 @@
     <div class="row"><div><label for="evRest">Restaurant</label><select id="evRest"></select></div><div><label for="evTitle">Name of the event</label><input id="evTitle" maxlength="80" value="Guest night"></div></div>
     <div class="row" style="margin-top:10px"><div><label for="evPool">Pool (rewards to share)</label><input id="evPool" type="number" inputmode="numeric" min="1" step="1" value="2000"></div><div><label for="evCap">Most one person can get</label><input id="evCap" type="number" inputmode="numeric" min="1" step="1" value="25"></div></div>
     <div class="row" style="margin-top:10px"><div><label for="evStart">Check-in opens</label><input id="evStart" type="datetime-local"></div><div><label for="evEnd">Check-in closes</label><input id="evEnd" type="datetime-local"></div></div>
+    <div class="row" style="margin-top:10px"><div><label for="evExp">Rewards expire after (days, 0 = never)</label><input id="evExp" type="number" inputmode="numeric" min="0" max="3650" step="1" value="90"></div></div>
     <div class="out" id="evPreview" style="margin-top:12px"></div>
     <p><button class="b p" id="evCreate" type="button">Create event</button></p><div class="msg" id="evMsg" role="status"></div></div>
   <div class="card"><h2>Events</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Event</th><th>Status</th><th class="n">Pool</th><th class="n">Each</th><th class="n">Issued</th><th><span class="sr">Actions</span></th></tr></thead><tbody id="evList"></tbody></table></div></div>
@@ -184,7 +185,7 @@ function splitPreview(){
 function defaults(){var a=new Date();$('#evStart').value=toLocal(a);$('#evEnd').value=toLocal(new Date(a.getTime()+3*3600000));splitPreview()}
 $('#evCreate').addEventListener('click',function(){
   var m=$('#evMsg');m.className='msg';m.textContent='';
-  kr.createEvent({rid:$('#evRest').value,title:$('#evTitle').value,pool:+$('#evPool').value,cap:+$('#evCap').value,opensAt:new Date($('#evStart').value).getTime(),closesAt:new Date($('#evEnd').value).getTime()})
+  kr.createEvent({rid:$('#evRest').value,title:$('#evTitle').value,pool:+$('#evPool').value,cap:+$('#evCap').value,opensAt:new Date($('#evStart').value).getTime(),closesAt:new Date($('#evEnd').value).getTime(),expiresDays:+$('#evExp').value})
    .then(function(e){return kr.openEvent(e.id)}).then(function(){m.className='msg good';m.textContent='Event created and open for check-in.';return refresh()}).catch(function(e){m.textContent=e.message});
 });
 function drawEvents(){

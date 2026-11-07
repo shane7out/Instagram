@@ -19,7 +19,7 @@
    "$eid": {
     ".read": true,
     ".write": "auth != null && auth.uid == '__OWNER_UID__' && (!data.exists() || data.child('status').val() != 'closed')",
-    ".validate": "newData.hasChildren(['rid','title','pool','cap','opensAt','closesAt','status','createdAt']) && newData.child('rid').isString() && newData.child('title').isString() && newData.child('title').val().length <= 80 && newData.child('pool').isNumber() && newData.child('pool').val() >= 1 && newData.child('pool').val() <= 1000000 && newData.child('pool').val() % 1 == 0 && newData.child('cap').isNumber() && newData.child('cap').val() >= 1 && newData.child('cap').val() <= newData.child('pool').val() && newData.child('cap').val() % 1 == 0 && newData.child('opensAt').isNumber() && newData.child('closesAt').isNumber() && newData.child('closesAt').val() > newData.child('opensAt').val() && (newData.child('status').val() == 'draft' || newData.child('status').val() == 'open' || newData.child('status').val() == 'closed') && (!data.exists() || (newData.child('pool').val() == data.child('pool').val() && newData.child('cap').val() == data.child('cap').val() && newData.child('rid').val() == data.child('rid').val())) && (newData.child('status').val() != 'closed' || (newData.child('issued').isNumber() && newData.child('issued').val() >= 0 && newData.child('issued').val() <= newData.child('pool').val() && newData.child('share').isNumber() && newData.child('share').val() >= 0 && newData.child('share').val() <= newData.child('cap').val() && newData.child('leftover').isNumber() && newData.child('leftover').val() >= 0 && newData.child('approvedCount').isNumber() && newData.child('closedAt').isNumber() && newData.child('issued').val() + newData.child('leftover').val() == newData.child('pool').val())) && (!data.exists() || data.child('status').val() == newData.child('status').val() || (data.child('status').val() == 'draft' && newData.child('status').val() == 'open') || (data.child('status').val() == 'open' && newData.child('status').val() == 'closed')) && (data.exists() || newData.child('status').val() == 'draft')",
+    ".validate": "newData.hasChildren(['rid','title','pool','cap','opensAt','closesAt','status','createdAt']) && newData.child('rid').isString() && newData.child('title').isString() && newData.child('title').val().length <= 80 && newData.child('pool').isNumber() && newData.child('pool').val() >= 1 && newData.child('pool').val() <= 1000000 && newData.child('pool').val() % 1 == 0 && newData.child('cap').isNumber() && newData.child('cap').val() >= 1 && newData.child('cap').val() <= newData.child('pool').val() && newData.child('cap').val() % 1 == 0 && newData.child('opensAt').isNumber() && newData.child('closesAt').isNumber() && newData.child('closesAt').val() > newData.child('opensAt').val() && (newData.child('status').val() == 'draft' || newData.child('status').val() == 'open' || newData.child('status').val() == 'closed') && (!data.exists() || (newData.child('pool').val() == data.child('pool').val() && newData.child('cap').val() == data.child('cap').val() && newData.child('rid').val() == data.child('rid').val())) && (newData.child('status').val() != 'closed' || (newData.child('issued').isNumber() && newData.child('issued').val() >= 0 && newData.child('issued').val() <= newData.child('pool').val() && newData.child('share').isNumber() && newData.child('share').val() >= 0 && newData.child('share').val() <= newData.child('cap').val() && newData.child('leftover').isNumber() && newData.child('leftover').val() >= 0 && newData.child('approvedCount').isNumber() && newData.child('closedAt').isNumber() && newData.child('issued').val() + newData.child('leftover').val() == newData.child('pool').val())) && (!data.exists() || data.child('status').val() == newData.child('status').val() || (data.child('status').val() == 'draft' && newData.child('status').val() == 'open') || (data.child('status').val() == 'open' && newData.child('status').val() == 'closed')) && (data.exists() || newData.child('status').val() == 'draft') && (!newData.child('expiresDays').exists() || (newData.child('expiresDays').isNumber() && newData.child('expiresDays').val() >= 0 && newData.child('expiresDays').val() <= 3650 && newData.child('expiresDays').val() % 1 == 0)) && (!data.exists() || newData.child('expiresDays').val() == data.child('expiresDays').val())",
     "rid": {},
     "title": {},
     "pool": {},
@@ -35,7 +35,8 @@
     "closedAt": {},
     "$other": {
      ".validate": false
-    }
+    },
+    "expiresDays": {}
    }
   },
   "checkins": {
@@ -57,12 +58,13 @@
     "$mkey": {
      ".read": true,
      ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists() && root.child('key_rewards/events/'+$eid).child('status').val() == 'open'",
-     ".validate": "newData.hasChildren(['rewards','at']) && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() % 1 == 0 && newData.child('rewards').val() <= root.child('key_rewards/events/'+$eid).child('cap').val() && newData.child('rewards').val() <= root.child('key_rewards/events/'+$eid).child('pool').val() && newData.child('at').isNumber()",
+     ".validate": "newData.hasChildren(['rewards','at']) && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() % 1 == 0 && newData.child('rewards').val() <= root.child('key_rewards/events/'+$eid).child('cap').val() && newData.child('rewards').val() <= root.child('key_rewards/events/'+$eid).child('pool').val() && newData.child('at').isNumber() && (!newData.child('expiresAt').exists() || (newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > newData.child('at').val()))",
      "rewards": {},
      "at": {},
      "$other": {
       ".validate": false
-     }
+     },
+     "expiresAt": {}
     }
    }
   },
@@ -95,11 +97,58 @@
   "grants": {
    "$id": {
     ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists()",
-    ".validate": "newData.hasChildren(['mkey','rewards','reason','at']) && newData.child('mkey').isString() && root.child('key_rewards/members/'+newData.child('mkey').val()).exists() && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() <= 1000 && newData.child('rewards').val() % 1 == 0 && newData.child('reason').isString() && newData.child('reason').val().length >= 1 && newData.child('reason').val().length <= 80 && newData.child('at').isNumber()",
+    ".validate": "newData.hasChildren(['mkey','rewards','reason','at']) && newData.child('mkey').isString() && root.child('key_rewards/members/'+newData.child('mkey').val()).exists() && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() <= 1000 && newData.child('rewards').val() % 1 == 0 && newData.child('reason').isString() && newData.child('reason').val().length >= 1 && newData.child('reason').val().length <= 80 && newData.child('at').isNumber() && (!newData.child('expiresAt').exists() || (newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > newData.child('at').val()))",
     "mkey": {},
     "rewards": {},
     "reason": {},
     "at": {},
+    "$other": {
+     ".validate": false
+    },
+    "expiresAt": {}
+   }
+  },
+  "wallet": {
+   "$mkey": {
+    ".read": true,
+    "$id": {
+     ".write": "auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists()",
+     ".validate": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && newData.hasChildren(['kind','rewards','at']) && (newData.child('kind').val() == 'event' || newData.child('kind').val() == 'grant' || newData.child('kind').val() == 'use') && newData.child('rewards').isNumber() && newData.child('rewards').val() >= 1 && newData.child('rewards').val() <= 1000000 && newData.child('rewards').val() % 1 == 0 && newData.child('at').isNumber() && (newData.child('kind').val() != 'grant' || newData.child('rewards').val() <= 1000) && (newData.child('kind').val() != 'use' || (newData.child('rewards').val() >= 15 && !newData.child('expiresAt').exists())) && (!newData.child('expiresAt').exists() || (newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > newData.child('at').val())) && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 80))",
+     "kind": {},
+     "rewards": {},
+     "at": {},
+     "expiresAt": {},
+     "note": {},
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "chats": {
+   "$mkey": {
+    ".read": true,
+    "messages": {
+     "$id": {
+      ".write": "($mkey.matches(/^[A-Za-z0-9]{12,40}$/) && !data.exists() && newData.exists() && newData.child('from').val() == 'member' && root.child('key_rewards/members/'+$mkey).exists()) || (auth != null && auth.uid == '__OWNER_UID__' && !data.exists() && newData.exists() && newData.child('from').val() == 'owner')",
+      ".validate": "newData.hasChildren(['from','text','t']) && (newData.child('from').val() == 'member' || newData.child('from').val() == 'owner') && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 500 && newData.child('t').isNumber() && newData.child('t').val() <= now + 600000 && newData.child('t').val() >= now - 600000 && (!newData.child('name').exists() || (newData.child('from').val() == 'member' && newData.child('name').isString() && newData.child('name').val().length <= 40))",
+      "from": {},
+      "text": {},
+      "t": {},
+      "name": {},
+      "$other": {
+       ".validate": false
+      }
+     }
+    },
+    "ownerSeen": {
+     ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+     ".validate": "newData.isNumber()"
+    },
+    "memberSeen": {
+     ".write": "$mkey.matches(/^[A-Za-z0-9]{12,40}$/) && root.child('key_rewards/members/'+$mkey).exists()",
+     ".validate": "newData.isNumber() && newData.val() <= now + 600000"
+    },
     "$other": {
      ".validate": false
     }

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="robots" content="noindex,nofollow">
+<title>My Key Rewards | Key Technologies.si</title>
+<meta name="theme-color" content="#0f171e">
+<link rel="icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="/fonts/lato.css">
+<style>
+  :root{--bg:#0f171e;--card:#19232f;--card2:#222f3d;--line:#2c3c4e;--ink:#f6f8fb;--dim:#9db0c4;--key:#00a8e1;--key2:#4fc8f0;--warn:#ffb84d;color-scheme:dark;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:var(--ink);font:15px/1.35 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  #app{height:100vh;height:-webkit-fill-available;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);background:radial-gradient(700px 320px at 85% -80px,rgba(0,168,225,.16) 0%,transparent 70%),radial-gradient(520px 260px at 0% 0%,rgba(240,169,26,.07) 0%,transparent 70%),var(--bg);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);}
+  button{font:inherit;color:inherit;} a{color:var(--key2);} :focus-visible{outline:2px solid var(--key2);outline-offset:2px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 8px;min-height:46px;}
+  .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);} .brand img{display:block;width:42px;height:auto;filter:drop-shadow(0 0 4px rgba(255,200,40,.6)) drop-shadow(0 0 11px rgba(255,200,40,.35));}
+  .word{font-size:15px;font-weight:900;letter-spacing:.09em;white-space:nowrap;} .word i{font-style:normal;color:var(--key);}
+  main{min-height:0;position:relative;}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;gap:10px;padding:6px 16px 16px;min-height:0;overflow:hidden;} .screen.on{display:flex;}
+  .lab{font-size:11.5px;color:var(--dim);font-weight:800;text-transform:uppercase;letter-spacing:.09em;}
+  .hero{position:relative;background:linear-gradient(155deg,#17324a 0%,#10243a 55%,#0f1d2c 100%);border:1px solid rgba(79,200,240,.22);border-radius:22px;padding:18px 18px 16px;box-shadow:0 10px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden;text-align:center;}
+  .hero::after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,168,225,.25),transparent 70%);pointer-events:none;}
+  .hnum{font-size:60px;font-weight:900;line-height:1;letter-spacing:-.02em;margin:4px 0 2px;position:relative;z-index:1;} .hsub{font-size:13px;color:var(--dim);position:relative;z-index:1;}
+  .bar{height:10px;background:#111b26;border-radius:8px;overflow:hidden;margin:12px 0 4px;border:1px solid var(--line);position:relative;z-index:1;} .bar i{display:block;height:10px;background:linear-gradient(90deg,#00a8e1,#4fc8f0);}
+  .warn{border:1px solid rgba(255,184,77,.4);background:rgba(255,184,77,.07);border-radius:14px;padding:9px 12px;font-size:14px;color:#ffd99a;font-weight:700;text-align:center;}
+  .ok{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:9px 12px;font-size:14px;color:var(--dim);text-align:center;}
+  .btn{min-height:50px;border-radius:14px;border:1px solid var(--line);background:var(--card2);font-weight:800;cursor:pointer;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink);position:relative;}
+  .btn.p{background:linear-gradient(135deg,#00a8e1,#0a86c0);border-color:transparent;color:#04121b;box-shadow:0 6px 16px rgba(0,168,225,.28);} .btn:active{transform:scale(.98);}
+  .bdg{position:absolute;top:-6px;right:-4px;min-width:22px;height:22px;border-radius:11px;background:var(--warn);color:#2a1a00;font-size:12px;font-weight:900;display:grid;place-items:center;padding:0 6px;box-shadow:0 0 0 3px var(--bg);} .bdg[hidden]{display:none;}
+  .grow{flex:1;min-height:0;overflow:hidden;} .act{display:flex;flex-direction:column;} .arow{height:40px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);font-size:14px;} .arow:last-child{border:none;}
+  .dot{width:26px;min-width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(79,200,240,.14);color:var(--key2);font-weight:900;font-size:14px;} .dot.u{background:rgba(255,184,77,.14);color:var(--warn);}
+  .arow .t{flex:1;min-width:0;} .arow .t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;} .arow .t small{color:var(--dim);font-size:11.5px;} .arow>b{flex:none;font-variant-numeric:tabular-nums;} .pos{color:var(--key2);} .neg{color:var(--warn);}
+  .empty{color:var(--dim);padding:10px 4px;font-size:14px;}
+  .fine{font-size:11.5px;color:var(--dim);line-height:1.4;text-align:center;}
+  .top2{display:flex;align-items:center;gap:10px;} .top2 h2{flex:1;margin:0;font-size:19px;font-weight:900;} .ibtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;flex:none;} .ibtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .msgs{display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:0;overflow:hidden;}
+  .bub{max-width:82%;padding:9px 12px;border-radius:18px;font-size:15px;line-height:1.35;overflow-wrap:anywhere;} .bub small{display:block;font-size:11px;opacity:.65;margin-top:2px;}
+  .bub.me{align-self:flex-end;background:linear-gradient(135deg,#00a8e1,#0a86c0);color:#04121b;border-bottom-right-radius:6px;} .bub.them{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:6px;}
+  #tForm{display:flex;gap:8px;} #tForm input{flex:1;min-width:0;height:48px;border-radius:24px;padding:0 16px;font:inherit;color:var(--ink);background:#111b26;border:1px solid var(--line);} #tForm .btn{min-height:48px;width:48px;padding:0;border-radius:50%;flex:none;}
+  input::placeholder{color:#6f8499;}
+  #toast{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 8px);z-index:90;background:linear-gradient(135deg,#17324a,#10243a);border:1px solid rgba(79,200,240,.45);border-radius:16px;padding:10px 14px;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;cursor:pointer;} #toast.on{display:block;} #toast b{display:block;font-size:14.5px;} #toast span{font-size:13px;color:var(--dim);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .msg{font-size:13.5px;font-weight:700;min-height:18px;text-align:center;color:var(--warn);}
+  .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  @media (max-height:640px){.hnum{font-size:46px;} .hero{padding:12px;} .arow{height:34px;} .screen{gap:8px;}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="app">
+<header><a class="brand" href="index.html" aria-label="Key Rewards"><img src="key-platform/assets/key-logo.svg" alt="" width="42" height="18"><span class="word">KEY <i>REWARDS</i></span></a></header>
+<main>
+  <section class="screen on" id="s-wallet" aria-label="My rewards">
+    <h1 class="sr">My Key Rewards</h1>
+    <div class="hero"><div class="lab" style="position:relative;z-index:1">Your rewards</div><div class="hnum" id="bal">0</div><div class="hsub">available to use for free food</div><div class="bar" aria-hidden="true"><i id="barI" style="width:0"></i></div><div class="hsub" id="barT"></div></div>
+    <div id="expLine" class="ok"></div>
+    <button class="btn p" id="goChat" type="button">Message Shane<span class="bdg" id="bdg" hidden>0</span></button>
+    <div class="lab">Recent</div>
+    <div class="grow act" id="hist"></div>
+    <p class="fine">Rewards can only be used for free food at participating restaurants. They have no cash value and cannot be sold or exchanged for cash. Every offer is at least 15 rewards. The date each reward expires is shown when you receive it.</p>
+  </section>
+  <section class="screen" id="s-chat" aria-label="Messages">
+    <div class="top2"><button class="ibtn" id="back" type="button" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Shane</h2></div>
+    <div class="msgs grow" id="msgs" aria-live="polite"></div>
+    <div class="msg" id="err" role="status"></div>
+    <form id="tForm"><label class="sr" for="tText">Message</label><input type="text" id="tText" maxlength="500" placeholder="Write a message" autocomplete="off"><button class="btn p" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form>
+  </section>
+  <section class="screen" id="s-none" aria-label="No code"><h1 style="font-size:22px;margin:8px 0 0">Open your own link</h1><p style="color:var(--dim)">To see your rewards and message us, open this page from the restaurant check-in page on the phone you used.</p></section>
+</main>
+</div>
+<script src="key-platform/kr-engine.js"></script>
+<script>
+(function(){
+var kr=KR.create(KR.localStore('main'));
+var $=function(s){return document.querySelector(s)}, esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var mk=(new URLSearchParams(location.search).get('m')||'').replace(/[^A-Za-z0-9]/g,''), name='';
+try{if(!mk)mk=localStorage.getItem('kr_member_key')||'';name=localStorage.getItem('kr_member_name')||''}catch(e){}
+var d=function(t){return new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})};
+var tf=function(t){var x=new Date(t);return x.toDateString()===new Date().toDateString()?x.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):x.toLocaleDateString(undefined,{month:'short',day:'numeric'})};
+var tab='wallet',lastUnread=-1;
+function show(n){tab=n;[].forEach.call(document.querySelectorAll('.screen'),function(el){el.classList.toggle('on',el.id==='s-'+n)})}
+if(!/^[A-Za-z0-9]{12,40}$/.test(mk)){show('none');return}
+function drawWallet(){
+  return kr.walletOf(mk).then(function(w){var b=w.balance;
+    $('#bal').textContent=b.available.toLocaleString();
+    var pct=Math.min(100,Math.round(b.available/KR.MIN_OFFER*100));$('#barI').style.width=pct+'%';$('#barT').textContent=b.available>=KR.MIN_OFFER?'You can use these on a free-food offer.':b.available+' of '+KR.MIN_OFFER+' toward your first offer';
+    var e=$('#expLine');
+    if(b.expiringSoon){e.className='warn';e.textContent=b.expiringSoon+' of your rewards expire on '+d(b.nextExpiry)+'. Use them before then.'}
+    else if(b.expired&&!b.available){e.className='ok';e.textContent=b.expired+' rewards have expired.'}
+    else if(b.nextExpiry){e.className='ok';e.textContent='Your next rewards expire on '+d(b.nextExpiry)+'.'+(b.expired?' '+b.expired+' have expired.':'')}
+    else{e.className='ok';e.textContent=b.available?'Your rewards have no expiry date.':'No rewards yet. Check in at a guest night to earn some.'}
+    var box=$('#hist'),n=Math.max(1,Math.floor(box.clientHeight/(window.matchMedia('(max-height:640px)').matches?34:40)));
+    box.innerHTML=w.entries.length?w.entries.slice(0,n).map(function(x){var use=x.kind==='use';return '<div class="arow"><span class="dot '+(use?'u':'')+'" aria-hidden="true">'+(use?'&minus;':'+')+'</span><span class="t"><b>'+esc(x.note||'Rewards')+'</b>'+(x.expiresAt?'<small>Expires '+d(x.expiresAt)+'</small>':'')+'</span><b class="'+(use?'neg':'pos')+'">'+(use?'-':'+')+x.rewards+'</b></div>'}).join(''):'<div class="empty">Nothing yet.</div>';
+  });
+}
+function toast(text){var el=$('#toast');el.innerHTML='<b>New message from Shane</b><span>'+esc(text)+'</span>';el.classList.add('on');el.onclick=function(){el.classList.remove('on');show('chat');drawChat()};setTimeout(function(){el.classList.remove('on')},5000)}
+function badge(u){var b=$('#bdg');b.hidden=!u;b.textContent=u>9?'9+':u}
+function poll(){return kr.memberUnread(mk).then(function(u){if(lastUnread>=0&&u>lastUnread&&tab!=='chat'){kr.listThread(mk).then(function(ms){var l=ms.filter(function(m){return m.from==='owner'}).pop();if(l)toast(l.text)})}lastUnread=u;badge(tab==='chat'?0:u);if(tab==='chat')drawChat();else drawWallet()})}
+function drawChat(){return kr.listThread(mk).then(function(ms){
+  $('#msgs').innerHTML=ms.length?ms.slice(-14).map(function(m){return '<div class="bub '+(m.from==='member'?'me':'them')+'">'+esc(m.text)+'<small>'+tf(m.t)+'</small></div>'}).join(''):'<div class="empty" style="text-align:center">Write to us about your rewards. We will reply here.</div>';
+  if(tab==='chat'){kr.markSeen(mk,'member');lastUnread=0;badge(0)}});}
+$('#goChat').onclick=function(){show('chat');drawChat();setTimeout(function(){$('#tText').focus()},50)};
+$('#back').onclick=function(){show('wallet');poll()};
+$('#tForm').onsubmit=function(e){e.preventDefault();var v=$('#tText').value.trim();if(!v)return;$('#err').textContent='';
+  kr.sendMessage(mk,{from:'member',text:v,name:name}).then(function(){$('#tText').value='';drawChat()},function(){$('#err').textContent='We could not send that. Please ask staff for help.'})};
+window.addEventListener('storage',function(e){if(e.key&&e.key.indexOf('kr_sandbox_')===0)poll()});
+setInterval(poll,3000);
+drawWallet().then(poll);
+})();
+</script>
+</body>
+</html>

@@ -49,7 +49,7 @@ var app=$('#app');
 function card(h){app.innerHTML='<div class="card">'+(h.indexOf('<h1')<0?'<h1 class="sr">Your Key Rewards</h1>':'')+h+'</div>'}
 function rewards(ev){
   kr.getShare(eid,mkey).then(function(s){
-    if(s){card('<span class="pill">Rewards received</span><p class="big" style="margin:10px 0 4px">'+s.rewards+'</p><p>Key Rewards from <b>'+esc(ev.title)+'</b>.</p><p class="dim">Every free-food offer is at least 15 rewards. Keep collecting and use them for free food at participating restaurants.</p><div class="bar" aria-hidden="true"><i style="width:'+Math.min(100,Math.round(s.rewards/15*100))+'%"></i></div><p class="dim">'+s.rewards+' of 15 toward your first offer.</p>')}
+    if(s){card('<span class="pill">Rewards received</span><p class="big" style="margin:10px 0 4px">'+s.rewards+'</p><p>Key Rewards from <b>'+esc(ev.title)+'</b>.</p><p class="dim">Every free-food offer is at least 15 rewards. Keep collecting and use them for free food at participating restaurants.</p><p><a href="key-rewards-me.html">My rewards, expiry dates and messages</a></p><div class="bar" aria-hidden="true"><i style="width:'+Math.min(100,Math.round(s.rewards/15*100))+'%"></i></div><p class="dim">'+s.rewards+' of 15 toward your first offer.</p>')}
     else card('<h1>This event has ended</h1><p>You did not receive rewards from <b>'+esc(ev.title)+'</b>. Staff confirm who was there before rewards are shared.</p>');
   });
 }
@@ -62,7 +62,7 @@ function start(){
       if(ev.status==='closed'){rewards(ev);return}
       kr.listCheckins(eid).then(function(all){
         var mine=all.filter(function(c){return c.mkey===mkey})[0];
-        if(mine){card('<span class="pill">You are checked in</span><h1 style="margin-top:10px">Thanks, '+esc(mine.name)+'</h1><p>You are checked in at <b>'+esc(rn)+'</b>. Staff confirm who is there. Rewards are shared equally among confirmed guests after the event ends.</p><p class="dim">Come back to this page after the event to see your rewards.</p><button class="btn" id="ref" type="button">Check again</button>');$('#ref').onclick=start;return}
+        if(mine){card('<span class="pill">You are checked in</span><h1 style="margin-top:10px">Thanks, '+esc(mine.name)+'</h1><p>You are checked in at <b>'+esc(rn)+'</b>. Staff confirm who is there. Rewards are shared equally among confirmed guests after the event ends.</p><p class="dim">Come back to this page after the event to see your rewards.</p><button class="btn" id="ref" type="button">Check again</button><p style="margin:14px 0 0"><a href="key-rewards-me.html">My rewards and messages</a></p>');$('#ref').onclick=start;return}
         card('<h1>Check in at '+esc(rn)+'</h1><p class="dim">'+esc(ev.title)+'</p><form id="f" novalidate><label for="nm">Your first name</label><input id="nm" name="first" autocomplete="given-name" maxlength="40" value="'+esc(name)+'" required><button class="btn" type="submit">Check in</button></form><div class="msg" id="m" role="status"></div>');
         $('#f').onsubmit=function(e){e.preventDefault();var n=KR.cleanName($('#nm').value),m=$('#m');m.className='msg';
           if(!n){m.className='msg err';m.textContent='Please enter your first name.';$('#nm').focus();return}

@@ -9,11 +9,12 @@ database rules deployed, and Shane saying go. Nothing here changes the live LVR 
 | Engine | `sites/key-technologies/key-platform/kr-engine.js` | All the logic (split, check-in, approve, close, redeem, summary). Two storage back ends: `localStore` (sandbox, this browser only) and `firebaseStore` (live REST, not switched on). |
 | Owner / restaurant dashboard | `sites/key-technologies/key-rewards-dashboard.html` | Overview KPIs and chart, create events, check-in tab with QR code and approve/reject, close and issue (with a confirm step), redemptions, restaurants, rules. Sandbox banner on top. noindex, no visitor counter. |
 | Phone app (owner) | `sites/key-technologies/key-rewards-app.html` (+ `rewards-app.webmanifest`) | Built to fit one phone screen with no scrolling (checked at 320x568, 360x640, 375x667, 390x844, 412x915, 430x932). Home, Everyone (searchable, sortable, paged list), Add (pick or create a person, amount, reason), Events (approve all, close). Person sheet: balance, history, add rewards, record a free-food use. Landscape shows a hold-upright notice. |
+| Member wallet and chat | `sites/key-technologies/key-rewards-me.html` | What a member sees: rewards available, expiry dates (a warning when some expire within 14 days), recent activity, and a message thread with Shane. Fits one phone screen. In the sandbox it is opened from a person's sheet in the phone app ("Open their member view"). |
 | Member check-in page | `sites/key-technologies/key-rewards-checkin.html?e=<event id>` | Guest enters a first name; the phone gets a private random member code. After the event it shows the member's rewards. |
 | Public demo / service | `key-platform/demos/key-rewards-events.html`, homepage card "Key Rewards: Guest Events & Loyalty" | Sliders and a close button, made-up data. |
 | Database rules (staged) | `.github/db-task/rules/key-rewards-rules.json` | Section `key_rewards`. Placeholder `__OWNER_UID__` (the deploy script fills it). |
 | Deploy script (NOT run) | `.github/db-task/mac/deploy-key-rewards-rules.sh` | Backs up current rules, adds only `key_rewards`, runs live checks, restores the old rules if any check fails. |
-| Tests | `.github/db-task/rewards-tests/test-kr-engine.js` (56 checks, pure logic) and `.github/db-task/rules/test-key-rewards.js` (113 checks: the rules plus the engine through the Firebase store, in the emulator) | Run the second with `env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY NO_PROXY='*' bash .github/db-task/rules/run-kr-rules-test.sh` |
+| Tests | `.github/db-task/rewards-tests/test-kr-engine.js` (80 checks, pure logic) and `.github/db-task/rules/test-key-rewards.js` (161 checks: the rules plus the engine through the Firebase store, in the emulator) | Run the second with `env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY NO_PROXY='*' bash .github/db-task/rules/run-kr-rules-test.sh` |
 
 ## Data (all under `key_rewards/`)
 - `restaurants/<rid>`: name, city, country, active, createdAt. Owner only.
@@ -22,6 +23,8 @@ database rules deployed, and Shane saying go. Nothing here changes the live LVR 
 - `shares/<eid>/<mkey>`: rewards, at. Written once by the owner when the event closes, never above the cap or the pool. A member can read their own by knowing their private code; nobody can list them.
 - `members/<mkey>`: name (first name only), createdAt, source (owner or event). Owner only. Created when an event closes (for approved guests) or when the owner adds a person.
 - `grants/<id>`: mkey, rewards (whole number 1 to 1000), reason, at. Rewards the owner adds by hand. Owner only, write once, only to someone in `members`.
+- `wallet/<mkey>/<id>`: each person's own ledger: kind (event, grant, use), rewards, at, expiresAt (optional, always after `at`), note. Owner writes, write once, nothing can be changed or deleted afterwards (so an expiry date can never be shortened after the fact). A person reads their own wallet by their private code; nobody can list wallets. Balances are computed from here.
+- `chats/<mkey>/messages/<id>`: from (member or owner), text (1 to 500 characters), t, name (members only). A member can post only if they are on the people list (so strangers cannot flood the inbox) and only as `member`; only the owner can post as `owner`; messages cannot be edited or deleted. `ownerSeen` / `memberSeen` mark what has been read. A person reads their own conversation by their private code; only the owner can list all conversations.
 - `redemptions/<id>`: mkey, rid, offer, rewards (whole number, at least 15), at. Owner only, write once.
 - Unknown fields are refused everywhere.
 
@@ -39,3 +42,15 @@ share = the smaller of (pool divided by approved guests, rounded down) and the p
 2. Owner sign-in set up (owner-login.sh).
 3. Run `deploy-key-rewards-rules.sh` on the Mac (after Shane says go).
 4. Switch the dashboard and check-in page from `KR.localStore` to `KR.firebaseStore` (one line each) and add the owner token; run one real event with a friendly restaurant.
+
+## Expiry (added 2026-11-07, Shane: give rewards an expiration date instead of taking them away)
+- Every batch of rewards can carry an expiry date set WHEN IT IS ISSUED: events have "expiresDays" (default 90, 0 = never); hand-added rewards pick 30, 60, 90 or 180 days in the phone app. The date is shown to the member next to each entry and cannot be shortened later.
+- Rewards past their date are simply no longer available (shown as "expired"); nothing is deducted or clawed back by hand.
+- When a person uses rewards, the ones that expire soonest are used first.
+- "Expiring soon" means within 14 days; it shows on Home, in the people list and the person's sheet, and as a warning on the member's wallet.
+- NEEDS ATTORNEY REVIEW before going live: expiring rewards is regulated in some places, must be disclosed in the program terms before anyone earns, and some places have unclaimed-property or minimum-period rules. The wording used is "expires on", never "use it or lose it".
+
+## Messages and alerts
+- Sandbox: the owner app shows a badge on the message button and a banner when a new message arrives (instantly across tabs of the same browser, otherwise within 3 seconds), and optional browser alerts while the app is open (More, Turn on alerts). "Demo: receive a test message" in More fakes a member message.
+- NOT built: alerts while the app is closed. That needs either a push-notification service (a server) or an email alert (the site already sends lead alerts through Formspree's free plan; the same could be used for member messages once live). Decide before going live.
+- Limits: no spam filter beyond the people-list requirement; messages are plain text, no photos; threads show the latest 14 messages on screen.

@@ -94,17 +94,31 @@
   #rot{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:center;justify-content:center;text-align:center;padding:24px;font-weight:800;font-size:18px;}
   @media (orientation:landscape) and (max-height:520px){#rot{display:flex;}}
   @media (max-height:640px){:root{--row:50px;} .hnum{font-size:36px;} .hero{padding:10px 12px 9px;} .hstats{margin-top:8px;padding-top:7px;} h1.hi{font-size:20px;} .bigbal b{font-size:40px;} .amt .big b{font-size:38px;} .arow{height:30px;} .screen{gap:8px;} .btn{min-height:46px;} .who{min-height:50px;} .amt button{height:48px;} .spark{height:40px;} nav button.add .c{width:46px;height:46px;margin-top:-22px;}}
+  @media (max-height:600px){#s-add{gap:6px;} #s-add .chips button{height:36px;font-size:13px;} #s-add .amt{padding:6px 8px;} #s-add .amt button{height:42px;font-size:24px;} #s-add .amt .big b{font-size:30px;} #s-add .who{min-height:46px;} #s-add .seg button{height:34px;} #s-add .lab{margin-bottom:3px!important;} #s-add .msg{min-height:0;} #aGo{min-height:46px!important;}}
   @media (max-width:340px){.word{font-size:13.5px;letter-spacing:.07em;} .brand img{width:36px;} .hnum{font-size:34px;}}
+  .ibtn{position:relative;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;} .ibtn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .bdg{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--warn);color:#2a1a00;font-size:11.5px;font-weight:900;display:grid;place-items:center;padding:0 5px;box-shadow:0 0 0 3px var(--bg);}
+  .bdg[hidden]{display:none;}
+  .top2{display:flex;align-items:center;gap:10px;} .top2 h2{flex:1;min-width:0;margin:0;font-size:19px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);text-transform:none;letter-spacing:0;} .top2 .ibtn{width:40px;height:40px;border-radius:12px;flex:none;}
+  .trow{height:64px;flex:none;display:flex;align-items:center;gap:12px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;padding:0 2px;cursor:pointer;}
+  .trow .pn small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .trow .pn b.u{color:var(--ink);} .tmeta{text-align:right;flex:none;font-size:11.5px;color:var(--dim);} .tmeta i{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--key);color:#04121b;font-style:normal;font-weight:900;font-size:11.5px;margin-top:4px;padding:0 5px;}
+  .msgs{display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:0;overflow:hidden;}
+  .bub{max-width:82%;padding:9px 12px;border-radius:18px;font-size:15px;line-height:1.35;word-wrap:break-word;overflow-wrap:anywhere;} .bub small{display:block;font-size:11px;opacity:.65;margin-top:2px;}
+  .bub.me{align-self:flex-end;background:linear-gradient(135deg,#00a8e1,#0a86c0);color:#04121b;border-bottom-right-radius:6px;} .bub.them{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:6px;}
+  #tForm{display:flex;gap:8px;} #tForm input{flex:1;height:48px;border-radius:24px;padding:0 16px;} #tForm .btn{min-height:48px;width:48px;padding:0;border-radius:50%;flex:none;}
+  #toast{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 8px);z-index:90;background:linear-gradient(135deg,#17324a,#10243a);border:1px solid rgba(79,200,240,.45);border-radius:16px;padding:10px 14px;box-shadow:0 12px 30px rgba(0,0,0,.5);display:none;cursor:pointer;} #toast.on{display:block;} #toast b{display:block;font-size:14.5px;} #toast span{font-size:13px;color:var(--dim);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .warnline{font-size:13px;color:var(--warn);font-weight:700;text-align:center;margin:-2px 0 0;} .dimline{font-size:13px;color:var(--dim);text-align:center;}
   .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
 </head>
 <body>
 <div id="rot" role="alert">Please hold your phone upright.</div>
+<div id="toast" role="status" aria-live="polite"></div>
 <div id="app">
 <header>
   <a class="brand" href="key-rewards-app.html" aria-label="Key Rewards"><img src="key-platform/assets/key-logo.svg" alt="" width="42" height="18"><span class="word">KEY <i>REWARDS</i></span></a>
-  <span class="date" id="today"></span>
+  <button class="ibtn" id="chatBtn" type="button" aria-label="Messages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span class="bdg" id="chatBdg" hidden>0</span></button>
 </header>
 
 <main>
@@ -132,6 +146,7 @@
     <div class="amt"><button type="button" id="aMinus" aria-label="Less">&minus;</button><div class="big"><b id="aVal">10</b><span>rewards to add</span></div><button type="button" id="aPlus" aria-label="More">+</button></div>
     <div class="chips" id="aChips" role="group" aria-label="Quick amounts"></div>
     <div><div class="lab" style="margin-bottom:6px">Reason</div><div class="chips" id="rChips" role="group" aria-label="Reason"></div></div>
+    <div><div class="lab" style="margin-bottom:6px">Expires after</div><div class="chips" id="xChips" role="group" aria-label="Expires after"></div></div>
     <button class="btn g" id="aGo" type="button" style="min-height:54px">Add rewards</button>
     <div class="msg" id="aMsg" role="status"></div>
   </section>
@@ -140,6 +155,17 @@
   <section class="screen" id="s-events" role="tabpanel" aria-labelledby="t-events">
     <div class="list" id="eList"></div>
     <div class="pager"><button class="btn" id="ePrev" type="button">&lsaquo; Prev</button><span id="eInfo" role="status"></span><button class="btn" id="eNext" type="button">Next &rsaquo;</button></div>
+  </section>
+  <!-- MESSAGES -->
+  <section class="screen" id="s-chat" role="region" aria-label="Messages">
+    <div class="top2"><button class="ibtn" id="cBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Messages</h2></div>
+    <div class="list" id="cList"></div>
+    <div class="pager"><button class="btn" id="cPrev" type="button">&lsaquo; Prev</button><span id="cInfo" role="status"></span><button class="btn" id="cNext" type="button">Next &rsaquo;</button></div>
+  </section>
+  <section class="screen" id="s-thread" role="region" aria-label="Conversation">
+    <div class="top2"><button class="ibtn" id="tBack" type="button" aria-label="Back to messages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2 id="tName"></h2><button class="btn" id="tRew" type="button" style="min-height:40px;padding:0 12px;font-size:13.5px">Rewards</button></div>
+    <div class="msgs grow" id="tMsgs" aria-live="polite"></div>
+    <form id="tForm"><label class="sr" for="tText">Message</label><input type="text" id="tText" maxlength="500" placeholder="Write a message" autocomplete="off"><button class="btn p" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form>
   </section>
 </main>
 
@@ -157,8 +183,11 @@
 <dialog id="dPerson" class="short" aria-labelledby="dpT"><div class="dh"><h3 id="dpT"></h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
   <div class="bigbal"><b id="dpBal">0</b><span>rewards available</span></div>
   <div class="mini3"><div><b id="dpR">0</b><span>from events</span></div><div><b id="dpG">0</b><span>added by you</span></div><div><b id="dpU">0</b><span>used</span></div></div>
+  <div class="warnline" id="dpExp" hidden></div>
   <div class="lab">Recent</div><div class="act" id="dpHist" style="min-height:102px"></div>
   <div class="two"><button class="btn g" id="dpAdd" type="button">Add rewards</button><button class="btn" id="dpUse" type="button">Free food use</button></div>
+  <button class="btn" id="dpMsg" type="button">Message</button>
+  <a class="dimline" id="dpView" href="#" target="_blank" rel="noopener" style="color:var(--key2)">Open their member view (demo)</a>
 </dialog>
 <!-- picker -->
 <dialog id="dPick" aria-labelledby="dkT"><div class="dh"><h3 id="dkT">Choose a person</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
@@ -182,7 +211,7 @@
 <!-- menu -->
 <dialog id="dMenu" class="short" aria-labelledby="dmT"><div class="dh"><h3 id="dmT">More</h3><button class="x" type="button" data-close aria-label="Close">&times;</button></div>
   <p style="margin:0;color:var(--dim);font-size:13px">This is a test version. Everything is saved on this device only, and nothing is issued, sent or paid.</p>
-  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
+  <div class="menu"><button class="btn p" id="mSeed" type="button">Load demo data</button><button class="btn" id="mDemoMsg" type="button">Demo: receive a test message</button><button class="btn" id="mAlerts" type="button">Turn on alerts</button><a class="btn" href="key-rewards-dashboard.html">Full dashboard</a><button class="btn" id="mReset" type="button">Erase test data</button><a class="btn" href="index.html">Back to the site</a></div><div class="msg" id="mMsg" role="status"></div>
 </dialog>
 
 <script src="key-platform/kr-engine.js"></script>
@@ -194,13 +223,13 @@ var fmt=function(n){return Number(n||0).toLocaleString()};
 var ago=function(t){if(!t)return '';var d=Math.floor((Date.now()-t)/86400000);return d<1?'today':d===1?'yesterday':d<30?d+' days ago':new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'})};
 var COLS=['#4fc8f0','#7ad8f5','#00a8e1','#8fb8ff','#a995ff','#9fb0c4','#6fb3d9'];
 var colorOf=function(k){var h=0,i;for(i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))|0;return COLS[Math.abs(h)%COLS.length]};
+var dshort=function(t){return t?new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'}):''};
 var CHEV='<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-var S={tab:'home',ledger:[],events:[],rests:[],sum:null,grants:{},q:'',sort:'az',page:0,pickQ:'',pickPage:0,ePage:0,mode:'ex',who:'',amt:10,reason:'',person:'',useAmt:15,closeId:''};
+var S={exp:90,tab:'home',threads:[],unread:0,lastUnread:-1,thread:'',cPage:0,tab0:'home',ledger:[],events:[],rests:[],sum:null,grants:{},q:'',sort:'az',page:0,pickQ:'',pickPage:0,ePage:0,mode:'ex',who:'',amt:10,reason:'',person:'',useAmt:15,closeId:''};
 var SORTS=[['az','A to Z'],['most','Most'],['new','Newest']];
 var REASONS=['Welcome','Thank you','Event','Other'];
-$('#today').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
 
-function load(){return Promise.all([kr.ledger(),kr.listEvents(),kr.listRestaurants(),kr.summary(),kr.store.get('key_rewards/grants')]).then(function(r){S.ledger=r[0];S.events=r[1];S.rests=r[2];S.sum=r[3];S.grants=r[4]||{};drawAll()})}
+function load(){return Promise.all([kr.ledger(),kr.listEvents(),kr.listRestaurants(),kr.summary(),kr.store.get('key_rewards/grants')]).then(function(r){S.ledger=r[0];S.events=r[1];S.rests=r[2];S.sum=r[3];S.grants=r[4]||{};drawAll();return loadInbox()})}
 function drawAll(){drawHome();drawPeople();drawAdd();drawEvents()}
 function byName(a,b){return a.name.localeCompare(b.name)}
 function sorted(list){var a=list.slice();if(S.sort==='az')a.sort(byName);else if(S.sort==='most')a.sort(function(x,y){return y.available-x.available||byName(x,y)});else a.sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)||byName(x,y)});return a}
@@ -217,9 +246,9 @@ function drawHome(){
   var W=7*86400000,now=Date.now(),wk=[0,0,0,0,0,0],add=function(at,v){var i=5-Math.floor((now-at)/W);if(i>=0&&i<=5)wk[i]+=v};
   S.events.forEach(function(e){if(e.status==='closed')add(e.closedAt||e.createdAt,e.issued||0)});
   Object.keys(S.grants).forEach(function(k){add(S.grants[k].at,S.grants[k].rewards)});
-  var mx=Math.max(1,Math.max.apply(null,wk)),h=small()?36:44;
+  var exps=S.ledger.reduce(function(a,m){return a+(m.expiringSoon||0)},0),mx=Math.max(1,Math.max.apply(null,wk)),h=small()?36:44;
   $('#hero').innerHTML='<div class="hrow"><div><div class="lab">Rewards given</div><div class="hnum">'+fmt(t.issued+t.granted)+'</div><div class="hsub">all time</div></div><div class="spark" role="img" aria-label="Rewards given per week, last 6 weeks: '+wk.join(', ')+'">'+wk.map(function(v,i){return '<i class="'+(i===5?'cur':'')+'" style="height:'+Math.max(3,Math.round(v/mx*h))+'px"></i>'}).join('')+'</div></div>'+
-   '<div class="hstats"><div><b>'+fmt(t.members)+'</b><span>People</span></div><div><b>'+fmt(t.outstanding)+'</b><span>Not used yet</span></div><div><b>'+fmt(t.open)+'</b><span>Events open</span></div></div>';
+   '<div class="hstats"><div><b>'+fmt(t.members)+'</b><span>People</span></div><div><b>'+fmt(t.outstanding)+'</b><span>Not used yet</span></div><div><b'+(exps?' style="color:var(--warn)"':'')+'>'+fmt(exps)+'</b><span>Expiring soon</span></div></div>';
   var items=[];
   S.sum.redemptions.forEach(function(x){var p=S.ledger.filter(function(m){return m.mkey===x.mkey})[0];items.push({at:x.at,t:(p?p.name:'Someone')+' used rewards',v:-x.rewards,k:'u'})});
   S.events.forEach(function(e){if(e.status==='closed')items.push({at:e.closedAt||e.createdAt,t:'Event closed: '+e.title,v:e.issued,k:'e'})});
@@ -233,7 +262,7 @@ $('#goAdd').onclick=function(){show('add')};$('#goPeople').onclick=function(){sh
 // ---------- people list (paged, nothing scrolls) ----------
 function listHtml(arr,page,rows){
   var start=page*rows;return arr.slice(start,start+rows).map(function(m){
-    return '<button class="prow" type="button" data-k="'+esc(m.mkey)+'"><span class="av" style="background:'+colorOf(m.mkey)+'" aria-hidden="true">'+esc((m.name[0]||'?').toUpperCase())+'</span><span class="pn"><b>'+esc(m.name)+'</b><small>'+(m.source==='owner'?'Added by you':m.source==='event'?'Event guest':'Guest')+(m.last?' &middot; '+ago(m.last):'')+'</small></span><span class="bal"><b>'+fmt(m.available)+'</b><small>rewards</small></span>'+CHEV+'</button>'}).join('');
+    return '<button class="prow" type="button" data-k="'+esc(m.mkey)+'"><span class="av" style="background:'+colorOf(m.mkey)+'" aria-hidden="true">'+esc((m.name[0]||'?').toUpperCase())+'</span><span class="pn"><b>'+esc(m.name)+'</b><small>'+(m.source==='owner'?'Added by you':m.source==='event'?'Event guest':'Guest')+(m.expiringSoon?'':(m.last?' &middot; '+ago(m.last):''))+'</small>'+(m.expiringSoon?'<small style="color:var(--warn);display:block">'+fmt(m.expiringSoon)+' expire '+dshort(m.nextExpiry)+'</small>':'')+'</span><span class="bal"><b>'+fmt(m.available)+'</b><small>rewards</small></span>'+CHEV+'</button>'}).join('');
 }
 function drawPeople(){
   var sl=SORTS.filter(function(s){return s[0]===S.sort})[0][1];$('#pSort').textContent=sl;$('#pSort').setAttribute('aria-label','Sort order: '+sl+'. Tap to change');
@@ -255,10 +284,13 @@ function openPerson(k){
   var m=S.ledger.filter(function(x){return x.mkey===k})[0];if(!m)return;S.person=k;
   $('#dpT').textContent=m.name;$('#dpBal').textContent=fmt(m.available);$('#dpR').textContent=fmt(m.received);$('#dpG').textContent=fmt(m.granted);$('#dpU').textContent=fmt(m.redeemed);
   $('#dpUse').disabled=m.available<KR.MIN_OFFER;
+  $('#dpView').href='key-rewards-me.html?m='+encodeURIComponent(k);
+  var xe=$('#dpExp');xe.hidden=!(m.expiringSoon||m.expired);xe.textContent=(m.expiringSoon?m.expiringSoon+' expire '+dshort(m.nextExpiry)+'. ':'')+(m.expired?m.expired+' have expired.':'');
   $('#dPerson').showModal();
   kr.historyOf(k).then(function(h){var box=$('#dpHist'),n=3;box.innerHTML=h.length?h.slice(0,n).map(function(i){return '<div class="arow"><span class="dot '+(i.rewards<0?'u':'')+'" aria-hidden="true">'+(i.rewards<0?'&minus;':'+')+'</span><span>'+esc(i.text)+'</span><b class="'+(i.rewards>=0?'pos':'neg')+'">'+(i.rewards>=0?'+':'')+i.rewards+'</b></div>'}).join(''):'<div class="empty">No activity yet.</div>'});
 }
 $('#dpAdd').onclick=function(){S.who=S.person;S.mode='ex';$('#dPerson').close();show('add')};
+$('#dpMsg').onclick=function(){$('#dPerson').close();openThread(S.person)};
 $('#dpUse').onclick=function(){var m=S.ledger.filter(function(x){return x.mkey===S.person})[0];if(!m)return;$('#duWho').textContent=m.name+' has '+m.available+' rewards.';$('#duRest').innerHTML=S.rests.map(function(r){return '<option value="'+esc(r.id)+'">'+esc(r.name)+'</option>'}).join('');S.useAmt=Math.min(Math.max(15,KR.MIN_OFFER),m.available);$('#uVal').textContent=S.useAmt;$('#uMsg').textContent='';$('#dPerson').close();$('#dUse').showModal()};
 function stepUse(d){var m=S.ledger.filter(function(x){return x.mkey===S.person})[0];S.useAmt=Math.max(KR.MIN_OFFER,Math.min(m?m.available:15,S.useAmt+d));$('#uVal').textContent=S.useAmt}
 $('#uMinus').onclick=function(){stepUse(-5)};$('#uPlus').onclick=function(){stepUse(5)};
@@ -273,6 +305,7 @@ function drawAdd(){
   else $('#whoBox').innerHTML='<label class="sr" for="newName">First name</label><input type="text" id="newName" maxlength="40" placeholder="First name of the new person" autocomplete="off" style="height:56px;border-radius:16px" value="'+esc(S.newName||'')+'">';
   $('#aVal').textContent=S.amt;
   $('#aChips').innerHTML=[5,10,20,50].map(function(v){return '<button type="button" data-v="'+v+'" aria-pressed="'+(S.amt===v)+'">'+v+'</button>'}).join('');
+  $('#xChips').innerHTML=[30,60,90,180].map(function(v){return '<button type="button" data-x="'+v+'" aria-pressed="'+(S.exp===v)+'">'+v+' days</button>'}).join('');
   $('#rChips').innerHTML=REASONS.map(function(r){return '<button type="button" data-r="'+r+'" aria-pressed="'+(S.reason===r)+'">'+r+'</button>'}).join('');
   var name=S.mode==='ex'?(m?m.name:''):(S.newName||'').trim(),ready=!!name&&!!S.reason;
   $('#aGo').disabled=!ready;$('#aGo').textContent=ready?('Add '+S.amt+' to '+name):'Add rewards';
@@ -282,13 +315,14 @@ $('#whoBox').onclick=function(e){if(e.target.closest('#pickBtn'))openPick()};
 $('#whoBox').oninput=function(e){if(e.target.id==='newName'){S.newName=e.target.value;var name=(S.newName||'').trim(),ready=!!name&&!!S.reason;$('#aGo').disabled=!ready;$('#aGo').textContent=ready?('Add '+S.amt+' to '+name):'Add rewards'}};
 $('#aMinus').onclick=function(){S.amt=Math.max(1,S.amt-5<1?1:S.amt-5);drawAdd()};$('#aPlus').onclick=function(){S.amt=Math.min(KR.MAX_GRANT,S.amt+5);drawAdd()};
 $('#aChips').onclick=function(e){var b=e.target.closest('[data-v]');if(b){S.amt=+b.dataset.v;drawAdd()}};
+$('#xChips').onclick=function(e){var b=e.target.closest('[data-x]');if(b){S.exp=+b.dataset.x;drawAdd()}};
 $('#rChips').onclick=function(e){var b=e.target.closest('[data-r]');if(b){S.reason=b.dataset.r;drawAdd()}};
 $('#aGo').onclick=function(){
   var msg=$('#aMsg');msg.className='msg';msg.textContent='';
   var p=S.mode==='new'?kr.addMember({name:S.newName}).then(function(m){return m.mkey}):Promise.resolve(S.who);
-  p.then(function(k){return kr.grant({mkey:k,rewards:S.amt,reason:S.reason}).then(function(){return k})}).then(function(k){
+  p.then(function(k){return kr.grant({mkey:k,rewards:S.amt,reason:S.reason,expiresDays:S.exp}).then(function(){return k})}).then(function(k){
     var wasNew=S.mode==='new';S.who=k;S.mode='ex';S.newName='';
-    return load().then(function(){var m=S.ledger.filter(function(x){return x.mkey===k})[0];msg.className='msg good';msg.textContent='Added '+S.amt+' to '+(m?m.name:'')+(wasNew?' (new). ':'. ')+'Now has '+(m?m.available:'')+'.'});
+    return load().then(function(){var m=S.ledger.filter(function(x){return x.mkey===k})[0];msg.className='msg good';msg.textContent='Added '+S.amt+' to '+(m?m.name:'')+(wasNew?' (new). ':'. ')+'Expires in '+S.exp+' days.'});
   }).catch(function(e){msg.className='msg err';msg.textContent=e.message});
 };
 function openPick(){S.pickQ='';S.pickPage=0;$('#kq').value='';$('#dPick').showModal();drawPick()}
@@ -325,6 +359,45 @@ $('#eList').onclick=function(e){var a=e.target.closest('[data-ap]'),c=e.target.c
 $('#dcNo').onclick=function(){$('#dClose').close()};
 $('#dcYes').onclick=function(){$('#dClose').close();kr.closeEvent(S.closeId).then(load).catch(function(e){alert(e.message)})};
 
+// ---------- messages and alerts ----------
+var tfmt=function(t){var d=new Date(t),today=new Date();return d.toDateString()===today.toDateString()?d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString(undefined,{month:'short',day:'numeric'})};
+var toastT;function toast(name,text,k){var el=$('#toast');el.innerHTML='<b>New message from '+esc(name)+'</b><span>'+esc(text)+'</span>';el.classList.add('on');el.onclick=function(){el.classList.remove('on');openThread(k)};clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('on')},5000)}
+function notify(title,body){try{if(window.Notification&&Notification.permission==='granted'&&document.hidden)new Notification(title,{body:body})}catch(e){}}
+function loadInbox(){return kr.threads().then(function(t){
+  S.threads=t;var u=t.reduce(function(a,x){return a+x.unread},0),b=$('#chatBdg');b.hidden=!u;b.textContent=u>9?'9+':u;
+  if(S.lastUnread>=0&&u>S.lastUnread){var n=t.filter(function(x){return x.unread})[0];if(n&&!(S.tab==='thread'&&S.thread===n.mkey)){toast(n.name,n.last.text,n.mkey);notify('New message from '+n.name,n.last.text)}}
+  S.lastUnread=u;document.title=(u?'('+u+') ':'')+'Key Rewards App | Key Technologies.si';
+  if(S.tab==='chat')drawChat();if(S.tab==='thread')drawThread();
+})}
+function drawChat(){
+  var list=$('#cList'),H=64;list.innerHTML='<div style="height:'+H+'px;visibility:hidden"></div>';var rows=Math.max(1,Math.floor(list.clientHeight/H)),arr=S.threads,pages=Math.max(1,Math.ceil(arr.length/rows));
+  if(S.cPage>=pages)S.cPage=pages-1;if(S.cPage<0)S.cPage=0;
+  list.innerHTML=arr.length?arr.slice(S.cPage*rows,S.cPage*rows+rows).map(function(x){return '<button class="trow" type="button" data-t="'+esc(x.mkey)+'"><span class="av" style="background:'+colorOf(x.mkey)+'" aria-hidden="true">'+esc((x.name[0]||'?').toUpperCase())+'</span><span class="pn"><b'+(x.unread?' class="u"':'')+'>'+esc(x.name)+'</b><small'+(x.unread?' style="color:var(--ink)"':'')+'>'+(x.last.from==='owner'?'You: ':'')+esc(x.last.text)+'</small></span><span class="tmeta">'+tfmt(x.last.t)+(x.unread?'<br><i>'+x.unread+'</i>':'')+'</span></button>'}).join(''):'<div class="empty">No messages yet. When someone writes to you, it shows up here. You can also open a person on the Everyone tab and tap Message.</div>';
+  $('#cInfo').textContent=arr.length?(S.cPage+1)+' of '+pages:'';$('#cPrev').disabled=S.cPage<=0;$('#cNext').disabled=S.cPage>=pages-1;
+}
+$('#cList').onclick=function(e){var b=e.target.closest('[data-t]');if(b)openThread(b.dataset.t)};
+$('#cPrev').onclick=function(){S.cPage--;drawChat()};$('#cNext').onclick=function(){S.cPage++;drawChat()};
+$('#chatBtn').onclick=function(){show('chat')};$('#cBack').onclick=function(){show(S.prev||'home')};$('#tBack').onclick=function(){show('chat')};
+function nameOf(k){var m=S.ledger.filter(function(x){return x.mkey===k})[0],t=S.threads.filter(function(x){return x.mkey===k})[0];return m&&m.name!=='Unknown'?m.name:t?t.name:'Guest'}
+function openThread(k){S.thread=k;show('thread');drawThread(true)}
+function drawThread(focus){
+  var k=S.thread;if(!k)return;$('#tName').textContent=nameOf(k);$('#tRew').hidden=!S.ledger.some(function(x){return x.mkey===k});
+  kr.listThread(k).then(function(ms){
+    $('#tMsgs').innerHTML=ms.length?ms.slice(-14).map(function(m){return '<div class="bub '+(m.from==='owner'?'me':'them')+'">'+esc(m.text)+'<small>'+tfmt(m.t)+'</small></div>'}).join(''):'<div class="empty" style="text-align:center">No messages yet. Say hello.</div>';
+    if(S.tab==='thread'&&ms.some(function(m){return m.from==='member'}))return kr.markSeen(k,'owner').then(function(){return kr.threads()}).then(function(t){S.threads=t;var u=t.reduce(function(a,x){return a+x.unread},0),b=$('#chatBdg');b.hidden=!u;b.textContent=u>9?'9+':u;S.lastUnread=u;document.title=(u?'('+u+') ':'')+'Key Rewards App | Key Technologies.si'});
+  });
+  if(focus)setTimeout(function(){$('#tText').focus()},50);
+}
+$('#tRew').onclick=function(){if(S.thread)openPerson(S.thread)};
+$('#tForm').onsubmit=function(e){e.preventDefault();var v=$('#tText').value.trim();if(!v)return;kr.sendMessage(S.thread,{from:'owner',text:v}).then(function(){$('#tText').value='';drawThread();loadInbox()})};
+window.addEventListener('storage',function(e){if(e.key&&e.key.indexOf('kr_sandbox_')===0)load()});
+setInterval(function(){loadInbox()},3000);
+$('#mDemoMsg').onclick=function(){var ms=S.ledger.filter(function(x){return x.name!=='Unknown'});if(!ms.length){$('#mMsg').className='msg err';$('#mMsg').textContent='Load demo data first.';return}
+  var m=ms[Math.floor(Math.random()*ms.length)],texts=['Hi! How long do my rewards last?','Can I use my rewards at the restaurant tonight?','Thank you for the welcome rewards!','When is the next guest night?'];
+  kr.sendMessage(m.mkey,{from:'member',text:texts[Math.floor(Math.random()*texts.length)],name:m.name}).then(function(){$('#dMenu').close();return loadInbox()})};
+$('#mAlerts').onclick=function(){var m=$('#mMsg');if(!window.Notification){m.className='msg err';m.textContent='This browser cannot show alerts.';return}
+  Notification.requestPermission().then(function(r){m.className='msg'+(r==='granted'?' good':' err');m.textContent=r==='granted'?'Alerts are on while the app is open.':'Alerts were not allowed.'})};
+
 // ---------- menu, tabs, dialogs ----------
 $('#menuBtn').onclick=function(){$('#mMsg').textContent='';$('#dMenu').showModal()};
 function seed(){return kr.seedDemo().then(load).then(function(){$('#mMsg').className='msg good';$('#mMsg').textContent='Demo data loaded.'})}
@@ -332,8 +405,8 @@ $('#seed1').onclick=seed;$('#mSeed').onclick=seed;
 $('#mReset').onclick=function(){if(confirm('Erase all test data on this device?'))store.clear().then(load).then(function(){$('#mMsg').className='msg good';$('#mMsg').textContent='Erased.'})};
 document.addEventListener('click',function(e){if(e.target.closest('[data-close]')){var d=e.target.closest('dialog');if(d)d.close()}});
 var tabs=[].slice.call(document.querySelectorAll('nav [role=tab]'));
-function show(n){S.tab=n;tabs.forEach(function(b){var on=b.dataset.tab===n;b.setAttribute('aria-selected',on);document.getElementById('s-'+b.dataset.tab).classList.toggle('on',on)});
-  if(n==='home')drawHome();if(n==='people')drawPeople();if(n==='add')drawAdd();if(n==='events')drawEvents()}
+function show(n){if(S.tab!=='chat'&&S.tab!=='thread')S.prev=S.tab;S.tab=n;tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===n)});[].forEach.call(document.querySelectorAll('.screen'),function(el){el.classList.toggle('on',el.id==='s-'+n)});
+  if(n==='home')drawHome();if(n==='people')drawPeople();if(n==='add')drawAdd();if(n==='events')drawEvents();if(n==='chat')drawChat()}
 tabs.forEach(function(b){b.onclick=function(){show(b.dataset.tab)}});
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(S.sum){drawAll();if($('#dPick').open)drawPick()}},120)});
 load();
