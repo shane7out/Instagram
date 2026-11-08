@@ -3,10 +3,10 @@
 # taps fake digits (1,2,3: never a real PIN), and reports dots filled, overlays over the keys, page errors, failed requests and version.json.
 # Nothing is written to the database or to the live site.
 set +e
-mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null 2>&1 && npm i playwright@1.49.1 >/dev/null 2>&1
+mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null 2>&1 && npm i playwright@latest >/dev/null 2>&1; npx playwright --version; cat /etc/os-release | head -2
 sudo apt-get update -y >/tmp/apt.log 2>&1; tail -2 /tmp/apt.log
-npx playwright install-deps webkit chromium >/tmp/pwdeps.log 2>&1; tail -3 /tmp/pwdeps.log
-npx playwright install webkit chromium >/tmp/pwinstall.log 2>&1; tail -3 /tmp/pwinstall.log
+npx playwright install-deps webkit >/tmp/pwdeps.log 2>&1; tail -3 /tmp/pwdeps.log
+npx playwright install webkit >/tmp/pwinstall.log 2>&1; tail -3 /tmp/pwinstall.log
 cat > /tmp/pw/diag.js <<'NODE'
 const pw = require('/tmp/pw/node_modules/playwright');
 const URL = 'https://lvr-data-a60c1.web.app/';
