@@ -1,37 +1,45 @@
 #!/bin/bash
-# READ-ONLY audit 3 (Shane, 2026-11-07: "the database should hold 1,781, I don't know why I'm only reading 1,586"). Nothing is written to the database.
-# (1) saves the LIVE dashboard page (code only) into the repo so the Total logic of the live version can be read; (2) looks for a group of ~195 records the screen may be leaving out.
+# READ-ONLY diagnostic (Shane, 2026-11-08: the CRM PIN pad ignores taps on his iPhone). Loads the LIVE page in iPhone-style WebKit and Chromium,
+# taps fake digits (1,2,3: never a real PIN), and reports dots filled, overlays over the keys, page errors, failed requests and version.json.
+# Nothing is written to the database or to the live site.
 set +e
-cat > /tmp/audit3.js <<'NODE'
-const fs = require('fs');
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-const get = async p => { const r = await fetch(DB + p + '.json', { signal: AbortSignal.timeout(90000) }); if (!r.ok) throw new Error(p + ' HTTP ' + r.status); return r.json(); };
-const rows = o => !o ? [] : Array.isArray(o) ? o.map((v, i) => [String(i), v]).filter(([, v]) => v) : Object.entries(o).filter(([, v]) => v);
-const numOf = ([k, v]) => String((v && typeof v === 'object' && v.num != null) ? v.num : k);
+mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null 2>&1 && npm i playwright@1.49.1 >/dev/null 2>&1
+npx playwright install --with-deps webkit chromium >/tmp/pwinstall.log 2>&1; tail -2 /tmp/pwinstall.log
+cat > /tmp/pw/diag.js <<'NODE'
+const pw = require('/tmp/pw/node_modules/playwright');
+const URL = 'https://lvr-data-a60c1.web.app/';
 (async () => {
-  for (const u of ['https://lvr-data-a60c1.web.app/', 'https://lvr-data-a60c1.web.app/index.html']) {
-    try { const r = await fetch(u + '?t=' + Date.now(), { signal: AbortSignal.timeout(90000), cache: 'no-store' }); const t = await r.text(); console.log('fetch ' + u + ' -> HTTP ' + r.status + ', ' + t.length + ' chars, APP_VERSION ' + ((t.match(/APP_VERSION\s*=\s*(\d+)/) || [])[1])); if (r.ok && t.length > 100000) { fs.writeFileSync('.github/db-task/fetched/live-dashboard.html', t); console.log('saved live-dashboard.html'); break; } } catch (e) { console.log('fetch ' + u + ' failed ' + e.message); }
+  try { const r = await fetch(URL + 'version.json?t=' + Date.now(), { cache: 'no-store' }); console.log('version.json -> HTTP ' + r.status + ' ' + (await r.text()).slice(0, 200)); } catch (e) { console.log('version.json failed ' + e.message); }
+  for (const [label, type, devName] of [['iPhone WebKit', pw.webkit, 'iPhone 15'], ['iPhone-size Chromium', pw.chromium, 'iPhone 15'], ['Desktop Chromium', pw.chromium, null]]) {
+    let b; try { b = await type.launch(); } catch (e) { console.log(label + ': cannot launch ' + e.message.slice(0, 120)); continue; }
+    const ctx = await b.newContext(devName ? { ...pw.devices[devName] } : { viewport: { width: 1280, height: 800 } });
+    const p = await ctx.newPage(); const errs = [], bad = [];
+    p.on('pageerror', e => errs.push(String(e).slice(0, 200)));
+    p.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 160)); });
+    p.on('requestfailed', r => bad.push(r.url().slice(0, 90) + ' ' + (r.failure() || {}).errorText));
+    p.on('response', r => { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url().slice(0, 90)); });
+    try {
+      await p.goto(URL, { waitUntil: 'load', timeout: 60000 }); await p.waitForTimeout(4000);
+      const info = await p.evaluate(() => {
+        const k = document.querySelector('.pin-key'); const r = k && k.getBoundingClientRect(); let top = null;
+        if (r) { const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); top = el ? (el.tagName + '#' + el.id + '.' + String(el.className).slice(0, 40)) : null; }
+        return { pinVisible: !!document.getElementById('pin-screen') && !document.getElementById('pin-screen').classList.contains('hidden'), firstKeyTopElement: top, entryType: typeof _pinEntry, pinKeyType: typeof pinKey, version: typeof APP_VERSION !== 'undefined' ? APP_VERSION : null, locked: typeof _pinLocked !== 'undefined' ? _pinLocked : null };
+      });
+      console.log(label + ' state: ' + JSON.stringify(info));
+      for (const d of ['1', '2', '3']) { try { if (devName) await p.tap('.pin-key:has-text("' + d + '")', { timeout: 5000 }); else await p.click('.pin-key:has-text("' + d + '")', { timeout: 5000 }); } catch (e) { console.log(label + ' tap ' + d + ' failed: ' + e.message.split('\n')[0].slice(0, 160)); } }
+      await p.waitForTimeout(500);
+      console.log(label + ': dots filled after tapping 1,2,3 = ' + await p.locator('.pin-dot.filled').count() + ' | entry now: ' + (await p.evaluate(() => typeof _pinEntry === 'string' ? _pinEntry.length + ' digits' : typeof _pinEntry)));
+      if (label === 'iPhone WebKit') await p.screenshot({ path: '/tmp/pw/webkit.png' });
+    } catch (e) { console.log(label + ' ERROR ' + e.message.split('\n')[0].slice(0, 200)); }
+    console.log(label + ' page errors: ' + JSON.stringify(errs.slice(0, 8)));
+    console.log(label + ' failed/4xx requests: ' + JSON.stringify(bad.slice(0, 10)));
+    await b.close();
   }
-  const [cus, del, crec] = await Promise.all([get('/dashboard/customrecords'), get('/dashboard/deleted'), get('/dashboard_crec')]);
-  const C = rows(cus), D = new Set(rows(del).map(([k, v]) => (v && typeof v === 'object' && v.num != null) ? String(v.num) : k)), R = rows(crec);
-  const live = C.filter(x => !D.has(numOf(x)));
-  console.log('customrecords ' + C.length + ', tombstones ' + D.size + ', customrecords not tombstoned ' + live.length + ', dashboard_crec ' + R.length);
-  const cn = new Set(C.map(numOf)); console.log('dashboard_crec nums not in customrecords: ' + R.filter(x => !cn.has(numOf(x))).length + ' | crec nums in customrecords: ' + R.filter(x => cn.has(numOf(x))).length);
-  const props = {}; live.forEach(([, v]) => { if (v && typeof v === 'object') Object.keys(v).forEach(k => { props[k] = (props[k] || 0) + 1; }); });
-  console.log('fields in live customrecords: ' + Object.entries(props).sort((a, b) => b[1] - a[1]).map(([k, n]) => k + ':' + n).join(' '));
-  Object.keys(props).forEach(k => { const d = {}; live.forEach(([, v]) => { const x = v && v[k]; if (typeof x === 'string' || typeof x === 'boolean' || typeof x === 'number') d[x] = (d[x] || 0) + 1; }); const keys = Object.keys(d); if (keys.length > 1 && keys.length <= 14) console.log('  ' + k + ' = ' + keys.map(z => z + ':' + d[z]).join(', ')); });
-  const ig = {}; live.forEach(([, v]) => { const h = String((v && (v.instagram || v.ig || v.igHandle)) || '').replace(/^@/, '').toLowerCase().trim(); if (h) ig[h] = (ig[h] || 0) + 1; });
-  const dupExtra = Object.values(ig).filter(n => n > 1).reduce((a, n) => a + n - 1, 0);
-  console.log('no instagram handle: ' + live.filter(([, v]) => !String((v && (v.instagram || v.ig || v.igHandle)) || '').trim()).length + ' | extra records sharing an Instagram handle: ' + dupExtra);
-  const nm = {}; live.forEach(([, v]) => { const h = String((v && v.name) || '').toLowerCase().replace(/[^a-z0-9]/g, ''); if (h) nm[h] = (nm[h] || 0) + 1; });
-  console.log('extra records sharing a name: ' + Object.values(nm).filter(n => n > 1).reduce((a, n) => a + n - 1, 0) + ' | no name: ' + live.filter(([, v]) => !(v && v.name)).length);
-  const nums = live.map(numOf).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
-  const bucket = {}; nums.forEach(n => { const b = Math.floor(n / 1000) * 1000; bucket[b] = (bucket[b] || 0) + 1; });
-  console.log('live customrecords by num range: ' + Object.entries(bucket).map(([b, n]) => b + 's:' + n).join(' '));
-})().catch(e => console.log('ERROR: ' + e.message));
+})();
 NODE
-node /tmp/audit3.js
-git config user.name "db-task-bot"
-git config user.email "db-task-bot@users.noreply.github.com"
-git add .github/db-task/fetched/live-dashboard.html 2>/dev/null
-if git diff --cached --quiet; then echo "nothing new to commit"; else git commit -m "fetch: live dashboard page (code only) for the Total audit" && git push origin HEAD:claude/master-file-e6ofy0 && echo pushed; fi
+node /tmp/pw/diag.js
+[ -f /tmp/pw/webkit.png ] && cp /tmp/pw/webkit.png /home/runner/work/Instagram/Instagram/.github/db-task/fetched/crm-pin-webkit.png
+cd /home/runner/work/Instagram/Instagram 2>/dev/null || true
+git config user.name "db-task-bot"; git config user.email "db-task-bot@users.noreply.github.com"
+git add .github/db-task/fetched/crm-pin-webkit.png 2>/dev/null
+if git diff --cached --quiet; then echo "nothing new to commit"; else git commit -m "fetch: CRM PIN screen as iPhone WebKit sees it (diagnostic)" && git push origin HEAD:claude/master-file-e6ofy0 && echo pushed; fi
