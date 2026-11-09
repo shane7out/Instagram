@@ -31,3 +31,9 @@ html[data-look="light"] .foot-fine{opacity:1!important;color:#4d5f87!important;}
 html[data-look="light"] dt > b,html[data-look="light"] .trust-grid b,html[data-look="light"] .lang-chip,html[data-look="light"] .t-card blockquote{color:var(--ink)!important;}
 html[data-look="light"] aside li,html[data-look="light"] .lead,html[data-look="light"] .roots p,html[data-look="light"] main p,html[data-look="light"] main li{color:var(--ink)!important;}
 html[data-look="light"] button[data-pp]{color:var(--ink)!important;} html[data-look="light"] button[data-pp][aria-pressed="true"]{color:#fff!important;}
+/* Light/Dark toggle button in the header (both looks) */
+#kt-theme-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:8px;border:1px solid var(--control-line);background:transparent;color:var(--ink);cursor:pointer;padding:0;}
+#kt-theme-btn:hover{border-color:var(--key-blue);}
+#kt-theme-btn:focus-visible{outline:2px solid var(--key-blue);outline-offset:2px;}
+@media (max-width:360px){#kt-theme-btn{width:36px;height:36px;} .nav-cta{gap:8px!important;} .home-btn{padding:0 8px!important;}}
+@media (max-width:340px){.home-btn{display:none!important;}}

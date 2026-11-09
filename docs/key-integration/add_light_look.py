@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Makes the LIGHT look the default on every public Key Technologies page (Shane, 2026-11-09: "I like the lighter look").
-Each page gets <html data-look="light">, a stylesheet link to key-platform/kt-light.css, a white theme-color, and a 4-line script so that
+Each page gets <html data-look="light">, a stylesheet link to key-platform/kt-light.css, a white theme-color, and a 4-line script (and key-platform/look-toggle.js, the Light/Dark button in the header) so that
 ?look=dark (remembered in that browser) puts the dark look back and ?look=light removes that choice. The light styles live ONLY in kt-light.css under
 html[data-look="light"], so deleting the attribute shows the original dark page. Replaces the earlier preview snippet (KTLOOK) if present. Idempotent.
 Run from the repo root as the LAST generator step (after add_analytics.py), because the page generators rewrite pages from scratch.
@@ -13,6 +13,7 @@ OLD = re.compile(r'<script>/\* KTLOOK \*/.*?</script>\n?', re.S)
 SW = ('<script>/* KTLOOK2 */(function(){try{var q=new URLSearchParams(location.search).get("look");if(q==="dark")localStorage.setItem("kt_look","dark");else if(q==="light")localStorage.removeItem("kt_look");'
       'if(localStorage.getItem("kt_look")==="dark")document.documentElement.removeAttribute("data-look");}catch(e){}})();</script>\n')
 LINK = '<link rel="stylesheet" href="/key-platform/kt-light.css">\n'
+TOGGLE = '<script src="/key-platform/look-toggle.js" defer></script>\n'
 done = 0
 for f in sorted(SITE.rglob('*.html')):
     rel = f.relative_to(SITE).as_posix()
@@ -24,6 +25,8 @@ for f in sorted(SITE.rglob('*.html')):
         s = re.sub(r'<html', '<html data-look="light"', s, count=1)
     if 'kt-light.css' not in s:
         s = s.replace('</head>', LINK + '</head>', 1)
+    if 'look-toggle.js' not in s:
+        s = s.replace('</head>', TOGGLE + '</head>', 1)
     if 'KTLOOK2' not in s:
         # the switch goes right after <head ...> so it runs before anything paints
         s = re.sub(r'(<head[^>]*>)', lambda m: m.group(1) + '\n' + SW.rstrip('\n'), s, count=1)
