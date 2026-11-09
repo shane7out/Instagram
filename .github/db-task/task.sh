@@ -1,34 +1,3 @@
 #!/bin/bash
-# READ-ONLY audit 8 (list every record with an empty Instagram handle, to look up real handles; nothing written) (Shane, 2026-11-09: "re-run the needs-a-DM check"). Runs the REAL live dashboard (now v474, which lists all records) in a throwaway headless Chromium with the
-# live data, every write blocked (only GET/HEAD allowed, Firebase SDK and websockets blocked), unlocked WITHOUT a PIN by calling the page's own unlock function. Reports the
-# page's own badges (Total, Need to DM) and, for the 196 records that used to be hidden (num 50802 and up), how many are DM-able, already DM'd, flagged bad IG, or have no
-# Instagram handle (those can never show as needing a DM, standing rule 10). Nothing is written anywhere.
-set +e
-mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null 2>&1 && npm i playwright@1.49.1 >/dev/null 2>&1
-npx playwright install chromium >/tmp/pwinstall.log 2>&1; tail -1 /tmp/pwinstall.log
-cat > /tmp/pw/audit8.js <<'NODE'
-const pw = require('/tmp/pw/node_modules/playwright');
-(async () => {
-  const b = await pw.chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
-  let blocked = 0;
-  await ctx.route('**/*', route => { const r = route.request(), m = r.method(), u = r.url();
-    if (m !== 'GET' && m !== 'HEAD') { blocked++; return route.abort(); }
-    if (/gstatic\.com\/firebasejs|firebaseapp\.com|googleapis\.com\/identitytoolkit|securetoken/.test(u)) { blocked++; return route.abort(); }
-    return route.continue(); });
-  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(String(e).slice(0, 160)));
-  await p.goto('https://lvr-data-a60c1.web.app/?t=' + Date.now(), { waitUntil: 'load', timeout: 90000 }); await p.waitForTimeout(3000);
-  await p.evaluate(() => { try { _coEditor = false; _applyCoEditorDmKey(); } catch (e) {} _bioUnlock(); });
-  await p.waitForTimeout(15000);
-  const r = await p.evaluate(() => {
-    const R = RESTAURANTS.filter(x => !x._isStaging); const out = {};
-    out.sampleKeys = Object.keys(R[R.length - 1] || {});
-    const empty = R.filter(x => !String(x.igHandle || '').trim());
-    out.count = empty.length;
-    out.rows = empty.map(x => [x.num, x.name, x.address || x.addr || '', x.city || '', x.phone || '', x.website || x.web || x.url || '', String(x.notes || '').slice(0, 60), (badIGMap[x.num] ? 'BADIG' : ''), (dmMap[x.num] || '')].join(' | '));
-    return out; });
-  console.log('AUDIT8 ' + JSON.stringify(r, null, 1));
-  console.log('page errors: ' + JSON.stringify(errs.slice(0, 4)) + ' | blocked requests: ' + blocked);
-  await b.close();
-})().catch(e => console.log('ERROR ' + (e.stack || e.message).slice(0, 500)));
-NODE
-node /tmp/pw/audit8.js
+# No task queued. (Last: read-only audit 8, 2026-11-09, run 474: listed the 119 records with an empty Instagram handle; script in git history, commit 6c6ef02.)
+echo "no task queued"
