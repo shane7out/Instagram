@@ -1,34 +1,36 @@
 #!/bin/bash
-# ONE-SHOT, Shane's OK (2026-11-09: "yes" = add only the 22 strongest Instagram handles): put the candidate handle for each record into dashboard/igovr/<num> (the dashboard's own
-# Instagram-override map: igHandle = igOverrideMap[num] || record.instagram) and clear that record's Bad-IG flag (dashboard/badig/<num>) so it can show as "Need to DM", as in the
-# earlier approved handle fixes. Per-key writes only; never overwrites an existing igovr entry; skips a record whose handle is already used by another record (50831 = Birria Bite 50433,
-# already in the database). 50818 keeps its earlier-approved @daikonvegansushi. Nothing is deleted except the Bad-IG flag; before-values are logged for undo.
+# READ-ONLY audit 9 (confirm the 21 new handles show up in the real dashboard) (Shane, 2026-11-09: "re-run the needs-a-DM check"). Runs the REAL live dashboard (now v474, which lists all records) in a throwaway headless Chromium with the
+# live data, every write blocked (only GET/HEAD allowed, Firebase SDK and websockets blocked), unlocked WITHOUT a PIN by calling the page's own unlock function. Reports the
+# page's own badges (Total, Need to DM) and, for the 196 records that used to be hidden (num 50802 and up), how many are DM-able, already DM'd, flagged bad IG, or have no
+# Instagram handle (those can never show as needing a DM, standing rule 10). Nothing is written anywhere.
 set +e
-cat > /tmp/apply.js <<'NODE'
-const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-const get = async p => { const r = await fetch(DB + p + '.json', { signal: AbortSignal.timeout(60000) }); if (!r.ok) throw new Error(p + ' HTTP ' + r.status); return r.json(); };
-const send = async (m, p, b) => (await fetch(DB + p + '.json', { method: m, headers: { 'Content-Type': 'application/json' }, body: b === undefined ? undefined : JSON.stringify(b), signal: AbortSignal.timeout(60000) })).status;
-const C = [[1429,"takumi_izakaya_lv"],[1436,"triplegeorgelv"],[1576,"parlourlv"],[50010,"olered"],[50400,"domakbbq"],[50816,"woktowalklv"],[50818,"daikonvegansushi"],[50819,"alexisparkresort"],[50820,"lucinospizzalv"],[50822,"vanderpumpparis"],[50825,"brooklynsbestlv"],[50826,"fishersdelilv"],[50827,"halgatteok_lv"],[50832,"hellohibachi"],[50836,"thepinkyring"],[50847,"wabagrill"],[50860,"propereatslasvegas"],[50861,"luchinirestaurant"],[50862,"krispykrunchychicken"],[50887,"netflixbites"],[50888,"goldensteerlv"]];
+mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null 2>&1 && npm i playwright@1.49.1 >/dev/null 2>&1
+npx playwright install chromium >/tmp/pwinstall.log 2>&1; tail -1 /tmp/pwinstall.log
+cat > /tmp/pw/audit9.js <<'NODE'
+const pw = require('/tmp/pw/node_modules/playwright');
 (async () => {
-  let igovr, badig, crec, custom;
-  try { igovr = (await get('/dashboard/igovr')) || {}; badig = (await get('/dashboard/badig')) || {}; crec = (await get('/dashboard_crec')) || {}; custom = (await get('/dashboard/customrecords')) || []; }
-  catch (e) { console.log('ABORT (could not read live data, nothing written): ' + e.message); return; }
-  console.log('BEFORE igovr: ' + JSON.stringify(igovr) + ' | badig count ' + Object.keys(badig).length);
-  const norm = s => String(s || '').toLowerCase().replace(/^@/, '').trim();
-  const used = new Map();
-  [crec, custom].forEach(o => Object.values(o).forEach(r => { if (r && typeof r === 'object') { const h = norm(r.instagram); if (h) used.set(h, r.num + ' ' + r.name); } }));
-  Object.entries(igovr).forEach(([n, v]) => { if (norm(v)) used.set(norm(v), 'igovr ' + n); });
-  for (const [num, h] of C) {
-    if (igovr[num]) { console.log('SKIP ' + num + ': igovr already set to ' + igovr[num]); continue; }
-    const other = used.get(h);
-    if (other && num !== 50818) { console.log('SKIP ' + num + ': @' + h + ' already used by ' + other); continue; }
-    const s1 = await send('PUT', '/dashboard/igovr/' + num, '@' + h);
-    let s2 = 'n/a'; const hadBad = badig[num] === true || badig[num] != null;
-    if (hadBad) s2 = await send('DELETE', '/dashboard/badig/' + num);
-    const back = await get('/dashboard/igovr/' + num), bb = await get('/dashboard/badig/' + num);
-    console.log((back === '@' + h && bb == null ? 'OK   ' : 'CHECK') + ' ' + num + ' @' + h + ' (igovr HTTP ' + s1 + ', badig was ' + JSON.stringify(badig[num]) + ' -> cleared HTTP ' + s2 + ')');
-  }
-  const ig2 = await get('/dashboard/igovr'); console.log('AFTER igovr entries: ' + Object.keys(ig2).length);
-})().catch(e => console.log('ERROR: ' + e.message));
+  const b = await pw.chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
+  let blocked = 0;
+  await ctx.route('**/*', route => { const r = route.request(), m = r.method(), u = r.url();
+    if (m !== 'GET' && m !== 'HEAD') { blocked++; return route.abort(); }
+    if (/gstatic\.com\/firebasejs|firebaseapp\.com|googleapis\.com\/identitytoolkit|securetoken/.test(u)) { blocked++; return route.abort(); }
+    return route.continue(); });
+  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(String(e).slice(0, 160)));
+  await p.goto('https://lvr-data-a60c1.web.app/?t=' + Date.now(), { waitUntil: 'load', timeout: 90000 }); await p.waitForTimeout(3000);
+  await p.evaluate(() => { try { _coEditor = false; _applyCoEditorDmKey(); } catch (e) {} _bioUnlock(); });
+  await p.waitForTimeout(15000);
+  const r = await p.evaluate(() => {
+    const out = {}; out.version = typeof APP_VERSION !== 'undefined' ? APP_VERSION : null;
+    out.badges = [].map.call(document.querySelectorAll('.badge'), x => x.textContent.replace(/\s+/g, ' ').trim()).slice(0, 12);
+    const dhs = _dmdHandleSet(); const R = RESTAURANTS.filter(x => !x._isStaging); out.total = R.length;
+    const cls = x => { const n = x.num; if (dmMap[n] && dmMap[n] !== 'pending') return 'alreadyDM'; if (badIGMap[n]) return 'badIG'; if (!x.igHandle) return 'noIG'; if (dhs[_igKey(x)] && !dmMap[n]) return 'dupHandleDMd'; return 'needsDM'; };
+    const nums = [1429,1436,1576,50010,50400,50816,50818,50819,50820,50822,50825,50826,50827,50832,50836,50847,50860,50861,50862,50887,50888];
+    out.rows = nums.map(n => { const x = R.find(y => Number(y.num) === n); return n + ' ' + (x ? String(x.name).slice(0, 22) + ' ig=' + x.igHandle + ' -> ' + cls(x) : 'NOT FOUND'); });
+    out.noIGnow = R.filter(x => !x.igHandle).length;
+    return out; });
+  console.log('AUDIT9 ' + JSON.stringify(r, null, 1));
+  console.log('page errors: ' + JSON.stringify(errs.slice(0, 4)) + ' | blocked requests: ' + blocked);
+  await b.close();
+})().catch(e => console.log('ERROR ' + (e.stack || e.message).slice(0, 500)));
 NODE
-node /tmp/apply.js
+node /tmp/pw/audit9.js
