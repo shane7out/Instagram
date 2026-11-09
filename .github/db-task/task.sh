@@ -38,6 +38,18 @@ const pw = require('/tmp/pw/node_modules/playwright');
     });
     console.log('after ' + t + 's: ' + JSON.stringify(r));
   }
+  const exp = await p.evaluate(async () => {
+    const out = {}; const rec = await (await fetch(FB_URL, { cache: 'no-store' })).json();
+    const cr = rec.customrecords; out.cloudCustomrecordsType = Array.isArray(cr) ? 'array' : typeof cr; out.cloudCustomrecordsLength = Array.isArray(cr) ? cr.length : Object.keys(cr || {}).length;
+    out.cloudCustomrecordsWithNum = (Array.isArray(cr) ? cr : Object.values(cr || {})).filter(x => x && x.num != null).length;
+    const nums = (Array.isArray(cr) ? cr : Object.values(cr || {})).filter(x => x && x.num != null).map(x => Number(x.num)); out.cloudMaxNum = Math.max.apply(null, nums); out.cloudHas60062 = nums.includes(60062); out.cloudHas60063 = nums.includes(60063); out.cloudCountOver50801 = nums.filter(n => n > 50801).length;
+    out.deletedInCloud = Object.keys(rec.deleted || {}).length; out.beforeApply = RESTAURANTS.length;
+    try { _applyFirebaseData(rec); } catch (e) { out.applyError = String(e).slice(0, 200); }
+    out.afterApply = RESTAURANTS.length; out.badgeAfter = (document.getElementById('s-total') || {}).textContent;
+    out.rebellionInListAfter = RESTAURANTS.filter(x => /rebellion market/i.test(String(x.name))).length; out.significantInListAfter = RESTAURANTS.filter(x => /significant other/i.test(String(x.name))).length;
+    return out;
+  });
+  console.log('MANUAL APPLY OF THE CLOUD COPY: ' + JSON.stringify(exp));
   console.log('dashboard.json requests: ' + JSON.stringify(reqs.slice(0, 12)));
   console.log('page errors: ' + JSON.stringify(errs.slice(0, 5)) + ' | blocked HTTP writes: ' + blockedHttp + ' | websocket frames passed (listen/keep-alive only): ' + passedFrames + ' | dropped: ' + droppedFrames + ' ' + JSON.stringify(droppedKinds));
   await b.close();
