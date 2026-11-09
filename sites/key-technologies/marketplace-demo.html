@@ -77,6 +77,7 @@
   .fine{font-size:12px;color:var(--ink-dim);margin-top:6px;}
   .foot{text-align:center;font-size:12px;color:var(--ink-dim);padding:0 0 40px;}
 </style>
+<script>/* KTLOOK */(function(){try{var q=new URLSearchParams(location.search).get("look");if(q==="light")localStorage.setItem("kt_look","light");else if(q==="dark")localStorage.removeItem("kt_look");if(localStorage.getItem("kt_look")==="light"){var d=document.documentElement;d.setAttribute("data-look","light");var l=document.createElement("link");l.rel="stylesheet";l.href="/key-platform/kt-light.css";document.head.appendChild(l);document.addEventListener("DOMContentLoaded",function(){var b=document.createElement("button");b.id="kt-look-pill";b.type="button";b.textContent="Light look preview \u00b7 back to dark";b.onclick=function(){try{localStorage.removeItem("kt_look")}catch(e){}location.href=location.pathname};document.body.appendChild(b);});}}catch(e){}})();</script>
 </head>
 <body>
 

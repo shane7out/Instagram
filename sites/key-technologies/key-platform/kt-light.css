@@ -1,0 +1,36 @@
+/* Key Technologies.si LIGHT LOOK (preview). Only active when <html data-look="light"> is set by the small switch in every page's head
+   (open any page with ?look=light; ?look=dark switches back). Nothing changes for visitors unless they use the switch. */
+html[data-look="light"]{
+  --bg:#f4f8fd; --bg-2:#ffffff; --card:#ffffff; --line:#d6e2f2; --ink:#0b1b4d; --ink-dim:#46598a;
+  --key-light:#0a6fb8; --key-blue:#0a6fb8; --white:#ffffff;
+  --btn-blue:#0a6fb8; --btn-blue-hover:#095a96; --control-line:#7b8fb6; color-scheme:light;
+}
+html[data-look="light"] body{background:var(--bg);color:var(--ink);}
+/* the gold key logo: darker-gold version that reads on white */
+html[data-look="light"] img[src$="key-logo.svg"]{content:url("/key-platform/assets/key-logo-light.svg");filter:none!important;}
+/* switch pill */
+#kt-look-pill{position:fixed;left:12px;bottom:12px;z-index:99999;border:1px solid #7b8fb6;background:#fff;color:#0b1b4d;border-radius:999px;padding:9px 14px;font:700 13px/1 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;box-shadow:0 6px 18px rgba(10,30,80,.2);cursor:pointer;}
+#kt-look-pill:hover{background:#eef4fc;}
+/* hard-coded dark spots on the pages */
+html[data-look="light"] header{background:rgba(255,255,255,.94)!important;}
+html[data-look="light"] .btn-primary,html[data-look="light"] .mobile-menu a.btn-primary,html[data-look="light"] .demo-strip a.btn-primary,html[data-look="light"] a.btn-primary,html[data-look="light"] button.btn-primary{color:#fff!important;}
+html[data-look="light"] .sw-card img{background:#e9f1fb!important;}
+html[data-look="light"] .about-photo img{box-shadow:0 6px 18px rgba(20,60,140,.15)!important;}
+/* guides and article text */
+html[data-look="light"] .guide p,html[data-look="light"] .guide li{color:var(--ink)!important;}
+html[data-look="light"] .guide h1,html[data-look="light"] .guide h2,html[data-look="light"] .guide h3,html[data-look="light"] .tldr b,html[data-look="light"] .tldr{color:var(--ink)!important;}
+html[data-look="light"] .byline{color:var(--ink-dim)!important;}
+/* small contrast fixes found by the automatic check */
+html[data-look="light"] .foot-fine,html[data-look="light"] #year,html[data-look="light"] #kpYear{color:#4d5f87!important;}
+html[data-look="light"] .method-step .letter{color:#0a6fb8!important;}
+html[data-look="light"] .kd-d.ok,html[data-look="light"] .Good{color:#0a6f43!important;}
+html[data-look="light"] .kd-d.bad,html[data-look="light"] .Watch{color:#8f5200!important;}
+html[data-look="light"] .Reply{color:#0a5f9f!important;} html[data-look="light"] .Idea{color:#6a36b0!important;}
+html[data-look="light"] button[aria-pressed="true"],html[data-look="light"] button.on,html[data-look="light"] button.active{color:#fff!important;}
+html[data-look="light"] button[data-c] .n{color:#0a5f9f!important;}
+/* second round: text on the blue fills, fine print, article text */
+html[data-look="light"] .primary,html[data-look="light"] .tag.solid,html[data-look="light"] .kp-tnext,html[data-look="light"] .chat-bubble.caller{color:#fff!important;}
+html[data-look="light"] .foot-fine{opacity:1!important;color:#4d5f87!important;}
+html[data-look="light"] dt > b,html[data-look="light"] .trust-grid b,html[data-look="light"] .lang-chip,html[data-look="light"] .t-card blockquote{color:var(--ink)!important;}
+html[data-look="light"] aside li,html[data-look="light"] .lead,html[data-look="light"] .roots p,html[data-look="light"] main p,html[data-look="light"] main li{color:var(--ink)!important;}
+html[data-look="light"] button[data-pp]{color:var(--ink)!important;} html[data-look="light"] button[data-pp][aria-pressed="true"]{color:#fff!important;}
