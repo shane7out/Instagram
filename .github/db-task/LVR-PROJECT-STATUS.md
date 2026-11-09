@@ -748,6 +748,7 @@ template is `.github/db-task/task.sh` from commit 37964f7 (DTS Kitchen) and the 
 shows (bio, followers, address, website) in `notes`, and do not invent phone, email or owner. This permission is ADD-ONLY: deleting or
 changing existing records still needs Shane's explicit OK in the conversation. Tell Shane afterward what was added (name, handle, num).
 Added so far under this rule: Significant Other Kitchen & Cocktails (@significantvegas), num 60062, 2026-11-06 (verified written: record, status "pending", attempts; template script in commit 3031cbb).
+Also added: Rebellion Market | Sandwich Shop + Deli (@rebellionmarketlv, Anthem, Henderson), num 60063, 2026-11-09 (verified: record, status "pending", attempts; script in commit ff7d440; 2,192 live records scanned, no duplicate found).
 
 ---
 
