@@ -11,10 +11,10 @@ def sub(a, b):
     assert a in s, a[:70]
     s = s.replace(a, b, 1)
 
-T = 'AI and Patient CRM for Chiropractors and Specialists | Key Technologies.si'
+T = 'Patient CRM & AI for Chiropractors | Key Technologies.si'
 sub('<title>AI and Intake CRM for Law Firms | Key Technologies.si</title>', '<title>%s</title>' % T)
 sub('content="Custom intake CRM, document automation and phone and text answering for law firms in Manhattan Beach, the South Bay and Las Vegas."',
-    'content="Custom patient CRM, appointment reminders, phone and text answering and a practice dashboard for chiropractors and specialist clinics in Manhattan Beach, the South Bay and Las Vegas."')
+    'content="Patient CRM, appointment reminders, phone and text answering and a practice dashboard for chiropractors and specialists in Manhattan Beach, the South Bay and Las Vegas."')
 sub('<meta property="og:title" content="AI and Intake CRM for Law Firms | Key Technologies.si">', '<meta property="og:title" content="%s">' % T)
 sub('content="Stop losing retainers to a slow intake process. Custom intake CRM and automation built around how your firm actually works."',
     'content="Stop losing patients to missed calls and empty appointment slots. Custom systems and a practice dashboard built around how your clinic actually works."')

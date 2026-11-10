@@ -9,7 +9,7 @@ D = lambda slug: ('key-platform/demos/%s.html' % slug, 'key-platform/demos/%s.ht
 MORE = {
  'business-dashboards': e(*D('business-dashboards'),
   title='Business Dashboard Demo | Key Technologies.si',
-  desc='Try a demo business dashboard for restaurants, dental and medical offices, law firms, chiropractors and specialists: sales or visits, busiest times and what needs attention. Made-up data.',
+  desc='Try a demo business dashboard for restaurants, dental and medical offices, law firms and clinics: sales or visits, busiest times and what needs attention. Made-up data.',
   name='Business dashboards and suites',
   h2='How a business dashboard works',
   steps=['We start with the questions you ask every day: how are sales or visits, what is selling, what needs attention.',

@@ -1,0 +1,24 @@
+name: site-check
+on:
+  push:
+    branches: [claude/master-file-e6ofy0]
+    paths: ['sites/key-technologies/**', '.github/site-check/**', '.github/workflows/site-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Links, titles, descriptions, sitemap (static)
+        run: python3 .github/site-check/static.py
+      - name: Serve the site and scan every page (phone widths, light and dark, accessibility)
+        run: |
+          cd .github/site-check && npm init -y >/dev/null && npm i playwright@1.49.1 axe-core@4.10.2 >/dev/null 2>&1 && npx playwright install chromium >/dev/null 2>&1
+          (cd "$GITHUB_WORKSPACE/sites/key-technologies" && python3 -m http.server 8765 >/dev/null 2>&1 &)
+          sleep 2
+          cd "$GITHUB_WORKSPACE" && NODE_PATH=.github/site-check/node_modules SITE_ROOT=sites/key-technologies node .github/site-check/browser.js
