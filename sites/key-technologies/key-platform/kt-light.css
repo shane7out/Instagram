@@ -54,3 +54,8 @@ html[data-look="light"] .welcome strong{color:#0b1b4d!important;}
 html[data-look="light"] #decayBox{background:#fff4dc!important;border-color:#e0b252!important;color:#4a3300!important;}
 html[data-look="light"] #decayBox summary,html[data-look="light"] #decayBox summary b{color:#6b4500!important;}
 @media (max-width:340px){.nav-row{padding-inline:10px!important;}}
+html[data-look="light"] #r1List li{background:#eef4fc!important;}
+html[data-look="light"] #r1List li > span:first-child{color:#8a5200!important;}
+html[data-look="light"] .tally .tflag{color:#0a5c34!important;background:rgba(10,140,70,.14)!important;}
+html[data-look="light"] .tally.hot .tflag{color:#7a4a00!important;background:rgba(240,169,26,.22)!important;}
+html[data-look="light"] .tally.low .tflag,html[data-look="light"] .tally.out .tflag{color:#a02020!important;background:rgba(255,107,107,.18)!important;}
