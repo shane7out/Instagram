@@ -19,6 +19,7 @@ input::placeholder,textarea::placeholder{color:#8a9bbd!important;}
 button,.btn{border-color:#cbdaf0;}
 header{background:#ffffff!important;border-bottom-color:#d6e2f2!important;}
 table th{color:#46598a!important;}table td,table th{border-color:#dbe6f6!important;}
+.tabs button[aria-selected=true]{color:#fff!important;}
 dialog,.modal,.sheet{background:#ffffff!important;color:#0b1b4d!important;}
 dialog::backdrop{background:rgba(8,20,50,.45)!important;}
 button[style*="2147482000"]{background:#ffffff!important;color:#0b1b4d!important;border-color:#9cb7dc!important;box-shadow:0 2px 10px rgba(20,60,140,.18)!important;}
@@ -29,13 +30,14 @@ div[style*="2147482500"] > form #oaMsg[style*="9fb3c8"]{color:#46598a!important;
 div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7dc!important;}
 </style>'''
 STUDIO = '''<style id="ktowner-light">
-:root{--bg:#f4f8fd!important;--bg2:#ffffff!important;--card:#ffffff!important;--card2:#eef4fc!important;--line:#d6e2f2!important;--ink:#0b1b4d!important;--dim:#46598a!important;--blue:#0a6fb8!important;--blue2:#0a8de6!important;--good:#0a7a4a!important;--warn:#a85f00!important;--bad:#b3302a!important;
+:root{--bg:#f4f8fd!important;--bg2:#ffffff!important;--card:#ffffff!important;--card2:#eef4fc!important;--line:#d6e2f2!important;--ink:#0b1b4d!important;--dim:#46598a!important;--blue:#0a6fb8!important;--blue2:#0a6fb8!important;--good:#0a7a4a!important;--warn:#a85f00!important;--bad:#b3302a!important;
 --s-idea:#5d6f8a;--s-script:#6b57d6;--s-made:#0a6fb8;--s-rev:#a85f00;--s-sched:#c2570f;--s-posted:#0a7a4a;color-scheme:light;}
 html,body{background:#f4f8fd!important;color:#0b1b4d!important;}
 header.top{background:rgba(255,255,255,.95)!important;}
 nav.tabs{background:rgba(255,255,255,.97)!important;border-top:1px solid #d6e2f2!important;}
 nav.tabs button[aria-selected=true]{background:rgba(10,111,184,.1)!important;}
 input,select,textarea,.chip,.pl,.out{background:#ffffff!important;color:#0b1b4d!important;border-color:#c9d9f1!important;}
+.badge{color:color-mix(in srgb,var(--c) 55%,#000)!important;}
 .pf{background:#eef4fc!important;}
 .wk i{background:#d6e2f2!important;}
 .ring .tr{stroke:#d6e2f2!important;}
