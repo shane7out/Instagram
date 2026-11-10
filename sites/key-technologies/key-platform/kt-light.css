@@ -49,3 +49,8 @@ html[data-look="light"] .msg{color:var(--ink)!important;}
 html[data-look="light"] .demo-bar{background:#e6f1fb!important;color:#2a3d6b!important;}
 html[data-look="light"] .demo-bar b{color:#8a5200!important;}
 html[data-look="light"] .demo-bar button:not(.on){color:#2a3d6b!important;}
+html[data-look="light"] .welcome{background:#e6f3fe!important;border-color:#9cc9f3!important;color:#0b1b4d!important;}
+html[data-look="light"] .welcome strong{color:#0b1b4d!important;}
+html[data-look="light"] #decayBox{background:#fff4dc!important;border-color:#e0b252!important;color:#4a3300!important;}
+html[data-look="light"] #decayBox summary,html[data-look="light"] #decayBox summary b{color:#6b4500!important;}
+@media (max-width:340px){.nav-row{padding-inline:10px!important;}}
