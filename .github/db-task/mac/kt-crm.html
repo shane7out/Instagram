@@ -9,12 +9,15 @@
 // The password is never stored. The token lives in this browser tab (or on this Mac if "Stay signed in" is ticked).
 (function () {
   if (window.OWNER_AUTH) return;
-  var DBH = 'lvr-data-a60c1-default-rtdb.firebaseio.com', SS = 'lvrOwnerAuth', KEEP = 'lvrOwnerAuthKeep';
+  var DBH = 'lvr-data-a60c1-default-rtdb.firebaseio.com', SS = 'lvrOwnerAuth', KEEP = 'lvrOwnerAuthKeep', LOCK = 'lvrOwnerAuthLock', TRIES = 'lvrOwnerAuthTries';
+  var lockKey = null, lockSalt = null;
   var st = null, apiKey = null, keyP = null, origFetch = window.fetch.bind(window), listeners = [];
   try { st = JSON.parse(sessionStorage.getItem(SS) || localStorage.getItem(KEEP) || 'null'); } catch (e) {}
+  function hasLock() { try { return !!localStorage.getItem(LOCK); } catch (e) { return false; } }
   function save(keep) {
     try { sessionStorage.removeItem(SS); localStorage.removeItem(KEEP); } catch (e) {}
     if (!st) return;
+    if (hasLock() || lockKey) { try { sessionStorage.setItem(SS, JSON.stringify(st)); } catch (e) {} if (lockKey) lockSave(); return; }  // PIN mode: nothing readable is left on the device
     try { (keep || st.keep ? localStorage : sessionStorage).setItem(keep || st.keep ? KEEP : SS, JSON.stringify(st)); } catch (e) {}
   }
   function note() { listeners.forEach(function (f) { try { f(); } catch (e) {} }); render(); }
@@ -59,7 +62,7 @@
       save(keep); note(); return st;
     });
   }
-  function signOut() { st = null; save(); note(); }
+  function signOut() { st = null; lockKey = null; lockSalt = null; try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (e) {} save(); note(); }
   // ---- tiny UI: a button bottom right + a sign-in box
   var btn = null, bar = null;
   function render() {
@@ -67,7 +70,7 @@
     if (!btn) {
       btn = document.createElement('button'); btn.type = 'button'; btn.id = 'ownerAuthBtn';
       btn.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147482000;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#0d1d33;color:#fff;font:700 13px system-ui,sans-serif;cursor:pointer;display:none;';
-      btn.addEventListener('click', function () { if (st) { if (confirm('Sign out of the owner login?')) signOut(); } else dialog(); });
+      btn.addEventListener('click', function () { if (st) menu(); else if (hasLock()) unlockUI(); else dialog(); });
       document.body.appendChild(btn);
     }
     getKey().then(function (k) {
@@ -98,11 +101,97 @@
     f.addEventListener('submit', function (e) {
       e.preventDefault(); msg.style.color = '#9fb3c8'; msg.textContent = 'Signing in…';
       signIn(back.querySelector('#oaEmail').value.trim(), back.querySelector('#oaPw').value, back.querySelector('#oaKeep').checked)
-        .then(function () { back.remove(); }).catch(function (er) { msg.style.color = '#ff9a9a'; msg.textContent = er.message || 'Sign-in did not work.'; });
+        .then(function () { back.remove(); if (back.querySelector('#oaKeep').checked && !hasLock()) pinSetup(); }).catch(function (er) { msg.style.color = '#ff9a9a'; msg.textContent = er.message || 'Sign-in did not work.'; });
     });
   }
+
+  // ---- QUICK-UNLOCK PIN (this device only). Real security stays the email + password login; the PIN just saves typing on a device you trust.
+  // The saved sign-in is encrypted with the PIN (AES-GCM, key from PBKDF2 250,000 rounds) and never stored in plain text. 5 wrong PINs erase it
+  // and ask for the email and password again. The PIN itself is never stored or sent anywhere. Use 6 to 8 digits.
+  var enc = new TextEncoder(), dec = new TextDecoder();
+  function b64(a) { var u = new Uint8Array(a), r = ''; for (var i = 0; i < u.length; i++) r += String.fromCharCode(u[i]); return btoa(r); }
+  function unb64(x) { var b = atob(x), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function deriveKey(pin, salt) {
+    return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']).then(function (k) {
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 250000, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function lockSave() {
+    if (!lockKey || !st || !st.refreshToken) return Promise.resolve();
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, lockKey, enc.encode(JSON.stringify({ refreshToken: st.refreshToken, uid: st.uid }))).then(function (ct) {
+      try { localStorage.setItem(LOCK, JSON.stringify({ s: b64(lockSalt), i: b64(iv), c: b64(ct) })); localStorage.removeItem(KEEP); } catch (e) {}
+    });
+  }
+  function shell(title, intro) {
+    var back = document.createElement('div');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;"></h3><p class="oaIntro" style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;"></p><div class="oaBody"></div><p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p><div class="oaBtns" style="display:flex;gap:8px;"></div></form>';
+    back.querySelector('h3').textContent = title; back.querySelector('.oaIntro').textContent = intro;
+    document.body.appendChild(back); return back;
+  }
+  var PINSTYLE = 'width:100%;padding:12px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:22px;letter-spacing:.3em;text-align:center;box-sizing:border-box;';
+  var BTN1 = 'flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;', BTN2 = 'flex:1;padding:12px;border-radius:10px;border:0;background:#0f67c2;color:#fff;font-weight:800;';
+  function pinSetup() {
+    var back = shell('Quick-unlock PIN', 'Optional. Next time on this device you only type this PIN instead of your email and password. Use 6 to 8 digits you will remember.');
+    back.querySelector('.oaBody').innerHTML = '<input id="oaP1" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '"><input id="oaP2" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Same PIN again" style="' + PINSTYLE + 'margin-top:8px;">';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Skip</button><button type="submit" style="' + BTN2 + '">Save PIN</button>';
+    var msg = back.querySelector('#oaMsg'); back.querySelector('#oaP1').focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    back.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault(); var a = back.querySelector('#oaP1').value, b = back.querySelector('#oaP2').value;
+      if (!/^\d{6,8}$/.test(a)) { msg.textContent = 'Use 6 to 8 digits, numbers only.'; return; }
+      if (a !== b) { msg.textContent = 'The two PINs do not match.'; return; }
+      if (!window.crypto || !crypto.subtle) { msg.textContent = 'This browser cannot do it. Keep using your email and password.'; return; }
+      msg.style.color = '#9fb3c8'; msg.textContent = 'Saving…';
+      lockSalt = crypto.getRandomValues(new Uint8Array(16));
+      deriveKey(a, lockSalt).then(function (k) { lockKey = k; return lockSave(); }).then(function () { try { localStorage.setItem(TRIES, '0'); } catch (er) {} save(); back.remove(); banner('Quick-unlock PIN saved on this device.'); render(); })
+        .catch(function () { lockKey = null; msg.style.color = '#ff9a9a'; msg.textContent = 'Could not save the PIN. Keep using your email and password.'; });
+    });
+  }
+  function unlockUI() {
+    if (document.getElementById('oaUnlock') || !hasLock()) return;
+    var back = shell('Enter your PIN', 'Owner quick-unlock for this device.'); back.id = 'oaUnlock';
+    back.querySelector('.oaBody').innerHTML = '<input id="oaPin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '">';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Use email and password</button><button type="submit" style="' + BTN2 + '">Unlock</button>';
+    var msg = back.querySelector('#oaMsg'), inp = back.querySelector('#oaPin'); inp.focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); dialog(); });
+    back.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault(); var pin = inp.value, blob = null;
+      try { blob = JSON.parse(localStorage.getItem(LOCK) || 'null'); } catch (er) {}
+      if (!blob || !/^\d{6,8}$/.test(pin)) { msg.textContent = 'Enter your 6 to 8 digit PIN.'; return; }
+      msg.style.color = '#9fb3c8'; msg.textContent = 'Checking…';
+      deriveKey(pin, unb64(blob.s)).then(function (k) {
+        return crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(blob.i) }, k, unb64(blob.c)).then(function (pt) {
+          var p = JSON.parse(dec.decode(pt)); lockKey = k; lockSalt = unb64(blob.s);
+          st = { idToken: null, refreshToken: p.refreshToken, exp: 0, uid: p.uid, keep: true };
+          try { localStorage.setItem(TRIES, '0'); } catch (er) {}
+          return refresh().then(function (t) {
+            if (!t) { try { localStorage.removeItem(LOCK); } catch (er) {} lockKey = null; st = null; back.remove(); banner('Your saved sign-in has expired. Sign in with your email and password.'); dialog(); return; }
+            back.remove(); note();
+          });
+        });
+      }).catch(function () {
+        var n = 0; try { n = (Number(localStorage.getItem(TRIES)) || 0) + 1; localStorage.setItem(TRIES, String(n)); } catch (er) {}
+        if (n >= 5) { try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} back.remove(); banner('Too many wrong PINs. The saved sign-in was erased. Use your email and password.'); dialog(); }
+        else { msg.style.color = '#ff9a9a'; msg.textContent = 'That PIN is not right (' + (5 - n) + ' tries left).'; inp.value = ''; inp.focus(); }
+      });
+    });
+  }
+  function menu() {
+    var back = shell('Owner signed in', hasLock() ? 'Quick-unlock PIN is on for this device.' : 'Quick-unlock PIN is off for this device.');
+    back.querySelector('.oaBtns').style.flexDirection = 'column';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaPinBtn" style="' + BTN2 + '">' + (hasLock() ? 'Change the quick-unlock PIN' : 'Set a quick-unlock PIN') + '</button>' +
+      (hasLock() ? '<button type="button" id="oaPinOff" style="' + BTN1 + '">Remove the quick-unlock PIN</button>' : '') +
+      '<button type="button" id="oaOut" style="' + BTN1 + '">Sign out</button><button type="button" id="oaNo" style="' + BTN1 + '">Close</button>';
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    back.querySelector('#oaOut').addEventListener('click', function () { back.remove(); signOut(); });
+    back.querySelector('#oaPinBtn').addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); } catch (er) {} lockKey = null; pinSetup(); });
+    var off = back.querySelector('#oaPinOff'); if (off) off.addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} lockKey = null; save(true); banner('Quick-unlock PIN removed. This device will ask for your email and password.'); });
+  }
   window.OWNER_AUTH = { signedIn: function () { return !!st; }, uid: function () { return st && st.uid; }, signIn: signIn, signOut: signOut, dialog: dialog, onChange: function (f) { listeners.push(f); } };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+  function boot() { render(); if (!st && hasLock()) unlockUI(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   // a signed-in token that is older than its life is renewed in the background
   setInterval(function () { if (st && Date.now() > st.exp - 120000) refresh(); }, 120000);
 })();

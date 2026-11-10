@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh
-# Gives your private owner pages a LIGHT background and the blue key (Shane, 2026-11-10). It takes each page's CURRENT LIVE copy, adds ONE colour-only style block
+# Gives your private owner pages a LIGHT background and the blue key, and adds the optional quick-unlock PIN to the sign-in box (Shane, 2026-11-10). It takes each page's CURRENT LIVE copy, adds ONE colour-only style block
 # and recolours the key mark, and puts it back. No script, text or data is changed, and nothing else that is waiting in the repo goes live with it.
 # Pages: Prospect CRM, Leads, Advertisers, Key Room, Rewards (Points) admin, Coupons admin, Invoice. A page that cannot be fetched is skipped. Nothing is uploaded if a check fails.
 set +e
@@ -16,6 +16,8 @@ cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
 PAGES="kt-crm.html key-leads.html key-advertisers.html key-room.html lvr-points-admin.html lvr-coupons-admin.html lvr-invoice.html"
 rm -rf /tmp/ownerlight-new && mkdir -p /tmp/ownerlight-new
 curl -sL -o /tmp/ownerlight-snippet.html "$RAWB/owner-light.snippet.html$CB"
+curl -sL -o /tmp/ownerlight-auth.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html$CB"
+echo "sign-in box (with quick-unlock PIN): $(wc -c < /tmp/ownerlight-auth.html) bytes" >> "$LOG"
 echo "style block: $(wc -c < /tmp/ownerlight-snippet.html) bytes" >> "$LOG"
 if ! grep -q 'ktowner-light' /tmp/ownerlight-snippet.html; then echo "Could not get the style block - nothing changed."; exit 1; fi
 DOPAGES=""
@@ -29,6 +31,7 @@ export DOPAGES
 node <<'NODE' >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
 const snippet = fs.readFileSync('/tmp/ownerlight-snippet.html', 'utf8').trim();
+let authSnip = ''; try { authSnip = fs.readFileSync('/tmp/ownerlight-auth.html', 'utf8').trim(); } catch (e) {}
 const MAP = { fffdf0:'bfe6ff', ffe45c:'4fb9ff', e49a00:'1a8be0', b87300:'0a6fb8', ffd23a:'2aa3f2', fff2a0:'8fd3ff', d48f00:'0a7fd0', f7d26a:'4cb9ff', e3a617:'1a8be0', b97a00:'0a6fb8', '8d5a00':'0a4f8f', d9a111:'2a9ae8', f0c64a:'66c3ff', a86f00:'0a5fa8' };
 let bad = 0;
 for (const f of process.env.DOPAGES.trim().split(/\s+/)) {
@@ -36,6 +39,7 @@ for (const f of process.env.DOPAGES.trim().split(/\s+/)) {
   s = s.replace(/<style id="ktowner-light">[\s\S]*?<\/style>/g, '');
   s = s.replace(/<linearGradient id="(k[a-z]*\d*)"[^>]*>[\s\S]*?<\/linearGradient>/g, m => m.replace(/(stop-color=")#([0-9a-fA-F]{6})(")/g, (a, b, c, d) => b + '#' + (MAP[c.toLowerCase()] || c) + d));
   s = s.replace('</head>', snippet + '</head>');
+  if (authSnip.includes('quick-unlock') && s.includes('<!--OWNER-AUTH-START-->')) { s = s.replace(/<!--OWNER-AUTH-START-->[\s\S]*?<!--OWNER-AUTH-END-->/, () => authSnip); console.log(f + ': sign-in box updated (quick-unlock PIN)'); }
   const blocks = [...s.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   blocks.forEach((m, i) => { fs.writeFileSync('/tmp/_ol_block.js', m[1]); const r = cp.spawnSync('node', ['--check', '/tmp/_ol_block.js'], { encoding: 'utf8' }); if (r.status) { console.log(f + ' script ' + i + ' SYNTAX CHECK FAILED'); bad++; } });
   fs.writeFileSync(p, s); console.log(f + ': light style added, key recoloured, ' + blocks.length + ' script blocks parse');
