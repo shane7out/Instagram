@@ -72,5 +72,6 @@ html[data-theme="light"] .achips button{background:#fff;color:#3f5380;border-col
 html[data-theme="light"] .crow{border-bottom-color:#dbe6f6;} html[data-theme="light"] .lvl{color:#566a94;border-color:#d0def3;} html[data-theme="light"] .lvl.k{color:#0a6fb8;border-color:#9cc9f3;background:#e6f3fe;} html[data-theme="light"] .lvl.t{background:#0a6fb8;color:#fff;border-color:transparent;}
 html[data-theme="light"] .crow .av{background:#bfe0fb;color:#0b1b4d;}
 html[data-theme="light"] .sub{color:#43578a;}
-/* 2026-11-10 Key Rewards light theme: the same navy tile + gold key mark (the old gold key faded into the white header) */
-html[data-theme="light"] .brand img.kl{content:url("/key-platform/assets/key-tile.svg");width:38px!important;height:38px!important;filter:none!important;border-radius:10px;box-shadow:0 2px 8px rgba(12,42,107,.28);}
+/* 2026-11-10 Key Rewards: the key in the brand blue (light theme = blue gradient key, dark theme and the app chip = brighter sky-blue key) */
+html[data-theme="light"] .brand img.kl{content:url("/key-platform/assets/key-blue.svg");width:46px!important;height:20px!important;filter:drop-shadow(0 1px 1.5px rgba(10,60,120,.3))!important;}
+.brand img.kd,.peek .pk img{content:url("/key-platform/assets/key-blue-dark.svg");filter:drop-shadow(0 0 5px rgba(0,168,225,.5))!important;}
