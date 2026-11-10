@@ -37,3 +37,15 @@ html[data-look="light"] button[data-pp]{color:var(--ink)!important;} html[data-l
 #kt-theme-btn:focus-visible{outline:2px solid var(--key-blue);outline-offset:2px;}
 @media (max-width:360px){#kt-theme-btn{width:36px;height:36px;} .nav-cta{gap:8px!important;} .home-btn{padding:0 8px!important;}}
 @media (max-width:340px){.home-btn{display:none!important;}}
+/* 2026-11-10: header fits 390px phones now that the Light/Dark button is in it (was 26px too wide on pages with the account icon + burger) */
+@media (max-width:480px){.nav-cta{gap:6px!important;} #kt-theme-btn,.nav-cta .home-btn,.nav-cta .burger,.nav-cta .account-icon{width:36px!important;min-width:0;}}
+@media (max-width:480px){.nav-row .btn.lr-toggle{padding:8px 8px!important;font-size:12px!important;min-height:36px!important;} .nav-row .btn.home-link{padding:8px 10px!important;min-height:36px!important;} .nav-row .logo-word{font-size:11.5px!important;letter-spacing:0!important;} .nav-row .nav-cta{gap:6px!important;}}
+@media (max-width:370px){.nav-row .btn.lr-toggle{padding:8px 6px!important;font-size:11.5px!important;} .nav-row .logo-word{font-size:10.5px!important;}}
+/* 2026-11-10 contrast fixes found by the all-pages axe scan (light look) */
+html[data-look="light"] .kt-brand{color:var(--ink)!important;}
+html[data-look="light"] .kt-brand span[style*="00a8e1"]{color:var(--key-blue)!important;}
+html[data-look="light"] .kp-chip[aria-pressed="true"],html[data-look="light"] .kp-tabs .nav.active{color:#0b1b4d!important;}
+html[data-look="light"] .msg{color:var(--ink)!important;}
+html[data-look="light"] .demo-bar{background:#e6f1fb!important;color:#2a3d6b!important;}
+html[data-look="light"] .demo-bar b{color:#8a5200!important;}
+html[data-look="light"] .demo-bar button:not(.on){color:#2a3d6b!important;}
