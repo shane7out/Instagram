@@ -1543,3 +1543,8 @@ STILL USING THE OLD PIN AS A SCREEN LOCK (cosmetic, repo-public): `lvr-coupons-a
 Owner sign-in box now offers an optional quick-unlock PIN (6-8 digits) after a "Stay signed in" login. The saved sign-in is encrypted on that device
 (PBKDF2 250k + AES-GCM); the PIN is never stored or sent; 5 wrong tries erase it. Real security remains email + password. Reaches live pages via
 `deploy-owner-light.sh` (also swaps the sign-in box) and with the website for key-pageviews.
+
+### 2026-11-10 22:55 — outside re-check after Shane created the owner login (db-task run 495, read-only)
+ownerAuth/apiKey present (good). BUT key_pageviews is still readable by a stranger (2 children), so the lockdown rules (keytech-lockdown.sh / deploy-key-rules.sh) are NOT live yet;
+key_leads and kt_crm read as empty (nothing to leak, but also not proven locked). lvr_rewards member data (name, phone, birthday, consent fields) still publicly readable (later phase).
+Next: Shane runs keytech-lockdown.sh on the Mac; then re-probe expecting key_pageviews/key_leads/kt_crm = HTTP 401.
