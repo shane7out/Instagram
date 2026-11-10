@@ -8,23 +8,19 @@ const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 const get = async p => { const r = await fetch(DB + p, { signal: AbortSignal.timeout(60000) }); return { s: r.status, t: await r.text() }; };
 const PII = /(email|e-mail|phone|mobile|tel|address|street|zip|dob|birth|password|pin|token|secret|ssn|card|name|ip\b|userAgent)/i;
 (async () => {
-  const root = await get('/.json?shallow=true');
-  console.log('ROOT shallow read (no credentials): HTTP ' + root.s + (root.s === 200 ? ' -> PUBLICLY LISTABLE' : ' -> denied'));
-  if (root.s !== 200) return;
-  const keys = Object.keys(JSON.parse(root.t) || {}).sort();
-  console.log('top-level nodes (' + keys.length + '): ' + keys.join(', '));
-  for (const k of keys) {
-    const sh = await get('/' + encodeURIComponent(k) + '.json?shallow=true');
-    if (sh.s !== 200) { console.log('  ' + k + ': HTTP ' + sh.s); continue; }
+  const NODES = ['key_leads','key_pageviews','kt_crm','ownerAuth','lvr_rewards','lvr_points','key_rewards','dashboard','dashboard_crec','dashboard_adv_crec','dashboard_exp_crec','dashboard_infl_crec','dashboard_deleted','lvr_deals','lvr_coupons','lvr_members','lvr_invoices','settings'];
+  for (const k of NODES) {
+    const sh = await get('/' + k + '.json?shallow=true');
+    if (sh.s !== 200) { console.log(k + ': HTTP ' + sh.s + ' (stranger refused)'); continue; }
     let j; try { j = JSON.parse(sh.t); } catch (e) { j = null; }
-    if (j === null) { console.log('  ' + k + ': empty'); continue; }
-    if (typeof j !== 'object') { console.log('  ' + k + ': scalar'); continue; }
+    if (j === null) { console.log(k + ': stranger can read it; empty/missing'); continue; }
+    if (typeof j !== 'object') { console.log(k + ': stranger can read it; scalar'); continue; }
     const ck = Object.keys(j); let fields = '';
     if (ck.length) {
-      const one = await get('/' + encodeURIComponent(k) + '/' + encodeURIComponent(ck[0]) + '.json?shallow=true');
+      const one = await get('/' + k + '/' + encodeURIComponent(ck[0]) + '.json?shallow=true');
       try { const o = JSON.parse(one.t); if (o && typeof o === 'object') { const f = Object.keys(o).slice(0, 14); fields = ' | sample fields: ' + f.join(',') + (f.some(x => PII.test(x)) ? '  <-- PERSONAL-LOOKING FIELDS' : ''); } } catch (e) {}
     }
-    console.log('  ' + k + ': ' + ck.length + ' children' + fields);
+    console.log(k + ': STRANGER CAN READ it, ' + ck.length + ' children' + fields);
   }
 })().catch(e => console.log('ERROR ' + e.message));
 NODE
