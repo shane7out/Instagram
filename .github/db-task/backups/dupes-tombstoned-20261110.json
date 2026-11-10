@@ -1,0 +1,262 @@
+{
+ "about": "Records tombstoned on 2026-11-10 with Shane's OK (obvious duplicates: same Instagram handle and same name as an older, already-messaged record that has the phone/address). To undo: delete dashboard_deleted/<num> and dashboard/deleted/<num>, then PUT dashboard_crec/<num> back from 'record' (all but 1329, which only lived in the dashboard/customrecords copy). Status/attempts/dm entries were left untouched.",
+ "records": [
+  {
+   "num": 50612,
+   "kept_instead": 22,
+   "record": {
+    "num": 50612,
+    "name": "Bottled Blonde Las Vegas",
+    "instagram": "@bottledblondelv",
+    "igHandle": "@bottledblondelv"
+   }
+  },
+  {
+   "num": 50736,
+   "kept_instead": 45,
+   "record": {
+    "num": 50736,
+    "name": "Papi Steak",
+    "instagram": "@papisteak",
+    "igHandle": "@papisteak"
+   }
+  },
+  {
+   "num": 50682,
+   "kept_instead": 47,
+   "record": {
+    "num": 50682,
+    "name": "Wax Rabbit",
+    "instagram": "@waxrabbitlv",
+    "igHandle": "@waxrabbitlv"
+   }
+  },
+  {
+   "num": 50780,
+   "kept_instead": 67,
+   "record": {
+    "num": 50780,
+    "name": "Mother Wolf Las Vegas",
+    "instagram": "@motherwolflv",
+    "igHandle": "@motherwolflv"
+   }
+  },
+  {
+   "num": 50759,
+   "kept_instead": 85,
+   "record": {
+    "num": 50759,
+    "name": "Scotch 80 Prime",
+    "instagram": "@scotch80prime",
+    "igHandle": "@scotch80prime"
+   }
+  },
+  {
+   "num": 50675,
+   "kept_instead": 98,
+   "record": {
+    "num": 50675,
+    "name": "Beauty & Essex Las Vegas",
+    "instagram": "@beautyandessexlv",
+    "igHandle": "@beautyandessexlv"
+   }
+  },
+  {
+   "num": 50681,
+   "kept_instead": 155,
+   "record": {
+    "num": 50681,
+    "name": "Andiamo Italian Steakhouse",
+    "instagram": "@andiamolv",
+    "igHandle": "@andiamolv"
+   }
+  },
+  {
+   "num": 50753,
+   "kept_instead": 159,
+   "record": {
+    "num": 50753,
+    "name": "Brezza Las Vegas",
+    "instagram": "@brezzalv",
+    "igHandle": "@brezzalv"
+   }
+  },
+  {
+   "num": 50720,
+   "kept_instead": 248,
+   "record": {
+    "num": 50720,
+    "name": "Bourbon Steak Las Vegas",
+    "instagram": "@bourbonsteaklv",
+    "igHandle": "@bourbonsteaklv"
+   }
+  },
+  {
+   "num": 50677,
+   "kept_instead": 312,
+   "record": {
+    "num": 50677,
+    "name": "Aburiya Raku",
+    "instagram": "@aburiyaraku",
+    "igHandle": "@aburiyaraku"
+   }
+  },
+  {
+   "num": 50620,
+   "kept_instead": 949,
+   "record": {
+    "num": 50620,
+    "name": "Fat Sal's Deli",
+    "instagram": "@fatsalsdeli",
+    "igHandle": "@fatsalsdeli"
+   }
+  },
+  {
+   "num": 50723,
+   "kept_instead": 951,
+   "record": {
+    "num": 50723,
+    "name": "Irv's Burgers",
+    "instagram": "@irvsburgers",
+    "igHandle": "@irvsburgers"
+   }
+  },
+  {
+   "num": 50765,
+   "kept_instead": 999,
+   "record": {
+    "num": 50765,
+    "name": "Echo. Taste & Sound",
+    "instagram": "@echotastesound",
+    "igHandle": "@echotastesound"
+   }
+  },
+  {
+   "num": 50678,
+   "kept_instead": 1045,
+   "record": {
+    "num": 50678,
+    "name": "Ferraro's Ristorante",
+    "instagram": "@ferraroslv",
+    "igHandle": "@ferraroslv"
+   }
+  },
+  {
+   "num": 50760,
+   "kept_instead": 1046,
+   "record": {
+    "num": 50760,
+    "name": "Cin-Cin Brewhouse & Seafood Bar",
+    "instagram": "@cincinbrewhouse",
+    "igHandle": "@cincinbrewhouse"
+   }
+  },
+  {
+   "num": 50618,
+   "kept_instead": 1054,
+   "record": {
+    "num": 50618,
+    "name": "Cured & Whey",
+    "instagram": "@curedandwhey",
+    "igHandle": "@curedandwhey"
+   }
+  },
+  {
+   "num": 50623,
+   "kept_instead": 1057,
+   "record": {
+    "num": 50623,
+    "name": "Guieb Café",
+    "instagram": "@guiebcafe",
+    "igHandle": "@guiebcafe"
+   }
+  },
+  {
+   "num": 1329,
+   "kept_instead": 1117,
+   "record": {
+    "num": 1329,
+    "name": "Taco Escobar",
+    "instagram": "@tacoescobarlv",
+    "address": "",
+    "cuisine": "",
+    "email": "",
+    "notes": "Manually added",
+    "owner": "Local Operators",
+    "phone": ""
+   },
+   "dm": "2026-06-19 7:27 AM"
+  },
+  {
+   "num": 50658,
+   "kept_instead": 1122,
+   "record": {
+    "num": 50658,
+    "name": "F The Bar",
+    "instagram": "@fergusonsthebar",
+    "igHandle": "@fergusonsthebar"
+   }
+  },
+  {
+   "num": 50676,
+   "kept_instead": 1124,
+   "record": {
+    "num": 50676,
+    "name": "Oyshi Sushi",
+    "instagram": "@oyshisushilv",
+    "igHandle": "@oyshisushilv"
+   }
+  },
+  {
+   "num": 50802,
+   "kept_instead": 1127,
+   "record": {
+    "num": 50802,
+    "name": "Rutba Indian Kitchen",
+    "instagram": "@rutbaindianvegas",
+    "notes": "Manually added"
+   }
+  },
+  {
+   "num": 50685,
+   "kept_instead": 1138,
+   "record": {
+    "num": 50685,
+    "name": "Shinjuku Ramen",
+    "instagram": "@shinjukuramenlv",
+    "igHandle": "@shinjukuramenlv"
+   }
+  },
+  {
+   "num": 50683,
+   "kept_instead": 1139,
+   "record": {
+    "num": 50683,
+    "name": "Kase Sake & Sushi",
+    "instagram": "@kaselasvegas",
+    "igHandle": "@kaselasvegas"
+   }
+  },
+  {
+   "num": 50717,
+   "kept_instead": 1144,
+   "record": {
+    "num": 50717,
+    "name": "Whip X Banh Mi",
+    "instagram": "@whipx.official",
+    "igHandle": "@whipx.official"
+   }
+  },
+  {
+   "num": 50873,
+   "kept_instead": 1164,
+   "record": {
+    "num": 50873,
+    "name": "The Laundry Room",
+    "instagram": "",
+    "notes": "Yelp migration - IG needed"
+   },
+   "igovr": "@laundryroomlv"
+  }
+ ]
+}

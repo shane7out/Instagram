@@ -1,5 +1,5 @@
 #!/bin/bash
-# audit 12 (Shane, 2026-11-09: "re-run the needs-a-DM check"). Runs the REAL live dashboard (now v474, which lists all records) in a throwaway headless Chromium with the
+# ONE-SHOT (Shane OK 2026-11-10: fix broken handles, delete obvious duplicates): tombstone 25 revived duplicate records and fix 4 malformed handles; backup in backups/dupes-tombstoned-20261110.json (Shane, 2026-11-09: "re-run the needs-a-DM check"). Runs the REAL live dashboard (now v474, which lists all records) in a throwaway headless Chromium with the
 # live data, every write blocked (only GET/HEAD allowed, Firebase SDK and websockets blocked), unlocked WITHOUT a PIN by calling the page's own unlock function. Reports the
 # page's own badges (Total, Need to DM) and, for the 196 records that used to be hidden (num 50802 and up), how many are DM-able, already DM'd, flagged bad IG, or have no
 # Instagram handle (those can never show as needing a DM, standing rule 10). Nothing is written anywhere.
@@ -95,4 +95,4 @@ const FIX = { 1530: '@Noosh_By_Chaiya_Bistro', 1613: '@2ScoopsofAlohalv', 50011:
   const crec2 = (await get('/dashboard_crec')) || {}; console.log('AFTER crec count ' + Object.keys(crec2).length + ' (before ' + Object.keys(crec).length + ')');
 })().catch(e => console.log('ERROR: ' + e.message));
 NODE
-APPLY=${APPLY:-0} node /tmp/dupe-apply.js
+APPLY=1 node /tmp/dupe-apply.js
