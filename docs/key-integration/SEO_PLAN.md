@@ -1,6 +1,6 @@
 # SEO and "AI/SI" plan (a running list; Claude works on it every check-in, Shane tackles his part a little at a time)
 
-Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes time, useful content and links from other sites. What we CAN do is be the clearest, most trustworthy answer for the term, and make the site easy for search engines and AI assistants to read.
+Last updated 2026-11-10. Honest note: nobody can promise rank #1. Ranking takes time, useful content and links from other sites. What we CAN do is be the clearest, most trustworthy answer for the term, and make the site easy for search engines and AI assistants to read.
 
 ## Done (on the site)
 - Every page has a unique title (60 characters or fewer), meta description, canonical address, social-share tags and structured data (Organization/Service/FAQ/Article/Breadcrumb/ContactPage).
@@ -16,6 +16,8 @@ Last updated 2026-11-06. Honest note: nobody can promise rank #1. Ranking takes 
 - Guide "How a restaurant rewards program works, and what to check before you start" (2026-11-07): general information, not legal advice; mentions the Key Rewards demo; no prices, no stats.
 - Restaurant page (the strongest vertical: Shane keeps watch on about 10,000 restaurants), Las Vegas page, languages page.
 - Visitor counter + Owner report (Sources tab shows which pages and sites bring visitors).
+
+- Quality net (2026-11-10): the site-check workflow tests links, titles, descriptions, sitemap and every page in light and dark on phone widths on every push; structured data on all indexable pages parses and carries no prices, ratings or reviews; page speed is good (home page about 344 KB in total); tap targets enlarged; home headline now reads "We help you make your business smarter."; the key logo is blue.
 
 ## Only Shane can do (each one takes minutes; ask Claude to walk you through)
 1. Google Search Console: add keytechnologies.si, verify, submit https://keytechnologies.si/sitemap.xml. (Biggest single step.)
