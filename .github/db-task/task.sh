@@ -1,5 +1,5 @@
 #!/bin/bash
-# READ-ONLY security probe (Shane, 2026-11-10: deep audit incl. security). Uses only GET with NO credentials, exactly what any stranger on the internet could do.
+# No task queued. (Last: read-only re-check 2026-11-10 23:23, run 497: strangers REFUSED (401) on key_leads, key_pageviews, kt_crm. Owner lockdown done. Script in git history, commit 9bc039d.)
 # Prints: can an unauthenticated visitor list/read the database root? top-level node names, child counts, and the FIELD NAMES (not values) of one sample record per node,
 # flagging fields that look like personal data. Never prints values of personal fields. Writes nothing.
 set +e

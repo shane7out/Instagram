@@ -1548,3 +1548,8 @@ Owner sign-in box now offers an optional quick-unlock PIN (6-8 digits) after a "
 ownerAuth/apiKey present (good). BUT key_pageviews is still readable by a stranger (2 children), so the lockdown rules (keytech-lockdown.sh / deploy-key-rules.sh) are NOT live yet;
 key_leads and kt_crm read as empty (nothing to leak, but also not proven locked). lvr_rewards member data (name, phone, birthday, consent fields) still publicly readable (later phase).
 Next: Shane runs keytech-lockdown.sh on the Mac; then re-probe expecting key_pageviews/key_leads/kt_crm = HTTP 401.
+
+### 2026-11-10 23:23 — OWNER LOCKDOWN CONFIRMED (db-task run 497, read-only, no credentials)
+Stranger gets HTTP 401 on key_leads, key_pageviews, kt_crm (was readable before). ownerAuth/apiKey stays readable (needed for the sign-in box).
+STILL PUBLIC: lvr_rewards (member name, phone, birthday, consent fields), lvr_points, dashboard, dashboard_crec, dashboard_deleted (some probes returned HTTP 429 = rate limit, not a verdict).
+Next phase (not built, needs Shane's OK): move LVR member data behind a lookup that does not expose the whole list.
