@@ -72,3 +72,8 @@ html:not([data-look="light"]) img[src$="key-logo.svg"]{content:url("/key-platfor
 /* CI measured My Account 2px too wide at 390px (font rendering differs slightly): a little more room */
 @media (max-width:430px){.nav-row{padding-inline:11px!important;} html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:40px;height:17px;}}
 @media (max-width:380px){html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:36px;height:16px;}}
+/* 2026-11-10 phone tap targets (audit): bigger hit areas without changing how things look */
+a.logo{min-height:44px;}
+.crumbs a{display:inline-block;padding:11px 3px;margin:-11px 0;}
+.foot-phone{display:inline-flex;align-items:center;min-height:44px;}
+.demo-strip a{display:inline-block;padding:9px 0;}
