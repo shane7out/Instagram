@@ -351,6 +351,21 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   var PHOTOS_PATH = '/lvr_points/receipt_photos';
   var DIRECTORY_PATH = '/lvr_points/directory';
   var MEMBERS_PATH = '/lvr_rewards';
+  // MEMBER DATA PROTECTION (docs/key-integration/MEMBER_DATA_PLAN.md): after the cut-over, phone, email, birthday and the link token live in lvr_member_private/<token>
+  // (token = the key, value has memberKey). These helpers put them back onto the member records so the rest of this page keeps working in BOTH layouts.
+  function privIndex() {
+    return fbGet('/lvr_member_private').then(function(p){ var by = {}; Object.keys(p && typeof p === 'object' && !p.error ? p : {}).forEach(function(t){ var v = p[t] || {}; if (v.memberKey) by[v.memberKey] = Object.assign({ token: t }, v); }); return by; }).catch(function(){ return {}; });
+  }
+  function fbGetMembers() {
+    return Promise.all([fbGet(MEMBERS_PATH), privIndex()]).then(function(r){
+      var m = r[0] && typeof r[0] === 'object' ? r[0] : r[0], by = r[1];
+      if (m && typeof m === 'object') Object.keys(by).forEach(function(k){ if (m[k] && typeof m[k] === 'object') ['phone', 'email', 'birthday', 'anniversary', 'token'].forEach(function(f){ if (m[k][f] == null && by[k][f] != null) m[k][f] = by[k][f]; }); });
+      return m;
+    });
+  }
+  function fbGetToken(k) {
+    return fbGet(MEMBERS_PATH + '/' + encodeURIComponent(k) + '/token').then(function(t){ if (t) return t; return privIndex().then(function(by){ return by[k] && by[k].token || null; }); });
+  }
 
   function _lvOwnerSessionValid(){
     try {
@@ -511,13 +526,13 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   // Decline = account stays closed and the Round One spot is freed.
   // ========================================================================
   function pendingSignups() {
-    return fetch(DB + MEMBERS_PATH + '.json?orderBy="status"&equalTo="pending"').then(function(r){ if (!r.ok) throw new Error('idx'); return r.json(); }).catch(function(){ return fbGet(MEMBERS_PATH).then(function(all){ var o = {}; Object.keys(all || {}).forEach(function(k){ if (all[k] && all[k].status === 'pending') o[k] = all[k]; }); return o; }); })
+    return fetch(DB + MEMBERS_PATH + '.json?orderBy="status"&equalTo="pending"').then(function(r){ if (!r.ok) throw new Error('idx'); return r.json(); }).catch(function(){ return fbGetMembers().then(function(all){ var o = {}; Object.keys(all || {}).forEach(function(k){ if (all[k] && all[k].status === 'pending') o[k] = all[k]; }); return o; }); })
       .then(function(o){ return Object.keys(o || {}).length; });
   }
   var DISPOSABLE = /@(mailinator|guerrillamail|10minutemail|tempmail|temp-mail|yopmail|trashmail|sharklasers|getnada|dispostable|maildrop|throwaway)\./i;
   function renderApprovalsTab() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
-    Promise.all([fbGet(MEMBERS_PATH), fbGet('/lvr_points/round1').catch(function(){ return {}; })]).then(function(x){
+    Promise.all([fbGetMembers(), fbGet('/lvr_points/round1').catch(function(){ return {}; })]).then(function(x){
       var all = x[0] || {}, reg = x[1] || {};
       // keep the Round One leaderboard in step: any member missing from it (joined before it existed, or a failed write) is added
       Object.keys(all).forEach(function(k){
@@ -607,7 +622,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   var cleanupMembers = null;
   function renderCleanupTab() {
     view.innerHTML = '<div class="empty-note">Loading members…</div>';
-    fbGet(MEMBERS_PATH).then(function(m){
+    fbGetMembers().then(function(m){
       cleanupMembers = m || {};
       drawCleanup('');
     }).catch(function(){ view.innerHTML = '<div class="empty-note">Could not load members — check connection.</div>'; });
@@ -802,7 +817,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   function applyAward(id) {
     return fbGet(RECEIPTS_PATH + '/' + id).then(function(r){
       if (!r || r.status !== 'approved' || r.pointsApplied !== false) { showToast('Already applied'); return; }
-      return fbGet(MEMBERS_PATH + '/' + r.memberKey + '/token').then(function(tok){
+      return fbGetToken(r.memberKey).then(function(tok){
         if (!tok || tok !== r.token) throw new Error('member mismatch');
         var pts = r.pointsAwarded || 0;
         var credit = pts > 0 ? fbPut(MEMBERS_PATH + '/' + r.memberKey + '/points', { '.sv': { increment: pts } }) : Promise.resolve({ ok: true });
@@ -906,7 +921,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       '<div class="field"><label>Find the member (name or Instagram)</label><input type="text" id="bSearch" placeholder="Start typing…" autocomplete="off"></div>' +
       '<div id="bResults"></div><div id="bForm"></div></div>' +
       '<div style="margin:22px 0 10px;font-weight:800;font-size:14px;">Recent bonus rewards</div><div id="bLog"><div class="empty-note">Loading…</div></div>';
-    Promise.all([bonusMembers ? Promise.resolve(bonusMembers) : fbGet(MEMBERS_PATH), fbGet('/lvr_points/bonuses')]).then(function(r){
+    Promise.all([bonusMembers ? Promise.resolve(bonusMembers) : fbGetMembers(), fbGet('/lvr_points/bonuses')]).then(function(r){
       bonusMembers = r[0] || {}; bonusLog = r[1] || {};
       drawBonusLog();
     }).catch(function(){ document.getElementById('bLog').innerHTML = '<div class="empty-note">Could not load.</div>'; });
@@ -1115,7 +1130,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       var gp = function(t){ return parts.filter(function(x){ return x.type === t; })[0].value; };
       var now = { getDate: function(){ return parseInt(gp('day'), 10); } }, run = gp('year') + '-' + gp('month');
       out.textContent = 'Using the SAVED settings: ' + pct + '%, new members safe for ' + grace + ' days. Reading members…';
-      return fbGet(MEMBERS_PATH).then(function(all){
+      return fbGetMembers().then(function(all){
         all = all || {};
         var todo = [], tooNew = 0;
         Object.keys(all).forEach(function(k){
@@ -1161,7 +1176,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       var out = document.getElementById('sDropOut'), run = monthKey();
       var ch = Object.assign({ prizeMin: 1, prizeMax: 10 }, settings.chest || {}), mn = Math.max(1, Number(ch.prizeMin) || 1), mx = Math.max(mn, Math.min(50, Number(ch.prizeMax) || 10));
       out.textContent = 'Reading the pool and members…';
-      return Promise.all([fbGet('/lvr_points/pool/total'), fbGet(MEMBERS_PATH), fbGet('/lvr_points/decay_by_member'), fbGet('/lvr_points/pool_drop_runs/' + run)]).then(function(x){
+      return Promise.all([fbGet('/lvr_points/pool/total'), fbGetMembers(), fbGet('/lvr_points/decay_by_member'), fbGet('/lvr_points/pool_drop_runs/' + run)]).then(function(x){
         var pool = Number(x[0]) || 0, all = x[1] || {}, gave = x[2] || {}, already = x[3];
         if (already) { out.textContent = 'The pool was already handed out for ' + run + ' (' + already.points + ' rewards to ' + already.members + ' members).'; return; }
         if (pool < 1) { out.textContent = 'The pool is empty. Run the monthly return first.'; return; }
@@ -1199,7 +1214,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     document.getElementById('sDropPreview').addEventListener('click', function(){ runDrop(true); });
     document.getElementById('sDropRun').addEventListener('click', function(){ runDrop(false); });
     function balances() {
-      return fbGet(MEMBERS_PATH).then(function(all){ all = all || {}; return Object.keys(all).map(function(k){ var m = all[k] || {}; return { key: k, name: m.name || '', instagram: m.instagram || '', points: Number(m.points) || 0 }; }); });
+      return fbGetMembers().then(function(all){ all = all || {}; return Object.keys(all).map(function(k){ var m = all[k] || {}; return { key: k, name: m.name || '', instagram: m.instagram || '', points: Number(m.points) || 0 }; }); });
     }
     document.getElementById('eBackup').addEventListener('click', function(){
       balances().then(function(rows){ downloadCsv('lvr-balances-backup-' + new Date().toISOString().slice(0, 10) + '.csv', rows); }).catch(function(){ showToast('Could not load members'); });
@@ -1574,7 +1589,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   // ========================================================================
   function renderTagsTab() {
     view.innerHTML = '<div class="empty-note">Loading posts…</div>';
-    Promise.all([fbGet('/lvr_points/tag_claims'), fbGet(MEMBERS_PATH), fbGet(SETTINGS_PATH + '/tagBonus')]).then(function(r){
+    Promise.all([fbGet('/lvr_points/tag_claims'), fbGetMembers(), fbGet(SETTINGS_PATH + '/tagBonus')]).then(function(r){
       var claims = r[0] || {}, members = r[1] || {}, cfg = r[2] || {}, pts = Math.max(1, Math.min(50, Number(cfg.points) || 5));
       var ids = Object.keys(claims).sort(function(a, b){ return (claims[b].submittedAt || 0) - (claims[a].submittedAt || 0); });
       var pend = ids.filter(function(i){ return claims[i].status === 'pending'; }), done = ids.filter(function(i){ return claims[i].status !== 'pending'; }).slice(0, 25);
@@ -1605,7 +1620,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       return fbPatch('/lvr_points/tag_claims/' + id, { status: 'approved', pointsAwarded: pts, pointsApplied: false, decidedAt: { '.sv': 'timestamp' } }).then(function(r){ if (!r.ok) throw new Error('approve'); return pts; });
     }) : fbGet('/lvr_points/tag_claims/' + id).then(function(f){ if (!f || f.status !== 'approved' || f.pointsApplied !== false) throw new Error('handled'); return f.pointsAwarded || pts; });
     first.then(function(n){
-      return fbGet(MEMBERS_PATH + '/' + c.memberKey + '/token').then(function(tok){
+      return fbGetToken(c.memberKey).then(function(tok){
         if (!tok || tok !== c.token) throw new Error('member mismatch');
         return fbPut('/lvr_points/bonuses/tag-' + id, { memberKey: c.memberKey, token: tok, name: (claims[id].handle || ''), points: n, reason: 'Instagram tag bonus', at: { '.sv': 'timestamp' } }).catch(function(){});
       }).then(function(){ return fbPut(MEMBERS_PATH + '/' + c.memberKey + '/points', { '.sv': { increment: n } }); })
@@ -1619,7 +1634,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   // ========================================================================
   var ledgerData = null;
   function ledgerLoad() {
-    return Promise.all([fbGet('/lvr_points/transactions'), fbGet(MEMBERS_PATH)]).then(function(r){ ledgerData = { tx: r[0] || {}, members: r[1] || {} }; return ledgerData; });
+    return Promise.all([fbGet('/lvr_points/transactions'), fbGetMembers()]).then(function(r){ ledgerData = { tx: r[0] || {}, members: r[1] || {} }; return ledgerData; });
   }
   function ledgerRows(d) {
     var rows = [];
