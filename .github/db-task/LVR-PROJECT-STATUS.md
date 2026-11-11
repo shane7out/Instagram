@@ -1553,3 +1553,6 @@ Next: Shane runs keytech-lockdown.sh on the Mac; then re-probe expecting key_pag
 Stranger gets HTTP 401 on key_leads, key_pageviews, kt_crm (was readable before). ownerAuth/apiKey stays readable (needed for the sign-in box).
 STILL PUBLIC: lvr_rewards (member name, phone, birthday, consent fields), lvr_points, dashboard, dashboard_crec, dashboard_deleted (some probes returned HTTP 429 = rate limit, not a verdict).
 Next phase (not built, needs Shane's OK): move LVR member data behind a lookup that does not expose the whole list.
+
+### 2026-11-11 — MEMBER DATA PROTECTION: Shane said yes ("I still want to build the member data protection")
+Plan written: docs/key-integration/MEMBER_DATA_PLAN.md (secret-as-path design on the free plan: lvr_member_private/<token> for phone/email/birthday/consent/token, exact-path-only indexes, owner tools read with the owner sign-in). Nothing live changes until Shane runs a Mac deploy; moving the 3 existing members needs his explicit OK at that point. Shane also mentioned entering a username and password into "that new file" — this matches the owner login he already created (verified working, run 497); no further sign-in setup is needed for this phase.
