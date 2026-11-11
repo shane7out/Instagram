@@ -1,6 +1,6 @@
 // Builds rules/lvr-rules-private.json from lvr-rules-owner.json (so the two never drift apart).
 // MEMBER DATA PROTECTION (plan: docs/key-integration/MEMBER_DATA_PLAN.md, step 1). STAGED, NOT DEPLOYED.
-//  - lvr_rewards: the whole-list read is REMOVED (no listing, no orderBy/shallow queries). One member can still be read by exact key.
+//  - lvr_rewards: the whole-list read is OWNER-ONLY now (no listing or orderBy/shallow queries for anyone else). One member can still be read by exact key.
 //  - lvr_member_private/<token>: phone, email, birthday, consent_*, memberKey. The token IS the path, so only someone who holds the
 //    member's personal link can read it; nobody can list it; the owner can read all. Anyone can create a new one (sign-up), only once.
 //  - lvr_refcodes/<code> = memberKey: exact-path lookup for referral codes (replaces orderBy="refCode"); create-once, and the member
@@ -9,7 +9,7 @@
 const fs = require('fs'), path = require('path');
 const OWN = "(auth != null && auth.uid == '__OWNER_UID__')";
 const r = JSON.parse(fs.readFileSync(path.join(__dirname, 'lvr-rules-owner.json'), 'utf8'));
-delete r.lvr_rewards['.read'];
+r.lvr_rewards['.read'] = OWN; // only the owner can list members
 r.lvr_rewards['$k']['.read'] = true;
 r.lvr_member_private = {
   '.read': OWN,

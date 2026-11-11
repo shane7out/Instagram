@@ -263,6 +263,7 @@
   }
  },
  "lvr_rewards": {
+  ".read": "(auth != null && auth.uid == '__OWNER_UID__')",
   ".indexOn": [
    "token",
    "refCode",
