@@ -560,8 +560,8 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   }
 
   function cardHtml(p) {
-    var phoneAction = p.phone ? '<a href="tel:' + p.phone.replace(/[^0-9+]/g,'') + '">Call</a>' : '';
-    var emailAction = p.email ? '<a href="mailto:' + p.email + '">Email</a>' : '';
+    var phoneAction = p.phone ? '<a href="tel:' + String(p.phone).replace(/[^0-9+]/g,'') + '">Call</a>' : '';
+    var emailAction = p.email ? '<a href="mailto:' + escapeHtml(String(p.email).replace(/[^A-Za-z0-9@._+\-]/g,'')) + '">Email</a>' : '';
     return '' +
       '<div class="card">' +
         '<div class="card-top">' +
@@ -576,9 +576,9 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
           '</select>' +
         '</div>' +
         '<div class="card-meta">' +
-          (p.phone ? p.phone + '<br>' : '') +
-          (p.email ? p.email + '<br>' : '') +
-          (p.address ? p.address : '') +
+          (p.phone ? escapeHtml(p.phone) + '<br>' : '') +
+          (p.email ? escapeHtml(p.email) + '<br>' : '') +
+          (p.address ? escapeHtml(p.address) : '') +
         '</div>' +
         (p.notes ? '<div class="card-notes">' + escapeHtml(p.notes) + '</div>' : '') +
         '<div class="card-actions">' +

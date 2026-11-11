@@ -487,6 +487,8 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     return { new:'New', contacted:'Contacted', responded:'Responded', client:'Client', dead:'Not interested' }[s] || 'New';
   }
 
+  function safeStatus(s) { return ['new','contacted','responded','client','dead'].indexOf(s) >= 0 ? s : 'new'; }  // a stranger can plant any value in a lead: only these five may reach the page
+
   function fmtTime(ts) {
     if (!ts) return '';
     var d = new Date(ts);
@@ -496,12 +498,12 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
 
   function gradeClass(letter) {
     if (!letter) return '';
-    return 'grade-' + letter.charAt(0);
+    var c = String(letter).charAt(0).toUpperCase(); return /^[A-F]$/.test(c) ? 'grade-' + c : '';
   }
 
   function cardHtml(l) {
     var phoneAction = l.phone ? '<a href="tel:' + String(l.phone).replace(/[^0-9+]/g,'') + '">Call</a>' : '';
-    var emailAction = l.email ? '<a href="mailto:' + l.email + '">Email</a>' : '';
+    var emailAction = l.email ? '<a href="mailto:' + escapeHtml(String(l.email).replace(/[^A-Za-z0-9@._+\-]/g,'')) + '">Email</a>' : '';
     var sourceLabel = SOURCE_LABELS[l.source] || l.source || 'Unknown source';
 
     var extraFields = '';
@@ -520,7 +522,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
         '<div class="audit-grade"><span class="letter ' + gradeClass(a.overallGrade) + '">' + escapeHtml(a.overallGrade || '—') + '</span>' +
         '<span style="font-size:13px;color:var(--ink-dim);">' +
         (a.security ? escapeHtml(a.security) + ' · ' : '') +
-        (a.performance != null ? 'Perf ' + a.performance : '') +
+        (a.performance != null ? 'Perf ' + escapeHtml(a.performance) : '') +
         '</span></div>';
     }
 
@@ -533,21 +535,21 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
           '</div>' +
           '<div style="text-align:right;">' +
             '<div class="card-time">' + fmtTime(l.createdAt) + '</div>' +
-            '<select class="status-select status-' + (l.status||'new') + '" data-id="' + l._id + '" style="margin-top:6px;">' +
+            '<select class="status-select status-' + safeStatus(l.status) + '" data-id="' + escapeHtml(l._id) + '" style="margin-top:6px;">' +
               ['new','contacted','responded','client','dead'].map(function(s){
-                return '<option value="' + s + '"' + ((l.status||'new')===s?' selected':'') + '>' + statusLabel(s) + '</option>';
+                return '<option value="' + s + '"' + (safeStatus(l.status)===s?' selected':'') + '>' + statusLabel(s) + '</option>';
               }).join('') +
             '</select>' +
           '</div>' +
         '</div>' +
         '<div class="card-meta">' +
-          (l.email ? l.email + '<br>' : '') +
-          (l.phone ? l.phone : '') +
+          (l.email ? escapeHtml(l.email) + '<br>' : '') +
+          (l.phone ? escapeHtml(l.phone) : '') +
         '</div>' +
         extraFields +
         '<div class="card-actions">' +
           phoneAction + emailAction +
-          '<button class="del-btn" data-id="' + l._id + '">Delete</button>' +
+          '<button class="del-btn" data-id="' + escapeHtml(l._id) + '">Delete</button>' +
         '</div>' +
       '</div>';
   }

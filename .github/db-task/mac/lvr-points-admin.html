@@ -745,24 +745,24 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     if (r.status === 'pending') {
       return '<div class="row-card" id="rc-' + id + '">' + head +
         '<div class="row-actions" style="align-items:center;">' +
-          '<button data-act="photo" data-id="' + id + '">View photos</button>' +
+          '<button data-act="photo" data-id="' + escapeHtml(id) + '">View photos</button>' +
           '<span style="font-size:12.5px;color:var(--ink-dim);">Points:</span>' +
-          '<input type="number" id="pts-' + id + '" value="' + suggested + '" min="0" style="width:84px;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);">' +
-          '<button data-act="approve" data-id="' + id + '" style="background:#0f67c2;border-color:#0f67c2;color:#fff;">Approve</button>' +
-          '<button data-act="reject" data-id="' + id + '">Reject</button>' +
+          '<input type="number" id="pts-' + escapeHtml(id) + '" value="' + suggested + '" min="0" style="width:84px;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);">' +
+          '<button data-act="approve" data-id="' + escapeHtml(id) + '" style="background:#0f67c2;border-color:#0f67c2;color:#fff;">Approve</button>' +
+          '<button data-act="reject" data-id="' + escapeHtml(id) + '">Reject</button>' +
         '</div><div class="row-sub" style="margin-top:6px;">' + (rate ? ('Suggested ' + suggested + ' = ' + money(r.amount) + ' x ' + rate + ' pts per $1') : 'No earn rate set for this restaurant yet - enter rewards by hand.') + '</div></div>';
     }
     if (r.status === 'approved' && r.pointsApplied === true && r.referralDone === false) {
       return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Rewards landed, but the referral bonus did not finish. Tap retry (safe - each level pays once).</div>' +
-        '<div class="row-actions"><button data-act="retryref" data-id="' + id + '">Retry referral bonus</button></div></div>';
+        '<div class="row-actions"><button data-act="retryref" data-id="' + escapeHtml(id) + '">Retry referral bonus</button></div></div>';
     }
     if (r.status === 'approved' && r.pointsApplied === false) {
       return '<div class="row-card">' + head + '<div class="row-sub" style="color:var(--yellow);">Approved for ' + (r.pointsAwarded||0) + ' pts but the rewards did not land. Tap retry (safe - it will not double-award).</div>' +
-        '<div class="row-actions"><button data-act="retry" data-id="' + id + '">Retry award</button></div></div>';
+        '<div class="row-actions"><button data-act="retry" data-id="' + escapeHtml(id) + '">Retry award</button></div></div>';
     }
     var label = r.status === 'approved' ? ('Approved +' + (r.pointsAwarded||0) + ' pts') : 'Rejected';
     return '<div class="row-card" id="rc-' + id + '">' + head + '<div class="row-sub" style="color:' + (r.status === 'approved' ? 'var(--green)' : 'var(--red)') + ';">' + label + '</div>' +
-      '<div class="row-actions"><button data-act="photo" data-id="' + id + '">View photos</button></div></div>';
+      '<div class="row-actions"><button data-act="photo" data-id="' + escapeHtml(id) + '">View photos</button></div></div>';
   }
 
   function showPhoto(id, btn) {
@@ -1545,9 +1545,9 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       '<div class="form-actions" style="margin-bottom:14px;"><button class="btn btn-primary" id="aPkg">Download package (spreadsheet + photos)</button><button class="btn" id="aCsv">Spreadsheet only</button></div>' +
       '<div class="row-sub" id="aStatusLine" style="margin-bottom:12px;"></div>' +
       (rows.length ? rows.slice(0, 200).map(function(r){
-        return '<div class="row-card" id="rc-' + r._id + '"><div class="row-top"><div><div class="row-name">' + escapeHtml(bizOf(r.slug)) + ' · #' + escapeHtml(r.receiptNo || '') + '</div>' +
+        return '<div class="row-card" id="rc-' + escapeHtml(r._id) + '"><div class="row-top"><div><div class="row-name">' + escapeHtml(bizOf(r.slug)) + ' · #' + escapeHtml(r.receiptNo || '') + '</div>' +
           '<div class="row-sub">' + escapeHtml(r.receiptDate || 'no date') + ' · ' + escapeHtml(r.name || '') + ' · ' + escapeHtml(r.status) + (r.pointsAwarded ? ' · +' + r.pointsAwarded + ' pts' : '') + '</div></div><div class="row-num">' + money(r.amount) + '</div></div>' +
-          '<div class="row-actions"><button data-act="photo" data-id="' + r._id + '">View photos</button></div></div>';
+          '<div class="row-actions"><button data-act="photo" data-id="' + escapeHtml(r._id) + '">View photos</button></div></div>';
       }).join('') + (rows.length > 200 ? '<div class="empty-note">Showing the newest 200. The download includes all ' + rows.length + '.</div>' : '') : '<div class="empty-note">No receipts match.</div>');
 
     function again() { auditF.slug = document.getElementById('aSlug').value; auditF.status = document.getElementById('aStatus').value; auditF.all = document.getElementById('aPeriod').value === 'all'; auditF.month = document.getElementById('aMonth').value || auditF.month; auditF.q = document.getElementById('aQ').value; renderAuditTab(); }
@@ -1581,7 +1581,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
         return '<div class="row-card"><div class="row-top"><div><div class="row-name">' + escapeHtml(m.name || c.memberKey) + ' ' + escapeHtml(c.handle || m.instagram || '') + '</div>' +
           '<div class="row-sub">' + (c.submittedAt ? new Date(c.submittedAt).toLocaleString() : '') + ' · <a href="' + escapeHtml(c.postUrl) + '" target="_blank" rel="noopener" style="color:var(--key-light);">Open the post</a></div></div>' +
           '<div class="row-num">' + (c.status === 'approved' ? '+' + (c.pointsAwarded || '') : c.status === 'rejected' ? 'No' : '') + '</div></div>' +
-          (c.status === 'pending' ? '<div class="row-sub" style="margin:8px 0;">Check: public account, tags @LasVegas_Restaurants, shows #ad / #LVRPoints, genuinely at a participating restaurant, not a duplicate or someone else\'s photo.</div><div style="display:flex;gap:8px;"><button class="btn btn-primary" data-tag="ok" data-id="' + id + '">Approve +' + pts + '</button><button class="btn btn-ghost" data-tag="no" data-id="' + id + '">Not approved</button></div>' : (c.status === 'approved' && c.pointsApplied === false ? '<button class="btn btn-ghost" data-tag="retry" data-id="' + id + '" style="margin-top:8px;">Rewards did not land - retry</button>' : '')) + '</div>';
+          (c.status === 'pending' ? '<div class="row-sub" style="margin:8px 0;">Check: public account, tags @LasVegas_Restaurants, shows #ad / #LVRPoints, genuinely at a participating restaurant, not a duplicate or someone else\'s photo.</div><div style="display:flex;gap:8px;"><button class="btn btn-primary" data-tag="ok" data-id="' + escapeHtml(id) + '">Approve +' + pts + '</button><button class="btn btn-ghost" data-tag="no" data-id="' + escapeHtml(id) + '">Not approved</button></div>' : (c.status === 'approved' && c.pointsApplied === false ? '<button class="btn btn-ghost" data-tag="retry" data-id="' + escapeHtml(id) + '" style="margin-top:8px;">Rewards did not land - retry</button>' : '')) + '</div>';
       }
       view.innerHTML = '<div class="row-sub" style="margin-bottom:12px;">' + (cfg.enabled ? 'Tag bonus is ON (' + pts + ' rewards).' : 'Tag bonus is OFF. Turn it on in Settings when the rules are deployed.') + ' Each approval adds the rewards and writes a ledger entry.</div>' +
         '<div style="font-weight:800;margin:6px 0;">Waiting to be checked (' + pend.length + ')</div>' + (pend.map(card).join('') || '<div class="empty-note">Nothing waiting.</div>') +

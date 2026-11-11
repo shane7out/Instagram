@@ -1,0 +1,74 @@
+{
+ "key-leads.html": [
+  [
+   "var emailAction = l.email ? '<a href=\"mailto:' + l.email + '\">Email</a>' : '';",
+   "var emailAction = l.email ? '<a href=\"mailto:' + escapeHtml(String(l.email).replace(/[^A-Za-z0-9@._+\\-]/g,'')) + '\">Email</a>' : '';"
+  ],
+  [
+   "(l.email ? l.email + '<br>' : '') +\n          (l.phone ? l.phone : '') +",
+   "(l.email ? escapeHtml(l.email) + '<br>' : '') +\n          (l.phone ? escapeHtml(l.phone) : '') +"
+  ],
+  [
+   "(a.performance != null ? 'Perf ' + a.performance : '')",
+   "(a.performance != null ? 'Perf ' + escapeHtml(a.performance) : '')"
+  ],
+  [
+   "return 'grade-' + letter.charAt(0);",
+   "var c = String(letter).charAt(0).toUpperCase(); return /^[A-F]$/.test(c) ? 'grade-' + c : '';"
+  ],
+  [
+   "status-' + (l.status||'new') + '\" data-id=\"' + l._id + '\"",
+   "status-' + safeStatus(l.status) + '\" data-id=\"' + escapeHtml(l._id) + '\""
+  ],
+  [
+   "((l.status||'new')===s?' selected':'')",
+   "(safeStatus(l.status)===s?' selected':'')"
+  ],
+  [
+   "data-id=\"' + l._id + '\">Delete",
+   "data-id=\"' + escapeHtml(l._id) + '\">Delete"
+  ],
+  [
+   "  function fmtTime(ts) {",
+   "  function safeStatus(s) { return ['new','contacted','responded','client','dead'].indexOf(s) >= 0 ? s : 'new'; }  // a stranger can plant any value in a lead: only these five may reach the page\n\n  function fmtTime(ts) {"
+  ]
+ ],
+ "kt-crm.html": [
+  [
+   "var emailAction = p.email ? '<a href=\"mailto:' + p.email + '\">Email</a>' : '';",
+   "var emailAction = p.email ? '<a href=\"mailto:' + escapeHtml(String(p.email).replace(/[^A-Za-z0-9@._+\\-]/g,'')) + '\">Email</a>' : '';"
+  ],
+  [
+   "var phoneAction = p.phone ? '<a href=\"tel:' + p.phone.replace(",
+   "var phoneAction = p.phone ? '<a href=\"tel:' + String(p.phone).replace("
+  ],
+  [
+   "(p.phone ? p.phone + '<br>' : '') +\n          (p.email ? p.email + '<br>' : '') +\n          (p.address ? p.address : '') +",
+   "(p.phone ? escapeHtml(p.phone) + '<br>' : '') +\n          (p.email ? escapeHtml(p.email) + '<br>' : '') +\n          (p.address ? escapeHtml(p.address) : '') +"
+  ]
+ ],
+ "lvr-points-admin.html": [
+  [
+   "data-id=\"' + id + '\"",
+   "data-id=\"' + escapeHtml(id) + '\""
+  ],
+  [
+   "data-id=\"' + r._id + '\"",
+   "data-id=\"' + escapeHtml(r._id) + '\""
+  ],
+  [
+   "id=\"pts-' + id + '\"",
+   "id=\"pts-' + escapeHtml(id) + '\""
+  ],
+  [
+   "id=\"rc-' + r._id + '\"",
+   "id=\"rc-' + escapeHtml(r._id) + '\""
+  ]
+ ],
+ "key-advertisers.html": [
+  [
+   "data-num=\"' + num + '\"",
+   "data-num=\"' + escapeHtml(num) + '\""
+  ]
+ ]
+}

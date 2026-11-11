@@ -520,7 +520,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
             '<div class="card-name">' + escapeHtml(a.name || '(no name)') + '</div>' +
             '<span class="card-cat">' + escapeHtml(catOf(a)) + '</span>' +
           '</div>' +
-          '<select class="status-select status-' + st + '" data-num="' + num + '">' +
+          '<select class="status-select status-' + st + '" data-num="' + escapeHtml(num) + '">' +
             ['new','contacted','responded','client','dead'].map(function(s){
               return '<option value="' + s + '"' + (st===s?' selected':'') + '>' + statusLabel(s) + '</option>';
             }).join('') +
@@ -534,7 +534,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
         '</div>' +
         '<div class="card-actions">' +
           phoneAction +
-          '<button class="flag-btn' + (isFlagged?' flagged':'') + '" data-num="' + num + '">' + (isFlagged ? '🚩 Flagged' : '🚩 Flag for Review') + '</button>' +
+          '<button class="flag-btn' + (isFlagged?' flagged':'') + '" data-num="' + escapeHtml(num) + '">' + (isFlagged ? '🚩 Flagged' : '🚩 Flag for Review') + '</button>' +
         '</div>' +
       '</div>';
   }
