@@ -765,9 +765,17 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       var rows = parseCsv(String(rd.result || '')); if (rows.length < 2) { alert('That file has no rows.'); return; }
       var head = rows[0].map(function(h){ return h.trim().toLowerCase(); });
       function col(r, k) { var i = head.indexOf(k); return i < 0 ? '' : (r[i] || '').trim(); }
-      var have = {}; Object.keys(prospects).forEach(function(k){ var p = prospects[k]; if (p) have[((p.name || '') + '|' + (p.address || '')).toLowerCase()] = 1; });
+      var have = {}; Object.keys(prospects).forEach(function(k){ var p = prospects[k]; if (p) { have[((p.name || '') + '|' + (p.address || '')).toLowerCase()] = 1; have[((p.name || '') + '|' + (p.dealership || '') + '|' + (p.email || '')).toLowerCase()] = 1; } });
       var num = nextNum(), batch = {}, added = 0, skipped = 0;
+      var personFile = head.indexOf('person_name') >= 0;   // staff-page file: one row per salesperson
       rows.slice(1).forEach(function(r){
+        if (personFile) {
+          var pn = col(r, 'person_name'), dl = col(r, 'dealership'); if (!pn) return;
+          var pkey = (pn + '|' + dl + '|' + col(r, 'email')).toLowerCase(); if (have[pkey]) { skipped++; return; } have[pkey] = 1;
+          batch[num] = { num: num, name: pn, vertical: 'Car Sales', phone: '', email: col(r, 'email'), address: col(r, 'address'), notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(),
+            dealership: dl, role: col(r, 'role'), brands: '', website: safeUrl(col(r, 'website')), sourceUrl: safeUrl(col(r, 'source_url')), confidence: col(r, 'confidence'), dnc: false };
+          num++; added++; return;
+        }
         var name = col(r, 'dealership') || col(r, 'name'); if (!name) return;
         var addr = [col(r, 'address'), col(r, 'city'), col(r, 'zip')].filter(Boolean).join(', ');
         var key = (name + '|' + addr).toLowerCase(); if (have[key]) { skipped++; return; } have[key] = 1;
@@ -779,7 +787,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
         batch[num] = rec; num++; added++;
       });
       if (!added) { alert('Nothing new to add (' + skipped + ' already in the CRM).'); return; }
-      if (!confirm('Add ' + added + ' Car Sales prospects' + (skipped ? ' (' + skipped + ' already there are skipped)' : '') + '?')) return;
+      if (!confirm('Add ' + added + (personFile ? ' salespeople' : ' Car Sales prospects') + (skipped ? ' (' + skipped + ' already there are skipped)' : '') + '?')) return;
       fetch(DB + NODE_PATH + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(batch) }).then(function(res){
         if (!res.ok) throw new Error('HTTP ' + res.status);
         Object.keys(batch).forEach(function(k){ prospects[k] = batch[k]; });
