@@ -305,6 +305,19 @@
   .score-value.score-na{color:var(--ink-dim);}
 
   /* ---- services ---- */
+  /* services: everything visible at once, grouped (build_services_grid.py) */
+  .svc-groups{display:grid;gap:26px;}
+  .svc-group h3{font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+  .svc-group .svc-n{font-size:12px;font-weight:700;color:var(--ink-dim);border:1px solid var(--line);border-radius:999px;padding:1px 8px;}
+  .svc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch;}
+  @media (max-width:900px){.svc-cards{grid-template-columns:1fr 1fr;}}
+  @media (max-width:600px){.svc-cards{grid-template-columns:1fr;gap:10px;}}
+  .svc-mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
+  .svc-mini h4{font-size:17px;line-height:1.3;margin:0;}
+  .svc-mini h4 a{color:var(--ink);text-decoration:none;}
+  .svc-mini h4 a:hover{color:var(--key-light);}
+  .svc-mini p{font-size:14.5px;line-height:1.45;margin:0;color:var(--ink-dim);flex:1;}
+  .svc-mini .demo-link{margin-top:2px;min-height:40px;display:inline-flex;align-items:center;}
   .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
   @media (max-width:900px){.service-grid{grid-template-columns:1fr 1fr;}}
   @media (max-width:600px){.service-grid{grid-template-columns:1fr;}}
@@ -636,242 +649,71 @@
       <p>Every engagement starts with a business problem, not a tool. Technology comes second.</p>
     </div>
     <div class="demo-strip"><span><span class="demo-chip">Demos</span>&nbsp; Every service below has a live demo, with clearly labeled fictional data.</span><a href="key-platform/index.html">Open all 26 demos &rarr;</a></div>
-    <div class="service-grid">
-      <article class="service-card reveal">
-        <span class="num">NEW</span>
-        <h3>Business Dashboards &amp; Suites</h3>
-        <p>Your sales, customers, busiest hours, reviews and follow-ups on one screen. We build a dashboard
-          suite around the systems you already use, for restaurants, dental and medical practices, law firms,
-          chiropractors, specialists and just about any other business.</p>
-        <details class="more"><summary>Read more</summary><p>For a restaurant that means sales and covers from
-          the point-of-sale and ordering systems you run, such as Square, Clover, Toast or Otter, next to
-          reservations, reviews and phone calls. For a practice it means visits, new patients, no-shows and
-          recall follow-ups. Real connections are set up with you and depend on the systems you use. Start
-          with one dashboard and add more as it earns its place.</p></details>
-              <a class="demo-link" href="key-platform/demos/business-dashboards.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">NEW</span>
-        <h3>Key Rewards: Guest Events &amp; Loyalty</h3>
-        <p>A rewards system for restaurants. At a guest night, the restaurant puts up a pool of rewards and the
-          guests who are really there share it equally. Guests check in with a QR code, staff approve who is
-          there, and a dashboard shows events, rewards issued and what is outstanding.</p>
-        <details class="more"><summary>Read more</summary><p>Rewards never expire and have no cash value; they
-          cannot be sold or exchanged for cash. They are used at events, parties, meet-and-greets and
-          participating restaurants as they are announced. Each venue agrees its pool in advance, so it knows
-          the most it could be asked to honor. Promotion and loyalty rules differ by place, so the terms are reviewed by an attorney before
-          anything goes live. You can <a href="key-rewards-app.html">try the phone app</a> or
-          <a href="key-rewards-dashboard.html">explore the full dashboard</a>, both with made-up data.</p></details>
-              <a class="demo-link" href="key-platform/demos/key-rewards-events.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">01</span>
-        <h3>Digital Content Creators</h3>
-        <p>We build digital content creators for your business: AI/SI-powered creators with a consistent
-          look, voice and style that make posts, captions, graphics, short-form video and email content
-          around the clock, every day of the year, so your business is never silent.</p>
-        <details class="more"><summary>Read more</summary><p>Each one is built around
-          your brand, your products and your tone, and runs on a schedule. You decide how much freedom it has:
-          publish on its own, or wait for your approval first. Behind it sits a content system that tracks
-          what was made, what is scheduled next and what is performing, and AI-made content is labeled
-          wherever a platform or the law asks for it. That includes video: a steady stream of short and
-          long videos for YouTube and other channels, planned on a content calendar, reviewed by a person
-          before it goes out, and tracked so you can see which videos actually bring people in.</p></details>
-              <a class="demo-link" href="key-platform/demos/content-creators.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">02</span>
-        <h3>AI/SI Strategy</h3>
-        <p>Help businesses identify where AI/SI can create the most value — and just as important, where it
-          can't yet, so effort goes where it actually pays off.</p>
-              <a class="demo-link" href="key-platform/demos/ai-strategy.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">03</span>
-        <h3>Business Automation</h3>
-        <p>Reduce repetitive manual work and connect business processes that currently run as disconnected,
-          manual steps.</p>
-        <details class="more"><summary>Read more</summary><p>Built to run on its own schedule and triggers — working in the background, not just
-          when someone remembers to open a tool.</p></details>
-              <a class="demo-link" href="key-platform/demos/business-automation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">04</span>
-        <h3>AI/SI Agents</h3>
-        <p>Build intelligent assistants capable of performing defined business tasks — not a generic
-          chatbot, a system built around how your business actually works.</p>
-        <details class="more"><summary>Read more</summary><p>Every agent runs inside clear
-          permission levels — read-only, approval-required, or fully autonomous — so you decide how much it
-          can do on its own.</p></details>
-              <a class="demo-link" href="key-platform/demos/ai-agents.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">05</span>
-        <h3>Custom CRM &amp; Lead Management</h3>
-        <p>A CRM built specifically around your business, not a generic tool everyone else uses, stretched
-          to fit.</p>
-        <details class="more"><summary>Read more</summary><p>Capture, qualify, organize and follow up with leads inside a system designed for how your
-          business actually works — built and proven the same way Shane designed and runs his own CRM
-          platform today, not assembled from a template. <a href="real-estate.html">See what this looks like
-          for real estate teams &rarr;</a></p></details>
-              <a class="demo-link" href="key-platform/demos/custom-crm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">06</span>
-        <h3>Customer Experience</h3>
-        <p>Use AI/SI to improve customer communication and response time without making interactions feel
-          automated or impersonal.</p>
-              <a class="demo-link" href="key-platform/demos/customer-experience.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">07</span>
-        <h3>Operations</h3>
-        <p>Identify inefficient workflows and the specific points where automation or better information
-          flow would actually move the needle.</p>
-              <a class="demo-link" href="key-platform/demos/operations.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">08</span>
-        <h3>Data &amp; Knowledge Systems</h3>
-        <p>Make business information easier to find, understand and use — across the tools a business
-          already has.</p>
-              <a class="demo-link" href="key-platform/demos/data-knowledge.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">09</span>
-        <h3>Marketing</h3>
-        <p>Use AI/SI to improve marketing workflows, research, customer segmentation and content production —
-          including AI-generated images and short-form video for ads and promotions, reviewed by a person
-          before anything ships.</p>
-              <a class="demo-link" href="key-platform/demos/marketing.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">10</span>
-        <h3>Security &amp; Technology</h3>
-        <p>Evaluate how AI/SI fits into existing networks, databases, permissions and business technology —
-          without widening the attack surface.</p>
-        <details class="more"><summary>Read more</summary><p>Every automated action stays logged and reversible, so
-          nothing runs as an unaccountable black box. In decades of having access to client systems and
-          databases, Key Technologies has never had a client compromised.</p></details>
-              <a class="demo-link" href="key-platform/demos/security-technology.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">11</span>
-        <h3>Custom AI/SI Systems</h3>
-        <p>Build systems specifically around how your business operates, not a one-size-fits-all package.</p>
-              <a class="demo-link" href="key-platform/demos/custom-ai-systems.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">12</span>
-        <h3>Website Development</h3>
-        <p>Build and maintain websites with AI/SI-assisted development and smart built-in features — faster
-          turnaround, plus on-site chat, personalization and intelligent lead capture baked in.</p>
-        <details class="more"><summary>Read more</summary><p>Your
-          hosting, domain and data stay in your name — Key Technologies manages and updates the site, it
-          doesn't take control of it.</p></details>
-              <a class="demo-link" href="key-platform/demos/website-development.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">13</span>
-        <h3>Email Automation</h3>
-        <p>Automate follow-up, nurture sequences and routine email responses, so leads and customers
-          hear back quickly without someone writing every message by hand.</p>
-        <details class="more"><summary>Read more</summary><p>Our Email Intelligence service sorts
-          the inbox and drafts replies from your own information, and a person approves before anything is sent.</p></details>
-        <a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> See Email Intelligence &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">14</span>
-        <h3>Social Media Management</h3>
-        <p>Build and maintain a real social media presence, not a stock content calendar nobody looks at.</p>
-        <details class="more"><summary>Read more</summary><p>That starts with an automated system: scheduled, consistent posting that runs on its own instead
-          of depending on someone remembering to log in. Content itself is AI-assisted — captions, graphics,
-          product shots and short-form video drafted fast, then reviewed by a person before anything goes
-          live, so volume doesn't come at the cost of quality or start looking obviously AI-made. Behind it
-          sits real content management software to track what's posted, what's scheduled next, and what's
-          actually performing, instead of losing it in a notes app or a group chat. This is the same
-          discipline behind LasVegas_Restaurants, OrangeCounty_Restaurants and SanDiego_Restaurants, applied
-          to your business.</p></details>
-              <a class="demo-link" href="key-platform/demos/social-media.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">15</span>
-        <h3>Review &amp; Reputation Management</h3>
-        <p>Monitor and respond to Google, Yelp and other reviews quickly, and flag negative reviews
-          before they sit unanswered — reputation handled consistently, not reactively.</p>
-              <a class="demo-link" href="key-platform/demos/reviews-reputation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">16</span>
-        <h3>Phone &amp; Text Answering</h3>
-        <p>Never miss a call or text. AI/SI-assisted answering handles common questions, takes messages,
-          and routes anything urgent to a real person.</p>
-        <details class="more"><summary>Read more</summary><p>Our Voice Services demo shows a fictional receptionist
-          capturing a lead and proposing an appointment.</p></details>
-        <a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> See Voice Services &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">17</span>
-        <h3>Booking &amp; Scheduling Automation</h3>
-        <p>Automate appointment and reservation booking, confirmations and reminders, so scheduling
-          doesn't eat staff time or lose customers to a missed call.</p>
-              <a class="demo-link" href="key-platform/demos/booking-scheduling.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">18</span>
-        <h3>Training &amp; Custom Training Software</h3>
-        <p>Teach your team how to actually use AI/SI tools day to day — training built around how your
-          business already works, not a one-size-fits-all course.</p>
-        <details class="more"><summary>Read more</summary><p>For ongoing or larger teams, that can
-          include custom-built training software: your own internal portal with your own material, tracked
-          progress and completion — built around your business, not a generic off-the-shelf LMS.</p></details>
-              <a class="demo-link" href="key-platform/demos/ai-training.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">19</span>
-        <h3>Custom Website Programming</h3>
-        <p>Full custom-coded websites and web applications, not just a template — built and maintained
-          by someone with 42+ years of computer and software experience who has been building websites since
-          the early days of the internet.</p>
-              <a class="demo-link" href="key-platform/demos/custom-programming.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">20</span>
-        <h3>ADA &amp; Accessibility Compliance</h3>
-        <p>Build and audit websites to meet ADA/WCAG accessibility standards — reduces a real and
-          growing source of legal exposure for small business websites, and makes a site usable for
-          every visitor, not just some.</p>
-              <a class="demo-link" href="key-platform/demos/accessibility-ada.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">21</span>
-        <h3>PHP &amp; WordPress Migration</h3>
-        <p>Move a business off PHP and WordPress onto a modern, custom-built stack — for sites that got
-          flagged by our free audit below, or anyone who no longer wants to depend on PHP's security
-          track record.</p>
-              <a class="demo-link" href="key-platform/demos/php-wordpress-migration.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">22</span>
-        <h3>Private LLM Setup</h3>
-        <p>Set up your own private AI/LLM — not a shared account on someone else's platform.</p>
-        <details class="more"><summary>Read more</summary><p>We load in
-          your business's own documents, records and knowledge so the AI actually knows your business,
-          while that data stays isolated and is never used to train anyone else's model. Key Technologies
-          can manage it going forward with login access, the same way we manage a website, or set it up
-          and hand over full control once it's configured — either way, it's yours.</p></details>
-              <a class="demo-link" href="key-platform/demos/private-llm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
-      <article class="service-card reveal">
-        <span class="num">23</span>
-        <h3>Cybersecurity &amp; Network Hardening</h3>
-        <p>A full security pass on the systems you already run — passwords and access controls, networks,
-          backups and exposed vulnerabilities — closing real gaps before they become a breach.</p>
-        <details class="more"><summary>Read more</summary><p>Backed by
-          a decade of hands-on security experience, not a generic checklist.</p></details>
-              <a class="demo-link" href="key-platform/demos/cybersecurity.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a>
-      </article>
+    <!--SERVICES-GRID-START-->
+    <div class="svc-groups">
+      <div class="svc-group reveal">
+        <h3>Customers &amp; Communication <span class="svc-n">5</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/customer-experience.html">Customer Experience</a></h4><p>Faster replies that still sound like a person wrote them.</p><a class="demo-link" href="key-platform/demos/customer-experience.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/email/index.html">Email Automation</a></h4><p>Sorts the inbox and drafts replies that a person approves.</p><a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/reviews-reputation.html">Review &amp; Reputation Management</a></h4><p>Answer reviews quickly and flag negative ones early.</p><a class="demo-link" href="key-platform/demos/reviews-reputation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/voice/index.html">Phone &amp; Text Answering</a></h4><p>An AI receptionist that answers calls and captures leads.</p><a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/booking-scheduling.html">Booking &amp; Scheduling Automation</a></h4><p>Booking, confirmations and reminders without staff time.</p><a class="demo-link" href="key-platform/demos/booking-scheduling.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
+      <div class="svc-group reveal">
+        <h3>Operations &amp; Sales <span class="svc-n">3</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/business-automation.html">Business Automation</a></h4><p>Connect steps that run by hand today so they run on their own.</p><a class="demo-link" href="key-platform/demos/business-automation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/custom-crm.html">Custom CRM &amp; Lead Management</a></h4><p>A CRM built around your business, not stretched to fit.</p><a class="demo-link" href="key-platform/demos/custom-crm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/operations.html">Operations</a></h4><p>Find the slow steps and what automating them would give back.</p><a class="demo-link" href="key-platform/demos/operations.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
+      <div class="svc-group reveal">
+        <h3>Marketing &amp; Content <span class="svc-n">3</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/content-creators.html">Digital Content Creators</a></h4><p>AI/SI creators with a consistent brand voice that make posts around the clock.</p><a class="demo-link" href="key-platform/demos/content-creators.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/marketing.html">Marketing</a></h4><p>Segments, research and content, with a person approving the message.</p><a class="demo-link" href="key-platform/demos/marketing.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/social-media.html">Social Media Management</a></h4><p>A real presence on a schedule, with review before anything goes live.</p><a class="demo-link" href="key-platform/demos/social-media.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
+      <div class="svc-group reveal">
+        <h3>AI Systems &amp; Strategy <span class="svc-n">5</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/ai-strategy.html">AI/SI Strategy</a></h4><p>Find where AI/SI pays off, and where it can not yet.</p><a class="demo-link" href="key-platform/demos/ai-strategy.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/ai-agents.html">AI/SI Agents</a></h4><p>Assistants that do defined tasks, with limits you set.</p><a class="demo-link" href="key-platform/demos/ai-agents.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/data-knowledge.html">Data &amp; Knowledge Systems</a></h4><p>Make what your business knows easy to find and use.</p><a class="demo-link" href="key-platform/demos/data-knowledge.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/custom-ai-systems.html">Custom AI/SI Systems</a></h4><p>Systems built around how your business operates.</p><a class="demo-link" href="key-platform/demos/custom-ai-systems.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/private-llm.html">Private LLM Setup</a></h4><p>Your own private AI that knows your business and keeps it private.</p><a class="demo-link" href="key-platform/demos/private-llm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
+      <div class="svc-group reveal">
+        <h3>Websites &amp; Security <span class="svc-n">6</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/security-technology.html">Security &amp; Technology</a></h4><p>Check access before an AI tool touches your systems.</p><a class="demo-link" href="key-platform/demos/security-technology.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/website-development.html">Website Development</a></h4><p>Websites with chat, personalization and lead capture built in.</p><a class="demo-link" href="key-platform/demos/website-development.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/custom-programming.html">Custom Website Programming</a></h4><p>Full custom-coded sites and web applications.</p><a class="demo-link" href="key-platform/demos/custom-programming.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/accessibility-ada.html">ADA &amp; Accessibility Compliance</a></h4><p>Make a site usable for everyone and reduce legal risk.</p><a class="demo-link" href="key-platform/demos/accessibility-ada.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/php-wordpress-migration.html">PHP &amp; WordPress Migration</a></h4><p>Move off PHP and WordPress to a modern custom stack.</p><a class="demo-link" href="key-platform/demos/php-wordpress-migration.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/cybersecurity.html">Cybersecurity &amp; Network Hardening</a></h4><p>A full security pass that closes real gaps.</p><a class="demo-link" href="key-platform/demos/cybersecurity.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
+      <div class="svc-group reveal">
+        <h3>Dashboards &amp; Rewards <span class="svc-n">2</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/business-dashboards.html">Business Dashboards &amp; Suites</a></h4><p>Your sales, customers, busiest hours, reviews and follow-ups on one screen, built around the systems you already use.</p><a class="demo-link" href="key-platform/demos/business-dashboards.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/key-rewards-events.html">Key Rewards: Guest Events &amp; Loyalty</a></h4><p>Share a pool of rewards equally among the guests who are really there, with check-in, approval and a dashboard. Rewards never expire, have no cash value and cannot be sold or exchanged for cash.</p><a class="demo-link" href="key-platform/demos/key-rewards-events.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
+      <div class="svc-group reveal">
+        <h3>Training &amp; Rewards <span class="svc-n">2</span></h3>
+        <div class="svc-cards">
+          <article class="svc-mini"><h4><a href="key-platform/demos/ai-training.html">Training &amp; Custom Training Software</a></h4><p>Teach your team to use AI/SI well, in your own portal.</p><a class="demo-link" href="key-platform/demos/ai-training.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+          <article class="svc-mini"><h4><a href="key-platform/demos/rewards.html">LVR Rewards</a></h4><p>Earn rewards at restaurants and use them for food.</p><a class="demo-link" href="key-platform/demos/rewards.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
+        </div>
+      </div>
     </div>
+    <!--SERVICES-GRID-END-->
   </section>
 
   <!-- ============ KEY PLATFORM ============ -->

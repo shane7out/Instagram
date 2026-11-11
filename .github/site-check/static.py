@@ -64,8 +64,8 @@ import json as _j
 _N=len(_j.load(open('key-platform/demos/list.json',encoding='utf-8')))
 for p in pages:
     t=read(p)
-    for m in re.finditer(r'<b>(\d+) services</b>|See all (\d+) (?:services|demos)',t):
-        n=int(m.group(1) or m.group(2))
+    for m in re.finditer(r'<b>(\d+) services</b>|See all (\d+) (?:services|demos)|Open all (\d+) (?:services|demos)',t):
+        n=int(m.group(1) or m.group(2) or m.group(3))
         if n!=_N: issues.append((p,'service count %d but the real number is %d (run docs/key-integration/sync_service_count.py)'%(n,_N)))
 for _l in read('llms.txt').split('\n'):
     for m in re.finditer(r'all (\d+) services',_l):

@@ -128,3 +128,6 @@ import sys as _s, os as _o
 _s.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
 import apply_demo_seo
 apply_demo_seo.run()
+
+# the home-page service cards follow the same list (all services visible, grouped); run here so a new service always gets its card
+import build_services_grid  # noqa: F401  (runs on import)
