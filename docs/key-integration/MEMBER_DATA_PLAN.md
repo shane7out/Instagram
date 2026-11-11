@@ -40,3 +40,10 @@ Order matters: pages that understand BOTH layouts go live first, then data move,
 - Rules (make-private-rules.js): added `lvr_member_idx/$h` (create-once, exact path) and `referredBy` on round1 entries; tests extended (db-task run to confirm).
 - STILL TO DO in step 2: lvr-rewards.html (Mac VIP sign-up) same treatment; legacy members without a Round One entry must be added to round1 by the step-5 move script (the founding order/count otherwise misses them once the list is closed).
 - Step 3 next: my-account.html (token lookup via lvr_member_private/<token>, memberKey, counts and referrals via registry/refcodes; legacy fallback).
+
+## Step 3 DONE (2026-11-11, check-in 14:35 UTC): member screen (my-account.html)
+- `fbFindByToken` opens the hidden spot `lvr_member_private/<token>` first (gets the member key), reads that one member by key and fills phone/email/token in from the hidden spot; falls back to the old token query while the list is still readable.
+- Founding rank works from the Round One registry when the member list is closed; invites used / friends count come from `friendsOf()` (old list query + `referredBy` in the registry).
+- `ensureRefCode` checks a code is free through `lvr_refcodes/<code>` (exact path) and the old list query, registers new codes in the index, and back-fills the index for members who already have a code (verified in a browser test: the write `PUT /lvr_refcodes/<code>` happens on its own).
+- Browser test with a mocked database in both layouts (old: list readable, token in the record; new: list closed, hidden spot + member by key): member screen renders name, Instagram, points, free-spin clock and Founding Member card; no page errors.
+- Still to do: step 2 part 2 (Mac VIP page lvr-rewards.html), step 4 (owner tools: lvr-points-admin, key-room, dashboard Rewards CRM read the list/phones with the owner token + show hidden-spot fields), step 5 (data move incl. adding legacy members to round1; needs Shane's OK + backup), step 6 (deploy rules + set settings/privateLayout, outside probe).
