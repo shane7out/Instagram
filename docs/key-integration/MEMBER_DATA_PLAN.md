@@ -26,3 +26,11 @@ Order matters: pages that understand BOTH layouts go live first, then data move,
 
 ## Status
 - 2026-11-11: plan written. Step 1 next.
+
+## Dependencies found while reading the code (2026-11-11) — each must be re-pointed before the list read is removed
+- rewards.html sign-up: `launchGate` counts members and finds the first N (founding members) from the whole `lvr_rewards` list, counts invites used with `orderBy="referredBy"`; `findReferrer` looks up by refCode (and checks duplicate phone/email) in the whole list.
+  Replacement: member count/order from the public `lvr_points/round1` registry (already one entry per member with a timestamp); referrer by exact path `lvr_refcodes/<code>`; invites used = a `referredBy` field written into the member's round1 entry at sign-up; duplicate phone/email check = hashed exact-path index `lvr_member_idx/<sha256>` (create-once), so no one can read phones back.
+- my-account.html: token lookup (`orderBy="token"`) -> `lvr_member_private/<token>`; `?shallow=true` member counts -> round1; `orderBy="refCode"` / `"referredBy"` -> `lvr_refcodes` and round1.
+- lvr-rewards.html (Mac VIP page): `findReferrer`, sign-up record with phone/birthday/consent.
+- Owner tools: lvr-points-admin.html (MEMBERS_PATH list, phone, token, instagram), key-room.html (get('/lvr_rewards')), the main dashboard Rewards CRM (live-only code; patched by a Mac patch script).
+- Rules: the founding-members gate and every owner/admin read must send the owner token (already wired in the owner pages).
