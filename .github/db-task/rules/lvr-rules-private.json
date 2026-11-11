@@ -235,6 +235,9 @@
     },
     "$other": {
      ".validate": "false"
+    },
+    "referredBy": {
+     ".validate": "newData.isString() && newData.val().length <= 64"
     }
    }
   },
@@ -348,6 +351,13 @@
    ".read": true,
    ".write": "newData.exists() ? (!data.exists() && newData.isString() && root.child('lvr_rewards').child(newData.val()).child('refCode').val() == $code) : (auth != null && auth.uid == '__OWNER_UID__')",
    ".validate": "newData.isString() && $code.length >= 4 && $code.length <= 12"
+  }
+ },
+ "lvr_member_idx": {
+  "$h": {
+   ".read": true,
+   ".write": "newData.exists() ? (!data.exists() && newData.isString() && newData.val().length >= 1 && newData.val().length <= 64) : (auth != null && auth.uid == '__OWNER_UID__')",
+   ".validate": "$h.length == 64 && newData.isString()"
   }
  }
 }

@@ -3,6 +3,7 @@
 //  - lvr_rewards: the whole-list read is OWNER-ONLY now (no listing or orderBy/shallow queries for anyone else). One member can still be read by exact key.
 //  - lvr_member_private/<token>: phone, email, birthday, consent_*, memberKey. The token IS the path, so only someone who holds the
 //    member's personal link can read it; nobody can list it; the owner can read all. Anyone can create a new one (sign-up), only once.
+//  - lvr_member_idx/<sha256> = memberKey (duplicate and self-referral checks) and round1 entries may carry referredBy.
 //  - lvr_refcodes/<code> = memberKey: exact-path lookup for referral codes (replaces orderBy="refCode"); create-once, and the member
 //    record must actually carry that code.
 // Usage: node make-private-rules.js   (reads/writes next to this file; keeps the __OWNER_UID__ placeholder)
@@ -32,5 +33,15 @@ r.lvr_refcodes = {
     '.validate': 'newData.isString() && $code.length >= 4 && $code.length <= 12'
   }
 };
+// duplicate / self-referral check without exposing anyone's phone or email: key = sha256 of the digits of the phone (or the lower-cased email), value = member key. Exact path only, create-once.
+r.lvr_member_idx = {
+  '$h': {
+    '.read': true,
+    '.write': "newData.exists() ? (!data.exists() && newData.isString() && newData.val().length >= 1 && newData.val().length <= 64) : " + OWN,
+    '.validate': "$h.length == 64 && newData.isString()"
+  }
+};
+// Round One registry entries may carry who invited the member, so the founding-invite count no longer needs the member list.
+r.lvr_points.round1['$mk']['referredBy'] = { '.validate': 'newData.isString() && newData.val().length <= 64' };
 fs.writeFileSync(path.join(__dirname, 'lvr-rules-private.json'), JSON.stringify(r, null, 1) + '\n');
 console.log('wrote lvr-rules-private.json');

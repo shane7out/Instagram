@@ -34,3 +34,9 @@ Order matters: pages that understand BOTH layouts go live first, then data move,
 - lvr-rewards.html (Mac VIP page): `findReferrer`, sign-up record with phone/birthday/consent.
 - Owner tools: lvr-points-admin.html (MEMBERS_PATH list, phone, token, instagram), key-room.html (get('/lvr_rewards')), the main dashboard Rewards CRM (live-only code; patched by a Mac patch script).
 - Rules: the founding-members gate and every owner/admin read must send the owner token (already wired in the owner pages).
+
+## Step 2 progress (2026-11-11, check-in 12:35 UTC)
+- DONE in rewards.html (public sign-up): writes the hidden node `lvr_member_private/<token>`, `lvr_refcodes/<code>`, hashed `lvr_member_idx/<sha256>` and `referredBy` in the Round One entry (all additional, so the current layout keeps working); referrer lookup tries the exact-path code first and falls back to the old list query; the founding-member count falls back to the Round One registry when the member list is closed; invites used also counted from the registry. A new setting `lvr_points/settings/privateLayout` (owner switches on at cut-over, step 6) makes the page leave phone, email and token out of the public member record. Tested in a browser with a mocked database in both layouts (old: list readable; new: list closed + flag on): records, private node, refcode, hash index and round1 writes all correct, referrer found, no errors.
+- Rules (make-private-rules.js): added `lvr_member_idx/$h` (create-once, exact path) and `referredBy` on round1 entries; tests extended (db-task run to confirm).
+- STILL TO DO in step 2: lvr-rewards.html (Mac VIP sign-up) same treatment; legacy members without a Round One entry must be added to round1 by the step-5 move script (the founding order/count otherwise misses them once the list is closed).
+- Step 3 next: my-account.html (token lookup via lvr_member_private/<token>, memberKey, counts and referrals via registry/refcodes; legacy fallback).

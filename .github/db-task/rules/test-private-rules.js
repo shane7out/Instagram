@@ -61,6 +61,15 @@ const TOK = 'tokAAAAAAAAAAAAAAAAAAAA', TOK2 = 'tokBBBBBBBBBBBBBBBBBBBB';
   await t('cannot take over an existing code', 'anon', 'PUT', '/lvr_refcodes/KAYLA1', 'K2', false);
   await t('stranger cannot delete a code', 'anon', 'DELETE', '/lvr_refcodes/KAYLA1', undefined, false);
   await t('owner can delete a code', 'owner', 'DELETE', '/lvr_refcodes/KAYLA1', undefined, true);
+  // 4b. hashed duplicate index and round1 referredBy
+  const H1 = 'a'.repeat(64);
+  await t('list the duplicate index', 'anon', 'GET', '/lvr_member_idx', undefined, false);
+  await t('register a phone hash for a member', 'anon', 'PUT', '/lvr_member_idx/' + H1, 'K2', true);
+  await t('read one hash entry', 'anon', 'GET', '/lvr_member_idx/' + H1, undefined, true);
+  await t('cannot overwrite a hash entry', 'anon', 'PUT', '/lvr_member_idx/' + H1, 'K3', false);
+  await t('hash key must be 64 characters', 'anon', 'PUT', '/lvr_member_idx/short', 'K2', false);
+  await t('round1 entry with referredBy (sign-up)', 'anon', 'PUT', '/lvr_points/round1/K5', { name: 'Ref P.', at: { '.sv': 'timestamp' }, status: 'pending', referredBy: 'K1' }, true);
+  await t('round1 entry with an unknown extra field is still refused', 'anon', 'PUT', '/lvr_points/round1/K6', { name: 'X', at: { '.sv': 'timestamp' }, status: 'pending', junk: 'x' }, false);
   // 5. member sign-up and the rest of the program keep working (rules inherited from the owner rules)
   await t('new member sign-up record (pending, 0 points, no phone)', 'anon', 'PUT', '/lvr_rewards/K3', { name: 'New P.', points: 0, status: 'pending', joinedAt: 3, refCode: 'NEWP33' }, true);
   await t('sign-up cannot start approved with points', 'anon', 'PUT', '/lvr_rewards/K4', { name: 'Cheat', points: 500, status: 'approved' }, false);

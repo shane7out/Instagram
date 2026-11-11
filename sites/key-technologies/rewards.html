@@ -530,18 +530,46 @@
     return Array.prototype.map.call(bytes, function(b){ return REF_CHARS.charAt(b % REF_CHARS.length); }).join("");
   }
   function digits(s){ return String(s || "").replace(/\D/g, ""); }
+  // MEMBER DATA PROTECTION (docs/key-integration/MEMBER_DATA_PLAN.md): phone, email and the personal-link token are also kept in a hidden
+  // spot that cannot be listed (lvr_member_private/<token>), referral codes are looked up one at a time (lvr_refcodes/<code>) and a hashed
+  // index (lvr_member_idx/<sha256>) answers "is this the same person" without exposing anyone's phone or email. Until the owner switches
+  // settings/privateLayout on, the old public fields are written too, so nothing that works today stops working.
+  var DB_ROOT = LVR_REWARDS_DB_URL.replace(/\/lvr_rewards$/, "");
+  function sha256hex(str){
+    try {
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)).then(function(b){
+        return Array.prototype.map.call(new Uint8Array(b), function(x){ return x.toString(16).padStart(2, "0"); }).join("");
+      });
+    } catch (e) { return Promise.resolve(null); }
+  }
+  function idHashes(phone, email){
+    var jobs = [];
+    var d = digits(phone); if (d.length >= 7) jobs.push(sha256hex("p:" + d));
+    var m = String(email || "").trim().toLowerCase(); if (m) jobs.push(sha256hex("e:" + m));
+    return Promise.all(jobs).then(function(a){ return a.filter(Boolean); });
+  }
   // Resolves to the referrer's member key, or null (unknown code, or the
   // same person signing up under their own link).
   function findReferrer(code, phone, email){
     if (!code) return Promise.resolve(null);
-    return fetch(LVR_REWARDS_DB_URL + '.json?orderBy="refCode"&equalTo="' + encodeURIComponent(code) + '"').then(function(r){ return r.json(); }).then(function(found){
-      var ks = found ? Object.keys(found) : [];
-      if (!ks.length) return null;
-      var c = found[ks[0]] || {};
-      if (phone && c.phone && digits(c.phone) === digits(phone)) return null;
-      if (email && c.email && String(c.email).toLowerCase() === String(email).toLowerCase()) return null;
-      return ks[0];
-    }).catch(function(){ return null; });
+    var c = encodeURIComponent(code);
+    return fetch(DB_ROOT + "/lvr_refcodes/" + c + ".json").then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }).then(function(mk){
+      if (typeof mk === "string" && mk) {
+        // new layout: same person? (their phone/email hash already belongs to the referrer)
+        return idHashes(phone, email).then(function(hs){
+          return Promise.all(hs.map(function(h){ return fetch(DB_ROOT + "/lvr_member_idx/" + h + ".json").then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }); }));
+        }).then(function(owners){ return owners.indexOf(mk) >= 0 ? null : mk; });
+      }
+      // old layout (member list still readable): look the code up in the list
+      return fetch(LVR_REWARDS_DB_URL + '.json?orderBy="refCode"&equalTo="' + c + '"').then(function(r){ return r.ok ? r.json() : null; }).then(function(found){
+        var ks = found ? Object.keys(found) : [];
+        if (!ks.length) return null;
+        var m = found[ks[0]] || {};
+        if (phone && m.phone && digits(m.phone) === digits(phone)) return null;
+        if (email && m.email && String(m.email).toLowerCase() === String(email).toLowerCase()) return null;
+        return ks[0];
+      }).catch(function(){ return null; });
+    });
   }
 
   // Sign-ups can be paused from the owner's Settings. While paused, the form
@@ -550,7 +578,7 @@
   var SETTINGS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/lvr_points/settings") + ".json";
   var LEADS_URL = LVR_REWARDS_DB_URL.replace("/lvr_rewards", "/key_leads/leads") + ".json";
   function signupsPaused(){
-    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null, launch: (st && st.launch) || null, decay: (st && st.decay) || null }; }).catch(function(){ return { paused: false, banner: "", welcome: null, launch: null, decay: null }; });
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || "", welcome: (st && st.welcome) || null, launch: (st && st.launch) || null, decay: (st && st.decay) || null, privateLayout: !!(st && st.privateLayout) }; }).catch(function(){ return { paused: false, banner: "", welcome: null, launch: null, decay: null }; });
   }
   // "You start with 21 free points." only when the owner has that switched on
   signupsPaused().then(function(r){
@@ -577,11 +605,11 @@
   var round1Reg = {}, lastKeys = null;
   function memberKeys(){
     return Promise.all([
-      fetch(LVR_REWARDS_DB_URL + ".json?shallow=true").then(function(r){ if (!r.ok) throw new Error("x"); return r.json(); }),
+      fetch(LVR_REWARDS_DB_URL + ".json?shallow=true").then(function(r){ if (!r.ok) throw new Error("x"); return r.json(); }).catch(function(){ return null; }),  /* null = the member list is closed (new layout): use the Round One registry instead */
       fetch(R1_URL).then(function(r){ return r.ok ? r.json() : {}; }).catch(function(){ return {}; })
     ]).then(function(x){
       var reg = x[1] || {}; round1Reg = reg;
-      lastKeys = Object.keys(x[0] || {}).filter(function(k){ return !(reg[k] && reg[k].status === "rejected"); }).sort();
+      lastKeys = Object.keys(x[0] || reg).filter(function(k){ return !(reg[k] && reg[k].status === "rejected"); }).sort();
       return lastKeys;
     });
   }
@@ -618,7 +646,9 @@
         if (!rk) return { ok: false, reason: "noinvite", limit: cfg.limit };
         if (keys.slice(0, cfg.limit).indexOf(rk) < 0) return { ok: false, reason: "notfounder", limit: cfg.limit };
         return fetch(LVR_REWARDS_DB_URL + '.json?orderBy="referredBy"&equalTo=' + encodeURIComponent(JSON.stringify(rk)) + "&shallow=true").then(function(r){ return r.json(); }).then(function(used){
-          var live = Object.keys(used || {}).filter(function(k){ return !(round1Reg[k] && round1Reg[k].status === "rejected"); }).length; // a declined friend does not use up the invite
+          var usedKeys = Object.keys(used && typeof used === "object" && !used.error ? used : {});
+          Object.keys(round1Reg).forEach(function(k){ if (round1Reg[k] && round1Reg[k].referredBy === rk && usedKeys.indexOf(k) < 0) usedKeys.push(k); });
+          var live = usedKeys.filter(function(k){ return !(round1Reg[k] && round1Reg[k].status === "rejected"); }).length; // a declined friend does not use up the invite
           if (live >= cfg.invites) return { ok: false, reason: "used", limit: cfg.limit };
           return { ok: true, invited: true, limit: cfg.limit };
         });
@@ -703,10 +733,10 @@
     status.textContent = "Opening your account…";
     status.className = "form-status";
 
-    var welcomeCfg = null, gateRes = null, pendingApproval = true;
+    var welcomeCfg = null, gateRes = null, pendingApproval = true, privateLayout = false, madeRec = null, madeReferrer = null;
     signupsPaused().then(function(r){
       if (r.paused) { showWaitlist(r.banner); throw new Error("paused"); }
-      welcomeCfg = r.welcome;
+      welcomeCfg = r.welcome; privateLayout = !!r.privateLayout;
       pendingApproval = !(r.launch && r.launch.approval === false);
       return launchGate(r.launch, phone, email).then(function(g){
         if (!g.ok) { showFull(g); throw new Error("full"); }
@@ -722,6 +752,10 @@
         consent_terms: "2026-11-03a" /* keep equal to PROGRAM_TERMS_VERSION in my-account.html */, consent_terms_ts: {".sv": "timestamp"}
       };
       if (referrerKey) rec.referredBy = referrerKey;
+      madeReferrer = referrerKey || null;
+      madeRec = { phone: phone, email: email, refCode: rec.refCode };
+      // switched on by the owner at cut-over: phone, email and the personal-link token stay out of the public member list
+      if (privateLayout) { delete rec.phone; delete rec.email; delete rec.token; }
       if (gateRes && gateRes.founding) rec.founding = true;
       // Every sign-up waits for the owner's approval (to keep out bots and fake accounts); welcome points are added on approval.
       if (pendingApproval) rec.status = "pending";
@@ -736,7 +770,12 @@
       return r.json().then(function(j){
         if (j && j.name) {
           // Round One registry (leaderboard name + status) and the owner's alert (Leads list + email)
-          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ name: shortName(name).slice(0, 40), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }) }).catch(function(){});
+          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(Object.assign({ name: shortName(name).slice(0, 40), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }, madeReferrer ? { referredBy: madeReferrer } : {})) }).catch(function(){});
+          // hidden spot + exact-path indexes (see the note above findReferrer)
+          var JH = {"Content-Type": "application/json"};
+          fetch(DB_ROOT + "/lvr_member_private/" + encodeURIComponent(token) + ".json", { method: "PUT", headers: JH, body: JSON.stringify({ memberKey: j.name, phone: phone, email: email }) }).catch(function(){});
+          if (madeRec && madeRec.refCode) fetch(DB_ROOT + "/lvr_refcodes/" + encodeURIComponent(madeRec.refCode) + ".json", { method: "PUT", headers: JH, body: JSON.stringify(j.name) }).catch(function(){});
+          idHashes(phone, email).then(function(hs){ hs.forEach(function(h){ fetch(DB_ROOT + "/lvr_member_idx/" + h + ".json", { method: "PUT", headers: JH, body: JSON.stringify(j.name) }).catch(function(){}); }); }).catch(function(){});
           var note = { source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "pending" : "approved", memberKey: j.name, createdAt: {".sv": "timestamp"}, landingPage: location.pathname };
           fetch(LEADS_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(note) }).catch(function(){});
           fetch("https://formspree.io/f/mzeedbyb", { method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify({ _subject: "New LVR Rewards sign-up" + (pendingApproval ? " waiting for your approval" : ""), source: "lvr-points-signup", name: name, email: email, phone: phone, status: pendingApproval ? "WAITING FOR APPROVAL: open Rewards admin > Approvals" : "approved", message: "A new person signed up for LVR Rewards. Open the Rewards admin, Approvals tab, to approve or decline." }) }).catch(function(){});
