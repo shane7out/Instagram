@@ -60,7 +60,7 @@ sub('''A potential client who doesn't hear back within the day typically
 sub('<h2>Built around your intake, not a generic platform</h2>', '<h2>Built around your restaurant, not a generic platform</h2>')
 cards = [
  ('Custom Guest CRM &amp; Inquiry Management', 'A CRM built around your restaurant: regulars, private-event and catering inquiries and follow-ups in one place, so a lead is answered quickly and nothing goes cold waiting for a callback.'),
- ('AI/SI Phone &amp; Text Answering', 'Never miss a call or text, including after hours. Hours, menu and location questions get answered right away; reservations, large parties and anything that needs a person are routed to one.'),
+ ('Phone &amp; Text Answering', 'Never miss a call or text, including after hours. Hours, menu and location questions get answered right away; reservations, large parties and anything that needs a person are routed to one.'),
  ('Social Media &amp; Content Creators', 'Steady posts, captions, graphics and short video in your restaurant\'s own look and voice, on a schedule, with you deciding whether each post goes out on its own or waits for your approval.'),
  ('Review &amp; Reputation Management', 'Monitor and answer Google and Yelp reviews quickly, in your own voice, and flag anything negative before it sits unanswered.'),
  ('Email &amp; Follow-up Automation', 'Slow-night messages, event announcements and thank-you notes that go out on their own to guests who asked to hear from you.'),

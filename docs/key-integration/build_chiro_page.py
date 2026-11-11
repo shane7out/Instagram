@@ -43,7 +43,7 @@ sub('<h2>Built around your intake, not a generic platform</h2>', '<h2>Built arou
 cards = [
  ('Practice Dashboard', 'Appointments, new patients, no-shows, busiest hours, reviews and follow-ups on one screen, built around the scheduling and billing systems you already use. Try the demo with made-up data.'),
  ('Custom Patient CRM &amp; Inquiry Management', 'A CRM built around your clinic: new-patient inquiries, referrals and follow-ups in one place, captured the moment they arrive, so nothing goes cold waiting for a callback.'),
- ('AI/SI Phone &amp; Text Answering', 'Never miss a call or text, including after hours. Hours, location and new-patient questions get answered right away; anything clinical or urgent is routed to a person.'),
+ ('Phone &amp; Text Answering', 'Never miss a call or text, including after hours. Hours, location and new-patient questions get answered right away; anything clinical or urgent is routed to a person.'),
  ('Appointment Reminders &amp; Rebooking', 'Confirmations, reminders and "time for your next visit" messages that go out on their own to patients who asked to hear from you, so fewer slots sit empty.'),
  ('Review &amp; Reputation Management', 'Monitor and answer Google reviews quickly, in your own voice, and flag anything negative before it sits unanswered.'),
  ('AI/SI Agents', 'An assistant that handles repetitive front-desk tasks, such as common questions and scheduling requests, inside permission levels you set, so you decide how much runs on its own.'),

@@ -5,7 +5,7 @@
 Key Technologies works worldwide and can communicate in any language using AI/SI, in writing and by voice. Key Technologies does not guarantee results. Interactive demos on this site use made-up data, are not connected to any real system and do not send, book or charge anything.
 
 ## Start here
-- [Home: services and free website audit](https://keytechnologies.si/): all 25 services, FAQ and contact
+- [Home: services and free website audit](https://keytechnologies.si/): all 26 services, FAQ and contact
 - [Book a free call](https://keytechnologies.si/book.html): request a call time (Mon to Fri, Pacific time); nothing is booked until confirmed
 - [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
 - [For restaurants](https://keytechnologies.si/restaurants.html): guest CRM, phone and text answering, review replies and social content for restaurants
@@ -14,8 +14,8 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Business dashboards demo](https://keytechnologies.si/key-platform/demos/business-dashboards.html): dashboards built around the systems you already use, with made-up data
 
 ## Demos (fictional data)
-- [AI phone receptionist](https://keytechnologies.si/key-platform/voice/)
-- [AI email assistant](https://keytechnologies.si/key-platform/email/)
+- [Phone receptionist](https://keytechnologies.si/key-platform/voice/)
+- [Email assistant](https://keytechnologies.si/key-platform/email/)
 - [Review and reputation management](https://keytechnologies.si/key-platform/demos/reviews-reputation.html)
 - [Booking and scheduling automation](https://keytechnologies.si/key-platform/demos/booking-scheduling.html)
 - [Custom CRM and lead management](https://keytechnologies.si/key-platform/demos/custom-crm.html)

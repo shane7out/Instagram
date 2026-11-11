@@ -16,10 +16,10 @@ svgs = re.findall(r'<svg width="\d+" height="\d+" viewBox="0 4 116 50" aria-hidd
 LOGO_H, LOGO_F = svgs[0], svgs[1]
 
 SERVICE_CARDS = [  # (href, thumb, title, text)
- ('key-platform/voice/', 'voice', 'AI phone receptionist', 'Answers calls day and night, captures the lead and sends anything urgent to a person.'),
+ ('key-platform/voice/', 'voice', 'Phone receptionist', 'Answers calls day and night, captures the lead and sends anything urgent to a person.'),
  ('key-platform/demos/booking-scheduling.html', 'booking-scheduling', 'Booking and reminders', 'Pick a time, get a confirmation and see the reminders that follow.'),
  ('key-platform/demos/reviews-reputation.html', 'reviews-reputation', 'Review management', 'Drafted replies in your voice, with bad reviews flagged for you first.'),
- ('key-platform/email/', 'email', 'AI email assistant', 'Sorts an inbox and drafts replies that a person approves before they go out.'),
+ ('key-platform/email/', 'email', 'Email assistant', 'Sorts an inbox and drafts replies that a person approves before they go out.'),
  ('key-platform/demos/content-creators.html', 'content-creators', 'Content and social posts', 'Posts and captions drafted around your brand, with your approval.'),
  ('key-platform/demos/custom-crm.html', 'custom-crm', 'Custom CRM', 'Leads move through your own stages so nothing slips through.'),
 ]
@@ -360,7 +360,7 @@ def graph(c):
      {"@type": "ProfessionalService", "name": "Key Technologies", "url": BASE, "description": c['desc'],
       "areaServed": {"@type": "City", "name": cn, "containedInPlace": {"@type": "State", "name": c['state']}},
       "founder": {"@type": "Person", "name": "Shane Christensen", "image": BASE + "images/shane-christensen.jpg"},
-      "knowsAbout": ["AI consulting", "Business automation", "AI phone receptionist", "Review management", "Website security"]},
+      "knowsAbout": ["AI consulting", "Business automation", "Phone receptionist", "Review management", "Website security"]},
      {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": BASE}, {"@type": "ListItem", "position": 2, "name": "Locations", "item": BASE + "#locations"}, {"@type": "ListItem", "position": 3, "name": cn, "item": url}]},
      {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in c['faq']]}]
 

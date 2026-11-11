@@ -119,7 +119,7 @@
  {
   "slug": "website-development",
   "num": "12",
-  "title": "AI/SI Website Development",
+  "title": "Website Development",
   "tag": "Websites with chat, personalization and lead capture built in.",
   "cat": "Websites & Security",
   "thumb": "demos/thumbs/website-development.jpg",
@@ -155,7 +155,7 @@
  {
   "slug": "../voice/index.html",
   "num": "16",
-  "title": "AI/SI Phone & Text Answering",
+  "title": "Phone & Text Answering",
   "tag": "An AI receptionist that answers calls and captures leads.",
   "cat": "Customers & Communication",
   "thumb": "demos/thumbs/voice.jpg",
@@ -173,7 +173,7 @@
  {
   "slug": "ai-training",
   "num": "18",
-  "title": "AI/SI Training & Custom Training Software",
+  "title": "Training & Custom Training Software",
   "tag": "Teach your team to use AI/SI well, in your own portal.",
   "cat": "Training & Rewards",
   "thumb": "demos/thumbs/ai-training.jpg",

@@ -10,7 +10,7 @@ SAFETY RULES (built in):
 
 Entry format (testimonials.json is a list):
   {"id": "short-slug", "quote": "Exactly what they said.", "name": "First Last", "role": "Owner", "company": "Business name",
-   "date": "2026-11-03", "service": "AI phone receptionist", "featured": true, "permission": true}
+   "date": "2026-11-03", "service": "Phone receptionist", "featured": true, "permission": true}
 Keep proof of the written permission yourself (an email or message). Only quote real clients, and say so if they were paid, got a discount
 or have any other connection to you (the FTC treats that as a disclosure item).
 """

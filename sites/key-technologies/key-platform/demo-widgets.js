@@ -152,7 +152,7 @@ T.brief=function(root){
  on(root,'input','change',calc);on(root,'select','change',calc);calc();
 };
 
-/* ---------- 12 AI/SI Website Development ---------- */
+/* ---------- 12 Website Development ---------- */
 T.site=function(root){
  root.innerHTML='<div class="two-columns"><div class="panel"><h3>Website controls</h3><label class="checkline"><input type="checkbox" id="wr"><span>Visitor has been here before (personalization)</span></label><p class="micro">Switch it on and watch the banner change.</p><hr class="hr"><p class="muted">The preview on the right is a fictional florist site with a built-in assistant. Try: <b>hours</b>, <b>delivery</b>, <b>prices</b>, or ask something it does not know.</p></div><div class="panel" style="padding:0;overflow:hidden"><div style="padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between"><b style="color:var(--ink)">Desert Bloom Florist</b><span class="micro">Home - Shop - Contact</span></div><div id="sb" style="padding:10px 16px;background:var(--bg-2);color:var(--ink)">Fresh flowers, delivered across Las Vegas.</div><div style="padding:16px"><div id="sc" class="chat-log" style="min-height:170px;max-height:260px;padding:0"><div class="chat-bubble agent">Hi! Ask me about hours, delivery or prices.</div></div><div class="row" style="margin-top:10px;flex-wrap:nowrap"><input id="si" placeholder="Type a question" maxlength="120" aria-label="Ask the site assistant"><button class="primary" id="ss" type="button">Send</button></div><div id="sl"></div></div></div></div>';
  q('#wr',root).onchange=function(){q('#sb',root).textContent=this.checked?'Welcome back! Want to reorder your last bouquet?':'Fresh flowers, delivered across Las Vegas.'};

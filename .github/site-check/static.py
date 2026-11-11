@@ -59,7 +59,18 @@ print(len(pages),'pages',len(issues),'issues')
 c=collections.Counter(re.sub(r':.*','',i[1]) for i in issues); print(c)
 for i in issues[:80]: print(i)
 
-HARD=('broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
+# the number of services quoted on the site must equal the real number of services (key-platform/demos/list.json)
+import json as _j
+_N=len(_j.load(open('key-platform/demos/list.json',encoding='utf-8')))
+for p in pages:
+    t=read(p)
+    for m in re.finditer(r'<b>(\d+) services</b>|See all (\d+) (?:services|demos)',t):
+        n=int(m.group(1) or m.group(2))
+        if n!=_N: issues.append((p,'service count %d but the real number is %d (run docs/key-integration/sync_service_count.py)'%(n,_N)))
+for _l in read('llms.txt').split('\n'):
+    for m in re.finditer(r'all (\d+) services',_l):
+        if int(m.group(1))!=_N: issues.append(('llms.txt','service count %s but the real number is %d'%(m.group(1),_N)))
+HARD=('service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
 hard=[i for i in issues if i[1].startswith(HARD)]
 print('HARD problems:',len(hard))
 sys.exit(1 if hard else 0)
