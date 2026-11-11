@@ -420,9 +420,9 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
         <option value="Car Sales">Car Sales</option>
       </select>
     </div>
-    <div class="field car-only"><label for="f-dealership">Dealership</label><input id="f-dealership" type="text" placeholder="e.g. Example Toyota of Las Vegas"></div>
+    <div class="field car-only"><label for="f-dealership">Dealership / brokerage</label><input id="f-dealership" type="text" placeholder="e.g. Example Toyota of Las Vegas, or Example Realty"></div>
     <div class="field car-only"><label for="f-role">Person and role (only if the dealership publishes it)</label><input id="f-role" type="text" placeholder="e.g. Jane Doe, General Sales Manager"></div>
-    <div class="field car-only"><label for="f-brands">Brands / type</label><input id="f-brands" type="text" placeholder="e.g. Toyota, franchise"></div>
+    <div class="field car-only"><label for="f-brands">Brands / type</label><input id="f-brands" type="text" placeholder="e.g. Toyota, franchise  /  Keller Williams, franchise office"></div>
     <div class="field car-only"><label for="f-website">Website</label><input id="f-website" type="url" placeholder="https://"></div>
     <div class="field car-only"><label for="f-source">Where this information came from (link)</label><input id="f-source" type="url" placeholder="https://"></div>
     <div class="field car-only"><label><input id="f-dnc" type="checkbox"> Do not contact (asked not to be contacted, or no consent)</label></div>
@@ -591,7 +591,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   function safeUrl(u) { u = String(u || '').trim(); return /^https?:\/\/[^\s"'<>]+$/i.test(u) ? u : ''; }
   // extra lines for Car Sales records (dealership, person/role, brands, links, distance, confidence, do-not-contact)
   function carExtraHtml(p) {
-    if (p.vertical !== 'Car Sales') return '';
+    if (!isPeopleVertical(p.vertical)) return '';
     var out = '';
     if (p.dnc) out += '<span class="badge dnc">Do not contact</span>';
     if (p.confidence) out += '<span class="badge">' + escapeHtml(p.confidence) + ' confidence</span>';
@@ -603,6 +603,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     var links = [];
     var w = safeUrl(p.website); if (w) links.push('<a href="' + escapeHtml(w) + '" target="_blank" rel="noopener noreferrer">Website</a>');
     var sv = safeUrl(p.sourceUrl); if (sv) links.push('<a href="' + escapeHtml(sv) + '" target="_blank" rel="noopener noreferrer">Source</a>');
+    var du = safeUrl(p.directoryUrl); if (du) links.push('<a href="' + escapeHtml(du) + '" target="_blank" rel="noopener noreferrer">Agent list</a>');
     var cs = safeUrl(p.contactSourceUrl); if (cs) links.push('<a href="' + escapeHtml(cs) + '" target="_blank" rel="noopener noreferrer">Contact source</a>');
     return '<div class="car-meta">' + out + (lines.length ? '<div>' + lines.join(' · ') + '</div>' : '') + (links.length ? '<div>' + links.join(' · ') + '</div>' : '') + '</div>';
   }
@@ -694,7 +695,8 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     syncCarFields();
     document.getElementById('modal-overlay').classList.add('open');
   }
-  function syncCarFields() { document.querySelector('#modal-overlay .modal').classList.toggle('car-on', document.getElementById('f-vertical').value === 'Car Sales'); }
+  function isPeopleVertical(v) { return v === 'Car Sales' || v === 'Real Estate'; }
+  function syncCarFields() { document.querySelector('#modal-overlay .modal').classList.toggle('car-on', isPeopleVertical(document.getElementById('f-vertical').value)); }
   document.getElementById('f-vertical').addEventListener('change', syncCarFields);
   function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingNum = null; }
 
@@ -721,7 +723,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     };
     // keep fields that came from an import (distance, confidence, contact source ...) and add the Car Sales fields
     ['distMiles','confidence','contactSourceUrl','dealerGroup','zip'].forEach(function(k){ if (prospects[num] && prospects[num][k] != null) record[k] = prospects[num][k]; });
-    if (record.vertical === 'Car Sales') {
+    if (isPeopleVertical(record.vertical)) {
       record.dealership = document.getElementById('f-dealership').value.trim();
       record.role = document.getElementById('f-role').value.trim();
       record.brands = document.getElementById('f-brands').value.trim();
@@ -767,31 +769,32 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       function col(r, k) { var i = head.indexOf(k); return i < 0 ? '' : (r[i] || '').trim(); }
       var have = {}; Object.keys(prospects).forEach(function(k){ var p = prospects[k]; if (p) { have[((p.name || '') + '|' + (p.address || '')).toLowerCase()] = 1; have[((p.name || '') + '|' + (p.dealership || '') + '|' + (p.email || '')).toLowerCase()] = 1; } });
       var num = nextNum(), batch = {}, added = 0, skipped = 0;
-      var personFile = head.indexOf('person_name') >= 0;   // staff-page file: one row per salesperson
+      var COMPANY = head.indexOf('brokerage') >= 0 ? 'brokerage' : 'dealership', VERT = COMPANY === 'brokerage' ? 'Real Estate' : 'Car Sales';
+      var personFile = head.indexOf('person_name') >= 0;   // staff-page file: one row per salesperson / agent
       rows.slice(1).forEach(function(r){
         if (personFile) {
-          var pn = col(r, 'person_name'), dl = col(r, 'dealership'); if (!pn) return;
+          var pn = col(r, 'person_name'), dl = col(r, COMPANY); if (!pn) return;
           var pkey = (pn + '|' + dl + '|' + col(r, 'email')).toLowerCase(); if (have[pkey]) { skipped++; return; } have[pkey] = 1;
-          batch[num] = { num: num, name: pn, vertical: 'Car Sales', phone: '', email: col(r, 'email'), address: col(r, 'address'), notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(),
+          batch[num] = { num: num, name: pn, vertical: VERT, phone: '', email: col(r, 'email'), address: col(r, 'address'), notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(),
             dealership: dl, role: col(r, 'role'), brands: '', website: safeUrl(col(r, 'website')), sourceUrl: safeUrl(col(r, 'source_url')), confidence: col(r, 'confidence'), dnc: false };
           num++; added++; return;
         }
-        var name = col(r, 'dealership') || col(r, 'name'); if (!name) return;
+        var name = col(r, COMPANY) || col(r, 'name'); if (!name) return;
         var addr = [col(r, 'address'), col(r, 'city'), col(r, 'zip')].filter(Boolean).join(', ');
         var key = (name + '|' + addr).toLowerCase(); if (have[key]) { skipped++; return; } have[key] = 1;
         var contact = [col(r, 'contact_name'), col(r, 'contact_role')].filter(Boolean).join(', ');
-        var rec = { num: num, name: name, vertical: 'Car Sales', phone: col(r, 'main_phone') || col(r, 'phone'), email: col(r, 'email'), address: addr,
-          notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(), dealership: name, role: contact,
+        var rec = { num: num, name: name, vertical: VERT, phone: col(r, 'main_phone') || col(r, 'phone'), email: col(r, 'email'), address: addr,
+          notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(), dealership: name, directoryUrl: safeUrl(col(r, 'agent_directory_url')), role: contact,
           brands: [col(r, 'brands'), col(r, 'type')].filter(Boolean).join(', '), website: safeUrl(col(r, 'website')), sourceUrl: safeUrl(col(r, 'source_url')),
           contactSourceUrl: safeUrl(col(r, 'contact_source_url')), confidence: col(r, 'confidence'), distMiles: col(r, 'est_miles_from_center'), dealerGroup: col(r, 'dealer_group'), zip: col(r, 'zip'), dnc: false };
         batch[num] = rec; num++; added++;
       });
       if (!added) { alert('Nothing new to add (' + skipped + ' already in the CRM).'); return; }
-      if (!confirm('Add ' + added + (personFile ? ' salespeople' : ' Car Sales prospects') + (skipped ? ' (' + skipped + ' already there are skipped)' : '') + '?')) return;
+      if (!confirm('Add ' + added + (personFile ? (VERT === 'Real Estate' ? ' agents' : ' salespeople') : ' ' + VERT + ' prospects') + (skipped ? ' (' + skipped + ' already there are skipped)' : '') + '?')) return;
       fetch(DB + NODE_PATH + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(batch) }).then(function(res){
         if (!res.ok) throw new Error('HTTP ' + res.status);
         Object.keys(batch).forEach(function(k){ prospects[k] = batch[k]; });
-        activeTab = 'Car Sales'; document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-v') === 'Car Sales'); });
+        activeTab = VERT; document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-v') === VERT); });
         render(); showToast(added + ' added');
       }).catch(function(){ alert('Import failed (nothing was added). Are you signed in as owner?'); });
     };

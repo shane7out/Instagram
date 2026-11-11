@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 // Dealership staff-page reader (runs on YOUR Mac, writes a CSV on YOUR Mac; nothing here is ever uploaded to the public repo).
-// For each dealership website in the list it politely opens the dealership's OWN public "meet our team / staff" page and keeps the sales people
+// For each dealership website in the list it politely opens the dealership's (or brokerage's) OWN public "meet our team / staff" page and keeps the sales people
 // it shows (name, job title, and an email ONLY if the page itself prints one next to that person; no phone numbers are collected). It never guesses email addresses, never opens login pages,
 // social media or review sites, obeys the site's robots.txt, waits between requests and stops when a site says no.
 // Usage: node scrape-dealer-staff.js <dealers.csv> <out.csv> [maxDealers]
 const fs = require('fs');
 const UA = 'Mozilla/5.0 (compatible; KeyTechnologiesResearch/1.0; one polite visit per page)';
 const DELAY = Number(process.env.SCRAPE_DELAY || 2500), TIMEOUT = 15000;
-const ROLE = /(sales\s*(consultant|professional|associate|advisor|adviser|representative|rep|executive|specialist|manager|director|person)|general\s*(sales\s*)?manager|general manager|internet\s*(sales\s*)?(manager|director|consultant|specialist|advisor|coordinator)|bdc|business development|brand\s*(specialist|ambassador)|product\s*(specialist|expert|genius|advisor)|client\s*advisor|customer\s*(advisor|experience)|fleet|owner|dealer principal|finance\s*(manager|director)|new\s*car\s*manager|used\s*car\s*manager|sales\s*&?\s*leasing)/i;
-const SALESY = /(sales|consultant|brand|product|advisor|adviser|bdc|internet|manager|owner|principal|specialist|finance|fleet)/i;
-const NOTNAME = /^(meet|our|the|team|staff|sales|service|parts|finance|department|contact|call|text|email|phone|home|new|used|inventory|specials|about|us|directions|hours|view|read|more|schedule|get|apply|value|your|trade|privacy|policy|terms|menu|search|find|shop|book|certified|pre-owned|toyota|honda|ford|chevrolet|nissan|hyundai|kia|bmw|mercedes|audi|lexus|subaru|mazda|volkswagen|jeep|dodge|ram|gmc|buick|cadillac|tesla|infiniti|acura|las|vegas|nevada|henderson)$/i;
-const PATHS = ['/meet-our-staff', '/meet-our-team', '/staff', '/about-us/staff', '/about-us/meet-our-team', '/about/staff', '/dealership/staff.htm', '/dealership/meet-our-staff.htm', '/staff.aspx', '/our-team', '/meet-the-team', '/our-staff', '/team', '/about-us/our-team', '/dealership/staff'];
+const MODE = process.env.SCRAPE_MODE === 'realtors' ? 'realtors' : 'cars';   // cars = dealership sales staff, realtors = brokerage agents
+const ROLE_CARS = /(sales\s*(consultant|professional|associate|advisor|adviser|representative|rep|executive|specialist|manager|director|person)|general\s*(sales\s*)?manager|general manager|internet\s*(sales\s*)?(manager|director|consultant|specialist|advisor|coordinator)|bdc|business development|brand\s*(specialist|ambassador)|product\s*(specialist|expert|genius|advisor)|client\s*advisor|customer\s*(advisor|experience)|fleet|owner|dealer principal|finance\s*(manager|director)|new\s*car\s*manager|used\s*car\s*manager|sales\s*&?\s*leasing)/i;
+const ROLE_RE = /(realtor|real\s*estate\s*(agent|professional|broker|salesperson|consultant|advisor|specialist)|licensed\s*(agent|realtor|salesperson)|associate\s*broker|broker\s*associate|managing\s*broker|broker\s*(\/|&|and)?\s*owner|broker|team\s*(lead|leader|member)|sales\s*(associate|agent|professional)|agent|property\s*manager|luxury\s*(specialist|advisor)|buyer.?s?\s*agent|listing\s*(agent|specialist))/i;
+const ROLE = MODE === 'realtors' ? ROLE_RE : ROLE_CARS;
+const SALESY = MODE === 'realtors' ? /(realtor|agent|broker|associate|team|sales|specialist|advisor|consultant|manager|owner)/i : /(sales|consultant|brand|product|advisor|adviser|bdc|internet|manager|owner|principal|specialist|finance|fleet)/i;
+const NOTNAME = /^(meet|our|the|team|staff|sales|service|parts|finance|department|contact|call|text|email|phone|home|new|used|inventory|specials|about|us|directions|hours|view|read|more|schedule|get|apply|value|your|trade|privacy|policy|terms|menu|search|find|shop|book|certified|pre-owned|toyota|honda|chevrolet|nissan|hyundai|bmw|mercedes|audi|lexus|subaru|mazda|volkswagen|jeep|dodge|gmc|buick|cadillac|tesla|infiniti|acura|las|vegas|nevada|henderson)$/i;
+const PATHS = MODE === 'realtors' ? ['/agents', '/our-agents', '/find-an-agent', '/agent-directory', '/team', '/our-team', '/meet-our-team', '/about-us/our-agents', '/about/agents', '/agent-search', '/people', '/realtors', '/staff'] : ['/meet-our-staff', '/meet-our-team', '/staff', '/about-us/staff', '/about-us/meet-our-team', '/about/staff', '/dealership/staff.htm', '/dealership/meet-our-staff.htm', '/staff.aspx', '/our-team', '/meet-the-team', '/our-staff', '/team', '/about-us/our-team', '/dealership/staff'];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function parseCsv(text) { const rows = []; let row = [], f = '', q = false; text = text.replace(/^﻿/, '');
   for (let i = 0; i < text.length; i++) { const c = text[i];
@@ -46,17 +49,17 @@ function looksLikeName(s) {
   if (parts.some(p => NOTNAME.test(p))) return null; if (ROLE.test(s)) return null; return s; }
 function extractPeople(html) {
   const lines = toLines(html), out = [], seen = new Set();
-  const nearby = (i, kind) => { for (let j = i; j <= Math.min(lines.length - 1, i + 5); j++) { const m = lines[j].match(new RegExp('\\[\\[' + kind + ':([^\\]]+)\\]\\]')); if (m) return m[1]; if (j > i && looksLikeName(lines[j].replace(/\[\[(mail|tel):[^\]]*\]\]/g, ''))) break; } return ''; };
+  const nearby = (i, ri, kind) => { for (let j = i; j <= Math.min(lines.length - 1, ri + 3); j++) { const m = lines[j].match(new RegExp('\\[\\[' + kind + ':([^\\]]+)\\]\\]')); if (m) return m[1]; const cl = lines[j].replace(/\[\[(mail|tel):[^\]]*\]\]/g, '').trim(); if (j > ri && (looksLikeName(cl) || ROLE.test(cl))) break; } return ''; };
   for (let i = 0; i < lines.length; i++) {
-    let name = null, role = '';
+    let name = null, role = '', ri = i;
     const clean = lines[i].replace(/\[\[(mail|tel):[^\]]*\]\]/g, '').trim();
     const m = clean.match(/^(.{4,40}?)\s*[-–—|,]\s*(.{3,60})$/);   // "Name - Title" / "Name, Title"
-    if (m && looksLikeName(m[1]) && ROLE.test(m[2])) { name = looksLikeName(m[1]); role = m[2]; }
-    else if (looksLikeName(clean)) { for (let j = i + 1; j <= i + 3 && j < lines.length; j++) { const c2 = lines[j].replace(/\[\[(mail|tel):[^\]]*\]\]/g, '').trim(); if (ROLE.test(c2) && c2.length <= 70) { name = looksLikeName(clean); role = c2; break; } if (looksLikeName(c2)) break; } }
+    if (m && looksLikeName(m[1]) && ROLE.test(m[2])) { name = looksLikeName(m[1]); role = m[2]; ri = i; }
+    else if (looksLikeName(clean)) { for (let j = i + 1; j <= i + 3 && j < lines.length; j++) { const c2 = lines[j].replace(/\[\[(mail|tel):[^\]]*\]\]/g, '').trim(); if (ROLE.test(c2) && c2.length <= 70) { name = looksLikeName(clean); role = c2; ri = j; break; } if (looksLikeName(c2)) break; } }
     if (!name || !SALESY.test(role)) continue;
     const key = name.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
-    let email = nearby(i, 'mail'); if (email && !/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) email = '';
-    out.push({ name, role: role.replace(/\s+/g, ' '), email: email.toLowerCase(), phone: nearby(i, 'tel') }); }
+    let email = nearby(i, ri, 'mail'); if (email && !/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) email = '';
+    out.push({ name, role: role.replace(/\s+/g, ' '), email: email.toLowerCase(), phone: '' }); }
   return out; }
 function staffLinks(html, base) {
   const found = []; const re = /<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi; let m;
@@ -68,9 +71,10 @@ function staffLinks(html, base) {
   const [inFile, outFile, maxArg] = process.argv.slice(2); if (!inFile || !outFile) { console.log('usage: node scrape-dealer-staff.js dealers.csv out.csv [maxDealers]'); process.exit(1); }
   if (typeof fetch !== 'function') { console.log('This needs Node 18 or newer (type: node -v).'); process.exit(1); }
   const rows = parseCsv(fs.readFileSync(inFile, 'utf8')); const head = rows[0].map(h => h.trim().toLowerCase()); const col = (r, k) => { const i = head.indexOf(k); return i < 0 ? '' : (r[i] || '').trim(); };
-  let dealers = rows.slice(1).map(r => ({ name: col(r, 'dealership'), website: col(r, 'website'), address: [col(r, 'address'), col(r, 'city'), col(r, 'zip')].filter(Boolean).join(', '), phone: col(r, 'main_phone') })).filter(d => /^https?:\/\//i.test(d.website));
+  const COMPANY_COL = head.indexOf('brokerage') >= 0 ? 'brokerage' : 'dealership';
+  let dealers = rows.slice(1).map(r => ({ name: col(r, COMPANY_COL), directory: col(r, 'agent_directory_url'), website: col(r, 'website'), address: [col(r, 'address'), col(r, 'city'), col(r, 'zip')].filter(Boolean).join(', '), phone: col(r, 'main_phone') })).filter(d => /^https?:\/\//i.test(d.website) || /^https?:\/\//i.test(d.directory));
   if (maxArg) dealers = dealers.slice(0, Number(maxArg));
-  const outCols = ['dealership', 'person_name', 'role', 'email', 'address', 'website', 'source_url', 'confidence', 'notes'];
+  const outCols = [COMPANY_COL, 'person_name', 'role', 'email', 'address', 'website', 'source_url', 'confidence', 'notes'];
   const out = [outCols.join(',')]; const report = []; let people = 0;
   for (let n = 0; n < dealers.length; n++) {
     const d = dealers[n]; let origin; try { origin = new URL(d.website).origin; } catch (e) { continue; }
@@ -78,7 +82,7 @@ function staffLinks(html, base) {
     const rb = await get(origin + '/robots.txt'); await sleep(DELAY); const robots = rb.status === 200 ? rb.body : '';
     const tried = []; let best = null, why = 'no staff page found';
     const home = robotsAllows(robots, '/') ? await get(d.website) : { status: 0, body: '', err: 'robots' }; await sleep(DELAY);
-    let cand = home.body ? staffLinks(home.body, home.url || d.website) : []; cand = cand.concat(PATHS.map(p => origin + p));
+    let cand = (/^https?:\/\//i.test(d.directory) ? [d.directory] : []).concat(home.body ? staffLinks(home.body, home.url || d.website) : []); cand = cand.concat(PATHS.map(p => origin + p));
     cand = [...new Set(cand)].slice(0, 9);
     for (const u of cand) {
       let path = '/'; try { path = new URL(u).pathname; } catch (e) {}
@@ -87,7 +91,17 @@ function staffLinks(html, base) {
       if (r.status === 403 || r.status === 429) { why = 'site blocked automated visits (HTTP ' + r.status + ')'; break; }
       if (r.status !== 200 || !r.body) continue;
       const ppl = extractPeople(r.body);
-      if (ppl.length >= 2) { best = { url: r.url, ppl }; break; }
+      if (ppl.length >= 2) {
+        best = { url: r.url, ppl };
+        if (MODE === 'realtors' && ppl.length >= 8) {   // agent directories are paged: read up to 5 more pages while new names keep appearing
+          const have = new Set(ppl.map(p => p.name.toLowerCase()));
+          for (let pg = 2; pg <= 6; pg++) {
+            const nu = r.url + (r.url.includes('?') ? '&' : '?') + 'page=' + pg; if (!robotsAllows(robots, new URL(nu).pathname)) break;
+            const r2 = await get(nu); await sleep(DELAY); if (r2.status !== 200 || !r2.body) break;
+            const more = extractPeople(r2.body).filter(p => !have.has(p.name.toLowerCase())); if (!more.length) break;
+            more.forEach(p => have.add(p.name.toLowerCase())); best.ppl = best.ppl.concat(more); }
+        }
+        break; }
       if (/<script[^>]*src=[^>]*(staff|team)|data-react|__NEXT_DATA__|window\.__/i.test(r.body) && why === 'no staff page found') why = 'page may load names with JavaScript (not readable by this simple reader)'; }
     if (best) { people += best.ppl.length; best.ppl.forEach(p => out.push([d.name, p.name, p.role, p.email, d.address, d.website, best.url, p.email ? 'email published on page' : 'name and title only', ''].map(cell).join(','))); console.log(best.ppl.length + ' people'); report.push(d.name + ': ' + best.ppl.length + ' people (' + best.url + ')'); }
     else { console.log('none (' + why + ')'); report.push(d.name + ': none (' + why + '; tried ' + (tried.join(' ') || 'nothing') + ')'); }
