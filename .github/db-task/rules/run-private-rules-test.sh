@@ -1,0 +1,44 @@
+#!/bin/bash
+# Test the STAGED member-data-protection rules (lvr-rules-private.json, built by make-private-rules.js) in the emulator. Nothing touches the real database.
+# Independent of run-rules-test.sh; it does not run the live page-view check.
+#
+# The staged rules contain the literal placeholder __OWNER_UID__ (the deploy
+# script substitutes the real owner uid). Here it is replaced with TESTOWNER,
+# the uid that test-private-rules.js puts into its unsigned test tokens.
+set -e
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORK=/tmp/rules-private-test
+rm -rf "$WORK"; mkdir -p "$WORK"; cd "$WORK"
+node "$HERE/make-private-rules.js" >/dev/null
+cp "$HERE/lvr-rules-private.json" .
+cp "$HERE/key-rules-owner.json" .
+cp "$HERE/test-extra-rules.json" .
+cp "$HERE/test-private-rules.js" .
+cp "$HERE/../decay/monthly-decay.js" .
+
+# Assemble a full ruleset: the staged fragment (placeholder -> TESTOWNER) + the live
+# catch-all ($rest, copied exactly) + a stand-in for the pet game's locked-down node.
+node -e '
+const fs=require("fs");
+const raw=fs.readFileSync("lvr-rules-private.json","utf8");
+if(!raw.includes("__OWNER_UID__")){console.error("placeholder __OWNER_UID__ not found in the staged rules");process.exit(3);}
+const sub=raw.split("__OWNER_UID__").join("TESTOWNER");
+if(sub.includes("__OWNER_UID__")){console.error("placeholder left over");process.exit(3);}
+const a=JSON.parse(sub);
+const b=JSON.parse(fs.readFileSync("test-extra-rules.json","utf8"));
+const kraw=fs.readFileSync("key-rules-owner.json","utf8");
+if(!kraw.includes("__OWNER_UID__")){console.error("placeholder __OWNER_UID__ not found in key-rules-owner.json");process.exit(3);}
+const k=JSON.parse(kraw.split("__OWNER_UID__").join("TESTOWNER"));
+fs.writeFileSync("database.rules.json",JSON.stringify({rules:Object.assign({},a,k,b)},null,1));
+'
+cat > firebase.json <<'JSON'
+{ "database": { "rules": "database.rules.json" }, "emulators": { "database": { "port": 9000 }, "ui": { "enabled": false } } }
+JSON
+npm init -y >/dev/null 2>&1
+npm i firebase-tools --no-audit --no-fund --loglevel=error 2>&1 | tail -2
+set +e
+npx firebase emulators:exec --only database --project demo-lvr "node test-private-rules.js" > out.txt 2>&1
+CODE=$?
+grep -E "^(PASS|FAIL)|passed|Error|rules" out.txt | head -2000
+echo "exit code: $CODE"
+exit $CODE
