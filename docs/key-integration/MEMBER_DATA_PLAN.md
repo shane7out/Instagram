@@ -25,7 +25,7 @@ Rules can hide a list but still allow reading one exact path. So the secrets bec
 Order matters: pages that understand BOTH layouts go live first, then data move, then rules. The old layout keeps working until the rules step.
 
 ## Status
-- 2026-11-11: plan written. Step 1 next.
+- 2026-11-11: plan written. Step 1 DONE: staged rules + 38 emulator checks pass (db-task run 500). Step 2 next.
 
 ## Dependencies found while reading the code (2026-11-11) — each must be re-pointed before the list read is removed
 - rewards.html sign-up: `launchGate` counts members and finds the first N (founding members) from the whole `lvr_rewards` list, counts invites used with `orderBy="referredBy"`; `findReferrer` looks up by refCode (and checks duplicate phone/email) in the whole list.

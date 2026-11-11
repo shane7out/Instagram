@@ -1,4 +1,3 @@
 #!/bin/bash
-# Member-data-protection rules test in the Firebase emulator (nothing touches the real database).
-bash .github/db-task/rules/run-private-rules-test.sh
-# rerun 1794371899
+# No task queued. (Last: member-data rules emulator test, run 500: 38 passed, 0 failed. Script: .github/db-task/rules/run-private-rules-test.sh)
+echo "no task queued"
