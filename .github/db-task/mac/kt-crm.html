@@ -279,9 +279,27 @@
   .car-meta a{color:var(--key-blue,#0a6fb8);}
   .badge{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;margin-right:6px;border:1px solid var(--line);color:var(--ink-dim);}
   .badge.dnc{background:#fde8e8;border-color:#e3a0a0;color:#8a1c1c;}
-  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;padding:0 16px;}
   .toolbar input[type=search]{flex:1 1 220px;min-width:0;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;}
   .toolbar button,.toolbar label.filebtn{padding:9px 13px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13.5px;font-weight:600;cursor:pointer;}
+  .filters{gap:10px 14px;margin:0 0 8px;}
+  .filters label{font-size:12.5px;color:var(--ink-dim);display:flex;align-items:center;gap:6px;}
+  .filters select,.filters input[type=number]{padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13.5px;}
+  .filters input[type=number]{width:72px;}
+  .result-count{font-size:12.5px;color:var(--ink-dim);margin:0 0 8px;padding:0 16px;}
+  .group-head{margin:14px 0 4px;padding:6px 2px;font-weight:800;font-size:14px;color:var(--ink);border-bottom:2px solid var(--line);display:flex;justify-content:space-between;gap:8px;}
+  .group-head span{font-weight:600;color:var(--ink-dim);font-size:12.5px;}
+  .more-btn{display:block;margin:14px auto;padding:11px 22px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;cursor:pointer;}
+  .dlg-ov{position:fixed;inset:0;background:rgba(8,20,50,.45);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;}
+  .dlg-ov.open{display:flex;}
+  .dlg{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;max-width:600px;width:100%;max-height:85vh;overflow:auto;padding:18px;}
+  .dlg h3{margin:0 0 8px;font-size:18px;}
+  .dlg .sub{font-size:13px;color:var(--ink-dim);margin:0 0 10px;}
+  .dlg ul{margin:6px 0 10px;padding-left:18px;font-size:13.5px;}
+  .dlg .row{padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .dlg .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
+  .dlg .btns button{padding:10px 16px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;cursor:pointer;}
+  .dlg .btns button.primary{background:var(--key-blue,#0a6fb8);border-color:var(--key-blue,#0a6fb8);color:#fff;}
   .field.car-only{display:none;}
   .car-on .field.car-only{display:block;}
   .card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
@@ -394,7 +412,19 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     <input type="search" id="searchBox" placeholder="Search name, dealership, brand, phone, address" aria-label="Search prospects">
     <label class="filebtn" for="csvFile">Import CSV</label><input type="file" id="csvFile" accept=".csv,text/csv" hidden>
     <button type="button" id="csvExport">Export CSV</button>
+    <button type="button" id="toolsBtn">Clean up</button>
   </div>
+  <div class="toolbar filters" id="filters">
+    <label>Status <select id="fStatus"><option value="all">All</option><option value="pending">Not contacted</option><option value="contacted">Contacted</option><option value="responded">Responded</option><option value="meeting">Meeting booked</option><option value="client">Client</option><option value="dead">Not interested</option></select></label>
+    <label>Email <select id="fEmail"><option value="all">Any</option><option value="has">Has an email</option><option value="personal">Personal email only</option><option value="none">No email</option></select></label>
+    <label>Confidence <select id="fConf"><option value="all">Any</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
+    <label>Within <input type="number" id="fMiles" min="1" max="500" placeholder="any"> miles</label>
+    <label>Sort <select id="fSort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="name">Name A to Z</option><option value="company">Company A to Z</option><option value="distance">Closest first</option></select></label>
+    <label><input type="checkbox" id="fGroup"> Group by company</label>
+    <label><input type="checkbox" id="fHideDnc"> Hide do-not-contact</label>
+  </div>
+  <div class="result-count" id="resultCount" role="status"></div>
+  <div class="dlg-ov" id="dlgOv"><div class="dlg" id="dlg" role="dialog" aria-modal="true"></div></div>
 
   <div class="list" id="list">
     <div class="empty-note">Loading…</div>
@@ -526,17 +556,44 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   }
 
   // ================= RENDER =================
-  function render() {
+  // ================= VIEW STATE (filters, sorting, paging) =================
+  var view = { status: 'all', email: 'all', conf: 'all', miles: '', sort: 'newest', group: false, hideDnc: false, limit: 50 };
+  var PAGE = 50;
+  var SHARED_LOCALS = /^(info|sales|contact|admin|office|support|hello|service|help|team|marketing|manager|general|inquiries|enquiries|mail|webmaster|noreply|no-reply|reception|leads|internet|bdc|fleet|parts)$/i;
+  function emailKind(e) {
+    e = String(e || '').trim(); if (!e) return 'none';
+    if (!/^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(e)) return 'bad';
+    return SHARED_LOCALS.test(e.split('@')[0]) ? 'shared' : 'personal';
+  }
+  function companyOf(p) { return (p.dealership || (isPeopleVertical(p.vertical) ? '' : '') || p.name || '').trim(); }
+  function filteredList() {
     var list = Object.keys(prospects).map(function(k){ return prospects[k]; }).filter(Boolean);
-    list.sort(function(a,b){ return (b.num||0) - (a.num||0); });
-
-    var filtered = activeTab === 'all' ? list : list.filter(function(p){ return p.vertical === activeTab; });
+    var f = activeTab === 'all' ? list : list.filter(function(p){ return p.vertical === activeTab; });
     var q = (document.getElementById('searchBox').value || '').trim().toLowerCase();
-    if (q) filtered = filtered.filter(function(p){ return [p.name, p.dealership, p.role, p.brands, p.phone, p.email, p.address, p.notes, p.website].join(' ').toLowerCase().indexOf(q) >= 0; });
+    if (q) f = f.filter(function(p){ return [p.name, p.dealership, p.role, p.brands, p.phone, p.email, p.address, p.notes, p.website].join(' ').toLowerCase().indexOf(q) >= 0; });
+    if (view.status !== 'all') f = f.filter(function(p){ return (p.status || 'pending') === view.status; });
+    if (view.email !== 'all') f = f.filter(function(p){ var k = emailKind(p.email); return view.email === 'has' ? (k !== 'none') : view.email === 'personal' ? k === 'personal' : k === 'none'; });
+    if (view.conf !== 'all') f = f.filter(function(p){ return p.confidence === view.conf; });
+    if (view.miles !== '') { var mm = Number(view.miles); f = f.filter(function(p){ return p.distMiles != null && p.distMiles !== '' && Number(p.distMiles) <= mm; }); }
+    if (view.hideDnc) f = f.filter(function(p){ return !p.dnc; });
+    var by = view.sort;
+    f.sort(function(a, b){
+      if (view.group) { var c = companyOf(a).toLowerCase().localeCompare(companyOf(b).toLowerCase()); if (c) return c; }
+      if (by === 'oldest') return (a.num || 0) - (b.num || 0);
+      if (by === 'name') return String(a.name || '').toLowerCase().localeCompare(String(b.name || '').toLowerCase());
+      if (by === 'company') return companyOf(a).toLowerCase().localeCompare(companyOf(b).toLowerCase());
+      if (by === 'distance') return (Number(a.distMiles) || 9999) - (Number(b.distMiles) || 9999);
+      return (b.num || 0) - (a.num || 0);
+    });
+    return { all: list, filtered: f };
+  }
 
-    // stats
+  function render() {
+    var r = filteredList(), list = r.all, filtered = r.filtered;
+
+    // stats (whole list)
     var counts = { pending: 0, contacted: 0, responded: 0, meeting: 0, client: 0 };
-    list.forEach(function(p){ if (counts[p.status] !== undefined) counts[p.status]++; });
+    list.forEach(function(p){ var st = p.status || 'pending'; if (counts[st] !== undefined) counts[st]++; });
     document.getElementById('statsRow').innerHTML =
       '<div class="stat-chip"><b>' + list.length + '</b> total</div>' +
       '<div class="stat-chip"><b>' + counts.pending + '</b> not contacted</div>' +
@@ -546,11 +603,21 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       '<div class="stat-chip"><b>' + counts.client + '</b> client</div>';
 
     var listEl = document.getElementById('list');
+    var shown = filtered.slice(0, view.limit);
+    document.getElementById('resultCount').textContent = filtered.length ? ('Showing ' + shown.length + ' of ' + filtered.length) : '';
     if (!filtered.length) {
-      listEl.innerHTML = '<div class="empty-note">No prospects here yet. Tap "+ Add Prospect" to start.</div>';
+      listEl.innerHTML = '<div class="empty-note">' + (list.length ? 'Nothing matches these filters.' : 'No prospects here yet. Tap "+ Add Prospect" to start.') + '</div>';
       return;
     }
-    listEl.innerHTML = filtered.map(cardHtml).join('');
+    var html = '', lastCo = null, perCo = {};
+    if (view.group) filtered.forEach(function(p){ var c = companyOf(p); perCo[c] = (perCo[c] || 0) + 1; });
+    shown.forEach(function(p){
+      if (view.group) { var c = companyOf(p); if (c !== lastCo) { html += '<div class="group-head">' + escapeHtml(c || '(no company)') + '<span>' + perCo[c] + ' in this list</span></div>'; lastCo = c; } }
+      html += cardHtml(p);
+    });
+    if (filtered.length > shown.length) html += '<button type="button" class="more-btn" id="moreBtn">Show ' + Math.min(PAGE, filtered.length - shown.length) + ' more (' + (filtered.length - shown.length) + ' left)</button>';
+    listEl.innerHTML = html;
+    var mb = document.getElementById('moreBtn'); if (mb) mb.addEventListener('click', function(){ view.limit += PAGE; render(); });
 
     // wire up status selects, delete buttons, copy-script buttons
     listEl.querySelectorAll('.status-select').forEach(function(sel){
@@ -626,7 +693,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
         '</div>' +
         '<div class="card-meta">' +
           (p.phone ? escapeHtml(p.phone) + '<br>' : '') +
-          (p.email ? escapeHtml(p.email) + '<br>' : '') +
+          (p.email ? escapeHtml(p.email) + (emailKind(p.email) === 'shared' ? ' <span class="badge">shared inbox</span>' : emailKind(p.email) === 'bad' ? ' <span class="badge dnc">check this email</span>' : '') + '<br>' : '') +
           (p.address ? escapeHtml(p.address) : '') +
         '</div>' +
         carExtraHtml(p) +
@@ -672,6 +739,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
     tab.classList.add('active');
     activeTab = tab.getAttribute('data-v');
+    view.limit = PAGE;
     render();
   });
 
@@ -739,11 +807,35 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     }).catch(function(){ alert('Save failed - check connection'); });
   });
 
-  // ================= SEARCH, CSV IMPORT / EXPORT =================
-  document.getElementById('searchBox').addEventListener('input', render);
+  // ================= FILTERS, SEARCH, DIALOGS =================
+  function resetPaging() { view.limit = PAGE; }
+  document.getElementById('searchBox').addEventListener('input', function(){ resetPaging(); render(); });
+  [['fStatus','status'],['fEmail','email'],['fConf','conf'],['fSort','sort']].forEach(function(x){
+    document.getElementById(x[0]).addEventListener('change', function(){ view[x[1]] = this.value; resetPaging(); render(); });
+  });
+  document.getElementById('fMiles').addEventListener('input', function(){ view.miles = this.value.trim(); resetPaging(); render(); });
+  document.getElementById('fGroup').addEventListener('change', function(){ view.group = this.checked; resetPaging(); render(); });
+  document.getElementById('fHideDnc').addEventListener('change', function(){ view.hideDnc = this.checked; resetPaging(); render(); });
+
+  function openDialog(html, buttons) {
+    var d = document.getElementById('dlg'); d.innerHTML = html + '<div class="btns"></div>';
+    var bar = d.querySelector('.btns');
+    buttons.forEach(function(b){ var el = document.createElement('button'); el.type = 'button'; el.textContent = b.label; if (b.primary) el.className = 'primary';
+      el.addEventListener('click', function(){ if (b.keepOpen !== true) closeDialog(); if (b.fn) b.fn(); }); bar.appendChild(el); });
+    document.getElementById('dlgOv').classList.add('open');
+  }
+  function closeDialog() { document.getElementById('dlgOv').classList.remove('open'); }
+  document.getElementById('dlgOv').addEventListener('click', function(e){ if (e.target.id === 'dlgOv') closeDialog(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDialog(); });
+  // one request that can add, change and delete many records at once (nulls delete); all or nothing
+  function multiWrite(obj) {
+    return fetch(DB + NODE_PATH + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(obj) }).then(function(res){ if (!res.ok) throw new Error('HTTP ' + res.status); });
+  }
+
+  // ================= CSV =================
   function parseCsv(text) {
     var rows = [], row = [], f = '', q = false, i = 0, c;
-    text = text.replace(/^\uFEFF/, '');
+    text = text.replace(/^﻿/, '');
     for (; i < text.length; i++) {
       c = text.charAt(i);
       if (q) { if (c === '"') { if (text.charAt(i + 1) === '"') { f += '"'; i++; } else q = false; } else f += c; }
@@ -756,9 +848,9 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     return rows.filter(function(r){ return r.some(function(x){ return x.trim(); }); });
   }
   function csvCell(v) { v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
-  // Import: a CSV with the research columns (dealership, dealer_group, brands, type, address, city, zip, est_miles_from_center, main_phone, website,
-  // source_url, contact_name, contact_role, contact_source_url, confidence, notes). Everything becomes a Car Sales prospect; a row already in the CRM
-  // (same name and address) is skipped, never overwritten. All new rows are written in ONE request.
+
+  // ----- Import with a preview. Understands: company files (dealership or brokerage rows) and people files (person_name rows).
+  // Rows already in the CRM (same name + address, or same person + company + email) are skipped, never overwritten. Every import gets a batch label so it can be undone.
   document.getElementById('csvFile').addEventListener('change', function(){
     var file = this.files && this.files[0]; this.value = '';
     if (!file) return;
@@ -768,44 +860,127 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
       var head = rows[0].map(function(h){ return h.trim().toLowerCase(); });
       function col(r, k) { var i = head.indexOf(k); return i < 0 ? '' : (r[i] || '').trim(); }
       var have = {}; Object.keys(prospects).forEach(function(k){ var p = prospects[k]; if (p) { have[((p.name || '') + '|' + (p.address || '')).toLowerCase()] = 1; have[((p.name || '') + '|' + (p.dealership || '') + '|' + (p.email || '')).toLowerCase()] = 1; } });
-      var num = nextNum(), batch = {}, added = 0, skipped = 0;
       var COMPANY = head.indexOf('brokerage') >= 0 ? 'brokerage' : 'dealership', VERT = COMPANY === 'brokerage' ? 'Real Estate' : 'Car Sales';
-      var personFile = head.indexOf('person_name') >= 0;   // staff-page file: one row per salesperson / agent
+      var personFile = head.indexOf('person_name') >= 0;
+      var batchId = 'imp-' + new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12), batchLabel = file.name;
+      var num = nextNum(), batch = {}, added = 0, skipped = 0, withEmail = 0, shared = 0, noEmail = 0, sample = [];
       rows.slice(1).forEach(function(r){
+        var rec;
         if (personFile) {
           var pn = col(r, 'person_name'), dl = col(r, COMPANY); if (!pn) return;
           var pkey = (pn + '|' + dl + '|' + col(r, 'email')).toLowerCase(); if (have[pkey]) { skipped++; return; } have[pkey] = 1;
-          batch[num] = { num: num, name: pn, vertical: VERT, phone: '', email: col(r, 'email'), address: col(r, 'address'), notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(),
+          rec = { num: num, name: pn, vertical: VERT, phone: '', email: col(r, 'email'), address: col(r, 'address'), notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(),
             dealership: dl, role: col(r, 'role'), brands: '', website: safeUrl(col(r, 'website')), sourceUrl: safeUrl(col(r, 'source_url')), confidence: col(r, 'confidence'), dnc: false };
-          num++; added++; return;
+        } else {
+          var name = col(r, COMPANY) || col(r, 'name'); if (!name) return;
+          var addr = [col(r, 'address'), col(r, 'city'), col(r, 'zip')].filter(Boolean).join(', ');
+          var key = (name + '|' + addr).toLowerCase(); if (have[key]) { skipped++; return; } have[key] = 1;
+          var contact = [col(r, 'contact_name'), col(r, 'contact_role')].filter(Boolean).join(', ');
+          rec = { num: num, name: name, vertical: VERT, phone: col(r, 'main_phone') || col(r, 'phone'), email: col(r, 'email'), address: addr,
+            notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(), dealership: name, directoryUrl: safeUrl(col(r, 'agent_directory_url')), role: contact,
+            brands: [col(r, 'brands'), col(r, 'brand'), col(r, 'type')].filter(Boolean).join(', '), website: safeUrl(col(r, 'website')), sourceUrl: safeUrl(col(r, 'source_url')),
+            contactSourceUrl: safeUrl(col(r, 'contact_source_url')), confidence: col(r, 'confidence'), distMiles: col(r, 'est_miles_from_center'), dealerGroup: col(r, 'dealer_group'), zip: col(r, 'zip'), dnc: false };
         }
-        var name = col(r, COMPANY) || col(r, 'name'); if (!name) return;
-        var addr = [col(r, 'address'), col(r, 'city'), col(r, 'zip')].filter(Boolean).join(', ');
-        var key = (name + '|' + addr).toLowerCase(); if (have[key]) { skipped++; return; } have[key] = 1;
-        var contact = [col(r, 'contact_name'), col(r, 'contact_role')].filter(Boolean).join(', ');
-        var rec = { num: num, name: name, vertical: VERT, phone: col(r, 'main_phone') || col(r, 'phone'), email: col(r, 'email'), address: addr,
-          notes: col(r, 'notes'), status: 'pending', addedAt: new Date().toISOString(), dealership: name, directoryUrl: safeUrl(col(r, 'agent_directory_url')), role: contact,
-          brands: [col(r, 'brands'), col(r, 'type')].filter(Boolean).join(', '), website: safeUrl(col(r, 'website')), sourceUrl: safeUrl(col(r, 'source_url')),
-          contactSourceUrl: safeUrl(col(r, 'contact_source_url')), confidence: col(r, 'confidence'), distMiles: col(r, 'est_miles_from_center'), dealerGroup: col(r, 'dealer_group'), zip: col(r, 'zip'), dnc: false };
-        batch[num] = rec; num++; added++;
+        rec.batchId = batchId; rec.batchLabel = batchLabel;
+        var ek = emailKind(rec.email); if (ek === 'personal') withEmail++; else if (ek === 'shared') shared++; else if (ek === 'none') noEmail++;
+        batch[num] = rec; num++; added++; if (sample.length < 6) sample.push(rec);
       });
       if (!added) { alert('Nothing new to add (' + skipped + ' already in the CRM).'); return; }
-      if (!confirm('Add ' + added + (personFile ? (VERT === 'Real Estate' ? ' agents' : ' salespeople') : ' ' + VERT + ' prospects') + (skipped ? ' (' + skipped + ' already there are skipped)' : '') + '?')) return;
-      fetch(DB + NODE_PATH + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(batch) }).then(function(res){
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        Object.keys(batch).forEach(function(k){ prospects[k] = batch[k]; });
-        activeTab = VERT; document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-v') === VERT); });
-        render(); showToast(added + ' added');
-      }).catch(function(){ alert('Import failed (nothing was added). Are you signed in as owner?'); });
+      var html = '<h3>Add ' + added + (personFile ? (VERT === 'Real Estate' ? ' agents' : ' salespeople') : ' ' + VERT + ' businesses') + '?</h3>' +
+        '<p class="sub">From <b>' + escapeHtml(file.name) + '</b>. Nothing is written until you tap Add.</p><ul>' +
+        '<li><b>' + added + '</b> new, <b>' + skipped + '</b> already in the CRM (skipped, not changed)</li>' +
+        '<li><b>' + withEmail + '</b> with a personal email, <b>' + shared + '</b> with a shared inbox (info@, sales@ ...), <b>' + noEmail + '</b> with no email</li></ul>' +
+        sample.map(function(x){ return '<div class="row"><b>' + escapeHtml(x.name) + '</b>' + (x.dealership && x.dealership !== x.name ? ' · ' + escapeHtml(x.dealership) : '') + (x.email ? ' · ' + escapeHtml(x.email) : '') + '</div>'; }).join('') +
+        '<p class="sub">You can undo this import later under Clean up.</p>';
+      openDialog(html, [{ label: 'Cancel' }, { label: 'Add ' + added, primary: true, fn: function(){
+        multiWrite(batch).then(function(){
+          Object.keys(batch).forEach(function(k){ prospects[k] = batch[k]; });
+          activeTab = VERT; document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-v') === VERT); });
+          resetPaging(); render(); showToast(added + ' added');
+        }).catch(function(){ alert('Import failed (nothing was added). Are you signed in as owner?'); });
+      } }]);
     };
     rd.readAsText(file);
   });
   document.getElementById('csvExport').addEventListener('click', function(){
-    var cols = ['num','name','vertical','dealership','role','brands','phone','email','address','website','sourceUrl','contactSourceUrl','confidence','distMiles','status','dnc','notes','addedAt'];
-    var list = Object.keys(prospects).map(function(k){ return prospects[k]; }).filter(Boolean).filter(function(p){ return activeTab === 'all' || p.vertical === activeTab; });
+    var cols = ['num','name','vertical','dealership','role','brands','phone','email','address','website','sourceUrl','contactSourceUrl','confidence','distMiles','status','dnc','notes','addedAt','batchLabel'];
+    var list = filteredList().filtered;
     var out = [cols.join(',')].concat(list.map(function(p){ return cols.map(function(c){ return csvCell(p[c]); }).join(','); })).join('\n');
     var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([out], { type: 'text/csv' })); a.download = 'crm-' + (activeTab === 'all' ? 'all' : activeTab.toLowerCase().replace(/[^a-z]+/g, '-')) + '.csv';
     document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  });
+
+  // ================= CLEAN UP: duplicates and undo an import =================
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+  function filledCount(p) { return ['phone','email','address','notes','website','role','brands','sourceUrl','dealership'].filter(function(k){ return p[k]; }).length; }
+  var RANK = { pending: 0, dead: 0, contacted: 1, responded: 2, meeting: 3, client: 4 };
+  function findDuplicateGroups() {
+    var recs = Object.keys(prospects).map(function(k){ return prospects[k]; }).filter(Boolean);
+    var parent = {}; recs.forEach(function(p){ parent[p.num] = p.num; });
+    function find(x){ while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+    function union(a, b){ a = find(a); b = find(b); if (a !== b) parent[b] = a; }
+    var seen = {};
+    recs.forEach(function(p){
+      var person = isPeopleVertical(p.vertical) && p.dealership && p.dealership !== p.name;
+      var keys = [];
+      if (emailKind(p.email) === 'personal') keys.push('e:' + String(p.email).toLowerCase());
+      if (person) { keys.push('n:' + norm(p.name) + '|' + norm(p.dealership)); }
+      else {
+        keys.push('n:' + norm(p.name) + '|' + norm(p.address));
+        var ph = String(p.phone || '').replace(/\D/g, ''); if (ph.length >= 10) keys.push('p:' + ph + '|' + norm(p.name).slice(0, 12));
+      }
+      keys.forEach(function(k){ if (seen[k] != null) union(seen[k], p.num); else seen[k] = p.num; });
+    });
+    var groups = {}; recs.forEach(function(p){ var r = find(p.num); (groups[r] = groups[r] || []).push(p); });
+    return Object.keys(groups).map(function(k){ return groups[k]; }).filter(function(g){ return g.length > 1; });
+  }
+  function mergeGroup(g) {
+    var keep = g.slice().sort(function(a, b){ return filledCount(b) - filledCount(a) || (a.num - b.num); })[0];
+    var merged = Object.assign({}, keep), notes = [];
+    g.forEach(function(p){
+      Object.keys(p).forEach(function(k){ if ((merged[k] == null || merged[k] === '') && p[k] != null && p[k] !== '') merged[k] = p[k]; });
+      if (p.notes && notes.indexOf(p.notes) < 0) notes.push(p.notes);
+      if ((RANK[p.status || 'pending'] || 0) > (RANK[merged.status || 'pending'] || 0)) merged.status = p.status;
+      if (p.dnc) merged.dnc = true;
+    });
+    merged.notes = notes.join(' | ');
+    var out = {}; out[keep.num] = merged;
+    g.forEach(function(p){ if (p.num !== keep.num) out[p.num] = null; });
+    return out;
+  }
+  function showDuplicates() {
+    var groups = findDuplicateGroups();
+    if (!groups.length) { openDialog('<h3>No duplicates found</h3><p class="sub">Checked emails, names with company, and business phone numbers.</p>', [{ label: 'Close', primary: true }]); return; }
+    var html = '<h3>' + groups.length + ' possible duplicate' + (groups.length === 1 ? '' : 's') + '</h3><p class="sub">Each group is merged into its most complete record. Anything the others had that it lacked (phone, email, notes, the furthest status, do-not-contact) is copied over, then the extra copies are removed.</p>' +
+      groups.slice(0, 25).map(function(g){ return '<div class="row">' + g.map(function(p){ return '<b>' + escapeHtml(p.name || '') + '</b>' + (p.dealership && p.dealership !== p.name ? ' · ' + escapeHtml(p.dealership) : '') + (p.email ? ' · ' + escapeHtml(p.email) : ''); }).join('<br>') + '</div>'; }).join('') +
+      (groups.length > 25 ? '<p class="sub">... and ' + (groups.length - 25) + ' more.</p>' : '');
+    openDialog(html, [{ label: 'Cancel' }, { label: 'Merge all ' + groups.length, primary: true, fn: function(){
+      var all = {}; groups.forEach(function(g){ Object.assign(all, mergeGroup(g)); });
+      multiWrite(all).then(function(){ Object.keys(all).forEach(function(k){ if (all[k] === null) delete prospects[k]; else prospects[k] = all[k]; }); render(); showToast('Merged ' + groups.length); })
+        .catch(function(){ alert('Merge failed (nothing was changed).'); });
+    } }]);
+  }
+  function showUndoImport() {
+    var batches = {};
+    Object.keys(prospects).forEach(function(k){ var p = prospects[k]; if (p && p.batchId) { var b = batches[p.batchId] = batches[p.batchId] || { id: p.batchId, label: p.batchLabel || '', total: 0, untouched: [] }; b.total++; if ((p.status || 'pending') === 'pending') b.untouched.push(p.num); } });
+    var ids = Object.keys(batches).sort().reverse();
+    if (!ids.length) { openDialog('<h3>No imports to undo</h3><p class="sub">Imports made from now on are labeled so they can be removed.</p>', [{ label: 'Close', primary: true }]); return; }
+    var html = '<h3>Undo an import</h3><p class="sub">Removes only the people from that file who are still "Not contacted". Anyone you have worked on stays.</p>' +
+      ids.map(function(id){ var b = batches[id]; return '<div class="row"><b>' + escapeHtml(b.label) + '</b><br>' + escapeHtml(id.replace('imp-', '').replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})$/, '$1-$2-$3 $4:$5')) + ' · ' + b.total + ' people, ' + b.untouched.length + ' untouched <button type="button" data-undo="' + escapeHtml(id) + '"' + (b.untouched.length ? '' : ' disabled') + ' style="float:right;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;cursor:pointer;">Remove ' + b.untouched.length + '</button></div>'; }).join('');
+    openDialog(html, [{ label: 'Close', primary: true }]);
+    document.querySelectorAll('#dlg [data-undo]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var b = batches[btn.getAttribute('data-undo')];
+        if (!confirm('Remove ' + b.untouched.length + ' people from ' + b.label + '?')) return;
+        var out = {}; b.untouched.forEach(function(n){ out[n] = null; });
+        multiWrite(out).then(function(){ b.untouched.forEach(function(n){ delete prospects[n]; }); closeDialog(); render(); showToast(b.untouched.length + ' removed'); })
+          .catch(function(){ alert('Could not remove them (nothing was changed).'); });
+      });
+    });
+  }
+  document.getElementById('toolsBtn').addEventListener('click', function(){
+    openDialog('<h3>Clean up</h3><p class="sub">Tools for keeping the lists tidy. Nothing changes until you confirm.</p>',
+      [{ label: 'Find duplicates', fn: showDuplicates }, { label: 'Undo an import', fn: showUndoImport }, { label: 'Close', primary: true }]);
   });
 </script>
 <div class="kt-built-by" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
