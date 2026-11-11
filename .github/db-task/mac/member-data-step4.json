@@ -1,0 +1,52 @@
+{
+ "lvr-points-admin.html": [
+  [
+   "  var MEMBERS_PATH = '/lvr_rewards';",
+   "  var MEMBERS_PATH = '/lvr_rewards';\n  // MEMBER DATA PROTECTION (docs/key-integration/MEMBER_DATA_PLAN.md): after the cut-over, phone, email, birthday and the link token live in lvr_member_private/<token>\n  // (token = the key, value has memberKey). These helpers put them back onto the member records so the rest of this page keeps working in BOTH layouts.\n  function privIndex() {\n    return fbGet('/lvr_member_private').then(function(p){ var by = {}; Object.keys(p && typeof p === 'object' && !p.error ? p : {}).forEach(function(t){ var v = p[t] || {}; if (v.memberKey) by[v.memberKey] = Object.assign({ token: t }, v); }); return by; }).catch(function(){ return {}; });\n  }\n  function fbGetMembers() {\n    return Promise.all([fbGet(MEMBERS_PATH), privIndex()]).then(function(r){\n      var m = r[0] && typeof r[0] === 'object' ? r[0] : r[0], by = r[1];\n      if (m && typeof m === 'object') Object.keys(by).forEach(function(k){ if (m[k] && typeof m[k] === 'object') ['phone', 'email', 'birthday', 'anniversary', 'token'].forEach(function(f){ if (m[k][f] == null && by[k][f] != null) m[k][f] = by[k][f]; }); });\n      return m;\n    });\n  }\n  function fbGetToken(k) {\n    return fbGet(MEMBERS_PATH + '/' + encodeURIComponent(k) + '/token').then(function(t){ if (t) return t; return privIndex().then(function(by){ return by[k] && by[k].token || null; }); });\n  }"
+  ],
+  [
+   "son(); }).catch(function(){ return fbGet(MEMBERS_PATH).then(function(all){ var o = {}; Object",
+   "son(); }).catch(function(){ return fbGetMembers().then(function(all){ var o = {}; Object"
+  ],
+  [
+   "    Promise.all([fbGet(MEMBERS_PATH), fbGet('/lvr_points/round1').catch(fun",
+   "    Promise.all([fbGetMembers(), fbGet('/lvr_points/round1').catch(fun"
+  ],
+  [
+   "    fbGet(MEMBERS_PATH).then(function(m){",
+   "    fbGetMembers().then(function(m){"
+  ],
+  [
+   "      return fbGet(MEMBERS_PATH + '/' + r.memberKey + '/token').then(function(tok){",
+   "      return fbGetToken(r.memberKey).then(function(tok){"
+  ],
+  [
+   " ? Promise.resolve(bonusMembers) : fbGet(MEMBERS_PATH), fbGet('/lvr_points/bonuses')]).then(f",
+   " ? Promise.resolve(bonusMembers) : fbGetMembers(), fbGet('/lvr_points/bonuses')]).then(f"
+  ],
+  [
+   "      out.textContent = 'Using the SAVED settings: ' + pct + '%, new members safe for ' + grace + ' days. Reading members\u2026';\n      return fbGet(MEMBERS_PATH).then(function(all){",
+   "      out.textContent = 'Using the SAVED settings: ' + pct + '%, new members safe for ' + grace + ' days. Reading members\u2026';\n      return fbGetMembers().then(function(all){"
+  ],
+  [
+   "([fbGet('/lvr_points/pool/total'), fbGet(MEMBERS_PATH), fbGet('/lvr_points/decay_by_member'),",
+   "([fbGet('/lvr_points/pool/total'), fbGetMembers(), fbGet('/lvr_points/decay_by_member'),"
+  ],
+  [
+   "      return fbGet(MEMBERS_PATH).then(function(all){ all = all || {}; r",
+   "      return fbGetMembers().then(function(all){ all = all || {}; r"
+  ],
+  [
+   "([fbGet('/lvr_points/tag_claims'), fbGet(MEMBERS_PATH), fbGet(SETTINGS_PATH + '/tagBonus')]).",
+   "([fbGet('/lvr_points/tag_claims'), fbGetMembers(), fbGet(SETTINGS_PATH + '/tagBonus')])."
+  ],
+  [
+   "      return fbGet(MEMBERS_PATH + '/' + c.memberKey + '/token').then(function(tok){",
+   "      return fbGetToken(c.memberKey).then(function(tok){"
+  ],
+  [
+   "fbGet('/lvr_points/transactions'), fbGet(MEMBERS_PATH)]).then(function(r){ ledgerData = { tx:",
+   "fbGet('/lvr_points/transactions'), fbGetMembers()]).then(function(r){ ledgerData = { tx:"
+  ]
+ ]
+}
