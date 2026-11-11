@@ -413,6 +413,7 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
     <label class="filebtn" for="csvFile">Import CSV</label><input type="file" id="csvFile" accept=".csv,text/csv" hidden>
     <button type="button" id="csvExport">Export CSV</button>
     <button type="button" id="toolsBtn">Clean up</button>
+    <button type="button" id="pasteBtn">Add from a team page</button>
   </div>
   <div class="toolbar filters" id="filters">
     <label>Status <select id="fStatus"><option value="all">All</option><option value="pending">Not contacted</option><option value="contacted">Contacted</option><option value="responded">Responded</option><option value="meeting">Meeting booked</option><option value="client">Client</option><option value="dead">Not interested</option></select></label>
@@ -981,6 +982,65 @@ div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7
   document.getElementById('toolsBtn').addEventListener('click', function(){
     openDialog('<h3>Clean up</h3><p class="sub">Tools for keeping the lists tidy. Nothing changes until you confirm.</p>',
       [{ label: 'Find duplicates', fn: showDuplicates }, { label: 'Undo an import', fn: showUndoImport }, { label: 'Close', primary: true }]);
+  });
+
+  // ================= ADD FROM A TEAM PAGE (paste) =================
+  // For dealership / brokerage sites a program cannot read (they block it or build the page with JavaScript): open the team page in your own browser,
+  // select all (Cmd+A), copy (Cmd+C), paste here. The people (name, title, and an email only if the page shows one next to them) are picked out and
+  // you choose who to add. Nothing is guessed: no emails are invented and phone numbers are ignored.
+  var ROLE_CARS = /(sales\s*(consultant|professional|associate|advisor|adviser|representative|rep|executive|specialist|manager|director|person)|general\s*(sales\s*)?manager|internet\s*(sales\s*)?(manager|director|consultant|specialist|advisor|coordinator)|bdc|business development|brand\s*(specialist|ambassador)|product\s*(specialist|expert|genius|advisor)|client\s*advisor|customer\s*(advisor|experience)|fleet|owner|dealer principal|finance\s*(manager|director)|new\s*car\s*manager|used\s*car\s*manager)/i;
+  var ROLE_RE = /(realtor|real\s*estate\s*(agent|professional|broker|salesperson|consultant|advisor|specialist)|licensed\s*(agent|realtor|salesperson)|associate\s*broker|broker\s*associate|managing\s*broker|broker|team\s*(lead|leader|member)|sales\s*(associate|agent|professional)|agent|property\s*manager|luxury\s*(specialist|advisor)|buyer.?s?\s*agent|listing\s*(agent|specialist)|owner)/i;
+  var NOTNAME = /^(meet|our|the|team|staff|sales|service|parts|finance|department|contact|call|text|email|phone|home|new|used|inventory|specials|about|us|directions|hours|view|read|more|schedule|get|apply|value|your|trade|privacy|policy|terms|menu|search|find|shop|book|certified|pre-owned|toyota|honda|chevrolet|nissan|hyundai|bmw|mercedes|audi|lexus|subaru|mazda|volkswagen|jeep|dodge|gmc|buick|cadillac|tesla|infiniti|acura|las|vegas|nevada|henderson|agents|realtors|office|license|dre|nrs|bs)$/i;
+  function pasteName(s) {
+    s = String(s || '').trim(); if (s.length < 5 || s.length > 40 || /[\d@:\/]/.test(s)) return null;
+    var parts = s.split(/\s+/); if (parts.length < 2 || parts.length > 4) return null;
+    if (!parts.every(function(x){ return /^[A-Z][a-zA-Z.'’-]+$/.test(x) || /^(jr|sr|ii|iii)\.?$/i.test(x); })) return null;
+    if (parts.some(function(x){ return NOTNAME.test(x); })) return null; return s;
+  }
+  function extractFromText(text, vertical) {
+    var ROLE = vertical === 'Real Estate' ? ROLE_RE : ROLE_CARS;
+    var lines = String(text || '').split(/\r?\n/).map(function(l){ return l.replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+    var out = [], seen = {}, EM = /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/;
+    function isRole(x) { return ROLE.test(x) && x.length <= 70; }
+    for (var i = 0; i < lines.length; i++) {
+      var name = null, role = '', ri = i, m = lines[i].match(/^(.{4,40}?)\s*[-–—|,]\s*(.{3,60})$/);
+      if (m && pasteName(m[1]) && isRole(m[2])) { name = pasteName(m[1]); role = m[2]; }
+      else if (pasteName(lines[i])) { for (var j = i + 1; j <= i + 3 && j < lines.length; j++) { if (isRole(lines[j])) { name = pasteName(lines[i]); role = lines[j]; ri = j; break; } if (pasteName(lines[j])) break; } }
+      if (!name) continue;
+      var key = name.toLowerCase(); if (seen[key]) continue; seen[key] = 1;
+      var email = '';
+      for (var k = i; k <= Math.min(lines.length - 1, ri + 3); k++) { if (k > ri && (pasteName(lines[k]) || isRole(lines[k]))) break; var em = lines[k].match(EM); if (em) { email = em[0].toLowerCase(); break; } }
+      out.push({ name: name, role: role, email: email });
+    }
+    return out;
+  }
+  document.getElementById('pasteBtn').addEventListener('click', function(){
+    var vert = (activeTab === 'Real Estate') ? 'Real Estate' : 'Car Sales';
+    openDialog('<h3>Add people from a team page</h3><p class="sub">Open the dealership or brokerage team page in your browser, press Cmd+A then Cmd+C, and paste it below. Only names, titles and emails the page itself shows are used.</p>' +
+      '<div class="field"><label for="pgType">List</label><select id="pgType"><option value="Car Sales"' + (vert === 'Car Sales' ? ' selected' : '') + '>Car Sales</option><option value="Real Estate"' + (vert === 'Real Estate' ? ' selected' : '') + '>Real Estate</option></select></div>' +
+      '<div class="field"><label for="pgCo">Dealership or brokerage name</label><input id="pgCo" type="text" placeholder="e.g. Example Toyota of Las Vegas"></div>' +
+      '<div class="field"><label for="pgUrl">Web address of the team page (optional)</label><input id="pgUrl" type="url" placeholder="https://"></div>' +
+      '<div class="field"><label for="pgText">Pasted page</label><textarea id="pgText" rows="7" placeholder="Paste here"></textarea></div><div id="pgOut"></div>',
+      [{ label: 'Close' }, { label: 'Read it', primary: true, keepOpen: true, fn: function(){
+        var co = document.getElementById('pgCo').value.trim(), v = document.getElementById('pgType').value, txt = document.getElementById('pgText').value;
+        if (!co) { alert('Type the dealership or brokerage name first.'); return; }
+        var found = extractFromText(txt, v), out = document.getElementById('pgOut');
+        var have = {}; Object.keys(prospects).forEach(function(k){ var q = prospects[k]; if (q) have[((q.name || '') + '|' + (q.dealership || '') + '|' + (q.email || '')).toLowerCase()] = 1; });
+        var fresh = found.filter(function(x){ return !have[(x.name + '|' + co + '|' + x.email).toLowerCase()]; });
+        if (!found.length) { out.innerHTML = '<p class="sub">I could not find any people with a sales title in that text. Make sure the names and titles are in what you copied.</p>'; return; }
+        out.innerHTML = '<p class="sub"><b>' + found.length + '</b> found, <b>' + fresh.length + '</b> new. Untick anyone you do not want.</p>' + fresh.map(function(x, i){ return '<div class="row"><label><input type="checkbox" data-i="' + i + '" checked> <b>' + escapeHtml(x.name) + '</b> · ' + escapeHtml(x.role) + (x.email ? ' · ' + escapeHtml(x.email) : '') + '</label></div>'; }).join('') +
+          (fresh.length ? '<div class="btns"><button type="button" id="pgAdd" class="primary">Add the ticked people</button></div>' : '');
+        var add = document.getElementById('pgAdd'); if (!add) return;
+        add.addEventListener('click', function(){
+          var url = safeUrl(document.getElementById('pgUrl').value), num = nextNum(), batch = {}, label = 'pasted: ' + co, id = 'imp-' + new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12), added = 0;
+          document.querySelectorAll('#pgOut input[data-i]').forEach(function(cb){ if (!cb.checked) return; var x = fresh[Number(cb.getAttribute('data-i'))];
+            batch[num] = { num: num, name: x.name, vertical: v, phone: '', email: x.email, address: '', notes: '', status: 'pending', addedAt: new Date().toISOString(), dealership: co, role: x.role, brands: '', website: '', sourceUrl: url, confidence: x.email ? 'email published on page' : 'name and title only', dnc: false, batchId: id, batchLabel: label };
+            num++; added++; });
+          if (!added) return;
+          multiWrite(batch).then(function(){ Object.keys(batch).forEach(function(k){ prospects[k] = batch[k]; }); closeDialog(); activeTab = v; document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-v') === v); }); resetPaging(); render(); showToast(added + ' added'); })
+            .catch(function(){ alert('Could not add them (nothing was changed). Are you signed in as owner?'); });
+        });
+      } }]);
   });
 </script>
 <div class="kt-built-by" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
