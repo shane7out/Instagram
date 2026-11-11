@@ -749,6 +749,7 @@ shows (bio, followers, address, website) in `notes`, and do not invent phone, em
 changing existing records still needs Shane's explicit OK in the conversation. Tell Shane afterward what was added (name, handle, num).
 Added so far under this rule: Significant Other Kitchen & Cocktails (@significantvegas), num 60062, 2026-11-06 (verified written: record, status "pending", attempts; template script in commit 3031cbb).
 Also added: Rebellion Market | Sandwich Shop + Deli (@rebellionmarketlv, Anthem, Henderson), num 60063, 2026-11-09 (verified: record, status "pending", attempts; script in commit ff7d440; 2,192 live records scanned, no duplicate found).
+Also added: Penny's Waikiki Malasadas (@pennyswaikikimalasadas, 8525 Blue Diamond Rd, Las Vegas; shared account with the Honolulu shop), num 60064, 2026-11-11 (verified: record, status "pending", attempts; script in commit f882a01; 2,170 live records scanned, no duplicate found).
 
 ---
 
