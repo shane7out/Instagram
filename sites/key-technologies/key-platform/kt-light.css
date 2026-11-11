@@ -93,3 +93,15 @@ a.logo .logo-word{font-size:20px!important;letter-spacing:.015em;}
 .nav-links a{font-size:15.5px!important;}
 @media (min-width:861px) and (max-width:1280px){.nav-links a{font-size:14px!important;}.nav-links{gap:12px!important;}}
 .nav-cta .btn{font-size:15px;}
+/* 2026-11-11 (Shane, round 2): the key and the brand name a little bigger again; same fit rules, tested 320 to 1440 */
+html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before,.kt-brand::before{width:56px;height:25px;}
+a.logo .logo-word{font-size:22px!important;}
+@media (max-width:900px){html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:52px;height:23px;} a.logo .logo-word{font-size:20px!important;}}
+@media (max-width:480px){html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:44px;height:19px;} a.logo .logo-word{font-size:16px!important;}}
+@media (max-width:430px){html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:42px;height:18px;} a.logo .logo-word{font-size:15px!important;}}
+@media (max-width:380px){html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:38px;height:17px;} a.logo .logo-word{font-size:14px!important;}}
+@media (max-width:370px){a.logo .logo-word{font-size:12.5px!important;}}
+@media (max-width:340px){html[data-look="light"] a.logo::before,html:not([data-look="light"]) a.logo::before{width:32px;height:14px;} a.logo .logo-word{font-size:11px!important;}}
+@media (max-width:480px){.nav-row:has(.lr-toggle) a.logo .logo-word{font-size:12.5px!important;} html[data-look="light"] .nav-row:has(.lr-toggle) a.logo::before,html:not([data-look="light"]) .nav-row:has(.lr-toggle) a.logo::before{width:38px;height:16px;}}
+@media (max-width:370px){.nav-row:has(.lr-toggle) a.logo .logo-word{font-size:11px!important;} html[data-look="light"] .nav-row:has(.lr-toggle) a.logo::before,html:not([data-look="light"]) .nav-row:has(.lr-toggle) a.logo::before{width:32px;height:14px;}}
+.kt-brand{font-size:1.3em;}
