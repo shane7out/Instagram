@@ -77,3 +77,19 @@ a.logo{min-height:44px;}
 .crumbs a{display:inline-block;padding:11px 3px;margin:-11px 0;}
 .foot-phone{display:inline-flex;align-items:center;min-height:44px;}
 .demo-strip a{display:inline-block;padding:9px 0;}
+/* 2026-11-11 (Shane): the brand name next to the key was too small and hard to read; bigger, but still fits every phone width (checked by the site-check at 320/390/1280) */
+a.logo .logo-word{font-size:20px!important;letter-spacing:.015em;}
+@media (max-width:900px){a.logo .logo-word{font-size:18px!important;}}
+@media (max-width:480px){a.logo .logo-word{font-size:15px!important;}}
+@media (max-width:430px){a.logo .logo-word{font-size:14.5px!important;}}
+@media (max-width:380px){a.logo .logo-word{font-size:13px!important;}}
+@media (max-width:370px){a.logo .logo-word{font-size:12px!important;}}
+@media (max-width:340px){a.logo .logo-word{font-size:10.5px!important;}}
+/* the account page header also holds two buttons, so its name is a little smaller on phones */
+@media (max-width:480px){.nav-row:has(.lr-toggle) a.logo .logo-word{font-size:12.5px!important;letter-spacing:0!important;}}
+@media (max-width:370px){.nav-row:has(.lr-toggle) a.logo .logo-word{font-size:11px!important;}}
+.kt-brand{font-size:1.2em;}
+/* top menu a little bigger too (Shane, 2026-11-11) */
+.nav-links a{font-size:15.5px!important;}
+@media (min-width:861px) and (max-width:1280px){.nav-links a{font-size:14px!important;}.nav-links{gap:12px!important;}}
+.nav-cta .btn{font-size:15px;}
