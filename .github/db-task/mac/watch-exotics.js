@@ -1,4 +1,4 @@
-// EXOTICS harvester (owner, 2026-11-11): Lamborghini, Ferrari and Porsche (any make listed in exotic-makes.json) on Craigslist within 100 miles of Las Vegas.
+// EXOTICS harvester (owner, 2026-11-11): Lamborghini, Ferrari and Porsche (any make listed in exotic-makes.json) on Craigslist within 50 miles of Las Vegas (EXOTIC_MILES=100 widens it).
 // To add a make (McLaren, Maserati, Bentley, ...): add one line to exotic-makes.json and run deals-exotics.sh again. The page and the Deals tab appear by themselves.
 // By default only "by owner" sellers (searchPath cto); set EXOTIC_PATH=cta to include dealers too.
 // Same pattern as watch-batman.js: type 'Lamborghini' / 'Ferrari' entries in manual.json, photos to carimg/, prints "ADDED n".
@@ -8,7 +8,7 @@
 const https=require('https'), fs=require('fs'), path=require('path'), zlib=require('zlib');
 const ROOT=path.join(__dirname,'..');
 const UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)';
-const CENTER={lat:36.1716,lon:-115.1391}, RADIUS=100; // miles
+const CENTER={lat:36.1716,lon:-115.1391}, RADIUS=Number(process.env.EXOTIC_MILES||50); // miles from downtown Las Vegas (owner 2026-11-11: 50)
 const SEARCH_PATH=process.env.EXOTIC_PATH==='cta'?'cta':'cto';
 let MAKES_CFG=[{make:'Lamborghini',query:'lamborghini'},{make:'Ferrari',query:'ferrari'},{make:'Porsche',query:'porsche'}];
 try{const j=JSON.parse(fs.readFileSync(path.join(__dirname,'exotic-makes.json'),'utf8'));if(Array.isArray(j)&&j.length)MAKES_CFG=j;}catch(e){}
@@ -42,6 +42,7 @@ if(process.argv.includes('--selftest')){
   T('parse',a.token==='tok1'&&a.title.includes('Huracan')&&a.images.length===1);
   T('near accepted',judge(a,mk,'').ok);
   T('far rejected (Phoenix)',!judge(parseItem(mkItem(180000,'1:2~33.45~-112.07','2018 Lamborghini Huracan')),mk,'').ok);
+  T('radius setting',RADIUS>0&&RADIUS<=500);
   T('Kingman about 100 mi',(()=>{const d=miles(CENTER.lat,CENTER.lon,35.19,-114.05);return d>85&&d<110;})());
   T('wanted ad rejected',!judge(parseItem(mkItem(180000,'1:1~36.1~-115.2','WTB Lamborghini Gallardo')),mk,'').ok);
   T('tractor rejected',!judge(parseItem(mkItem(18000,'1:1~36.1~-115.2','Lamborghini tractor 1990')),mk,'').ok);
@@ -74,7 +75,7 @@ async function detail(src){const r=await getR(src,false).catch(()=>null);if(!r||
   const seen=new Set(manual.filter(e=>e.src).map(e=>e.src.split('/').pop()));
   try{JSON.parse(fs.readFileSync(path.join(ROOT,'_tools','deleted-tokens.json'),'utf8')).forEach(t=>seen.add(t));}catch(e){}
   const ar=await getR('https://reference.craigslist.org/Areas',false);
-  const areas=JSON.parse(ar.buf.toString()).filter(a=>['lasvegas','mohave'].includes(a.Hostname)); // the two Craigslist sites that reach 100 miles around Las Vegas
+  const areas=JSON.parse(ar.buf.toString()).filter(a=>a.Hostname==='lasvegas'||(RADIUS>60&&a.Hostname==='mohave')); // Las Vegas covers 50 miles; Mohave County (Kingman, Bullhead City) is added only for wider searches
   console.error('areas: '+areas.map(a=>a.Hostname).join(','));
   // 1) drop ads that have been taken down
   let removed=0;

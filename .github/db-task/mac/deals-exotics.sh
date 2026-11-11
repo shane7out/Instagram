@@ -1,10 +1,11 @@
 #!/bin/bash
-# Run on the Mac (ONE command): finds Lamborghinis, Ferraris and Porsches for sale by owner within 100 miles of Las Vegas on Craigslist,
+# Run on the Mac (ONE command): finds Lamborghinis, Ferraris and Porsches for sale by owner within 50 miles of Las Vegas on Craigslist,
 # adds them to the Deals site as one page per make (/lamborghini, /ferrari, /porsche) with tabs on the Deals home page, and puts it live.
 # More makes later: add a line to exotic-makes.json in the repo (make, query, emoji, color, page) and run this again.
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deals-exotics.sh?$(date +%s)" -o /tmp/deals-exotics.sh && bash /tmp/deals-exotics.sh
-# Add dealers too:  EXOTIC_PATH=cta bash /tmp/deals-exotics.sh        Run it again any time: it adds new cars and removes ads that were taken down.
+# Add dealers too:  EXOTIC_PATH=cta bash /tmp/deals-exotics.sh      Wider search (100 miles):  EXOTIC_MILES=100 bash /tmp/deals-exotics.sh        Run it again any time: it adds new cars and removes ads that were taken down.
 set +e
+export EXOTIC_MILES="${EXOTIC_MILES:-50}"
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
 cd /Users/mac/wholesale-classic-cars || { echo "Could not find the Deals folder (/Users/mac/wholesale-classic-cars) - nothing changed."; exit 1; }
@@ -31,15 +32,15 @@ function page(type,emoji,file){
   const rows=man.filter(e=>e.type===type).sort((a,b)=>String(b.addedTs||b.added||'').localeCompare(String(a.addedTs||a.added||'')));
   const card=e=>{const img=(e.imgs&&e.imgs[0])||'';const price=e.price?('$'+Number(e.price).toLocaleString()):'-';const more=(e.imgs&&e.imgs.length>1)?('<div class="count">'+e.imgs.length+' photos</div>'):'';
     return `<a class="card" href="${esc(e.src)}" target="_blank" rel="noopener"><div class="ph">${img?`<img loading="lazy" src="${esc(img)}" alt="${esc(e.model)}">`:'<div class="noph">no photo</div>'}${more}</div><div class="body"><div class="price">${esc(price)}</div><div class="title">${esc(e.model)}</div><div class="loc">${esc(e.location||'')}</div><div class="cta">View on Craigslist &rarr;</div></div></a>`;};
-  const html=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${type} for sale near Las Vegas - Deals</title><style>${CSS}</style></head><body><header><a href="/">&larr; Deals</a><h1>${emoji} ${type}s for sale near Las Vegas</h1></header><div class="wrap"><p class="sub">${rows.length} on Craigslist within 100 miles of Las Vegas. Tap a car to open the original ad.</p><div class="grid">${rows.map(card).join('\n')||'<div class="empty">None right now - check back soon.</div>'}</div></div><footer>Refreshed from Craigslist &middot; classiccarsforsale-co</footer></body></html>`;
+  const html=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${type} for sale near Las Vegas - Deals</title><style>${CSS}</style></head><body><header><a href="/">&larr; Deals</a><h1>${emoji} ${type}s for sale near Las Vegas</h1></header><div class="wrap"><p class="sub">${rows.length} on Craigslist within ${process.env.EXOTIC_MILES||50} miles of Las Vegas. Tap a car to open the original ad.</p><div class="grid">${rows.map(card).join('\n')||'<div class="empty">None right now - check back soon.</div>'}</div></div><footer>Refreshed from Craigslist &middot; classiccarsforsale-co</footer></body></html>`;
   fs.writeFileSync(file,html);console.log(file+': '+rows.length+' cars');return rows.length;}
 let MK=[];try{MK=JSON.parse(fs.readFileSync('_tools/exotic-makes.json','utf8'));}catch(e){console.log('no make list, using defaults');}
 if(!MK.length)MK=[{make:'Lamborghini',emoji:'🏎️',color:'#1b7a3a',page:'lamborghini'},{make:'Ferrari',emoji:'🐎',color:'#b3202a',page:'ferrari'},{make:'Porsche',emoji:'🏁',color:'#6b4a00',page:'porsche'}];
-MK.forEach(m=>page(m.make,m.emoji,m.page+'.html'));
+MK.forEach(m=>{m.count=page(m.make,m.emoji,m.page+'.html');});
 // tabs on the Deals home page (plain links, class tablink, so the filter script leaves them alone)
 let idx=fs.readFileSync('index.html','utf8');const before=idx;
 const S='display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:999px;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer';
-const TABS=MK.map(m=>'<a class="tablink tab-exotic" href="/'+m.page+'" style="'+S+';border:1.5px solid '+m.color+';color:'+m.color+'">'+m.emoji+' '+m.make+'</a>').join('\n        ');
+const TABS=MK.map(m=>'<a class="tablink tab-exotic" href="/'+m.page+'" style="'+S+';border:1.5px solid '+m.color+';color:'+m.color+'">'+m.emoji+' '+m.make+' '+(m.count||0)+'</a>').join('\n        ');
 idx=idx.replace(/<a class="tablink tab-(?:exotic|lambo|ferrari)"[^>]*>[^<]*<\/a>\s*/g,'');
 const anchor=/(<a class="tablink"[^>]*href="\/batman"[^>]*>[^<]*<\/a>|<button class="chip chip-deals"[^>]*>[^<]*<\/button>)/;
 idx=idx.replace(anchor,'$1\n        '+TABS);
