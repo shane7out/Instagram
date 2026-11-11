@@ -823,22 +823,49 @@
     var bytes = new Uint8Array(6); (window.crypto || window.msCrypto).getRandomValues(bytes);
     return Array.prototype.map.call(bytes, function(b){ return REF_CHARS.charAt(b % REF_CHARS.length); }).join('');
   }
+  function digits(s) { return String(s || '').replace(/\D/g, ''); }
+  // MEMBER DATA PROTECTION (docs/key-integration/MEMBER_DATA_PLAN.md): the phone number and the personal-link token are also kept in a hidden spot
+  // that cannot be listed (lvr_member_private/<token>); referral codes are looked up one at a time (lvr_refcodes/<code>); a hashed index
+  // (lvr_member_idx/<sha256>) answers "is this the same person" without exposing anyone's phone. Until the owner switches settings/privateLayout on,
+  // the old public fields are written too, so nothing that works today stops working.
+  var DB_ROOT = RTDB_URL.replace(/\/lvr_rewards\.json$/, '');
+  function sha256hex(str) {
+    try {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function(b){
+        return Array.prototype.map.call(new Uint8Array(b), function(x){ return x.toString(16).padStart(2, '0'); }).join('');
+      });
+    } catch (e) { return Promise.resolve(null); }
+  }
+  function idHashes(phone) {
+    var d = digits(phone);
+    return Promise.all(d.length >= 7 ? [sha256hex('p:' + d)] : []).then(function(a){ return a.filter(Boolean); });
+  }
   function findReferrer(code, phone) {
     if (!code) return Promise.resolve(null);
-    return fetch(RTDB_URL + '?orderBy="refCode"&equalTo="' + encodeURIComponent(code) + '"').then(function(r){ return r.json(); }).then(function(found){
-      var ks = found ? Object.keys(found) : [];
-      if (!ks.length) return null;
-      var c = found[ks[0]] || {};
-      if (phone && c.phone && String(c.phone).replace(/\D/g, '') === String(phone).replace(/\D/g, '')) return null;
-      return ks[0];
-    }).catch(function(){ return null; });
+    var c = encodeURIComponent(code);
+    return fetch(DB_ROOT + '/lvr_refcodes/' + c + '.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }).then(function(mk){
+      if (typeof mk === 'string' && mk) {
+        // new layout: same person? (their phone hash already belongs to the referrer)
+        return idHashes(phone).then(function(hs){
+          return Promise.all(hs.map(function(h){ return fetch(DB_ROOT + '/lvr_member_idx/' + h + '.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }); }));
+        }).then(function(owners){ return owners.indexOf(mk) >= 0 ? null : mk; });
+      }
+      // old layout (member list still readable): look the code up in the list
+      return fetch(RTDB_URL + '?orderBy="refCode"&equalTo="' + c + '"').then(function(r){ return r.ok ? r.json() : null; }).then(function(found){
+        var ks = found ? Object.keys(found) : [];
+        if (!ks.length) return null;
+        var m = found[ks[0]] || {};
+        if (phone && m.phone && digits(m.phone) === digits(phone)) return null;
+        return ks[0];
+      }).catch(function(){ return null; });
+    });
   }
 
   // Sign-ups can be paused from the owner's Settings: the form is hidden and a
   // short notice points people to the message box at the bottom of the page.
   var SETTINGS_URL = RTDB_URL.replace('/lvr_rewards.json', '/lvr_points/settings.json');
   function signupsPaused() {
-    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || '', welcome: (st && st.welcome) || null }; }).catch(function(){ return { paused: false, banner: '', welcome: null }; });
+    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || '', welcome: (st && st.welcome) || null, privateLayout: !!(st && st.privateLayout) }; }).catch(function(){ return { paused: false, banner: '', welcome: null, privateLayout: false }; });
   }
   function applyPause(r) {
     var wrap = document.getElementById('formWrap');
@@ -972,10 +999,10 @@
     setSaveStatus('saving', '⏳  Saving to database…');
     var token = genToken();
 
-    var welcomeCfg = null;
+    var welcomeCfg = null, privateLayout = false, madeRec = null, madeReferrer = null;
     signupsPaused().then(function(r) {
       if (r.paused) { applyPause(r); btn.disabled = false; $('saveStatus').className = 'save-status'; throw new Error('paused'); }
-      welcomeCfg = r.welcome;
+      welcomeCfg = r.welcome; privateLayout = !!r.privateLayout;
       return findReferrer(savedRef(), phone);
     }).then(function(referrerKey) {
       var rec = {
@@ -996,6 +1023,10 @@
         consent_rules_ts: nowTs
       };
       if (referrerKey) rec.referredBy = referrerKey;
+      madeReferrer = referrerKey || null;
+      madeRec = { phone: phone, refCode: rec.refCode };
+      // switched on by the owner at cut-over: phone and the personal-link token stay out of the public member list
+      if (privateLayout) { delete rec.phone; delete rec.token; }
       // Every sign-up waits for the owner's approval (keeps out bots and fake accounts); welcome points are added
       // by the owner when the sign-up is approved (Points admin > Approvals), so nothing is credited here.
       rec.status = 'pending';
@@ -1014,7 +1045,12 @@
       if (j && j.name) {
         var parts = String(name).trim().split(/\s+/).filter(Boolean);
         var short = !parts.length ? 'Member' : parts.length === 1 ? parts[0] : parts[0] + ' ' + parts[parts.length - 1].charAt(0).toUpperCase() + '.';
-        fetch(RTDB_URL.replace(/\.json.*$/, '') .replace(/\/lvr_rewards$/, '/lvr_points/round1') + '/' + encodeURIComponent(j.name) + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: short.slice(0, 40), at: { '.sv': 'timestamp' }, status: 'pending' }) }).catch(function () {});
+        fetch(RTDB_URL.replace(/\.json.*$/, '') .replace(/\/lvr_rewards$/, '/lvr_points/round1') + '/' + encodeURIComponent(j.name) + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ name: short.slice(0, 40), at: { '.sv': 'timestamp' }, status: 'pending' }, (privateLayout && madeReferrer) ? { referredBy: madeReferrer } : {})) }).catch(function () {});
+        // hidden spot + exact-path indexes (see the note above findReferrer)
+        var JH = { 'Content-Type': 'application/json' };
+        fetch(DB_ROOT + '/lvr_member_private/' + encodeURIComponent(token) + '.json', { method: 'PUT', headers: JH, body: JSON.stringify({ memberKey: j.name, phone: phone, birthday: bdStr, anniversary: anStr || null }) }).catch(function () {});
+        if (madeRec && madeRec.refCode) fetch(DB_ROOT + '/lvr_refcodes/' + encodeURIComponent(madeRec.refCode) + '.json', { method: 'PUT', headers: JH, body: JSON.stringify(j.name) }).catch(function () {});
+        idHashes(phone).then(function(hs){ hs.forEach(function(h){ fetch(DB_ROOT + '/lvr_member_idx/' + h + '.json', { method: 'PUT', headers: JH, body: JSON.stringify(j.name) }).catch(function () {}); }); }).catch(function () {});
       }
       return fetch(IG_IDX_BASE + igToKey(ig) + '.json', {
         method:  'PUT',

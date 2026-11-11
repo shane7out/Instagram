@@ -770,7 +770,8 @@
       return r.json().then(function(j){
         if (j && j.name) {
           // Round One registry (leaderboard name + status) and the owner's alert (Leads list + email)
-          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(Object.assign({ name: shortName(name).slice(0, 40), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }, madeReferrer ? { referredBy: madeReferrer } : {})) }).catch(function(){});
+          // (referredBy goes on the registry only after the owner switches the new layout on: today's rules reject unknown fields there)
+          fetch(R1_URL.replace(".json", "/" + encodeURIComponent(j.name) + ".json"), { method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(Object.assign({ name: shortName(name).slice(0, 40), at: {".sv": "timestamp"}, status: pendingApproval ? "pending" : "approved" }, (privateLayout && madeReferrer) ? { referredBy: madeReferrer } : {})) }).catch(function(){});
           // hidden spot + exact-path indexes (see the note above findReferrer)
           var JH = {"Content-Type": "application/json"};
           fetch(DB_ROOT + "/lvr_member_private/" + encodeURIComponent(token) + ".json", { method: "PUT", headers: JH, body: JSON.stringify({ memberKey: j.name, phone: phone, email: email }) }).catch(function(){});

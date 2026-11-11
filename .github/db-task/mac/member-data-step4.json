@@ -5,12 +5,12 @@
    "  var MEMBERS_PATH = '/lvr_rewards';\n  // MEMBER DATA PROTECTION (docs/key-integration/MEMBER_DATA_PLAN.md): after the cut-over, phone, email, birthday and the link token live in lvr_member_private/<token>\n  // (token = the key, value has memberKey). These helpers put them back onto the member records so the rest of this page keeps working in BOTH layouts.\n  function privIndex() {\n    return fbGet('/lvr_member_private').then(function(p){ var by = {}; Object.keys(p && typeof p === 'object' && !p.error ? p : {}).forEach(function(t){ var v = p[t] || {}; if (v.memberKey) by[v.memberKey] = Object.assign({ token: t }, v); }); return by; }).catch(function(){ return {}; });\n  }\n  function fbGetMembers() {\n    return Promise.all([fbGet(MEMBERS_PATH), privIndex()]).then(function(r){\n      var m = r[0] && typeof r[0] === 'object' ? r[0] : r[0], by = r[1];\n      if (m && typeof m === 'object') Object.keys(by).forEach(function(k){ if (m[k] && typeof m[k] === 'object') ['phone', 'email', 'birthday', 'anniversary', 'token'].forEach(function(f){ if (m[k][f] == null && by[k][f] != null) m[k][f] = by[k][f]; }); });\n      return m;\n    });\n  }\n  function fbGetToken(k) {\n    return fbGet(MEMBERS_PATH + '/' + encodeURIComponent(k) + '/token').then(function(t){ if (t) return t; return privIndex().then(function(by){ return by[k] && by[k].token || null; }); });\n  }"
   ],
   [
-   "son(); }).catch(function(){ return fbGet(MEMBERS_PATH).then(function(all){ var o = {}; Object",
-   "son(); }).catch(function(){ return fbGetMembers().then(function(all){ var o = {}; Object"
+   "    return fetch(DB + MEMBERS_PATH + '.json?orderBy=\"status\"&equalTo=\"pending\"').then(function(r){ if (!r.ok) throw new Error('idx'); return r.json(); }).catch(function(){ return fbGet(MEMBERS_PATH).then(function(all){ var o = {}; Object.keys(all || {}).forEach(function(k){ if (all[k] && all[k].status === 'pending') o[k] = all[k]; }); return o; }); })",
+   "    return fetch(DB + MEMBERS_PATH + '.json?orderBy=\"status\"&equalTo=\"pending\"').then(function(r){ if (!r.ok) throw new Error('idx'); return r.json(); }).catch(function(){ return fbGetMembers().then(function(all){ var o = {}; Object.keys(all || {}).forEach(function(k){ if (all[k] && all[k].status === 'pending') o[k] = all[k]; }); return o; }); })"
   ],
   [
-   "    Promise.all([fbGet(MEMBERS_PATH), fbGet('/lvr_points/round1').catch(fun",
-   "    Promise.all([fbGetMembers(), fbGet('/lvr_points/round1').catch(fun"
+   "    Promise.all([fbGet(MEMBERS_PATH), fbGet('/lvr_points/round1').catch(function(){ return {}; })]).then(function(x){",
+   "    Promise.all([fbGetMembers(), fbGet('/lvr_points/round1').catch(function(){ return {}; })]).then(function(x){"
   ],
   [
    "    fbGet(MEMBERS_PATH).then(function(m){",
@@ -21,32 +21,62 @@
    "      return fbGetToken(r.memberKey).then(function(tok){"
   ],
   [
-   " ? Promise.resolve(bonusMembers) : fbGet(MEMBERS_PATH), fbGet('/lvr_points/bonuses')]).then(f",
-   " ? Promise.resolve(bonusMembers) : fbGetMembers(), fbGet('/lvr_points/bonuses')]).then(f"
+   "    Promise.all([bonusMembers ? Promise.resolve(bonusMembers) : fbGet(MEMBERS_PATH), fbGet('/lvr_points/bonuses')]).then(function(r){",
+   "    Promise.all([bonusMembers ? Promise.resolve(bonusMembers) : fbGetMembers(), fbGet('/lvr_points/bonuses')]).then(function(r){"
   ],
   [
    "      out.textContent = 'Using the SAVED settings: ' + pct + '%, new members safe for ' + grace + ' days. Reading members\u2026';\n      return fbGet(MEMBERS_PATH).then(function(all){",
    "      out.textContent = 'Using the SAVED settings: ' + pct + '%, new members safe for ' + grace + ' days. Reading members\u2026';\n      return fbGetMembers().then(function(all){"
   ],
   [
-   "([fbGet('/lvr_points/pool/total'), fbGet(MEMBERS_PATH), fbGet('/lvr_points/decay_by_member'),",
-   "([fbGet('/lvr_points/pool/total'), fbGetMembers(), fbGet('/lvr_points/decay_by_member'),"
+   "      return Promise.all([fbGet('/lvr_points/pool/total'), fbGet(MEMBERS_PATH), fbGet('/lvr_points/decay_by_member'), fbGet('/lvr_points/pool_drop_runs/' + run)]).then(function(x){",
+   "      return Promise.all([fbGet('/lvr_points/pool/total'), fbGetMembers(), fbGet('/lvr_points/decay_by_member'), fbGet('/lvr_points/pool_drop_runs/' + run)]).then(function(x){"
   ],
   [
-   "      return fbGet(MEMBERS_PATH).then(function(all){ all = all || {}; r",
-   "      return fbGetMembers().then(function(all){ all = all || {}; r"
+   "      return fbGet(MEMBERS_PATH).then(function(all){ all = all || {}; return Object.keys(all).map(function(k){ var m = all[k] || {}; return { key: k, name: m.name || '', instagram: m.instagram || '', points: Number(m.points) || 0 }; }); });",
+   "      return fbGetMembers().then(function(all){ all = all || {}; return Object.keys(all).map(function(k){ var m = all[k] || {}; return { key: k, name: m.name || '', instagram: m.instagram || '', points: Number(m.points) || 0 }; }); });"
   ],
   [
-   "([fbGet('/lvr_points/tag_claims'), fbGet(MEMBERS_PATH), fbGet(SETTINGS_PATH + '/tagBonus')]).",
-   "([fbGet('/lvr_points/tag_claims'), fbGetMembers(), fbGet(SETTINGS_PATH + '/tagBonus')])."
+   "    Promise.all([fbGet('/lvr_points/tag_claims'), fbGet(MEMBERS_PATH), fbGet(SETTINGS_PATH + '/tagBonus')]).then(function(r){",
+   "    Promise.all([fbGet('/lvr_points/tag_claims'), fbGetMembers(), fbGet(SETTINGS_PATH + '/tagBonus')]).then(function(r){"
   ],
   [
    "      return fbGet(MEMBERS_PATH + '/' + c.memberKey + '/token').then(function(tok){",
    "      return fbGetToken(c.memberKey).then(function(tok){"
   ],
   [
-   "fbGet('/lvr_points/transactions'), fbGet(MEMBERS_PATH)]).then(function(r){ ledgerData = { tx:",
-   "fbGet('/lvr_points/transactions'), fbGetMembers()]).then(function(r){ ledgerData = { tx:"
+   "    return Promise.all([fbGet('/lvr_points/transactions'), fbGet(MEMBERS_PATH)]).then(function(r){ ledgerData = { tx: r[0] || {}, members: r[1] || {} }; return ledgerData; });",
+   "    return Promise.all([fbGet('/lvr_points/transactions'), fbGetMembers()]).then(function(r){ ledgerData = { tx: r[0] || {}, members: r[1] || {} }; return ledgerData; });"
+  ]
+ ],
+ "lvr-rewards.html": [
+  [
+   "    return Array.prototype.map.call(bytes, function(b){ return REF_CHARS.charAt(b % REF_CHARS.length); }).join('');\n  }",
+   "    return Array.prototype.map.call(bytes, function(b){ return REF_CHARS.charAt(b % REF_CHARS.length); }).join('');\n  }\n  function digits(s) { return String(s || '').replace(/\\D/g, ''); }\n  // MEMBER DATA PROTECTION (docs/key-integration/MEMBER_DATA_PLAN.md): the phone number and the personal-link token are also kept in a hidden spot\n  // that cannot be listed (lvr_member_private/<token>); referral codes are looked up one at a time (lvr_refcodes/<code>); a hashed index\n  // (lvr_member_idx/<sha256>) answers \"is this the same person\" without exposing anyone's phone. Until the owner switches settings/privateLayout on,\n  // the old public fields are written too, so nothing that works today stops working.\n  var DB_ROOT = RTDB_URL.replace(/\\/lvr_rewards\\.json$/, '');\n  function sha256hex(str) {\n    try {\n      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function(b){\n        return Array.prototype.map.call(new Uint8Array(b), function(x){ return x.toString(16).padStart(2, '0'); }).join('');\n      });\n    } catch (e) { return Promise.resolve(null); }\n  }\n  function idHashes(phone) {\n    var d = digits(phone);\n    return Promise.all(d.length >= 7 ? [sha256hex('p:' + d)] : []).then(function(a){ return a.filter(Boolean); });\n  }"
+  ],
+  [
+   "    return fetch(RTDB_URL + '?orderBy=\"refCode\"&equalTo=\"' + encodeURIComponent(code) + '\"').then(function(r){ return r.json(); }).then(function(found){\n      var ks = found ? Object.keys(found) : [];\n      if (!ks.length) return null;\n      var c = found[ks[0]] || {};\n      if (phone && c.phone && String(c.phone).replace(/\\D/g, '') === String(phone).replace(/\\D/g, '')) return null;\n      return ks[0];\n    }).catch(function(){ return null; });",
+   "    var c = encodeURIComponent(code);\n    return fetch(DB_ROOT + '/lvr_refcodes/' + c + '.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }).then(function(mk){\n      if (typeof mk === 'string' && mk) {\n        // new layout: same person? (their phone hash already belongs to the referrer)\n        return idHashes(phone).then(function(hs){\n          return Promise.all(hs.map(function(h){ return fetch(DB_ROOT + '/lvr_member_idx/' + h + '.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }); }));\n        }).then(function(owners){ return owners.indexOf(mk) >= 0 ? null : mk; });\n      }\n      // old layout (member list still readable): look the code up in the list\n      return fetch(RTDB_URL + '?orderBy=\"refCode\"&equalTo=\"' + c + '\"').then(function(r){ return r.ok ? r.json() : null; }).then(function(found){\n        var ks = found ? Object.keys(found) : [];\n        if (!ks.length) return null;\n        var m = found[ks[0]] || {};\n        if (phone && m.phone && digits(m.phone) === digits(phone)) return null;\n        return ks[0];\n      }).catch(function(){ return null; });\n    });"
+  ],
+  [
+   "    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || '', welcome: (st && st.welcome) || null }; }).catch(function(){ return { paused: false, banner: '', welcome: null }; });",
+   "    return fetch(SETTINGS_URL).then(function(r){ return r.json(); }).then(function(st){ return { paused: !!(st && st.paused && st.paused.signups), banner: (st && st.banner) || '', welcome: (st && st.welcome) || null, privateLayout: !!(st && st.privateLayout) }; }).catch(function(){ return { paused: false, banner: '', welcome: null, privateLayout: false }; });"
+  ],
+  [
+   "    var welcomeCfg = null;",
+   "    var welcomeCfg = null, privateLayout = false, madeRec = null, madeReferrer = null;"
+  ],
+  [
+   "      welcomeCfg = r.welcome;",
+   "      welcomeCfg = r.welcome; privateLayout = !!r.privateLayout;"
+  ],
+  [
+   "      if (referrerKey) rec.referredBy = referrerKey;",
+   "      if (referrerKey) rec.referredBy = referrerKey;\n      madeReferrer = referrerKey || null;\n      madeRec = { phone: phone, refCode: rec.refCode };\n      // switched on by the owner at cut-over: phone and the personal-link token stay out of the public member list\n      if (privateLayout) { delete rec.phone; delete rec.token; }"
+  ],
+  [
+   "        fetch(RTDB_URL.replace(/\\.json.*$/, '') .replace(/\\/lvr_rewards$/, '/lvr_points/round1') + '/' + encodeURIComponent(j.name) + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: short.slice(0, 40), at: { '.sv': 'timestamp' }, status: 'pending' }) }).catch(function () {});",
+   "        fetch(RTDB_URL.replace(/\\.json.*$/, '') .replace(/\\/lvr_rewards$/, '/lvr_points/round1') + '/' + encodeURIComponent(j.name) + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ name: short.slice(0, 40), at: { '.sv': 'timestamp' }, status: 'pending' }, (privateLayout && madeReferrer) ? { referredBy: madeReferrer } : {})) }).catch(function () {});\n        // hidden spot + exact-path indexes (see the note above findReferrer)\n        var JH = { 'Content-Type': 'application/json' };\n        fetch(DB_ROOT + '/lvr_member_private/' + encodeURIComponent(token) + '.json', { method: 'PUT', headers: JH, body: JSON.stringify({ memberKey: j.name, phone: phone, birthday: bdStr, anniversary: anStr || null }) }).catch(function () {});\n        if (madeRec && madeRec.refCode) fetch(DB_ROOT + '/lvr_refcodes/' + encodeURIComponent(madeRec.refCode) + '.json', { method: 'PUT', headers: JH, body: JSON.stringify(j.name) }).catch(function () {});\n        idHashes(phone).then(function(hs){ hs.forEach(function(h){ fetch(DB_ROOT + '/lvr_member_idx/' + h + '.json', { method: 'PUT', headers: JH, body: JSON.stringify(j.name) }).catch(function () {}); }); }).catch(function () {});"
   ]
  ]
 }

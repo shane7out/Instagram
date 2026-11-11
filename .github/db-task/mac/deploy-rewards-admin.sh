@@ -3,7 +3,7 @@
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-rewards-admin.sh?$(date +%s)" -o /tmp/deploy-rewards-admin.sh && bash /tmp/deploy-rewards-admin.sh
 # MEMBER DATA PROTECTION, step 4 (2026-11-11): teaches the Rewards admin page (lvr-points-admin) to read each member's phone, email, birthday and link token from EITHER the old place
 # or the new hidden place. Nothing visible changes today (the old place still has them); this must be live BEFORE the members are moved. Takes the page's CURRENT LIVE copy,
-# applies 12 small text replacements, checks the page still parses, puts it back. Safe to run twice. Nothing in the database is touched.
+# applies small text replacements (Rewards admin, plus the VIP sign-up page lvr-rewards.html so new sign-ups also use the hidden spot), checks the page still parses, puts it back. Safe to run twice. Nothing in the database is touched.
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
@@ -15,7 +15,7 @@ cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
 rm -rf /tmp/rwadm-new && mkdir -p /tmp/rwadm-new
 curl -sL -o /tmp/rwadm.json "$RAWB/member-data-step4.json$CB"
 [ -s /tmp/rwadm.json ] || { echo "Could not get the change list - nothing changed."; exit 1; }
-PAGES="lvr-points-admin.html"
+PAGES="lvr-points-admin.html lvr-rewards.html"
 DOPAGES=""
 for f in $PAGES; do
   CODE=$(curl -s -o "/tmp/rwadm-new/$f" -w '%{http_code}' "$LIVE/$f$CB"); SZ=$(wc -c < "/tmp/rwadm-new/$f")
