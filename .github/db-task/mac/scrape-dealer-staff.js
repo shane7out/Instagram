@@ -14,6 +14,8 @@ const ROLE = MODE === 'realtors' ? ROLE_RE : ROLE_CARS;
 const SALESY = MODE === 'realtors' ? /(realtor|agent|broker|associate|team|sales|specialist|advisor|consultant|manager|owner)/i : /(sales|consultant|brand|product|advisor|adviser|bdc|internet|manager|owner|principal|specialist|finance|fleet)/i;
 const NOTNAME = /^(meet|our|the|team|staff|sales|service|parts|finance|department|contact|call|text|email|phone|home|new|used|inventory|specials|about|us|directions|hours|view|read|more|schedule|get|apply|value|your|trade|privacy|policy|terms|menu|search|find|shop|book|certified|pre-owned|toyota|honda|chevrolet|nissan|hyundai|bmw|mercedes|audi|lexus|subaru|mazda|volkswagen|jeep|dodge|gmc|buick|cadillac|tesla|infiniti|acura|las|vegas|nevada|henderson)$/i;
 const PATHS = MODE === 'realtors' ? ['/agents', '/our-agents', '/find-an-agent', '/agent-directory', '/team', '/our-team', '/meet-our-team', '/about-us/our-agents', '/about/agents', '/agent-search', '/people', '/realtors', '/staff'] : ['/meet-our-staff', '/meet-our-team', '/staff', '/about-us/staff', '/about-us/meet-our-team', '/about/staff', '/dealership/staff.htm', '/dealership/meet-our-staff.htm', '/staff.aspx', '/our-team', '/meet-the-team', '/our-staff', '/team', '/about-us/our-team', '/dealership/staff'];
+// national / corporate sites have no local staff list worth reading (and are not the local business's own team page)
+const NATIONAL = /(^|\.)(remax\.com|century21\.com|bhhs\.com|kw\.com|coldwellbanker\.com|compass\.com|exprealty\.com|realtor\.com|zillow\.com|redfin\.com|windermere\.com|sothebysrealty\.com|tesla\.com|carmax\.com|drivetime\.com|enterprisecarsales\.com|hertzcarsales\.com|lazydays\.com|rushtruckcenters\.com|ridenow\.com|facebook\.com|instagram\.com|yelp\.com|google\.com)$/i;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function parseCsv(text) { const rows = []; let row = [], f = '', q = false; text = text.replace(/^﻿/, '');
   for (let i = 0; i < text.length; i++) { const c = text[i];
@@ -77,8 +79,9 @@ function staffLinks(html, base) {
   const outCols = [COMPANY_COL, 'person_name', 'role', 'email', 'address', 'website', 'source_url', 'confidence', 'notes'];
   const out = [outCols.join(',')]; const report = []; let people = 0;
   for (let n = 0; n < dealers.length; n++) {
-    const d = dealers[n]; let origin; try { origin = new URL(d.website).origin; } catch (e) { continue; }
+    const d = dealers[n]; let origin; try { origin = new URL(d.website || d.directory).origin; } catch (e) { continue; }
     process.stdout.write(`[${n + 1}/${dealers.length}] ${d.name} ... `);
+    if (NATIONAL.test(new URL(d.website || d.directory).hostname) && !/^https?:\/\//i.test(d.directory)) { console.log('skipped (national company site)'); report.push(d.name + ': skipped (national company site, no local team page)'); continue; }
     const rb = await get(origin + '/robots.txt'); await sleep(DELAY); const robots = rb.status === 200 ? rb.body : '';
     const tried = []; let best = null, why = 'no staff page found';
     const home = robotsAllows(robots, '/') ? await get(d.website) : { status: 0, body: '', err: 'robots' }; await sleep(DELAY);
