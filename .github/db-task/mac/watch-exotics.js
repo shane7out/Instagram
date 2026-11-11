@@ -1,4 +1,5 @@
-// EXOTICS harvester (owner, 2026-11-11): Lamborghini and Ferrari listings on Craigslist within 100 miles of Las Vegas.
+// EXOTICS harvester (owner, 2026-11-11): Lamborghini, Ferrari and Porsche (any make listed in exotic-makes.json) on Craigslist within 100 miles of Las Vegas.
+// To add a make (McLaren, Maserati, Bentley, ...): add one line to exotic-makes.json and run deals-exotics.sh again. The page and the Deals tab appear by themselves.
 // By default only "by owner" sellers (searchPath cto); set EXOTIC_PATH=cta to include dealers too.
 // Same pattern as watch-batman.js: type 'Lamborghini' / 'Ferrari' entries in manual.json, photos to carimg/, prints "ADDED n".
 // Distance is computed here from the latitude/longitude Craigslist attaches to every listing (haversine from downtown Las Vegas), so it does not
@@ -9,7 +10,10 @@ const ROOT=path.join(__dirname,'..');
 const UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)';
 const CENTER={lat:36.1716,lon:-115.1391}, RADIUS=100; // miles
 const SEARCH_PATH=process.env.EXOTIC_PATH==='cta'?'cta':'cto';
-const MAKES=[{q:'lamborghini',make:'Lamborghini',re:/\blamborghini\b/i},{q:'ferrari',make:'Ferrari',re:/\bferrari\b/i}];
+let MAKES_CFG=[{make:'Lamborghini',query:'lamborghini'},{make:'Ferrari',query:'ferrari'},{make:'Porsche',query:'porsche'}];
+try{const j=JSON.parse(fs.readFileSync(path.join(__dirname,'exotic-makes.json'),'utf8'));if(Array.isArray(j)&&j.length)MAKES_CFG=j;}catch(e){}
+const MAKES=MAKES_CFG.map(m=>({q:m.query,make:m.make,re:new RegExp('\\b'+String(m.query).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i')}));
+const MAKE_NAMES=new Set(MAKES.map(m=>m.make));
 const MINP=3000;
 const WTB=/\b(wtb|wanted|looking for|looking to buy|i buy|we buy|cash (?:paid|for)|buying|will pay)\b/i;
 const NOTCAR=/\b(tractor|golf cart|scooter|toy|model car|diecast|die-cast|poster|bicycle|e-?bike|lawn|rc car|steering wheel only|wheels? only|rims? only|parts? only|for parts)\b/i;
@@ -43,7 +47,9 @@ if(process.argv.includes('--selftest')){
   T('tractor rejected',!judge(parseItem(mkItem(18000,'1:1~36.1~-115.2','Lamborghini tractor 1990')),mk,'').ok);
   T('low price rejected',!judge(parseItem(mkItem(1,'1:1~36.1~-115.2','Lamborghini')),mk,'').ok);
   T('no geo rejected',!judge(parseItem(mkItem(90000,'','2012 Lamborghini Gallardo')),mk,'').ok);
-  T('Ferrari title needed',!judge(a,MAKES[1],'').ok);
+  T('Ferrari title needed',!judge(a,MAKES.find(m=>m.make==='Ferrari'),'').ok);
+  T('Porsche configured',MAKES.some(m=>m.make==='Porsche'&&m.re.test('2019 Porsche 911 Carrera')));
+  T('Porsche diesel tractor rejected',!judge(parseItem(mkItem(25000,'1:1~36.1~-115.2','Porsche Diesel tractor')),MAKES.find(m=>m.make==='Porsche'),'').ok);
   process.exit(bad?1:0);
 }
 
@@ -72,7 +78,7 @@ async function detail(src){const r=await getR(src,false).catch(()=>null);if(!r||
   console.error('areas: '+areas.map(a=>a.Hostname).join(','));
   // 1) drop ads that have been taken down
   let removed=0;
-  for(const e of manual.filter(e=>(e.type==='Lamborghini'||e.type==='Ferrari')&&e.src)){
+  for(const e of manual.filter(e=>MAKE_NAMES.has(e.type)&&e.src)){
     const d=await detail(e.src); await sleep(1200);
     if(d.dead){manual.splice(manual.indexOf(e),1);removed++;}
   }

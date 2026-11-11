@@ -1,0 +1,5 @@
+[
+  { "make": "Lamborghini", "query": "lamborghini", "emoji": "🏎️", "color": "#1b7a3a", "page": "lamborghini" },
+  { "make": "Ferrari",     "query": "ferrari",     "emoji": "🐎",  "color": "#b3202a", "page": "ferrari" },
+  { "make": "Porsche",     "query": "porsche",     "emoji": "🏁",  "color": "#6b4a00", "page": "porsche" }
+]
