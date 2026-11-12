@@ -1,3 +1,4 @@
 #!/bin/bash
-# No task queued. (Last: read-only Craigslist API probe for exotics, run 506: API answers; listings carry lat/lon in field 4, distance is computed by the harvester.)
-echo "no task queued"
+# Member-data-protection rules test in the Firebase emulator (nothing touches the real database).
+# Adds the step-5 checks: the owner can move a legacy member's token/phone out of the public record; strangers cannot.
+bash .github/db-task/rules/run-private-rules-test.sh

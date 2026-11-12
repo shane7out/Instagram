@@ -41,6 +41,14 @@ r.lvr_member_idx = {
     '.validate': "$h.length == 64 && newData.isString()"
   }
 };
+// Step 5 (moving the 3 existing members) has to REMOVE the personal-link token (and phone/email/birthday) from the public member record, and the old rule
+// made the token unchangeable for everyone. Only the owner may now change or remove it; a stranger still cannot (verified in test-private-rules.js).
+{
+  const w = r.lvr_rewards['$k']['.write'];
+  const old = "((!data.child('token').exists() || newData.child('token').val() == data.child('token').val())";
+  if (w.split(old).length !== 2) throw new Error('token clause not found exactly once');
+  r.lvr_rewards['$k']['.write'] = w.replace(old, "(" + OWN + " || (!data.child('token').exists() || newData.child('token').val() == data.child('token').val()))");
+}
 // Round One registry entries may carry who invited the member, so the founding-invite count no longer needs the member list.
 r.lvr_points.round1['$mk']['referredBy'] = { '.validate': 'newData.isString() && newData.val().length <= 64' };
 fs.writeFileSync(path.join(__dirname, 'lvr-rules-private.json'), JSON.stringify(r, null, 1) + '\n');
