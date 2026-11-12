@@ -35,3 +35,4 @@ Last updated 2026-11-10. Honest note: nobody can promise rank #1. Ranking takes 
 - Watch the Owner report's Sources and Pages tabs; double down on what works.
 
 - YouTube (2026-11-06): game plan and tracker live in key-content-studio.html. Tracked links use utm_source=youtube so the Owner report shows which videos send visitors. Later: embed the best videos on the matching guide pages (VideoObject schema), and link the channel from the site's sameAs once the channel exists (needs Shane's channel address).
+- Audit 2026-11-12 (06:4x UTC): 55 pages scanned (demos excluded). All JSON-LD parses; every indexable page has a canonical equal to its og:url, a description and exactly one h1; no image lacks alt text. Pages without canonical/description/h1 are redirect stubs (los-angeles, manhattan-beach, guides/ai-receptionist-cost, key-platform/voice|email|sales) or owner/app pages, all marked noindex and not in the sitemap. Nothing to fix.
