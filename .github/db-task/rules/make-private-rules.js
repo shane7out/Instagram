@@ -47,7 +47,7 @@ r.lvr_member_idx = {
   const w = r.lvr_rewards['$k']['.write'];
   const old = "((!data.child('token').exists() || newData.child('token').val() == data.child('token').val())";
   if (w.split(old).length !== 2) throw new Error('token clause not found exactly once');
-  r.lvr_rewards['$k']['.write'] = w.replace(old, "(" + OWN + " || (!data.child('token').exists() || newData.child('token').val() == data.child('token').val()))");
+  r.lvr_rewards['$k']['.write'] = w.replace(old, "((" + OWN + " || " + old.slice(1) + ")");
 }
 // Round One registry entries may carry who invited the member, so the founding-invite count no longer needs the member list.
 r.lvr_points.round1['$mk']['referredBy'] = { '.validate': 'newData.isString() && newData.val().length <= 64' };
