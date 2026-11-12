@@ -215,7 +215,7 @@
   .launch-tag{color:var(--key-light);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.03em;margin-right:8px;}
 
   /* ---- hero ---- */
-  .hero{padding-block:52px 40px;border-top:none;position:relative;overflow:hidden;isolation:isolate;}
+  .hero{padding-block:36px 24px;border-top:none;position:relative;overflow:hidden;isolation:isolate;}
   .hero-grid{display:grid;grid-template-columns:minmax(0,860px);gap:48px;align-items:start;} /* 2026-11-11 (Shane): the form moved down to the Contact section, so the top is one column */
   @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
   .hero h1{
@@ -363,22 +363,11 @@
   .g-card h3{font-size:19px;margin-bottom:8px;line-height:1.25;} .g-card p{font-size:14.5px;color:var(--ink-dim);} .g-card .go{display:inline-block;margin-top:10px;font-weight:700;font-size:14px;color:var(--key-light);}
   @media (max-width:900px){.g-grid{grid-template-columns:1fr;}}
   /* ---- see it work ---- */
-  .sw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  .sw-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--ink);}
-  .sw-card:hover,.sw-card:focus-visible{border-color:var(--key-light);box-shadow:0 10px 30px rgba(0,168,225,.15);}
-  .sw-card img{display:block;width:100%;height:auto;aspect-ratio:660/290;object-fit:cover;object-position:top;background:#121a22;border-bottom:1px solid var(--line);}
-  .sw-card .sw-body{display:block;padding:14px 16px 16px;}
-  .sw-card h3{font-size:18px;margin-bottom:4px;}
-  .sw-card p{font-size:14.5px;color:var(--ink-dim);}
-  .sw-card .go{display:inline-block;margin-top:8px;font-weight:700;font-size:14px;color:var(--key-light);}
-  .sw-more{margin-top:22px;text-align:center;}
-  @media (max-width:900px){.sw-grid{grid-template-columns:1fr 1fr;}}
-  @media (max-width:600px){.sw-grid{grid-template-columns:1fr;}}
   /* ---- soft motion as sections scroll into view (off for reduced motion, never hides text from search engines) ---- */
   .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease;}
   .js .reveal.in{opacity:1;transform:none;}
-  .js .sw-grid .reveal:nth-child(3n+2),.js .service-grid .reveal:nth-child(3n+2),.js .trust-grid .reveal:nth-child(4n+2){transition-delay:.07s;}
-  .js .sw-grid .reveal:nth-child(3n),.js .service-grid .reveal:nth-child(3n),.js .trust-grid .reveal:nth-child(4n+3){transition-delay:.14s;}
+  .js .trust-grid .reveal:nth-child(4n+2){transition-delay:.07s;}
+  .js .trust-grid .reveal:nth-child(4n+3){transition-delay:.14s;}
   .js .trust-grid .reveal:nth-child(4n){transition-delay:.21s;}
   .demo-strip{margin:0 0 20px;padding:14px 18px;border:1px solid var(--key-blue);border-radius:14px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;}
   .demo-strip a{color:var(--key-light);font-weight:700;}
@@ -563,13 +552,11 @@
   <p class="mm-group-label">Explore</p>
   <ul>
     <li><a href="index.html">Home</a></li>
-    <li><a href="key-platform/index.html#library">Demos</a></li>
     <li><a href="guides/index.html">Guides</a></li>
     <li><a href="languages.html">Languages</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#industries">Industries</a></li>
     <li><a href="#solutions">Solutions</a></li>
-    <li><a href="#platform">Platform</a></li>
     <li><a href="#method">How It Works</a></li>
     <li><a href="#results">Results</a></li>
   </ul>
@@ -604,41 +591,12 @@
         <p class="hero-sub" style="margin-top:10px;">Key Technologies helps businesses turn AI/SI into practical systems that improve sales, customer
           experience, operations, information management and decision-making.</p>
         <div class="hero-ctas">
-          <a class="btn btn-primary" href="#method">See How It Works</a>
+          <a class="btn btn-primary" href="#services">See all our services</a>
+          <a class="btn btn-ghost" href="#method">See How It Works</a>
         </div>
       </div>
 
     </div>
-  </section>
-
-  <!-- ============ TRUST STRIP ============
-       To show a real client quote here: write it as a <figure class="quote"> under this list. Only use a quote you have written permission for. -->
-  <section class="wrap trust-band" aria-label="Why Key Technologies">
-    <ul class="trust-grid">
-      <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
-      <li class="reveal"><b>26 services</b><span>each with a live demo you can try</span></li>
-      <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don't need</span></li>
-      <li class="reveal"><b>Worldwide</b><span>In person around our home markets, online anywhere</span></li>
-    </ul>
-  </section>
-
-
-  <!-- ============ SEE IT WORK ============ -->
-  <section class="wrap" id="see-it-work">
-    <div class="section-head reveal">
-      <span class="eyebrow">See it work</span>
-      <h2>Try it before you talk to anyone</h2>
-      <p>Every service has a live demo. Everything in them is made up, and nothing is sent, booked or charged.</p>
-    </div>
-    <div class="sw-grid">
-      <a class="sw-card reveal" href="key-platform/voice/"><img src="key-platform/demos/thumbs/voice.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the phone receptionist demo"><span class="sw-body"><h3>Phone receptionist</h3><p>Answers calls, captures the lead and sends anything urgent to a person.</p><span class="go">Try the demo &rarr;</span></span></a>
-      <a class="sw-card reveal" href="key-platform/email/"><img src="key-platform/demos/thumbs/email.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the email assistant demo"><span class="sw-body"><h3>Email assistant</h3><p>Sorts an inbox and drafts replies that a person approves before they go out.</p><span class="go">Try the demo &rarr;</span></span></a>
-      <a class="sw-card reveal" href="key-platform/demos/booking-scheduling.html"><img src="key-platform/demos/thumbs/booking-scheduling.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the booking and scheduling demo"><span class="sw-body"><h3>Booking and scheduling</h3><p>Pick a time, get a confirmation and see the reminders that follow.</p><span class="go">Try the demo &rarr;</span></span></a>
-      <a class="sw-card reveal" href="key-platform/demos/custom-crm.html"><img src="key-platform/demos/thumbs/custom-crm.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the custom CRM demo"><span class="sw-body"><h3>Custom CRM</h3><p>Leads move through your own stages so nothing slips through.</p><span class="go">Try the demo &rarr;</span></span></a>
-      <a class="sw-card reveal" href="key-platform/demos/reviews-reputation.html"><img src="key-platform/demos/thumbs/reviews-reputation.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the review management demo"><span class="sw-body"><h3>Review management</h3><p>Drafted replies in your voice, with bad reviews flagged for you first.</p><span class="go">Try the demo &rarr;</span></span></a>
-      <a class="sw-card reveal" href="key-platform/demos/ai-agents.html"><img src="key-platform/demos/thumbs/ai-agents.jpg" width="660" height="290" loading="lazy" decoding="async" alt="Screenshot of the AI agents demo"><span class="sw-body"><h3>AI agents</h3><p>An assistant that does one job, within limits you set.</p><span class="go">Try the demo &rarr;</span></span></a>
-    </div>
-    <p class="sw-more"><a class="btn btn-ghost" href="key-platform/index.html#library" data-tap>See all 26 services</a></p>
   </section>
 
   <!-- ============ SERVICES ============ -->
@@ -646,9 +604,8 @@
     <div class="section-head reveal">
       <span class="eyebrow eyebrow-mark"><svg width="36" height="16" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><defs><linearGradient id="ke1" x1="0" y1="5" x2="0" y2="53" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".22" stop-color="#4fb9ff"/><stop offset=".48" stop-color="#1a8be0"/><stop offset=".56" stop-color="#0a6fb8"/><stop offset=".68" stop-color="#2aa3f2"/><stop offset=".88" stop-color="#8fd3ff"/><stop offset="1" stop-color="#0a7fd0"/></linearGradient></defs><g fill="none" stroke="url(#ke1)"><circle cx="24" cy="30" r="19" stroke-width="8"/><circle cx="24" cy="30" r="8.5" stroke-width="3"/></g><g fill="url(#ke1)"><rect x="42" y="26.5" width="72" height="7" rx="1"/><rect x="45" y="21" width="6" height="18" rx="2"/><rect x="55" y="23" width="5" height="14" rx="2"/><path d="M90,33H98V45H90ZM102,33H114V51H102Z"/></g></svg>Services</span>
       <h2>Where Key Technologies can help</h2>
-      <p>Every engagement starts with a business problem, not a tool. Technology comes second.</p>
+      <p>Every engagement starts with a business problem, not a tool. Technology comes second. Each service has a live demo with clearly labeled fictional data.</p>
     </div>
-    <div class="demo-strip"><span><span class="demo-chip">Demos</span>&nbsp; Every service below has a live demo, with clearly labeled fictional data.</span><a href="key-platform/index.html">Open all 26 demos &rarr;</a></div>
     <!--SERVICES-GRID-START-->
     <div class="svc-groups">
       <div class="svc-group reveal">
@@ -714,23 +671,20 @@
       </div>
     </div>
     <!--SERVICES-GRID-END-->
+    <div class="demo-strip" style="margin-top:20px"><span><span class="demo-chip">Partners</span>&nbsp; Interested in selling these as an independent partner? Join the interest list. It is free and not a job offer.</span><a href="key-platform/partners.html">Join the interest list &rarr;</a></div>
   </section>
 
-  <!-- ============ KEY PLATFORM ============ -->
-  <section class="wrap" id="platform">
-    <div class="section-head reveal">
-      <span class="eyebrow eyebrow-mark"><svg width="36" height="16" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><defs><linearGradient id="ke2" x1="0" y1="5" x2="0" y2="53" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".22" stop-color="#4fb9ff"/><stop offset=".48" stop-color="#1a8be0"/><stop offset=".56" stop-color="#0a6fb8"/><stop offset=".68" stop-color="#2aa3f2"/><stop offset=".88" stop-color="#8fd3ff"/><stop offset="1" stop-color="#0a7fd0"/></linearGradient></defs><g fill="none" stroke="url(#ke2)"><circle cx="24" cy="30" r="19" stroke-width="8"/><circle cx="24" cy="30" r="8.5" stroke-width="3"/></g><g fill="url(#ke2)"><rect x="42" y="26.5" width="72" height="7" rx="1"/><rect x="45" y="21" width="6" height="18" rx="2"/><rect x="55" y="23" width="5" height="14" rx="2"/><path d="M90,33H98V45H90ZM102,33H114V51H102Z"/></g></svg>KEY Platform</span>
-      <h2>Business Solutions, working together</h2>
-      <p>One catalog of business solutions for phones, email, customers and growth. Each one carries an honest status: a demo you can try today, or a plan that is not for sale yet.</p>
-    </div>
-    <div class="service-grid">
-      <article class="service-card reveal"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Voice Receptionist</h3><p>Answers calls around the clock, captures the lead, routes anything urgent to a person and proposes an appointment. Try a scripted sample call. No real phone line is connected.</p><a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> Try the Voice demo &rarr;</a></article>
-      <article class="service-card reveal"><span class="num"><span class="demo-chip">Prototype</span></span><h3>Email Intelligence</h3><p>Sorts an inbox and drafts replies from your own information. A person approves before anything is sent. The demo uses fictional email and sends nothing.</p><a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> Try the Email demo &rarr;</a></article>
-    </div>
-    <div class="demo-strip" style="margin-top:20px"><span><span class="demo-chip">Planned</span>&nbsp; Also on the plan, not yet for sale: KEY CRM packaging, websites and landing pages, workflow automation, marketing and social growth, scheduling and reminders, reviews, and reporting.</span><a href="key-platform/index.html">See the full catalog &rarr;</a></div>
-    <div class="demo-strip"><span><span class="demo-chip">Rewards</span>&nbsp; Try the LVR Rewards demo: earn, spin and use sample rewards at made-up restaurants.</span><a href="key-platform/demos/rewards.html">Try the rewards demo &rarr;</a></div>
-    <div class="demo-strip"><span><span class="demo-chip">Partners</span>&nbsp; Interested in selling these as an independent partner? Join the interest list. It is free and not a job offer.</span><a href="key-platform/partners.html">Join the interest list &rarr;</a></div>
+  <!-- ============ TRUST STRIP ============
+       To show a real client quote here: write it as a <figure class="quote"> under this list. Only use a quote you have written permission for. -->
+  <section class="wrap trust-band" aria-label="Why Key Technologies">
+    <ul class="trust-grid">
+      <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
+      <li class="reveal"><b>26 services</b><span>each with a live demo you can try</span></li>
+      <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don't need</span></li>
+      <li class="reveal"><b>Worldwide</b><span>In person around our home markets, online anywhere</span></li>
+    </ul>
   </section>
+
 
   <!-- ============ INDUSTRIES ============ -->
   <section class="wrap" id="industries">
@@ -1247,8 +1201,6 @@
       <li><a href="#industries">Industries</a></li>
       <li><a href="#audit">Free Website Audit</a></li>
       <li><a href="#solutions">Solutions</a></li>
-      <li><a href="#platform">Platform</a></li>
-      <li><a href="key-platform/index.html#library">Demos</a></li>
     <li><a href="guides/index.html">Guides</a></li>
     <li><a href="languages.html">Languages</a></li><!--testimonials-foot--><!--/testimonials-foot-->
       <li><a href="#method">How It Works</a></li>
