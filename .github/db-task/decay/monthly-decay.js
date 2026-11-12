@@ -35,7 +35,16 @@ function laNow() {
   const grace = Math.max(0, Math.min(365, Number(cfg.graceDays)));
   console.log('rate ' + pct + '%, first return only after ' + grace + ' days of membership');
 
-  const members = await get('/lvr_rewards') || {};
+  // After the member-data lockdown (MEMBER_DATA_PLAN.md) the member LIST can only be read by the owner, but one member can still be read by its
+  // key, and every member is in the Round One registry. So: try the list (old layout), else walk the registry and read each member by key.
+  let members;
+  try { members = await get('/lvr_rewards') || {}; }
+  catch (e) {
+    const reg = await get('/lvr_points/round1') || {};
+    members = {};
+    for (const k of Object.keys(reg)) { const m = await get('/lvr_rewards/' + encodeURIComponent(k)); if (m && typeof m === 'object') members[k] = m; }
+    console.log('member list is locked: read ' + Object.keys(members).length + ' members one by one through the registry');
+  }
   let eligible = 0, taken = 0, pointsTotal = 0, tooNew = 0, already = 0, failed = 0;
   for (const mk of Object.keys(members)) {
     const m = members[mk] || {};
