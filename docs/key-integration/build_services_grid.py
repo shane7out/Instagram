@@ -51,5 +51,35 @@ if '/* services: everything visible at once' in s:
     s = re.sub(r'  /\* services: everything visible at once.*?\.svc-mini \.demo-link\{[^}]*\}\n', lambda m: CSS, s, count=1, flags=re.S)
 else:
     s = s.replace('  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}', CSS + '  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}', 1)
+# search-engine data: the OfferCatalog in index.html must list exactly the services on the page (keeps the descriptions already written, adds missing
+# services from the one list with their card text, drops ones that are no longer in the list)
+import json as _json
+def _sync_offer_catalog(text):
+    for m in re.finditer(r'(<script type="application/ld\+json">)(.*?)(</script>)', text, re.S):
+        if 'OfferCatalog' not in m.group(2): continue
+        data = _json.loads(m.group(2)); found = []
+        def walk(o):
+            if isinstance(o, dict):
+                if o.get('@type') == 'OfferCatalog': found.append(o)
+                for v in o.values(): walk(v)
+            elif isinstance(o, list):
+                for v in o: walk(v)
+        walk(data)
+        if not found: return text
+        cat = found[0]; have = {}
+        for off in cat.get('itemListElement', []):
+            nm = (off.get('itemOffered') or {}).get('name')
+            if nm: have[nm] = off
+        new = []
+        for e in lst:
+            off = have.get(e['title'])
+            if off is None:
+                off = {'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': e['title'], 'description': e['tag'] + MUST_SAY.get(e['slug'], '')}}
+            new.append(off)
+        cat['itemListElement'] = new
+        body = _json.dumps(data, indent=2, ensure_ascii=False)
+        return text[:m.start(2)] + '\n' + body + '\n' + text[m.end(2):]
+    return text
+s = _sync_offer_catalog(s)
 open(path, 'w', encoding='utf-8').write(s)
 print('services grid built: %d services in %d groups' % (len(lst), sum(1 for c in cats if any(e['cat'] == c for e in lst))))

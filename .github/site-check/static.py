@@ -70,6 +70,12 @@ for p in pages:
 for _l in read('llms.txt').split('\n'):
     for m in re.finditer(r'all (\d+) services',_l):
         if int(m.group(1))!=_N: issues.append(('llms.txt','service count %s but the real number is %d'%(m.group(1),_N)))
+# the search-engine data (OfferCatalog in index.html) must list exactly the services in the one list
+for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>',read('index.html'),re.S):
+    if 'OfferCatalog' in m.group(1):
+        _nm=sorted(re.findall(r'"@type": "Service",\s*"name": "([^"]+)"',m.group(1)))
+        _want=sorted(e['title'] for e in _j.load(open('key-platform/demos/list.json',encoding='utf-8')))
+        if _nm!=_want: issues.append(('index.html','service count structured data lists %d services but the real number is %d (run docs/key-integration/build_services_grid.py)'%(len(_nm),len(_want))))
 HARD=('service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
 hard=[i for i in issues if i[1].startswith(HARD)]
 print('HARD problems:',len(hard))
