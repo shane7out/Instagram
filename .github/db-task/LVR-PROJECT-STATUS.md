@@ -1584,3 +1584,6 @@ Plan: new Mac harvester `mac/watch-exotics.js` (pattern of watch-batman.js, writ
 
 ### 2026-11-12 — Metro Sliceteria added as num 60065 (standing rule 10a, Shane's Instagram screenshot)
 @metrosliceteria, pizza place ("NOW OPEN! Metro Pizza by the Slice / Sandwiches / Whole Pies / Gelato", The Bend, link metrosliceteria.com/menu). Dedup scan of 2,172 live records found no match; num 60065 claimed atomically, status 'pending', attempts written, read back and verified (run 513). Street address, owner, email and phone were not in the screenshot, so they are blank (address says "The Bend, Spring Valley area").
+
+### 2026-11-13 — Verrazano Pizza LV added as num 60066 (standing rule 10a, Shane's Instagram screenshot)
+@verrazanolv, NY-style pizza "for the past 40 years", 240 S. Rainbow #3 LV 89145 and 1631 N Decatur Blvd LV 89108, business phone (702) 363-1090 as printed in the bio, site verrazanopizzalv.com. Dedup scan of 2,173 live records found no match; num 60066 claimed atomically, status 'pending', attempts written, read back and verified (run 515). Owner and email were not in the screenshot, so they are blank.
