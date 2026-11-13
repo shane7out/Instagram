@@ -1587,3 +1587,6 @@ Plan: new Mac harvester `mac/watch-exotics.js` (pattern of watch-batman.js, writ
 
 ### 2026-11-13 — Verrazano Pizza LV added as num 60066 (standing rule 10a, Shane's Instagram screenshot)
 @verrazanolv, NY-style pizza "for the past 40 years", 240 S. Rainbow #3 LV 89145 and 1631 N Decatur Blvd LV 89108, business phone (702) 363-1090 as printed in the bio, site verrazanopizzalv.com. Dedup scan of 2,173 live records found no match; num 60066 claimed atomically, status 'pending', attempts written, read back and verified (run 515). Owner and email were not in the screenshot, so they are blank.
+
+### 2026-11-13 — Spaghetti Western added as num 60067 (standing rule 10a, Shane's Instagram screenshot)
+@spaghettywesternlv1, Italian, 10690 Southern Highlands Pkwy, Las Vegas NV ("Experience the taste of true Italian comfort... chef's weekly specials"). Dedup scan of 2,176 live records found no match; num 60067 claimed atomically, status 'pending', attempts written, read back and verified (run 517). The website in the bio was cut off in the screenshot ("www.spaghettywesternlv.co..."), so it was not saved; owner, phone and email were not shown. Shane's account already follows them (the screenshot shows "Following").
