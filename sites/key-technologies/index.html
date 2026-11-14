@@ -306,18 +306,16 @@
 
   /* ---- services ---- */
   /* services: everything visible at once, grouped (build_services_grid.py) */
-  .svc-groups{display:grid;gap:26px;}
-  .svc-group h3{font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:8px;}
-  .svc-group .svc-n{font-size:12px;font-weight:700;color:var(--ink-dim);border:1px solid var(--line);border-radius:999px;padding:1px 8px;}
-  .svc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch;}
-  @media (max-width:900px){.svc-cards{grid-template-columns:1fr 1fr;}}
-  @media (max-width:600px){.svc-cards{grid-template-columns:1fr;gap:10px;}}
-  .svc-mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
-  .svc-mini h4{font-size:17px;line-height:1.3;margin:0;}
-  .svc-mini h4 a{color:var(--ink);text-decoration:none;}
-  .svc-mini h4 a:hover{color:var(--key-light);}
-  .svc-mini p{font-size:14.5px;line-height:1.45;margin:0;color:var(--ink-dim);flex:1;}
-  .svc-mini .demo-link{margin-top:2px;min-height:40px;display:inline-flex;align-items:center;}
+  .svc-list{list-style:none;margin:0;padding:0;counter-reset:svc;columns:2;column-gap:44px;}
+  @media (max-width:760px){.svc-list{columns:1;}}
+  .svc-list li{counter-increment:svc;break-inside:avoid;display:grid;grid-template-columns:2.2em 1fr auto;column-gap:6px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);}
+  .svc-list li::before{content:counter(svc);grid-row:1 / span 2;color:var(--ink-dim);font-weight:700;font-size:15px;}
+  .svc-name{grid-column:2;font-weight:800;font-size:17px;line-height:1.3;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:30px;}
+  .svc-name:hover{color:var(--key-light);text-decoration:underline;}
+  .svc-desc{grid-column:2 / span 2;font-size:15px;line-height:1.45;color:var(--ink-dim);margin-top:3px;}
+  .svc-demo{grid-column:3;grid-row:1;font-weight:700;font-size:14px;color:var(--key-light);text-decoration:none;display:inline-flex;align-items:center;min-height:36px;padding-left:8px;}
+  .svc-demo:hover{text-decoration:underline;}
+  /* end services css */
   .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
   @media (max-width:900px){.service-grid{grid-template-columns:1fr 1fr;}}
   @media (max-width:600px){.service-grid{grid-template-columns:1fr;}}
@@ -607,69 +605,34 @@
       <p>Each service has a live demo with clearly labeled fictional data.</p>
     </div>
     <!--SERVICES-GRID-START-->
-    <div class="svc-groups">
-      <div class="svc-group reveal">
-        <h3>Customers &amp; Communication <span class="svc-n">5</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/customer-experience.html">Customer Experience</a></h4><p>Faster replies that still sound like a person wrote them.</p><a class="demo-link" href="key-platform/demos/customer-experience.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/email/index.html">Email Automation</a></h4><p>Sorts the inbox and drafts replies that a person approves.</p><a class="demo-link" href="key-platform/email/index.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/reviews-reputation.html">Review &amp; Reputation Management</a></h4><p>Answer reviews quickly and flag negative ones early.</p><a class="demo-link" href="key-platform/demos/reviews-reputation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/voice/index.html">Phone &amp; Text Answering</a></h4><p>An AI receptionist that answers calls and captures leads.</p><a class="demo-link" href="key-platform/voice/index.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/booking-scheduling.html">Booking &amp; Scheduling Automation</a></h4><p>Booking, confirmations and reminders without staff time.</p><a class="demo-link" href="key-platform/demos/booking-scheduling.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-      <div class="svc-group reveal">
-        <h3>Operations &amp; Sales <span class="svc-n">3</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/business-automation.html">Business Automation</a></h4><p>Connect steps that run by hand today so they run on their own.</p><a class="demo-link" href="key-platform/demos/business-automation.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/custom-crm.html">Custom CRM &amp; Lead Management</a></h4><p>A CRM built around your business, not stretched to fit.</p><a class="demo-link" href="key-platform/demos/custom-crm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/operations.html">Operations</a></h4><p>Find the slow steps and what automating them would give back.</p><a class="demo-link" href="key-platform/demos/operations.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-      <div class="svc-group reveal">
-        <h3>Marketing &amp; Content <span class="svc-n">3</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/content-creators.html">Digital Content Creators</a></h4><p>AI/SI creators with a consistent brand voice that make posts around the clock.</p><a class="demo-link" href="key-platform/demos/content-creators.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/marketing.html">Marketing</a></h4><p>Segments, research and content, with a person approving the message.</p><a class="demo-link" href="key-platform/demos/marketing.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/social-media.html">Social Media Management</a></h4><p>A real presence on a schedule, with review before anything goes live.</p><a class="demo-link" href="key-platform/demos/social-media.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-      <div class="svc-group reveal">
-        <h3>AI Systems &amp; Strategy <span class="svc-n">5</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/ai-strategy.html">AI/SI Strategy</a></h4><p>Find where AI/SI pays off, and where it can not yet.</p><a class="demo-link" href="key-platform/demos/ai-strategy.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/ai-agents.html">AI/SI Agents</a></h4><p>Assistants that do defined tasks, with limits you set.</p><a class="demo-link" href="key-platform/demos/ai-agents.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/data-knowledge.html">Data &amp; Knowledge Systems</a></h4><p>Make what your business knows easy to find and use.</p><a class="demo-link" href="key-platform/demos/data-knowledge.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/custom-ai-systems.html">Custom AI/SI Systems</a></h4><p>Systems built around how your business operates.</p><a class="demo-link" href="key-platform/demos/custom-ai-systems.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/private-llm.html">Private LLM Setup</a></h4><p>Your own private AI that knows your business and keeps it private.</p><a class="demo-link" href="key-platform/demos/private-llm.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-      <div class="svc-group reveal">
-        <h3>Websites &amp; Security <span class="svc-n">6</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/security-technology.html">Security &amp; Technology</a></h4><p>Check access before an AI tool touches your systems.</p><a class="demo-link" href="key-platform/demos/security-technology.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/website-development.html">Website Development</a></h4><p>Websites with chat, personalization and lead capture built in.</p><a class="demo-link" href="key-platform/demos/website-development.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/custom-programming.html">Custom Website Programming</a></h4><p>Full custom-coded sites and web applications.</p><a class="demo-link" href="key-platform/demos/custom-programming.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/accessibility-ada.html">ADA &amp; Accessibility Compliance</a></h4><p>Make a site usable for everyone and reduce legal risk.</p><a class="demo-link" href="key-platform/demos/accessibility-ada.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/php-wordpress-migration.html">PHP &amp; WordPress Migration</a></h4><p>Move off PHP and WordPress to a modern custom stack.</p><a class="demo-link" href="key-platform/demos/php-wordpress-migration.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/cybersecurity.html">Cybersecurity &amp; Network Hardening</a></h4><p>A full security pass that closes real gaps.</p><a class="demo-link" href="key-platform/demos/cybersecurity.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-      <div class="svc-group reveal">
-        <h3>Dashboards &amp; Rewards <span class="svc-n">2</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/business-dashboards.html">Business Dashboards &amp; Suites</a></h4><p>Your sales, customers, busiest hours, reviews and follow-ups on one screen, built around the systems you already use.</p><a class="demo-link" href="key-platform/demos/business-dashboards.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/key-rewards-events.html">Key Rewards: Guest Events &amp; Loyalty</a></h4><p>Share a pool of rewards equally among the guests who are really there, with check-in, approval and a dashboard. Rewards never expire, have no cash value and cannot be sold or exchanged for cash.</p><a class="demo-link" href="key-platform/demos/key-rewards-events.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-      <div class="svc-group reveal">
-        <h3>Training &amp; Rewards <span class="svc-n">2</span></h3>
-        <div class="svc-cards">
-          <article class="svc-mini"><h4><a href="key-platform/demos/ai-training.html">Training &amp; Custom Training Software</a></h4><p>Teach your team to use AI/SI well, in your own portal.</p><a class="demo-link" href="key-platform/demos/ai-training.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-          <article class="svc-mini"><h4><a href="key-platform/demos/rewards.html">LVR Rewards</a></h4><p>Earn rewards at restaurants and use them for food.</p><a class="demo-link" href="key-platform/demos/rewards.html"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>
-        </div>
-      </div>
-    </div>
+    <ol class="svc-list">
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/customer-experience.html">Customer Experience</a><span class="svc-desc">Faster replies that still sound like a person wrote them.</span><a class="svc-demo" href="key-platform/demos/customer-experience.html" aria-label="Try the Customer Experience demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/email/index.html">Email Automation</a><span class="svc-desc">Sorts the inbox and drafts replies that a person approves.</span><a class="svc-demo" href="key-platform/email/index.html" aria-label="Try the Email Automation demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/reviews-reputation.html">Review &amp; Reputation Management</a><span class="svc-desc">Answer reviews quickly and flag negative ones early.</span><a class="svc-demo" href="key-platform/demos/reviews-reputation.html" aria-label="Try the Review &amp; Reputation Management demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/voice/index.html">Phone &amp; Text Answering</a><span class="svc-desc">An AI receptionist that answers calls and captures leads.</span><a class="svc-demo" href="key-platform/voice/index.html" aria-label="Try the Phone &amp; Text Answering demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/booking-scheduling.html">Booking &amp; Scheduling Automation</a><span class="svc-desc">Booking, confirmations and reminders without staff time.</span><a class="svc-demo" href="key-platform/demos/booking-scheduling.html" aria-label="Try the Booking &amp; Scheduling Automation demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/business-automation.html">Business Automation</a><span class="svc-desc">Connect steps that run by hand today so they run on their own.</span><a class="svc-demo" href="key-platform/demos/business-automation.html" aria-label="Try the Business Automation demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/custom-crm.html">Custom CRM &amp; Lead Management</a><span class="svc-desc">A CRM built around your business, not stretched to fit.</span><a class="svc-demo" href="key-platform/demos/custom-crm.html" aria-label="Try the Custom CRM &amp; Lead Management demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/operations.html">Operations</a><span class="svc-desc">Find the slow steps and what automating them would give back.</span><a class="svc-demo" href="key-platform/demos/operations.html" aria-label="Try the Operations demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/content-creators.html">Digital Content Creators</a><span class="svc-desc">AI/SI creators with a consistent brand voice that make posts around the clock.</span><a class="svc-demo" href="key-platform/demos/content-creators.html" aria-label="Try the Digital Content Creators demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/marketing.html">Marketing</a><span class="svc-desc">Segments, research and content, with a person approving the message.</span><a class="svc-demo" href="key-platform/demos/marketing.html" aria-label="Try the Marketing demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/social-media.html">Social Media Management</a><span class="svc-desc">A real presence on a schedule, with review before anything goes live.</span><a class="svc-demo" href="key-platform/demos/social-media.html" aria-label="Try the Social Media Management demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/ai-strategy.html">AI/SI Strategy</a><span class="svc-desc">Find where AI/SI pays off, and where it can not yet.</span><a class="svc-demo" href="key-platform/demos/ai-strategy.html" aria-label="Try the AI/SI Strategy demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/ai-agents.html">AI/SI Agents</a><span class="svc-desc">Assistants that do defined tasks, with limits you set.</span><a class="svc-demo" href="key-platform/demos/ai-agents.html" aria-label="Try the AI/SI Agents demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/data-knowledge.html">Data &amp; Knowledge Systems</a><span class="svc-desc">Make what your business knows easy to find and use.</span><a class="svc-demo" href="key-platform/demos/data-knowledge.html" aria-label="Try the Data &amp; Knowledge Systems demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/custom-ai-systems.html">Custom AI/SI Systems</a><span class="svc-desc">Systems built around how your business operates.</span><a class="svc-demo" href="key-platform/demos/custom-ai-systems.html" aria-label="Try the Custom AI/SI Systems demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/private-llm.html">Private LLM Setup</a><span class="svc-desc">Your own private AI that knows your business and keeps it private.</span><a class="svc-demo" href="key-platform/demos/private-llm.html" aria-label="Try the Private LLM Setup demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/security-technology.html">Security &amp; Technology</a><span class="svc-desc">Check access before an AI tool touches your systems.</span><a class="svc-demo" href="key-platform/demos/security-technology.html" aria-label="Try the Security &amp; Technology demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/website-development.html">Website Development</a><span class="svc-desc">Websites with chat, personalization and lead capture built in.</span><a class="svc-demo" href="key-platform/demos/website-development.html" aria-label="Try the Website Development demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/custom-programming.html">Custom Website Programming</a><span class="svc-desc">Full custom-coded sites and web applications.</span><a class="svc-demo" href="key-platform/demos/custom-programming.html" aria-label="Try the Custom Website Programming demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/accessibility-ada.html">ADA &amp; Accessibility Compliance</a><span class="svc-desc">Make a site usable for everyone and reduce legal risk.</span><a class="svc-demo" href="key-platform/demos/accessibility-ada.html" aria-label="Try the ADA &amp; Accessibility Compliance demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/php-wordpress-migration.html">PHP &amp; WordPress Migration</a><span class="svc-desc">Move off PHP and WordPress to a modern custom stack.</span><a class="svc-demo" href="key-platform/demos/php-wordpress-migration.html" aria-label="Try the PHP &amp; WordPress Migration demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/cybersecurity.html">Cybersecurity &amp; Network Hardening</a><span class="svc-desc">A full security pass that closes real gaps.</span><a class="svc-demo" href="key-platform/demos/cybersecurity.html" aria-label="Try the Cybersecurity &amp; Network Hardening demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/business-dashboards.html">Business Dashboards &amp; Suites</a><span class="svc-desc">Your sales, customers, busiest hours, reviews and follow-ups on one screen, built around the systems you already use.</span><a class="svc-demo" href="key-platform/demos/business-dashboards.html" aria-label="Try the Business Dashboards &amp; Suites demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/key-rewards-events.html">Key Rewards: Guest Events &amp; Loyalty</a><span class="svc-desc">Share a pool of rewards equally among the guests who are really there, with check-in, approval and a dashboard. Rewards never expire, have no cash value and cannot be sold or exchanged for cash.</span><a class="svc-demo" href="key-platform/demos/key-rewards-events.html" aria-label="Try the Key Rewards: Guest Events &amp; Loyalty demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/ai-training.html">Training &amp; Custom Training Software</a><span class="svc-desc">Teach your team to use AI/SI well, in your own portal.</span><a class="svc-demo" href="key-platform/demos/ai-training.html" aria-label="Try the Training &amp; Custom Training Software demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/rewards.html">LVR Rewards</a><span class="svc-desc">Earn rewards at restaurants and use them for food.</span><a class="svc-demo" href="key-platform/demos/rewards.html" aria-label="Try the LVR Rewards demo">Demo &rarr;</a></li>
+    </ol>
     <!--SERVICES-GRID-END-->
     <div class="demo-strip" style="margin-top:20px"><span><span class="demo-chip">Partners</span>&nbsp; Interested in selling these as an independent partner? Join the interest list. It is free and not a job offer.</span><a href="key-platform/partners.html">Join the interest list &rarr;</a></div>
   </section>

@@ -11,19 +11,13 @@ ORDER = ['Customers & Communication', 'Operations & Sales', 'Marketing & Content
 MUST_SAY = {'key-rewards-events': ' Rewards never expire, have no cash value and cannot be sold or exchanged for cash.'}
 cats = ORDER + sorted({e['cat'] for e in lst} - set(ORDER))
 esc = lambda t: html.escape(t, quote=False)
-out = ['<!--SERVICES-GRID-START-->', '    <div class="svc-groups">']
-for c in cats:
-    items = [e for e in lst if e['cat'] == c]
-    if not items: continue
-    out.append('      <div class="svc-group reveal">')
-    out.append('        <h3>%s <span class="svc-n">%d</span></h3>' % (esc(c), len(items)))
-    out.append('        <div class="svc-cards">')
-    for e in items:
+out = ['<!--SERVICES-GRID-START-->', '    <ol class="svc-list">']
+for c in cats:                                   # related services stay next to each other, but there are no headings or boxes: one plain numbered list
+    for e in [e for e in lst if e['cat'] == c]:
         href = 'key-platform/' + e['href'].lstrip('./')
-        out.append('          <article class="svc-mini"><h4><a href="%s">%s</a></h4><p>%s</p><a class="demo-link" href="%s"><span class="demo-chip">Demo</span> Try the demo &rarr;</a></article>'
-                   % (href, esc(e['title']), esc(e['tag'] + MUST_SAY.get(e['slug'], '')), href))
-    out.append('        </div>'); out.append('      </div>')
-out.append('    </div>'); out.append('    <!--SERVICES-GRID-END-->')
+        out.append('      <li class="reveal"><a class="svc-name" href="%s">%s</a><span class="svc-desc">%s</span><a class="svc-demo" href="%s" aria-label="Try the %s demo">Demo &rarr;</a></li>'
+                   % (href, esc(e['title']), esc(e['tag'] + MUST_SAY.get(e['slug'], '')), href, esc(e['title'])))
+out.append('    </ol>'); out.append('    <!--SERVICES-GRID-END-->')
 block = '\n'.join(out)
 path = SITE + 'index.html'
 s = open(path, encoding='utf-8').read()
@@ -34,21 +28,19 @@ else:
     m = re.compile(r'</article>\s*</div>').search(s, g)           # the end of the old card grid
     s = s[:g] + block.strip() + s[m.end():]
 CSS = '''  /* services: everything visible at once, grouped (build_services_grid.py) */
-  .svc-groups{display:grid;gap:26px;}
-  .svc-group h3{font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:8px;}
-  .svc-group .svc-n{font-size:12px;font-weight:700;color:var(--ink-dim);border:1px solid var(--line);border-radius:999px;padding:1px 8px;}
-  .svc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch;}
-  @media (max-width:900px){.svc-cards{grid-template-columns:1fr 1fr;}}
-  @media (max-width:600px){.svc-cards{grid-template-columns:1fr;gap:10px;}}
-  .svc-mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
-  .svc-mini h4{font-size:17px;line-height:1.3;margin:0;}
-  .svc-mini h4 a{color:var(--ink);text-decoration:none;}
-  .svc-mini h4 a:hover{color:var(--key-light);}
-  .svc-mini p{font-size:14.5px;line-height:1.45;margin:0;color:var(--ink-dim);flex:1;}
-  .svc-mini .demo-link{margin-top:2px;min-height:40px;display:inline-flex;align-items:center;}
+  .svc-list{list-style:none;margin:0;padding:0;counter-reset:svc;columns:2;column-gap:44px;}
+  @media (max-width:760px){.svc-list{columns:1;}}
+  .svc-list li{counter-increment:svc;break-inside:avoid;display:grid;grid-template-columns:2.2em 1fr auto;column-gap:6px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);}
+  .svc-list li::before{content:counter(svc);grid-row:1 / span 2;color:var(--ink-dim);font-weight:700;font-size:15px;}
+  .svc-name{grid-column:2;font-weight:800;font-size:17px;line-height:1.3;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:30px;}
+  .svc-name:hover{color:var(--key-light);text-decoration:underline;}
+  .svc-desc{grid-column:2 / span 2;font-size:15px;line-height:1.45;color:var(--ink-dim);margin-top:3px;}
+  .svc-demo{grid-column:3;grid-row:1;font-weight:700;font-size:14px;color:var(--key-light);text-decoration:none;display:inline-flex;align-items:center;min-height:36px;padding-left:8px;}
+  .svc-demo:hover{text-decoration:underline;}
+  /* end services css */
 '''
 if '/* services: everything visible at once' in s:
-    s = re.sub(r'  /\* services: everything visible at once.*?\.svc-mini \.demo-link\{[^}]*\}\n', lambda m: CSS, s, count=1, flags=re.S)
+    s = re.sub(r'  /\* services: everything visible at once.*?(?:\.svc-mini \.demo-link\{[^}]*\}|/\* end services css \*/)\n', lambda m: CSS, s, count=1, flags=re.S)
 else:
     s = s.replace('  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}', CSS + '  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}', 1)
 # search-engine data: the OfferCatalog in index.html must list exactly the services on the page (keeps the descriptions already written, adds missing
@@ -82,4 +74,4 @@ def _sync_offer_catalog(text):
     return text
 s = _sync_offer_catalog(s)
 open(path, 'w', encoding='utf-8').write(s)
-print('services grid built: %d services in %d groups' % (len(lst), sum(1 for c in cats if any(e['cat'] == c for e in lst))))
+print('services list built: %d services (one plain numbered list)' % len(lst))
