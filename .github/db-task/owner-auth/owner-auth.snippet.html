@@ -74,6 +74,7 @@
       if (!k) { btn.style.display = 'none'; return; }
       btn.style.display = 'block';
       btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
+      btn.setAttribute('aria-label', st ? 'Owner signed in. Open the owner menu' : 'Owner sign-in'); btn.title = st ? 'Owner signed in' : 'Owner sign-in';
       btn.style.background = st ? '#0f5d34' : '#7a2a00';
     });
   }
