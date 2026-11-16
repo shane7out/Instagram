@@ -216,6 +216,8 @@ h2+.sub{color:var(--mute);margin:0 0 26px;max-width:640px}
 .bullets li::before{content:"☘";position:absolute;left:0;color:var(--mint)}
 .links{display:flex;flex-wrap:wrap;gap:10px}
 footer{border-top:1px solid var(--line);padding:30px 0 46px;color:var(--mute);font-size:14px}
+footer .wrap.credit{display:block;text-align:center;margin-top:22px;font-size:12.5px;opacity:.7}
+footer .credit a{text-decoration:none;border-bottom:1px solid #555}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;justify-content:space-between}
 @media(max-width:760px){
  nav a:not(.keep){display:none}header img{height:40px}
@@ -328,7 +330,8 @@ def page(img_src):
 <footer><div class="wrap">
  <div>© Johnny Mac’s Sports Bar &amp; Grill. All rights reserved.</div>
  <div>842 S Boulder Hwy, Henderson NV · <a href="tel:7025642121">702-564-2121</a></div>
-</div></footer>
+</div>
+<div class="wrap credit">Website by <a href="https://keytechnologies.si/" target="_blank" rel="noopener">Key Technologies</a></div></footer>
 <script>%(js)s</script>
 </body>
 </html>
