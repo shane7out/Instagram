@@ -215,15 +215,32 @@
   .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
 
   /* sign-in box (only shown if the data is protected) */
-  #gate{max-width:360px;margin:80px auto;text-align:center;padding:0 16px;}
-  #gate h1{font-size:20px;margin:0 0 14px;}
-  #gate button{width:100%;padding:13px 14px;border-radius:10px;border:none;background:var(--key-blue);color:#0f171e;font-size:15px;font-weight:700;cursor:pointer;}
-  #gateMsg{min-height:20px;font-size:13.5px;color:var(--warn);margin-top:10px;}
-  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-  #gate input[type=password]{width:100%;box-sizing:border-box;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:22px;letter-spacing:.35em;text-align:center;margin-bottom:10px;}
-  #gate .pinKeep{display:flex;align-items:center;gap:8px;justify-content:center;font-size:13.5px;color:var(--ink-dim);margin:0 0 12px;}
-  #gate .pinKeep input{width:auto;margin:0;}
-  #gate button.linkbtn{width:auto;background:none;color:var(--ink-dim);font-size:13px;font-weight:600;text-decoration:underline;padding:10px;margin-top:14px;}
+  /* PIN screen: same look as the LVR dashboard PIN pad (round keys, dots, dark blue background) */
+  #gate{position:fixed;inset:0;z-index:2147481000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;text-align:center;overflow-y:auto;
+    background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(14,72,168,.55) 0%,transparent 65%),radial-gradient(ellipse 60% 52% at 15% 80%,rgba(0,105,230,.30) 0%,transparent 58%),radial-gradient(ellipse 55% 48% at 85% 18%,rgba(36,12,140,.35) 0%,transparent 56%),radial-gradient(ellipse 45% 38% at 68% 68%,rgba(0,180,255,.16) 0%,transparent 50%),#050b16;}
+  #gate .pin-title{color:#fff;font-size:22px;font-weight:400;letter-spacing:.01em;margin-bottom:26px;opacity:.95;}
+  #gate .pin-dots{display:flex;gap:20px;margin-bottom:40px;}
+  #gate .pin-dot{display:block;width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.60);background:transparent;transition:background .12s,transform .1s;}
+  #gate .pin-dot.filled{background:#fff;border-color:#fff;transform:scale(1.05);}
+  #gate .pin-dot.error{background:#FF453A;border-color:#FF453A;transform:scale(1.1);}
+  #gate .pin-grid{display:grid;grid-template-columns:repeat(3,78px);gap:14px 20px;}
+  #gate .pin-key{width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.175);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:300;font-size:32px;line-height:1;font-family:inherit;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation;transition:background .08s,color .08s;}
+  #gate .pin-key:active,#gate .pin-key.pressed{background:rgba(255,255,255,.58);color:#000;}
+  #gate .pin-key.empty{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;cursor:default;}
+  #gate .pin-key.del{font-size:28px;font-weight:400;}
+  #gate .pin-key:focus-visible,#gate #bioBtn:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+  #gate .pin-msg{color:#FF453A;font-size:13px;font-weight:700;margin-top:22px;min-height:20px;}
+  #gate #bioBtn{background:rgba(20,147,255,.12);border:2px solid rgba(20,147,255,.35);color:#fff;border-radius:24px;padding:22px 46px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+  #gate #bioBtn .bio-ico{font-size:46px;line-height:1;} #gate #bioBtn .bio-txt{font-size:14px;font-weight:700;letter-spacing:.05em;opacity:.9;}
+  #gate #bioSection{display:flex;flex-direction:column;align-items:center;margin-bottom:26px;} #gate #bioSection[hidden]{display:none;}
+  #gate .bio-or{color:rgba(255,255,255,.4);font-size:13px;font-weight:600;margin-top:14px;}
+  #gate button.linkbtn{background:none;border:none;color:rgba(255,255,255,.45);font-size:13px;font-weight:600;text-decoration:underline;cursor:pointer;padding:10px;margin-top:10px;font-family:inherit;}
+  #gate .shake{animation:pvshake .4s;} @keyframes pvshake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+  body.pvlock #ownerAuthBtn{display:none!important;}
+  #bioOffer{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:2147482200;background:#12243a;border:1.5px solid rgba(20,147,255,.4);border-radius:16px;padding:16px 22px;width:min(300px,calc(100vw - 32px));text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  #bioOffer[hidden]{display:none;} #bioOffer .bo-t{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
+  #bioOffer .bo-b{display:flex;gap:10px;justify-content:center;} #bioOffer .bo-b button{border:none;border-radius:10px;padding:9px 20px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;}
+  #bioYes{background:#1493FF;color:#fff;} #bioNo{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);} #bioOffer .bo-m{color:#ffb84d;font-size:12.5px;margin-top:8px;min-height:0;}
   #app{display:none;}
 
   /* top bar: always in reach */
@@ -318,22 +335,30 @@
   }
 </style>
 </head>
-<body>
+<body class="pvlock">
 
 <div id="toasts" aria-live="polite"></div>
 
 <div id="gate" role="main">
-  <h1>Visitor report</h1>
-  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">Enter your report PIN to open it.</p>
-  <form id="pinForm" autocomplete="on" novalidate>
-    <input type="text" name="username" value="Visitor report" autocomplete="username" readonly tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-    <label for="pinIn" class="sr-only">Report PIN</label>
-    <input id="pinIn" name="password" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="current-password" placeholder="PIN" aria-describedby="gateMsg">
-    <label class="pinKeep"><input id="pinKeep" type="checkbox" checked> Keep me signed in on this device</label>
-    <button id="pinGo" type="submit">Open report</button>
-  </form>
-  <div id="gateMsg" role="status"></div>
+  <div class="pin-title">Visitor report</div>
+  <div id="bioSection" hidden>
+    <button id="bioBtn" type="button"><span class="bio-ico" aria-hidden="true">&#128273;</span><span class="bio-txt">Face ID / Touch ID</span></button>
+    <div class="bio-or">or use your PIN</div>
+  </div>
+  <div class="pin-dots" id="pinDots" aria-hidden="true"><i class="pin-dot"></i><i class="pin-dot"></i><i class="pin-dot"></i><i class="pin-dot"></i><i class="pin-dot"></i><i class="pin-dot"></i></div>
+  <div class="pin-grid" role="group" aria-label="PIN pad">
+    <button class="pin-key" type="button" data-k="1">1</button><button class="pin-key" type="button" data-k="2">2</button><button class="pin-key" type="button" data-k="3">3</button>
+    <button class="pin-key" type="button" data-k="4">4</button><button class="pin-key" type="button" data-k="5">5</button><button class="pin-key" type="button" data-k="6">6</button>
+    <button class="pin-key" type="button" data-k="7">7</button><button class="pin-key" type="button" data-k="8">8</button><button class="pin-key" type="button" data-k="9">9</button>
+    <span class="pin-key empty" aria-hidden="true"></span><button class="pin-key" type="button" data-k="0">0</button><button class="pin-key del" type="button" data-k="del" aria-label="Delete">&#9003;</button>
+  </div>
+  <div id="gateMsg" class="pin-msg" role="status"></div>
   <button id="ownerBtn" type="button" class="linkbtn">Sign in as owner instead</button>
+</div>
+<div id="bioOffer" hidden role="dialog" aria-label="Use Face ID next time">
+  <div class="bo-t">Use Face ID next time?</div>
+  <div class="bo-b"><button id="bioYes" type="button">Set up</button><button id="bioNo" type="button">Not now</button></div>
+  <div id="bioOfferMsg" class="bo-m" role="status"></div>
 </div>
 
 <div id="app">
@@ -484,18 +509,20 @@ function country(tz) {
 // done later (rules that only answer the signed-in owner) the database will refuse the read, and this page then shows the
 // Owner sign-in box by itself. No password is stored in this file, ever.
 var unlocked = false;
-function showApp() { $("gate").style.display = "none"; $("app").style.display = "block"; }
-function showGate(msg) { $("app").style.display = "none"; $("gate").style.display = ""; $("gateMsg").textContent = msg || ""; }
+function showApp() { $("gate").style.display = "none"; document.body.classList.remove("pvlock"); $("app").style.display = "block"; }
+function showGate(msg) { $("app").style.display = "none"; $("gate").style.display = ""; document.body.classList.add("pvlock"); $("gateMsg").textContent = msg || ""; }
 function ownerState() {
   var on = !!(window.OWNER_AUTH && window.OWNER_AUTH.signedIn());
   if (on && !unlocked) { unlocked = true; showApp(); loadData(); }
   else if (!on && unlocked) { unlocked = false; loadData(); }
 }
-// ---------- report PIN ----------
-// The PIN opens a separate READ-ONLY account that can see this report and nothing else (the database rules allow it to read
-// the page-view counts only). The PIN is turned into that account's password in this browser (PBKDF2); the PIN itself is never
-// stored here or sent anywhere. The same derivation is used by the Mac script viewer-pin-setup.sh that creates the account.
-var VIEWER_EMAIL = "report-viewer@kt-report.invalid", VIEWER_SALT = "kt-report-viewer-v1";
+// ---------- report PIN + Face ID ----------
+// Two ways in, like the LVR dashboard: the PIN pad, or Face ID / Touch ID. The PIN opens a separate READ-ONLY account that can see this report
+// and nothing else (database rules: page-view counts only). The PIN is turned into that account's password in this browser (PBKDF2) and is never
+// stored or sent. Face ID (a passkey with the WebAuthn "prf" extension) unlocks a copy of that password that is encrypted on this device and can
+// only be decrypted with the passkey, i.e. with your face or finger. The same derivation is used by the Mac script viewer-pin-setup.sh.
+var VIEWER_EMAIL = "report-viewer@kt-report.invalid", VIEWER_SALT = "kt-report-viewer-v1", PIN_LEN = 6, BIO_KEY = "ktPvBio", BIO_NO = "ktPvBioNo";
+var BIO_SALT = new TextEncoder().encode("kt-report-viewer-bio-v1");
 function derivePw(pin) {
   var enc = new TextEncoder();
   return crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveBits"]).then(function (k) {
@@ -505,17 +532,93 @@ function derivePw(pin) {
     return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   });
 }
-$("pinForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  var pin = $("pinIn").value.replace(/\s/g, ""), m = $("gateMsg"), go = $("pinGo");
-  if (!/^[0-9]{6,12}$/.test(pin)) { m.textContent = "Enter your PIN (6 to 12 digits)."; return; }
-  if (!window.OWNER_AUTH || !window.crypto || !window.crypto.subtle) { m.textContent = "This browser cannot open the report with a PIN."; return; }
-  m.textContent = "Checking..."; go.disabled = true;
-  derivePw(pin).then(function (pw) { return window.OWNER_AUTH.signIn(VIEWER_EMAIL, pw, $("pinKeep").checked); })
-    .then(function () { m.textContent = ""; $("pinIn").value = ""; })
-    .catch(function (err) { m.textContent = /not right/i.test(String(err && err.message)) ? "That PIN is not right." : "Could not check the PIN. Try again in a minute."; })
-    .then(function () { go.disabled = false; });
+var pv = "", pvBusy = false, lastPw = null;
+function paintDots(err) {
+  var d = $("pinDots").children;
+  for (var i = 0; i < d.length; i++) d[i].className = "pin-dot" + (err ? " error" : (i < pv.length ? " filled" : ""));
+}
+function resetPin() { pv = ""; paintDots(false); }
+function wrongPin(msg) {
+  $("gateMsg").textContent = msg; paintDots(true);
+  var g = $("pinDots"); g.classList.remove("shake"); void g.offsetWidth; g.classList.add("shake");
+  setTimeout(function () { resetPin(); }, 700);
+}
+function pinKey(k) {
+  if (pvBusy) return;
+  if (k === "del") { pv = pv.slice(0, -1); paintDots(false); return; }
+  if (pv.length >= PIN_LEN) return;
+  pv += k; $("gateMsg").textContent = ""; paintDots(false);
+  if (pv.length === PIN_LEN) submitPin();
+}
+function submitPin() {
+  if (!window.OWNER_AUTH || !window.crypto || !window.crypto.subtle) { wrongPin("This browser cannot open the report with a PIN."); return; }
+  pvBusy = true; $("gateMsg").textContent = "";
+  var pin = pv;
+  derivePw(pin).then(function (pw) { lastPw = pw; return window.OWNER_AUTH.signIn(VIEWER_EMAIL, pw, false); })
+    .then(function () { resetPin(); offerBio(); })
+    .catch(function (err) { wrongPin(/not right/i.test(String(err && err.message)) ? "That PIN is not right." : "Could not check the PIN. Try again in a minute."); })
+    .then(function () { pvBusy = false; });
+}
+Array.prototype.forEach.call(document.querySelectorAll("#gate .pin-key[data-k]"), function (b) { b.addEventListener("click", function () { pinKey(b.getAttribute("data-k")); }); });
+document.addEventListener("keydown", function (e) {
+  if ($("gate").style.display === "none" || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === "Backspace") pinKey("del");
 });
+
+// ---- Face ID / Touch ID (WebAuthn passkey with the prf extension) ----
+function rnd(n) { return window.crypto.getRandomValues(new Uint8Array(n)); }
+function b64(u) { var s = ""; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); }
+function unb64(t) { var s = atob(t), u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+function bioSupported() { return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && window.isSecureContext); }
+function bioStored() { try { return JSON.parse(localStorage.getItem(BIO_KEY) || "null"); } catch (e) { return null; } }
+function prfSecret(credId) {
+  return navigator.credentials.get({ publicKey: { challenge: rnd(32), rpId: location.hostname, allowCredentials: [{ type: "public-key", id: credId }],
+    userVerification: "required", timeout: 60000, extensions: { prf: { eval: { first: BIO_SALT } } } } }).then(function (a) {
+    var r = a.getClientExtensionResults(), f = r && r.prf && r.prf.results && r.prf.results.first;
+    if (!f) throw new Error("noprf"); return new Uint8Array(f);
+  });
+}
+function aesKey(sec) { return crypto.subtle.importKey("raw", sec, "AES-GCM", false, ["encrypt", "decrypt"]); }
+function bioSetup(pw) {
+  return navigator.credentials.create({ publicKey: { rp: { name: "Key Technologies", id: location.hostname }, user: { id: rnd(16), name: "visitor-report", displayName: "Visitor report" },
+    challenge: rnd(32), pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "discouraged" }, timeout: 60000, extensions: { prf: {} } } }).then(function (c) {
+    var x = c.getClientExtensionResults(); if (!(x && x.prf && x.prf.enabled)) throw new Error("noprf");
+    var id = new Uint8Array(c.rawId);
+    return prfSecret(id).then(aesKey).then(function (k) {
+      var iv = rnd(12);
+      return crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, k, new TextEncoder().encode(pw)).then(function (ct) {
+        localStorage.setItem(BIO_KEY, JSON.stringify({ id: b64(id), iv: b64(iv), ct: b64(new Uint8Array(ct)) }));
+      });
+    });
+  });
+}
+function bioUnlock() {
+  var o = bioStored(); if (!o) return Promise.reject(new Error("none"));
+  return prfSecret(unb64(o.id)).then(aesKey).then(function (k) { return crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(o.iv) }, k, unb64(o.ct)); })
+    .then(function (pt) { return window.OWNER_AUTH.signIn(VIEWER_EMAIL, new TextDecoder().decode(pt), false); });
+}
+function showBioButton() { $("bioSection").hidden = !(bioSupported() && bioStored()); }
+$("bioBtn").addEventListener("click", function () {
+  if (pvBusy) return; pvBusy = true; $("gateMsg").textContent = "";
+  bioUnlock().catch(function (err) {
+    var m = String(err && err.message);
+    if (/not right/i.test(m)) { try { localStorage.removeItem(BIO_KEY); } catch (e) {} showBioButton(); $("gateMsg").textContent = "Face ID needs to be set up again. Use your PIN."; }
+    else if (!/NotAllowed|abort|cancel/i.test(String(err && err.name) + m)) $("gateMsg").textContent = "Face ID did not work. Use your PIN.";
+  }).then(function () { pvBusy = false; });
+});
+function offerBio() {
+  var no = false; try { no = !!localStorage.getItem(BIO_NO); } catch (e) {}
+  if (!bioSupported() || bioStored() || no || !lastPw) return;
+  $("bioOfferMsg").textContent = ""; $("bioOffer").hidden = false;
+}
+$("bioNo").addEventListener("click", function () { try { localStorage.setItem(BIO_NO, "1"); } catch (e) {} $("bioOffer").hidden = true; lastPw = null; });
+$("bioYes").addEventListener("click", function () {
+  var pw = lastPw; if (!pw) { $("bioOffer").hidden = true; return; }
+  bioSetup(pw).then(function () { $("bioOffer").hidden = true; lastPw = null; showBioButton(); })
+    .catch(function (err) { $("bioOfferMsg").textContent = /noprf/.test(String(err && err.message)) ? "This phone cannot do Face ID for this page yet. Keep using your PIN." : "Face ID was not set up."; });
+});
+showBioButton();
 $("ownerBtn").addEventListener("click", function () {
   var m = $("gateMsg");
   if (window.OWNER_AUTH) { m.textContent = ""; window.OWNER_AUTH.dialog(); }
@@ -559,7 +662,7 @@ function loadData() {
     checkNew();
   }).catch(function (err) {
     $("status").textContent = "";
-    if (err && err.denied) { showGate("The visitor data is protected. Enter your report PIN to see it."); return; }
+    if (err && err.denied) { showGate(""); return; }
     $("status").textContent = "Could not load the data. Try Refresh.";
   });
 }

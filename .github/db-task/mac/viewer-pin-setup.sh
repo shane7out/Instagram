@@ -3,7 +3,7 @@
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/viewer-pin-setup.sh?$(date +%s)" -o /tmp/viewer-pin-setup.sh && bash /tmp/viewer-pin-setup.sh
 #
 # Lets you open the Owner visitor report (keytechnologies.si/key-pageviews.html) with just a PIN. How it works:
-#   * you type a PIN (6 to 12 digits) here; it is never saved or sent anywhere,
+#   * you type a 6-digit PIN here (the report page has the same round PIN pad as the dashboard); it is never saved or sent anywhere,
 #   * the PIN is turned into the password of ONE extra, READ-ONLY sign-in account (it can read the page-view counts and nothing else:
 #     no leads, no CRM, no members, and it cannot change anything). The report page does the same conversion in the browser.
 #   * then the key-technologies database rules are updated so that account (and you, as owner) can read the page views.
@@ -34,8 +34,8 @@ const derive = pin => crypto.pbkdf2Sync(pin, SALT, 150000, 32, 'sha256').toStrin
   if (!TOKEN) { log('No gcloud login found - nothing changed.'); return report(); }
   const apiKey = await (await fetch(DB + '/ownerAuth/apiKey.json')).json().catch(() => null);
   if (!apiKey) { log('The sign-in key is not stored yet (run owner-setup.sh first) - nothing changed.'); return report(); }
-  const p1 = ask('Choose your report PIN, 6 to 12 digits (8 or more is stronger; hidden): ', true).trim();
-  if (!/^[0-9]{6,12}$/.test(p1)) { log('The PIN must be 6 to 12 digits, numbers only - nothing changed.'); return report(); }
+  const p1 = ask('Choose your 6-digit report PIN (hidden; use numbers only, not one of your other PINs): ', true).trim();
+  if (!/^[0-9]{6}$/.test(p1)) { log('The PIN must be exactly 6 digits, numbers only - nothing changed.'); return report(); }
   const p2 = ask('Type it again: ', true).trim();
   if (p1 !== p2) { log('The two PINs did not match - nothing changed.'); return report(); }
   const PW = derive(p1);
@@ -81,7 +81,7 @@ const derive = pin => crypto.pbkdf2Sync(pin, SALT, 150000, 32, 'sha256').toStrin
   const probes = [['a stranger cannot read the page views', a, 401], ['the PIN account CAN read the page views', v, 200], ['the PIN account cannot read the leads', l, 401], ['the PIN account cannot change the page views', w, 401]];
   let ok = true;
   for (const [name, got, want] of probes) { const good = got === want || (want === 401 && got === 403); if (!good) ok = false; log((good ? 'OK   ' : 'FAIL ') + name + ' (HTTP ' + got + ')'); }
-  log(ok ? 'ALL CHECKS PASSED. Open keytechnologies.si/key-pageviews.html and type your PIN.' : 'A check failed - tell Claude; nothing is lost (the rules step rolls itself back if it fails).');
+  log(ok ? 'ALL CHECKS PASSED. Open keytechnologies.si/key-pageviews.html, type your PIN on the pad, and say yes to Face ID when it asks.' : 'A check failed - tell Claude; nothing is lost (the rules step rolls itself back if it fails).');
   await report();
 })();
 NODE
