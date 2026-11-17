@@ -325,9 +325,10 @@
 <div id="gate" role="main">
   <h1>Visitor report</h1>
   <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">Enter your report PIN to open it.</p>
-  <form id="pinForm" autocomplete="off" novalidate>
+  <form id="pinForm" autocomplete="on" novalidate>
+    <input type="text" name="username" value="Visitor report" autocomplete="username" readonly tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
     <label for="pinIn" class="sr-only">Report PIN</label>
-    <input id="pinIn" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off" placeholder="PIN" aria-describedby="gateMsg">
+    <input id="pinIn" name="password" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="current-password" placeholder="PIN" aria-describedby="gateMsg">
     <label class="pinKeep"><input id="pinKeep" type="checkbox" checked> Keep me signed in on this device</label>
     <button id="pinGo" type="submit">Open report</button>
   </form>
