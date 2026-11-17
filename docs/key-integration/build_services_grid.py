@@ -20,7 +20,7 @@ for slug, pos in PIN.items():
 if True:
     for e in ordered:
         href = 'key-platform/' + e['href'].lstrip('./')
-        namehref = {'mobile-apps': 'mobile-apps.html'}.get(e['slug'], href)     # the service name goes to its full page, the Demo link to the demo
+        namehref = {'mobile-apps': 'mobile-apps.html', 'website-development': 'website-development.html'}.get(e['slug'], href)     # the service name goes to its full page, the Demo link to the demo
         out.append('      <li class="reveal"><a class="svc-name" href="%s">%s</a><span class="svc-desc">%s</span><a class="svc-demo" href="%s" aria-label="Try the %s demo">Demo &rarr;</a></li>'
                    % (namehref, esc(e['title']), esc(e['tag'] + MUST_SAY.get(e['slug'], '')), href, esc(e['title'])))
 out.append('    </ol>'); out.append('    <!--SERVICES-GRID-END-->')

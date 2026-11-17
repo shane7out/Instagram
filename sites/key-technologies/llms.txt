@@ -9,6 +9,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Book a free call](https://keytechnologies.si/book.html): request a call time (Mon to Fri, Pacific time); nothing is booked until confirmed
 - [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
 - [Custom mobile apps](https://keytechnologies.si/mobile-apps.html): iPhone and Android apps, including an Android APK file the client owns, plus the websites and systems behind them
+- [Custom website development](https://keytechnologies.si/website-development.html): custom websites with chat and lead capture, web applications, WordPress and PHP migration, accessibility and security
 - [For restaurants](https://keytechnologies.si/restaurants.html): guest CRM, phone and text answering, review replies and social content for restaurants
 - [For chiropractors and specialists](https://keytechnologies.si/chiropractors-specialists.html): patient CRM, appointment reminders, phone and text answering and a practice dashboard
 - [Key Rewards guest events demo](https://keytechnologies.si/key-platform/demos/key-rewards-events.html): share a pool of rewards equally among guests at a restaurant; no cash value, never expire, made-up data
