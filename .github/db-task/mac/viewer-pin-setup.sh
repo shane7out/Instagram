@@ -34,7 +34,7 @@ const derive = pin => crypto.pbkdf2Sync(pin, SALT, 150000, 32, 'sha256').toStrin
   if (!TOKEN) { log('No gcloud login found - nothing changed.'); return report(); }
   const apiKey = await (await fetch(DB + '/ownerAuth/apiKey.json')).json().catch(() => null);
   if (!apiKey) { log('The sign-in key is not stored yet (run owner-setup.sh first) - nothing changed.'); return report(); }
-  const p1 = ask('Choose your 6-digit report PIN (hidden; use numbers only, not one of your other PINs): ', true).trim();
+  const p1 = ask('Type your 6-digit PIN for the report (hidden). You can use the same one as your LVR dashboard: ', true).trim();
   if (!/^[0-9]{6}$/.test(p1)) { log('The PIN must be exactly 6 digits, numbers only - nothing changed.'); return report(); }
   const p2 = ask('Type it again: ', true).trim();
   if (p1 !== p2) { log('The two PINs did not match - nothing changed.'); return report(); }
