@@ -6,7 +6,10 @@ Run from the repo root. The pages in .github/db-task/mac are put live by Shane's
 import os, re
 FILES = ['.github/db-task/mac/kt-crm.html', '.github/db-task/mac/key-leads.html', '.github/db-task/mac/key-advertisers.html', '.github/db-task/mac/key-room.html',
          '.github/db-task/mac/lvr-points-admin.html', '.github/db-task/mac/lvr-coupons-admin.html', '.github/db-task/mac/lvr-invoice.html',
-         'sites/key-technologies/key-pageviews.html', 'sites/key-technologies/key-content-studio.html']
+         ]
+# Shane, 2026-11-17: the two owner pages that are part of the public website (Owner report, Content Studio) use the site's dark look with the bright blue,
+# like the rest of keytechnologies.si; the light override is REMOVED from them. (The Mac-deployed owner tools above keep the light look until Shane says otherwise.)
+SITE_DARK = ['sites/key-technologies/key-pageviews.html', 'sites/key-technologies/key-content-studio.html']
 CSS = '''<style id="ktowner-light">
 :root{--bg:#f4f8fd!important;--bg-2:#ffffff!important;--card:#ffffff!important;--line:#d6e2f2!important;--ink:#0b1b4d!important;--ink-dim:#46598a!important;--key-light:#0a6fb8!important;--key-blue:#0a6fb8!important;--good:#0a6fb8;color-scheme:light;}
 html,body{background:#f4f8fd!important;color:#0b1b4d!important;}
@@ -57,4 +60,9 @@ for p in FILES:
     new = new.replace('</head>', (STUDIO if p.endswith('key-content-studio.html') else CSS) + '</head>', 1)
     if new != t:
         open(p, 'w', encoding='utf-8').write(new); n += 1
-print('owner light applied to', n, 'pages')
+for p in SITE_DARK:
+    t = open(p, encoding='utf-8').read()
+    new = re.sub(r'<style id="ktowner-light">.*?</style>', '', t, flags=re.S)
+    if new != t:
+        open(p, 'w', encoding='utf-8').write(new); n += 1
+print('owner light applied/removed on', n, 'pages')

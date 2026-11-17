@@ -77,6 +77,7 @@
       if (!k) { btn.style.display = 'none'; return; }
       btn.style.display = 'block';
       btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
+      btn.setAttribute('aria-label', st ? 'Owner signed in. Open the owner menu' : 'Owner sign-in'); btn.title = st ? 'Owner signed in' : 'Owner sign-in';
       btn.style.background = st ? '#0f5d34' : '#7a2a00';
     });
   }
@@ -93,7 +94,7 @@
       '<label style="display:block;font-weight:700;margin:10px 0 3px;" for="oaPw">Password</label><input id="oaPw" type="password" autocomplete="current-password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
       '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13.5px;color:#9fb3c8;"><input id="oaKeep" type="checkbox"> Stay signed in on this Mac</label>' +
       '<p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p>' +
-      '<div style="display:flex;gap:8px;"><button type="button" id="oaNo" style="flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;">Cancel</button><button type="submit" style="flex:1;padding:12px;border-radius:10px;border:0;background:#0f67c2;color:#fff;font-weight:800;">Sign in</button></div></form>';
+      '<div style="display:flex;gap:8px;"><button type="button" id="oaNo" style="flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;">Cancel</button><button type="submit" style="flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;">Sign in</button></div></form>';
     document.body.appendChild(back);
     var f = back.querySelector('form'), msg = back.querySelector('#oaMsg');
     back.querySelector('#oaEmail').focus();
@@ -131,7 +132,7 @@
     document.body.appendChild(back); return back;
   }
   var PINSTYLE = 'width:100%;padding:12px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:22px;letter-spacing:.3em;text-align:center;box-sizing:border-box;';
-  var BTN1 = 'flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;', BTN2 = 'flex:1;padding:12px;border-radius:10px;border:0;background:#0f67c2;color:#fff;font-weight:800;';
+  var BTN1 = 'flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;', BTN2 = 'flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;';
   function pinSetup() {
     var back = shell('Quick-unlock PIN', 'Optional. Next time on this device you only type this PIN instead of your email and password. Use 6 to 8 digits you will remember.');
     back.querySelector('.oaBody').innerHTML = '<input id="oaP1" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '"><input id="oaP2" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Same PIN again" style="' + PINSTYLE + 'margin-top:8px;">';
@@ -311,30 +312,7 @@
     body{font-size:16px;}
   }
 </style>
-<style id="ktowner-light">
-:root{--bg:#f4f8fd!important;--bg-2:#ffffff!important;--card:#ffffff!important;--line:#d6e2f2!important;--ink:#0b1b4d!important;--ink-dim:#46598a!important;--key-light:#0a6fb8!important;--key-blue:#0a6fb8!important;--good:#0a6fb8;color-scheme:light;}
-html,body{background:#f4f8fd!important;color:#0b1b4d!important;}
-#pin-screen{background:#f4f8fd!important;}
-.pin-logo{color:#0a6fb8!important;}
-#hnav{background:#ffffff!important;border-bottom:1px solid #d6e2f2;}
-#hnav .hn-btn{border-color:#cbdaf0!important;background:#fff!important;color:#0b1b4d!important;}
-input,select,textarea{background:#ffffff!important;color:#0b1b4d!important;border-color:#c9d9f1!important;}
-input::placeholder,textarea::placeholder{color:#8a9bbd!important;}
-button,.btn{border-color:#cbdaf0;}
-header{background:#ffffff!important;border-bottom-color:#d6e2f2!important;}
-table th{color:#46598a!important;}table td,table th{border-color:#dbe6f6!important;}
-.tabs button[aria-selected=true]{color:#fff!important;}
-#gate button{color:#fff!important;}
-#gateMsg{color:#8a4b00!important;}
-dialog,.modal,.sheet{background:#ffffff!important;color:#0b1b4d!important;}
-dialog::backdrop{background:rgba(8,20,50,.45)!important;}
-button[style*="2147482000"]{background:#ffffff!important;color:#0b1b4d!important;border-color:#9cb7dc!important;box-shadow:0 2px 10px rgba(20,60,140,.18)!important;}
-div[style*="2147482500"]{background:rgba(8,20,50,.45)!important;}
-div[style*="2147482500"] > form{background:#ffffff!important;color:#0b1b4d!important;border-color:#d6e2f2!important;box-shadow:0 20px 50px rgba(10,30,80,.25);}
-div[style*="2147482500"] > form p:not(#oaMsg),div[style*="2147482500"] > form label{color:#46598a!important;}
-div[style*="2147482500"] > form #oaMsg[style*="9fb3c8"]{color:#46598a!important;}
-div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7dc!important;}
-</style></head>
+</head>
 <body>
 
 <div id="toasts" aria-live="polite"></div>

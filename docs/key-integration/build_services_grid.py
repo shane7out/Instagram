@@ -12,8 +12,13 @@ MUST_SAY = {'key-rewards-events': ' Rewards never expire, have no cash value and
 cats = ORDER + sorted({e['cat'] for e in lst} - set(ORDER))
 esc = lambda t: html.escape(t, quote=False)
 out = ['<!--SERVICES-GRID-START-->', '    <ol class="svc-list">']
-for c in cats:                                   # related services stay next to each other, but there are no headings or boxes: one plain numbered list
-    for e in [e for e in lst if e['cat'] == c]:
+ordered = [e for c in cats for e in lst if e['cat'] == c]    # related services stay next to each other, but there are no headings or boxes: one plain numbered list
+PIN = {'mobile-apps': 3}                         # Shane (2026-11-17): Mobile Apps is service number 3 on the home list
+for slug, pos in PIN.items():
+    hit = [e for e in ordered if e['slug'] == slug]
+    if hit: ordered.remove(hit[0]); ordered.insert(pos - 1, hit[0])
+if True:
+    for e in ordered:
         href = 'key-platform/' + e['href'].lstrip('./')
         out.append('      <li class="reveal"><a class="svc-name" href="%s">%s</a><span class="svc-desc">%s</span><a class="svc-demo" href="%s" aria-label="Try the %s demo">Demo &rarr;</a></li>'
                    % (href, esc(e['title']), esc(e['tag'] + MUST_SAY.get(e['slug'], '')), href, esc(e['title'])))

@@ -225,6 +225,15 @@
   "href": "demos/cybersecurity.html"
  },
  {
+  "slug": "mobile-apps",
+  "num": "25",
+  "title": "Mobile Apps",
+  "tag": "Your own app on your customers' phones: rewards, ordering, booking or a tool for your crew.",
+  "cat": "Websites & Security",
+  "thumb": "demos/thumbs/mobile-apps.jpg",
+  "href": "demos/mobile-apps.html"
+ },
+ {
   "slug": "rewards",
   "num": "P",
   "title": "LVR Rewards",

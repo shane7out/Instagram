@@ -165,6 +165,47 @@ T.site=function(root){
  q('#ss',root).onclick=send;q('#si',root).addEventListener('keydown',function(e){if(e.key==='Enter')send()});
 };
 
+/* ---------- 25 Mobile Apps ---------- */
+T.mobileapp=function(root){
+ var kinds={guest:{n:'Corner Cafe',sub:'Guest app for a fictional cafe',on:['loyalty','order','push']},book:{n:'Bright Smile Dental',sub:'Patient app for a fictional dental office',on:['book','push','forms']},team:{n:'Desert Pro Cleaning',sub:'Crew app for a fictional cleaning company',on:['jobs','photos','offline']}};
+ var feats={loyalty:['Rewards card','Points and visits in one place'],order:['Order ahead','Pick a drink and a pickup time'],book:['Book a visit','Choose a day and time'],forms:['Intake forms','Fill out paperwork before the visit'],jobs:['Today\'s jobs','Addresses, notes and check-in'],photos:['Photo upload','Attach photos to a job or receipt'],push:['Notifications','Reminders and news to the phone'],offline:['Works offline','Keeps working with a weak signal']};
+ var keys=Object.keys(feats),cur='guest',tab=null;
+ root.innerHTML='<div class="two-columns"><div class="panel"><div class="panel-heading"><h3>Design a sample app</h3><span class="tag outline">Fictional</span></div>'+
+ '<label for="mk">What kind of app?</label><select id="mk">'+Object.keys(kinds).map(function(k){return '<option value="'+k+'">'+esc(kinds[k].sub)+'</option>'}).join('')+'</select>'+
+ '<p class="micro" style="margin:12px 0 4px;font-weight:700">Features to include</p>'+
+ keys.map(function(k){return '<label class="checkline"><input type="checkbox" data-f="'+k+'"><span><b>'+esc(feats[k][0])+'</b> <span class="micro">'+esc(feats[k][1])+'</span></span></label>'}).join('')+
+ '<p class="micro" style="margin-top:10px">Tick features and the phone on the right changes. Tap the tabs on the phone to see each screen.</p></div>'+
+ '<div class="panel" style="display:grid;place-items:center"><div id="mph" style="width:260px;max-width:100%;border:8px solid #0b1118;border-radius:34px;background:#fff;color:#0b1b4d;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)">'+
+ '<div id="mhd" style="background:#00a3e0;color:#fff;padding:14px 14px 10px"><div style="font-size:11px;opacity:.85">9:41</div><div id="mnm" style="font-weight:800;font-size:17px"></div></div>'+
+ '<div id="mbd" style="min-height:230px;padding:14px;font-size:14px"></div>'+
+ '<div id="mtb" style="display:flex;border-top:1px solid #dbe6f6;background:#f4f8fd"></div></div></div></div>'+
+ '<div class="panel" style="margin-top:16px"><h3>Built for the phone</h3><ul style="margin:10px 0 0;padding-left:18px"><li>iPhone and Android</li><li>Your logo, colors and wording</li><li>Connects to the systems you already use, such as your website, bookings or rewards</li></ul></div>';
+ function screen(k){
+  var h={
+   loyalty:'<p style="margin:0 0 8px;font-weight:700">Your rewards</p><div style="background:#eaf6fd;border-radius:12px;padding:12px"><div style="font-size:26px;font-weight:800;color:#0a6fb8">120</div><div class="micro" style="color:#46598a">sample points</div></div><p class="micro" style="color:#46598a;margin-top:10px">Sample data only.</p>',
+   order:'<p style="margin:0 0 8px;font-weight:700">Order ahead</p><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-bottom:6px">Oat latte</div><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-bottom:8px">Almond croissant</div><div style="background:#00a3e0;color:#fff;text-align:center;border-radius:10px;padding:9px;font-weight:700">Pickup at 8:15</div>',
+   book:'<p style="margin:0 0 8px;font-weight:700">Pick a time</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #00a3e0;border-radius:8px;padding:6px 9px">Tue 9:00</span><span style="border:1px solid #dbe6f6;border-radius:8px;padding:6px 9px">Tue 11:30</span><span style="border:1px solid #dbe6f6;border-radius:8px;padding:6px 9px">Wed 2:00</span></div><div style="background:#00a3e0;color:#fff;text-align:center;border-radius:10px;padding:9px;font-weight:700;margin-top:12px">Book sample visit</div>',
+   forms:'<p style="margin:0 0 8px;font-weight:700">Before your visit</p><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-bottom:6px">Name (sample)</div><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px">Reason for visit</div>',
+   jobs:'<p style="margin:0 0 8px;font-weight:700">Today</p><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-bottom:6px"><b>8:30</b> Sample Office A<br><span class="micro" style="color:#46598a">Gate code in notes</span></div><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px"><b>11:00</b> Sample Shop B</div>',
+   photos:'<p style="margin:0 0 8px;font-weight:700">Add a photo</p><div style="height:90px;border:2px dashed #9cb7dc;border-radius:12px;display:grid;place-items:center;color:#46598a">Tap to take a photo</div>',
+   push:'<p style="margin:0 0 8px;font-weight:700">Messages</p><div style="background:#eaf6fd;border-radius:10px;padding:9px">'+({guest:'Your order is ready for pickup.',book:'Reminder: your visit is tomorrow at 9:00.',team:'A new job was added to today.'}[cur])+' (sample notification)</div>',
+   offline:'<p style="margin:0 0 8px;font-weight:700">Offline mode</p><div style="background:#fff7e6;border-radius:10px;padding:9px">No signal: changes are saved on the phone and sync when you are back online.</div>'}[k];
+  return h||''}
+ function draw(){
+  var k=kinds[cur],on=keys.filter(function(f){return q('[data-f="'+f+'"]',root).checked});
+  q('#mnm',root).textContent=k.n;
+  if(!on.length){q('#mbd',root).innerHTML='<p class="muted" style="color:#46598a">Tick at least one feature.</p>';q('#mtb',root).innerHTML='';return}
+  if(on.indexOf(tab)<0)tab=on[0];
+  q('#mbd',root).innerHTML=screen(tab);
+  q('#mtb',root).innerHTML=on.map(function(f){return '<button type="button" data-t="'+f+'" style="flex:1;border:0;background:'+(f===tab?'#fff':'transparent')+';color:'+(f===tab?'#0a6fb8':'#46598a')+';font-weight:700;font-size:10px;line-height:1.2;font-family:inherit;padding:9px 2px;cursor:pointer">'+esc(feats[f][0])+'</button>'}).join('');
+  on_tabs()}
+ function on_tabs(){qa('[data-t]',root).forEach(function(b){b.addEventListener('click',function(){tab=this.getAttribute('data-t');draw()})})}
+ function preset(){qa('[data-f]',root).forEach(function(c){c.checked=kinds[cur].on.indexOf(c.getAttribute('data-f'))>=0});tab=null;draw()}
+ q('#mk',root).addEventListener('change',function(){cur=this.value;preset()});
+ qa('[data-f]',root).forEach(function(c){c.addEventListener('change',draw)});
+ preset();
+};
+
 /* ---------- 14 Social Media Management ---------- */
 T.social=function(root){
  var posts=[['Mon','Instagram','Monday motivation from the team'],['Tue','Facebook','New seasonal menu preview'],['Wed','Instagram','Behind the scenes in the kitchen'],['Thu','Facebook','Customer spotlight'],['Fri','Instagram','Weekend special announced'],['Sat','Instagram','Live from the farmers market'],['Sun','Facebook','Sunday brunch reminder']].map(function(p,i){return {d:p[0],pl:p[1],t:p[2],st:i<2?'Scheduled':'Draft'}});
