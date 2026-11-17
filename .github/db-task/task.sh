@@ -1,9 +1,3 @@
 #!/bin/bash
-# Rules test in the Firebase emulator (nothing touches the real database): the read-only "report PIN" account (page-view report opens with a PIN).
-set +e
-bash .github/db-task/rules/run-owner-rules-test.sh
-A=$?
-bash .github/db-task/rules/run-private-rules-test.sh
-B=$?
-echo "owner suite exit $A, private suite exit $B"
-[ "$A" = "0" ] && [ "$B" = "0" ]
+# No task queued. (Last: report-PIN rules tests, run 526: owner suite incl. 10 new report-PIN checks and the 55-check member-data suite all passed.)
+echo "no task queued"
