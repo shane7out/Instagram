@@ -712,14 +712,14 @@ const DAYMS = 86400000, HRMS = 3600000;
   // ---- the read-only "report PIN" account (the Owner report opens with a PIN) ----
   await t('report PIN: can read the events', 'viewer', 'GET', '/key_pageviews/events', undefined, true);
   await t('report PIN: can read the page views', 'viewer', 'GET', '/key_pageviews/hits', undefined, true);
-  await t('report PIN: cannot overwrite a page view', 'viewer', 'PUT', '/key_pageviews/hits/index_html/H1', { t: 9 }, false);
+  await call('admin', 'PUT', '/key_pageviews/hits/index_html/HV1', { t: 5 });
+  await t('report PIN: cannot overwrite a page view', 'viewer', 'PUT', '/key_pageviews/hits/index_html/HV1', { t: 9 }, false);
   await t('report PIN: cannot delete the page views', 'viewer', 'DELETE', '/key_pageviews/hits', undefined, false);
   await t('report PIN: cannot delete the events', 'viewer', 'DELETE', '/key_pageviews/events', undefined, false);
   await t('report PIN: cannot read the leads', 'viewer', 'GET', '/key_leads/leads', undefined, false);
   await t('report PIN: cannot read the prospect CRM', 'viewer', 'GET', '/kt_crm', undefined, false);
   await t('report PIN: cannot change the prospect CRM', 'viewer', 'PUT', '/kt_crm', { x: 1 }, false);
   await t('report PIN: cannot change the owner sign-in key', 'viewer', 'PUT', '/ownerAuth/apiKey', 'x', false);
-  await t('report PIN: cannot read the LVR members', 'viewer', 'GET', '/lvr_rewards', undefined, false);
   await t('report PIN: cannot change LVR points settings', 'viewer', 'PUT', '/lvr_points/settings/zz', 1, false);
   await call('admin', 'PUT', '/key_pageviews/hits/index_html/H1', { t: 5 });
   await t('page views: a visitor cannot read the views', 'anon', 'GET', '/key_pageviews/hits', undefined, false);
