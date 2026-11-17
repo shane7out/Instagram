@@ -944,6 +944,66 @@ G13['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G13'] = G13
 
+# ================= Guide 14: iPhone, Android, APK or web app =================
+G14 = dict(slug='iphone-android-apk-mobile-app-guide', date='2026-11-17',
+  title='iPhone App, Android App, APK or Web App? | Key Technologies.si',
+  desc='A plain guide to building a mobile app: iPhone and Android apps, your own Android APK file, cross-platform apps and installable web apps, and how to choose.',
+  h1='iPhone app, Android app, APK or web app? A plain guide to building a mobile app',
+  short='What iPhone apps, Android apps, an APK file, cross-platform apps and installable web apps are, and how a business owner can choose.')
+G14['faq'] = [
+ ('What is an APK file?', 'An APK is the installable file for an Android app. If you have one, you can put it on your own website and people can install the app from it without going through a store. Android may ask the person to allow installs from that source first.'),
+ ('Can an iPhone app be installed from a file like an APK?', 'Not in the same simple way. Apple controls how apps get onto iPhones. For most businesses that means the App Store, or TestFlight for private testing before launch.'),
+ ('Do I need two separate apps for iPhone and Android?', 'Not always. One shared codebase can run on both and keeps them in step. Some features that need the phone\'s own tools are better built natively. A good developer says which fits your goals before the work starts.'),
+ ('Is an installable web app (PWA) enough?', 'Sometimes. It installs from the browser with no store and is the simplest option, but some phone features are more limited than in a full app. If your idea does not need them, it can be the best first step.'),
+ ('Who should own the app and the developer accounts?', 'You should. Your developer accounts, domain, hosting and data should be in your name, and who owns the finished app and its code should be settled in writing before work starts.'),
+ ('Where should a business start?', 'Describe what the app should do and who will use it, then decide the smallest version that is worth building. Our free Opportunity Review is a good first step.')]
+G14['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('Mobile app guide','')])}
+<h1>{esc(G14['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 17, 2026</p>
+<div class="tldr"><b>Short answer:</b> you can reach phones as an <b>iPhone app</b>, an <b>Android app</b>, a shared app that runs on both, an <b>Android APK file</b> you host yourself, or an <b>installable web app</b>. The right choice depends on who will use it and what it needs to do on the phone.</div>
+
+<h2>The five ways to put something on a phone</h2>
+<ul>
+<li><b>iPhone app:</b> built for iPhone and iPad and installed from the App Store. For private testing before launch, Apple offers TestFlight.</li>
+<li><b>Android app:</b> built for Android phones and tablets. It can be published on Google Play.</li>
+<li><b>Your own APK file:</b> the installable file for an Android app. You can host it on your own website, so people can install the app without waiting on a store.</li>
+<li><b>One app for both:</b> a shared codebase that runs on iPhone and Android, so the two stay in step and updates ship together.</li>
+<li><b>Installable web app (PWA):</b> a website that installs from the browser and behaves like an app, with no store at all.</li>
+</ul>
+
+<h2>What an APK does, and does not, do</h2>
+<p>An APK is useful when you want control: a private app for your team, a way to share the app before it is in a store, or a download link on your own site. Android may ask the person to allow installs from that source, and many customers feel safer with Google Play, so many businesses offer both. iPhones do not work this way. Apple decides how apps are installed, so iPhone apps go through the App Store, or TestFlight while testing.</p>
+
+<h2>How to choose</h2>
+<ol>
+<li><b>Will people use it again and again?</b> Rewards cards, ordering, booking and crew tools do. A one-time brochure does not need an app.</li>
+<li><b>Does it need the phone itself?</b> Notifications, the camera, offline use and a saved card are the usual reasons to build an app instead of a website.</li>
+<li><b>Which phones do your customers carry?</b> If you do not know, plan for both.</li>
+<li><b>What is the smallest version worth building?</b> Start with one feature and add more as it earns its place.</li>
+</ol>
+
+<h2>What to ask any app developer</h2>
+<ul>
+<li>Who owns the code, the developer accounts and the data, and where is that written down?</li>
+<li>Will I get the APK file and the source, or only a link to rent?</li>
+<li>What happens when a new version of iOS or Android arrives, and who maintains the app?</li>
+<li>Can I see a working demo, not only slides?</li>
+<li>How is customer information protected?</li>
+</ul>
+
+<h2>Where Key Technologies fits</h2>
+<p>We build custom mobile apps for iPhone and Android, including an Android APK file you own, and the websites, databases and sign-in behind them. The work is done by Shane, who has more than 42 years of computer and software experience. You can try a sample app in the <a href="../key-platform/demos/mobile-apps.html">mobile app demo</a>, which uses made-up data, or read about the <a href="../mobile-apps.html">mobile app service</a>.</p>
+
+{faq_html(G14['faq'])}
+
+<div class="guide-cta"><h2>Thinking about an app?</h2>
+<p>Tell us what it should do and who will use it. The first call is free, and we will say honestly whether an app, a website or a smaller first step fits.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../mobile-apps.html">Mobile app development</a></div></div>
+{more([('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
+</article>"""
+GUIDES['G14'] = G14
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
@@ -961,7 +1021,7 @@ def build():
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
     hub_title = 'Guides on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, AI for law firms and medical offices, PHP2Shell, and AI for restaurants.'
+    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, mobile apps for iPhone and Android, AI for law firms and medical offices, PHP2Shell, and AI for restaurants.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>

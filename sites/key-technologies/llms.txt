@@ -8,6 +8,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Home: services and free website audit](https://keytechnologies.si/): all 27 services, FAQ and contact
 - [Book a free call](https://keytechnologies.si/book.html): request a call time (Mon to Fri, Pacific time); nothing is booked until confirmed
 - [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
+- [Custom mobile apps](https://keytechnologies.si/mobile-apps.html): iPhone and Android apps, including an Android APK file the client owns, plus the websites and systems behind them
 - [For restaurants](https://keytechnologies.si/restaurants.html): guest CRM, phone and text answering, review replies and social content for restaurants
 - [For chiropractors and specialists](https://keytechnologies.si/chiropractors-specialists.html): patient CRM, appointment reminders, phone and text answering and a practice dashboard
 - [Key Rewards guest events demo](https://keytechnologies.si/key-platform/demos/key-rewards-events.html): share a pool of rewards equally among guests at a restaurant; no cash value, never expire, made-up data
@@ -55,6 +56,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [AI phone answering for dental and law offices: what it should and should not do](https://keytechnologies.si/guides/ai-phone-answering-dental-law.html): How AI phone answering works for a dental or law office, what it should hand to a person, and what to check before turning it on.
 - [How a restaurant rewards program works, and what to check before you start](https://keytechnologies.si/guides/restaurant-rewards-program.html): A plain guide to restaurant rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.
 - [Frequently asked questions about Key Technologies](https://keytechnologies.si/guides/frequently-asked-questions.html): Plain answers about the free call, what AI/SI means, who owns your accounts, permission levels, the demos and Key Rewards.
+- [IPhone app, Android app, APK or web app? A plain guide to building a mobile app](https://keytechnologies.si/guides/iphone-android-apk-mobile-app-guide.html): What iPhone apps, Android apps, an APK file, cross-platform apps and installable web apps are, and how a business owner can choose.
 
 ## LVR Rewards (Las Vegas Restaurants)
 - [LVR Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.
