@@ -313,7 +313,7 @@ G2['body'] = f'''<article class="wrap guide">
 <p>Use your own numbers, not a vendor&rsquo;s. For a week, count: (1) the calls you miss or send to voicemail, (2) roughly how many of those would have become a paying customer, and (3) what an average customer is worth. Multiply them together. That is the order of magnitude of what missed calls cost you, and it tells you how much an AI receptionist could be worth. If the figure is small, a simpler fix such as a better voicemail message may be enough, and we will tell you so.</p>
 
 <h2>Where Key Technologies fits</h2>
-<p>We set up and look after AI phone and text answering for small businesses. We quote after learning your call volume, your workflow and the rules that apply to you, so the number is real. The first conversation is free, with no obligation and no sales pitch about tools you do not need.</p>
+<p>We set up and look after AI phone and text answering for small businesses. We quote after learning your call volume, your workflow and the rules that apply to you, so the number is real. The first conversation is free, with no obligation.</p>
 
 {faq_html(G2['faq'])}
 
@@ -453,7 +453,7 @@ G4['body'] = f"""<article class="wrap guide">
 </ol>
 
 <h2>Where Key Technologies fits</h2>
-<p>We help small and mid-sized businesses use AI in practical, safe ways: strategy, automation, AI assistants, phone and email help, custom software, security and training. The first conversation is free, with no obligation and no sales pitch about tools you do not need. Key Technologies does not guarantee results.</p>
+<p>We help small and mid-sized businesses use AI in practical, safe ways: strategy, automation, AI assistants, phone and email help, custom software, security and training. The first conversation is free, with no obligation. Key Technologies does not guarantee results.</p>
 
 {faq_html(G4['faq'])}
 
@@ -767,7 +767,7 @@ G10['body'] = f"""<article class="wrap guide">
 
 <h2>The steps</h2>
 <ol>
-<li><b>A free call.</b> Thirty minutes about your business: what takes time, where customers or leads slip through, and what you already use. No obligation, and no sales pitch about tools you do not need.</li>
+<li><b>A free call.</b> Thirty minutes about your business: what takes time, where customers or leads slip through, and what you already use. No obligation.</li>
 <li><b>A plain-language look at where AI/SI helps and where it does not.</b> Some jobs are a good fit, some should start as a small trial, and some should stay with a person. You get an honest answer, including &ldquo;not yet.&rdquo;</li>
 <li><b>One small piece first.</b> Common starting points are answering missed calls and texts, following up with new inquiries, replies to reviews, or a dashboard for the numbers you check every day.</li>
 <li><b>Built around your business.</b> We work from how you actually operate, using the systems you already have where that makes sense, instead of fitting you to a generic template.</li>

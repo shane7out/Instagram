@@ -91,7 +91,7 @@ def build():
             '  <p class="lead">Words from real Key Technologies clients, shared with their permission.</p>\n</section>\n'
             '<section class="wrap" id="all-testimonials">\n  <div class="t-grid all">%s</div>\n</section>\n'
             '<section class="city-cta" id="cityCta"><div class="wrap"><h2>Want results like these?</h2>'
-            '<p>Start with a free conversation about how your business runs. No obligation, and no sales pitch about tools you don&rsquo;t need.</p>'
+            '<p>Start with a free conversation about how your business runs. No obligation.</p>'
             '<div class="row"><a class="btn btn-primary" href="book.html">Book a free call</a><a class="btn btn-ghost" href="index.html#audit">Run the Free Website Audit</a></div></div></section>') % ''.join(card(e, True) for e in items)
     ld = [{"@type": "CollectionPage", "name": "Client Testimonials", "description": c['desc'], "url": BASE + 'testimonials.html', "isPartOf": {"@type": "WebSite", "name": "Key Technologies.si", "url": BASE}},
           {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": BASE}, {"@type": "ListItem", "position": 2, "name": "Testimonials", "item": BASE + 'testimonials.html'}]}]

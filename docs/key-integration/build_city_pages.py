@@ -52,7 +52,7 @@ CITIES = {
   roots=('Restaurant and hospitality roots',
          'For about ten years, Shane has built restaurant-focused social media brands and audiences, including Las Vegas Restaurants (<a href="https://www.instagram.com/lasvegas_restaurants/">@LasVegas_Restaurants on Instagram</a>), growing real followings and helping local businesses get discovered. Key Technologies applies the same practical, hands-on approach to the systems behind the business: the phones, bookings, reviews and email.'),
   faq=[('Do you work with Las Vegas businesses in person?', 'Yes. Key Technologies works in person around its home markets, which include Las Vegas, and online anywhere. Most of the work can be done remotely, and we meet in person where it helps.'),
-       ('What happens in the free review?', 'We talk through how your business runs today and point out where AI or automation could realistically help, and where it would not. There is no obligation and no sales pitch about tools you do not need.'),
+       ('What happens in the free review?', 'We talk through how your business runs today and point out where AI or automation could realistically help, and where it would not. There is no obligation.'),
        ('Do I need to be technical?', 'No. We explain everything in plain language, and a person on your team stays in charge of anything customer-facing.'),
        ('Which kinds of businesses do you work with in Las Vegas?', 'Restaurants and hospitality, medical and dental practices, law firms, real estate, e-commerce and other small and mid-sized businesses.'),
        ('What does it cost?', 'It depends on the work, so we do not publish a price list. The first call is free, and we give you a clear quote once we understand your business.'),
@@ -87,7 +87,7 @@ def ca_city(name, file, lead, area_phrase):
              'Shane Christensen first saw a computer in his junior high school computer lab, back when floppy disks were big, and saw what it could do. He started a computer business while still in high school and has worked with computers and software for more than 42 years. He has been building websites since the early days of the internet.</p><p>Key Technologies brings that hands-on experience to the systems behind your business: the phones, bookings, reviews and email, built around how your work actually happens.'),
       roots_btn=False,
       faq=[('Do you work with %s businesses in person?' % name, 'Yes. Key Technologies works in person around its home markets, which include %s, and online anywhere. Most of the work can be done remotely, and we meet in person where it helps.' % area_phrase),
-           ('What happens in the free review?', 'We talk through how your business runs today and point out where AI or automation could realistically help, and where it would not. There is no obligation and no sales pitch about tools you do not need.'),
+           ('What happens in the free review?', 'We talk through how your business runs today and point out where AI or automation could realistically help, and where it would not. There is no obligation.'),
            ('Do I need to be technical?', 'No. We explain everything in plain language, and a person on your team stays in charge of anything customer-facing.'),
            ('Which kinds of businesses do you work with?', 'Restaurants and hospitality, medical and dental practices, law firms, real estate, e-commerce and other small and mid-sized businesses.'),
            ('What does it cost?', 'It depends on the work, so we do not publish a price list. The first call is free, and we give you a clear quote once we understand your business.'),
@@ -292,7 +292,7 @@ def body_for(c):
         <li>A clear next step, or an honest &ldquo;not yet&rdquo;</li>
       </ul>
       <a class="btn btn-primary" href="book.html">Book a free call</a>
-      <p class="fine">No obligation. No sales pitch about tools you don&rsquo;t need.</p>
+      <p class="fine">No obligation.</p>
     </aside>
   </div>
 </section>
@@ -300,7 +300,7 @@ def body_for(c):
 <section class="wrap trust-band" aria-label="Why Key Technologies">
   <ul class="trust-grid">
     <li class="reveal"><b>42+ years</b><span>working with computers and software</span></li>
-    <li class="reveal"><b>Free review</b><span>no obligation, no sales pitch about tools you don&rsquo;t need</span></li>
+    <li class="reveal"><b>Free review</b><span>no obligation, an honest look at what would actually help</span></li>
     <li class="reveal"><b>In person or online</b><span>around {cn}, or anywhere remotely</span></li>
     <li class="reveal"><b>25 services</b><span>each with a live demo you can try</span></li>
   </ul>
@@ -348,7 +348,7 @@ def body_for(c):
 
 <section class="city-cta" id="cityCta">
   <div class="wrap"><h2>{esc(c['cta_h'])}</h2>
-  <p>Start with a free conversation about how your business runs. No obligation, and no sales pitch about tools you don&rsquo;t need.</p>
+  <p>Start with a free conversation about how your business runs. No obligation.</p>
   <div class="row"><a class="btn btn-primary" href="book.html">Book a free call</a><a class="btn btn-ghost" href="index.html#audit">Run the Free Website Audit</a></div></div>
 </section>'''
 
