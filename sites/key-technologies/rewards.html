@@ -265,7 +265,7 @@
       <div>
         <p class="eyebrow eyebrow-mark"><svg width="36" height="16" viewBox="0 4 116 50" aria-hidden="true" focusable="false"><defs><linearGradient id="ke1" x1="0" y1="5" x2="0" y2="53" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".22" stop-color="#4fb9ff"/><stop offset=".48" stop-color="#1a8be0"/><stop offset=".56" stop-color="#0a6fb8"/><stop offset=".68" stop-color="#2aa3f2"/><stop offset=".88" stop-color="#8fd3ff"/><stop offset="1" stop-color="#0a7fd0"/></linearGradient></defs><g fill="none" stroke="url(#ke1)"><circle cx="24" cy="30" r="19" stroke-width="8"/><circle cx="24" cy="30" r="8.5" stroke-width="3"/></g><g fill="url(#ke1)"><rect x="42" y="26.5" width="72" height="7" rx="1"/><rect x="45" y="21" width="6" height="18" rx="2"/><rect x="55" y="23" width="5" height="14" rx="2"/><path d="M90,33H98V45H90ZM102,33H114V51H102Z"/></g></svg>LVR Rewards</p>
         <h1 style="margin-top:14px;">Join LVR Rewards. <span class="accent">Earn free food.</span></h1>
-        <p class="hero-sub">Join free at local Las Vegas restaurants, earn 1 reward for every $1 you spend, and trade your rewards for free food. <b id="welcomeLine"></b><b id="foundLine"></b><span id="shareLine" hidden>It is a rewards game: <b>use your rewards before the 1st. <span class="decayPct">20</span>% of unused rewards go back into the game each month and are handed out at random to other players.</b> </span>No app to download and no password: just a link that's yours.</p>
+        <p class="hero-sub">Join free at local Las Vegas restaurants, earn 1 reward for every $1 you spend, and trade your rewards for free food. <b id="welcomeLine"></b><b id="foundLine"></b>% of unused rewards go back into the game each month and are handed out at random to other players.</b> </span>No app to download and no password: just a link that's yours.</p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#signup">Join Free</a>
           <a class="btn btn-ghost" href="#how">See How It Works</a>
@@ -293,7 +293,6 @@
             <label for="r-phone">Phone <span class="req" aria-hidden="true">*</span></label>
             <input id="r-phone" name="phone" type="tel" autocomplete="tel" required>
           </div>
-          <details id="decayBox" hidden style="background:rgba(255,211,92,.07);border:1px solid rgba(255,211,92,.35);border-radius:12px;padding:0 13px;margin:2px 0 12px;font-size:13.5px;line-height:1.45;color:var(--ink-dim);"><summary style="cursor:pointer;padding:11px 0;color:#ffe08a;"><b style="color:#ffd35c;">How the monthly rewards share works</b> (tap to open or close)</summary><div style="padding:0 0 11px;"><p style="margin:0 0 8px;"><b>Use your rewards before the 1st.</b> LVR Rewards is a rewards game, and the game works best when rewards keep moving. On the <b>1st of every month</b>, <span class="decayPct">20</span>% of the rewards a player has not used go back into the game.</p><p style="margin:0 0 8px;">Those rewards do not disappear. They are <b>handed out at random to other players</b>, a few rewards at a time, the same way rewards were first given out to you.</p><p style="margin:0 0 8px;"><b>Example:</b> you have 50 rewards on the 1st. <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your rewards on a free offer before the 1st, nothing goes back.</p><p style="margin:0;">It is not a fee and no money is involved. New players are not affected for their first 30 days.</p></div></details>
           <label for="r-rules" style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--ink-dim);margin:2px 0 14px;cursor:pointer;">
             <input id="r-rules" type="checkbox" style="margin-top:3px;width:18px;height:18px;flex:none;">
             <span><b style="color:var(--ink);">I'm in.</b> I am 18 or older. I understand this is a game that gives rewards for eating at local restaurants. No purchase is necessary. 1 reward = $1 toward a free offer at a participating restaurant. Rewards can only be used for free offers at participating restaurants, not for anything else or for cash. Rewards are used when I claim an offer and are never refunded. I agree to the <a href="rewards-terms.html" target="_blank" rel="noopener">LVR Rewards Program Terms</a> and have read the <a href="rewards-privacy.html" target="_blank" rel="noopener">Privacy page</a>, including that LVR Rewards is a free promotion that may be paused, changed or ended, and rewards adjusted or taken back, at any time at its sole discretion, with nothing owed to me. I understand every sign-up is reviewed by hand and rewards are added only after I am approved, that on the 1st of every month a share of my unused rewards may go back into the game and be handed out at random to other players, and that Round One members are shown on a leaderboard by first name and last initial.</span>
@@ -356,13 +355,6 @@
         your account opens and any welcome rewards are added.</p>
     </details>
 
-    <details id="decayFaq" hidden>
-      <summary>How does the monthly rewards share work?</summary>
-      <p><b>Use your rewards before the 1st.</b> LVR Rewards is a rewards game. On the 1st of every month, <span class="decayPct">20</span>% of the rewards a player has
-        not used go back into the game and are handed out at random to other players, a few rewards at a time, the same way rewards were first given out.
-        Example: you have 50 rewards on the 1st, <span class="decayBack">10</span> go back into the game and you keep <span class="decayKeep">40</span>. If you spend your rewards on a
-        free offer before the 1st, nothing goes back. It is not a fee and no money is involved. New players are not affected for their first 30 days.</p>
-    </details>
 
     <details>
       <summary>Do I get rewards just for signing up?</summary>
@@ -691,17 +683,6 @@
       var lc = launchCfg(r.launch); if (lc) renderRound1(lc.limit);
     });
   });
-  // monthly return disclosure (only while the owner has it switched on)
-  signupsPaused().then(function(r){
-    var d = r && r.decay; if (!d || d.enabled !== true) return;
-    var pct = Math.max(1, Math.min(50, Number(d.percent) || 20));
-    var back = Math.floor(50 * pct / 100);
-    Array.prototype.forEach.call(document.querySelectorAll(".decayPct"), function(e){ e.textContent = pct; });
-    Array.prototype.forEach.call(document.querySelectorAll(".decayBack"), function(e){ e.textContent = back; });
-    Array.prototype.forEach.call(document.querySelectorAll(".decayKeep"), function(e){ e.textContent = 50 - back; });
-    var b = document.getElementById("decayBox"), f = document.getElementById("decayFaq"), sl = document.getElementById("shareLine"); if (b) b.hidden = false; if (f) f.hidden = false; if (sl) sl.hidden = false;
-  });
-
   var form = document.getElementById("signupForm");
   var status = document.getElementById("signupStatus");
   form.addEventListener("submit", function(e){

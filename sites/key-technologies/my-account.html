@@ -996,7 +996,7 @@
   function decayCfg() {
     var d = Object.assign({ enabled: false, percent: 20, graceDays: 30 }, appSettings.decay || {});
     d.percent = Math.max(1, Math.min(50, Number(d.percent) || 20));
-    if (DEMO) d.enabled = false; // the monthly share is not part of the demo
+    d.enabled = false; // RETIRED 2026-11-17 (Shane: nobody's rewards are ever taken back); every monthly-share message below stays switched off
     return d;
   }
   function decayOn() { return decayCfg().enabled === true; }
