@@ -175,8 +175,8 @@ T.mobileapp=function(root){
  '<p class="micro" style="margin:12px 0 4px;font-weight:700">Features to include</p>'+
  keys.map(function(k){return '<label class="checkline"><input type="checkbox" data-f="'+k+'"><span><b>'+esc(feats[k][0])+'</b> <span class="micro">'+esc(feats[k][1])+'</span></span></label>'}).join('')+
  '<p class="micro" style="margin-top:10px">Tick features and the phone on the right changes. Tap the tabs on the phone to see each screen.</p></div>'+
- '<div class="panel" style="display:grid;place-items:center"><div id="mph" style="width:260px;max-width:100%;border:8px solid #0b1118;border-radius:34px;background:#fff;color:#0b1b4d;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)">'+
- '<div id="mhd" style="background:#00a3e0;color:#fff;padding:14px 14px 10px"><div style="font-size:11px;opacity:.85">9:41</div><div id="mnm" style="font-weight:800;font-size:17px"></div></div>'+
+ '<div class="panel" style="display:grid;place-items:center"><div id="mph" style="width:min(260px,100%);box-sizing:border-box;border:8px solid #0b1118;border-radius:34px;background:#fff;color:#0b1b4d;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)">'+
+ '<div id="mhd" style="background:#0a6fb8;color:#fff;padding:14px 14px 10px"><div style="font-size:11px">9:41</div><div id="mnm" style="font-weight:800;font-size:17px"></div></div>'+
  '<div id="mbd" style="min-height:230px;padding:14px;font-size:14px"></div>'+
  '<div id="mtb" style="display:flex;border-top:1px solid #dbe6f6;background:#f4f8fd"></div></div></div></div>'+
  '<div class="panel" style="margin-top:16px"><h3>Built for the phone</h3><ul style="margin:10px 0 0;padding-left:18px"><li>iPhone and Android</li><li>Your logo, colors and wording</li><li>Connects to the systems you already use, such as your website, bookings or rewards</li></ul></div>';
