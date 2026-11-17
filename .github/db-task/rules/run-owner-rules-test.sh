@@ -28,7 +28,7 @@ const a=JSON.parse(sub);
 const b=JSON.parse(fs.readFileSync("test-extra-rules.json","utf8"));
 const kraw=fs.readFileSync("key-rules-owner.json","utf8");
 if(!kraw.includes("__OWNER_UID__")){console.error("placeholder __OWNER_UID__ not found in key-rules-owner.json");process.exit(3);}
-const k=JSON.parse(kraw.split("__OWNER_UID__").join("TESTOWNER"));
+const k=JSON.parse(kraw.split("__OWNER_UID__").join("TESTOWNER").split("__VIEWER_UID__").join("TESTVIEWER"));
 fs.writeFileSync("database.rules.json",JSON.stringify({rules:Object.assign({},a,k,b)},null,1));
 '
 cat > firebase.json <<'JSON'

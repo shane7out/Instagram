@@ -118,11 +118,12 @@ const BASE = 'http://127.0.0.1:9000';
 const b64u = o => Buffer.from(JSON.stringify(o)).toString('base64url');
 const jwt = uid => b64u({ alg: 'none', typ: 'JWT' }) + '.' + b64u({ uid: uid, user_id: uid, sub: uid, iat: Math.floor(Date.now() / 1000) }) + '.';
 const OWNER_JWT = jwt('TESTOWNER');
+const VIEWER_JWT = jwt('TESTVIEWER'); // the read-only "report PIN" account: may read the page-view report and nothing else
 const OTHER_JWT = jwt('SOMEONE-ELSE'); // signed in, but NOT the owner (e.g. a stranger who signed up through the public Auth API)
 
 // who: 'anon' (no token) | 'owner' (token for the owner uid) | 'other' (token for another uid) | 'admin' (emulator bypass, used to seed data)
 async function call(who, method, p, body) {
-  const auth = who === 'owner' ? '&auth=' + OWNER_JWT : who === 'other' ? '&auth=' + OTHER_JWT : '';
+  const auth = who === 'owner' ? '&auth=' + OWNER_JWT : who === 'other' ? '&auth=' + OTHER_JWT : who === 'viewer' ? '&auth=' + VIEWER_JWT : '';
   const url = `${BASE}${p}.json?ns=${NS}${auth}`;
   const r = await fetch(url, {
     method,
@@ -708,6 +709,18 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('engagement: a visitor cannot delete the events', 'anon', 'DELETE', '/key_pageviews/events', undefined, false);
   await t('engagement: a signed-in stranger cannot read the events', 'other', 'GET', '/key_pageviews/events', undefined, false);
   await t('engagement: the owner can read the events', 'owner', 'GET', '/key_pageviews/events', undefined, true);
+  // ---- the read-only "report PIN" account (the Owner report opens with a PIN) ----
+  await t('report PIN: can read the events', 'viewer', 'GET', '/key_pageviews/events', undefined, true);
+  await t('report PIN: can read the page views', 'viewer', 'GET', '/key_pageviews/hits', undefined, true);
+  await t('report PIN: cannot overwrite a page view', 'viewer', 'PUT', '/key_pageviews/hits/index_html/H1', { t: 9 }, false);
+  await t('report PIN: cannot delete the page views', 'viewer', 'DELETE', '/key_pageviews/hits', undefined, false);
+  await t('report PIN: cannot delete the events', 'viewer', 'DELETE', '/key_pageviews/events', undefined, false);
+  await t('report PIN: cannot read the leads', 'viewer', 'GET', '/key_leads/leads', undefined, false);
+  await t('report PIN: cannot read the prospect CRM', 'viewer', 'GET', '/kt_crm', undefined, false);
+  await t('report PIN: cannot change the prospect CRM', 'viewer', 'PUT', '/kt_crm', { x: 1 }, false);
+  await t('report PIN: cannot change the owner sign-in key', 'viewer', 'PUT', '/ownerAuth/apiKey', 'x', false);
+  await t('report PIN: cannot read the LVR members', 'viewer', 'GET', '/lvr_rewards', undefined, false);
+  await t('report PIN: cannot change LVR points settings', 'viewer', 'PUT', '/lvr_points/settings/zz', 1, false);
   await call('admin', 'PUT', '/key_pageviews/hits/index_html/H1', { t: 5 });
   await t('page views: a visitor cannot read the views', 'anon', 'GET', '/key_pageviews/hits', undefined, false);
   await t('page views: a visitor cannot read the whole node', 'anon', 'GET', '/key_pageviews', undefined, false);

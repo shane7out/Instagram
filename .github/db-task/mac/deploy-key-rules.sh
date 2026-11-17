@@ -55,6 +55,9 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
   let fragText = await (await fetch(FRAG)).text();
   if (fragText.indexOf('__OWNER_UID__') < 0) { log('The owner rules file has no owner placeholder - nothing changed.'); return report(); }
   fragText = fragText.split('__OWNER_UID__').join(UID);
+  // the read-only report-PIN account (made by viewer-pin-setup.sh); without it the placeholder becomes a value no real account can have
+  let VUID = 'NOVIEWER'; try { const vf = path.join(os.homedir(), '.lvr', 'viewer-uid'); if (fs.existsSync(vf)) { const v = fs.readFileSync(vf, 'utf8').trim(); if (/^[A-Za-z0-9]{20,40}$/.test(v)) VUID = v; } } catch (e) {}
+  fragText = fragText.split('__VIEWER_UID__').join(VUID); log(VUID === 'NOVIEWER' ? 'No report PIN account yet (owner-only read of the page views).' : 'Report PIN account found: it may read the page views.');
   let frag; try { frag = JSON.parse(fragText); } catch (e) { log('Could not read the owner rules file - nothing changed.'); return report(); }
   for (const k of SECTIONS) if (!frag[k]) { log('Owner rules file is missing section ' + k + ' - nothing changed.'); return report(); }
   const merged = JSON.parse(liveText); for (const k of SECTIONS) merged.rules[k] = frag[k];

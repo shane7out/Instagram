@@ -219,6 +219,11 @@
   #gate h1{font-size:20px;margin:0 0 14px;}
   #gate button{width:100%;padding:13px 14px;border-radius:10px;border:none;background:var(--key-blue);color:#0f171e;font-size:15px;font-weight:700;cursor:pointer;}
   #gateMsg{min-height:20px;font-size:13.5px;color:var(--warn);margin-top:10px;}
+  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  #gate input[type=password]{width:100%;box-sizing:border-box;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:22px;letter-spacing:.35em;text-align:center;margin-bottom:10px;}
+  #gate .pinKeep{display:flex;align-items:center;gap:8px;justify-content:center;font-size:13.5px;color:var(--ink-dim);margin:0 0 12px;}
+  #gate .pinKeep input{width:auto;margin:0;}
+  #gate button.linkbtn{width:auto;background:none;color:var(--ink-dim);font-size:13px;font-weight:600;text-decoration:underline;padding:10px;margin-top:14px;}
   #app{display:none;}
 
   /* top bar: always in reach */
@@ -318,10 +323,16 @@
 <div id="toasts" aria-live="polite"></div>
 
 <div id="gate" role="main">
-  <h1>Owner sign-in</h1>
-  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">This report is protected. It opens when you are signed in as the owner.</p>
-  <button id="ownerBtn" type="button">Sign in as owner</button>
+  <h1>Visitor report</h1>
+  <p style="font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">Enter your report PIN to open it.</p>
+  <form id="pinForm" autocomplete="off" novalidate>
+    <label for="pinIn" class="sr-only">Report PIN</label>
+    <input id="pinIn" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off" placeholder="PIN" aria-describedby="gateMsg">
+    <label class="pinKeep"><input id="pinKeep" type="checkbox" checked> Keep me signed in on this device</label>
+    <button id="pinGo" type="submit">Open report</button>
+  </form>
   <div id="gateMsg" role="status"></div>
+  <button id="ownerBtn" type="button" class="linkbtn">Sign in as owner instead</button>
 </div>
 
 <div id="app">
@@ -479,6 +490,31 @@ function ownerState() {
   if (on && !unlocked) { unlocked = true; showApp(); loadData(); }
   else if (!on && unlocked) { unlocked = false; loadData(); }
 }
+// ---------- report PIN ----------
+// The PIN opens a separate READ-ONLY account that can see this report and nothing else (the database rules allow it to read
+// the page-view counts only). The PIN is turned into that account's password in this browser (PBKDF2); the PIN itself is never
+// stored here or sent anywhere. The same derivation is used by the Mac script viewer-pin-setup.sh that creates the account.
+var VIEWER_EMAIL = "report-viewer@kt-report.invalid", VIEWER_SALT = "kt-report-viewer-v1";
+function derivePw(pin) {
+  var enc = new TextEncoder();
+  return crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveBits"]).then(function (k) {
+    return crypto.subtle.deriveBits({ name: "PBKDF2", salt: enc.encode(VIEWER_SALT), iterations: 150000, hash: "SHA-256" }, k, 256);
+  }).then(function (bits) {
+    var a = new Uint8Array(bits), s = ""; for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]);
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  });
+}
+$("pinForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var pin = $("pinIn").value.replace(/\s/g, ""), m = $("gateMsg"), go = $("pinGo");
+  if (!/^[0-9]{6,12}$/.test(pin)) { m.textContent = "Enter your PIN (6 to 12 digits)."; return; }
+  if (!window.OWNER_AUTH || !window.crypto || !window.crypto.subtle) { m.textContent = "This browser cannot open the report with a PIN."; return; }
+  m.textContent = "Checking..."; go.disabled = true;
+  derivePw(pin).then(function (pw) { return window.OWNER_AUTH.signIn(VIEWER_EMAIL, pw, $("pinKeep").checked); })
+    .then(function () { m.textContent = ""; $("pinIn").value = ""; })
+    .catch(function (err) { m.textContent = /not right/i.test(String(err && err.message)) ? "That PIN is not right." : "Could not check the PIN. Try again in a minute."; })
+    .then(function () { go.disabled = false; });
+});
 $("ownerBtn").addEventListener("click", function () {
   var m = $("gateMsg");
   if (window.OWNER_AUTH) { m.textContent = ""; window.OWNER_AUTH.dialog(); }
@@ -522,7 +558,7 @@ function loadData() {
     checkNew();
   }).catch(function (err) {
     $("status").textContent = "";
-    if (err && err.denied) { showGate("The visitor data is protected now. Sign in as the owner to see it."); return; }
+    if (err && err.denied) { showGate("The visitor data is protected. Enter your report PIN to see it."); return; }
     $("status").textContent = "Could not load the data. Try Refresh.";
   });
 }

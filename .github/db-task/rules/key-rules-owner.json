@@ -14,7 +14,7 @@
     }
   },
   "key_pageviews": {
-    ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__VIEWER_UID__')",
     ".write": "auth != null && auth.uid == '__OWNER_UID__'",
     "hits": {
       "$page": {
