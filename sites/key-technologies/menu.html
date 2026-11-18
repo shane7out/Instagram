@@ -353,7 +353,7 @@
     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); });
   }
   function ownerLogin() {
-    var d = ownDialog('<h3>Owner</h3><p>Enter your owner PIN to remove restaurants.</p><input id="ownPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12"><div class="own-row"><button class="own-no" id="ownCancel">Cancel</button><button class="own-ok" id="ownGo">Continue</button></div><p id="ownErr" style="margin:12px 0 0;color:#ff9a9a;"></p>');
+    var d = ownDialog('<h3>Owner</h3><p>Enter your owner PIN to remove restaurants.</p><input id="ownPin" aria-label="Owner PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="12"><div class="own-row"><button class="own-no" id="ownCancel">Cancel</button><button class="own-ok" id="ownGo">Continue</button></div><p id="ownErr" style="margin:12px 0 0;color:#ff9a9a;"></p>');
     var pin = d.el.querySelector('#ownPin'); pin.focus();
     function go() { sha256hex(pin.value.trim()).then(function (h) { if (h && h === OWNER_HASH) { OWNER = true; try { sessionStorage.setItem('lvrOwner', '1'); } catch (e) {} d.close(); renderVegas(); } else { d.el.querySelector('#ownErr').textContent = 'That PIN is not right.'; pin.value = ''; pin.focus(); } }); }
     d.el.querySelector('#ownGo').addEventListener('click', go);

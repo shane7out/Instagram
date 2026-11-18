@@ -18,7 +18,7 @@ a = hub.index('<script>(function(){var b=document.getElementById("burgerBtn")');
 body = '''<main id="main" class="wrap kp-main">
 <section class="page active" style="display:block;padding-top:6px">
 <div class="hero"><span class="eyebrow">Free call</span><h1 style="margin-top:10px">Book a <span>free call</span></h1>
-<p>Thirty minutes to talk through your business and where AI/SI could actually help. No pitch, no cost, no obligation. Pick a time below and we will confirm it by reply. Nothing is booked until we confirm.</p></div>
+<p>Thirty minutes to talk through your business and where AI/SI could actually help. No cost, no obligation. Pick a time below and we will confirm it by reply. Nothing is booked until we confirm.</p></div>
 <div class="two-columns" style="margin-top:26px;align-items:start">
 <div class="lead-card" aria-labelledby="pickh"><span class="eyebrow">Step 1</span><h2 id="pickh" style="margin-top:6px">Pick a day and time</h2>
 <div class="field"><label for="tz">Your time zone</label><select id="tz"></select></div>
@@ -90,7 +90,7 @@ page = '''<!doctype html>
 <title>Book a Free Call | Key Technologies.si</title>
 <meta name="description" content="Book a free 30-minute call with Key Technologies to talk through your business and where AI/SI could help. Pick a time and we confirm by reply.">
 <link rel="canonical" href="https://keytechnologies.si/book.html"><meta name="theme-color" content="#0f171e">
-<meta property="og:type" content="website"><meta property="og:title" content="Book a Free Call | Key Technologies.si"><meta property="og:description" content="Thirty minutes, no pitch, no cost. Pick a time and we confirm by reply."><meta property="og:url" content="https://keytechnologies.si/book.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:title" content="Book a Free Call | Key Technologies.si"><meta property="og:description" content="Thirty minutes, no cost, no obligation. Pick a time and we confirm by reply."><meta property="og:url" content="https://keytechnologies.si/book.html"><meta property="og:image" content="https://keytechnologies.si/og-image.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="apple-touch-icon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="/fonts/lato.css">
 <link rel="stylesheet" href="key-platform/site-base.css"><link rel="stylesheet" href="key-platform/kp.css"><script src="key-platform/lead-send.js" defer></script></head><body>

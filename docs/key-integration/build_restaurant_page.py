@@ -73,11 +73,11 @@ s = s[:i] + '<div class="service-grid">\n' + html + '    ' + s[j:]
 
 # proof
 sub('<h2>Shane designed and runs his own CRM — this isn\'t theory</h2>', '<h2>Shane keeps watch on about 10,000 restaurants — this isn\'t theory</h2>')
-sub('''Key Technologies isn't pitching a CRM concept — Shane personally
+sub('''This is not just a CRM idea. Shane personally
       designed and operates a custom CRM and outreach database, tracking relationships and follow-ups across
       about 10,000 restaurants today. The same approach — built around how the work actually happens, not a
       generic template — is what gets built for your intake process.''',
-    '''Key Technologies isn't pitching a CRM concept. Shane personally
+    '''This is not just a CRM idea. Shane personally
       designed and operates a custom CRM and outreach database, tracking relationships and follow-ups across
       about 10,000 restaurants today, mainly in Las Vegas and Orange County, and he has worked in the
       restaurant and hospitality world for a decade. The same approach, built around how the work actually

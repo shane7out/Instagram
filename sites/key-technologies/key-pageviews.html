@@ -135,7 +135,7 @@
   var BTN1 = 'flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;', BTN2 = 'flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;';
   function pinSetup() {
     var back = shell('Quick-unlock PIN', 'Optional. Next time on this device you only type this PIN instead of your email and password. Use 6 to 8 digits you will remember.');
-    back.querySelector('.oaBody').innerHTML = '<input id="oaP1" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '"><input id="oaP2" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Same PIN again" style="' + PINSTYLE + 'margin-top:8px;">';
+    back.querySelector('.oaBody').innerHTML = '<input id="oaP1" aria-label="PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '"><input id="oaP2" aria-label="Same PIN again" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Same PIN again" style="' + PINSTYLE + 'margin-top:8px;">';
     back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Skip</button><button type="submit" style="' + BTN2 + '">Save PIN</button>';
     var msg = back.querySelector('#oaMsg'); back.querySelector('#oaP1').focus();
     back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
@@ -153,7 +153,7 @@
   function unlockUI() {
     if (document.getElementById('oaUnlock') || !hasLock()) return;
     var back = shell('Enter your PIN', 'Owner quick-unlock for this device.'); back.id = 'oaUnlock';
-    back.querySelector('.oaBody').innerHTML = '<input id="oaPin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '">';
+    back.querySelector('.oaBody').innerHTML = '<input id="oaPin" aria-label="PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '">';
     back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Use email and password</button><button type="submit" style="' + BTN2 + '">Unlock</button>';
     var msg = back.querySelector('#oaMsg'), inp = back.querySelector('#oaPin'); inp.focus();
     back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); dialog(); });
