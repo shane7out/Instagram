@@ -93,6 +93,9 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.v===1&&o.wallets&&o.entries)return o}}catch(e){canSave=false}return fresh()}
  function nextRank(){var m=0;S.wallets.forEach(function(w){if(w.id!=='treasury'&&(w.rank||0)>m)m=w.rank});return m+1}
  function openW(name,type){var id='w'+(S.nextW++),t=now();S.wallets.push({id:id,name:name,type:type,t:t,rank:nextRank()});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
+ /* Instructions from Shane, applied once per browser when the page opens (so every browser shows the same starting position). */
+ var INSTR=[{id:'2026-11-18-a',from:'treasury',to:"Vanilla Rice's Hibachi House",amt:10000,note:'Starting credit (Shane, Nov 18)'},{id:'2026-11-18-b',from:'treasury',to:"Johnny Mac's",amt:10000,note:'Starting credit (Shane, Nov 18)'}];
+ function applyInstr(){S.applied=S.applied||[];INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;var to=find(x.to);if(!to||bal(x.from)<x.amt)return;S.entries.push({id:S.next++,t:now(),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)})}
  function find(n){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].name.toLowerCase()===n.toLowerCase())return S.wallets[i].id;return null}
  function seed(){if(S.seeded2)return;var v=find("Vanilla Rice's Hibachi House")||openW("Vanilla Rice's Hibachi House",'Restaurant'),j=find("Johnny Mac's")||openW("Johnny Mac's",'Restaurant');
   var others=S.wallets.filter(function(w){return w.id!=='treasury'&&w.id!==v&&w.id!==j}).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t});
@@ -145,7 +148,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  $('restore').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1||!Array.isArray(o.wallets)||!Array.isArray(o.entries))throw 0;var tot=0;o.entries.forEach(function(e){if(!e.from)tot+=e.amt});if(tot!==SUPPLY)throw 0;
    if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Restaurant Rewards backup.',true)}};r.readAsText(f);this.value=''});
  $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});
- S=load();seed();paint();
+ S=load();seed();applyInstr();paint();
 })();
 </script>
 </body>
