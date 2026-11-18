@@ -91,6 +91,10 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #rdm .who{display:grid;gap:10px;margin:12px 0 0}
 #rdm .wb{min-height:60px;border-radius:16px;border:2px solid rgba(255,255,255,.35);background:transparent;color:#fff;font:900 19px Lato,system-ui,sans-serif;cursor:pointer;padding:8px 12px}
 #rdm .wb[aria-pressed="true"]{background:#00a8e1;border-color:#00a8e1;color:#0f171e}
+#pres .brow{display:flex;gap:10px;margin:20px 0 0}#pres .brow .rbtn{margin:0;flex:1}
+#rdm .demo{background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.45);border-radius:10px;padding:6px 10px;margin:0 0 10px;font-size:13px;font-weight:700;color:rgba(255,255,255,.85)}
+#rdm .binfo{display:flex;gap:12px;align-items:center;background:#16222f;border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:16px;line-height:1.35}#rdm .binfo .i{flex:none;width:26px;height:26px;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 15px monospace}
+#rdm .bterms{text-align:center;font-size:14px;margin:14px 0 0;color:rgba(255,255,255,.8)}
 #rdm .send{display:block;width:100%;min-height:64px;margin:14px 0 0;border:0;border-radius:16px;background:#00a8e1;color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer}
 #rdm .rmsg{min-height:22px;margin:8px 0 0;text-align:center;font-weight:700;font-size:15px}#rdm .rmsg.err{background:rgba(0,168,225,.18);border-radius:8px;padding:6px 10px}
 #rdm .done{text-align:center}#rdm .done .tick{width:84px;height:84px;border-radius:50%;background:#00a8e1;color:#0f171e;font:900 52px/84px Lato,sans-serif;margin:6px auto 14px}#rdm .done h3{font-size:26px;margin:0 0 4px}#rdm .done p{color:rgba(255,255,255,.85);margin:0 0 6px;font-size:18px}
@@ -292,10 +296,33 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
    var to=rs[cur],ent={id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name,status:'pending'};S.entries.push(ent);save();chime();receipt(ent,id)});
   $('rdm').classList.remove('hide');$('rdm').scrollTop=0}
 
+ /* DEMO ONLY (practice version): buying credits. No real payment is taken; the credit comes from the Treasury. Needs the attorney before it is ever real. */
+ function openBuy(id){
+  var w=S.wallets.filter(function(x){return x.id===id})[0],rc=$('rc'),amt=0;ac();rc.innerHTML='';
+  var hd=el('div','rhead');hd.appendChild(el('h2',null,'Buy credits'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
+  rc.appendChild(el('p','have',w.name+' has '+fmt(bal(id))+' Restaurant Rewards'));
+  var demo=el('div','demo','Demo only. No real payment is taken.');rc.appendChild(demo);
+  var info=el('div','binfo');info.appendChild(el('span','i','i'));info.appendChild(el('span',null,'1 Restaurant Reward = 1 USD at participating restaurants.'));rc.appendChild(info);
+  rc.appendChild(el('label',null,'How much?'));rc.lastChild.setAttribute('for','bamt');
+  var inp=el('input');inp.id='bamt';inp.setAttribute('inputmode','numeric');inp.setAttribute('autocomplete','off');inp.placeholder='Amount in dollars, like 20';var ar=el('div','arow');ar.appendChild(inp);rc.appendChild(ar);
+  var qc=el('div','chips');[20,50,100,250].forEach(function(v){var c=el('button',null,'$'+v);c.type='button';c.addEventListener('click',function(){inp.value=String(v);upd()});qc.appendChild(c)});rc.appendChild(qc);
+  rc.appendChild(el('p','bterms','By purchasing, you agree to the Restaurant Rewards Terms.'));
+  var go=el('button','send','Continue');go.type='button';rc.appendChild(go);var msg=el('div','rmsg');msg.setAttribute('role','alert');rc.appendChild(msg);
+  function upd(){var a=parse(inp.value);amt=a>0?a:0;go.textContent=amt>0?'Continue — $'+fmt(amt):'Continue'}
+  inp.addEventListener('input',upd);upd();
+  go.addEventListener('click',function(){if(!(amt>0)){msg.textContent='Please type a whole number of dollars, like 20.';msg.className='rmsg err';inp.focus();return}
+   if(amt>bal('treasury')){msg.textContent='The Treasury only has '+fmt(bal('treasury'))+'.';msg.className='rmsg err';return}
+   var ent={id:S.next++,t:now(),from:'treasury',to:id,amt:amt,note:'Bought credits (practice)'};S.entries.push(ent);save();chime();
+   rc.innerHTML='';var dn=el('div','done');dn.appendChild(el('div','tick','✓'));dn.appendChild(el('h3',null,'Credits added'));dn.appendChild(el('div','ramt2','+'+fmt(amt)));dn.appendChild(el('p',null,'Restaurant Rewards'));
+   var tb=el('div','rtab');[['To',w.name],['Paid','$'+fmt(amt)+' (demo, nothing charged)'],['New balance',fmt(bal(id))],['Confirmation',conf(ent)]].forEach(function(kv){var r=el('div','rrow');r.appendChild(el('small',null,kv[0]));r.appendChild(el('b',kv[0]==='Confirmation'?'conf':null,kv[1]));tb.appendChild(r)});dn.appendChild(tb);
+   var ok=el('button','send','Done');ok.type='button';ok.addEventListener('click',function(){$('rdm').classList.add('hide');paint();present(id)});dn.appendChild(ok);rc.appendChild(dn);$('rdm').scrollTop=0});
+  $('rdm').classList.remove('hide');$('rdm').scrollTop=0}
+
  function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
  function cleanNote(n){return String(n||'').replace(/\s*\(Shane[^)]*\)/,'').trim()}
  function conf(e){var d=new Date(e.t);return 'RR-'+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+e.id).slice(-4)}
  function isPay(e){return !!e.from&&/^Redeemed at /.test(e.note||'')}
+ function isBuy(e){return e.from==='treasury'&&/^Bought credits/.test(e.note||'')}
  function receipt(e,backId){curRc={e:e,b:backId};var rc=$('rc');rc.innerHTML='';var stt=e.status||'confirmed',dn=el('div','done');dn.appendChild(el('div','tick',stt==='pending'?'\u2026':(stt==='declined'?'\u2715':'\u2713')));dn.appendChild(el('h3',null,stt==='pending'?'Waiting for confirmation':(stt==='declined'?'Declined':'Paid')));dn.appendChild(el('div','ramt2',fmt(e.amt)));dn.appendChild(el('p',null,'Restaurant Rewards'));
   var rows=[['To',wname(e.to)],['From',wname(e.from)],['When',fdate(e.t)],['Confirmation',conf(e)]];if(stt==='pending')rows.push(['Status','Waiting for '+wname(e.to)]);if(stt==='declined')rows.push(['Status','Declined by '+wname(e.to)]);
   var tb=el('div','rtab');rows.forEach(function(kv){var r=el('div','rrow');r.appendChild(el('small',null,kv[0]));r.appendChild(el('b',kv[0]==='Confirmation'?'conf':null,kv[1]));tb.appendChild(r)});dn.appendChild(tb);
@@ -303,10 +330,10 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   if(stt==='pending'&&!DBM){var cb=el('button','send','Confirm (practice)');cb.type='button';cb.addEventListener('click',function(){e.status='confirmed';save();chime();receipt(e,backId)});dn.appendChild(cb);var db2=el('button','more','Decline (practice)');db2.type='button';db2.addEventListener('click',function(){e.status='declined';save();receipt(e,backId)});dn.appendChild(db2)}
   var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
-  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(gcard(w,false,false));presId=id;if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
+  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(gcard(w,false,false));presId=id;if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');var canB=(!DBM&&w.id!=='treasury');if(canR||canB){var br=el('div','brow');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});br.appendChild(rb)}if(canB){var bb=el('button','rbtn','Buy credits');bb.type='button';bb.addEventListener('click',function(){openBuy(id)});br.appendChild(bb)}pc.appendChild(br)}
   pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?(credited(e)?e.amt:0):(debited(e)?-e.amt:0);run+=d;if(e.kind==='open')return;var nt=cleanNote(e.note),t,sub=fdate(e.t);
-   if(inn){if(!e.from)t='Opening balance';else if(isPay(e))t='Payment from '+wname(e.from);else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):'Sent to '+wname(e.to)}
-   if(nt&&!isPay(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;if(stTxt(e))sub+=' \u00b7 '+stTxt(e);rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});
+   if(inn){if(!e.from)t='Opening balance';else if(isPay(e))t='Payment from '+wname(e.from);else if(isBuy(e))t='Bought credits';else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):'Sent to '+wname(e.to)}
+   if(nt&&!isPay(e)&&!isBuy(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;if(stTxt(e))sub+=' \u00b7 '+stTxt(e);rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});
   rows.reverse();var lim=canR?3:5;var draw=function(list){ul.innerHTML='';list.forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var dc=r.e.status==='declined',a=el('span','a'+(r.inn&&!dc?' in':''),(dc?'':(r.inn?'+':'\u2212'))+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);if(isPay(r.e)){li.className='tap';li.setAttribute('role','button');li.setAttribute('tabindex','0');var open=function(){receipt(r.e,id)};li.addEventListener('click',open);li.addEventListener('keydown',function(ev){if(ev.key==='Enter')open()})}ul.appendChild(li)})};draw(rows.slice(0,lim));pc.appendChild(ul);if(rows.length>lim){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){draw(rows);mb.remove()});pc.appendChild(mb)}
   $('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}
  $('lock').addEventListener('click',function(){RR.signOut();location.reload()});
