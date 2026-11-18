@@ -122,7 +122,7 @@ def menu_html():
     for i, (n, intro, items) in enumerate(MENU):
         li = ''.join('<li><b>%s</b>%s</li>' % (E(a), ('<span>%s</span>' % E(b)) if b else '') for a, b in items)
         panes.append('<div class="pane%s" id="m%d"><h3>%s</h3>%s<ul>%s</ul></div>' % (' on' if i == 0 else '', i, E(n), ('<p class="intro">%s</p>' % E(intro)) if intro else '', li))
-    return '<div class="chips" role="tablist">%s</div>%s' % (tabs, ''.join(panes))
+    return '<div class="chips" role="group" aria-label="Menu sections">%s</div>%s' % (tabs, ''.join(panes))
 
 def loc_html():
     out = []
