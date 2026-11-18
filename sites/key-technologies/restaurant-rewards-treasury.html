@@ -98,13 +98,14 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres .plogos{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}#pres .plogos img{height:64px;width:auto;max-width:150px;object-fit:contain}
 #pres h2{text-align:center;font-size:22px;margin:6px 0 2px}
 #pres .gc{max-width:none;width:100%;margin:10px 0 4px;aspect-ratio:1.58/1}
+#pres .kt,#rdm .kt{text-align:center;margin:18px 0 6px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.7)}#pres .kt a,#rdm .kt a{color:inherit;text-decoration:underline}
 #pres .accrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 0;padding:10px 14px;background:#16222f;border:1px solid rgba(255,255,255,.22);border-radius:14px;font-weight:700;font-size:15px}#pres .accrow small{font-size:12px;color:rgba(255,255,255,.7);font-weight:400}#pres .accrow .acc{border:1.5px solid rgba(0,168,225,.7);background:rgba(0,168,225,.16);color:#fff;border-radius:999px;font:800 14px Lato,system-ui,sans-serif;padding:7px 14px;cursor:pointer}
 #pres .flip{perspective:1100px;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:20px}#pres .flip:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 #pres .flip .fi{display:grid;transition:transform .6s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}#pres .flip.on .fi{transform:rotateY(180deg)}
 #pres .flip .fi>*{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden}#pres .flip .fi>.back{transform:rotateY(180deg)}
 #pres .gc.back{aspect-ratio:auto}.gc.back{padding:0;display:block;aspect-ratio:auto}.gc.back::after{display:none}.gc.back .strip{height:22px;margin-top:10px;background:linear-gradient(#1b1b1b,#0b0b0b);box-shadow:0 1px 0 rgba(255,255,255,.35)}
 .gc.back .bk{padding:7px 14px 10px;color:#0f171e}.gc.back .l{margin:0 0 1px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:900;text-shadow:0 1px 0 rgba(255,255,255,.5)}.gc.back .l.f{margin-top:5px}
-.gc.back .t{margin:0 0 4px;font-size:11.5px;line-height:1.2;font-weight:900;color:#0f171e;text-shadow:0 1px 0 rgba(255,255,255,.5)}.gc.back .t.s{margin:0 0 1px;font-size:11px;font-weight:700}.gc.back .t.p{margin:0 0 3px;font-size:9.5px;line-height:1.28;font-weight:700}.gc.back .t.h{margin:4px 0 0;font-size:9.5px;font-weight:700;opacity:.75}
+.gc.back .t{margin:0 0 4px;font-size:11.5px;line-height:1.2;font-weight:900;color:#0f171e;text-shadow:0 1px 0 rgba(255,255,255,.5)}.gc.back .t.s{margin:0 0 1px;font-size:11px;font-weight:700}.gc.back .t.p{margin:0 0 3px;font-size:9.5px;line-height:1.28;font-weight:700}.gc.back .hr{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.gc.back .t.h.c{font-weight:900;opacity:.9;white-space:nowrap}.gc.back .t.h{margin:4px 0 0;font-size:9.5px;font-weight:700;opacity:.75}
 @media(max-height:830px){#pres .gc{aspect-ratio:1.68/1}}
 #pres .pcard{background:linear-gradient(135deg,#1a2a3b 0%,#16222f 60%,#0f171e 100%);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:16px 18px;margin:14px 0;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #pres .pcard small{display:block;color:rgba(255,255,255,.78);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
@@ -240,9 +241,10 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   bk.appendChild(d('l','How to use it'));['1. Tap Redeem.','2. Pick the restaurant and type how much.','3. Tap Send and show the cashier the confirmation.'].forEach(function(x){bk.appendChild(d('t s',x))});
   bk.appendChild(d('l f','The fine print'));
   ['No cash value. Restaurant Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Restaurant Rewards and gives them away. They are never sold.','Each restaurant decides, and can change at any time, whether it accepts them. A restaurant that is on the list above accepts them now. A restaurant that is not on the list does not accept them. Use them while you can.'].forEach(function(x){bk.appendChild(d('t p',x))});
-  bk.appendChild(d('t h','Tap the card to flip it back.'));
+  var hr=d('hr');hr.appendChild(d('t h','Tap the card to flip it back.'));hr.appendChild(d('t h c','Design by keytechnologies.si'));bk.appendChild(hr);
   b.appendChild(bk);fi.appendChild(b);wr.appendChild(fi);
   var tg=function(){var on=wr.classList.toggle('on');wr.setAttribute('aria-pressed',String(on));tick()};wr.addEventListener('click',tg);wr.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();tg()}});return wr}
+ function credit(){var p=document.createElement('p');p.className='kt';p.appendChild(document.createTextNode('Design by '));var a=document.createElement('a');a.href='https://keytechnologies.si/';a.textContent='keytechnologies.si';a.target='_blank';a.rel='noopener';p.appendChild(a);return p}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
@@ -310,7 +312,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
    if(a===null||a<=0){say2('Please type a whole number, like 100',true);inp.focus();return}
    if(a>have){say2(w.name+' only has '+fmt(have)+'. Please type a smaller amount.',true);return}
    var to=rs[cur],ent={id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name,status:'pending'};S.entries.push(ent);save();chime();receipt(ent,id)});
-  $('rdm').classList.remove('hide');$('rdm').scrollTop=0}
+  rc.appendChild(credit());$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
 
  function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
  function cleanNote(n){return String(n||'').replace(/\s*\(Shane[^)]*\)/,'').trim()}
@@ -321,7 +323,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   var tb=el('div','rtab');rows.forEach(function(kv){var r=el('div','rrow');r.appendChild(el('small',null,kv[0]));r.appendChild(el('b',kv[0]==='Confirmation'?'conf':null,kv[1]));tb.appendChild(r)});dn.appendChild(tb);
   dn.appendChild(el('p','cash',stt==='pending'?'The credit is on hold. '+wname(e.to)+' confirms it with their PIN.':(stt==='declined'?'The credit stays with '+wname(e.from)+'.':'Show this screen to the cashier.')));
   if(stt==='pending'&&!DBM){var cb=el('button','send','Confirm (practice)');cb.type='button';cb.addEventListener('click',function(){e.status='confirmed';save();chime();receipt(e,backId)});dn.appendChild(cb);var db2=el('button','more','Decline (practice)');db2.type='button';db2.addEventListener('click',function(){e.status='declined';save();receipt(e,backId)});dn.appendChild(db2)}
-  var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
+  var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);dn.appendChild(credit());rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
   var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,false,false):flipCard(w));presId=id;if(w.type==='Restaurant'){var on=accepts(w.id),ar=el('div','accrow');ar.appendChild(el('span',null,'Accepting Restaurant Rewards: '+(on?'On':'Off')));if(!DBM){var tg=el('button','acc'+(on?' on':''),on?'Turn off':'Turn on');tg.type='button';tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id)});ar.appendChild(tg)}else ar.appendChild(el('small',null,'The restaurant controls this switch.'));pc.appendChild(ar)}
   if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
@@ -329,7 +331,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
    if(inn){if(!e.from)t='Opening balance';else if(isPay(e))t='Payment from '+wname(e.from);else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):'Sent to '+wname(e.to)}
    if(nt&&!isPay(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;if(stTxt(e))sub+=' \u00b7 '+stTxt(e);rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});
   rows.reverse();var lim=canR?3:(id==='treasury'?7:5);var draw=function(list){ul.innerHTML='';list.forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var dc=r.e.status==='declined',a=el('span','a'+(r.inn&&!dc?' in':''),(dc||id==='treasury'&&!r.inn?'':(r.inn?'+':'\u2212'))+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);if(isPay(r.e)){li.className='tap';li.setAttribute('role','button');li.setAttribute('tabindex','0');var open=function(){receipt(r.e,id)};li.addEventListener('click',open);li.addEventListener('keydown',function(ev){if(ev.key==='Enter')open()})}ul.appendChild(li)})};draw(rows.slice(0,lim));pc.appendChild(ul);if(rows.length>lim){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){draw(rows);mb.remove()});pc.appendChild(mb)}
-  $('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}
+  pc.appendChild(credit());$('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}
  $('lock').addEventListener('click',function(){RR.signOut();location.reload()});
  $('showAll').addEventListener('click',function(){sel='all';paint()});
  function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -342,5 +344,6 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  if(RR.signedIn()&&RR.email()===RR.TREASURER.email)enterDb();else start();
 })();
 </script>
+<p class="ktcredit" style="text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">keytechnologies.si</a></p>
 </body>
 </html>
