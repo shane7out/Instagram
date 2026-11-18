@@ -9,7 +9,7 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 SITE = os.path.join(ROOT, 'sites/key-technologies')
 
 CSS = r'''
-:root{--bg:#0f171e;--card:#1b2735;--line:#4a5d72;--ink:#ffffff;--key:#00a8e1;--key2:#7fd8f7;--good:#5fe49a}
+:root{--bg:#0f171e;--card:#1b2735;--line:#4a5d72;--ink:#ffffff;--key:#00a8e1;--key2:#7fd8f7;--good:#7fd8f7}
 *{box-sizing:border-box}
 html{font-size:100%%;-webkit-text-size-adjust:100%%}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 21px/1.45 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
@@ -31,8 +31,6 @@ p{margin:0 0 12px;color:#e9f1f8}
 .wallet.small .num{font-size:52px}
 .cust{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 18px;margin:10px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
 .cust b{font-size:21px}.cust .n{font-size:40px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:17px;color:#e9f1f8;font-weight:700;margin-top:4px}
-.ticket{border:4px dashed var(--good);border-radius:20px;padding:12px 18px;margin:12px 0;background:rgba(95,228,154,.10)}
-.ticket b{display:block;font-size:22px;line-height:1.25}.ticket .code{font-size:38px;font-weight:900;letter-spacing:.1em;color:var(--good);margin-top:2px}
 .btn{display:block;width:100%%;min-height:62px;margin:14px 0 0;padding:12px 18px;border:0;border-radius:16px;background:var(--key);color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer}
 .btn:active{background:#33bce8}.btn:focus-visible{outline:5px solid #fff;outline-offset:4px}
 .btn.ghost{background:transparent;color:#fff;border:3px solid #7d90a5;min-height:54px;font-size:20px}
@@ -82,10 +80,10 @@ def page(c):
  function P(el,v){el.innerHTML=v+'<small>Restaurant Rewards</small>'}
  function show(n){cur=n;secs.forEach(function(s,i){s.classList.toggle('hide',i!==n-1)});[].forEach.call(dots,function(d,i){d.classList.toggle('on',i<n)});lab.textContent='Step '+n+' of 4';window.scrollTo(0,0);var h=secs[n-1].querySelector('h1');if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}}
  function reset(){R($('w2'),C.start);P($('c2'),0);R($('w3'),C.start-C.give);P($('c3'),C.give);if($('r3'))R($('r3'),C.restStart);
-  $('earn').classList.remove('hide');$('n2').classList.add('hide');$('m2').classList.add('hide');$('m3').classList.add('hide');$('redeem').classList.remove('hide');$('ticket').classList.add('hide');$('n3').classList.add('hide')}
+  $('earn').classList.remove('hide');$('n2').classList.add('hide');$('m2').classList.add('hide');$('m3').classList.add('hide');$('redeem').classList.remove('hide');$('n3').classList.add('hide')}
  [].forEach.call(document.querySelectorAll('[data-next]'),function(b){b.addEventListener('click',function(){show(cur+1)})});
  $('earn').addEventListener('click',function(){R($('w2'),C.start-C.give);P($('c2'),C.give);$('m2').textContent=C.m2;$('m2').classList.remove('hide');this.classList.add('hide');$('n2').classList.remove('hide');$('n2').focus()});
- $('redeem').addEventListener('click',function(){P($('c3'),0);R($('w3'),C.afterRedeemWallet);if($('r3'))R($('r3'),C.restStart+C.give);$('m3').textContent=C.m3;$('m3').classList.remove('hide');this.classList.add('hide');$('ticket').classList.remove('hide');$('n3').classList.remove('hide');$('n3').focus()});
+ $('redeem').addEventListener('click',function(){P($('c3'),0);R($('w3'),C.afterRedeemWallet);if($('r3'))R($('r3'),C.restStart+C.give);$('m3').textContent=C.m3;$('m3').classList.remove('hide');this.classList.add('hide');$('n3').classList.remove('hide');$('n3').focus()});
  $('again').addEventListener('click',function(){reset();show(1)});
  reset();
 })();
@@ -112,12 +110,11 @@ JOHNNY_BODY = '''<section id="s1">
 </section>
 <section id="s3" class="hide">
 <h1>The customer uses them here.</h1>
-<p class="say">Alex wants free Mozzarella Sticks. Alex taps Redeem.</p>
+<p class="say">Alex taps Redeem to use the rewards.</p>
 <div class="wallet"><small>Your wallet</small><div class="num" id="w3" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <p class="result hide pop" id="m3"></p>
 <button class="btn" type="button" id="redeem">Alex taps Redeem</button>
-<div class="ticket hide pop" id="ticket"><b>Free Mozzarella Sticks (5)</b>Show this code to your server:<div class="code">JM-4F7K</div></div>
 <button class="btn hide" type="button" data-next id="n3">Next</button>
 </section>
 <section id="s4" class="hide">
@@ -147,13 +144,12 @@ LVMPD_BODY = '''<section id="s1">
 </section>
 <section id="s3" class="hide">
 <h1>They use them at a restaurant.</h1>
-<p class="say">At Johnny Mac's, Alex taps Redeem for free Mozzarella Sticks.</p>
+<p class="say">At Johnny Mac's, Alex taps Redeem.</p>
 <div class="wallet small"><small>LVMPD wallet</small><div class="num" id="w3" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <div class="wallet small"><small>Johnny Mac's wallet</small><div class="num" id="r3" aria-live="polite"></div></div>
 <p class="result hide pop" id="m3"></p>
 <button class="btn" type="button" id="redeem">Alex taps Redeem</button>
-<div class="ticket hide pop" id="ticket"><b>Free Mozzarella Sticks (5)</b>Show this code to the server:<div class="code">JM-4F7K</div></div>
 <button class="btn hide" type="button" data-next id="n3">Next</button>
 </section>
 <section id="s4" class="hide">

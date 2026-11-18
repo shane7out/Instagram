@@ -6,7 +6,7 @@ Fuller demo with menu + map: https://keytechnologies.si/johnny-macs-demo/
 ## What the wallet demo shows (his words, kept simple)
 1. Johnny Mac's has a wallet. We put 500 Restaurant Rewards in it.
 2. A customer (Alex) eats there and earns 15 rewards from it (wallet 500 -> 485).
-3. Alex taps Redeem for free Mozzarella Sticks and gets a code to show the server. The 15 rewards go back into Johnny Mac's wallet (485 -> 500).
+3. Alex taps Redeem. The 15 rewards go back into Johnny Mac's wallet (485 -> 500).
 4. Nothing to install, he can see every reward used, customers come back.
 
 ## Say it in one breath
