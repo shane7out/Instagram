@@ -16,6 +16,8 @@ Prepared for Shane Christensen (Key Technologies.si, Las Vegas, NV). This is a p
 
 Nothing is sold. No customer pays anything for Restaurant Rewards today.
 
+**Expiration (added 2026-11-18, Shane):** Restaurant Rewards are good for 90 days from the day they are issued by the Treasury. The issue date stays with the credit wherever it goes (spent, gifted, paid to a restaurant), oldest credit is used first, and whatever is unused after 90 days expires and returns to the Treasury as a recorded move in the same ledger. The expiry date is shown on every wallet card and in the fine print on the back. Please advise on expiration disclosure rules for gift cards, certificates and loyalty credit in Nevada and federally, and whether returning expired credit to the issuer changes any analysis.
+
 ## 2. Questions we need answered
 
 ### A. Is one central supply handed out by Key Technologies an "issuer" problem?
