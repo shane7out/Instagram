@@ -23,6 +23,12 @@ for f in sorted(glob.glob(SITE + '**/*.html', recursive=True)):
     if '/thumbs/' in f: continue
     t = o = open(f, encoding='utf-8').read()
     t = CITY_LI.sub('', t)
+    # 5. Shorter desktop top menu (fewer choices, clearer next step): Home (the logo and the home button do that), Solutions, Results, Locations and Contact (the Book a Call button does that) are dropped from the desktop menu only; the phone menu and the footer keep every link.
+    def short_menu(m):
+        blk = m.group(0)
+        if '>Contact<' not in blk: return blk
+        return re.sub(r'[ \t]*<li><a href="[^"]*">(?:Home|Solutions|Results|Locations|Contact)</a></li>[ \t]*\n?', '', blk)
+    t = re.sub(r'<ul class="nav-links">.*?</ul>', short_menu, t, flags=re.S)
     # the desktop top menu never carries the Languages item
     t = re.sub(r'<ul class="nav-links">.*?</ul>', lambda m: LANG_LI.sub('', m.group(0)), t, flags=re.S)
     def add_lang(m):
