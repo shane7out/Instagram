@@ -27,14 +27,24 @@ def flat(text,cx,y,size,ls):
 pearls=''.join(f'<circle cx="{50+42.3*math.cos(i*math.pi/36):.2f}" cy="{50+42.3*math.sin(i*math.pi/36):.2f}" r=".62" fill="url(#pearl)"/>' for i in range(72))
 rosette=''.join(f'<ellipse cx="50" cy="50" rx="23.5" ry="9.5" transform="rotate({i*7.5} 50 50)"/>' for i in range(24))
 rays=''.join(f'<line x1="50" y1="50" x2="{50+27*math.cos(i*math.pi/30):.2f}" y2="{50+27*math.sin(i*math.pi/30):.2f}"/>' for i in range(60))
-def leaf(cx,cy,ang,l=3.6,w=1.5): return f'<path d="M0 0Q{l/2} {-w} {l} 0Q{l/2} {w} 0 0Z" transform="translate({cx} {cy}) rotate({ang})" fill="{K}"/>'
-sprig=lambda x,dirn:''.join(leaf(x+dirn*i*0.3,50+j*(2.2+i*1.1),(-90 if j<0 else 90)+dirn*(-35 if j<0 else 35)*-1+0,3.2,1.25) for i in range(0) for j in (-1,1))
-# laurel sprigs on the sides: three leaf pairs fanning up and down from the side diamonds
-def side(x,d):
+def laurel(a0,r=35.0):
+    """A small laurel sprig either side of a diamond, following the band. a0 = angle in degrees from north (clockwise)."""
     out=''
-    for k in range(3):
-        out+=leaf(x,50-1.8-k*2.7,-70-d*18+ (0 if d>0 else 0),3.4,1.2)
-        out+=leaf(x,50+1.8+k*2.7,70+d*18,3.4,1.2)
+    for sgn in (1,-1):
+        # stem
+        a1=math.radians(a0+sgn*3.2);a2=math.radians(a0+sgn*19)
+        x1,y1=50+r*math.sin(a1),50-r*math.cos(a1);x2,y2=50+r*math.sin(a2),50-r*math.cos(a2)
+        out+=f'<path d="M{x1:.2f} {y1:.2f}A{r} {r} 0 0 {1 if sgn>0 else 0} {x2:.2f} {y2:.2f}" fill="none" stroke="{K}" stroke-width=".45"/>'
+        for k in range(4):
+            a=math.radians(a0+sgn*(5+k*4.4));px,py=50+r*math.sin(a),50-r*math.cos(a)
+            tx,ty=math.cos(a)*sgn,math.sin(a)*sgn;nx,ny=math.sin(a),-math.cos(a)
+            for side in (1,-1):
+                ux=math.cos(math.radians(38))*tx+side*math.sin(math.radians(38))*nx
+                uy=math.cos(math.radians(38))*ty+side*math.sin(math.radians(38))*ny
+                L=3.3-k*.25;w=1.15
+                out+=f'<path d="M0 0Q{L/2:.2f} {-w} {L:.2f} 0Q{L/2:.2f} {w} 0 0Z" transform="translate({px:.2f} {py:.2f}) rotate({math.degrees(math.atan2(uy,ux)):.1f})" fill="{K}"/>'
+    cx,cy=50+r*math.sin(math.radians(a0)),50-r*math.cos(math.radians(a0))
+    out+=f'<rect x="{cx-1.5:.2f}" y="{cy-1.5:.2f}" width="3" height="3" fill="{K}" transform="rotate(45 {cx:.2f} {cy:.2f})"/>'
     return out
 svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Restaurant Rewards (RR)">
 <title>Restaurant Rewards (RR)</title>
@@ -62,8 +72,7 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <path d="{arc_text("RESTAURANT",32.7,7.6,1.35,True)}"/>
 <path d="{arc_text("REWARDS",38.1,7.6,1.8,False)}"/>
 </g>
-{side(10.9,1)}{side(89.1,-1)}
-<rect x="9.4" y="48.6" width="3" height="3" fill="{K}" transform="rotate(45 10.9 50)"/><rect x="87.6" y="48.6" width="3" height="3" fill="{K}" transform="rotate(45 89.1 50)"/>
+{laurel(270)}{laurel(90)}
 <circle cx="50" cy="50" r="28.6" fill="url(#ring)"/>
 <circle cx="50" cy="50" r="27.6" fill="url(#enamel)"/>
 <g clip-path="url(#disc)"><g fill="none" stroke="#e8c25c" stroke-width=".22" stroke-opacity=".22">{rosette}</g><g stroke="#e8c25c" stroke-width=".14" stroke-opacity=".15">{rays}</g></g>
