@@ -187,3 +187,5 @@ Last updated 2026-11-05. Nothing here is urgent except item 1.
 115. RAISED, NOT INDENTED (2026-11-18, Shane: "embossed, not indented"). Card letters are now RAISED: light edge top-left, dark-gold edge bottom-right, plus a soft drop shadow underneath (before it was the reverse, which reads as pressed-in). Same CSS in the Treasury, cards.html and app.html.
 
 116. CARD FULL WIDTH IN THE WALLET VIEW (2026-11-18, Shane: bigger so it lines up with the transactions). The gold card in "Show this wallet" now spans the same width as the Activity list (left and right edges match at 375, 390 and 430 px phones); the transactions start in the first screen. Options A (black letters) and B (gold with thin black edge) were shown as pictures only and are NOT live; Shane has not picked.
+
+117. BLACK RAISED LETTERS ON THE GOLD CARD (2026-11-18, Shane chose option A: "definitely black letters, the only way it will pop"). All gold-card text is now near-black (#0f171e) and raised (light edge top-left, soft shade underneath); chip and rule stay gold. Same CSS in the Treasury, cards.html and app.html. Option B is discarded.
