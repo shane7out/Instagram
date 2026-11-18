@@ -7,7 +7,8 @@ ap=argparse.ArgumentParser()
 ap.add_argument('--sides',choices=['laurel','diamond'],default='laurel')
 ap.add_argument('--center',choices=['spirals','plain','rings','rays'],default='plain')
 ap.add_argument('--rule',type=int,default=0,help='1 = small rule and diamond under the RR')
-ap.add_argument('--rr',type=float,default=29,help='RR size')
+ap.add_argument('--rr',type=float,default=28,help='RR size')
+ap.add_argument('--track',type=float,default=3.0,help='space between the two R')
 ap.add_argument('--out',default='sites/key-technologies/brand/rr-seal-fancy.svg')
 A=ap.parse_args();PLAIN=A.sides=='diamond'
 from fontTools.ttLib import TTFont
@@ -68,9 +69,9 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <defs>
 <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset=".28" stop-color="#e9c35a"/><stop offset=".55" stop-color="#b78722"/><stop offset=".8" stop-color="#f0d27a"/><stop offset="1" stop-color="#9a6e14"/></linearGradient>
 <linearGradient id="face" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc8b"/><stop offset=".5" stop-color="#e2b947"/><stop offset="1" stop-color="#c8982e"/></linearGradient>
-<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#e8c25c"/><stop offset="1" stop-color="#b07f1c"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".35" stop-color="#f4cf4a"/><stop offset=".7" stop-color="#d9a420"/><stop offset="1" stop-color="#9a6a0c"/></linearGradient>
 <radialGradient id="pearl" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fffbe9"/><stop offset=".6" stop-color="#d9ad45"/><stop offset="1" stop-color="#8a5e0c"/></radialGradient>
-<radialGradient id="enamel" cx=".5" cy=".35" r=".75"><stop offset="0" stop-color="#26333f"/><stop offset="1" stop-color="#070b0f"/></radialGradient>
+<radialGradient id="enamel" cx=".5" cy=".35" r=".75"><stop offset="0" stop-color="#141c25"/><stop offset="1" stop-color="#05080b"/></radialGradient>
 <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".5"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
 <filter id="bev" x="-12%" y="-12%" width="124%" height="124%"><feGaussianBlur in="SourceAlpha" stdDeviation=".45" result="a"/><feOffset in="a" dx="-.9" dy="-1.1" result="ho"/><feComposite in="ho" in2="SourceAlpha" operator="out" result="h"/><feFlood flood-color="#fff" flood-opacity=".9"/><feComposite in2="h" operator="in" result="hc"/><feOffset in="a" dx="1" dy="1.2" result="so"/><feComposite in="so" in2="SourceAlpha" operator="out" result="s"/><feFlood flood-color="#3d2200" flood-opacity=".7"/><feComposite in2="s" operator="in" result="sc"/><feMerge><feMergeNode in="sc"/><feMergeNode in="hc"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id="rrb" x="-10%" y="-10%" width="120%" height="120%"><feOffset in="SourceAlpha" dx=".35" dy=".5" result="o"/><feGaussianBlur in="o" stdDeviation=".25" result="b"/><feFlood flood-color="#000" flood-opacity=".75"/><feComposite in2="b" operator="in" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -98,8 +99,7 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <g clip-path="url(#disc)">{CENTER}</g>
 <circle cx="50" cy="50" r="26.2" fill="none" stroke="#e8c25c" stroke-opacity=".8" stroke-width=".45"/>
 <circle cx="50" cy="50" r="24.8" fill="none" stroke="#e8c25c" stroke-opacity=".4" stroke-width=".25"/>
-<g filter="url(#rrb)"><path fill="url(#gold)" d="{flat("RR",50,50+A.rr*.34,A.rr,-.4)}"/></g>
+<g filter="url(#rrb)"><path fill="url(#gold)" stroke="#7a520a" stroke-width=".3" stroke-linejoin="round" d="{flat("RR",50,50+A.rr*.34,A.rr,A.track)}"/></g>
 {RULE}
-<circle cx="50" cy="50" r="49.2" fill="url(#sheen)" opacity=".55"/>
 </svg>'''
 open(A.out,'w').write(svg);print(len(svg),'bytes')
