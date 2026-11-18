@@ -209,7 +209,7 @@ def shell(c, body, ld_graph):
     <li><a href="index.html#faq">FAQ</a></li>
     <li><a href="rewards.html">Restaurant Rewards</a></li>
   </ul>
-  <a class="btn btn-primary" style="width:100%" href="index.html#lead-short">Explore My Options</a>
+  <a class="btn btn-primary" style="width:100%" href="index.html#lead-short">Get My Free Review</a>
 </div>
 <main id="main">
 {body}
