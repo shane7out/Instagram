@@ -25,6 +25,7 @@ CSS = r'''
 .demobar b{color:#fff}.demobar a{color:#9fd0ff}
 #rewards{--bg:#0f171e;--card:#232f3e;--line:#37475a;--ink:#f6f8fb;--mute:#aab9ca;--mint:#4fc8f0;--gold:#00a8e1;--green:#00a8e1;--r:14px;background:#0f171e;color:#f6f8fb;font-family:Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;border-top:1px solid #37475a;border-bottom:1px solid #37475a}
 #rewards h2,#rewards h3,#rewards b{font-family:inherit}#rewards h2{font-weight:900}
+#where{background:#0f171e;padding-top:8px}
 #rewards .btn,#rewards .offer button{color:#0f171e;font-family:inherit}#rewards .btn.ghost{color:#f6f8fb;background:transparent;border-color:#637283}
 #rewards .offer button:disabled{background:transparent;color:#8c9bab;border-color:#37475a}
 .byKey{display:flex;align-items:center;gap:8px;margin:0 0 14px;color:#aab9ca;font-size:13.5px}.byKey b{color:#4fc8f0}
@@ -79,7 +80,8 @@ SECTION = '''<section id="rewards"><div class="wrap">
 </div></section>
 
 '''
-sub('<section id="reviews">', SECTION + '<section id="reviews">')
+WHERE = '<section id="where"><div class="wrap"><div data-rr-where></div></div></section>\n<script src="/key-platform/rr-map.js"></script>\n\n'
+sub('<section id="reviews">', SECTION + WHERE + '<section id="reviews">')
 
 JS = r'''
 (function(){

@@ -79,9 +79,10 @@ def page(i, s):
 <div class="sectionhead"><div><span class="eyebrow">Try it</span><h2>%s</h2></div></div>
 <p class="lead">%s</p>
 <div id="widget"></div>
+%s
 <div class="two-columns" style="margin-top:22px"><div class="panel"><h3>What you get</h3><ul style="margin:10px 0 0;padding-left:18px">%s</ul></div>
 <div class="panel"><h3>About this demo</h3><p>Everything here is fictional sample data that runs in your browser. Nothing is sent, posted, booked or charged, and nothing is connected to a real system. A real project starts with your own information and a review of what is safe to automate.</p><div class="action-row">%s%s</div></div></div>
-%s</section>''' % (label, esc(title), esc(tag), esc(head), esc(how), ''.join('<li>%s</li>' % esc(b) for b in bullets), cta, ghost, nav)
+%s</section>''' % (label, esc(title), esc(tag), esc(head), esc(how), ('<div data-rr-where style="margin-top:26px"></div><script src="../rr-map.js"></script>' if num == 'P' else ''), ''.join('<li>%s</li>' % esc(b) for b in bullets), cta, ghost, nav)
     root = '../../'
     return '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
