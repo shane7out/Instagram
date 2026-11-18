@@ -27,7 +27,7 @@ Status: **inventory and plan only (2026-11-02). Nothing imported, nothing deploy
 | Auth / roles | **Client-side PINs** (owner, co-editors, a limited guest). The owner PIN hash is in page source; sessions are browser storage. There is no server-enforced role model and no tenant concept. A Firebase Auth owner login is in progress (`owner-auth`, `owner-setup.sh`): it is blocked on the free plan until Email/Password is enabled in the console, and it only helps the LVR sections' rules. |
 | Python | Repo root (`dashboard.py`, `bot_worker.py`, `database_models.py`, Railway/Streamlit): the separate Instagram-automation product (Postgres). Not connected to the web properties. |
 | Other product line | LVR Points (`lvr_rewards`, `lvr_points`, `my-account.html`, `rewards.html`): a separate program with its own referral rules. **Do not merge it with the Sales Partner Network or its commissions.** |
-| Logo | Inline SVG blue key in each page header (`#168fff`), plus `apple-touch-icon.png` / `og-image.png`. There is no standalone official vector file in the repo; locate the owner's original before using any screenshot-derived icon. |
+| Logo | Inline SVG blue key in each page header (`#168fff`), plus `apple-touch-icon.png` / `og-image-2.png`. There is no standalone official vector file in the repo; locate the owner's original before using any screenshot-derived icon. |
 | Design tokens | `index.html` already uses the near-black navy / blue palette the handoff describes. LVR Points pages additionally use **gold/yellow/red** accents (wheel, tags, pills). |
 
 ## 2. Overlaps and route/entity map

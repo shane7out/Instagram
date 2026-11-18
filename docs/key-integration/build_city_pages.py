@@ -109,7 +109,7 @@ def shell(c, body, ld_graph):
 <link rel="stylesheet" href="/fonts/lato.css">
 <link rel="stylesheet" href="key-platform/site-base.css"><link rel="stylesheet" href="key-platform/site-extra.css">
 <link rel="canonical" href="{url}">
-<meta property="og:type" content="website"><meta property="og:title" content="{esc(c['title'])}"><meta property="og:description" content="{esc(c['desc'])}"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og-image.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:title" content="{esc(c['title'])}"><meta property="og:description" content="{esc(c['desc'])}"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og-image-2.png"><meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{ld}</script>
 <script>document.documentElement.classList.add("js");</script>
 <style>

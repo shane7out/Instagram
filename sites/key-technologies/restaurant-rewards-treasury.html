@@ -172,8 +172,9 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function openW(name,type){var id='w'+(S.nextW++),t=now();S.wallets.push({id:id,name:name,type:type,t:t,rank:nextRank()});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
  /* Instructions from Shane, applied once per browser when the page opens (so every browser shows the same starting position). */
  var INSTR=[{id:'2026-11-18-a',from:'treasury',to:"Vanilla Rice's Hibachi House",amt:10000,note:'Starting credit (Shane, Nov 18)'},{id:'2026-11-18-b',from:'treasury',to:"Johnny Mac's",amt:10000,note:'Starting credit (Shane, Nov 18)'},
-  {id:'2026-11-18-c',create:{name:'Thin Blue 702',type:'Organization'}},{id:'2026-11-18-d',from:'treasury',to:'Thin Blue 702',amt:500000,note:'Starting credit (Shane, Nov 18)'}];
- function applyInstr(){S.applied=S.applied||[];S.wallets.forEach(function(w){if(w.name==='LVMPD')w.name='Thin Blue 702'});INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;if(x.create){if(!find(x.create.name))openW(x.create.name,x.create.type);S.applied.push(x.id);return}var to=find(x.to);if(!to||bal(x.from)<x.amt)return;S.entries.push({id:S.next++,t:now(),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)})}
+  {id:'2026-11-18-c',create:{name:'Thin Blue 702',type:'Organization'}},{id:'2026-11-18-d',from:'treasury',to:'Thin Blue 702',amt:500000,note:'Starting credit (Shane, Nov 18)'},
+  {id:'2026-11-18-e',create:{name:'PJ',type:'Customer'}},{id:'2026-11-18-f',from:'treasury',to:'PJ',amt:10000,note:'Starting credit (Shane, Nov 18)'}];
+ function applyInstr(){S.applied=S.applied||[];S.wallets.forEach(function(w){if(w.name==='LVMPD')w.name='Thin Blue 702'});INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;if(x.create){if(!find(x.create.name))openW(x.create.name,x.create.type);S.applied.push(x.id);return}var to=find(x.to);if(!to||bal(x.from)<x.amt)return;if(DBM&&S.entries.some(function(e){return e.to===to&&e.note===x.note&&e.from===x.from})){S.applied.push(x.id);return}S.entries.push({id:S.next++,t:now(),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)})}
  function find(n){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].name.toLowerCase()===n.toLowerCase())return S.wallets[i].id;return null}
  function seed(){if(S.seeded2)return;var v=find("Vanilla Rice's Hibachi House")||openW("Vanilla Rice's Hibachi House",'Restaurant'),j=find("Johnny Mac's")||openW("Johnny Mac's",'Restaurant');
   var others=S.wallets.filter(function(w){return w.id!=='treasury'&&w.id!==v&&w.id!==j}).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t});
@@ -201,7 +202,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
    if(r.status===401||r.status===403){RR.signOut();DBM=false;start('The database did not accept that PIN account. Try again, or use the practice version.');return}
    if(r.status!==200){DBM=false;start('Could not reach the database. Check your connection and try again, or use the practice version.');return}
    var logos={};try{logos=JSON.parse(localStorage.getItem('rrLogosV1'))||{}}catch(e){}
-   if(r.json&&r.json.meta){S=fromRem(r.json);hasMeta=true;S.logos=logos;markSynced();sigPrev=sig(S)}
+   if(r.json&&r.json.meta){S=fromRem(r.json);hasMeta=true;S.logos=logos;markSynced();sigPrev=sig(S);applyInstr()}
    else{var c=localCandidate();S=c||fresh();if(!c){S.seeded2=false}S.logos=c&&c.logos?c.logos:logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Restaurant Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';

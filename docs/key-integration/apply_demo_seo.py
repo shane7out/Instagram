@@ -122,7 +122,7 @@ def head_block(path, title, desc, extra_graph):
     if path != 'key-platform/': crumbs.append((title.split(' | ')[0], url))
     graph.append({"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]})
     ld = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False)
-    return (H_START + '\n<link rel="canonical" href="%s">\n<meta property="og:type" content="website"><meta property="og:title" content="%s"><meta property="og:description" content="%s"><meta property="og:url" content="%s"><meta property="og:image" content="%sog-image.png"><meta name="twitter:card" content="summary_large_image">\n<script type="application/ld+json">%s</script>\n' % (url, esc(title), esc(desc), url, BASE, ld) + H_END)
+    return (H_START + '\n<link rel="canonical" href="%s">\n<meta property="og:type" content="website"><meta property="og:title" content="%s"><meta property="og:description" content="%s"><meta property="og:url" content="%s"><meta property="og:image" content="%sog-image-2.png"><meta name="twitter:card" content="summary_large_image">\n<script type="application/ld+json">%s</script>\n' % (url, esc(title), esc(desc), url, BASE, ld) + H_END)
 
 def body_block(cfg):
     steps = ''.join('<li>%s</li>' % esc(x) for x in cfg['steps'])

@@ -26,7 +26,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
 <link rel="stylesheet" href="/fonts/lato.css">
 <link rel="stylesheet" href="../key-platform/site-base.css">
 <link rel="canonical" href="{url}">
-<meta property="og:type" content="article"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og-image.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="article"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og-image-2.png"><meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{ld}</script>
 <style>
   .guide{{max-width:760px;margin:0 auto;padding-top:34px;padding-bottom:64px;}}
@@ -152,7 +152,7 @@ def graph(title, desc, path, headline, faq, crumb_names, date=None):
     date = date or DATE
     url = BASE + path
     g = [{"@type": "Article", "headline": headline, "description": desc, "mainEntityOfPage": url, "url": url,
-          "datePublished": date, "dateModified": date, "image": BASE + "og-image.png",
+          "datePublished": date, "dateModified": date, "image": BASE + "og-image-2.png",
           "author": {"@type": "Organization", "name": "Key Technologies", "url": BASE},
           "publisher": {"@type": "Organization", "name": "Key Technologies", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "icon-512.png"}}},
          {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumb_names)]}]
