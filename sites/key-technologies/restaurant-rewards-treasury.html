@@ -102,6 +102,21 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres h2{text-align:center;font-size:22px;margin:6px 0 2px}
 #pres .gc{max-width:none;width:100%;margin:10px 0 4px;aspect-ratio:1.58/1}
 #pres .kt,#rdm .kt{text-align:center;margin:18px 0 6px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.7)}#pres .kt a,#rdm .kt a{color:inherit;text-decoration:underline}
+#pres .gblock{margin:16px 0 0}#pres .gc.gift{aspect-ratio:2.05/1;margin:0}
+.gc.gift{display:block;padding:15px 18px;aspect-ratio:2.05/1}.gc.gift::after{display:none}.gc.gift.mini{aspect-ratio:auto;min-height:150px}
+.gc.gift .gb{font-weight:900;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#0f171e;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.3);max-width:62%;line-height:1.25}
+.gc.gift .gf{margin-top:7px;font-size:12px;font-weight:700;color:#0f171e;max-width:60%;text-shadow:0 1px 0 rgba(255,255,255,.5)}.gc.gift .gf b{display:block;font-size:18px;line-height:1.15;font-weight:900;text-shadow:-1px -1px 0 rgba(255,255,255,.7),1px 1px 0 rgba(60,35,0,.3)}
+.gc.gift .ga{margin-top:6px;font-weight:900;font-size:40px;line-height:1;color:#0f171e;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35),0 2px 3px rgba(60,35,0,.25)}.gc.gift .ga small{font-size:14px;letter-spacing:.08em}
+.gc.gift .gn{margin-top:7px;font-size:11px;font-weight:700;color:#0f171e;max-width:58%;line-height:1.25;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.gc.gift .rib{position:absolute;top:0;bottom:0;right:42px;width:36px;background:linear-gradient(90deg,#0a2036,#0f3b63 28%,#1b8fcf 50%,#0f3b63 72%,#0a2036);box-shadow:0 0 0 1px rgba(255,255,255,.55),inset 0 0 0 2px rgba(255,255,255,.16),8px 0 14px rgba(0,0,0,.16),-8px 0 14px rgba(0,0,0,.16);overflow:hidden;z-index:1}
+.gc.gift .rib::after{content:"";position:absolute;left:-60%;right:-60%;height:34%;top:-40%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.7),transparent);transform:rotate(0);animation:ribglint 3.6s ease-in-out infinite}@keyframes ribglint{0%,45%{top:-40%}100%{top:130%}}
+.gc.gift .bow{position:absolute;right:20px;top:-6px;width:78px;height:62px;z-index:2;filter:drop-shadow(0 3px 3px rgba(0,0,0,.3));animation:bowpop .8s cubic-bezier(.2,1.5,.4,1) .5s both;transform-origin:50% 70%}.gc.gift .bow svg{display:block;width:100%;height:100%}@keyframes bowpop{0%{transform:scale(0) rotate(-30deg)}100%{transform:none}}
+.gc.gift .gck{position:absolute;right:26px;top:50%;margin-top:-26px;width:52px;height:52px;border-radius:50%;background:#0f3b63;color:#fff;font:900 28px/52px Lato,sans-serif;text-align:center;box-shadow:0 0 0 2px #cfeaff,0 4px 10px rgba(0,0,0,.3);z-index:2}
+.gc.gift.given{filter:saturate(.8) brightness(.96)}
+#pres .givebtn{display:block;width:100%;min-height:54px;margin:12px 0 0;border:0;border-radius:999px;background:#00a8e1;color:#0f171e;font:900 19px Lato,system-ui,sans-serif;letter-spacing:.02em;cursor:pointer;box-shadow:0 6px 18px rgba(0,168,225,.35);transition:transform .15s}#pres .givebtn:active{transform:scale(.98)}
+#rdm .gwarn{margin:12px 0 4px;color:#fff;font-weight:700;font-size:15px;line-height:1.35;background:rgba(0,168,225,.14);border:1px solid rgba(0,168,225,.55);border-radius:12px;padding:10px 12px}#rdm .gch{margin-top:10px;flex-wrap:wrap}#rdm .gch button{flex:0 1 auto;padding:0 14px}
+.giftshelf{margin-top:10px}.giftshelf .gline{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.14);font-size:15px}.giftshelf .gline span{color:var(--dim);text-align:right}
+@media (prefers-reduced-motion:reduce){.gc.gift .rib::after,.gc.gift .bow{animation:none!important}}
 #pres .accrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 0;padding:10px 14px;background:#16222f;border:1px solid rgba(255,255,255,.22);border-radius:14px;font-weight:700;font-size:15px}#pres .accrow small{font-size:12px;color:rgba(255,255,255,.7);font-weight:400}#pres .accrow .acc{border:1.5px solid rgba(0,168,225,.7);background:rgba(0,168,225,.16);color:#fff;border-radius:999px;font:800 14px Lato,system-ui,sans-serif;padding:7px 14px;cursor:pointer}
 #pres .flip{perspective:1100px;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:20px;position:relative}#pres .flip:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 #pres .flip .fl{transform-style:preserve-3d;animation:floaty 7s ease-in-out infinite;will-change:transform}
@@ -182,6 +197,18 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  </div>
 </div>
 
+<div class="box" id="giftbox">
+ <h2>Send a gift to give</h2>
+ <p style="margin:0 0 6px">A gift is credit that is <b>not</b> in the person's wallet. It sits on their screen as a gift card, and they can give all of it to one person. It can't be split.</p>
+ <div class="two" style="gap:10px">
+  <div><label for="gwho">Gift for</label><select id="gwho"></select></div>
+  <div><label for="gamt">Amount (RR)</label><input id="gamt" inputmode="numeric" autocomplete="off" placeholder="Example: 100"></div>
+ </div>
+ <button class="btn" id="gcreate" type="button">Send the gift</button>
+ <div class="msg" id="gmsg" role="alert"></div>
+ <div class="giftshelf" id="giftshelf"></div>
+</div>
+
 <div class="box">
  <h2 id="lhead">Every move</h2>
  <div class="logos hide" id="logoBar"><span id="logoList" style="display:contents"></span><label class="btn ghost" style="display:inline-block;cursor:pointer;margin:0">Add a logo<input id="logoIn" type="file" accept="image/*" style="display:none"></label><span class="fine" style="margin:0">Stays in this browser only.</span><button class="btn ghost" id="present" type="button">Show this wallet</button></div>
@@ -207,7 +234,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  var INSTR=[{id:'2026-11-18-a',from:'treasury',to:"Vanilla Rice's Hibachi House",amt:10000,note:'Starting credit (Shane, Nov 18)'},{id:'2026-11-18-b',from:'treasury',to:"Johnny Mac's",amt:10000,note:'Starting credit (Shane, Nov 18)'},
   {id:'2026-11-18-c',create:{name:'Thin Blue 702',type:'Organization'}},{id:'2026-11-18-d',from:'treasury',to:'Thin Blue 702',amt:500000,note:'Starting credit (Shane, Nov 18)'},
   {id:'2026-11-18-e',create:{name:'PJ',type:'Customer'}},{id:'2026-11-18-f',from:'treasury',to:'PJ',amt:10000,note:'Starting credit (Shane, Nov 18)'},
-  {id:'2026-11-18-g',create:{name:'Smizzy',type:'Customer'}},{id:'2026-11-18-h',from:'treasury',to:'Smizzy',amt:10000,note:'Starting credit (Shane, Nov 18)'}];
+  {id:'2026-11-18-g',create:{name:'Smizzy',type:'Customer'}},{id:'2026-11-18-h',from:'treasury',to:'Smizzy',amt:10000,note:'Starting credit (Shane, Nov 18)'},
+  {id:'2026-11-18-i',create:{name:'Gift for Thin Blue 702',type:'Other'}},{id:'2026-11-18-j',from:'treasury',to:'Gift for Thin Blue 702',amt:10000,note:'Gift to give (Shane, Nov 18)'}];
  function applyInstr(){S.applied=S.applied||[];S.wallets.forEach(function(w){if(w.name==='LVMPD')w.name='Thin Blue 702'});INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;if(x.create){if(!find(x.create.name))openW(x.create.name,x.create.type);S.applied.push(x.id);return}var to=find(x.to);if(!to||bal(x.from)<x.amt)return;if(DBM&&S.entries.some(function(e){return e.to===to&&e.note===x.note&&e.from===x.from})){S.applied.push(x.id);return}S.entries.push({id:S.next++,t:now(),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)})}
  function find(n){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].name.toLowerCase()===n.toLowerCase())return S.wallets[i].id;return null}
  function seed(){if(S.seeded2)return;var v=find("Vanilla Rice's Hibachi House")||openW("Vanilla Rice's Hibachi House",'Restaurant'),j=find("Johnny Mac's")||openW("Johnny Mac's",'Restaurant');
@@ -254,7 +282,13 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function stTxt(e){return e.status==='pending'?'Waiting for confirmation':(e.status==='declined'?'Declined':'')}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id&&credited(e))b+=e.amt;if(e.from===id&&debited(e))b-=e.amt});return b}
  function accepts(id){return !(S.accept&&S.accept[id]===false)}
- function sw(){return S.wallets.slice().sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
+ function isGiftW(w){return !!w&&w.type==='Other'&&/^Gift for /.test(w.name)}
+ function giftHolder(w){return w.name.slice(9)}
+ function wById(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i];return null}
+ function isGiftE(e){return /^Gift from /.test(e.note||'')}
+ function giftsFor(w){return S.wallets.filter(function(g){return isGiftW(g)&&giftHolder(g).toLowerCase()===w.name.toLowerCase()})}
+ function giftOut(g){for(var i=S.entries.length-1;i>=0;i--){var e=S.entries[i];if(e.from===g.id&&isGiftE(e))return e}return null}
+ function sw(){return S.wallets.filter(function(w){return !isGiftW(w)}).sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
  function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
  function numFor(w){var r=w.id==='treasury'?0:(w.rank||9);return 'RR 05'+('0'+(10+r)).slice(-2)+' 0001 '+('000'+(42+r*65)).slice(-4)}
  function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','Restaurant Rewards'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}g.appendChild(d('nm',w.id==='treasury'?'Treasury':w.name));var cr=d('crow');cr.appendChild(d('chip'));cr.appendChild(d('rrmark','RR'));g.appendChild(cr);g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.textContent=w.id==='treasury'?'Treasury balance':'Balance';var b2=document.createElement('b');b2.textContent=fmt(bal(w.id));var un=document.createElement('span');un.className='un';un.textContent=' RR';b2.appendChild(un);bb.appendChild(sm2);bb.appendChild(b2);g.appendChild(bb);if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
@@ -300,6 +334,17 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   wr.addEventListener('pointerleave',function(){wr.classList.remove('tilt');fl.style.transform=''});
   applyZ();setTimeout(upd,60);return wr}
  function credit(){var p=document.createElement('p');p.className='kt';p.appendChild(document.createTextNode('Design by '));var a=document.createElement('a');a.href='https://keytechnologies.si/';a.textContent='keytechnologies.si';a.target='_blank';a.rel='noopener';p.appendChild(a);return p}
+ /* A gift to give: a card that is NOT part of the holder's balance. It goes to exactly one person, in one piece. */
+ function giftCard(g,mini){var gv=giftOut(g),amt=gv?gv.amt:bal(g.id),holder=giftHolder(g),c=document.createElement('div');c.className='gc gift'+(gv?' given':'')+(mini?' mini':'');
+  var d=function(k,t){var e=document.createElement('div');e.className=k;if(t!=null)e.textContent=t;return e};
+  c.appendChild(d('gb',gv?'Restaurant Rewards \u00b7 Gift given':'Restaurant Rewards \u00b7 A gift to give'));
+  var gf=d('gf');gf.appendChild(document.createTextNode(gv?'Given to':'A gift for'));var nb=document.createElement('b');nb.textContent=gv?wname(gv.to):holder;gf.appendChild(nb);c.appendChild(gf);
+  var ga=d('ga',fmt(amt));var un=document.createElement('small');un.textContent=' RR';ga.appendChild(un);c.appendChild(ga);
+  c.appendChild(d('gn',gv?fdate(gv.t):'Give it to one person. It can\u2019t be split.'));
+  if(!gv){c.appendChild(d('rib'));var bw=document.createElement('div');bw.className='bow';bw.innerHTML='<svg viewBox="0 0 76 60" aria-hidden="true"><path d="M38 36C22 38 5 31 5 17 5 6 21 3 38 32Z" fill="#0f3b63" stroke="#cfeaff" stroke-width="1.6"/><path d="M38 36C54 38 71 31 71 17 71 6 55 3 38 32Z" fill="#0f3b63" stroke="#cfeaff" stroke-width="1.6"/><path d="M38 36C30 38 17 33 14 21 12 13 22 10 38 32Z" fill="#00a8e1" opacity=".75"/><path d="M38 36C46 38 59 33 62 21 64 13 54 10 38 32Z" fill="#00a8e1" opacity=".75"/><path d="M33 40L24 58M43 40L52 58" stroke="#0f3b63" stroke-width="5" stroke-linecap="round"/><rect x="29" y="28" width="18" height="14" rx="5" fill="#0f3b63" stroke="#cfeaff" stroke-width="1.6"/></svg>';c.appendChild(bw)}
+  else{var ck=d('gck','\u2713');c.appendChild(ck)}
+  return c}
+ function giftBlock(g,backId){var w=document.createElement('div');w.className='gblock';w.appendChild(giftCard(g,false));if(!giftOut(g)&&bal(g.id)>0){var b=document.createElement('button');b.type='button';b.className='givebtn';b.textContent='Give this gift';b.addEventListener('click',function(){openGive(g.id,backId)});w.appendChild(b)}return w}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
@@ -310,6 +355,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   sw().forEach(function(w){var b=gcard(w,true,true);b.setAttribute('aria-pressed',String(sel===w.id));b.setAttribute('aria-label',w.name+', balance '+fmt(bal(w.id)));b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
   ['mfrom','mto'].forEach(function(id){var s=$(id),v=s.value;s.innerHTML='';sw().forEach(function(w){var o=el('option',null,(w.id==='treasury'?'':'#'+w.rank+' ')+w.name+' ('+fmt(bal(w.id))+')');o.value=w.id;s.appendChild(o)});if(v&&S.wallets.some(function(w){return w.id===v}))s.value=v});
   if(!$('mfrom').dataset.init){$('mfrom').value='treasury';$('mto').selectedIndex=Math.min(1,S.wallets.length-1);$('mfrom').dataset.init='1'}
+  var gs=$('gwho'),gv=gs.value;gs.innerHTML='';sw().filter(function(w){return w.id!=='treasury'}).forEach(function(w){var o=el('option',null,w.name);o.value=w.id;gs.appendChild(o)});if(gv&&wById(gv))gs.value=gv;
+  var shelf=$('giftshelf');shelf.innerHTML='';S.wallets.filter(isGiftW).forEach(function(g){var o=giftOut(g),r=el('div','gline');r.appendChild(el('b',null,giftHolder(g)));r.appendChild(el('span',null,o?'gave '+fmt(o.amt)+' RR to '+wname(o.to):'holding '+fmt(bal(g.id))+' RR to give'));shelf.appendChild(r)});
   var rows=$('rows');rows.innerHTML='';var list=S.entries.filter(function(e){return sel==='all'||e.from===sel||e.to===sel}).slice().reverse();
   $('lhead').textContent=sel==='all'?'Every move':'Statement: '+wname(sel);
   var lb=$('logoBar');lb.classList.toggle('hide',sel==='all');var ll=$('logoList');ll.innerHTML='';if(sel!=='all'){(S.logos&&S.logos[sel]||[]).forEach(function(u,i){var it=el('span','it'),im=el('img'),x=el('button',null,'\u00d7');im.src=u;im.alt='Logo';x.type='button';x.setAttribute('aria-label','Remove this logo');x.addEventListener('click',function(){S.logos[sel].splice(i,1);paint()});it.appendChild(im);it.appendChild(x);ll.appendChild(it)})}
@@ -327,6 +374,12 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   var id=openW(n,$('wtype').value);$('wname').value='';$('wstart').value='';
   if(a>0){S.entries.push({id:S.next++,t:now(),from:'treasury',to:id,amt:a,note:'Starting credit'});say('wmsg','Created "'+n+'" with '+fmt(a)+' Restaurant Rewards from the Treasury.')}else{say('wmsg','Created "'+n+'". It starts at 0.')}
   paint()});
+ $('gcreate').addEventListener('click',function(){var wid=$('gwho').value,a=parse($('gamt').value),w=wById(wid);
+  if(!w){say('gmsg','Pick who the gift is for.',true);return}
+  if(a===null||a<=0){say('gmsg','Please type a whole number, like 100.',true);$('gamt').focus();return}
+  if(a>bal('treasury')){say('gmsg','The Treasury only has '+fmt(bal('treasury'))+'.',true);return}
+  var gid=openW('Gift for '+w.name.slice(0,40),'Other');S.entries.push({id:S.next++,t:now(),from:'treasury',to:gid,amt:a,note:'Gift to give'});$('gamt').value='';
+  say('gmsg','Sent a gift of '+fmt(a)+' RR for '+w.name+'. It is not in their wallet; it shows as a gift card on their screen.');paint()});
  $('wname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('wcreate').click()}});
  function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
@@ -369,22 +422,42 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
    var to=rs[cur],ent={id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name,status:'pending'};S.entries.push(ent);save();chime();receipt(ent,id);burst()});
   rc.appendChild(credit());$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
 
+ function openGive(gid,backId){var g=wById(gid),holder=giftHolder(g),amt=bal(gid),rc=$('rc'),ask=false;ac();rc.innerHTML='';
+  var hd=el('div','rhead');hd.appendChild(el('h2',null,'Give your gift'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
+  rc.appendChild(giftCard(g,true));
+  rc.appendChild(el('p','gwarn','All '+fmt(amt)+' RR go to ONE person, in one piece. It can\u2019t be split or shared, and it can\u2019t be taken back.'));
+  rc.appendChild(el('label',null,'Who is this gift for?'));rc.lastChild.setAttribute('for','gname');
+  var inp=el('input');inp.id='gname';inp.maxLength=40;inp.setAttribute('autocomplete','off');inp.placeholder='Their name';rc.appendChild(inp);
+  var people=S.wallets.filter(function(w){return w.type==='Customer'&&!isGiftW(w)&&w.name.toLowerCase()!==holder.toLowerCase()}).slice(-6);
+  if(people.length){var ch=el('div','chips gch');people.forEach(function(w){var c=el('button',null,w.name);c.type='button';c.addEventListener('click',function(){inp.value=w.name;reset()});ch.appendChild(c)});rc.appendChild(ch)}
+  var msg=el('div','rmsg');msg.setAttribute('role','alert');
+  var go=el('button','send','Give '+fmt(amt)+' RR');go.type='button';rc.appendChild(go);var back2=el('button','more hide','Go back');back2.type='button';rc.appendChild(back2);rc.appendChild(msg);rc.appendChild(credit());
+  function nm(){return inp.value.replace(/\s+/g,' ').trim()}
+  function say2(t,err){msg.textContent=t;msg.className='rmsg'+(err?' err':'')}
+  function reset(){ask=false;back2.classList.add('hide');go.textContent=nm()?'Give '+fmt(amt)+' RR to '+nm():'Give '+fmt(amt)+' RR';say2('')}
+  inp.addEventListener('input',reset);back2.addEventListener('click',reset);
+  go.addEventListener('click',function(){var n=nm();if(!n){say2('Type the name of the person this gift is for.',true);inp.focus();return}
+   var exId=find(n),tw=exId&&wById(exId);if(tw&&(tw.type==='Restaurant'||tw.id==='treasury'||isGiftW(tw)||tw.name.toLowerCase()===holder.toLowerCase())){say2('A gift goes to a person, not to a restaurant, the Treasury or '+holder+'. Pick someone else.',true);return}
+   if(!ask){ask=true;go.textContent='Yes, give it to '+n;back2.classList.remove('hide');say2('Last check: all '+fmt(amt)+' RR go to '+n+'. This can\u2019t be undone.');return}
+   var rid=tw?tw.id:openW(n,'Customer'),ent={id:S.next++,t:now(),from:gid,to:rid,amt:bal(gid),note:'Gift from '+holder};S.entries.push(ent);save();chime();receipt(ent,backId);burst()});
+  $('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
  function cleanNote(n){return String(n||'').replace(/\s*\(Shane[^)]*\)/,'').trim()}
  function conf(e){var d=new Date(e.t);return 'RR-'+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+e.id).slice(-4)}
  function isPay(e){return !!e.from&&/^Redeemed at /.test(e.note||'')}
- function receipt(e,backId){curRc={e:e,b:backId};var rc=$('rc');rc.innerHTML='';var stt=e.status||'confirmed',dn=el('div','done');dn.appendChild(el('div','tick',stt==='pending'?'\u2026':(stt==='declined'?'\u2715':'\u2713')));dn.appendChild(el('h3',null,stt==='pending'?'Waiting for confirmation':(stt==='declined'?'Declined':'Paid')));dn.appendChild(el('div','ramt2',fmt(e.amt)+' RR'));dn.appendChild(el('p',null,'Restaurant Rewards'));
-  var rows=[['To',wname(e.to)],['From',wname(e.from)],['When',fdate(e.t)],['Confirmation',conf(e)]];if(stt==='pending')rows.push(['Status','Waiting for '+wname(e.to)]);if(stt==='declined')rows.push(['Status','Declined by '+wname(e.to)]);
+ function receipt(e,backId){curRc={e:e,b:backId};var rc=$('rc');rc.innerHTML='';var stt=e.status||'confirmed',dn=el('div','done');dn.appendChild(el('div','tick',stt==='pending'?'\u2026':(stt==='declined'?'\u2715':'\u2713')));dn.appendChild(el('h3',null,isGiftE(e)?'Gift given':(stt==='pending'?'Waiting for confirmation':(stt==='declined'?'Declined':'Paid'))));dn.appendChild(el('div','ramt2',fmt(e.amt)+' RR'));dn.appendChild(el('p',null,'Restaurant Rewards'));
+  var rows=[['To',wname(e.to)],['From',isGiftE(e)?giftHolder(wById(e.from)):wname(e.from)],['When',fdate(e.t)],['Confirmation',conf(e)]];if(stt==='pending')rows.push(['Status','Waiting for '+wname(e.to)]);if(stt==='declined')rows.push(['Status','Declined by '+wname(e.to)]);
   var tb=el('div','rtab');rows.forEach(function(kv){var r=el('div','rrow');r.appendChild(el('small',null,kv[0]));r.appendChild(el('b',kv[0]==='Confirmation'?'conf':null,kv[1]));tb.appendChild(r)});dn.appendChild(tb);
-  dn.appendChild(el('p','cash',stt==='pending'?'The credit is on hold. '+wname(e.to)+' confirms it with their PIN.':(stt==='declined'?'The credit stays with '+wname(e.from)+'.':'Show this screen to the cashier.')));
+  dn.appendChild(el('p','cash',stt==='pending'?'The credit is on hold. '+wname(e.to)+' confirms it with their PIN.':(stt==='declined'?'The credit stays with '+wname(e.from)+'.':(isGiftE(e)?'All '+fmt(e.amt)+' RR went to '+wname(e.to)+' in one piece. It is now in their wallet.':'Show this screen to the cashier.'))));
   if(stt==='pending'&&!DBM){var cb=el('button','send','Confirm (practice)');cb.type='button';cb.addEventListener('click',function(){e.status='confirmed';save();chime();receipt(e,backId)});dn.appendChild(cb);var db2=el('button','more','Decline (practice)');db2.type='button';db2.addEventListener('click',function(){e.status='declined';save();receipt(e,backId)});dn.appendChild(db2)}
   var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);dn.appendChild(credit());rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id,quiet){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
   var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,false,false):flipCard(w,quiet));presId=id;if(!quiet)countUp(pc.querySelector('.bal b'),bal(id));if(w.type==='Restaurant'){var on=accepts(w.id),ar=el('div','accrow');ar.appendChild(el('span',null,'Accepting Restaurant Rewards: '+(on?'On':'Off')));if(!DBM){var tg=el('button','acc'+(on?' on':''),on?'Turn off':'Turn on');tg.type='button';tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id,true)});ar.appendChild(tg)}else ar.appendChild(el('small',null,'The restaurant controls this switch.'));pc.appendChild(ar)}
   if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
+  giftsFor(w).forEach(function(g){pc.appendChild(giftBlock(g,id))});
   pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?(credited(e)?e.amt:0):(debited(e)?-e.amt:0);run+=d;if(e.kind==='open')return;var nt=cleanNote(e.note),t,sub=fdate(e.t);
-   if(inn){if(!e.from)t='Opening balance';else if(isPay(e))t='Payment from '+wname(e.from);else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):'Sent to '+wname(e.to)}
-   if(nt&&!isPay(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;if(stTxt(e))sub+=' \u00b7 '+stTxt(e);rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});
+   if(inn){if(!e.from)t='Opening balance';else if(isGiftE(e))t='Gift from '+giftHolder(wById(e.from));else if(isPay(e))t='Payment from '+wname(e.from);else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):(isGiftW(wById(e.to))?'Gift of '+fmt(e.amt)+' RR for '+giftHolder(wById(e.to)):'Sent to '+wname(e.to))}
+   if(nt&&!isPay(e)&&!isGiftE(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;if(stTxt(e))sub+=' \u00b7 '+stTxt(e);rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});
   rows.reverse();var lim=canR?3:(id==='treasury'?7:5);var draw=function(list){ul.innerHTML='';list.forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var dc=r.e.status==='declined',a=el('span','a'+(r.inn&&!dc?' in':''),(dc||id==='treasury'&&!r.inn?'':(r.inn?'+':'\u2212'))+fmt(r.amt)+' RR');a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);if(isPay(r.e)){li.className='tap';li.setAttribute('role','button');li.setAttribute('tabindex','0');var open=function(){receipt(r.e,id)};li.addEventListener('click',open);li.addEventListener('keydown',function(ev){if(ev.key==='Enter')open()})}ul.appendChild(li)})};draw(rows.slice(0,lim));pc.appendChild(ul);if(rows.length>lim){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){draw(rows);mb.remove()});pc.appendChild(mb)}
   pc.appendChild(credit());$('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}
  $('lock').addEventListener('click',function(){RR.signOut();location.reload()});
