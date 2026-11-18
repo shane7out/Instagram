@@ -74,7 +74,7 @@ SECTION = '''<section id="rewards"><div class="wrap">
     <li>Use rewards for free food at participating restaurants.</li>
     <li>No password and no app to download.</li>
    </ul>
-   <p class="rwnote">Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, events, parties and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Real offers and amounts are set by each restaurant.</p>
+   <p class="rwnote">Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Real offers and amounts are set by each restaurant.</p>
   </div>
  </div>
 </div></section>

@@ -257,3 +257,5 @@ Last updated 2026-11-05. Nothing here is urgent except item 1.
 150. SMIZZY GIFT (2026-11-18, Shane: "make the same one for Smizzy so I can give 100 away to another friend"). INSTR 2026-11-18-m/n: "Gift for Smizzy" with 100 RR (his wallet still shows 100 RR; the gift is the second card). Same design as Vanilla Rice's and Thin Blue 702's.
 
 151. PJ GIFT (2026-11-18, Shane). INSTR 2026-11-18-o/p: "Gift for PJ" with 100 RR; PJ's own wallet still shows 100 RR.
+
+152. DINNER PARTIES, SPECIAL EVENTS, MEET AND GREETS (2026-11-18, Shane: RR will be used to host dinner parties, special events and meet and greets). Card back "What it is for": "Food and gratuity. Dinner parties and special events. Meet and greets. VIP experiences and special invites. And new ideas all the time."; the demo-page disclaimers now say "food, gratuity, dinner parties, special events, meet and greets and special invites". ATTORNEY: hosting events with RR needs review (alcohol/venue rules, ticketing, refunds, who runs the event).

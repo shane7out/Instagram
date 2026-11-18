@@ -157,7 +157,7 @@ JOHNNY_BODY = '''<section id="s1">
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
 <ul class="big"><li>Alex got free food and will come back.</li><li>You see every Restaurant Reward used, and when.</li><li>Nothing to install. Nothing to learn.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
-<p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. Restaurant Rewards can be used for food, gratuity, events, parties and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
+<p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
 </section>'''
 
 TB_BODY = '''<section id="s1">
@@ -195,7 +195,7 @@ TB_BODY = '''<section id="s1">
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
 <ul class="big"><li>Alex got a free meal.</li><li>The restaurant got the Restaurant Rewards.</li><li>You can see where every Restaurant Reward went.</li><li>Any restaurant that joins accepts the same Restaurant Rewards.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
-<p class="fine"><b>Example only.</b> Restaurant Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, events, parties and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. All names and numbers are made up to show the idea.</p>
+<p class="fine"><b>Example only.</b> Restaurant Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. All names and numbers are made up to show the idea.</p>
 </section>'''
 
 PAGES = [
