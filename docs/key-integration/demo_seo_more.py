@@ -246,9 +246,9 @@ MORE = {
   steps=['Dine at a participating Las Vegas restaurant and send in your receipt.',
          'After the receipt is checked, you earn 1 reward per $1.',
          'A free spin comes and goes. When it is on, you can take it for a chance at more rewards.',
-         'Use your rewards for food at participating restaurants before they expire. Rewards expire 89 days after they are issued, and your card shows the date.'],
+         'Use your rewards for food at participating restaurants before they expire. Rewards expire 90 days after they are issued, and your card shows the date.'],
   before='Rewards have no cash value, cannot be exchanged for cash and can only be used for food at participating restaurants. Program rules can change, so the Program Terms control. This page is a demo with made-up restaurants, receipts and rewards.',
   faq=[('What can I use rewards for?', 'Food at participating restaurants only. They have no cash value and cannot be exchanged for cash.'),
-       ('Do rewards expire?', 'Yes. Rewards expire 89 days after they are issued, and the expiration date is shown on your card. Unused rewards expire. They have no cash value and can only be used for food at participating restaurants.'),
+       ('Do rewards expire?', 'Yes. Rewards expire 90 days after they are issued, and the expiration date is shown on your card. Unused rewards expire. They have no cash value and can only be used for food at participating restaurants.'),
        ('Is this demo real?', 'No. The restaurants, receipts and rewards in this demo are made up.')]),
 }
