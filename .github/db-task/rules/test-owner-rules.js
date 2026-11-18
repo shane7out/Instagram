@@ -116,14 +116,16 @@ const BASE = 'http://127.0.0.1:9000';
 
 // Unsigned test tokens (the emulator accepts alg "none"). The runner replaces __OWNER_UID__ with TESTOWNER.
 const b64u = o => Buffer.from(JSON.stringify(o)).toString('base64url');
-const jwt = uid => b64u({ alg: 'none', typ: 'JWT' }) + '.' + b64u({ uid: uid, user_id: uid, sub: uid, iat: Math.floor(Date.now() / 1000) }) + '.';
+const jwt = (uid, email) => b64u({ alg: 'none', typ: 'JWT' }) + '.' + b64u(Object.assign({ uid: uid, user_id: uid, sub: uid, iat: Math.floor(Date.now() / 1000) }, email ? { email: email, email_verified: false } : {})) + '.';
 const OWNER_JWT = jwt('TESTOWNER');
 const VIEWER_JWT = jwt('TESTVIEWER'); // the read-only "report PIN" account: may read the page-view report and nothing else
+const TREASURER_JWT = jwt('TESTTREASURER', 'treasurer@kt-rr.invalid'); // the Treasury PIN account
+const REST1_JWT = jwt('RESTONE', 'rr-w1@kt-rr.invalid'), REST2_JWT = jwt('RESTTWO', 'rr-w2@kt-rr.invalid'); // restaurant confirm-PIN accounts (email names the restaurant wallet)
 const OTHER_JWT = jwt('SOMEONE-ELSE'); // signed in, but NOT the owner (e.g. a stranger who signed up through the public Auth API)
 
 // who: 'anon' (no token) | 'owner' (token for the owner uid) | 'other' (token for another uid) | 'admin' (emulator bypass, used to seed data)
 async function call(who, method, p, body) {
-  const auth = who === 'owner' ? '&auth=' + OWNER_JWT : who === 'other' ? '&auth=' + OTHER_JWT : who === 'viewer' ? '&auth=' + VIEWER_JWT : '';
+  const auth = who === 'owner' ? '&auth=' + OWNER_JWT : who === 'other' ? '&auth=' + OTHER_JWT : who === 'viewer' ? '&auth=' + VIEWER_JWT : who === 'treasurer' ? '&auth=' + TREASURER_JWT : who === 'rest1' ? '&auth=' + REST1_JWT : who === 'rest2' ? '&auth=' + REST2_JWT : '';
   const url = `${BASE}${p}.json?ns=${NS}${auth}`;
   const r = await fetch(url, {
     method,
@@ -740,6 +742,80 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('owner sign-in key: a visitor cannot replace it', 'anon', 'PUT', '/ownerAuth/apiKey', 'AIzaEVIL', false);
   await t('owner sign-in key: a signed-in stranger cannot replace it', 'other', 'PUT', '/ownerAuth/apiKey', 'AIzaEVIL', false);
   await t('owner sign-in key: a browser cannot change it even with the owner login (only the setup script can)', 'owner', 'PUT', '/ownerAuth/apiKey', 'AIzaEVIL', false);
+
+  // =====================================================================
+  // 12. RESTAURANT REWARDS LEDGER (rr_ledger): Treasury PIN account writes, restaurants only confirm their own payments
+  // =====================================================================
+  const RR = '/rr_ledger';
+  const WAL = (name, type, rank) => Object.assign({ name: name, type: type, t: 1700000000000 }, rank === undefined ? {} : { rank: rank });
+  await t('ledger: a visitor cannot read it', 'anon', 'GET', RR, undefined, false);
+  await t('ledger: a signed-in stranger cannot read it', 'other', 'GET', RR, undefined, false);
+  await t('ledger: the report-PIN account cannot read it', 'viewer', 'GET', RR, undefined, false);
+  await t('ledger: the owner can read it', 'owner', 'GET', RR, undefined, true);
+  await t('ledger: the Treasury PIN account can read it', 'treasurer', 'GET', RR, undefined, true);
+  const GENESIS = { 'meta': { issued: 100000000, t: 1700000000000 }, 'wallets/treasury': WAL('Restaurant Rewards Treasury', 'Treasury'), 'entries/e0000001': { t: 1700000000000, to: 'treasury', amt: 100000000, kind: 'issue', note: 'Opening balance' } };
+  await t('ledger: a visitor cannot create the supply', 'anon', 'PATCH', RR, GENESIS, false);
+  await t('ledger: a stranger cannot create the supply', 'other', 'PATCH', RR, GENESIS, false);
+  await t('ledger: wrong supply number is refused', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'meta': { issued: 5000, t: 1 } }), false);
+  await t('ledger: a second 1,000,000 issue entry with the first is refused (amount cap)', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'entries/e0000002': { t: 1, to: 'treasury', amt: 100000000, kind: 'issue' } }), true); // creating both at once is allowed only because the supply is not issued yet; the next test checks it cannot happen later
+  await call('admin', 'DELETE', RR);
+  await t('ledger: the Treasury PIN account can create the supply (meta + Treasury wallet + opening entry in one go)', 'treasurer', 'PATCH', RR, GENESIS, true);
+  await t('ledger: the supply cannot be issued a second time later', 'treasurer', 'PUT', RR + '/entries/e0000099', { t: 2, to: 'treasury', amt: 100000000, kind: 'issue' }, false);
+  await t('ledger: meta cannot be changed', 'treasurer', 'PUT', RR + '/meta', { issued: 100000000, t: 5 }, false);
+  await t('ledger: wallet w1 (Restaurant) with its opening entry', 'treasurer', 'PATCH', RR, { 'wallets/w1': WAL('Vanilla Rice', 'Restaurant', 1), 'entries/e0000002': { t: 3, to: 'w1', amt: 0, kind: 'open' } }, true);
+  await t('ledger: wallet w2 (Restaurant)', 'treasurer', 'PATCH', RR, { 'wallets/w2': WAL("Johnny Mac's", 'Restaurant', 2), 'entries/e0000003': { t: 4, to: 'w2', amt: 0, kind: 'open' } }, true);
+  await t('ledger: wallet w3 (Customer)', 'treasurer', 'PATCH', RR, { 'wallets/w3': WAL('Alex', 'Customer', 3), 'entries/e0000004': { t: 5, to: 'w3', amt: 0, kind: 'open' } }, true);
+  await t('ledger: a wallet cannot be created twice', 'treasurer', 'PUT', RR + '/wallets/w1', WAL('Copy', 'Restaurant'), false);
+  await t('ledger: a wallet cannot be renamed', 'treasurer', 'PUT', RR + '/wallets/w1/name', 'Renamed', false);
+  await t('ledger: a wallet cannot be deleted', 'treasurer', 'DELETE', RR + '/wallets/w1', undefined, false);
+  await t('ledger: bad wallet id refused', 'treasurer', 'PUT', RR + '/wallets/W-1', WAL('Bad', 'Restaurant'), false);
+  await t('ledger: bad wallet kind refused', 'treasurer', 'PUT', RR + '/wallets/w4', WAL('Bad', 'Casino'), false);
+  await t('ledger: wallet with an extra field refused', 'treasurer', 'PUT', RR + '/wallets/w4', Object.assign(WAL('X', 'Other'), { balance: 99999 }), false);
+  await t('ledger: a visitor cannot create a wallet', 'anon', 'PUT', RR + '/wallets/w5', WAL('X', 'Other'), false);
+  await t('ledger: a restaurant account cannot create a wallet', 'rest2', 'PUT', RR + '/wallets/w5', WAL('X', 'Other'), false);
+  const MOVE = (to, amt, extra) => Object.assign({ t: 10, from: 'treasury', to: to, amt: amt }, extra || {});
+  await t('ledger: move credit from the Treasury to w3', 'treasurer', 'PUT', RR + '/entries/e0000005', MOVE('w3', 500000, { note: 'Starting credit' }), true);
+  await t('ledger: the owner may also write an entry', 'owner', 'PUT', RR + '/entries/e0000006', MOVE('w1', 10000), true);
+  await t('ledger: an entry cannot be overwritten', 'treasurer', 'PUT', RR + '/entries/e0000005', MOVE('w3', 100), false);
+  await t('ledger: an entry cannot be deleted', 'treasurer', 'DELETE', RR + '/entries/e0000005', undefined, false);
+  await t('ledger: a visitor cannot add an entry', 'anon', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100), false);
+  await t('ledger: a signed-in stranger cannot add an entry', 'other', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100), false);
+  await t('ledger: entry to a wallet that does not exist refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w9', 100), false);
+  await t('ledger: entry from a wallet that does not exist refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100, { from: 'w9' }), false);
+  await t('ledger: entry from a wallet to itself refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('treasury', 100), false);
+  await t('ledger: zero-amount move refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 0), false);
+  await t('ledger: negative amount refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', -100), false);
+  await t('ledger: amount with cents refused (whole numbers only)', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 150), false);
+  await t('ledger: amount above the supply refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 200000000), false);
+  await t('ledger: bad entry key refused', 'treasurer', 'PUT', RR + '/entries/zz1', MOVE('w3', 100), false);
+  await t('ledger: entry with an extra field refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100, { secret: 1 }), false);
+  await t('ledger: a long note refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100, { note: 'n'.repeat(121) }), false);
+  await t('ledger: a transfer cannot be created already confirmed', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w2', 100, { from: 'w3', status: 'confirmed' }), false);
+  await t('ledger: a payment from w3 to restaurant w2 is created as pending', 'treasurer', 'PUT', RR + '/entries/e0000008', MOVE('w2', 8300, { from: 'w3', note: 'Redeemed at Johnny Mac\'s', status: 'pending', fn: 'Alex', tn: "Johnny Mac's" }), true);
+  await t('ledger: a payment from w3 to restaurant w1 is created as pending', 'treasurer', 'PUT', RR + '/entries/e0000009', MOVE('w1', 1000, { from: 'w3', status: 'pending', note: 'Redeemed at Vanilla Rice' }), true);
+  // restaurants confirm their own payments only
+  await t('restaurant: w2 can confirm its own pending payment', 'rest2', 'PUT', RR + '/entries/e0000008/status', 'confirmed', true);
+  await t('restaurant: a confirmed payment cannot be changed again', 'rest2', 'PUT', RR + '/entries/e0000008/status', 'declined', false);
+  await t('restaurant: w2 cannot confirm a payment meant for w1', 'rest2', 'PUT', RR + '/entries/e0000009/status', 'confirmed', false);
+  await t('restaurant: w1 can decline its own pending payment', 'rest1', 'PUT', RR + '/entries/e0000009/status', 'declined', true);
+  await call('admin', 'PUT', RR + '/entries/e0000010', MOVE('w2', 700, { from: 'w3', status: 'pending' }));
+  await t('restaurant: an invalid status is refused', 'rest2', 'PUT', RR + '/entries/e0000010/status', 'paid', false);
+  await t('restaurant: cannot change the amount of a payment', 'rest2', 'PUT', RR + '/entries/e0000010/amt', 100, false);
+  await t('restaurant: cannot change who a payment goes to', 'rest2', 'PUT', RR + '/entries/e0000010/to', 'w1', false);
+  await t('restaurant: cannot delete a payment', 'rest2', 'DELETE', RR + '/entries/e0000010', undefined, false);
+  await t('Treasury PIN account cannot confirm a payment itself', 'treasurer', 'PUT', RR + '/entries/e0000010/status', 'confirmed', false);
+  await t('a visitor cannot confirm a payment', 'anon', 'PUT', RR + '/entries/e0000010/status', 'confirmed', false);
+  await t('a signed-in stranger cannot confirm a payment', 'other', 'PUT', RR + '/entries/e0000010/status', 'confirmed', false);
+  // restaurants read only their own payments (query by "to")
+  const q = async (who, wallet) => { const auth = who === 'rest2' ? REST2_JWT : who === 'rest1' ? REST1_JWT : OTHER_JWT; const r = await fetch(`${BASE}${RR}/entries.json?ns=${NS}&auth=${auth}&orderBy=%22to%22&equalTo=%22${wallet}%22`); return { s: r.status, t: await r.text() }; };
+  check('restaurant: w2 can list payments to w2', await q('rest2', 'w2'), true);
+  check('restaurant: w2 cannot list payments to w1', await q('rest2', 'w1'), false);
+  check('restaurant: w1 can list payments to w1', await q('rest1', 'w1'), true);
+  check('a signed-in stranger cannot list any payments', await q('other', 'w2'), false);
+  await t('restaurant: w2 cannot read all entries', 'rest2', 'GET', RR + '/entries', undefined, false);
+  await t('restaurant: w2 cannot read the wallets', 'rest2', 'GET', RR + '/wallets', undefined, false);
+  await t('restaurant: w2 cannot read the whole ledger', 'rest2', 'GET', RR, undefined, false);
+  await t('restaurant: w2 cannot read the supply record', 'rest2', 'GET', RR + '/meta', undefined, false);
 
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
