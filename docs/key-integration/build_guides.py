@@ -407,9 +407,9 @@ G4 = dict(slug='what-is-ai-si', date='2026-11-05',
 G4['faq'] = [
  ('What does AI/SI stand for?', 'AI/SI stands for Artificial Intelligence / Super Intelligence. Key Technologies uses it as its name for putting the most advanced AI available to work as a practical business tool. It is not a claim that anyone has built superintelligence.'),
  ('Is AI/SI the same as AGI?', 'No. AGI usually means an AI as capable as a person across most tasks. Superintelligence means beyond the best humans. Neither is a product you can buy today, and Key Technologies does not claim to sell either one.'),
- ('Is Key Technologies building superintelligent AI?', 'No. We build practical systems for businesses (phone answering, content, CRM, automation) using the strongest AI tools available, with a person approving anything important.'),
+ ('Is Key Technologies building superintelligent AI?', 'No. We build practical systems for businesses (phone answering, content, CRM, automation) using the strongest AI/SI tool available, with a person approving anything important.'),
  ('Can AI make mistakes?', 'Yes. AI can write a confident answer that is wrong, so anything that goes to a customer, touches money, or involves legal or medical matters should be checked by a person. Good systems are built with that in mind.'),
- ('Do I need to know which AI tools I need?', 'No. Start from the problem (missed calls, slow follow-up, repetitive work), not the tool. A free conversation is enough to find out whether AI helps and where.'),
+ ('Do I need to know how to use AI?', 'No. Start from the problem (missed calls, slow follow-up, repetitive work), not the tool. A free conversation is enough to find out whether AI helps and where.'),
  ('Where should a small business start?', 'Pick one repetitive job that costs you time or customers, try a small version, and measure the result before doing more. Our free Website Audit and a free call are two easy first steps.')]
 G4['body'] = f"""<article class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','index.html'),('What is AI/SI?','')])}
@@ -472,7 +472,7 @@ G5 = dict(slug='choose-an-ai-consultant', date='2026-11-05',
   short='A plain checklist for small-business owners: ten questions to ask, what good answers sound like, and the warning signs.')
 G5['faq'] = [
  ('Do I need an AI consultant, or can I use a chatbot myself?', 'You can start on your own for drafting and brainstorming. A consultant helps when AI has to connect to your phones, customer list or website, when customers will see the output, or when security and accuracy matter.'),
- ('What should I prepare before the first call?', 'Write down the one or two jobs that cost you the most time or customers, the tools you use today, and what a good result would look like. You do not need to know which AI tools you want.'),
+ ('What should I prepare before the first call?', 'Write down the one or two jobs that cost you the most time or customers, the tools you use today, and what a good result would look like. You do not need to know how you want to use AI.'),
  ('Should I be worried if a consultant will not name a price on the first call?', 'No. A fair quote needs to know what you want built. Be careful if there is no written scope afterwards, or if the price keeps changing without a change in what you asked for.'),
  ('Who should own the accounts and data?', 'You. Your accounts, domain, customer list and data should stay in your name. A good consultant needs login access to do the work, but should never become the owner.'),
  ('How can I check a consultant is real?', 'Ask to see work you can try yourself, such as a demo or a system they run for their own business, and talk to them directly, not only to a sales form.')]
@@ -1007,9 +1007,9 @@ GUIDES['G14'] = G14
 # ================= Guide 15: white hat, gray hat, black hat =================
 G15 = dict(slug='white-hat-gray-hat-black-hat-explained', date='2026-11-18',
   title='White Hat, Gray Hat, Black Hat Hackers Explained | Key Technologies.si',
-  desc='What white hat, gray hat and black hat mean, how attackers and defenders use the same AI tools, and what to ask before you let anyone test your business security.',
+  desc='What white hat, gray hat and black hat mean, how attackers and defenders use the same AI tool, and what to ask before you let anyone test your business security.',
   h1='White hat, gray hat, black hat: what the terms mean, and why it matters for your business',
-  short='A plain guide to white hat, gray hat and black hat hackers, how attackers and defenders now use the same AI tools, and what to ask before anyone tests your security.')
+  short='A plain guide to white hat, gray hat and black hat hackers, how attackers and defenders now use the same AI tool, and what to ask before anyone tests your security.')
 G15['faq'] = [
  ('What is a black hat hacker?', 'Someone who breaks into systems without permission to steal, spy, extort or cause harm. This is the criminal attacker.'),
  ('What is a white hat hacker?', 'A security professional who tests and defends systems with the owner\'s permission. The permission, usually in writing and with a clear scope, is what makes the work legitimate.'),
