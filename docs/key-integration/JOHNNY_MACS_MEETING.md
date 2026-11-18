@@ -25,6 +25,6 @@ Fuller demo with menu + map: https://keytechnologies.si/johnny-macs-demo/
 
 ## Easier-to-read version + LVMPD example (added 2026-11-18)
 - Johnny Mac's wallet (bigger type, portrait): https://keytechnologies.si/johnny-macs-demo/wallet.html
-- LVMPD wallet EXAMPLE (777 rewards, redeemed rewards move to the restaurant's wallet): https://keytechnologies.si/lvmpd-demo/
+- Thin Blue 702 wallet EXAMPLE (777 rewards, redeemed rewards move to the restaurant's wallet): https://keytechnologies.si/thin-blue-702-demo/
 - Both are made for a phone held upright; held sideways they ask the person to turn it. Both are unlisted and noindex.
 - LVMPD page: clearly labeled "example only, not affiliated with or endorsed by LVMPD"; no logo or badge. Before showing it to anyone at LVMPD, ask them; rewards for public employees may be limited by gift/ethics rules, so check with them first.

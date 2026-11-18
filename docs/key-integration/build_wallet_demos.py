@@ -1,60 +1,60 @@
 #!/usr/bin/env python3
 """Builds the large-type, portrait, four-step wallet demos (sample numbers only, unlisted + noindex):
   sites/key-technologies/johnny-macs-demo/wallet.html   (Johnny Mac's, 500 rewards, redeemed rewards go back into his wallet)
-  sites/key-technologies/lvmpd-demo/index.html          (example sponsor wallet, 777 rewards, redeemed rewards move to the restaurant's wallet)
+  sites/key-technologies/thin-blue-702-demo/index.html          (example sponsor wallet, 777 rewards, redeemed rewards move to the restaurant's wallet)
 Run from the repo root, anywhere in the chain before add_security_meta.py:  python3 docs/key-integration/build_wallet_demos.py
-The LVMPD page is a clearly labeled EXAMPLE: no logo, no badge, "not affiliated with or endorsed by"."""
+The Thin Blue 702 page is a clearly labeled EXAMPLE with made-up numbers."""
 import os, json
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..'))
 SITE = os.path.join(ROOT, 'sites/key-technologies')
 
 CSS = r'''
-:root{--bg:#0f171e;--card:#1b2735;--line:#4a5d72;--ink:#ffffff;--key:#00a8e1;--key2:#7fd8f7;--good:#7fd8f7}
+:root{--bg:#0f171e;--card:#16222f;--line:rgba(255,255,255,.28);--ink:#ffffff;--key:#00a8e1;--key2:#00a8e1;--good:#00a8e1}
 *{box-sizing:border-box}
 html{font-size:100%%;-webkit-text-size-adjust:100%%}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 21px/1.45 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-.demo{background:#10243a;color:#e3f0fc;font-size:15px;line-height:1.35;text-align:center;padding:8px 14px;border-bottom:1px solid #1f3d5c}
+.demo{background:#0f171e;color:#ffffff;font-size:15px;line-height:1.35;text-align:center;padding:8px 14px;border-bottom:1px solid #00a8e1}
 .demo b{color:#fff}
 .wrapcol{max-width:480px;margin:0 auto;padding:0 18px}
 header{display:flex;align-items:center;gap:12px;padding:14px 0 0}
 header img{height:68px;width:auto}
 header span{font-weight:900;font-size:20px;line-height:1.2}
 .step{color:var(--key2);font-weight:900;letter-spacing:.05em;text-transform:uppercase;font-size:16px;margin:14px 0 6px}
-.dots{display:flex;gap:8px;margin:0 0 16px}.dots i{flex:1;height:8px;border-radius:99px;background:#2d3e52}.dots i.on{background:var(--key)}
+.dots{display:flex;gap:8px;margin:0 0 16px}.dots i{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.14)}.dots i.on{background:var(--key)}
 h1{font-size:32px;line-height:1.15;margin:0 0 10px;font-weight:900;letter-spacing:-.01em}
-p{margin:0 0 12px;color:#e9f1f8}
+p{margin:0 0 12px;color:#ffffff}
 .say{font-size:22px;line-height:1.4;color:#fff;font-weight:700}
-.wallet{background:linear-gradient(135deg,#21364d 0%%,#16222f 60%%,#12202d 100%%);border:1px solid #4a6a8a;border-radius:18px;padding:14px 16px 12px;margin:12px 0;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
+.wallet{background:linear-gradient(135deg,#1a2a3b 0%%,#16222f 60%%,#0f171e 100%%);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:14px 16px 12px;margin:12px 0;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
 .ahead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;text-align:left;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.14)}
-.ahead b{font-size:17px;font-weight:900;white-space:nowrap}.ahead span{font-size:13px;color:#c3d0de;letter-spacing:.03em;white-space:nowrap}
-.wallet small{display:block;color:#c3d0de;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.ahead b{font-size:17px;font-weight:900;white-space:nowrap}.ahead span{font-size:13px;color:rgba(255,255,255,.78);letter-spacing:.03em;white-space:nowrap}
+.wallet small{display:block;color:rgba(255,255,255,.78);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .wallet .num{font-size:30px;font-weight:900;line-height:1.02;color:var(--key2);letter-spacing:-.03em}
-.wallet .num span{display:block;font-size:16px;font-weight:700;color:#e9f1f8;letter-spacing:0;margin-top:0}
+.wallet .num span{display:block;font-size:16px;font-weight:700;color:#ffffff;letter-spacing:0;margin-top:0}
 .wallet.small .num{font-size:26px}
 .cust{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 18px;margin:10px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
-.cust b{font-size:21px}.cust .n{font-size:22px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:16px;color:#e9f1f8;font-weight:700;margin-top:4px}
+.cust b{font-size:21px}.cust .n{font-size:22px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:16px;color:#ffffff;font-weight:700;margin-top:4px}
 .btn{display:block;width:100%%;min-height:62px;margin:14px 0 0;padding:12px 18px;border:0;border-radius:16px;background:var(--key);color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer}
-.btn:active{background:#33bce8}.btn:focus-visible{outline:5px solid #fff;outline-offset:4px}
-.btn.ghost{background:transparent;color:#fff;border:3px solid #7d90a5;min-height:54px;font-size:20px}
+.btn:active{background:#00a8e1}.btn:focus-visible{outline:5px solid #fff;outline-offset:4px}
+.btn.ghost{background:transparent;color:#fff;border:3px solid rgba(255,255,255,.45);min-height:54px;font-size:20px}
 ul.big{list-style:none;padding:0;margin:12px 0 0}ul.big li{padding:12px 0 12px 44px;position:relative;border-bottom:2px solid var(--line);color:#fff;font-size:21px;line-height:1.35}
 ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);font-weight:900;font-size:28px;top:7px}
-.fine{font-size:15px;line-height:1.45;color:#cfdbe7;margin-top:18px;padding-bottom:30px}
+.fine{font-size:15px;line-height:1.45;color:rgba(255,255,255,.8);margin-top:18px;padding-bottom:30px}
 .hide{display:none}
-.act{margin:14px 0 0;background:#16222f;border:1px solid #37475a;border-radius:16px;padding:6px 16px}
-.act h2{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#c3d0de;margin:10px 0 2px}
-.act ul{list-style:none;margin:0;padding:0}.act li{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #2d3e52;font-size:17px;line-height:1.3}.act li:last-child{border-bottom:0}
-.act li small{display:block;color:#9db0c4;font-size:13px}.act .amt{font-weight:900;white-space:nowrap;color:#fff}.act .amt.in{color:var(--key2)}
+.act{margin:14px 0 0;background:#16222f;border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:6px 16px}
+.act h2{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.78);margin:10px 0 2px}
+.act ul{list-style:none;margin:0;padding:0}.act li{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:17px;line-height:1.3}.act li:last-child{border-bottom:0}
+.act li small{display:block;color:rgba(255,255,255,.7);font-size:13px}.act .amt{font-weight:900;white-space:nowrap;color:#fff}.act .amt.in{color:var(--key2)}
 .redeemrow{display:flex;gap:10px;margin-top:14px;align-items:stretch}
-.redeemrow input{flex:1.3;min-width:0;font:900 26px Lato,system-ui,sans-serif;padding:10px 12px;border-radius:14px;border:2px solid #7d90a5;background:#0f171e;color:#fff;text-align:center}
-.redeemrow input::placeholder{color:#8fa2b6;font-weight:400;font-size:19px}
+.redeemrow input{flex:1.3;min-width:0;font:900 26px Lato,system-ui,sans-serif;padding:10px 12px;border-radius:14px;border:2px solid rgba(255,255,255,.45);background:#0f171e;color:#fff;text-align:center}
+.redeemrow input::placeholder{color:rgba(255,255,255,.55);font-weight:400;font-size:19px}
 .redeemrow input:focus-visible{outline:4px solid var(--key2);outline-offset:2px}
 .redeemrow .btn{flex:1;margin:0;width:auto;min-height:60px}
-.lab{display:block;color:#e9f1f8;font-size:18px;font-weight:700;margin:14px 0 6px}
+.lab{display:block;color:#ffffff;font-size:18px;font-weight:700;margin:14px 0 6px}
 .linkbtn{display:block;margin:8px auto 0;padding:10px;background:none;border:0;color:var(--key2);font:700 18px Lato,system-ui,sans-serif;text-decoration:underline;cursor:pointer}
-.err{color:#ffb84d;font-weight:700;font-size:18px;text-align:center;margin:6px 0 0;min-height:24px}
+.err{color:#ffffff;font-weight:700;font-size:18px;text-align:center;margin:6px 0 0;min-height:24px}
 .result{color:var(--good);font-size:20px;line-height:1.35;font-weight:900;text-align:center;margin:10px 0 0}
 .rotate{display:none;position:fixed;inset:0;z-index:99;background:#0f171e;color:#fff;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:30px;font-weight:900;line-height:1.3}
-.rotate div{max-width:420px}.rotate small{display:block;font-size:22px;font-weight:400;margin-top:10px;color:#e9f1f8}
+.rotate div{max-width:420px}.rotate small{display:block;font-size:22px;font-weight:400;margin-top:10px;color:#ffffff}
 @media (orientation:landscape) and (max-height:520px){.rotate{display:flex}}
 @media (prefers-reduced-motion:no-preference){.pop{animation:pop .5s ease}@keyframes pop{0%%{transform:scale(.96);opacity:.5}100%%{transform:scale(1);opacity:1}}}
 '''
@@ -155,17 +155,17 @@ JOHNNY_BODY = '''<section id="s1">
 <p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
 </section>'''
 
-LVMPD_BODY = '''<section id="s1">
-<h1>This is the LVMPD account.</h1>
+TB_BODY = '''<section id="s1">
+<h1>This is the Thin Blue 702 account.</h1>
 <p class="say">777 Restaurant Rewards are in it.</p>
-<div class="wallet"><div class="ahead"><b>LVMPD</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><small>Available balance</small><div class="num">777.00<span>Restaurant Rewards</span></div></div>
+<div class="wallet"><div class="ahead"><b>Thin Blue 702</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><small>Available balance</small><div class="num">777.00<span>Restaurant Rewards</span></div></div>
 <p>Restaurant Rewards from this account can be used at restaurants in the Restaurant Rewards network.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
 <section id="s2" class="hide">
 <h1>A person gets Restaurant Rewards.</h1>
-<p class="say">Alex receives 150 Restaurant Rewards from the LVMPD account.</p>
-<div class="wallet"><div class="ahead"><b>LVMPD</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><small>Available balance</small><div class="num" id="w2" aria-live="polite"></div></div>
+<p class="say">Alex receives 150 Restaurant Rewards from the Thin Blue 702 account.</p>
+<div class="wallet"><div class="ahead"><b>Thin Blue 702</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><small>Available balance</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
 <p class="result hide pop" id="m2"></p>
 <button class="btn" type="button" id="earn">Alex gets 150 Restaurant Rewards</button>
@@ -174,7 +174,7 @@ LVMPD_BODY = '''<section id="s1">
 <section id="s3" class="hide">
 <h1>They use them at a restaurant.</h1>
 <p class="say">At Johnny Mac's, Alex types how many to use, then taps Redeem.</p>
-<div class="wallet small"><div class="ahead"><b>LVMPD</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><small>Available balance</small><div class="num" id="w3" aria-live="polite"></div></div>
+<div class="wallet small"><div class="ahead"><b>Thin Blue 702</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><small>Available balance</small><div class="num" id="w3" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <div class="wallet small"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><small>Available balance</small><div class="num" id="r3" aria-live="polite"></div></div>
 <p class="result hide pop" id="m3"></p>
@@ -190,16 +190,16 @@ LVMPD_BODY = '''<section id="s1">
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
 <ul class="big"><li>Alex got a free meal.</li><li>The restaurant got the Restaurant Rewards.</li><li>You can see where every Restaurant Reward went.</li><li>Any restaurant that joins accepts the same Restaurant Rewards.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
-<p class="fine"><b>Example only.</b> This page is not affiliated with and is not endorsed by the Las Vegas Metropolitan Police Department. Restaurant Rewards are a free perk with no cash value. All names and numbers are made up to show the idea.</p>
+<p class="fine"><b>Example only.</b> Restaurant Rewards are a free perk with no cash value. All names and numbers are made up to show the idea.</p>
 </section>'''
 
 PAGES = [
  (os.path.join(SITE, 'johnny-macs-demo/wallet.html'), dict(title="Johnny Mac's Account Demo", head="Johnny Mac's Rewards", logo='img/logo.png',
    banner="Sample people and sample numbers. Nothing here is real or connected to a bank or a register.", body=JOHNNY_BODY,
    js=dict(acctName="Johnny Mac's account", start=50000, give=15000, restStart=0, toRest=False, m2='150 Restaurant Rewards moved from your account to Alex.', m3='They went back into your account.'))),
- (os.path.join(SITE, 'lvmpd-demo/index.html'), dict(title="LVMPD Account Example", head="LVMPD Rewards (example)", logo='',
-   banner="Example only, made-up numbers. Not affiliated with or endorsed by LVMPD.", body=LVMPD_BODY,
-   js=dict(acctName='LVMPD account', start=77700, give=15000, restStart=0, toRest=True, m2='150 Restaurant Rewards moved from the LVMPD account to Alex.', m3='They went into Johnny Mac\'s account.'))),
+ (os.path.join(SITE, 'thin-blue-702-demo/index.html'), dict(title="Thin Blue 702 Account Example", head="Thin Blue 702 Rewards (example)", logo='',
+   banner="Example only. Made-up people and numbers.", body=TB_BODY,
+   js=dict(acctName='Thin Blue 702 account', start=77700, give=15000, restStart=0, toRest=True, m2='150 Restaurant Rewards moved from the Thin Blue 702 account to Alex.', m3='They went into Johnny Mac\'s account.'))),
 ]
 for path, c in PAGES:
     os.makedirs(os.path.dirname(path), exist_ok=True)
