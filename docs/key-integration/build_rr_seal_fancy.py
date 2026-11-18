@@ -2,7 +2,8 @@
 """Builds sites/key-technologies/brand/rr-seal-fancy.svg: the showpiece RR seal (gold metal ring, pearl border,
 black enamel centre with engraved rosette, raised gold RR). Lettering is outlined, so no font is needed.
 Run from the repo root: python3 docs/key-integration/build_rr_seal_fancy.py"""
-import math
+import math,sys
+PLAIN=len(sys.argv)>1 and sys.argv[1]=='plain'
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
@@ -27,6 +28,9 @@ def flat(text,cx,y,size,ls):
 pearls=''.join(f'<circle cx="{50+42.3*math.cos(i*math.pi/36):.2f}" cy="{50+42.3*math.sin(i*math.pi/36):.2f}" r=".62" fill="url(#pearl)"/>' for i in range(72))
 rosette=''.join(f'<ellipse cx="50" cy="50" rx="23.5" ry="9.5" transform="rotate({i*7.5} 50 50)"/>' for i in range(24))
 rays=''.join(f'<line x1="50" y1="50" x2="{50+27*math.cos(i*math.pi/30):.2f}" y2="{50+27*math.sin(i*math.pi/30):.2f}"/>' for i in range(60))
+def dia(a0,r=35.0):
+    cx,cy=50+r*math.sin(math.radians(a0)),50-r*math.cos(math.radians(a0))
+    return f'<rect x="{cx-1.5:.2f}" y="{cy-1.5:.2f}" width="3" height="3" fill="{K}" transform="rotate(45 {cx:.2f} {cy:.2f})"/>'
 def laurel(a0,r=35.0):
     """A small laurel sprig either side of a diamond, following the band. a0 = angle in degrees from north (clockwise)."""
     out=''
@@ -72,7 +76,7 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <path d="{arc_text("RESTAURANT",32.7,7.6,1.35,True)}"/>
 <path d="{arc_text("REWARDS",38.1,7.6,1.8,False)}"/>
 </g>
-{laurel(270)}{laurel(90)}
+{(dia(270) + dia(90)) if PLAIN else (laurel(270) + laurel(90))}
 <circle cx="50" cy="50" r="28.6" fill="url(#ring)"/>
 <circle cx="50" cy="50" r="27.6" fill="url(#enamel)"/>
 <g clip-path="url(#disc)"><g fill="none" stroke="#e8c25c" stroke-width=".22" stroke-opacity=".22">{rosette}</g><g stroke="#e8c25c" stroke-width=".14" stroke-opacity=".15">{rays}</g></g>
@@ -82,4 +86,4 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <path d="M36 64.5h28" stroke="url(#gold)" stroke-width=".5"/><rect x="48.9" y="63.4" width="2.2" height="2.2" fill="url(#gold)" transform="rotate(45 50 64.5)"/>
 <circle cx="50" cy="50" r="49.2" fill="url(#sheen)" opacity=".55"/>
 </svg>'''
-open('sites/key-technologies/brand/rr-seal-fancy.svg','w').write(svg);print(len(svg),'bytes')
+open('sites/key-technologies/brand/rr-seal-fancy.svg' if not PLAIN else '/tmp/claude-0/-home-user-Instagram/6bde34d7-67bf-5700-8233-771caa70603f/scratchpad/plain.svg','w').write(svg);print(len(svg),'bytes')
