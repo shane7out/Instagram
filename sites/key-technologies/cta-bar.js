@@ -1,4 +1,4 @@
-/* Phone-only sticky "Get My Free Review" bar. Appears after the visitor scrolls a little, hides when the form is on screen or the menu is open. */
+/* Phone-only sticky "Get My Free Review" bar. Appears only after the visitor has scrolled past the services list (home) or well into the page (others), hides when the form is on screen or the menu is open. */
 (function () {
   var st = document.createElement('style');
   st.textContent = '.ktcta{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:8px 16px calc(8px + env(safe-area-inset-bottom));background:rgba(15,23,30,.96);border-top:1px solid #37475a;backdrop-filter:blur(8px)}' +
@@ -16,7 +16,10 @@
   }
   function menuOpen() { var b = document.getElementById('burgerBtn'); return b && b.getAttribute('aria-expanded') === 'true'; }
   function update() {
-    var on = window.scrollY > 500 && !formVisible && !menuOpen();
+    var sv = document.getElementById('services'), after;
+    if (sv) { var r = sv.getBoundingClientRect(); after = r.bottom < window.innerHeight * 0.5; }   /* home page: only after the services list */
+    else { after = window.scrollY > Math.max(900, document.documentElement.scrollHeight * 0.35); }   /* other pages: well into the page */
+    var on = after && !formVisible && !menuOpen();
     bar.classList.toggle('on', on); document.documentElement.classList.toggle('ktcta-pad', on);
   }
   window.addEventListener('scroll', update, { passive: true });
