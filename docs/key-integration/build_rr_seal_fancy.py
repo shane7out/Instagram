@@ -4,7 +4,7 @@ black enamel centre with engraved rosette, raised gold RR). Lettering is outline
 Run from the repo root: python3 docs/key-integration/build_rr_seal_fancy.py"""
 import math,sys,argparse
 ap=argparse.ArgumentParser()
-ap.add_argument('--sides',choices=['laurel','diamond'],default='diamond')
+ap.add_argument('--sides',choices=['laurel','diamond','none'],default='none')
 ap.add_argument('--center',choices=['spirals','plain','rings','rays'],default='plain')
 ap.add_argument('--rule',type=int,default=0,help='1 = small rule and diamond under the RR')
 ap.add_argument('--rr',type=float,default=23,help='RR size')
@@ -92,7 +92,7 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <path d="{arc_text("RESTAURANT",32.6,8.2,1.25,True)}"/>
 <path d="{arc_text("REWARDS",38.0,8.2,1.7,False)}"/>
 </g>
-{(dia(270) + dia(90)) if PLAIN else (laurel(270) + laurel(90))}
+{'' if A.sides=='none' else ((dia(270) + dia(90)) if PLAIN else (laurel(270) + laurel(90)))}
 <g filter="url(#bev)"><circle cx="50" cy="50" r="28.8" fill="none" stroke="url(#ring)" stroke-width="2.2"/></g>
 <circle cx="50" cy="50" r="27.7" fill="#000" opacity=".35"/>
 <circle cx="50" cy="50" r="27.6" fill="url(#enamel)"/>
