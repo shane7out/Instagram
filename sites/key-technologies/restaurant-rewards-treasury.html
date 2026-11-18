@@ -82,7 +82,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  <table><thead><tr><th>When</th><th>Move</th><th class="r">Amount</th><th>Note</th></tr></thead><tbody id="rows"></tbody></table>
  <div class="msg" id="tmsg" role="alert"></div>
 </div>
-<p class="fine">Restaurant Rewards are a promotional perk with no cash value. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. Before real customers use wallets, have your attorney review the program terms.</p>
+<p class="fine">Restaurant Rewards are a promotional perk with no cash value. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. A wallet named after an outside organization is for planning only and does not mean that organization has agreed to anything. Before real customers use wallets, have your attorney review the program terms.</p>
 </div>
 <script>
 (function(){
@@ -94,8 +94,9 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function nextRank(){var m=0;S.wallets.forEach(function(w){if(w.id!=='treasury'&&(w.rank||0)>m)m=w.rank});return m+1}
  function openW(name,type){var id='w'+(S.nextW++),t=now();S.wallets.push({id:id,name:name,type:type,t:t,rank:nextRank()});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
  /* Instructions from Shane, applied once per browser when the page opens (so every browser shows the same starting position). */
- var INSTR=[{id:'2026-11-18-a',from:'treasury',to:"Vanilla Rice's Hibachi House",amt:10000,note:'Starting credit (Shane, Nov 18)'},{id:'2026-11-18-b',from:'treasury',to:"Johnny Mac's",amt:10000,note:'Starting credit (Shane, Nov 18)'}];
- function applyInstr(){S.applied=S.applied||[];INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;var to=find(x.to);if(!to||bal(x.from)<x.amt)return;S.entries.push({id:S.next++,t:now(),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)})}
+ var INSTR=[{id:'2026-11-18-a',from:'treasury',to:"Vanilla Rice's Hibachi House",amt:10000,note:'Starting credit (Shane, Nov 18)'},{id:'2026-11-18-b',from:'treasury',to:"Johnny Mac's",amt:10000,note:'Starting credit (Shane, Nov 18)'},
+  {id:'2026-11-18-c',create:{name:'LVMPD',type:'Organization'}},{id:'2026-11-18-d',from:'treasury',to:'LVMPD',amt:500000,note:'Starting credit (Shane, Nov 18)'}];
+ function applyInstr(){S.applied=S.applied||[];INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;if(x.create){if(!find(x.create.name))openW(x.create.name,x.create.type);S.applied.push(x.id);return}var to=find(x.to);if(!to||bal(x.from)<x.amt)return;S.entries.push({id:S.next++,t:now(),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)})}
  function find(n){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].name.toLowerCase()===n.toLowerCase())return S.wallets[i].id;return null}
  function seed(){if(S.seeded2)return;var v=find("Vanilla Rice's Hibachi House")||openW("Vanilla Rice's Hibachi House",'Restaurant'),j=find("Johnny Mac's")||openW("Johnny Mac's",'Restaurant');
   var others=S.wallets.filter(function(w){return w.id!=='treasury'&&w.id!==v&&w.id!==j}).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t});
