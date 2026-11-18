@@ -27,10 +27,10 @@ p{margin:0 0 18px;color:#e9f1f8}
 .wallet{background:var(--card);border:3px solid var(--key);border-radius:24px;padding:24px 26px;margin:22px 0}
 .wallet small{display:block;color:#e9f1f8;font-size:24px;font-weight:700}
 .wallet .num{font-size:128px;font-weight:900;line-height:1.02;color:var(--key2);letter-spacing:-.03em}
-.wallet .num span{font-size:30px;font-weight:700;color:#e9f1f8;letter-spacing:0;margin-left:10px}
+.wallet .num span{display:block;font-size:30px;font-weight:700;color:#e9f1f8;letter-spacing:0;margin-top:6px}
 .wallet.small .num{font-size:96px}
 .cust{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:20px 26px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.cust b{font-size:32px}.cust .n{font-size:56px;font-weight:900;color:var(--good);line-height:1}.cust .n small{font-size:24px;color:#e9f1f8;font-weight:700}
+.cust b{font-size:32px}.cust .n{font-size:56px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:right}.cust .n small{display:block;font-size:22px;color:#e9f1f8;font-weight:700;margin-top:4px}
 .ticket{border:4px dashed var(--good);border-radius:24px;padding:22px 26px;margin:18px 0;background:rgba(95,228,154,.10)}
 .ticket b{display:block;font-size:34px;line-height:1.25}.ticket .code{font-size:54px;font-weight:900;letter-spacing:.1em;color:var(--good);margin-top:6px}
 .btn{display:block;width:100%%;min-height:88px;margin:22px 0 0;padding:18px 22px;border:0;border-radius:22px;background:var(--key);color:#0f171e;font:900 32px Lato,system-ui,sans-serif;cursor:pointer}
@@ -77,8 +77,8 @@ def page(c):
 (function(){
  var C=%(cfg)s,cur=1,secs=[1,2,3,4].map(function(i){return document.getElementById('s'+i)}),dots=document.querySelectorAll('.dots i'),lab=document.getElementById('stepLabel');
  function $(i){return document.getElementById(i)}
- function R(el,v){el.innerHTML=v+'<span>rewards</span>'}
- function P(el,v){el.innerHTML=v+' <small>rewards</small>'}
+ function R(el,v){el.innerHTML=v+'<span>Restaurant Rewards</span>'}
+ function P(el,v){el.innerHTML=v+'<small>Restaurant Rewards</small>'}
  function show(n){cur=n;secs.forEach(function(s,i){s.classList.toggle('hide',i!==n-1)});[].forEach.call(dots,function(d,i){d.classList.toggle('on',i<n)});lab.textContent='Step '+n+' of 4';window.scrollTo(0,0);var h=secs[n-1].querySelector('h1');if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}}
  function reset(){R($('w2'),C.start);P($('c2'),0);R($('w3'),C.start-C.give);P($('c3'),C.give);if($('r3'))R($('r3'),C.restStart);
   $('earn').classList.remove('hide');$('n2').classList.add('hide');$('redeem').classList.remove('hide');$('ticket').classList.add('hide');$('n3').classList.add('hide')}
@@ -96,16 +96,16 @@ def page(c):
 JOHNNY_BODY = '''<section id="s1">
 <h1>This is your wallet.</h1>
 <p class="say">500 Restaurant Rewards are in it for Johnny Mac's.</p>
-<div class="wallet"><small>Your wallet</small><div class="num">500<span>rewards</span></div></div>
-<p>Customers earn rewards from your wallet when they eat with you.</p>
+<div class="wallet"><small>Your wallet</small><div class="num">500<span>Restaurant Rewards</span></div></div>
+<p>Customers earn Restaurant Rewards from your wallet when they eat with you.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
 <section id="s2" class="hide">
-<h1>A customer earns rewards.</h1>
+<h1>A customer earns Restaurant Rewards.</h1>
 <p class="say">Alex eats at Johnny Mac's and sends in the receipt.</p>
 <div class="wallet"><small>Your wallet</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
-<button class="btn" type="button" id="earn">Alex earns 15 rewards</button>
+<button class="btn" type="button" id="earn">Alex earns 15 Restaurant Rewards</button>
 <button class="btn hide" type="button" data-next id="n2">Next</button>
 </section>
 <section id="s3" class="hide">
@@ -119,9 +119,9 @@ JOHNNY_BODY = '''<section id="s1">
 </section>
 <section id="s4" class="hide">
 <h1>That's it.</h1>
-<p class="say">The 15 rewards Alex used went back into your wallet.</p>
-<div class="wallet"><small>Your wallet</small><div class="num">500<span>rewards</span></div></div>
-<ul class="big"><li>Alex got free food and will come back.</li><li>You see every reward used, and when.</li><li>Nothing to install. Nothing to learn.</li></ul>
+<p class="say">The 15 Restaurant Rewards Alex used went back into your wallet.</p>
+<div class="wallet"><small>Your wallet</small><div class="num">500<span>Restaurant Rewards</span></div></div>
+<ul class="big"><li>Alex got free food and will come back.</li><li>You see every Restaurant Reward used, and when.</li><li>Nothing to install. Nothing to learn.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
 <p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
 </section>'''
@@ -129,16 +129,16 @@ JOHNNY_BODY = '''<section id="s1">
 LVMPD_BODY = '''<section id="s1">
 <h1>This is the LVMPD wallet.</h1>
 <p class="say">777 Restaurant Rewards are in it.</p>
-<div class="wallet"><small>LVMPD wallet</small><div class="num">777<span>rewards</span></div></div>
-<p>Rewards from this wallet can be used at restaurants in the Restaurant Rewards network.</p>
+<div class="wallet"><small>LVMPD wallet</small><div class="num">777<span>Restaurant Rewards</span></div></div>
+<p>Restaurant Rewards from this wallet can be used at restaurants in the Restaurant Rewards network.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
 <section id="s2" class="hide">
-<h1>A person gets rewards.</h1>
-<p class="say">Alex receives 15 rewards from the LVMPD wallet.</p>
+<h1>A person gets Restaurant Rewards.</h1>
+<p class="say">Alex receives 15 Restaurant Rewards from the LVMPD wallet.</p>
 <div class="wallet"><small>LVMPD wallet</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
-<button class="btn" type="button" id="earn">Alex gets 15 rewards</button>
+<button class="btn" type="button" id="earn">Alex gets 15 Restaurant Rewards</button>
 <button class="btn hide" type="button" data-next id="n2">Next</button>
 </section>
 <section id="s3" class="hide">
@@ -153,8 +153,8 @@ LVMPD_BODY = '''<section id="s1">
 </section>
 <section id="s4" class="hide">
 <h1>That's it.</h1>
-<p class="say">The 15 rewards moved into the restaurant's wallet.</p>
-<ul class="big"><li>Alex got a free meal.</li><li>The restaurant got the rewards.</li><li>You can see where every reward went.</li><li>Any restaurant that joins accepts the same rewards.</li></ul>
+<p class="say">The 15 Restaurant Rewards moved into the restaurant's wallet.</p>
+<ul class="big"><li>Alex got a free meal.</li><li>The restaurant got the Restaurant Rewards.</li><li>You can see where every Restaurant Reward went.</li><li>Any restaurant that joins accepts the same Restaurant Rewards.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
 <p class="fine"><b>Example only.</b> This page is not affiliated with and is not endorsed by the Las Vegas Metropolitan Police Department. Restaurant Rewards are a free perk with no cash value. All names and numbers are made up to show the idea.</p>
 </section>'''
