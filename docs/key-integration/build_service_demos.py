@@ -62,6 +62,18 @@ def switch():
     items = [('Overview', '../index.html'), ('Voice Services', '../voice/index.html'), ('Email Intelligence', '../email/index.html'), ('All demos', '../index.html#library')]
     return '<nav class="kp-switch" aria-label="KEY Platform demos"><span class="lbl">KEY Platform</span>' + ''.join('<a href="%s">%s</a>' % (h, t) for t, h in items) + '</nav>'
 
+# Optional video per service (slug -> (embed URL, plain link, heading, one honest line)). The video itself is a third-party Instagram reel Shane picked.
+VIDEOS = {
+ 'cybersecurity': ('https://www.instagram.com/reel/Df40DmNSiZK/embed/', 'https://www.instagram.com/reel/Df40DmNSiZK/', 'Watch: AI agents and hackers', 'A short video about AI agents and hackers.'),
+ 'ai-agents': ('https://www.instagram.com/reel/Df40DmNSiZK/embed/', 'https://www.instagram.com/reel/Df40DmNSiZK/', 'Watch: AI agents and hackers', 'A short video about AI agents and hackers.'),
+}
+def video_block(slug):
+    v = VIDEOS.get(slug)
+    if not v: return ''
+    return ('<div class="panel" style="margin-top:22px"><h3>%s</h3><p>%s</p>'
+            '<div style="max-width:400px;margin:14px auto 0;border-radius:16px;overflow:hidden;background:#000"><iframe src="%s" title="%s" loading="lazy" allowfullscreen scrolling="no" allow="encrypted-media; picture-in-picture; fullscreen" style="display:block;width:100%%;height:min(720px,150vw);border:0"></iframe></div>'
+            '<p style="text-align:center;margin:12px 0 0"><a href="%s" target="_blank" rel="noopener">Watch it on Instagram</a></p></div>') % (esc(v[2]), esc(v[3]), v[0], esc(v[2]), v[1])
+
 def page(i, s):
     slug, num, title, tag, widget, head, how, bullets = s
     prev = S[i - 1] if i > 0 else None
@@ -80,9 +92,10 @@ def page(i, s):
 <p class="lead">%s</p>
 <div id="widget"></div>
 %s
+%s
 <div class="two-columns" style="margin-top:22px"><div class="panel"><h3>What you get</h3><ul style="margin:10px 0 0;padding-left:18px">%s</ul></div>
 <div class="panel"><h3>About this demo</h3><p>Everything here is fictional sample data that runs in your browser. Nothing is sent, posted, booked or charged, and nothing is connected to a real system. A real project starts with your own information and a review of what is safe to automate.</p><div class="action-row">%s%s</div></div></div>
-%s</section>''' % (label, esc(title), esc(tag), esc(head), esc(how), ('<div data-rr-where style="margin-top:26px"></div><script src="../rr-map.js"></script>' if num == 'P' else ''), ''.join('<li>%s</li>' % esc(b) for b in bullets), cta, ghost, nav)
+%s</section>''' % (label, esc(title), esc(tag), esc(head), esc(how), ('<div data-rr-where style="margin-top:26px"></div><script src="../rr-map.js"></script>' if num == 'P' else ''), video_block(slug), ''.join('<li>%s</li>' % esc(b) for b in bullets), cta, ghost, nav)
     root = '../../'
     return '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
