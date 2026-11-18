@@ -48,8 +48,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 
 <div class="grid">
  <div class="stat"><small>Total Restaurant Rewards</small><b id="sTotal"></b></div>
- <div class="stat"><small>In the Treasury</small><b id="sTre"></b></div>
- <div class="stat"><small>In wallets</small><b id="sWal"></b></div>
+ <div class="stat"><small>In your Treasury wallet</small><b id="sTre"></b></div>
+ <div class="stat"><small>In other wallets</small><b id="sWal"></b></div>
 </div>
 <div class="check" id="check" role="status"></div>
 
@@ -86,14 +86,14 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 </div>
 <script>
 (function(){
- var KEY='rrTreasuryV1',SUPPLY=100000000; /* 1,000,000.00 in hundredths */
+ var KEY='rrTreasuryV2',SUPPLY=100000000; /* 1,000,000.00 in hundredths */
  var S,sel='all',canSave=true;
  function now(){return Date.now()}
- function fresh(){var t=now();return {v:1,wallets:[{id:'treasury',name:'Treasury',type:'Treasury',t:t}],entries:[{id:1,t:t,from:null,to:'treasury',amt:SUPPLY,note:'Opening balance'}],next:2,nextW:1}}
+ function fresh(){var t=now();return {v:1,wallets:[{id:'treasury',name:'Restaurant Rewards Treasury',type:'Shane\'s wallet',t:t}],entries:[{id:1,t:t,from:null,to:'treasury',amt:SUPPLY,note:'Opening balance'}],next:2,nextW:1}}
  function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.v===1&&o.wallets&&o.entries)return o}}catch(e){canSave=false}return fresh()}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));canSave=true}catch(e){canSave=false}}
  function $(i){return document.getElementById(i)}
- function fmt(c){return (c/100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+ function fmt(c){var t=(c/100).toFixed(2);if(/\.00$/.test(t))t=t.slice(0,-3);return t.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
  function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+(\.\d{1,2})?$/.test(v))return null;return Math.round(parseFloat(v)*100)}
  function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id)b+=e.amt;if(e.from===id)b-=e.amt});return b}
@@ -122,7 +122,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   if(S.wallets.some(function(w){return w.name.toLowerCase()===n.toLowerCase()})){say('wmsg','A wallet with that name already exists.',true);return}
   S.wallets.push({id:'w'+(S.nextW++),name:n,type:$('wtype').value,t:now()});$('wname').value='';say('wmsg','Created "'+n+'". It starts at 0.00.');paint()});
  $('wname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('wcreate').click()}});
- function move(){var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
+ function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
   if(a===null||a<=0){say('mmsg','Please type an amount, like 25000.',true);$('mamt').focus();return}
   if(a>bal(f)){say('mmsg',wname(f)+' only has '+fmt(bal(f))+'. Please type a smaller amount.',true);return}
