@@ -80,4 +80,12 @@ def _sync_offer_catalog(text):
     return text
 s = _sync_offer_catalog(s)
 open(path, 'w', encoding='utf-8').write(s)
+# every demo page shows the SAME number as the home list (Shane, 2026-11-18: the security demo said "Service 23" while the home list says 1)
+import os as _os
+for _pos, _e in enumerate(ordered, 1):
+    _f = SITE + 'key-platform/' + _e['href'].lstrip('./')
+    if not _f.endswith('.html') or '/demos/' not in _f or not _os.path.exists(_f): continue
+    _t = open(_f, encoding='utf-8').read()
+    _n = re.sub(r'(<span class="eyebrow">)[^<]*?( &middot; Demo</span>)', r'\g<1>Service %d\g<2>' % _pos, _t, count=1)
+    if _n != _t: open(_f, 'w', encoding='utf-8').write(_n)
 print('services list built: %d services (one plain numbered list)' % len(lst))
