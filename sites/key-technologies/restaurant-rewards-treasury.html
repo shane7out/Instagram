@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Restaurant Rewards Treasury | Key Technologies.si</title>
+<meta name="description" content="Owner tool: a starting supply of Restaurant Rewards, wallets created one by one, and every move of credit recorded.">
+<meta name="theme-color" content="#0f171e">
+<link rel="stylesheet" href="/fonts/lato.css">
+<style>
+:root{--bg:#0f171e;--card:#1b2735;--line:#3b4e63;--ink:#fff;--dim:#c3d0de;--key:#00a8e1;--key2:#7fd8f7;--warn:#ffb84d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.top{background:#10243a;color:#e3f0fc;font-size:14px;line-height:1.4;text-align:center;padding:9px 14px;border-bottom:1px solid #1f3d5c}.top b{color:#fff}
+.col{max-width:920px;margin:0 auto;padding:0 18px 70px}
+h1{font-size:clamp(26px,5vw,36px);line-height:1.15;margin:22px 0 6px;font-weight:900}
+h2{font-size:19px;margin:0 0 10px;font-weight:900}
+p{margin:0 0 12px;color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}.stat small{display:block;color:var(--dim);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.stat b{display:block;font-size:26px;line-height:1.2;color:var(--key2)}
+.check{border-radius:14px;padding:11px 14px;margin:0 0 16px;font-weight:700;border:1px solid var(--key);background:rgba(0,168,225,.12)}.check.bad{border-color:var(--warn);background:rgba(255,184,77,.12);color:var(--warn)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 14px}
+label{display:block;color:var(--dim);font-size:14px;font-weight:700;margin:10px 0 5px}label:first-of-type{margin-top:0}
+input,select{width:100%;font:700 18px Lato,system-ui,sans-serif;padding:10px 12px;border-radius:12px;border:2px solid #7d90a5;background:#0f171e;color:#fff}
+input::placeholder{color:#8fa2b6;font-weight:400}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--key2);outline-offset:2px}
+.btn{border:0;border-radius:12px;background:var(--key);color:#0f171e;font:900 18px Lato,system-ui,sans-serif;padding:12px 16px;cursor:pointer;min-height:48px;margin-top:12px;width:100%}.btn:active{background:#33bce8}
+.btn.ghost{background:transparent;color:#fff;border:2px solid #637283;width:auto;margin:0;font-size:15px;min-height:42px;padding:8px 14px}
+.msg{min-height:22px;margin:8px 0 0;font-weight:700;font-size:15px;color:var(--key2)}.msg.err{color:var(--warn)}
+.wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:0 0 18px}
+.wc{text-align:left;background:linear-gradient(135deg,#21364d 0%,#16222f 60%,#12202d 100%);border:1px solid #4a6a8a;border-radius:16px;padding:14px;color:#fff;cursor:pointer;font:inherit}
+.wc[aria-pressed="true"]{border:2px solid var(--key);box-shadow:0 0 0 3px rgba(0,168,225,.25)}
+.wc small{display:block;color:var(--dim);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}.wc b{display:block;font-size:18px;margin:2px 0 6px}.wc .n{font-size:26px;font-weight:900;color:var(--key2);line-height:1.1}.wc .n span{font-size:13px;color:var(--dim);font-weight:700;display:block}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;border-bottom:1px solid #2d3e52;text-align:left;vertical-align:top}th{color:var(--dim);font-size:12px;letter-spacing:.1em;text-transform:uppercase}td.r,th.r{text-align:right;white-space:nowrap}.in{color:var(--key2);font-weight:900}.out{color:#fff;font-weight:900}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;align-items:center}
+.fine{font-size:14px;color:#cfdbe7;margin-top:18px;line-height:1.5}
+.hide{display:none}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.two{grid-template-columns:1fr}table{font-size:14px}th:nth-child(4),td:nth-child(4){display:none}}
+</style>
+</head>
+<body>
+<div class="top"><b>Owner tool, prototype.</b> Restaurant Rewards have no cash value. This page keeps its records in <b>this browser only</b>, so tap <b>Download backup</b> often.</div>
+<div class="col">
+<h1>Restaurant Rewards Treasury</h1>
+<p>One starting supply, wallets created one by one, and every move of credit written down. Nothing is ever edited or deleted; to fix a mistake, move the credit back.</p>
+
+<div class="grid">
+ <div class="stat"><small>Total Restaurant Rewards</small><b id="sTotal"></b></div>
+ <div class="stat"><small>In the Treasury</small><b id="sTre"></b></div>
+ <div class="stat"><small>In wallets</small><b id="sWal"></b></div>
+</div>
+<div class="check" id="check" role="status"></div>
+
+<h2>Wallets</h2>
+<div class="wallets" id="wallets"></div>
+
+<div class="two">
+ <div class="box">
+  <h2>Create a wallet</h2>
+  <label for="wname">Name</label><input id="wname" maxlength="40" autocomplete="off" placeholder="Example: Johnny Mac's">
+  <label for="wtype">Kind</label>
+  <select id="wtype"><option>Restaurant</option><option>Organization</option><option>Customer</option><option>Other</option></select>
+  <button class="btn" id="wcreate" type="button">Create wallet</button>
+  <div class="msg" id="wmsg" role="alert"></div>
+ </div>
+ <div class="box">
+  <h2>Move credit</h2>
+  <label for="mfrom">From</label><select id="mfrom"></select>
+  <label for="mto">To</label><select id="mto"></select>
+  <label for="mamt">Amount (Restaurant Rewards)</label><input id="mamt" inputmode="decimal" autocomplete="off" placeholder="Example: 25000">
+  <label for="mnote">Note (optional)</label><input id="mnote" maxlength="80" autocomplete="off" placeholder="Example: Starting credit">
+  <button class="btn" id="mmove" type="button">Move credit</button>
+  <div class="msg" id="mmsg" role="alert"></div>
+ </div>
+</div>
+
+<div class="box">
+ <h2 id="lhead">Every move</h2>
+ <div class="tools"><button class="btn ghost" id="showAll" type="button">Show every move</button><button class="btn ghost" id="csv" type="button">Download list (CSV)</button><button class="btn ghost" id="backup" type="button">Download backup</button><label class="btn ghost" style="display:inline-block;cursor:pointer;margin:0">Restore backup<input id="restore" type="file" accept="application/json,.json" style="display:none"></label><button class="btn ghost" id="reset" type="button">Start over</button></div>
+ <table><thead><tr><th>When</th><th>Move</th><th class="r">Amount</th><th>Note</th></tr></thead><tbody id="rows"></tbody></table>
+ <div class="msg" id="tmsg" role="alert"></div>
+</div>
+<p class="fine">Restaurant Rewards are a promotional perk with no cash value. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. Before real customers use wallets, have your attorney review the program terms.</p>
+</div>
+<script>
+(function(){
+ var KEY='rrTreasuryV1',SUPPLY=100000000; /* 1,000,000.00 in hundredths */
+ var S,sel='all',canSave=true;
+ function now(){return Date.now()}
+ function fresh(){var t=now();return {v:1,wallets:[{id:'treasury',name:'Treasury',type:'Treasury',t:t}],entries:[{id:1,t:t,from:null,to:'treasury',amt:SUPPLY,note:'Opening balance'}],next:2,nextW:1}}
+ function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.v===1&&o.wallets&&o.entries)return o}}catch(e){canSave=false}return fresh()}
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(S));canSave=true}catch(e){canSave=false}}
+ function $(i){return document.getElementById(i)}
+ function fmt(c){return (c/100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+ function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+(\.\d{1,2})?$/.test(v))return null;return Math.round(parseFloat(v)*100)}
+ function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
+ function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id)b+=e.amt;if(e.from===id)b-=e.amt});return b}
+ function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
+ function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+ function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
+ function paint(){
+  var tre=bal('treasury'),tot=0,wal=0;S.wallets.forEach(function(w){var b=bal(w.id);tot+=b;if(w.id!=='treasury')wal+=b});
+  $('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);
+  var ck=$('check');if(tot===SUPPLY){ck.className='check';ck.textContent='Everything adds up: the Treasury plus all wallets equals '+fmt(SUPPLY)+' Restaurant Rewards.'}else{ck.className='check bad';ck.textContent='Warning: the wallets add up to '+fmt(tot)+', not '+fmt(SUPPLY)+'. Download a backup and check the list below.'}
+  var box=$('wallets');box.innerHTML='';
+  S.wallets.forEach(function(w){var b=el('button','wc');b.type='button';b.setAttribute('aria-pressed',String(sel===w.id));b.appendChild(el('small',null,w.type));b.appendChild(el('b',null,w.name));var n=el('div','n',fmt(bal(w.id)));n.appendChild(el('span',null,'Restaurant Rewards'));b.appendChild(n);b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
+  ['mfrom','mto'].forEach(function(id){var s=$(id),v=s.value;s.innerHTML='';S.wallets.forEach(function(w){var o=el('option',null,w.name+' ('+fmt(bal(w.id))+')');o.value=w.id;s.appendChild(o)});if(v&&S.wallets.some(function(w){return w.id===v}))s.value=v});
+  if(!$('mfrom').dataset.init){$('mfrom').value='treasury';$('mto').selectedIndex=Math.min(1,S.wallets.length-1);$('mfrom').dataset.init='1'}
+  var rows=$('rows');rows.innerHTML='';var list=S.entries.filter(function(e){return sel==='all'||e.from===sel||e.to===sel}).slice().reverse();
+  $('lhead').textContent=sel==='all'?'Every move':'Statement: '+wname(sel);
+  if(!list.length){var tr=el('tr'),td=el('td',null,'Nothing yet.');td.colSpan=4;tr.appendChild(td);rows.appendChild(tr)}
+  list.forEach(function(e){var tr=el('tr');tr.appendChild(el('td',null,when(e.t)));
+   var mv=e.from?(wname(e.from)+' → '+wname(e.to)):('Opening balance → '+wname(e.to));tr.appendChild(el('td',null,mv));
+   var sign='',cls='';if(sel!=='all'){if(e.to===sel){sign='+';cls='in'}else{sign='−';cls='out'}}
+   var a=el('td','r '+cls,sign+fmt(e.amt));tr.appendChild(a);tr.appendChild(el('td',null,e.note||''));rows.appendChild(tr)});
+  if(!canSave)say('tmsg','This browser is not saving. Download a backup before you leave.',true);
+  save()}
+ $('wcreate').addEventListener('click',function(){var n=$('wname').value.replace(/\s+/g,' ').trim();
+  if(!n){say('wmsg','Please type a name.',true);$('wname').focus();return}
+  if(S.wallets.some(function(w){return w.name.toLowerCase()===n.toLowerCase()})){say('wmsg','A wallet with that name already exists.',true);return}
+  S.wallets.push({id:'w'+(S.nextW++),name:n,type:$('wtype').value,t:now()});$('wname').value='';say('wmsg','Created "'+n+'". It starts at 0.00.');paint()});
+ $('wname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('wcreate').click()}});
+ function move(){var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
+  if(f===t){say('mmsg','Pick two different wallets.',true);return}
+  if(a===null||a<=0){say('mmsg','Please type an amount, like 25000.',true);$('mamt').focus();return}
+  if(a>bal(f)){say('mmsg',wname(f)+' only has '+fmt(bal(f))+'. Please type a smaller amount.',true);return}
+  S.entries.push({id:S.next++,t:now(),from:f,to:t,amt:a,note:$('mnote').value.replace(/\s+/g,' ').trim().slice(0,80)});
+  $('mamt').value='';$('mnote').value='';say('mmsg','Moved '+fmt(a)+' Restaurant Rewards from '+wname(f)+' to '+wname(t)+'.');paint()}
+ $('mmove').addEventListener('click',move);
+ $('mamt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();move()}});
+ $('showAll').addEventListener('click',function(){sel='all';paint()});
+ function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+ function stamp(){var d=new Date();return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
+ $('backup').addEventListener('click',function(){dl('restaurant-rewards-backup-'+stamp()+'.json','application/json',JSON.stringify(S,null,1));say('tmsg','Backup downloaded. Keep it somewhere safe.')});
+ $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};var out=['When,From,To,Amount,Note'];S.entries.forEach(function(e){out.push([q(new Date(e.t).toISOString()),q(e.from?wname(e.from):'Opening balance'),q(wname(e.to)),(e.amt/100).toFixed(2),q(e.note)].join(','))});dl('restaurant-rewards-moves-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','List downloaded.')});
+ $('restore').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1||!Array.isArray(o.wallets)||!Array.isArray(o.entries))throw 0;var tot=0;o.entries.forEach(function(e){if(!e.from)tot+=e.amt});if(tot!==SUPPLY)throw 0;
+   if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Restaurant Rewards backup.',true)}};r.readAsText(f);this.value=''});
+ $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});
+ S=load();paint();
+})();
+</script>
+</body>
+</html>
