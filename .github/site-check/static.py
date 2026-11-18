@@ -26,7 +26,7 @@ for p in pages:
         if not md: issues.append((p,'no meta description'))
         elif len(md.group(1))>170: issues.append((p,f'description long {len(md.group(1))}'))
         if not re.search(r'rel=["\']canonical',t): issues.append((p,'no canonical'))
-        if p not in smurls and p!='index.html' and not p.startswith('guides/index') : issues.append((p,'indexable but not in sitemap'))
+        if p not in smurls and (p[:-10] if p.endswith('/index.html') else p) not in smurls and (p[:-10] if p.endswith('/index.html') else p)+'/' not in smurls and p!='index.html' and not p.startswith('guides/index') : issues.append((p,'indexable but not in sitemap'))
     h1=len(re.findall(r'<h1[\s>]',t))
     if h1!=1 and not noidx: issues.append((p,f'h1 count {h1}'))
     for m in re.finditer(r'<img\b[^>]*>',t):
