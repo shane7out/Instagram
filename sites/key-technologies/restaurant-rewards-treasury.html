@@ -374,7 +374,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   c.appendChild(d('brand','Restaurant Rewards'));c.appendChild(d('nm','A credit to give'));
   var cr=d('crow');cr.appendChild(d('chip gchip','GIFT'));var gx=expInfo(g.id);cr.appendChild(rrLock());c.appendChild(cr);
   c.appendChild(d('num',cardNo(g)));
-  var bb=d('bal'),sm=document.createElement('small');sm.textContent='Tap to give \u203a';var b2=document.createElement('b');b2.textContent=fmt(amt);var rt=d('rt');if(gx)rt.appendChild(cdEl(gx));rt.appendChild(b2);bb.appendChild(sm);bb.appendChild(rt);c.appendChild(bb);
+  var bb=d('bal'),sm=document.createElement('small');sm.textContent='Balance';var b2=document.createElement('b');b2.textContent=fmt(amt);var rt=d('rt');if(gx)rt.appendChild(cdEl(gx));rt.appendChild(b2);bb.appendChild(sm);bb.appendChild(rt);c.appendChild(bb);
   if(open){c.setAttribute('role','button');c.setAttribute('tabindex','0');c.setAttribute('aria-label','Credit to give, '+fmt(amt)+' RR. Tap to give it to one person.');c.addEventListener('click',open);c.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}})}
   return c}
  function giftBlock(g,backId){if(giftOut(g)||avail(g.id)<=0)return null;var w=document.createElement('div');w.className='gblock';w.appendChild(giftCard(g,function(){openGive(g.id,backId)}));return w}
