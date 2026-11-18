@@ -37,8 +37,8 @@ CSS = '''  /* services: everything visible at once, grouped (build_services_grid
   .svc-list{list-style:none;margin:0;padding:0;counter-reset:svc;columns:2;column-gap:44px;}
   @media (max-width:760px){.svc-list{columns:1;}}
   .svc-list li{counter-increment:svc;break-inside:avoid;display:grid;grid-template-columns:2.2em 1fr auto;column-gap:6px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);}
-  .svc-list li::before{content:counter(svc);grid-row:1 / span 2;color:var(--ink-dim);font-weight:700;font-size:15px;}
-  .svc-name{grid-column:2;font-weight:800;font-size:17px;line-height:1.3;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:30px;}
+  .svc-list li::before{content:counter(svc);grid-row:1 / span 2;color:var(--ink);font-weight:900;font-size:16px;}
+  .svc-name{grid-column:2;font-weight:900;font-size:18px;line-height:1.3;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:30px;}
   .svc-name:hover{color:var(--key-light);text-decoration:underline;}
   .svc-desc{grid-column:2 / span 2;font-size:15px;line-height:1.45;color:var(--ink-dim);margin-top:3px;}
   .svc-demo{grid-column:3;grid-row:1;font-weight:700;font-size:14px;color:var(--key-light);text-decoration:none;display:inline-flex;align-items:center;min-height:36px;padding-left:8px;}

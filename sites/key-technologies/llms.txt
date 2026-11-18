@@ -58,6 +58,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [How a restaurant rewards program works, and what to check before you start](https://keytechnologies.si/guides/restaurant-rewards-program.html): A plain guide to restaurant rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.
 - [Frequently asked questions about Key Technologies](https://keytechnologies.si/guides/frequently-asked-questions.html): Plain answers about the free call, what AI/SI means, who owns your accounts, permission levels, the demos and Key Rewards.
 - [IPhone app, Android app, APK or web app? A plain guide to building a mobile app](https://keytechnologies.si/guides/iphone-android-apk-mobile-app-guide.html): What iPhone apps, Android apps, an APK file, cross-platform apps and installable web apps are, and how a business owner can choose.
+- [White hat, gray hat, black hat: what the terms mean, and why it matters for your business](https://keytechnologies.si/guides/white-hat-gray-hat-black-hat-explained.html): A plain guide to white hat, gray hat and black hat hackers, how attackers and defenders now use the same AI tools, and what to ask before anyone tests your security.
 
 ## LVR Rewards (Las Vegas Restaurants)
 - [LVR Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.

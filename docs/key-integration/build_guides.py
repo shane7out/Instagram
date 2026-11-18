@@ -1004,6 +1004,56 @@ G14['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G14'] = G14
 
+# ================= Guide 15: white hat, gray hat, black hat =================
+G15 = dict(slug='white-hat-gray-hat-black-hat-explained', date='2026-11-18',
+  title='White Hat, Gray Hat, Black Hat Hackers Explained | Key Technologies.si',
+  desc='What white hat, gray hat and black hat mean, how attackers and defenders use the same AI tools, and what to ask before you let anyone test your business security.',
+  h1='White hat, gray hat, black hat: what the terms mean, and why it matters for your business',
+  short='A plain guide to white hat, gray hat and black hat hackers, how attackers and defenders now use the same AI tools, and what to ask before anyone tests your security.')
+G15['faq'] = [
+ ('What is a black hat hacker?', 'Someone who breaks into systems without permission to steal, spy, extort or cause harm. This is the criminal attacker.'),
+ ('What is a white hat hacker?', 'A security professional who tests and defends systems with the owner\'s permission. The permission, usually in writing and with a clear scope, is what makes the work legitimate.'),
+ ('What is a gray hat hacker?', 'Someone who breaks into systems without permission but often without criminal intent, for example to show that a hole exists. It is still unauthorized access, and it can be illegal.'),
+ ('Do attackers use AI too?', 'Yes. The same AI tools are available to everyone, including people who attack businesses. That is why defenders use them as well, with a person staying in charge of what is allowed to change.'),
+ ('What should I ask before someone tests my security?', 'Ask for a written agreement that says what may be tested and when, who will have access to what, and how findings will be handled. Your accounts should stay in your name.'),
+ ('Where should a business start?', 'Start with the basics: strong passwords, two-step sign-in, backups and knowing who has access to what. A short conversation can tell you where the biggest gaps are.')]
+G15['body'] = f"""<article class="wrap guide">
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('White hat, gray hat, black hat','')])}
+<h1>{esc(G15['h1'])}</h1>
+<p class="byline">Key Technologies &middot; Published November 18, 2026</p>
+<div class="tldr"><b>Short answer:</b> a <b>black hat</b> breaks in to cause harm, a <b>white hat</b> tests and defends with the owner&rsquo;s permission, and a <b>gray hat</b> breaks in without permission, often to show a hole. The same AI tools are now in everyone&rsquo;s hands, so the question is who puts them to work for you.</div>
+
+<h2>The three hats</h2>
+<ul>
+<li><b>Black hat:</b> breaks in to steal, spy or cause harm. These are the criminals.</li>
+<li><b>Gray hat:</b> breaks in without permission, often just to show a hole. The intent may be better than a criminal&rsquo;s, but it is still not allowed, and it can be illegal.</li>
+<li><b>White hat:</b> a security expert who tests and defends with the owner&rsquo;s permission. Permission and a clear scope are what separate this from the other two.</li>
+</ul>
+
+<h2>Why AI changes the picture</h2>
+<p>The same AI tools are available to everyone, good guys and bad guys. Attackers use them to move faster. Defenders can use them too: software agents that watch for suspicious activity and flag it, while a person decides what is allowed to change. The tools are not the difference. Who is using them, and with whose permission, is.</p>
+
+<h2>What to ask before anyone tests your security</h2>
+<ol>
+<li><b>Is there a written agreement?</b> It should say what may be tested, when, and what happens to the findings.</li>
+<li><b>Who gets access to what?</b> Doing the work usually means real login access, the same as hiring any contractor, so it should be limited to what the job needs.</li>
+<li><b>Do my accounts stay in my name?</b> They should.</li>
+<li><b>Does a person approve changes?</b> Automated tools can flag problems, but a person should approve anything that changes your systems.</li>
+<li><b>Are the promises believable?</b> Be careful with guarantees that nothing will ever go wrong. Nobody can honestly promise that.</li>
+</ol>
+
+<h2>Where Key Technologies fits</h2>
+<p>We work as white hats: with the owner&rsquo;s permission, inside the access you grant, with your accounts in your name. Our <a href="../key-platform/demos/cybersecurity.html">agentic security service</a> puts AI agents to work watching for threats, with a person in charge. You can try a sample security check in the demo, which uses a fictional office.</p>
+
+{faq_html(G15['faq'])}
+
+<div class="guide-cta"><h2>Want a straight look at where you stand?</h2>
+<p>Book a free call and tell us what you use today. The first call is free, with no obligation.</p>
+<div class="row"><a class="btn btn-primary" href="../book.html">Book a free call</a><a class="btn btn-ghost" href="../key-platform/demos/cybersecurity.html">Try the security demo</a></div></div>
+{more([('What is AI/SI? A plain-English guide','What AI and superintelligence mean and how to tell real help from hype.','what-is-ai-si.html'),('How to choose an AI consultant: 10 questions to ask','A plain checklist for small-business owners, including the warning signs.','choose-an-ai-consultant.html')])}
+</article>"""
+GUIDES['G15'] = G15
+
 def build():
     os.makedirs(SITE + 'guides', exist_ok=True)
     for g in GUIDES.values():
