@@ -21,7 +21,10 @@ Nothing is sold. No customer pays anything for Restaurant Rewards today.
 ### A. Is one central supply handed out by Key Technologies an "issuer" problem?
 Key Technologies would mint a fixed supply and distribute it to wallets that can later be spent at participating restaurants. Does that structure, by itself, create obligations (money transmission, stored value / prepaid access, gift certificate or gift card rules, unclaimed property / escheat, state or federal registration), even if nothing is ever sold?
 
-### B. What changes if a restaurant pays Key Technologies for credit?
+### B. How credit comes in, and what changes if a restaurant ever pays money
+**Current model (Shane, 2026-11-18): barter, no money.** Key Technologies / Las Vegas Restaurants reposts a restaurant on its Instagram stories; in exchange the restaurant gives credit (free food credit); Key Technologies gives that credit to its audience as Restaurant Rewards. No money is paid by restaurants or guests. Please advise on: barter tax treatment for both sides, a short written agreement per restaurant, disclosure rules for the promotional reposts, and who is responsible if a restaurant stops honoring credit.
+
+**If a restaurant ever pays money instead:**
 The business idea has a restaurant funding credit it later honors. If a restaurant (or anyone) **pays money** to receive Restaurant Rewards, is that selling a stored-value instrument or a gift card? What wording and structure (for example, "marketing budget", "service fee", "campaign credit", a fixed offer catalog, no cash-out, no transfers outside the program) keeps this a promotional program? Who may be paid, and when may a balance expire?
 
 ### C. What is a restaurant's balance worth, and what can it do with it?
