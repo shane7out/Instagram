@@ -29,3 +29,5 @@ Rule: one item at a time. Shane picks the next one; Claude updates this file aft
 
 ## Done recently
 Johnny Mac's site live + PIN-page chip; shorter restaurant DM; dark look only (button removed); Mobile Apps service (#3) + demo + page + guide; blue login/owner pages; home page goes straight from the headline into the services (hero buttons removed, 2026-11-17).
+
+NEW (2026-11-18): Mac: run deploy-restaurant-rewards-name.sh (renames LVR Rewards to Restaurant Rewards on the sign-up page and Rewards admin). Johnny Mac's demo page is live and unlisted at keytechnologies.si/johnny-macs-demo/; ask Johnny Mac's before linking it publicly. Restaurants: only add the ones that are ready; do not chase the rest.
