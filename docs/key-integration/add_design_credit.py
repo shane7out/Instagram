@@ -6,7 +6,7 @@ The one-screen app pages (key-rewards-app, key-rewards-me, key-rewards-dashboard
 screens with fixed layouts; the credit for those goes on their own about/sign-in screen (ask Shane first)."""
 import pathlib, re
 SITE = pathlib.Path('sites/key-technologies')
-PAGES = ['restaurant-rewards-treasury.html', 'restaurant-confirm.html', 'rewards.html', 'join-restaurant.html', 'key-rewards-join.html', 'key-rewards-checkin.html',
+PAGES = ['restaurant-rewards-treasury.html', 'restaurant-confirm.html', 'restaurant-rewards-uses.html', 'rewards.html', 'join-restaurant.html', 'key-rewards-join.html', 'key-rewards-checkin.html',
          'rewards-terms.html', 'rewards-privacy.html', 'points-terms.html', 'points-privacy.html', 'spin-terms.html',
          'johnny-macs-demo/index.html', 'johnny-macs-demo/app.html', 'johnny-macs-demo/cards.html', 'johnny-macs-demo/wallet.html', 'thin-blue-702-demo/index.html']
 BLOCK = ('<p class="ktcredit" style="text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78">'
