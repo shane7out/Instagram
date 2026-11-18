@@ -342,7 +342,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  $('restore').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1||!Array.isArray(o.wallets)||!Array.isArray(o.entries))throw 0;var tot=0;o.entries.forEach(function(e){if(!e.from)tot+=e.amt});if(tot!==SUPPLY)throw 0;
    if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Restaurant Rewards backup.',true)}};r.readAsText(f);this.value=''});
  $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});
- if(RR.signedIn()&&RR.email()===RR.TREASURER.email)enterDb();else start();
+ if(/[?&]demo=1\b/.test(location.search)){$('modeNote').innerHTML='<b>Demo.</b> Sample wallets only. Tap a wallet card, then <b>Show this wallet</b>. Restaurant Rewards have no cash value.';enterLocal()}else if(RR.signedIn()&&RR.email()===RR.TREASURER.email)enterDb();else start();
 })();
 </script>
 <p class="ktcredit" style="text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">keytechnologies.si</a></p>
