@@ -100,6 +100,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   <label for="wname">Name</label><input id="wname" maxlength="40" autocomplete="off" placeholder="Example: Johnny Mac's">
   <label for="wtype">Kind</label>
   <select id="wtype"><option>Restaurant</option><option>Organization</option><option>Customer</option><option>Other</option></select>
+  <label for="wstart">Starting credit from the Treasury (optional)</label><input id="wstart" inputmode="decimal" autocomplete="off" placeholder="Example: 5000">
   <button class="btn" id="wcreate" type="button">Create wallet</button>
   <div class="msg" id="wmsg" role="alert"></div>
  </div>
@@ -174,7 +175,10 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  $('wcreate').addEventListener('click',function(){var n=$('wname').value.replace(/\s+/g,' ').trim();
   if(!n){say('wmsg','Please type a name.',true);$('wname').focus();return}
   if(S.wallets.some(function(w){return w.name.toLowerCase()===n.toLowerCase()})){say('wmsg','A wallet with that name already exists.',true);return}
-  openW(n,$('wtype').value);$('wname').value='';say('wmsg','Created "'+n+'". It starts at 0.');paint()});
+  var raw=$('wstart').value.trim(),a=0;if(raw!==''){a=parse(raw);if(a===null||a<0){say('wmsg','Starting credit: please type an amount like 5000, or leave it empty.',true);$('wstart').focus();return}if(a>bal('treasury')){say('wmsg','The Treasury only has '+fmt(bal('treasury'))+'.',true);return}}
+  var id=openW(n,$('wtype').value);$('wname').value='';$('wstart').value='';
+  if(a>0){S.entries.push({id:S.next++,t:now(),from:'treasury',to:id,amt:a,note:'Starting credit'});say('wmsg','Created "'+n+'" with '+fmt(a)+' Restaurant Rewards from the Treasury.')}else{say('wmsg','Created "'+n+'". It starts at 0.')}
+  paint()});
  $('wname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('wcreate').click()}});
  function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
