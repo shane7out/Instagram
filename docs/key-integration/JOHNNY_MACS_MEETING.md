@@ -22,3 +22,9 @@ Fuller demo with menu + map: https://keytechnologies.si/johnny-macs-demo/
 - Show it on a phone or tablet held in his hands; let him tap Next himself.
 - Say the four steps out loud; do not show the dashboard, the map or the menu unless he asks.
 - Leave him one thing: the link on a card or text, and your number.
+
+## Easier-to-read version + LVMPD example (added 2026-11-18)
+- Johnny Mac's wallet (bigger type, portrait): https://keytechnologies.si/johnny-macs-demo/wallet.html
+- LVMPD wallet EXAMPLE (777 rewards, redeemed rewards move to the restaurant's wallet): https://keytechnologies.si/lvmpd-demo/
+- Both are made for a phone held upright; held sideways they ask the person to turn it. Both are unlisted and noindex.
+- LVMPD page: clearly labeled "example only, not affiliated with or endorsed by LVMPD"; no logo or badge. Before showing it to anyone at LVMPD, ask them; rewards for public employees may be limited by gift/ethics rules, so check with them first.
