@@ -1032,6 +1032,7 @@ G15['body'] = f"""<article class="wrap guide">
 
 <h2>Why AI changes the picture</h2>
 <p>The same AI tool is available to everyone, good guys and bad guys. Attackers use it to move faster. Defenders can use it too: software agents that watch for suspicious activity and flag it, while a person decides what is allowed to change. The tool is not the difference. Who is using it, and with whose permission, is.</p>
+<p>A key is a good way to picture it. A key is a tool: it changes something else by opening a lock. It opens the door for the owner and for a burglar alike. What matters is who is holding it, and whether they have permission.</p>
 
 <h2>What to ask before anyone tests your security</h2>
 <ol>
