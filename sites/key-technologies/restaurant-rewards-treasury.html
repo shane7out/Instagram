@@ -58,8 +58,9 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 .gc.sm{border-radius:16px;padding:13px 14px 11px}.gc.sm .brand{font-size:10px}.gc.sm .nm{font-size:15px;margin-top:4px;padding-right:0}.gc.sm .chip{margin-top:9px;margin-bottom:8px;width:34px;height:25px;border-radius:5px}.gc.sm .num{font-size:13px;letter-spacing:.1em;padding-top:10px}.gc.sm .bal{margin-top:6px;padding-top:6px}.gc.sm .bal small{font-size:9px;padding-bottom:3px}.gc.sm .bal b{font-size:22px;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35),0 2px 3px rgba(60,35,0,.25)}.gc.sm::after{display:none}
 .gc .lgs{position:absolute;right:12px;top:10px;display:flex;gap:5px;z-index:2}.gc .lgs img{height:30px;width:auto;max-width:56px;object-fit:contain;border-radius:5px;background:rgba(255,255,255,.35)}
 .gcb{font:inherit;color:inherit;display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;text-align:left;border-radius:18px}.gcb[aria-pressed="true"] .gc{outline:3px solid #00a8e1;outline-offset:3px}.wallets .gc{min-height:0}
-#pres{position:fixed;top:0;left:0;right:0;bottom:0;height:100%;z-index:50;background:#0f171e;overflow:auto;padding:0 0 40px}
-#pres .pc{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 112px) 18px 6px}
+#pres{position:fixed;top:0;left:0;right:0;bottom:0;height:100%;z-index:50;background:#0f171e;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 112px) 0 26px;box-sizing:border-box}
+#pres:not(.hide){display:flex}
+#pres .pc{width:100%;max-width:520px;margin:auto;padding:0 18px}
 #pres .phead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 10px}#pres .phead h2{text-align:left;margin:0;font-size:20px;line-height:1.2}
 #pres .exit{float:right;background:none;border:1px solid rgba(255,255,255,.4);color:rgba(255,255,255,.78);border-radius:10px;padding:7px 12px;font:700 14px Lato,system-ui,sans-serif;cursor:pointer}
 #pres .plogos{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}#pres .plogos img{height:64px;width:auto;max-width:150px;object-fit:contain}
