@@ -1014,14 +1014,14 @@ G15['faq'] = [
  ('What is a black hat hacker?', 'Someone who breaks into systems without permission to steal, spy, extort or cause harm. This is the criminal attacker.'),
  ('What is a white hat hacker?', 'A security professional who tests and defends systems with the owner\'s permission. The permission, usually in writing and with a clear scope, is what makes the work legitimate.'),
  ('What is a gray hat hacker?', 'Someone who breaks into systems without permission but often without criminal intent, for example to show that a hole exists. It is still unauthorized access, and it can be illegal.'),
- ('Do attackers use AI too?', 'Yes. The same AI tools are available to everyone, including people who attack businesses. That is why defenders use them as well, with a person staying in charge of what is allowed to change.'),
+ ('Do attackers use AI too?', 'Yes. The same AI tool is available to everyone, including people who attack businesses. That is why defenders use it as well, with a person staying in charge of what is allowed to change.'),
  ('What should I ask before someone tests my security?', 'Ask for a written agreement that says what may be tested and when, who will have access to what, and how findings will be handled. Your accounts should stay in your name.'),
  ('Where should a business start?', 'Start with the basics: strong passwords, two-step sign-in, backups and knowing who has access to what. A short conversation can tell you where the biggest gaps are.')]
 G15['body'] = f"""<article class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','index.html'),('White hat, gray hat, black hat','')])}
 <h1>{esc(G15['h1'])}</h1>
 <p class="byline">Key Technologies &middot; Published November 18, 2026</p>
-<div class="tldr"><b>Short answer:</b> a <b>black hat</b> breaks in to cause harm, a <b>white hat</b> tests and defends with the owner&rsquo;s permission, and a <b>gray hat</b> breaks in without permission, often to show a hole. The same AI tools are now in everyone&rsquo;s hands, so the question is who puts them to work for you.</div>
+<div class="tldr"><b>Short answer:</b> a <b>black hat</b> breaks in to cause harm, a <b>white hat</b> tests and defends with the owner&rsquo;s permission, and a <b>gray hat</b> breaks in without permission, often to show a hole. The same AI tool is now in everyone&rsquo;s hands, so the question is who puts it to work for you.</div>
 
 <h2>The three hats</h2>
 <ul>
@@ -1031,7 +1031,7 @@ G15['body'] = f"""<article class="wrap guide">
 </ul>
 
 <h2>Why AI changes the picture</h2>
-<p>The same AI tools are available to everyone, good guys and bad guys. Attackers use them to move faster. Defenders can use them too: software agents that watch for suspicious activity and flag it, while a person decides what is allowed to change. The tools are not the difference. Who is using them, and with whose permission, is.</p>
+<p>The same AI tool is available to everyone, good guys and bad guys. Attackers use it to move faster. Defenders can use it too: software agents that watch for suspicious activity and flag it, while a person decides what is allowed to change. The tool is not the difference. Who is using it, and with whose permission, is.</p>
 
 <h2>What to ask before anyone tests your security</h2>
 <ol>
