@@ -1,10 +1,10 @@
 /* Phone-only sticky "Get My Free Review" bar. Appears after the visitor scrolls a little, hides when the form is on screen or the menu is open. */
 (function () {
   var st = document.createElement('style');
-  st.textContent = '.ktcta{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(15,23,30,.96);border-top:1px solid #37475a;backdrop-filter:blur(8px)}' +
-    '.ktcta a{display:block;text-align:center;text-decoration:none;font:900 16px Lato,system-ui,sans-serif;color:#0f171e;background:#00a8e1;border-radius:12px;padding:14px 16px}' +
+  st.textContent = '.ktcta{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:8px 16px calc(8px + env(safe-area-inset-bottom));background:rgba(15,23,30,.96);border-top:1px solid #37475a;backdrop-filter:blur(8px)}' +
+    '.ktcta a{display:block;text-align:center;text-decoration:none;font:900 15px Lato,system-ui,sans-serif;color:#0f171e;background:#00a8e1;border-radius:10px;padding:10px 16px}' +
     '.ktcta a:active{background:#33bce8}' +
-    '@media(max-width:760px){.ktcta.on{display:block}.ktcta-pad body{padding-bottom:76px}}';
+    '@media(max-width:760px){.ktcta.on{display:block}.ktcta-pad body{padding-bottom:62px}}';
   document.head.appendChild(st);
   var bar = document.createElement('div'); bar.className = 'ktcta'; bar.id = 'ktCta';
   bar.innerHTML = '<a href="/#lead-short">Get My Free Review</a>';
