@@ -83,7 +83,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
   </div>
 </header>
 <div class="mobile-menu" id="mobileMenu">
-  <a class="mm-account" id="mmAccount" href="../rewards.html"><span>Log in</span><small>LVR Rewards member</small></a>
+  <a class="mm-account" id="mmAccount" href="../rewards.html"><span>Log in</span><small>Restaurant Rewards member</small></a>
   <div class="mm-cta-row">
     <a class="btn btn-primary" href="../book.html">Book a Call</a>
     <a class="btn btn-ghost" href="../index.html#audit">Free Website Audit</a>
@@ -103,7 +103,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
     <li><a href="../index.html#about">About Shane</a></li>
     <li><a href="../index.html#locations">Locations</a></li>
     <li><a href="../index.html#faq">FAQ</a></li>
-    <li><a href="../rewards.html">LVR Rewards</a></li>
+    <li><a href="../rewards.html">Restaurant Rewards</a></li>
   </ul>
   <a class="btn btn-primary" style="width:100%" href="../index.html#lead-short">Explore My Options</a>
 </div>
@@ -124,7 +124,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
       <li><a href="../index.html#about">About</a></li>
       <li><a href="../index.html#locations">Locations</a></li>
       <li><a href="../index.html#faq">FAQ</a></li>
-      <li><a href="../rewards.html">LVR Rewards</a></li>
+      <li><a href="../rewards.html">Restaurant Rewards</a></li>
       <li><a href="../privacy.html">Privacy</a></li>
       <li><a href="../terms.html">Terms</a></li>
     </ul>
@@ -1101,7 +1101,7 @@ def build():
     t = open(p, encoding='utf-8').read()
     if '## Guides' not in t:
         block = '## Guides\n' + '\n'.join(f'- [{g["h1"][0].upper() + g["h1"][1:]}]({BASE}guides/{g["slug"]}.html): {g["short"]}' for g in GUIDES.values()) + '\n\n'
-        t = t.replace('## LVR Rewards', block + '## LVR Rewards', 1)
+        t = t.replace('## Restaurant Rewards', block + '## Restaurant Rewards', 1)
     for g in GUIDES.values():
         url = f'{BASE}guides/{g["slug"]}.html'
         if url not in t:
