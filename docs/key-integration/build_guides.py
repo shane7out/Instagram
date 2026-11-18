@@ -1072,7 +1072,7 @@ def build():
     # hub
     cards = ''.join(f'<a href="{g["slug"]}.html"><b>{esc(g["h1"][0].upper() + g["h1"][1:])}</b><span>{esc(g["short"])}</span></a>' for g in GUIDES.values())
     hub_title = 'Guides on AI and Website Security | Key Technologies.si'
-    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, mobile apps for iPhone and Android, AI for law firms and medical offices, PHP2Shell, and AI for restaurants.'
+    hub_desc = 'Short, practical guides: what AI/SI means, choosing an AI consultant, iPhone and Android apps, AI for law, medical offices and restaurants, and PHP2Shell.'
     body = f'''<section class="wrap guide">
 {crumbs_html([('Home','../index.html'),('Guides','')])}
 <h1>Guides</h1>
