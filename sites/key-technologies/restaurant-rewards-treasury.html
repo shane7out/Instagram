@@ -62,6 +62,14 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres:not(.hide){display:flex}
 #pres .pc{width:100%;max-width:520px;margin:auto;padding:0 18px}
 #pres .phead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 10px}#pres .phead h2{text-align:left;margin:0;font-size:20px;line-height:1.2}
+#pres li.tap{cursor:pointer}#pres li.tap:active{background:rgba(255,255,255,.05)}
+.gc .keyi{position:absolute;right:20px;top:18px;opacity:.8;z-index:2}.gc.sm .keyi{right:14px;top:13px}.gc.sm .keyi svg{width:30px;height:12px}.gc .lgs{right:68px}.gc.sm .lgs{right:48px}
+#rdm .chips{display:flex;gap:8px;margin:10px 0 0}#rdm .chips button{flex:1;min-height:42px;border-radius:999px;border:1.5px solid rgba(0,168,225,.6);background:rgba(0,168,225,.12);color:#fff;font:800 16px Lato,system-ui,sans-serif;cursor:pointer}
+#rdm .ramt2{font:900 56px/1.05 Lato,system-ui,sans-serif;color:#00a8e1;margin:2px 0 0}
+#rdm .rtab{margin:16px 0 6px;background:#16222f;border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:4px 16px;text-align:left}
+#rdm .rrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.14)}#rdm .rrow:last-child{border-bottom:0}
+#rdm .rrow small{color:rgba(255,255,255,.7);font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}#rdm .rrow b{font-size:18px;text-align:right}#rdm .rrow b.conf{font-size:22px;letter-spacing:.1em;font-variant-numeric:tabular-nums;color:#fff}
+#rdm .done .cash{margin:10px 0 0;color:rgba(255,255,255,.85);font-size:16px}
 #pres .rbtn{display:block;width:100%;min-height:50px;margin:20px 0 0;border:1.5px solid rgba(0,168,225,.7);border-radius:999px;background:rgba(0,168,225,.16);color:#fff;font:800 18px Lato,system-ui,sans-serif;letter-spacing:.02em;cursor:pointer;transition:background .15s}#pres .rbtn:active{background:rgba(0,168,225,.32)}#pres .rbtn:disabled{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5);cursor:not-allowed}
 #pres .more{display:block;margin:8px auto 0;background:none;border:0;color:#00a8e1;font:700 15px Lato,system-ui,sans-serif;text-decoration:underline;cursor:pointer;padding:6px}
 #rdm{position:fixed;top:0;left:0;right:0;height:100%;z-index:60;background:#0f171e;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 112px) 0 26px;box-sizing:border-box}
@@ -170,13 +178,13 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));canSave=true}catch(e){canSave=false}}
  function $(i){return document.getElementById(i)}
  function fmt(c){var t=(c/100).toFixed(2);if(/\.00$/.test(t))t=t.slice(0,-3);return t.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
- function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+(\.\d{1,2})?$/.test(v))return null;return Math.round(parseFloat(v)*100)}
+ function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+$/.test(v))return null;return parseInt(v,10)*100}
  function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id)b+=e.amt;if(e.from===id)b-=e.amt});return b}
  function sw(){return S.wallets.slice().sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
  function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
  function numFor(w){var r=w.id==='treasury'?0:(w.rank||9);return 'RR 05'+('0'+(10+r)).slice(-2)+' 0001 '+('000'+(42+r*65)).slice(-4)}
- function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','Restaurant Rewards'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}g.appendChild(d('nm',w.id==='treasury'?'Treasury':w.name));g.appendChild(d('chip'));g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.textContent=w.id==='treasury'?'Treasury balance':'Balance';var b2=document.createElement('b');b2.textContent=fmt(bal(w.id));bb.appendChild(sm2);bb.appendChild(b2);g.appendChild(bb);if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
+ function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','Restaurant Rewards'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}var ki=document.createElement('div');ki.className='keyi';ki.innerHTML='<svg viewBox="0 0 64 24" width="40" height="15" fill="none" stroke="#0f171e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6.5"/><path d="M16 12h40M44 12v7M52 12v5"/></svg>';g.appendChild(ki);g.appendChild(d('nm',w.id==='treasury'?'Treasury':w.name));g.appendChild(d('chip'));g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.textContent=w.id==='treasury'?'Treasury balance':'Balance';var b2=document.createElement('b');b2.textContent=fmt(bal(w.id));bb.appendChild(sm2);bb.appendChild(b2);g.appendChild(bb);if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
@@ -200,14 +208,14 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  $('wcreate').addEventListener('click',function(){var n=$('wname').value.replace(/\s+/g,' ').trim();
   if(!n){say('wmsg','Please type a name.',true);$('wname').focus();return}
   if(S.wallets.some(function(w){return w.name.toLowerCase()===n.toLowerCase()})){say('wmsg','A wallet with that name already exists.',true);return}
-  var raw=$('wstart').value.trim(),a=0;if(raw!==''){a=parse(raw);if(a===null||a<0){say('wmsg','Starting credit: please type an amount like 5000, or leave it empty.',true);$('wstart').focus();return}if(a>bal('treasury')){say('wmsg','The Treasury only has '+fmt(bal('treasury'))+'.',true);return}}
+  var raw=$('wstart').value.trim(),a=0;if(raw!==''){a=parse(raw);if(a===null||a<0){say('wmsg','Starting credit: please type a whole number like 5000, or leave it empty.',true);$('wstart').focus();return}if(a>bal('treasury')){say('wmsg','The Treasury only has '+fmt(bal('treasury'))+'.',true);return}}
   var id=openW(n,$('wtype').value);$('wname').value='';$('wstart').value='';
   if(a>0){S.entries.push({id:S.next++,t:now(),from:'treasury',to:id,amt:a,note:'Starting credit'});say('wmsg','Created "'+n+'" with '+fmt(a)+' Restaurant Rewards from the Treasury.')}else{say('wmsg','Created "'+n+'". It starts at 0.')}
   paint()});
  $('wname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('wcreate').click()}});
  function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
-  if(a===null||a<=0){say('mmsg','Please type an amount, like 25000.',true);$('mamt').focus();return}
+  if(a===null||a<=0){say('mmsg','Please type a whole number, like 25000.',true);$('mamt').focus();return}
   if(a>bal(f)){say('mmsg',wname(f)+' only has '+fmt(bal(f))+'. Please type a smaller amount.',true);return}
   S.entries.push({id:S.next++,t:now(),from:f,to:t,amt:a,note:$('mnote').value.replace(/\s+/g,' ').trim().slice(0,80)});
   $('mamt').value='';$('mnote').value='';say('mmsg','Moved '+fmt(a)+' Restaurant Rewards from '+wname(f)+' to '+wname(t)+'.');paint()}
@@ -227,7 +235,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   var hd=el('div','rhead');hd.appendChild(el('h2',null,'Redeem'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
   rc.appendChild(el('p','have',w.name+' has '+fmt(have)+' Restaurant Rewards'));
   rc.appendChild(el('label',null,'How much?'));var lb=rc.lastChild;lb.setAttribute('for','ramt');
-  var ar=el('div','arow'),inp=el('input');inp.id='ramt';inp.setAttribute('inputmode','decimal');inp.setAttribute('autocomplete','off');inp.placeholder='Amount, like 83.17';ar.appendChild(inp);var ua=el('button',null,'Use all');ua.type='button';ua.addEventListener('click',function(){inp.value=(have/100).toFixed(2).replace(/\.00$/,'')});ar.appendChild(ua);rc.appendChild(ar);
+  var ar=el('div','arow'),inp=el('input');inp.id='ramt';inp.setAttribute('inputmode','decimal');inp.setAttribute('autocomplete','off');inp.placeholder='Amount, like 100';ar.appendChild(inp);var ua=el('button',null,'Use all');ua.type='button';ua.addEventListener('click',function(){inp.value=(have/100).toFixed(2).replace(/\.00$/,'')});ar.appendChild(ua);rc.appendChild(ar);
+  var qc=el('div','chips');[25,50,100].filter(function(v){return v*100<=have}).forEach(function(v){var c=el('button',null,String(v));c.type='button';c.addEventListener('click',function(){inp.value=String(v);light(cur)});qc.appendChild(c)});var ca=el('button',null,'All');ca.type='button';ca.addEventListener('click',function(){inp.value=String(have/100);light(cur)});qc.appendChild(ca);rc.appendChild(qc);
   var l2=el('label',null,'Pay who?');rc.appendChild(l2);
   var ww=el('div','wwrap'),wh=el('div','wheel');wh.id='rwheel';wh.setAttribute('role','listbox');wh.setAttribute('aria-label','Choose who to pay');
   var items=rs.map(function(r,i){var d=el('div','wi'+(i===0?' on':''),r.name);d.setAttribute('role','option');wh.appendChild(d);return d});
@@ -240,16 +249,24 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   inp.addEventListener('input',function(){light(cur)});light(0);
   function say2(t,err){msg.textContent=t;msg.className='rmsg'+(err?' err':'')}
   send.addEventListener('click',function(){var a=parse(inp.value);
-   if(a===null||a<=0){say2('Please type an amount, like 83.17',true);inp.focus();return}
+   if(a===null||a<=0){say2('Please type a whole number, like 100',true);inp.focus();return}
    if(a>have){say2(w.name+' only has '+fmt(have)+'. Please type a smaller amount.',true);return}
-   var to=rs[cur];S.entries.push({id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name});save();chime();
-   rc.innerHTML='';var dn=el('div','done');dn.appendChild(el('div','tick','✓'));dn.appendChild(el('h3',null,'Sent'));dn.appendChild(el('p',null,fmt(a)+' Restaurant Rewards'));dn.appendChild(el('p',null,'to '+to.name));dn.appendChild(el('p',null,'New balance: '+fmt(bal(id))));
-   var ok=el('button','send','Done');ok.type='button';ok.addEventListener('click',function(){$('rdm').classList.add('hide');paint();present(id)});dn.appendChild(ok);rc.appendChild(dn)});
+   var to=rs[cur],ent={id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name};S.entries.push(ent);save();chime();receipt(ent,id)});
   $('rdm').classList.remove('hide');$('rdm').scrollTop=0}
+
+ function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
+ function cleanNote(n){return String(n||'').replace(/\s*\(Shane[^)]*\)/,'').trim()}
+ function conf(e){var d=new Date(e.t);return 'RR-'+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+e.id).slice(-4)}
+ function isPay(e){return !!e.from&&/^Redeemed at /.test(e.note||'')}
+ function receipt(e,backId){var rc=$('rc');rc.innerHTML='';var dn=el('div','done');dn.appendChild(el('div','tick','✓'));dn.appendChild(el('h3',null,'Paid'));dn.appendChild(el('div','ramt2',fmt(e.amt)));dn.appendChild(el('p',null,'Restaurant Rewards'));
+  var tb=el('div','rtab');[['To',wname(e.to)],['From',wname(e.from)],['When',fdate(e.t)],['Confirmation',conf(e)]].forEach(function(kv){var r=el('div','rrow');r.appendChild(el('small',null,kv[0]));r.appendChild(el('b',kv[0]==='Confirmation'?'conf':null,kv[1]));tb.appendChild(r)});dn.appendChild(tb);
+  dn.appendChild(el('p','cash','Show this screen to the cashier.'));var ok=el('button','send','Done');ok.type='button';ok.addEventListener('click',function(){$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
-  var hd=el('div','phead');hd.appendChild(el('h2',null,w.name));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(gcard(w,false,false));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
-  pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?e.amt:-e.amt;run+=d;var t,sub;if(e.kind==='open'){t='Wallet opened';sub=when(e.t)}else if(inn){t=e.from?'Received from '+wname(e.from):'Opening balance';sub=when(e.t)+(e.note?' \u00b7 '+e.note:'')}else{t='Sent to '+wname(e.to);sub=when(e.t)+(e.note?' \u00b7 '+e.note:'')}rows.push({t:t,sub:sub,amt:e.amt,inn:inn,open:e.kind==='open',run:run})});
-  rows.reverse();var lim=canR?3:5;var draw=function(list){ul.innerHTML='';list.forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var a=el('span','a'+(r.inn&&!r.open?' in':''),r.open?'0':(r.inn?'+':'\u2212')+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);ul.appendChild(li)})};draw(rows.slice(0,lim));pc.appendChild(ul);if(rows.length>lim){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){draw(rows);mb.remove()});pc.appendChild(mb)}
+  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(gcard(w,false,false));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
+  pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?e.amt:-e.amt;run+=d;if(e.kind==='open')return;var nt=cleanNote(e.note),t,sub=fdate(e.t);
+   if(inn){if(!e.from)t='Opening balance';else if(isPay(e))t='Payment from '+wname(e.from);else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):'Sent to '+wname(e.to)}
+   if(nt&&!isPay(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});
+  rows.reverse();var lim=canR?3:5;var draw=function(list){ul.innerHTML='';list.forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var a=el('span','a'+(r.inn?' in':''),(r.inn?'+':'\u2212')+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);if(isPay(r.e)){li.className='tap';li.setAttribute('role','button');li.setAttribute('tabindex','0');var open=function(){receipt(r.e,id)};li.addEventListener('click',open);li.addEventListener('keydown',function(ev){if(ev.key==='Enter')open()})}ul.appendChild(li)})};draw(rows.slice(0,lim));pc.appendChild(ul);if(rows.length>lim){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){draw(rows);mb.remove()});pc.appendChild(mb)}
   $('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}
  $('showAll').addEventListener('click',function(){sel='all';paint()});
  function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
