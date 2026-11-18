@@ -24,13 +24,13 @@ header span{font-weight:900;font-size:26px;line-height:1.2}
 h1{font-size:48px;line-height:1.12;margin:0 0 16px;font-weight:900;letter-spacing:-.01em}
 p{margin:0 0 18px;color:#e9f1f8}
 .say{font-size:30px;line-height:1.4;color:#fff;font-weight:700}
-.wallet{background:var(--card);border:3px solid var(--key);border-radius:24px;padding:24px 26px;margin:22px 0}
+.wallet{background:var(--card);border:3px solid var(--key);border-radius:24px;padding:24px 26px;margin:22px 0;text-align:center}
 .wallet small{display:block;color:#e9f1f8;font-size:24px;font-weight:700}
 .wallet .num{font-size:128px;font-weight:900;line-height:1.02;color:var(--key2);letter-spacing:-.03em}
 .wallet .num span{display:block;font-size:30px;font-weight:700;color:#e9f1f8;letter-spacing:0;margin-top:6px}
 .wallet.small .num{font-size:96px}
-.cust{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:20px 26px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.cust b{font-size:32px}.cust .n{font-size:56px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:right}.cust .n small{display:block;font-size:22px;color:#e9f1f8;font-weight:700;margin-top:4px}
+.cust{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:20px 26px;margin:16px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
+.cust b{font-size:32px}.cust .n{font-size:56px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:22px;color:#e9f1f8;font-weight:700;margin-top:4px}
 .ticket{border:4px dashed var(--good);border-radius:24px;padding:22px 26px;margin:18px 0;background:rgba(95,228,154,.10)}
 .ticket b{display:block;font-size:34px;line-height:1.25}.ticket .code{font-size:54px;font-weight:900;letter-spacing:.1em;color:var(--good);margin-top:6px}
 .btn{display:block;width:100%;min-height:88px;margin:22px 0 0;padding:18px 22px;border:0;border-radius:22px;background:var(--key);color:#0f171e;font:900 32px Lato,system-ui,sans-serif;cursor:pointer}
@@ -40,6 +40,7 @@ ul.big{list-style:none;padding:0;margin:12px 0 0}ul.big li{padding:18px 0 18px 5
 ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);font-weight:900;font-size:38px;top:12px}
 .fine{font-size:19px;line-height:1.45;color:#cfdbe7;margin-top:30px;padding-bottom:50px}
 .hide{display:none}
+.result{color:var(--good);font-size:30px;line-height:1.35;font-weight:900;text-align:center;margin:18px 0 0}
 .rotate{display:none;position:fixed;inset:0;z-index:99;background:#0f171e;color:#fff;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:30px;font-weight:900;line-height:1.3}
 .rotate div{max-width:420px}.rotate small{display:block;font-size:22px;font-weight:400;margin-top:10px;color:#e9f1f8}
 @media (orientation:landscape) and (max-height:520px){.rotate{display:flex}}
@@ -66,6 +67,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <p class="say">Alex eats at Johnny Mac's and sends in the receipt.</p>
 <div class="wallet"><small>Your wallet</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
+<p class="result hide pop" id="m2"></p>
 <button class="btn" type="button" id="earn">Alex earns 15 Restaurant Rewards</button>
 <button class="btn hide" type="button" data-next id="n2">Next</button>
 </section>
@@ -74,6 +76,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <p class="say">Alex wants free Mozzarella Sticks. Alex taps Redeem.</p>
 <div class="wallet"><small>Your wallet</small><div class="num" id="w3" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
+<p class="result hide pop" id="m3"></p>
 <button class="btn" type="button" id="redeem">Alex taps Redeem</button>
 <div class="ticket hide pop" id="ticket"><b>Free Mozzarella Sticks (5)</b>Show this code to your server:<div class="code">JM-4F7K</div></div>
 <button class="btn hide" type="button" data-next id="n3">Next</button>
@@ -90,16 +93,16 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 </div>
 <script>
 (function(){
- var C={"start": 500, "give": 15, "afterRedeemWallet": 500, "restStart": 0},cur=1,secs=[1,2,3,4].map(function(i){return document.getElementById('s'+i)}),dots=document.querySelectorAll('.dots i'),lab=document.getElementById('stepLabel');
+ var C={"start": 500, "give": 15, "afterRedeemWallet": 500, "restStart": 0, "m2": "15 Restaurant Rewards moved from your wallet to Alex.", "m3": "Alex used 15 Restaurant Rewards. They went back into your wallet."},cur=1,secs=[1,2,3,4].map(function(i){return document.getElementById('s'+i)}),dots=document.querySelectorAll('.dots i'),lab=document.getElementById('stepLabel');
  function $(i){return document.getElementById(i)}
  function R(el,v){el.innerHTML=v+'<span>Restaurant Rewards</span>'}
  function P(el,v){el.innerHTML=v+'<small>Restaurant Rewards</small>'}
  function show(n){cur=n;secs.forEach(function(s,i){s.classList.toggle('hide',i!==n-1)});[].forEach.call(dots,function(d,i){d.classList.toggle('on',i<n)});lab.textContent='Step '+n+' of 4';window.scrollTo(0,0);var h=secs[n-1].querySelector('h1');if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}}
  function reset(){R($('w2'),C.start);P($('c2'),0);R($('w3'),C.start-C.give);P($('c3'),C.give);if($('r3'))R($('r3'),C.restStart);
-  $('earn').classList.remove('hide');$('n2').classList.add('hide');$('redeem').classList.remove('hide');$('ticket').classList.add('hide');$('n3').classList.add('hide')}
+  $('earn').classList.remove('hide');$('n2').classList.add('hide');$('m2').classList.add('hide');$('m3').classList.add('hide');$('redeem').classList.remove('hide');$('ticket').classList.add('hide');$('n3').classList.add('hide')}
  [].forEach.call(document.querySelectorAll('[data-next]'),function(b){b.addEventListener('click',function(){show(cur+1)})});
- $('earn').addEventListener('click',function(){R($('w2'),C.start-C.give);P($('c2'),C.give);this.classList.add('hide');$('n2').classList.remove('hide');$('n2').focus()});
- $('redeem').addEventListener('click',function(){P($('c3'),0);R($('w3'),C.afterRedeemWallet);if($('r3'))R($('r3'),C.restStart+C.give);this.classList.add('hide');$('ticket').classList.remove('hide');$('n3').classList.remove('hide');$('n3').focus()});
+ $('earn').addEventListener('click',function(){R($('w2'),C.start-C.give);P($('c2'),C.give);$('m2').textContent=C.m2;$('m2').classList.remove('hide');this.classList.add('hide');$('n2').classList.remove('hide');$('n2').focus()});
+ $('redeem').addEventListener('click',function(){P($('c3'),0);R($('w3'),C.afterRedeemWallet);if($('r3'))R($('r3'),C.restStart+C.give);$('m3').textContent=C.m3;$('m3').classList.remove('hide');this.classList.add('hide');$('ticket').classList.remove('hide');$('n3').classList.remove('hide');$('n3').focus()});
  $('again').addEventListener('click',function(){reset();show(1)});
  reset();
 })();
