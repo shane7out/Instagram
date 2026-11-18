@@ -98,12 +98,13 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres .plogos{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}#pres .plogos img{height:64px;width:auto;max-width:150px;object-fit:contain}
 #pres h2{text-align:center;font-size:22px;margin:6px 0 2px}
 #pres .gc{max-width:none;width:100%;margin:10px 0 4px;aspect-ratio:1.58/1}
+#pres .accrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 0;padding:10px 14px;background:#16222f;border:1px solid rgba(255,255,255,.22);border-radius:14px;font-weight:700;font-size:15px}#pres .accrow small{font-size:12px;color:rgba(255,255,255,.7);font-weight:400}#pres .accrow .acc{border:1.5px solid rgba(0,168,225,.7);background:rgba(0,168,225,.16);color:#fff;border-radius:999px;font:800 14px Lato,system-ui,sans-serif;padding:7px 14px;cursor:pointer}
 #pres .flip{perspective:1100px;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:20px}#pres .flip:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 #pres .flip .fi{display:grid;transition:transform .6s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}#pres .flip.on .fi{transform:rotateY(180deg)}
 #pres .flip .fi>*{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden}#pres .flip .fi>.back{transform:rotateY(180deg)}
-.gc.back{padding:0;display:block}.gc.back::after{display:none}.gc.back .strip{height:26px;margin-top:12px;background:linear-gradient(#1b1b1b,#0b0b0b);box-shadow:0 1px 0 rgba(255,255,255,.35)}
-.gc.back .bk{padding:9px 16px 0;color:#0f171e}.gc.back .l{margin:0 0 3px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:900;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35)}
-.gc.back .t{margin:0 0 9px;font-size:15px;line-height:1.25;font-weight:900;color:#0f171e;text-shadow:-1px -1px 0 rgba(255,255,255,.6),1px 1px 0 rgba(60,35,0,.25)}.gc.back .t.s{margin:0 0 2px;font-size:14px;font-weight:700}.gc.back .t.h{margin:8px 0 0;font-size:11px;font-weight:700;opacity:.8}
+#pres .gc.back{aspect-ratio:auto}.gc.back{padding:0;display:block;aspect-ratio:auto}.gc.back::after{display:none}.gc.back .strip{height:22px;margin-top:10px;background:linear-gradient(#1b1b1b,#0b0b0b);box-shadow:0 1px 0 rgba(255,255,255,.35)}
+.gc.back .bk{padding:7px 14px 10px;color:#0f171e}.gc.back .l{margin:0 0 1px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:900;text-shadow:0 1px 0 rgba(255,255,255,.5)}.gc.back .l.f{margin-top:5px}
+.gc.back .t{margin:0 0 4px;font-size:11.5px;line-height:1.2;font-weight:900;color:#0f171e;text-shadow:0 1px 0 rgba(255,255,255,.5)}.gc.back .t.s{margin:0 0 1px;font-size:11px;font-weight:700}.gc.back .t.p{margin:0 0 3px;font-size:9.5px;line-height:1.28;font-weight:700}.gc.back .t.h{margin:4px 0 0;font-size:9.5px;font-weight:700;opacity:.75}
 @media(max-height:830px){#pres .gc{aspect-ratio:1.68/1}}
 #pres .pcard{background:linear-gradient(135deg,#1a2a3b 0%,#16222f 60%,#0f171e 100%);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:16px 18px;margin:14px 0;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #pres .pcard small{display:block;color:rgba(255,255,255,.78);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
@@ -192,8 +193,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function eRem(e){var r={t:e.t,to:e.to,amt:e.amt};if(e.from)r.from=e.from;if(e.note)r.note=String(e.note).slice(0,120);if(e.kind==='open')r.kind='open';else if(!e.from)r.kind='issue';if(e.status==='pending')r.status='pending';if(e.from)r.fn=String(wname(e.from)).slice(0,60);r.tn=String(wname(e.to)).slice(0,60);return r}
  function fromRem(j){var ws=[],es=[],mx=0,mw=0;Object.keys(j.wallets||{}).forEach(function(id){var w=j.wallets[id],o={id:id,name:w.name,type:id==='treasury'?"Shane's wallet":w.type,t:w.t};if(w.rank)o.rank=w.rank;ws.push(o);var m=/^w(\d+)$/.exec(id);if(m)mw=Math.max(mw,+m[1])});
   Object.keys(j.entries||{}).sort().forEach(function(k){var e=j.entries[k],id=parseInt(k.slice(1),10),o={id:id,t:e.t,from:e.from||null,to:e.to,amt:e.amt,note:e.note||''};if(e.kind==='open')o.kind='open';if(e.status)o.status=e.status;es.push(o);if(id>mx)mx=id});
-  return {v:1,wallets:ws,entries:es,next:mx+1,nextW:mw+1}}
- function sig(o){return o.entries.length+':'+o.entries.map(function(e){return e.status||'-'}).join('')}
+  return {v:1,wallets:ws,entries:es,next:mx+1,nextW:mw+1,accept:j.accept||{}}}
+ function sig(o){return o.entries.length+':'+o.entries.map(function(e){return e.status||'-'}).join('')+JSON.stringify(o.accept||{})}
  function markSynced(){synced={w:{},e:{}};S.wallets.forEach(function(w){synced.w[w.id]=1});S.entries.forEach(function(e){synced.e[e.id]=1})}
  function unsynced(){var w=[],e=[];S.wallets.forEach(function(x){if(!synced.w[x.id])w.push(x)});S.entries.forEach(function(x){if(!synced.e[x.id])e.push(x)});return {w:w,e:e,n:w.length+e.length}}
  function setStat(k,code){var d=$('dbstat');if(!DBM){d.className='hide';return}d.className='st '+k;d.onclick=null;
@@ -225,6 +226,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function held(){var h=0;S.entries.forEach(function(e){if(e.status==='pending')h+=e.amt});return h}
  function stTxt(e){return e.status==='pending'?'Waiting for confirmation':(e.status==='declined'?'Declined':'')}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id&&credited(e))b+=e.amt;if(e.from===id&&debited(e))b-=e.amt});return b}
+ function accepts(id){return !(S.accept&&S.accept[id]===false)}
  function sw(){return S.wallets.slice().sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
  function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
  function numFor(w){var r=w.id==='treasury'?0:(w.rank||9);return 'RR 05'+('0'+(10+r)).slice(-2)+' 0001 '+('000'+(42+r*65)).slice(-4)}
@@ -234,8 +236,11 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   var fi=document.createElement('div');fi.className='fi';fi.appendChild(gcard(w,false,false));
   var b=document.createElement('div');b.className='gc back';var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};
   b.appendChild(d('strip'));var bk=d('bk');
-  bk.appendChild(d('l','Where to use it'));var rs=sw().filter(function(x){return x.type==='Restaurant'}).map(function(x){return x.name});bk.appendChild(d('t',rs.length?rs.join(' \u00b7 '):'Participating restaurants'));
-  bk.appendChild(d('l','How to use it'));['1. Tap Redeem.','2. Type how much and pick the restaurant.','3. Tap Send and show the cashier the confirmation.'].forEach(function(x){bk.appendChild(d('t s',x))});bk.appendChild(d('t h','Tap the card to flip it back.'));
+  bk.appendChild(d('l','Where to use it'));var rs=sw().filter(function(x){return x.type==='Restaurant'&&accepts(x.id)}).map(function(x){return x.name});bk.appendChild(d('t',rs.length?rs.join(' \u00b7 '):'No restaurant is accepting right now.'));
+  bk.appendChild(d('l','How to use it'));['1. Tap Redeem.','2. Pick the restaurant and type how much.','3. Tap Send and show the cashier the confirmation.'].forEach(function(x){bk.appendChild(d('t s',x))});
+  bk.appendChild(d('l f','The fine print'));
+  ['No cash value. Restaurant Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Restaurant Rewards and gives them away. They are never sold.','Each restaurant decides, and can change at any time, whether it accepts them. A restaurant that is on the list above accepts them now. A restaurant that is not on the list does not accept them. Use them while you can.'].forEach(function(x){bk.appendChild(d('t p',x))});
+  bk.appendChild(d('t h','Tap the card to flip it back.'));
   b.appendChild(bk);fi.appendChild(b);wr.appendChild(fi);
   var tg=function(){var on=wr.classList.toggle('on');wr.setAttribute('aria-pressed',String(on));tick()};wr.addEventListener('click',tg);wr.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();tg()}});return wr}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
@@ -282,9 +287,9 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function tick(){window.__rrTicks=(window.__rrTicks||0)+1;if(!soundOn)return;var a=ac();if(!a)return;try{var o=a.createOscillator(),g=a.createGain(),t=a.currentTime;o.type='square';o.frequency.value=1700;g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.0001,t+.03);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.04);if(navigator.vibrate)navigator.vibrate(6)}catch(e){}}
  function chime(){if(!soundOn)return;var a=ac();if(!a)return;try{[[880,0],[1320,.12]].forEach(function(n){var o=a.createOscillator(),g=a.createGain(),t=a.currentTime+n[1];o.type='sine';o.frequency.value=n[0];g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.5);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.55)})}catch(e){}}
  function openRedeem(id){
-  var w=S.wallets.filter(function(x){return x.id===id})[0],rs=sw().filter(function(x){return x.type==='Restaurant'}),rc=$('rc'),cur=0,have=bal(id);
+  var w=S.wallets.filter(function(x){return x.id===id})[0],rs=sw().filter(function(x){return x.type==='Restaurant'&&accepts(x.id)}),rc=$('rc'),cur=0,have=bal(id);
   ac();rc.innerHTML='';
-  if(!rs.length){rc.appendChild(el('p',null,'There is no restaurant to pay yet. Create a Restaurant wallet first.'));$('rdm').classList.remove('hide');return}
+  if(!rs.length){rc.appendChild(el('p',null,'No restaurant is accepting Restaurant Rewards right now. Check the back of your card for the list.'));$('rdm').classList.remove('hide');return}
   var hd=el('div','rhead');hd.appendChild(el('h2',null,'Redeem'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
   rc.appendChild(el('p','have',w.name+' has '+fmt(have)+' Restaurant Rewards'));
   rc.appendChild(el('label',null,'How much?'));var lb=rc.lastChild;lb.setAttribute('for','ramt');
@@ -318,7 +323,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   if(stt==='pending'&&!DBM){var cb=el('button','send','Confirm (practice)');cb.type='button';cb.addEventListener('click',function(){e.status='confirmed';save();chime();receipt(e,backId)});dn.appendChild(cb);var db2=el('button','more','Decline (practice)');db2.type='button';db2.addEventListener('click',function(){e.status='declined';save();receipt(e,backId)});dn.appendChild(db2)}
   var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
-  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,false,false):flipCard(w));presId=id;if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
+  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,false,false):flipCard(w));presId=id;if(w.type==='Restaurant'){var on=accepts(w.id),ar=el('div','accrow');ar.appendChild(el('span',null,'Accepting Restaurant Rewards: '+(on?'On':'Off')));if(!DBM){var tg=el('button','acc'+(on?' on':''),on?'Turn off':'Turn on');tg.type='button';tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id)});ar.appendChild(tg)}else ar.appendChild(el('small',null,'The restaurant controls this switch.'));pc.appendChild(ar)}
+  if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
   pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?(credited(e)?e.amt:0):(debited(e)?-e.amt:0);run+=d;if(e.kind==='open')return;var nt=cleanNote(e.note),t,sub=fdate(e.t);
    if(inn){if(!e.from)t='Opening balance';else if(isPay(e))t='Payment from '+wname(e.from);else if(e.from==='treasury')t='Credit from the Treasury';else t='Received from '+wname(e.from)}else{t=isPay(e)?'Paid '+wname(e.to):'Sent to '+wname(e.to)}
    if(nt&&!isPay(e)&&nt!=='Opening balance')sub+=' \u00b7 '+nt;if(stTxt(e))sub+=' \u00b7 '+stTxt(e);rows.push({t:t,sub:sub,amt:e.amt,inn:inn,run:run,e:e})});

@@ -35,6 +35,7 @@ li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bot
 li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weight:900;white-space:nowrap}
 .none{color:var(--dim);text-align:center;padding:22px 0}
 .msg{min-height:22px;font-weight:700;color:var(--key);margin:6px 0}
+.acc{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}.acc b{display:block;font-size:17px}.acc small{display:block;color:var(--dim);font-size:13px;line-height:1.3;margin-top:2px}.acc button{flex:none;border:2px solid var(--key);background:rgba(0,168,225,.16);color:#fff;border-radius:999px;font:800 15px Lato,system-ui,sans-serif;padding:9px 16px;min-height:44px;cursor:pointer}.acc.off button{background:var(--key);color:#0f171e}
 .fine{font-size:13px;color:rgba(255,255,255,.7);margin-top:22px}
 .hide{display:none}
 </style>
@@ -42,6 +43,7 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
 <body>
 <div class="col" id="app" hidden>
  <div class="who"><div><h1 id="rname">Confirm payments</h1><p id="rid" style="margin:0"></p></div><button type="button" id="out">Lock</button></div>
+ <div class="acc" id="acc"><div><b>Accepting Restaurant Rewards</b><small id="accs"></small></div><button type="button" id="accb">Turn off</button></div>
  <h2>Waiting for you</h2>
  <div id="pend"></div>
  <h2>Recent</h2>
@@ -58,12 +60,16 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
  function fmt(c){var t=(c/100).toFixed(2);if(/\.00$/.test(t))t=t.slice(0,-3);return t.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
  function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
  function conf(k,t){var d=new Date(t);return 'RR-'+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+parseInt(k.slice(1),10)).slice(-4)}
+ var accOn=true;
+ function paintAcc(){$('acc').className='acc'+(accOn?'':' off');$('accs').textContent=accOn?'You are on the list. Guests can pay you with Restaurant Rewards.':'You are off the list. Guests cannot pay you. Turn it back on any time.';$('accb').textContent=accOn?'Turn off':'Turn on'}
+ function loadAcc(){RR.db('GET','rr_ledger/accept/'+id).then(function(r){if(r.status===200){accOn=r.json!==false;paintAcc()}})}
+ $('accb').addEventListener('click',function(){var v=!accOn;if(!v&&!window.confirm('Turn off? Guests will no longer be able to pay you with Restaurant Rewards. You can turn it back on any time.'))return;$('accb').disabled=true;RR.db('PUT','rr_ledger/accept/'+id,v).then(function(r){$('accb').disabled=false;if(r.status===200){accOn=v;paintAcc();say(v?'You are on the list.':'You are off the list.')}else say('That did not save. Try again.')})});
  function say(t){$('msg').textContent=t}
  function load(){
   RR.db('GET','rr_ledger/entries',undefined,'orderBy=%22to%22&equalTo=%22'+id+'%22').then(function(r){
    if(r.status===401||r.status===403){RR.signOut();location.reload();return}
    if(r.status!==200){say('Could not reach the database. Trying again soon.');return}
-   ents=r.json||{};draw()})}
+   ents=r.json||{};draw();loadAcc()})}
  function draw(){
   var keys=Object.keys(ents).filter(function(k){return ents[k].kind!=='open'&&ents[k].amt>0}).sort().reverse(),pend=$('pend'),rec=$('recent');pend.innerHTML='';rec.innerHTML='';
   var pk=keys.filter(function(k){return ents[k].status==='pending'}),dk=keys.filter(function(k){return ents[k].status!=='pending'});
@@ -83,7 +89,7 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
   RR.db('PUT','rr_ledger/entries/'+k+'/status',v).then(function(r){if(r.status===200){say(v==='confirmed'?'Confirmed. Thank you.':'Declined.');load()}else{btn.disabled=false;say('That did not save (it may already be handled). Refreshing.');load()}})}
  function open(rid){id=rid;RR.db('GET','rr_ledger/entries',undefined,'orderBy=%22to%22&equalTo=%22'+id+'%22').then(function(r){
    if(r.status===401||r.status===403){RR.signOut();start('That PIN did not open this restaurant.');return}
-   $('app').hidden=false;$('rid').textContent='Restaurant ID: '+id;ents=(r.status===200&&r.json)||{};
+   $('app').hidden=false;$('rid').textContent='Restaurant ID: '+id;ents=(r.status===200&&r.json)||{};loadAcc();
    var any=Object.keys(ents).map(function(k){return ents[k].tn}).filter(Boolean)[0];if(any)$('rname').textContent=any;draw();
    timer=setInterval(function(){if(!document.hidden)load()},10000);document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});
    var idle=null,go=function(){clearTimeout(idle);idle=setTimeout(function(){RR.signOut();location.reload()},10*60*1000)};['click','touchstart','keydown'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()})}

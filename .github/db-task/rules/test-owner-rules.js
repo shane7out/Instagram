@@ -817,6 +817,21 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('restaurant: w2 cannot read the whole ledger', 'rest2', 'GET', RR, undefined, false);
   await t('restaurant: w2 cannot read the supply record', 'rest2', 'GET', RR + '/meta', undefined, false);
 
+  // ---- restaurants switch acceptance on/off (accept/<wallet>); a payment to a restaurant that is off is refused ----
+  await t('accept: restaurant w2 can turn itself off', 'rest2', 'PUT', RR + '/accept/w2', false, true);
+  await t('accept: restaurant w2 can read its own switch', 'rest2', 'GET', RR + '/accept/w2', undefined, true);
+  await t('accept: restaurant w2 cannot read the switch of w1', 'rest2', 'GET', RR + '/accept/w1', undefined, false);
+  await t('accept: restaurant w2 cannot change the switch of w1', 'rest2', 'PUT', RR + '/accept/w1', false, false);
+  await t('accept: the Treasury PIN account cannot change a restaurant switch', 'treasurer', 'PUT', RR + '/accept/w1', false, false);
+  await t('accept: a visitor cannot change a switch', 'anon', 'PUT', RR + '/accept/w1', false, false);
+  await t('accept: a stranger cannot change a switch', 'other', 'PUT', RR + '/accept/w1', false, false);
+  await t('accept: only true or false is allowed', 'rest2', 'PUT', RR + '/accept/w2', 'maybe', false);
+  await t('accept: the Treasury PIN account can read the switches', 'treasurer', 'GET', RR + '/accept', undefined, true);
+  await t('accept: a payment to a restaurant that is off is refused', 'treasurer', 'PUT', RR + '/entries/e0000020', MOVE('w2', 100, { from: 'w3', status: 'pending' }), false);
+  await t('accept: a payment to a restaurant that is still on is accepted', 'treasurer', 'PUT', RR + '/entries/e0000021', MOVE('w1', 100, { from: 'w3', status: 'pending' }), true);
+  await t('accept: restaurant w2 can turn itself back on', 'rest2', 'PUT', RR + '/accept/w2', true, true);
+  await t('accept: a payment to w2 works again once it is back on', 'treasurer', 'PUT', RR + '/entries/e0000022', MOVE('w2', 100, { from: 'w3', status: 'pending' }), true);
+
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.log('TEST HARNESS ERROR', e); process.exit(2); });
