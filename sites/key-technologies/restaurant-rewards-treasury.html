@@ -29,7 +29,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 .btn{border:0;border-radius:12px;background:var(--key);color:#0f171e;font:900 18px Lato,system-ui,sans-serif;padding:12px 16px;cursor:pointer;min-height:48px;margin-top:12px;width:100%}.btn:active{background:#00a8e1}
 .btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4);width:auto;margin:0;font-size:15px;min-height:42px;padding:8px 14px}
 .msg{min-height:22px;margin:8px 0 0;font-weight:700;font-size:15px;color:var(--key2)}.msg.err{color:#fff;background:rgba(0,168,225,.18);border-radius:8px;padding:6px 10px}
-.wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:0 0 18px}
+.wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:0 0 18px}
 .wc{text-align:left;background:linear-gradient(135deg,#1a2a3b 0%,#16222f 60%,#0f171e 100%);border:1px solid rgba(255,255,255,.28);border-radius:16px;padding:14px;color:#fff;cursor:pointer;font:inherit}
 .wc[aria-pressed="true"]{border:2px solid var(--key);box-shadow:0 0 0 3px rgba(0,168,225,.25)}
 .wc .lg{display:flex;gap:6px;justify-content:flex-end;min-height:0;margin:-2px 0 4px}.wc .lg img{height:34px;width:auto;max-width:72px;object-fit:contain;border-radius:6px;background:rgba(255,255,255,.06)}
@@ -39,11 +39,30 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 .tools{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;align-items:center}
 .fine{font-size:14px;color:rgba(255,255,255,.8);margin-top:18px;line-height:1.5}
 .hide{display:none}
+
+.gc{position:relative;width:100%;aspect-ratio:1.586/1;border-radius:20px;padding:16px 18px;color:#0f171e;text-align:left;border:0;cursor:pointer;font:inherit;overflow:hidden;display:block;
+ background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);
+ box-shadow:0 14px 30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(80,50,0,.35)}
+.gc::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 54%);pointer-events:none}
+.gc::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;border:2px solid rgba(255,255,255,.25);box-shadow:0 0 0 22px rgba(255,255,255,.07),0 0 0 44px rgba(255,255,255,.05);pointer-events:none}
+.gc .brand{font-weight:900;font-size:13px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.gc .nm{position:absolute;left:18px;right:18px;top:40px;font-weight:900;font-size:21px;line-height:1.15;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.gc .chip{position:absolute;left:18px;top:94px;width:46px;height:34px;border-radius:7px;background:linear-gradient(135deg,#e9d38a,#a97d1c);border:1px solid rgba(80,50,0,.45);box-shadow:inset 0 0 0 4px rgba(255,255,255,.18)}
+.gc .chip::before,.gc .chip::after{content:"";position:absolute;background:rgba(80,50,0,.45)}.gc .chip::before{left:0;right:0;top:50%;height:1px}.gc .chip::after{top:0;bottom:0;left:50%;width:1px}
+.gc .num{position:absolute;left:18px;bottom:44px;font-weight:700;font-size:19px;letter-spacing:.14em;font-variant-numeric:tabular-nums;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.gc .bal{position:absolute;left:18px;right:18px;bottom:12px;display:flex;justify-content:space-between;align-items:baseline;font-weight:900}
+.gc .bal small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.8}.gc .bal b{font-size:26px;letter-spacing:-.01em}
+
+.gc .tb{position:absolute;right:18px;top:14px;font-weight:900;font-size:17px;display:none}
+.gc.sm{border-radius:16px;padding:12px 14px;aspect-ratio:1.586/1;width:100%}.gc.sm .brand{font-size:10px}.gc.sm .nm{left:14px;right:14px;top:30px;font-size:15px}.gc.sm .chip{left:14px;top:70px;width:34px;height:25px;border-radius:5px}.gc.sm .num{left:14px;bottom:36px;font-size:13px;letter-spacing:.1em}.gc.sm .bal{left:14px;right:14px;bottom:10px}.gc.sm .bal small{font-size:9px}.gc.sm .bal b{font-size:20px}.gc.sm::after{display:none}
+.gc .lgs{position:absolute;right:12px;top:10px;display:flex;gap:5px}.gc .lgs img{height:30px;width:auto;max-width:56px;object-fit:contain;border-radius:5px;background:rgba(255,255,255,.35)}
+.gcb{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;text-align:left;border-radius:18px}.gcb[aria-pressed="true"] .gc{outline:3px solid #00a8e1;outline-offset:3px}.wallets .gc{min-height:0}
 #pres{position:fixed;inset:0;z-index:50;background:#0f171e;overflow:auto;padding:0 0 40px}
 #pres .pc{max-width:520px;margin:0 auto;padding:16px 18px}
 #pres .exit{float:right;background:none;border:1px solid rgba(255,255,255,.4);color:rgba(255,255,255,.78);border-radius:10px;padding:7px 12px;font:700 14px Lato,system-ui,sans-serif;cursor:pointer}
 #pres .plogos{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}#pres .plogos img{height:64px;width:auto;max-width:150px;object-fit:contain}
 #pres h2{text-align:center;font-size:22px;margin:6px 0 2px}
+#pres .gc{margin:14px 0 6px}
 #pres .pcard{background:linear-gradient(135deg,#1a2a3b 0%,#16222f 60%,#0f171e 100%);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:16px 18px;margin:14px 0;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #pres .pcard small{display:block;color:rgba(255,255,255,.78);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 #pres .pbal{font-size:44px;font-weight:900;color:#00a8e1;line-height:1.1}#pres .pbal span{display:block;font-size:17px;color:#ffffff;font-weight:700}
@@ -125,6 +144,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id)b+=e.amt;if(e.from===id)b-=e.amt});return b}
  function sw(){return S.wallets.slice().sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
  function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
+ function numFor(w){var r=w.id==='treasury'?0:(w.rank||9);return 'RR 05'+('0'+(10+r)).slice(-2)+' 0001 '+('000'+(42+r*65)).slice(-4)}
+ function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','Restaurant Rewards'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}g.appendChild(d('nm',w.name));g.appendChild(d('chip'));g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.textContent=w.id==='treasury'?'Treasury balance':'Balance';var b2=document.createElement('b');b2.textContent=fmt(bal(w.id));bb.appendChild(sm2);bb.appendChild(b2);g.appendChild(bb);if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
@@ -132,7 +153,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   $('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);
   var ck=$('check');if(tot===SUPPLY){ck.className='check';ck.textContent='Everything adds up: the Treasury plus all wallets equals '+fmt(SUPPLY)+' Restaurant Rewards.'}else{ck.className='check bad';ck.textContent='Warning: the wallets add up to '+fmt(tot)+', not '+fmt(SUPPLY)+'. Download a backup and check the list below.'}
   var box=$('wallets');box.innerHTML='';
-  sw().forEach(function(w){var b=el('button','wc');b.type='button';b.setAttribute('aria-pressed',String(sel===w.id));var lg=el('div','lg');(S.logos&&S.logos[w.id]||[]).forEach(function(u){var im=el('img');im.src=u;im.alt='';lg.appendChild(im)});if(lg.children.length)b.appendChild(lg);b.appendChild(el('small',null,(w.id==='treasury'?'':'#'+w.rank+' \u00b7 ')+w.type));b.appendChild(el('b',null,w.name));var n=el('div','n',fmt(bal(w.id)));n.appendChild(el('span',null,'Restaurant Rewards'));b.appendChild(n);b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
+  sw().forEach(function(w){var b=gcard(w,true,true);b.setAttribute('aria-pressed',String(sel===w.id));b.setAttribute('aria-label',w.name+', balance '+fmt(bal(w.id)));b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
   ['mfrom','mto'].forEach(function(id){var s=$(id),v=s.value;s.innerHTML='';sw().forEach(function(w){var o=el('option',null,(w.id==='treasury'?'':'#'+w.rank+' ')+w.name+' ('+fmt(bal(w.id))+')');o.value=w.id;s.appendChild(o)});if(v&&S.wallets.some(function(w){return w.id===v}))s.value=v});
   if(!$('mfrom').dataset.init){$('mfrom').value='treasury';$('mto').selectedIndex=Math.min(1,S.wallets.length-1);$('mfrom').dataset.init='1'}
   var rows=$('rows');rows.innerHTML='';var list=S.entries.filter(function(e){return sel==='all'||e.from===sel||e.to===sel}).slice().reverse();
@@ -163,7 +184,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function present(id){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
   var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){$('pres').classList.add('hide');document.body.style.overflow=''});pc.appendChild(ex);
   var lg=el('div','plogos');(S.logos&&S.logos[id]||[]).forEach(function(u){var im=el('img');im.src=u;im.alt='';lg.appendChild(im)});if(lg.children.length)pc.appendChild(lg);
-  pc.appendChild(el('h2',null,w.name));var card=el('div','pcard');card.appendChild(el('small',null,'Restaurant Rewards Account'));card.appendChild(el('small',null,'Available balance'));var bb=el('div','pbal',fmt(bal(id)));bb.appendChild(el('span',null,'Restaurant Rewards'));card.appendChild(bb);pc.appendChild(card);
+  pc.appendChild(el('h2',null,w.name));pc.appendChild(gcard(w,false,false));
   pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?e.amt:-e.amt;run+=d;var t,sub;if(e.kind==='open'){t='Wallet opened';sub=when(e.t)}else if(inn){t=e.from?'Received from '+wname(e.from):'Opening balance';sub=when(e.t)+(e.note?' \u00b7 '+e.note:'')}else{t='Sent to '+wname(e.to);sub=when(e.t)+(e.note?' \u00b7 '+e.note:'')}rows.push({t:t,sub:sub,amt:e.amt,inn:inn,open:e.kind==='open',run:run})});
   rows.reverse().forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var a=el('span','a'+(r.inn&&!r.open?' in':''),r.open?'0':(r.inn?'+':'\u2212')+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);ul.appendChild(li)});pc.appendChild(ul);
   pc.appendChild(el('p','fine','Sample view. Restaurant Rewards are a promotional perk with no cash value. This view shows one wallet only.'));$('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}

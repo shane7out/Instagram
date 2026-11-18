@@ -28,7 +28,6 @@ header{display:flex;align-items:center;gap:12px;padding:14px 0 6px}header img{he
 .card{background:linear-gradient(135deg,#1a2a3b 0%,#16222f 60%,#0f171e 100%);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:14px 16px 12px;margin:0 0 12px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
 .ahead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;text-align:left;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.14)}.ahead b{font-size:17px;white-space:nowrap}.ahead span{font-size:13px;color:var(--dim)}
 .card small{display:block;color:var(--dim);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-.bal{font-size:34px;font-weight:900;line-height:1.05;color:var(--key2);letter-spacing:-.02em}.bal span{display:block;font-size:16px;font-weight:700;color:#ffffff;letter-spacing:0}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}.stat{background:#16222f;border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:center}.stat b{display:block;font-size:22px;color:#fff}.stat small{color:var(--dim);font-size:13px}
 h2{font-size:18px;margin:18px 0 8px;font-weight:900}
 .box{background:#16222f;border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 12px}
@@ -46,6 +45,24 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
 .act small{display:block;color:rgba(255,255,255,.7);font-size:13px}.amt{font-weight:900;white-space:nowrap}.in{color:var(--key2)}.empty{color:rgba(255,255,255,.7);padding:14px 0;text-align:center;font-size:16px}
 .fine{font-size:14px;color:rgba(255,255,255,.8);margin-top:20px;line-height:1.45}
 .hide{display:none}
+
+.gc{position:relative;width:100%;aspect-ratio:1.586/1;border-radius:20px;padding:16px 18px;color:#0f171e;text-align:left;border:0;cursor:pointer;font:inherit;overflow:hidden;display:block;
+ background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);
+ box-shadow:0 14px 30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(80,50,0,.35)}
+.gc::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 54%);pointer-events:none}
+.gc::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;border:2px solid rgba(255,255,255,.25);box-shadow:0 0 0 22px rgba(255,255,255,.07),0 0 0 44px rgba(255,255,255,.05);pointer-events:none}
+.gc .brand{font-weight:900;font-size:13px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.gc .nm{position:absolute;left:18px;right:18px;top:40px;font-weight:900;font-size:21px;line-height:1.15;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.gc .chip{position:absolute;left:18px;top:94px;width:46px;height:34px;border-radius:7px;background:linear-gradient(135deg,#e9d38a,#a97d1c);border:1px solid rgba(80,50,0,.45);box-shadow:inset 0 0 0 4px rgba(255,255,255,.18)}
+.gc .chip::before,.gc .chip::after{content:"";position:absolute;background:rgba(80,50,0,.45)}.gc .chip::before{left:0;right:0;top:50%;height:1px}.gc .chip::after{top:0;bottom:0;left:50%;width:1px}
+.gc .num{position:absolute;left:18px;bottom:44px;font-weight:700;font-size:19px;letter-spacing:.14em;font-variant-numeric:tabular-nums;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.gc .bal{position:absolute;left:18px;right:18px;bottom:12px;display:flex;justify-content:space-between;align-items:baseline;font-weight:900}
+.gc .bal small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.8}.gc .bal b{font-size:26px;letter-spacing:-.01em}
+
+.gc .tb{position:absolute;right:18px;top:14px;font-weight:900;font-size:17px;display:none}
+.gc.sm{border-radius:16px;padding:12px 14px;aspect-ratio:1.586/1;width:100%}.gc.sm .brand{font-size:10px}.gc.sm .nm{left:14px;right:14px;top:30px;font-size:15px}.gc.sm .chip{left:14px;top:70px;width:34px;height:25px;border-radius:5px}.gc.sm .num{left:14px;bottom:36px;font-size:13px;letter-spacing:.1em}.gc.sm .bal{left:14px;right:14px;bottom:10px}.gc.sm .bal small{font-size:9px}.gc.sm .bal b{font-size:20px}.gc.sm::after{display:none}
+.gc .lgs{position:absolute;right:12px;top:10px;display:flex;gap:5px}.gc .lgs img{height:30px;width:auto;max-width:56px;object-fit:contain;border-radius:5px;background:rgba(255,255,255,.35)}
+
 </style>
 </head>
 <body>
@@ -70,7 +87,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
 
 <!-- ============ RESTAURANT VIEW ============ -->
 <section id="vRest" aria-labelledby="tabRest">
- <div class="card"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><small>Available balance</small><div class="bal" id="rBal"></div></div>
+ <div class="gc" style="margin:0 0 12px"><div class="brand">Restaurant Rewards</div><div class="nm">Johnny Mac's</div><div class="chip"></div><div class="num">RR 0511 0001 0042</div><div class="bal"><small>Balance</small><b id="rBal"></b></div></div>
  <div class="two"><div class="stat"><b id="rGiven"></b><small>given to customers</small></div><div class="stat"><b id="rBack"></b><small>used and returned</small></div></div>
  <div class="box"><label for="gwho">Give Restaurant Rewards to</label>
   <select id="gwho"><option value="alex">Alex</option><option value="maria">Maria</option><option value="sam">Sam</option></select>
@@ -89,7 +106,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
   <p class="fine" style="margin-top:12px">No password. In the real app, each customer has a private link from sign-up. Phone numbers here are made up.</p>
  </div>
  <div id="app" class="hide">
-  <div class="card"><div class="ahead"><b id="cName"></b><span>Restaurant Rewards &bull;&bull;&bull;&bull; <span id="cTail"></span></span></div><small>Available balance</small><div class="bal" id="cBal"></div></div>
+  <div class="gc" style="margin:0 0 12px"><div class="brand">Restaurant Rewards</div><div class="nm" id="cName"></div><div class="chip"></div><div class="num" id="cNum"></div><div class="bal"><small>Balance</small><b id="cBal"></b></div></div>
   <div class="box"><label for="uamt">Use Restaurant Rewards at Johnny Mac's</label>
    <div class="row"><input id="uamt" inputmode="decimal" autocomplete="off" placeholder="Type an amount, like 83.17" aria-label="Amount to use"><button class="btn" id="use" type="button">Redeem</button></div>
    <button class="ghost" id="useAll" type="button">Use all of my Restaurant Rewards</button>
@@ -118,9 +135,9 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
  function list(ul,items){ul.innerHTML='';if(!items.length){var l=document.createElement('li');l.className='empty';l.textContent='Nothing yet.';ul.appendChild(l);return}items.forEach(function(x){ul.appendChild(x)})}
  function paint(){
   var given=0,back=0;S.events.forEach(function(e){if(e.type==='give')given+=e.amt;else back+=e.amt});
-  $('rBal').innerHTML=fmt(restBal())+'<span>Restaurant Rewards</span>';$('rGiven').textContent=fmt(given);$('rBack').textContent=fmt(back);
+  $('rBal').textContent=fmt(restBal());$('rGiven').textContent=fmt(given);$('rBack').textContent=fmt(back);
   list($('rAct'),S.events.slice().reverse().map(function(e){return e.type==='give'?li('Given to '+PEOPLE[e.who].n,when(e.t),e.amt,false):li('Used by '+PEOPLE[e.who].n,when(e.t),e.amt,true)}));
-  if(S.who){var p=PEOPLE[S.who];$('login').classList.add('hide');$('app').classList.remove('hide');$('cName').textContent=p.n;$('cTail').textContent=p.tail;$('cBal').innerHTML=fmt(custBal(S.who))+'<span>Restaurant Rewards</span>';
+  if(S.who){var p=PEOPLE[S.who];$('login').classList.add('hide');$('app').classList.remove('hide');$('cName').textContent=p.n;$('cNum').textContent='RR 0511 '+p.tail+' 0042';$('cBal').textContent=fmt(custBal(S.who));
    list($('cAct'),S.events.filter(function(e){return e.who===S.who}).reverse().map(function(e){return e.type==='give'?li('Received from Johnny Mac’s',when(e.t),e.amt,true):li('Used at Johnny Mac’s',when(e.t),e.amt,false)}));
    if(S.events.some(function(e){return e.who===S.who}))S.flags.saw=true}
   else{$('login').classList.remove('hide');$('app').classList.add('hide')}

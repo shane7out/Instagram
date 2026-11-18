@@ -31,6 +31,11 @@ p{margin:0 0 12px;color:#ffffff}
 .wallet .num{font-size:30px;font-weight:900;line-height:1.02;color:var(--key2);letter-spacing:-.03em}
 .wallet .num span{display:block;font-size:16px;font-weight:700;color:#ffffff;letter-spacing:0;margin-top:0}
 .wallet.small .num{font-size:26px}
+.wallet{background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);border:0;color:#0f171e;position:relative;overflow:hidden;box-shadow:0 12px 26px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(80,50,0,.35)}
+.wallet::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 54%);pointer-events:none}
+.wallet>*{position:relative}
+.wallet .ahead{border-bottom-color:rgba(15,23,30,.3)}.wallet .ahead span,.wallet small,.wallet .num span,.wallet .num{color:#0f171e}
+.wallet .gnum{font-weight:700;letter-spacing:.14em;font-size:15px;text-align:left;margin:0 0 6px;text-shadow:0 1px 0 rgba(255,255,255,.4)}
 .cust{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 18px;margin:10px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
 .cust b{font-size:21px}.cust .n{font-size:22px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:16px;color:#ffffff;font-weight:700;margin-top:4px}
 .btn{display:block;width:100%;min-height:62px;margin:14px 0 0;padding:12px 18px;border:0;border-radius:16px;background:var(--key);color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer}
@@ -70,14 +75,14 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <section id="s1">
 <h1>This is your account.</h1>
 <p class="say">500 Restaurant Rewards are in it for Johnny Mac's.</p>
-<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><small>Available balance</small><div class="num">500.00<span>Restaurant Rewards</span></div></div>
+<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num">500.00<span>Restaurant Rewards</span></div></div>
 <p>Customers earn Restaurant Rewards from your account when they eat with you.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
 <section id="s2" class="hide">
 <h1>A customer earns Restaurant Rewards.</h1>
 <p class="say">Alex eats at Johnny Mac's and sends in the receipt.</p>
-<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><small>Available balance</small><div class="num" id="w2" aria-live="polite"></div></div>
+<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
 <p class="result hide pop" id="m2"></p>
 <button class="btn" type="button" id="earn">Alex earns 150 Restaurant Rewards</button>
@@ -86,7 +91,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <section id="s3" class="hide">
 <h1>The customer uses them here.</h1>
 <p class="say">Alex types how many to use, then taps Redeem.</p>
-<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><small>Available balance</small><div class="num" id="w3" aria-live="polite"></div></div>
+<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="w3" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <p class="result hide pop" id="m3"></p>
 <div id="rbox"><label class="lab" for="amt">How many Restaurant Rewards does Alex use?</label>
@@ -98,7 +103,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <section id="s4" class="hide">
 <h1>That's it.</h1>
 <p class="say">The Restaurant Rewards Alex used went back into your account.</p>
-<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><small>Available balance</small><div class="num" id="w4"></div></div>
+<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="w4"></div></div>
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
 <ul class="big"><li>Alex got free food and will come back.</li><li>You see every Restaurant Reward used, and when.</li><li>Nothing to install. Nothing to learn.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
