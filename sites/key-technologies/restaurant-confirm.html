@@ -36,6 +36,7 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
 .none{color:var(--dim);text-align:center;padding:22px 0}
 .msg{min-height:22px;font-weight:700;color:var(--key);margin:6px 0}
 .acc{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}.acc b{display:block;font-size:17px}.acc small{display:block;color:var(--dim);font-size:13px;line-height:1.3;margin-top:2px}.acc button{flex:none;border:2px solid var(--key);background:rgba(0,168,225,.16);color:#fff;border-radius:999px;font:800 15px Lato,system-ui,sans-serif;padding:9px 16px;min-height:44px;cursor:pointer}.acc.off button{background:var(--key);color:#0f171e}
+.cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2147480000}.cf i{position:absolute;width:8px;height:12px;border-radius:2px;animation:cfly 1.5s cubic-bezier(.15,.7,.3,1) forwards}@keyframes cfly{0%{transform:translate(0,0) rotate(0);opacity:1}70%{opacity:1}100%{transform:translate(var(--x),calc(var(--y) + 280px)) rotate(var(--r));opacity:0}}@media (prefers-reduced-motion:reduce){.cf{display:none}}
 .fine{font-size:13px;color:rgba(255,255,255,.7);margin-top:22px}
 .hide{display:none}
 </style>
@@ -64,6 +65,8 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
  function paintAcc(){$('acc').className='acc'+(accOn?'':' off');$('accs').textContent=accOn?'You are on the list. Guests can pay you with Restaurant Rewards.':'You are off the list. Guests cannot pay you. Turn it back on any time.';$('accb').textContent=accOn?'Turn off':'Turn on'}
  function loadAcc(){RR.db('GET','rr_ledger/accept/'+id).then(function(r){if(r.status===200){accOn=r.json!==false;paintAcc()}})}
  $('accb').addEventListener('click',function(){var v=!accOn;if(!v&&!window.confirm('Turn off? Guests will no longer be able to pay you with Restaurant Rewards. You can turn it back on any time.'))return;$('accb').disabled=true;RR.db('PUT','rr_ledger/accept/'+id,v).then(function(r){$('accb').disabled=false;if(r.status===200){accOn=v;paintAcc();say(v?'You are on the list.':'You are off the list.')}else say('That did not save. Try again.')})});
+ var RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+ function burst(){if(RM)return;var cols=['#f2d06b','#e0a82e','#00a8e1','#ffffff','#9fd6f2'],box=document.createElement('div');box.className='cf';document.body.appendChild(box);for(var i=0;i<48;i++){var p=document.createElement('i'),a=Math.random()*Math.PI*2,v=110+Math.random()*230;p.style.cssText='--x:'+(Math.cos(a)*v).toFixed(0)+'px;--y:'+(Math.sin(a)*v-130).toFixed(0)+'px;--r:'+(Math.random()*720-360).toFixed(0)+'deg;background:'+cols[i%cols.length]+';left:50%;top:36%;animation-delay:'+(Math.random()*.08).toFixed(2)+'s';box.appendChild(p)}setTimeout(function(){box.remove()},1900)}
  function say(t){$('msg').textContent=t}
  function load(){
   RR.db('GET','rr_ledger/entries',undefined,'orderBy=%22to%22&equalTo=%22'+id+'%22').then(function(r){
@@ -86,7 +89,7 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
   if(!dk.length){var li=el('li',null,'Nothing yet.');rec.appendChild(li)}
   dk.slice(0,15).forEach(function(k){var e=ents[k],li=el('li'),l=el('span'),b=el('b',null,(e.status==='declined'?'Declined, ':'')+(e.fn||'A guest'));l.appendChild(b);l.appendChild(el('small',null,fdate(e.t)+' · '+conf(k,e.t)));li.appendChild(l);li.appendChild(el('span','a',(e.status==='declined'?'':'+')+fmt(e.amt)));rec.appendChild(li)})}
  function set(k,v,btn){btn.disabled=true;say('Saving…');
-  RR.db('PUT','rr_ledger/entries/'+k+'/status',v).then(function(r){if(r.status===200){say(v==='confirmed'?'Confirmed. Thank you.':'Declined.');load()}else{btn.disabled=false;say('That did not save (it may already be handled). Refreshing.');load()}})}
+  RR.db('PUT','rr_ledger/entries/'+k+'/status',v).then(function(r){if(r.status===200){say(v==='confirmed'?'Confirmed. Thank you.':'Declined.');if(v==='confirmed')burst();load()}else{btn.disabled=false;say('That did not save (it may already be handled). Refreshing.');load()}})}
  function open(rid){id=rid;RR.db('GET','rr_ledger/entries',undefined,'orderBy=%22to%22&equalTo=%22'+id+'%22').then(function(r){
    if(r.status===401||r.status===403){RR.signOut();start('That PIN did not open this restaurant.');return}
    $('app').hidden=false;$('rid').textContent='Restaurant ID: '+id;ents=(r.status===200&&r.json)||{};loadAcc();
