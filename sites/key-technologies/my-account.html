@@ -2312,7 +2312,7 @@
   }
 
   function makeCode(slug) {
-    var prefix = (slug.replace(/[^a-z]/gi, '').slice(0, 3) || 'LVR').toUpperCase();
+    var prefix = (slug.replace(/[^a-z]/gi, '').slice(0, 3) || 'RR').toUpperCase();
     var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     var suffix = '';
     for (var i = 0; i < 5; i++) suffix += chars.charAt(Math.floor(Math.random() * chars.length));

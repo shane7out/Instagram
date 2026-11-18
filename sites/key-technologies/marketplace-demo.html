@@ -85,7 +85,7 @@
     <span><b style="color:var(--gold);">DEMO</b> — every business and offer here is made up.</span>
     <span class="seg" role="group" aria-label="Preview mode">
       <button id="modeAll" type="button">Full marketplace</button>
-      <button id="modeLvr" type="button">LVR restaurant app</button>
+      <button id="modeLvr" type="button">RR restaurant app</button>
     </span>
   </div>
 </div>
@@ -160,7 +160,7 @@
     document.getElementById("modeAll").className = mode === "all" ? "on" : "";
     document.getElementById("modeLvr").className = mode === "lvr" ? "on" : "";
     document.getElementById("brand").innerHTML = mode === "lvr"
-      ? 'LVR<small>Las Vegas Restaurants</small>'
+      ? 'RR<small>Restaurant Rewards</small>'
       : 'Marketplace<small>Everything local, one place</small>';
     document.getElementById("balNum").textContent = balance;
 
@@ -194,7 +194,7 @@
 
     document.getElementById("foot").textContent = mode === "lvr"
       ? "This is the restaurant-only app: members see restaurants and nothing else."
-      : "Switch to “LVR restaurant app” above to see the focused, restaurant-only version.";
+      : "Switch to “RR restaurant app” above to see the focused, restaurant-only version.";
   }
 
   function makeCode(){

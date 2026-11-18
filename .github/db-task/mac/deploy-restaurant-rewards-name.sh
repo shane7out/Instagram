@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-restaurant-rewards-name.sh?$(date +%s)" -o /tmp/deploy-restaurant-rewards-name.sh && bash /tmp/deploy-restaurant-rewards-name.sh
-# RENAME on the LVR dashboard hosting: the words "LVR Rewards" / "LVR Rewards Program" / "LVR Points" become "Restaurant Rewards" on the member sign-up page (lvr-rewards.html)
+# RENAME on the LVR dashboard hosting: the words "LVR Rewards" / "LVR Rewards Program" / "LVR Points" become "Restaurant Rewards" (and the big "LVR" logo word becomes "RR") on the member sign-up page (lvr-rewards.html)
 # and the Rewards admin page (lvr-points-admin.html). Only visible words change. "Las Vegas Restaurants (LVR)" as the company name, page addresses, database names and every PIN, rule and member record stay exactly as they are.
 # It ALSO gives the sign-up page the same colors, font and look as keytechnologies.si (one small style block added at the end of the page head). Takes each page's CURRENT LIVE copy, checks every script still parses, and if anything fails uploads nothing. Safe to run twice. Keeps a .bak-rrname copy of each page.
 set +e
@@ -31,6 +31,7 @@ for (const f of process.env.DOPAGES.trim().split(/\s+/)) {
   s = s.split('LVR Rewards Program').join('Restaurant Rewards Program').split('LVR REWARDS').join('RESTAURANT REWARDS')
        .split('LVR Rewards').join('Restaurant Rewards').split('LVR Points').join('Restaurant Rewards').split('LVR rewards').join('Restaurant Rewards');
   if (f === 'lvr-rewards.html' && !s.includes('/*KEYTHEME')) { s = s.replace('</head>', '<style>' + fs.readFileSync('/tmp/rrname-theme.css', 'utf8') + '</style>\n</head>'); }
+  s = s.split('<div class="brand-name">LVR</div>').join('<div class="brand-name">RR</div>').split('<div class="brand-sub">Las Vegas Restaurants</div>').join('<div class="brand-sub">Restaurant Rewards</div>');
   const after = (s.match(/LVR (Rewards|Points)/gi) || []).length;
   const blocks = [...s.matchAll(/<script>([\s\S]*?)<\/script>/g)]; let ok = true;
   blocks.forEach((m, i) => { fs.writeFileSync('/tmp/_rr_block.js', m[1]); const r = cp.spawnSync('node', ['--check', '/tmp/_rr_block.js'], { encoding: 'utf8' }); if (r.status) { ok = false; console.log(f + ' script block ' + i + ' FAILED: ' + (r.stderr || '').split('\n')[0]); } });
