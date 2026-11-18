@@ -243,7 +243,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   if(!list.length){var tr=el('tr'),td=el('td',null,'Nothing yet.');td.colSpan=4;tr.appendChild(td);rows.appendChild(tr)}
   list.forEach(function(e){var tr=el('tr');tr.appendChild(el('td',null,when(e.t)));
    var mv=e.kind==='open'?('Wallet opened: '+wname(e.to)):(e.from?(wname(e.from)+' → '+wname(e.to)):('Opening balance → '+wname(e.to)));tr.appendChild(el('td',null,mv));
-   var sign='',cls='';if(sel!=='all'){if(e.to===sel){sign='+';cls='in'}else{sign='−';cls='out'}}
+   var sign='',cls='';if(sel!=='all'&&sel!=='treasury'){if(e.to===sel){sign='+';cls='in'}else{sign='−';cls='out'}}
    var a=el('td','r '+(e.kind==='open'||e.status==='declined'?'':cls),e.kind==='open'?'0':(e.status==='declined'?'':sign)+fmt(e.amt));tr.appendChild(a);tr.appendChild(el('td',null,[e.note||'',stTxt(e)].filter(Boolean).join(' \u00b7 ')));rows.appendChild(tr)});
   if(!canSave)say('tmsg','This browser is not saving. Download a backup before you leave.',true);
   save()}
