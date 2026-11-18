@@ -91,6 +91,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function now(){return Date.now()}
  function fresh(){var t=now();return {v:1,wallets:[{id:'treasury',name:'Restaurant Rewards Treasury',type:'Shane\'s wallet',t:t}],entries:[{id:1,t:t,from:null,to:'treasury',amt:SUPPLY,note:'Opening balance'}],next:2,nextW:1}}
  function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.v===1&&o.wallets&&o.entries)return o}}catch(e){canSave=false}return fresh()}
+ function openW(name,type){var id='w'+(S.nextW++),t=now();S.wallets.push({id:id,name:name,type:type,t:t});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
+ function seed(){if(S.seeded)return;S.seeded=true;if(!S.wallets.some(function(w){return w.name.toLowerCase()==='johnny mac\'s'}))openW('Johnny Mac\'s','Restaurant')}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));canSave=true}catch(e){canSave=false}}
  function $(i){return document.getElementById(i)}
  function fmt(c){var t=(c/100).toFixed(2);if(/\.00$/.test(t))t=t.slice(0,-3);return t.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
@@ -112,15 +114,15 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   $('lhead').textContent=sel==='all'?'Every move':'Statement: '+wname(sel);
   if(!list.length){var tr=el('tr'),td=el('td',null,'Nothing yet.');td.colSpan=4;tr.appendChild(td);rows.appendChild(tr)}
   list.forEach(function(e){var tr=el('tr');tr.appendChild(el('td',null,when(e.t)));
-   var mv=e.from?(wname(e.from)+' → '+wname(e.to)):('Opening balance → '+wname(e.to));tr.appendChild(el('td',null,mv));
+   var mv=e.kind==='open'?('Wallet opened: '+wname(e.to)):(e.from?(wname(e.from)+' → '+wname(e.to)):('Opening balance → '+wname(e.to)));tr.appendChild(el('td',null,mv));
    var sign='',cls='';if(sel!=='all'){if(e.to===sel){sign='+';cls='in'}else{sign='−';cls='out'}}
-   var a=el('td','r '+cls,sign+fmt(e.amt));tr.appendChild(a);tr.appendChild(el('td',null,e.note||''));rows.appendChild(tr)});
+   var a=el('td','r '+(e.kind==='open'?'':cls),e.kind==='open'?'0':sign+fmt(e.amt));tr.appendChild(a);tr.appendChild(el('td',null,e.note||''));rows.appendChild(tr)});
   if(!canSave)say('tmsg','This browser is not saving. Download a backup before you leave.',true);
   save()}
  $('wcreate').addEventListener('click',function(){var n=$('wname').value.replace(/\s+/g,' ').trim();
   if(!n){say('wmsg','Please type a name.',true);$('wname').focus();return}
   if(S.wallets.some(function(w){return w.name.toLowerCase()===n.toLowerCase()})){say('wmsg','A wallet with that name already exists.',true);return}
-  S.wallets.push({id:'w'+(S.nextW++),name:n,type:$('wtype').value,t:now()});$('wname').value='';say('wmsg','Created "'+n+'". It starts at 0.00.');paint()});
+  openW(n,$('wtype').value);$('wname').value='';say('wmsg','Created "'+n+'". It starts at 0.');paint()});
  $('wname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('wcreate').click()}});
  function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
@@ -134,11 +136,11 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
  function stamp(){var d=new Date();return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
  $('backup').addEventListener('click',function(){dl('restaurant-rewards-backup-'+stamp()+'.json','application/json',JSON.stringify(S,null,1));say('tmsg','Backup downloaded. Keep it somewhere safe.')});
- $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};var out=['When,From,To,Amount,Note'];S.entries.forEach(function(e){out.push([q(new Date(e.t).toISOString()),q(e.from?wname(e.from):'Opening balance'),q(wname(e.to)),(e.amt/100).toFixed(2),q(e.note)].join(','))});dl('restaurant-rewards-moves-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','List downloaded.')});
+ $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};var out=['When,From,To,Amount,Note'];S.entries.forEach(function(e){out.push([q(new Date(e.t).toISOString()),q(e.kind==='open'?'Wallet opened':(e.from?wname(e.from):'Opening balance')),q(wname(e.to)),(e.amt/100).toFixed(2),q(e.note)].join(','))});dl('restaurant-rewards-moves-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','List downloaded.')});
  $('restore').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1||!Array.isArray(o.wallets)||!Array.isArray(o.entries))throw 0;var tot=0;o.entries.forEach(function(e){if(!e.from)tot+=e.amt});if(tot!==SUPPLY)throw 0;
    if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Restaurant Rewards backup.',true)}};r.readAsText(f);this.value=''});
  $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});
- S=load();paint();
+ S=load();seed();paint();
 })();
 </script>
 </body>
