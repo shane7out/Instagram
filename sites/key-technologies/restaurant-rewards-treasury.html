@@ -146,7 +146,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   <label for="wname">Name</label><input id="wname" maxlength="40" autocomplete="off" placeholder="Example: Johnny Mac's">
   <label for="wtype">Kind</label>
   <select id="wtype"><option>Restaurant</option><option>Organization</option><option>Customer</option><option>Other</option></select>
-  <label for="wstart">Starting credit from the Treasury (optional)</label><input id="wstart" inputmode="decimal" autocomplete="off" placeholder="Example: 5000">
+  <label for="wstart">Starting credit from the Treasury (optional)</label><input id="wstart" inputmode="numeric" autocomplete="off" placeholder="Example: 5000">
   <button class="btn" id="wcreate" type="button">Create wallet</button>
   <div class="msg" id="wmsg" role="alert"></div>
  </div>
@@ -154,7 +154,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   <h2>Move credit</h2>
   <label for="mfrom">From</label><select id="mfrom"></select>
   <label for="mto">To</label><select id="mto"></select>
-  <label for="mamt">Amount (Restaurant Rewards)</label><input id="mamt" inputmode="decimal" autocomplete="off" placeholder="Example: 25000">
+  <label for="mamt">Amount (Restaurant Rewards)</label><input id="mamt" inputmode="numeric" autocomplete="off" placeholder="Example: 25000">
   <label for="mnote">Note (optional)</label><input id="mnote" maxlength="80" autocomplete="off" placeholder="Example: Starting credit">
   <button class="btn" id="mmove" type="button">Move credit</button>
   <div class="msg" id="mmsg" role="alert"></div>
@@ -170,7 +170,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 </div>
 <div id="pres" class="hide" role="dialog" aria-label="Wallet view"><div class="pc" id="pc"></div></div>
 <div id="rdm" class="hide" role="dialog" aria-label="Redeem"><div class="rc" id="rc"></div></div>
-<p class="fine">Restaurant Rewards are a promotional perk with no cash value. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. A wallet named after an outside group is for planning only and does not mean that group has agreed to anything. Before real customers use wallets, have your attorney review the program terms.</p>
+<p class="fine">Restaurant Rewards are a promotional perk with no cash value. Restaurant Rewards can be used for food and gratuity. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. A wallet named after an outside group is for planning only and does not mean that group has agreed to anything. Before real customers use wallets, have your attorney review the program terms.</p>
 </div>
 <script src="/key-platform/rr-auth.js"></script>
 <script>
@@ -223,7 +223,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  var idleT=null;function idle(){var go=function(){clearTimeout(idleT);idleT=setTimeout(function(){RR.signOut();location.reload()},15*60*1000)};['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()}
  function start(msg){RR.gate({title:'Restaurant Rewards Treasury',sub:msg||'Type your Treasury PIN.',email:RR.TREASURER.email,salt:RR.TREASURER.salt,onOK:enterDb,onSkip:{label:'Use the practice version (this browser only)',fn:enterLocal}})}
  function $(i){return document.getElementById(i)}
- function fmt(c){var t=(c/100).toFixed(2);if(/\.00$/.test(t))t=t.slice(0,-3);return t.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+ function fmt(c){return String(Math.round(c/100)).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
  function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+$/.test(v))return null;return parseInt(v,10)*100}
  function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
  function credited(e){return e.status!=='pending'&&e.status!=='declined'}
@@ -242,10 +242,9 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   var b=document.createElement('div');b.className='gc back';var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};
   b.appendChild(d('strip'));var bk=d('bk');
   bk.appendChild(d('l','Where to use it'));var rs=sw().filter(function(x){return x.type==='Restaurant'&&accepts(x.id)}).map(function(x){return x.name});bk.appendChild(d('t',rs.length?rs.join(' \u00b7 '):'No restaurant is accepting right now.'));
-  bk.appendChild(d('l','How to use it'));['1. Tap Redeem.','2. Pick the restaurant and type how much.','3. Tap Send and show the cashier the confirmation.'].forEach(function(x){bk.appendChild(d('t s',x))});
-  bk.appendChild(d('l f','The fine print'));bk.appendChild(d('t p','RR means Restaurant Rewards. 1 RR is one Restaurant Reward.'));
-  ['No cash value. Restaurant Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Restaurant Rewards and gives them away. They are never sold.','Each restaurant decides, and can change at any time, whether it accepts them. A restaurant that is on the list above accepts them now. A restaurant that is not on the list does not accept them. Use them while you can.'].forEach(function(x){bk.appendChild(d('t p',x))});
-  
+  bk.appendChild(d('l','How to use it'));['1. Tap Redeem.','2. Pick the restaurant and type how much.','3. Tap Send and show the cashier the confirmation.'].forEach(function(x){bk.appendChild(d('t s',x))});bk.appendChild(d('t s','Use RR for food and gratuity (tip).'));
+  bk.appendChild(d('l f','The fine print'));
+  ['RR means Restaurant Rewards. 1 RR is one Restaurant Reward. Restaurant Rewards can be used for food and gratuity.','No cash value. Restaurant Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Restaurant Rewards and gives them away. They are never sold.','Participating restaurants can turn acceptance on or off, and add or remove credit, whenever they want. A restaurant on the list above accepts them now. A restaurant not on the list does not accept them. Use them while you can.','This is a free trial game and we are trying it out to see where it goes. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost.','Thank you for playing and for believing in the future of this technology.'].forEach(function(x){bk.appendChild(d('t p',x))});
   b.appendChild(bk);var hr=d('hr');hr.appendChild(d('t h','Scroll to read. Tap to flip back.'));hr.appendChild(d('t h c','Design by keytechnologies.si'));b.appendChild(hr);fi.appendChild(b);wr.appendChild(fi);
   var tg=function(){var on=wr.classList.toggle('on');wr.setAttribute('aria-pressed',String(on));tick()};wr.addEventListener('click',tg);wr.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();tg()}});return wr}
  function credit(){var p=document.createElement('p');p.className='kt';p.appendChild(document.createTextNode('Design by '));var a=document.createElement('a');a.href='https://keytechnologies.si/';a.textContent='keytechnologies.si';a.target='_blank';a.rel='noopener';p.appendChild(a);return p}
@@ -299,7 +298,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   var hd=el('div','rhead');hd.appendChild(el('h2',null,'Redeem'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
   rc.appendChild(el('p','have',w.name+' has '+fmt(have)+' RR (Restaurant Rewards)'));
   rc.appendChild(el('label',null,'How much?'));var lb=rc.lastChild;lb.setAttribute('for','ramt');
-  var ar=el('div','arow'),inp=el('input');inp.id='ramt';inp.setAttribute('inputmode','decimal');inp.setAttribute('autocomplete','off');inp.placeholder='Amount, like 100';ar.appendChild(inp);var ua=el('button',null,'Use all');ua.type='button';ua.addEventListener('click',function(){inp.value=(have/100).toFixed(2).replace(/\.00$/,'')});ar.appendChild(ua);rc.appendChild(ar);
+  var ar=el('div','arow'),inp=el('input');inp.id='ramt';inp.setAttribute('inputmode','numeric');inp.setAttribute('autocomplete','off');inp.placeholder='Amount, like 100';ar.appendChild(inp);var ua=el('button',null,'Use all');ua.type='button';ua.addEventListener('click',function(){inp.value=String(Math.round(have/100))});ar.appendChild(ua);rc.appendChild(ar);
   var qc=el('div','chips');[25,50,100].filter(function(v){return v*100<=have}).forEach(function(v){var c=el('button',null,String(v));c.type='button';c.addEventListener('click',function(){inp.value=String(v);light(cur)});qc.appendChild(c)});var ca=el('button',null,'All');ca.type='button';ca.addEventListener('click',function(){inp.value=String(have/100);light(cur)});qc.appendChild(ca);rc.appendChild(qc);
   var l2=el('label',null,'Pay who?');rc.appendChild(l2);
   var ww=el('div','wwrap'),wh=el('div','wheel');wh.id='rwheel';wh.setAttribute('role','listbox');wh.setAttribute('aria-label','Choose who to pay');
@@ -341,7 +340,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
  function stamp(){var d=new Date();return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
  $('backup').addEventListener('click',function(){dl('restaurant-rewards-backup-'+stamp()+'.json','application/json',JSON.stringify(S,null,1));say('tmsg','Backup downloaded. Keep it somewhere safe.')});
- $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};var out=['When,From,To,Amount,Note'];S.entries.forEach(function(e){out.push([q(new Date(e.t).toISOString()),q(e.kind==='open'?'Wallet opened':(e.from?wname(e.from):'Opening balance')),q(wname(e.to)),(e.amt/100).toFixed(2),q(e.note)].join(','))});dl('restaurant-rewards-moves-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','List downloaded.')});
+ $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};var out=['When,From,To,Amount,Note'];S.entries.forEach(function(e){out.push([q(new Date(e.t).toISOString()),q(e.kind==='open'?'Wallet opened':(e.from?wname(e.from):'Opening balance')),q(wname(e.to)),Math.round(e.amt/100),q(e.note)].join(','))});dl('restaurant-rewards-moves-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','List downloaded.')});
  $('restore').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1||!Array.isArray(o.wallets)||!Array.isArray(o.entries))throw 0;var tot=0;o.entries.forEach(function(e){if(!e.from)tot+=e.amt});if(tot!==SUPPLY)throw 0;
    if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Restaurant Rewards backup.',true)}};r.readAsText(f);this.value=''});
  $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});

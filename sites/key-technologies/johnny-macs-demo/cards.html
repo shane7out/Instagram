@@ -78,14 +78,14 @@ ul.act{list-style:none;margin:0;padding:2px 14px;background:var(--card);border:1
  <div id="dCard"></div>
  <div class="box">
   <label for="amt">How much do you want to use?</label>
-  <div class="row"><input id="amt" inputmode="decimal" autocomplete="off" placeholder="Type an amount" aria-describedby="msg"><button class="btn" id="redeem" type="button">Redeem</button></div>
+  <div class="row"><input id="amt" inputmode="numeric" autocomplete="off" placeholder="Type an amount" aria-describedby="msg"><button class="btn" id="redeem" type="button">Redeem</button></div>
   <button class="link" id="all" type="button" style="display:block;margin:6px auto 0">Use all of this card</button>
   <div class="msg" id="msg" role="alert"></div>
  </div>
  <h2>Activity</h2><ul class="act" id="act"></ul>
 </section>
 
-<p class="fine">Restaurant Rewards are a free perk with no cash value. Card numbers here are made up and are not payment cards.</p>
+<p class="fine">Restaurant Rewards are a free perk with no cash value. Restaurant Rewards can be used for food and gratuity. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Card numbers here are made up and are not payment cards.</p>
 </div>
 <script>
 (function(){
@@ -98,8 +98,8 @@ ul.act{list-style:none;margin:0;padding:2px 14px;background:var(--card);border:1
  function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.cards)return o}}catch(e){}return fresh()}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
  function $(i){return document.getElementById(i)}
- function fmt(c){return (c/100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
- function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+(\.\d{1,2})?$/.test(v))return null;return Math.round(parseFloat(v)*100)}
+ function fmt(c){return String(Math.round(c/100)).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+ function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+$/.test(v))return null;return parseInt(v,10)*100}
  function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function card(c,asButton){var g=el(asButton?'button':'div','gc');if(asButton)g.type='button';
@@ -113,7 +113,7 @@ ul.act{list-style:none;margin:0;padding:2px 14px;background:var(--card);border:1
  function paintDetail(flash){$('dName').textContent=cur.name;var d=$('dCard');d.innerHTML='';var g=card(cur,false);if(flash)g.classList.add('flash');d.appendChild(g);
   var ul=$('act');ul.innerHTML='';cur.log.slice().reverse().forEach(function(l){var li=el('li'),a=el('span'),b=el('b',null,l.w),s=el('small',null,when(l.t));a.appendChild(b);a.appendChild(s);var m=el('span','amt'+(l.k==='in'?' in':''),(l.k==='in'?'+':'−')+fmt(l.a));li.appendChild(a);li.appendChild(m);ul.appendChild(li)});save()}
  function say(t,err){var m=$('msg');m.textContent=t;m.className='msg'+(err?' err':'')}
- function redeem(a){if(a===null||a<=0){say('Please type an amount, like 25 or 83.17',true);$('amt').focus();return}
+ function redeem(a){if(a===null||a<=0){say('Please type an amount, like 25 or 83',true);$('amt').focus();return}
   if(a>cur.bal){say('This card only has '+fmt(cur.bal)+'. Please type a smaller amount.',true);return}
   cur.bal-=a;cur.log.push({k:'out',w:'Used at '+cur.name,a:a,t:Date.now()});$('amt').value='';say('Done. You used '+fmt(a)+' Restaurant Rewards at '+cur.name+'.');paintDetail(true)}
  $('redeem').addEventListener('click',function(){redeem(parse($('amt').value))});

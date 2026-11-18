@@ -75,7 +75,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <section id="s1">
 <h1>This is your account.</h1>
 <p class="say">500 Restaurant Rewards are in it for Johnny Mac's.</p>
-<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num">500.00<span>Restaurant Rewards</span></div></div>
+<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num">500<span>Restaurant Rewards</span></div></div>
 <p>Customers earn Restaurant Rewards from your account when they eat with you.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
@@ -95,7 +95,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <p class="result hide pop" id="m3"></p>
 <div id="rbox"><label class="lab" for="amt">How many Restaurant Rewards does Alex use?</label>
-<div class="redeemrow"><input id="amt" type="text" inputmode="decimal" autocomplete="off" placeholder="Type an amount, like 83.17" aria-describedby="err"><button class="btn" type="button" id="redeem">Redeem</button></div>
+<div class="redeemrow"><input id="amt" type="text" inputmode="numeric" autocomplete="off" placeholder="Type an amount, like 83" aria-describedby="err"><button class="btn" type="button" id="redeem">Redeem</button></div>
 <button class="linkbtn" type="button" id="all">Use all of Alex's Restaurant Rewards</button>
 <p class="err" id="err" role="alert"></p></div>
 <button class="btn hide" type="button" data-next id="n3">Next</button>
@@ -107,7 +107,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
 <ul class="big"><li>Alex got free food and will come back.</li><li>You see every Restaurant Reward used, and when.</li><li>Nothing to install. Nothing to learn.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
-<p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
+<p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. Restaurant Rewards can be used for food and gratuity. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
 </section>
 </main>
 </div>
@@ -115,7 +115,7 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
 (function(){
  var C={"acctName": "Johnny Mac's account", "start": 50000, "give": 15000, "restStart": 0, "toRest": false, "m2": "150 Restaurant Rewards moved from your account to Alex.", "m3": "They went back into your account."},cur=1,wallet,alex,rest,secs=[1,2,3,4].map(function(i){return document.getElementById('s'+i)}),dots=document.querySelectorAll('.dots i'),lab=document.getElementById('stepLabel');
  function $(i){return document.getElementById(i)}
- function fmt(c){return (c/100).toFixed(2)}
+ function fmt(c){return String(Math.round(c/100)).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
  function R(el,c){if(el)el.innerHTML=fmt(c)+'<span>Restaurant Rewards</span>'}
  function P(el,c){el.innerHTML=fmt(c)+'<small>Restaurant Rewards</small>'}
  function paint(){R($('w2'),wallet);P($('c2'),alex);R($('w3'),wallet);P($('c3'),alex);R($('r3'),rest);R($('w4'),wallet)}
@@ -124,10 +124,10 @@ ul.big li::before{content:"✓";position:absolute;left:6px;color:var(--good);fon
  function reset(){acts=[];if($('actList'))$('actList').innerHTML='';wallet=C.start;alex=0;rest=C.restStart;paint();$('earn').classList.remove('hide');$('n2').classList.add('hide');$('m2').classList.add('hide');$('m3').classList.add('hide');$('rbox').classList.remove('hide');$('n3').classList.add('hide');$('amt').value='';$('err').textContent=''}
  [].forEach.call(document.querySelectorAll('[data-next]'),function(b){b.addEventListener('click',function(){show(cur+1)})});
  $('earn').addEventListener('click',function(){wallet-=C.give;alex=C.give;paint();addAct(C.acctName,'Issued to Alex',C.give,false);$('m2').textContent=C.m2;$('m2').classList.remove('hide');this.classList.add('hide');$('n2').classList.remove('hide');$('n2').focus()});
- function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+(\.\d{1,2})?$/.test(v))return null;return Math.round(parseFloat(v)*100)}
+ function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+$/.test(v))return null;return parseInt(v,10)*100}
  function redeem(){
   var a=parse($('amt').value);
-  if(a===null||a<=0){$('err').textContent='Please type an amount, like 83.17';$('amt').focus();return}
+  if(a===null||a<=0){$('err').textContent='Please type an amount, like 83';$('amt').focus();return}
   if(a>alex){$('err').textContent='Alex only has '+fmt(alex)+'. Please type a smaller amount.';$('amt').focus();return}
   $('err').textContent='';alex-=a;if(C.toRest){rest+=a}else{wallet+=a}paint();addAct(C.toRest?"Johnny Mac's account":C.acctName,'Redeemed by Alex',a,true);
   $('m3').textContent='Alex used '+fmt(a)+' Restaurant Rewards. '+C.m3;$('m3').classList.remove('hide');$('rbox').classList.add('hide');$('n3').classList.remove('hide');$('n3').focus()}
