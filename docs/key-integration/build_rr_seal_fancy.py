@@ -2,8 +2,14 @@
 """Builds sites/key-technologies/brand/rr-seal-fancy.svg: the showpiece RR seal (gold metal ring, pearl border,
 black enamel centre with engraved rosette, raised gold RR). Lettering is outlined, so no font is needed.
 Run from the repo root: python3 docs/key-integration/build_rr_seal_fancy.py"""
-import math,sys
-PLAIN=len(sys.argv)>1 and sys.argv[1]=='plain'
+import math,sys,argparse
+ap=argparse.ArgumentParser()
+ap.add_argument('--sides',choices=['laurel','diamond'],default='laurel')
+ap.add_argument('--center',choices=['spirals','plain','rings','rays'],default='spirals')
+ap.add_argument('--rule',type=int,default=1,help='1 = small rule and diamond under the RR')
+ap.add_argument('--rr',type=float,default=25,help='RR size')
+ap.add_argument('--out',default='sites/key-technologies/brand/rr-seal-fancy.svg')
+A=ap.parse_args();PLAIN=A.sides=='diamond'
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
@@ -54,6 +60,9 @@ def laurel(a0,r=35.0):
     cx,cy=50+r*math.sin(math.radians(a0)),50-r*math.cos(math.radians(a0))
     out+=f'<rect x="{cx-1.5:.2f}" y="{cy-1.5:.2f}" width="3" height="3" fill="{K}" transform="rotate(45 {cx:.2f} {cy:.2f})"/>'
     return out
+rings=''.join(f'<circle cx="50" cy="50" r="{r}" fill="none" stroke="#e8c25c" stroke-width=".18" stroke-opacity=".2"/>' for r in (6,10,14,18,22))
+CENTER={'spirals':f'<g fill="none" stroke="#e8c25c" stroke-width=".22" stroke-opacity=".22">{rosette}</g><g stroke="#e8c25c" stroke-width=".14" stroke-opacity=".15">{rays}</g>','plain':'','rings':rings,'rays':f'<g stroke="#e8c25c" stroke-width=".16" stroke-opacity=".2">{rays}</g>'}[A.center]
+RULE='''<path d="M36 64.5h28" stroke="url(#gold)" stroke-width=".5"/><rect x="48.9" y="63.4" width="2.2" height="2.2" fill="url(#gold)" transform="rotate(45 50 64.5)"/>''' if A.rule else ''
 svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Restaurant Rewards (RR)">
 <title>Restaurant Rewards (RR)</title>
 <defs>
@@ -86,11 +95,11 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
 <g filter="url(#bev)"><circle cx="50" cy="50" r="28.8" fill="none" stroke="url(#ring)" stroke-width="2.2"/></g>
 <circle cx="50" cy="50" r="27.7" fill="#000" opacity=".35"/>
 <circle cx="50" cy="50" r="27.6" fill="url(#enamel)"/>
-<g clip-path="url(#disc)"><g fill="none" stroke="#e8c25c" stroke-width=".22" stroke-opacity=".22">{rosette}</g><g stroke="#e8c25c" stroke-width=".14" stroke-opacity=".15">{rays}</g></g>
+<g clip-path="url(#disc)">{CENTER}</g>
 <circle cx="50" cy="50" r="26.2" fill="none" stroke="#e8c25c" stroke-opacity=".8" stroke-width=".45"/>
 <circle cx="50" cy="50" r="24.8" fill="none" stroke="#e8c25c" stroke-opacity=".4" stroke-width=".25"/>
-<g filter="url(#rrb)"><path fill="url(#gold)" d="{flat("RR",50,58.6,25,-.4)}"/></g>
-<path d="M36 64.5h28" stroke="url(#gold)" stroke-width=".5"/><rect x="48.9" y="63.4" width="2.2" height="2.2" fill="url(#gold)" transform="rotate(45 50 64.5)"/>
+<g filter="url(#rrb)"><path fill="url(#gold)" d="{flat("RR",50,50+A.rr*.34,A.rr,-.4)}"/></g>
+{RULE}
 <circle cx="50" cy="50" r="49.2" fill="url(#sheen)" opacity=".55"/>
 </svg>'''
-open('sites/key-technologies/brand/rr-seal-fancy.svg' if not PLAIN else '/tmp/claude-0/-home-user-Instagram/6bde34d7-67bf-5700-8233-771caa70603f/scratchpad/plain.svg','w').write(svg);print(len(svg),'bytes')
+open(A.out,'w').write(svg);print(len(svg),'bytes')
