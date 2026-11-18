@@ -91,14 +91,19 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function now(){return Date.now()}
  function fresh(){var t=now();return {v:1,wallets:[{id:'treasury',name:'Restaurant Rewards Treasury',type:'Shane\'s wallet',t:t}],entries:[{id:1,t:t,from:null,to:'treasury',amt:SUPPLY,note:'Opening balance'}],next:2,nextW:1}}
  function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.v===1&&o.wallets&&o.entries)return o}}catch(e){canSave=false}return fresh()}
- function openW(name,type){var id='w'+(S.nextW++),t=now();S.wallets.push({id:id,name:name,type:type,t:t});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
- function seed(){if(S.seeded)return;S.seeded=true;if(!S.wallets.some(function(w){return w.name.toLowerCase()==='johnny mac\'s'}))openW('Johnny Mac\'s','Restaurant')}
+ function nextRank(){var m=0;S.wallets.forEach(function(w){if(w.id!=='treasury'&&(w.rank||0)>m)m=w.rank});return m+1}
+ function openW(name,type){var id='w'+(S.nextW++),t=now();S.wallets.push({id:id,name:name,type:type,t:t,rank:nextRank()});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
+ function find(n){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].name.toLowerCase()===n.toLowerCase())return S.wallets[i].id;return null}
+ function seed(){if(S.seeded2)return;var v=find("Vanilla Rice's Hibachi House")||openW("Vanilla Rice's Hibachi House",'Restaurant'),j=find("Johnny Mac's")||openW("Johnny Mac's",'Restaurant');
+  var others=S.wallets.filter(function(w){return w.id!=='treasury'&&w.id!==v&&w.id!==j}).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t});
+  S.wallets.forEach(function(w){if(w.id===v)w.rank=1;else if(w.id===j)w.rank=2});others.forEach(function(w,k){w.rank=3+k});S.seeded=true;S.seeded2=true}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));canSave=true}catch(e){canSave=false}}
  function $(i){return document.getElementById(i)}
  function fmt(c){var t=(c/100).toFixed(2);if(/\.00$/.test(t))t=t.slice(0,-3);return t.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
  function parse(v){v=String(v).replace(/[$,\s]/g,'');if(!/^\d+(\.\d{1,2})?$/.test(v))return null;return Math.round(parseFloat(v)*100)}
  function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id)b+=e.amt;if(e.from===id)b-=e.amt});return b}
+ function sw(){return S.wallets.slice().sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
  function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
@@ -107,8 +112,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
   $('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);
   var ck=$('check');if(tot===SUPPLY){ck.className='check';ck.textContent='Everything adds up: the Treasury plus all wallets equals '+fmt(SUPPLY)+' Restaurant Rewards.'}else{ck.className='check bad';ck.textContent='Warning: the wallets add up to '+fmt(tot)+', not '+fmt(SUPPLY)+'. Download a backup and check the list below.'}
   var box=$('wallets');box.innerHTML='';
-  S.wallets.forEach(function(w){var b=el('button','wc');b.type='button';b.setAttribute('aria-pressed',String(sel===w.id));b.appendChild(el('small',null,w.type));b.appendChild(el('b',null,w.name));var n=el('div','n',fmt(bal(w.id)));n.appendChild(el('span',null,'Restaurant Rewards'));b.appendChild(n);b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
-  ['mfrom','mto'].forEach(function(id){var s=$(id),v=s.value;s.innerHTML='';S.wallets.forEach(function(w){var o=el('option',null,w.name+' ('+fmt(bal(w.id))+')');o.value=w.id;s.appendChild(o)});if(v&&S.wallets.some(function(w){return w.id===v}))s.value=v});
+  sw().forEach(function(w){var b=el('button','wc');b.type='button';b.setAttribute('aria-pressed',String(sel===w.id));b.appendChild(el('small',null,(w.id==='treasury'?'':'#'+w.rank+' \u00b7 ')+w.type));b.appendChild(el('b',null,w.name));var n=el('div','n',fmt(bal(w.id)));n.appendChild(el('span',null,'Restaurant Rewards'));b.appendChild(n);b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
+  ['mfrom','mto'].forEach(function(id){var s=$(id),v=s.value;s.innerHTML='';sw().forEach(function(w){var o=el('option',null,(w.id==='treasury'?'':'#'+w.rank+' ')+w.name+' ('+fmt(bal(w.id))+')');o.value=w.id;s.appendChild(o)});if(v&&S.wallets.some(function(w){return w.id===v}))s.value=v});
   if(!$('mfrom').dataset.init){$('mfrom').value='treasury';$('mto').selectedIndex=Math.min(1,S.wallets.length-1);$('mfrom').dataset.init='1'}
   var rows=$('rows');rows.innerHTML='';var list=S.entries.filter(function(e){return sel==='all'||e.from===sel||e.to===sel}).slice().reverse();
   $('lhead').textContent=sel==='all'?'Every move':'Statement: '+wname(sel);
