@@ -62,6 +62,30 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres:not(.hide){display:flex}
 #pres .pc{width:100%;max-width:520px;margin:auto;padding:0 18px}
 #pres .phead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 10px}#pres .phead h2{text-align:left;margin:0;font-size:20px;line-height:1.2}
+#pres .rbtn{display:block;width:100%;min-height:56px;margin:6px 0 0;border:0;border-radius:14px;background:#00a8e1;color:#0f171e;font:900 20px Lato,system-ui,sans-serif;cursor:pointer}#pres .rbtn:disabled{background:rgba(255,255,255,.14);color:rgba(255,255,255,.55);cursor:not-allowed}
+#pres .more{display:block;margin:8px auto 0;background:none;border:0;color:#00a8e1;font:700 15px Lato,system-ui,sans-serif;text-decoration:underline;cursor:pointer;padding:6px}
+#rdm{position:fixed;top:0;left:0;right:0;height:100%;z-index:60;background:#0f171e;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 112px) 0 26px;box-sizing:border-box}
+#rdm:not(.hide){display:flex}
+#rdm .rc{width:100%;max-width:520px;margin:auto;padding:0 18px}
+#rdm .rhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px}#rdm .rhead h2{margin:0;font-size:24px;line-height:1.2}
+#rdm .exit{background:none;border:1px solid rgba(255,255,255,.4);color:rgba(255,255,255,.78);border-radius:10px;padding:7px 12px;font:700 14px Lato,system-ui,sans-serif;cursor:pointer}
+#rdm .have{color:rgba(255,255,255,.78);font-size:15px;margin:0 0 8px}
+#rdm label{display:block;color:rgba(255,255,255,.78);font-size:14px;font-weight:700;margin:12px 0 6px}
+#rdm .arow{display:flex;gap:10px;align-items:stretch}#rdm .arow input{flex:1;min-width:0;font:900 30px Lato,system-ui,sans-serif;text-align:center;padding:10px;border-radius:14px;border:2px solid rgba(255,255,255,.45);background:#0f171e;color:#fff}
+#rdm .arow button{border:2px solid rgba(255,255,255,.4);background:none;color:#fff;border-radius:14px;font:700 15px Lato,system-ui,sans-serif;padding:0 14px;cursor:pointer}
+#rdm .wwrap{position:relative;border-radius:16px;overflow:hidden;background:#16222f;border:1px solid rgba(255,255,255,.22)}
+#rdm .wheel{height:168px;overflow-y:auto;scroll-snap-type:y mandatory;padding:56px 0;box-sizing:border-box;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#rdm .wheel::-webkit-scrollbar{display:none}
+#rdm .wi{height:56px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;font-size:19px;font-weight:700;color:rgba(255,255,255,.4);text-align:center;padding:0 12px;transition:color .1s}
+#rdm .wi.on{color:#fff;font-size:22px;font-weight:900}
+#rdm .band{position:absolute;left:8px;right:8px;top:56px;height:56px;border-top:2px solid #00a8e1;border-bottom:2px solid #00a8e1;border-radius:6px;pointer-events:none}
+#rdm .fade{position:absolute;left:0;right:0;height:46px;pointer-events:none}#rdm .fade.t{top:0;background:linear-gradient(#16222f,rgba(22,34,47,0))}#rdm .fade.b{bottom:0;background:linear-gradient(rgba(22,34,47,0),#16222f)}
+#rdm .who{display:grid;gap:10px;margin:12px 0 0}
+#rdm .wb{min-height:60px;border-radius:16px;border:2px solid rgba(255,255,255,.35);background:transparent;color:#fff;font:900 19px Lato,system-ui,sans-serif;cursor:pointer;padding:8px 12px}
+#rdm .wb[aria-pressed="true"]{background:#00a8e1;border-color:#00a8e1;color:#0f171e}
+#rdm .send{display:block;width:100%;min-height:64px;margin:14px 0 0;border:0;border-radius:16px;background:#00a8e1;color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer}
+#rdm .rmsg{min-height:22px;margin:8px 0 0;text-align:center;font-weight:700;font-size:15px}#rdm .rmsg.err{background:rgba(0,168,225,.18);border-radius:8px;padding:6px 10px}
+#rdm .done{text-align:center}#rdm .done .tick{width:84px;height:84px;border-radius:50%;background:#00a8e1;color:#0f171e;font:900 52px/84px Lato,sans-serif;margin:6px auto 14px}#rdm .done h3{font-size:26px;margin:0 0 4px}#rdm .done p{color:rgba(255,255,255,.85);margin:0 0 6px;font-size:18px}
 #pres .exit{float:right;background:none;border:1px solid rgba(255,255,255,.4);color:rgba(255,255,255,.78);border-radius:10px;padding:7px 12px;font:700 14px Lato,system-ui,sans-serif;cursor:pointer}
 #pres .plogos{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}#pres .plogos img{height:64px;width:auto;max-width:150px;object-fit:contain}
 #pres h2{text-align:center;font-size:22px;margin:6px 0 2px}
@@ -123,6 +147,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  <div class="msg" id="tmsg" role="alert"></div>
 </div>
 <div id="pres" class="hide" role="dialog" aria-label="Wallet view"><div class="pc" id="pc"></div></div>
+<div id="rdm" class="hide" role="dialog" aria-label="Redeem"><div class="rc" id="rc"></div></div>
 <p class="fine">Restaurant Rewards are a promotional perk with no cash value. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. A wallet named after an outside group is for planning only and does not mean that group has agreed to anything. Before real customers use wallets, have your attorney review the program terms.</p>
 </div>
 <script>
@@ -190,10 +215,41 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  $('mamt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();move()}});
  $('logoIn').addEventListener('change',function(){var f=this.files[0],inp=this;if(!f||sel==='all')return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=240,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.logos=S.logos||{};S.logos[sel]=S.logos[sel]||[];if(S.logos[sel].length>=3){say('tmsg','A wallet can show up to 3 logos. Remove one first.',true);return}S.logos[sel].push(c.toDataURL('image/png'));say('tmsg','Logo added.');paint()};im.onerror=function(){say('tmsg','That file could not be read as a picture.',true)};im.src=r.result};r.readAsDataURL(f);inp.value=''});
  $('present').addEventListener('click',function(){if(sel!=='all')present(sel)});
+
+ var audio=null,soundOn=true;
+ function ac(){if(!audio){try{audio=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(audio&&audio.state==='suspended')try{audio.resume()}catch(e){}return audio}
+ function tick(){window.__rrTicks=(window.__rrTicks||0)+1;if(!soundOn)return;var a=ac();if(!a)return;try{var o=a.createOscillator(),g=a.createGain(),t=a.currentTime;o.type='square';o.frequency.value=1700;g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.0001,t+.03);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.04);if(navigator.vibrate)navigator.vibrate(6)}catch(e){}}
+ function chime(){if(!soundOn)return;var a=ac();if(!a)return;try{[[880,0],[1320,.12]].forEach(function(n){var o=a.createOscillator(),g=a.createGain(),t=a.currentTime+n[1];o.type='sine';o.frequency.value=n[0];g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.5);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.55)})}catch(e){}}
+ function openRedeem(id){
+  var w=S.wallets.filter(function(x){return x.id===id})[0],rs=sw().filter(function(x){return x.type==='Restaurant'}),rc=$('rc'),cur=0,have=bal(id);
+  ac();rc.innerHTML='';
+  if(!rs.length){rc.appendChild(el('p',null,'There is no restaurant to pay yet. Create a Restaurant wallet first.'));$('rdm').classList.remove('hide');return}
+  var hd=el('div','rhead');hd.appendChild(el('h2',null,'Redeem'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
+  rc.appendChild(el('p','have',w.name+' has '+fmt(have)+' Restaurant Rewards'));
+  rc.appendChild(el('label',null,'How much?'));var lb=rc.lastChild;lb.setAttribute('for','ramt');
+  var ar=el('div','arow'),inp=el('input');inp.id='ramt';inp.setAttribute('inputmode','decimal');inp.setAttribute('autocomplete','off');inp.placeholder='Amount, like 83.17';ar.appendChild(inp);var ua=el('button',null,'Use all');ua.type='button';ua.addEventListener('click',function(){inp.value=(have/100).toFixed(2).replace(/\.00$/,'')});ar.appendChild(ua);rc.appendChild(ar);
+  var l2=el('label',null,'Pay who?');rc.appendChild(l2);
+  var ww=el('div','wwrap'),wh=el('div','wheel');wh.id='rwheel';wh.setAttribute('role','listbox');wh.setAttribute('aria-label','Choose who to pay');
+  var items=rs.map(function(r,i){var d=el('div','wi'+(i===0?' on':''),r.name);d.setAttribute('role','option');wh.appendChild(d);return d});
+  ww.appendChild(wh);ww.appendChild(el('div','band'));ww.appendChild(el('div','fade t'));ww.appendChild(el('div','fade b'));rc.appendChild(ww);
+  var who=el('div','who'),btns=rs.map(function(r,i){var b=el('button','wb',r.name);b.type='button';b.setAttribute('aria-pressed',String(i===0));b.addEventListener('click',function(){go(i)});who.appendChild(b);return b});rc.appendChild(who);
+  var send=el('button','send','Send');send.type='button';rc.appendChild(send);var msg=el('div','rmsg');msg.setAttribute('role','alert');rc.appendChild(msg);
+  function light(i){cur=i;items.forEach(function(d,k){d.classList.toggle('on',k===i)});btns.forEach(function(b,k){b.setAttribute('aria-pressed',String(k===i))});var a=parse(inp.value);send.textContent=(a>0?'Send '+fmt(a)+' to ':'Send to ')+rs[i].name}
+  function go(i){if(i!==cur){light(i)}wh.scrollTo({top:i*56,behavior:'smooth'})}
+  var last=0;wh.addEventListener('scroll',function(){var i=Math.max(0,Math.min(rs.length-1,Math.round(wh.scrollTop/56)));if(i!==last){last=i;tick();light(i)}});
+  inp.addEventListener('input',function(){light(cur)});light(0);
+  function say2(t,err){msg.textContent=t;msg.className='rmsg'+(err?' err':'')}
+  send.addEventListener('click',function(){var a=parse(inp.value);
+   if(a===null||a<=0){say2('Please type an amount, like 83.17',true);inp.focus();return}
+   if(a>have){say2(w.name+' only has '+fmt(have)+'. Please type a smaller amount.',true);return}
+   var to=rs[cur];S.entries.push({id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name});save();chime();
+   rc.innerHTML='';var dn=el('div','done');dn.appendChild(el('div','tick','✓'));dn.appendChild(el('h3',null,'Sent'));dn.appendChild(el('p',null,fmt(a)+' Restaurant Rewards'));dn.appendChild(el('p',null,'to '+to.name));dn.appendChild(el('p',null,'New balance: '+fmt(bal(id))));
+   var ok=el('button','send','Done');ok.type='button';ok.addEventListener('click',function(){$('rdm').classList.add('hide');paint();present(id)});dn.appendChild(ok);rc.appendChild(dn)});
+  $('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
-  var hd=el('div','phead');hd.appendChild(el('h2',null,w.name));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(gcard(w,false,false));
+  var hd=el('div','phead');hd.appendChild(el('h2',null,w.name));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(gcard(w,false,false));var canR=(w.id!=='treasury'&&w.type!=='Restaurant');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=bal(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});pc.appendChild(rb)}
   pc.appendChild(el('h3',null,'Activity'));var ul=el('ul'),run=0,rows=[];S.entries.forEach(function(e){if(e.to!==id&&e.from!==id)return;var inn=e.to===id,d=inn?e.amt:-e.amt;run+=d;var t,sub;if(e.kind==='open'){t='Wallet opened';sub=when(e.t)}else if(inn){t=e.from?'Received from '+wname(e.from):'Opening balance';sub=when(e.t)+(e.note?' \u00b7 '+e.note:'')}else{t='Sent to '+wname(e.to);sub=when(e.t)+(e.note?' \u00b7 '+e.note:'')}rows.push({t:t,sub:sub,amt:e.amt,inn:inn,open:e.kind==='open',run:run})});
-  rows.reverse().forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var a=el('span','a'+(r.inn&&!r.open?' in':''),r.open?'0':(r.inn?'+':'\u2212')+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);ul.appendChild(li)});pc.appendChild(ul);
+  rows.reverse();var lim=canR?3:5;var draw=function(list){ul.innerHTML='';list.forEach(function(r){var li=el('li'),l=el('span'),b=el('b',null,r.t),sm=el('small',null,r.sub);l.appendChild(b);l.appendChild(sm);var a=el('span','a'+(r.inn&&!r.open?' in':''),r.open?'0':(r.inn?'+':'\u2212')+fmt(r.amt));a.appendChild(el('small',null,'Balance '+fmt(r.run)));li.appendChild(l);li.appendChild(a);ul.appendChild(li)})};draw(rows.slice(0,lim));pc.appendChild(ul);if(rows.length>lim){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){draw(rows);mb.remove()});pc.appendChild(mb)}
   $('pres').classList.remove('hide');document.body.style.overflow='hidden';$('pres').scrollTop=0}
  $('showAll').addEventListener('click',function(){sel='all';paint()});
  function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
