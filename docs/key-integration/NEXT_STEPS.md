@@ -255,3 +255,5 @@ Last updated 2026-11-05. Nothing here is urgent except item 1.
 149. NO STARS, CLEANER CARDS (2026-11-18, Shane: "remove the stars... I don't want stars on the card whatsoever... show me something cleaner"). The twinkling sparkle stars (and their code) are removed from the wallet cards, and the large decorative concentric rings on the cards in the wallet view are gone. The card is now plain gold with the embossed RR logo, the name, number and balance; the slow sheen sweep stays. RULE: no stars on cards. (Confetti when a payment is sent/confirmed or a gift is given is still on; tell me if confetti should go too.)
 
 150. SMIZZY GIFT (2026-11-18, Shane: "make the same one for Smizzy so I can give 100 away to another friend"). INSTR 2026-11-18-m/n: "Gift for Smizzy" with 100 RR (his wallet still shows 100 RR; the gift is the second card). Same design as Vanilla Rice's and Thin Blue 702's.
+
+151. PJ GIFT (2026-11-18, Shane). INSTR 2026-11-18-o/p: "Gift for PJ" with 100 RR; PJ's own wallet still shows 100 RR.
