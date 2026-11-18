@@ -218,8 +218,8 @@
  {
   "slug": "cybersecurity",
   "num": "23",
-  "title": "Cybersecurity & Network Hardening",
-  "tag": "A full security pass that closes real gaps.",
+  "title": "Agentic Security & Network Hardening",
+  "tag": "AI works for the bad guys too. We put it to work for you: agents that watch for threats, with a person in charge.",
   "cat": "Websites & Security",
   "thumb": "demos/thumbs/cybersecurity.jpg",
   "href": "demos/cybersecurity.html"

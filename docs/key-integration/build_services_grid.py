@@ -13,7 +13,7 @@ cats = ORDER + sorted({e['cat'] for e in lst} - set(ORDER))
 esc = lambda t: html.escape(t, quote=False)
 out = ['<!--SERVICES-GRID-START-->', '    <ol class="svc-list">']
 ordered = [e for c in cats for e in lst if e['cat'] == c]    # related services stay next to each other, but there are no headings or boxes: one plain numbered list
-PIN = {'mobile-apps': 3}                         # Shane (2026-11-17): Mobile Apps is service number 3 on the home list
+PIN = {'cybersecurity': 1, 'mobile-apps': 3}                         # Shane: Agentic Security is service number 1 (2026-11-18), Mobile Apps is number 3 (2026-11-17)
 for slug, pos in PIN.items():
     hit = [e for e in ordered if e['slug'] == slug]
     if hit: ordered.remove(hit[0]); ordered.insert(pos - 1, hit[0])
