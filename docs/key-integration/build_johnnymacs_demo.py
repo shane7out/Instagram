@@ -49,7 +49,7 @@ CSS = r'''
 sub('</style>', CSS + '</style>')
 
 BAR = ('<div class="demobar"><b>Demo.</b> A sample restaurant website built by <a href="https://keytechnologies.si/">Key Technologies</a> '
-       'with Restaurant Rewards built in. Every member, balance and receipt below is sample data.<span class="dm"><a href="app.html">1. Working account demo</a><a href="../restaurant-rewards-treasury.html?demo=1">2. Rewards wallet and Treasury demo</a><a href="wallet.html">3. The 4 simple steps</a><a href="cards.html">4. Gold wallet card</a></span></div>')
+       'with Restaurant Rewards built in. Every member, balance and receipt below is sample data.<span class="dm"><a href="app.html">1. Working account demo</a><a href="../restaurant-rewards-treasury.html?demo=1">2. Rewards wallet and Treasury demo</a><a href="wallet.html">3. The 4 simple steps</a><a href="cards.html">4. Gold wallet card</a><a href="#video">5. Watch the video</a></span></div>')
 sub('<body>\n', '<body>\n' + BAR + '\n')
 
 SECTION = '''<section id="rewards"><div class="wrap">

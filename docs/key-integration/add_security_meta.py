@@ -17,7 +17,10 @@ CSP = ("default-src 'self'; "
        "frame-src 'self' https://www.google.com; "
        "worker-src 'self' blob:; "
        "object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io")
-TAG = ('<!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="%s"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->' % CSP)
+def tag_for(page_text):
+    # only pages that really embed an Instagram video may frame Instagram; every other page keeps the tight rule
+    csp = CSP.replace("frame-src 'self' https://www.google.com;", "frame-src 'self' https://www.google.com https://www.instagram.com;") if 'src="https://www.instagram.com/' in page_text else CSP
+    return ('<!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="%s"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->' % csp)
 n = 0
 for d, _, fs in os.walk(ROOT):
     if os.sep + 'fonts' in d:
@@ -33,7 +36,7 @@ for d, _, fs in os.walk(ROOT):
         m = re.search(r'<meta charset="?utf-8"?\s*/?>', new, re.I)
         if not m:
             print('skip (no charset meta):', p); continue
-        new = new[:m.end()] + TAG + new[m.end():]
+        new = new[:m.end()] + tag_for(new) + new[m.end():]
         if new != t:
             open(p, 'w', encoding='utf-8').write(new); n += 1
 print('security meta applied/updated on', n, 'pages')
