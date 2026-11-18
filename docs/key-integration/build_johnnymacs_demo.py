@@ -85,7 +85,7 @@ sub('<section id="reviews">', SECTION + WHERE + '<section id="reviews">')
 
 JS = r'''
 (function(){
- var bal=12,START=12,OFFERS=[['Free Homemade Mozzarella Sticks (5)','Appetizer',15],['Free French Bread with garlic butter','Appetizer',10],['Free 4-Finger Chicken Basket','Entree',30],['Free Cannoli','Dessert',8]];
+ var bal=12,START=12,OFFERS=[['Free Pickle Spears (6)','Appetizer',15],['Free French Bread with garlic butter','Appetizer',10],['Free 4-Finger Chicken Basket','Entree',30],['Free Cannoli','Dessert',8]];
  var el=document.getElementById('rwBal'),msg=document.getElementById('rwMsg'),box=document.getElementById('rwOffers');
  function say(t){msg.textContent=t}
  function draw(){

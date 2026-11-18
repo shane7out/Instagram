@@ -24,13 +24,13 @@ header span{font-weight:900;font-size:20px;line-height:1.2}
 h1{font-size:32px;line-height:1.15;margin:0 0 10px;font-weight:900;letter-spacing:-.01em}
 p{margin:0 0 12px;color:#e9f1f8}
 .say{font-size:22px;line-height:1.4;color:#fff;font-weight:700}
-.wallet{background:var(--card);border:3px solid var(--key);border-radius:20px;padding:14px 18px;margin:14px 0;text-align:center}
+.wallet{background:var(--card);border:3px solid var(--key);border-radius:18px;padding:12px 16px;margin:12px 0;text-align:center}
 .wallet small{display:block;color:#e9f1f8;font-size:18px;font-weight:700}
-.wallet .num{font-size:76px;font-weight:900;line-height:1.02;color:var(--key2);letter-spacing:-.03em}
-.wallet .num span{display:block;font-size:21px;font-weight:700;color:#e9f1f8;letter-spacing:0;margin-top:2px}
-.wallet.small .num{font-size:52px}
+.wallet .num{font-size:40px;font-weight:900;line-height:1.02;color:var(--key2);letter-spacing:-.03em}
+.wallet .num span{display:block;font-size:18px;font-weight:700;color:#e9f1f8;letter-spacing:0;margin-top:0}
+.wallet.small .num{font-size:32px}
 .cust{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 18px;margin:10px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
-.cust b{font-size:21px}.cust .n{font-size:40px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:17px;color:#e9f1f8;font-weight:700;margin-top:4px}
+.cust b{font-size:21px}.cust .n{font-size:28px;font-weight:900;color:var(--good);line-height:1}.cust .n{text-align:center}.cust .n small{display:block;font-size:16px;color:#e9f1f8;font-weight:700;margin-top:4px}
 .btn{display:block;width:100%%;min-height:62px;margin:14px 0 0;padding:12px 18px;border:0;border-radius:16px;background:var(--key);color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer}
 .btn:active{background:#33bce8}.btn:focus-visible{outline:5px solid #fff;outline-offset:4px}
 .btn.ghost{background:transparent;color:#fff;border:3px solid #7d90a5;min-height:54px;font-size:20px}
