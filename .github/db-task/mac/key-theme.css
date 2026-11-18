@@ -1,0 +1,11 @@
+/*KEYTHEME: same colors, font and look as keytechnologies.si*/
+@font-face{font-family:Lato;font-style:normal;font-weight:400;font-display:swap;src:url(https://keytechnologies.si/fonts/lato-400.woff2) format('woff2')}
+@font-face{font-family:Lato;font-style:normal;font-weight:700;font-display:swap;src:url(https://keytechnologies.si/fonts/lato-700.woff2) format('woff2')}
+@font-face{font-family:Lato;font-style:normal;font-weight:900;font-display:swap;src:url(https://keytechnologies.si/fonts/lato-900.woff2) format('woff2')}
+:root{--bg:#0f171e;--bg-dark:#0a1117;--panel:#232f3e;--border:#37475a;--border-hi:#aab9ca;--sky:#4fc8f0;--gold:#00a8e1;--error:#ff7b7b;--success:#3ddc84;--white-12:#2a3a4c;--white-06:#18222d}
+html,body{background:#0f171e !important}
+body,input,select,textarea,button,.btn,.c-btn{font-family:Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif !important}
+h1,h2,h3,.brand-name,.chip-val,.tagline-item,.form-heading,.perks-heading,.s-title,.s-badge{font-family:Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif !important;font-weight:900 !important;letter-spacing:0 !important}
+.btn,.c-btn,#sLinkCopyBtn{background:#00a8e1 !important;color:#0f171e !important}
+.btn:hover{box-shadow:0 10px 36px rgba(0,168,225,.35) !important}
+.intro-blurb{background:rgba(0,168,225,.08) !important;border-color:rgba(0,168,225,.3) !important}

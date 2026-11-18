@@ -15,7 +15,7 @@ def sub(a, b, count=1):
     assert a in s, a[:60]
     s = s.replace(a, b, count)
 
-sub('<title>', '<meta name="robots" content="noindex,nofollow"><title>')
+sub('<title>', '<meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="/fonts/lato.css"><title>')
 sub('<title>Johnny Mac\'s Sports Bar &amp; Grill | Henderson, NV | NY Pizza &amp; Buffalo Wings Since 1983</title>',
     '<title>Johnny Mac\'s Website and Rewards Demo | Key Technologies.si</title>')
 sub('<nav><a href="#specials">Specials</a>', '<nav><a href="#rewards" class="keep">Rewards</a><a href="#specials">Specials</a>')
@@ -23,7 +23,11 @@ sub('<nav><a href="#specials">Specials</a>', '<nav><a href="#rewards" class="kee
 CSS = r'''
 .demobar{background:#10243a;color:#cfe3f7;font-size:13.5px;text-align:center;padding:9px 14px;border-bottom:1px solid #1f3d5c}
 .demobar b{color:#fff}.demobar a{color:#9fd0ff}
-#rewards{background:#0f1a14}
+#rewards{--bg:#0f171e;--card:#232f3e;--line:#37475a;--ink:#f6f8fb;--mute:#aab9ca;--mint:#4fc8f0;--gold:#00a8e1;--green:#00a8e1;--r:14px;background:#0f171e;color:#f6f8fb;font-family:Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;border-top:1px solid #37475a;border-bottom:1px solid #37475a}
+#rewards h2,#rewards h3,#rewards b{font-family:inherit}#rewards h2{font-weight:900}
+#rewards .btn,#rewards .offer button{color:#0f171e;font-family:inherit}#rewards .btn.ghost{color:#f6f8fb;background:transparent;border-color:#637283}
+#rewards .offer button:disabled{background:transparent;color:#8c9bab;border-color:#37475a}
+.byKey{display:flex;align-items:center;gap:8px;margin:0 0 14px;color:#aab9ca;font-size:13.5px}.byKey b{color:#4fc8f0}
 .rw{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
 .rwcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
 .rwcard h3{margin:0 0 4px;font-size:21px}
@@ -49,6 +53,7 @@ sub('<body>\n', '<body>\n' + BAR + '\n')
 
 SECTION = '''<section id="rewards"><div class="wrap">
  <h2>Restaurant Rewards</h2>
+ <p class="byKey"><span>Powered by <b>Key Technologies</b>. Same wallet at every participating restaurant.</span></p>
  <p class="sub">Earn rewards every time you eat here, and use them for free food. One rewards balance that works at every participating restaurant.</p>
  <div class="rw">
   <div class="rwcard" aria-live="polite">

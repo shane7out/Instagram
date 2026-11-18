@@ -3,7 +3,7 @@
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-restaurant-rewards-name.sh?$(date +%s)" -o /tmp/deploy-restaurant-rewards-name.sh && bash /tmp/deploy-restaurant-rewards-name.sh
 # RENAME on the LVR dashboard hosting: the words "LVR Rewards" / "LVR Rewards Program" / "LVR Points" become "Restaurant Rewards" on the member sign-up page (lvr-rewards.html)
 # and the Rewards admin page (lvr-points-admin.html). Only visible words change. "Las Vegas Restaurants (LVR)" as the company name, page addresses, database names and every PIN, rule and member record stay exactly as they are.
-# Takes each page's CURRENT LIVE copy, checks every script still parses, and if anything fails uploads nothing. Safe to run twice. Keeps a .bak-rrname copy of each page.
+# It ALSO gives the sign-up page the same colors, font and look as keytechnologies.si (one small style block added at the end of the page head). Takes each page's CURRENT LIVE copy, checks every script still parses, and if anything fails uploads nothing. Safe to run twice. Keeps a .bak-rrname copy of each page.
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
@@ -21,6 +21,8 @@ for f in $PAGES; do
 done
 [ -z "$DOPAGES" ] && { echo "No page could be fetched - nothing changed."; exit 1; }
 export DOPAGES
+curl -sL -o /tmp/rrname-theme.css "$RAWB/key-theme.css$CB"
+[ -s /tmp/rrname-theme.css ] || { echo "Could not get the theme file - nothing changed."; exit 1; }
 node <<'NODE' >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
 let bad = 0;
@@ -28,6 +30,7 @@ for (const f of process.env.DOPAGES.trim().split(/\s+/)) {
   const p = '/tmp/rrname-new/' + f; let s = fs.readFileSync(p, 'utf8'); const before = (s.match(/LVR (Rewards|Points)/gi) || []).length;
   s = s.split('LVR Rewards Program').join('Restaurant Rewards Program').split('LVR REWARDS').join('RESTAURANT REWARDS')
        .split('LVR Rewards').join('Restaurant Rewards').split('LVR Points').join('Restaurant Rewards').split('LVR rewards').join('Restaurant Rewards');
+  if (f === 'lvr-rewards.html' && !s.includes('/*KEYTHEME')) { s = s.replace('</head>', '<style>' + fs.readFileSync('/tmp/rrname-theme.css', 'utf8') + '</style>\n</head>'); }
   const after = (s.match(/LVR (Rewards|Points)/gi) || []).length;
   const blocks = [...s.matchAll(/<script>([\s\S]*?)<\/script>/g)]; let ok = true;
   blocks.forEach((m, i) => { fs.writeFileSync('/tmp/_rr_block.js', m[1]); const r = cp.spawnSync('node', ['--check', '/tmp/_rr_block.js'], { encoding: 'utf8' }); if (r.status) { ok = false; console.log(f + ' script block ' + i + ' FAILED: ' + (r.stderr || '').split('\n')[0]); } });

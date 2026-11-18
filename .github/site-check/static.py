@@ -76,7 +76,13 @@ for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>',read(
         _nm=sorted(re.findall(r'"@type": "Service",\s*"name": "([^"]+)"',m.group(1)))
         _want=sorted(e['title'] for e in _j.load(open('key-platform/demos/list.json',encoding='utf-8')))
         if _nm!=_want: issues.append(('index.html','service count structured data lists %d services but the real number is %d (run docs/key-integration/build_services_grid.py)'%(len(_nm),len(_want))))
-HARD=('service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
+# every Restaurant Rewards page must keep the Key Technologies look: same background, same blue, same Lato font ("one brain, many tentacles")
+for _p in ['rewards.html','my-account.html','menu.html','join-restaurant.html','key-rewards-app.html','key-rewards-me.html','key-rewards-join.html','key-rewards-dashboard.html','key-rewards-checkin.html','johnny-macs-demo/index.html']:
+    if os.path.exists(_p):
+        _t=read(_p)
+        for _need,_why in [('#0f171e','background'),('#00a8e1','blue'),('Lato','font')]:
+            if _need.lower() not in _t.lower(): issues.append((_p,'theme drift: missing Key Technologies %s (%s)'%(_why,_need)))
+HARD=('theme drift','service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
 hard=[i for i in issues if i[1].startswith(HARD)]
 print('HARD problems:',len(hard))
 sys.exit(1 if hard else 0)
