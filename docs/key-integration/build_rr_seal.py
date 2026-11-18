@@ -49,11 +49,11 @@ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100
  <feFlood flood-color="#4d2c00" flood-opacity=".72" result="sf"/><feComposite in="sf" in2="s" operator="in" result="sc"/>
  <feMerge><feMergeNode in="sc"/><feMergeNode in="hc"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
 <g filter="url(#emb)"><circle cx="50" cy="50" r="46" fill="none" stroke="{G}" stroke-opacity=".62" stroke-width="3"/></g>
-{circ(48.2)}{circ(43.8)}{circ(29)}
+{circ(48.2)}{circ(43.8)}{circ(29.4)}
 <g fill="{K}" style="filter:drop-shadow(0 .5px 0 rgba(255,255,255,.7))">
-<path d="{arc_text("RESTAURANT",34,7.6,1.5,True)}"/>
-<path d="{arc_text("REWARDS",39.3,7.6,1.8,False)}"/>
-<path d="{flat_text("RR",50,59.5,27,-.5)}"/>
+<path d="{arc_text("RESTAURANT",33.6,8.8,1.1,True)}"/>
+<path d="{arc_text("REWARDS",40.2,8.8,1.5,False)}"/>
+<path d="{flat_text("RR",50,58.5,25,-.4)}"/>
 </g>
 {dia(13.7,50)}{dia(86.3,50)}
 </svg>'''

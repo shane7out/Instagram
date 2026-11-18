@@ -108,7 +108,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres .pc>.gc,#pres .flip,#pres .gblock{width:min(100%,304px);margin-left:auto!important;margin-right:auto!important}
 #pres .gc::after{display:none}
 #pres .gc:not(.back){aspect-ratio:1.74/1;min-height:172px}#pres .gc.sm .nm{font-size:16px;margin-top:3px}#pres .gc.sm .num{font-size:13px;padding-top:4px}#pres .gc.sm .bal{margin-top:4px;padding-top:5px}#pres .gc.sm .bal b{font-size:25px}#pres .gc.sm .bal small{font-size:10px}#pres .gc.sm .brand{font-size:10.5px}#pres .gc.sm .nm.long{font-size:min(15px,4.2vw)}
-#pres .gc.sm .crow{margin-top:4px;margin-bottom:4px}#pres .gc.sm .rrlock img{height:46px}#pres .gc.sm .chip{width:34px;height:25px}#pres .gc.sm .gtag{padding:4px 10px;font-size:10px}#pres .gc.gift.sm .gnote{font-size:10.5px;padding-top:4px}
+#pres .gc.sm .crow{margin-top:4px;margin-bottom:4px}#pres .gc.sm .crow{position:static}#pres .gc.sm .rrlock{position:absolute;right:13px;top:50px;z-index:1}#pres .gc.sm .rrlock img{height:78px}#pres .gc.gift.sm .gnote{max-width:calc(100% - 100px)}#pres .gc.sm .chip{width:34px;height:25px}#pres .gc.sm .gtag{padding:4px 10px;font-size:10px}#pres .gc.gift.sm .gnote{font-size:10.5px;padding-top:4px}
 #pres .kt,#rdm .kt{text-align:center;margin:10px 0 4px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.7)}#pres .kt a,#rdm .kt a{color:inherit;text-decoration:underline}
 #pres .giftpill{display:block;width:100%;min-height:44px;margin:10px 0 0;border:1.5px solid rgba(255,255,255,.35);border-radius:999px;background:transparent;color:#fff;font:800 16px Lato,system-ui,sans-serif;letter-spacing:.02em;cursor:pointer}#pres .giftpill:active{background:rgba(255,255,255,.1)}
 #pres .rbtn,#pres .giftpill{display:block;width:100%;min-height:40px;margin:10px 0 0;padding:0 14px;border:1.5px solid rgba(0,168,225,.7);border-radius:999px;background:rgba(0,168,225,.16);color:#fff;font:800 15px Lato,system-ui,sans-serif;letter-spacing:.02em;cursor:pointer}
@@ -126,7 +126,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
 #pres .flip .fi{display:grid}#pres .flip .fi>*{grid-area:1/1}
 #pres .flip .fi>.back{visibility:hidden}#pres .flip.on .fi>.back{visibility:visible}#pres .flip.on .fi>.gc:not(.back){visibility:hidden}
 #pres .flip.enter{animation:dropin .95s cubic-bezier(.2,.9,.25,1.1) both}
-@keyframes floaty{0%,100%{transform:rotateX(2.4deg) rotateY(-3.2deg) translateY(0)}50%{transform:rotateX(-2.4deg) rotateY(3.2deg) translateY(-4px)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes dropin{0%{opacity:0;transform:perspective(900px) translateY(-60px) rotateX(42deg) scale(.88)}55%{opacity:1;transform:perspective(900px) translateY(8px) rotateX(-6deg) scale(1.03)}80%{transform:perspective(900px) translateY(-2px) rotateX(1.5deg) scale(1)}100%{transform:none}}
 #pres .flip .shine{position:absolute;inset:0;border-radius:20px;pointer-events:none;overflow:hidden;z-index:5}
 #pres .flip .shine::before{content:"";position:absolute;top:-10%;bottom:-10%;width:45%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-18deg)}
@@ -341,7 +341,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:9px 8px;b
  function giftCard(g,open){var amt=bal(g.id),c=document.createElement('div');c.className='gc sm gift';var d=function(k,t){var e=document.createElement('div');e.className=k;if(t!=null)e.textContent=t;return e};
   c.appendChild(d('brand','Restaurant Rewards'));c.appendChild(d('nm','A credit to give'));
   var cr=d('crow');cr.appendChild(d('gtag','Gift'));cr.appendChild(rrLock());c.appendChild(cr);
-  c.appendChild(d('gnote','For a friend, a family member, or anywhere you want. It goes whole to one. Tap to give.'));
+  c.appendChild(d('gnote','For a friend or family, whole to one person. Tap to give.'));
   var bb=d('bal'),sm=document.createElement('small');sm.textContent='For one person';var b2=document.createElement('b');b2.textContent=fmt(amt);var un=document.createElement('span');un.className='un';un.textContent=' RR';b2.appendChild(un);bb.appendChild(sm);bb.appendChild(b2);c.appendChild(bb);
   if(open){c.setAttribute('role','button');c.setAttribute('tabindex','0');c.setAttribute('aria-label','Credit to give, '+fmt(amt)+' RR. Tap to give it to one person.');c.addEventListener('click',open);c.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}})}
   return c}
