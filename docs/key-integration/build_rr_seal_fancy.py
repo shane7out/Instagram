@@ -4,11 +4,11 @@ black enamel centre with engraved rosette, raised gold RR). Lettering is outline
 Run from the repo root: python3 docs/key-integration/build_rr_seal_fancy.py"""
 import math,sys,argparse
 ap=argparse.ArgumentParser()
-ap.add_argument('--sides',choices=['laurel','diamond'],default='laurel')
+ap.add_argument('--sides',choices=['laurel','diamond'],default='diamond')
 ap.add_argument('--center',choices=['spirals','plain','rings','rays'],default='plain')
 ap.add_argument('--rule',type=int,default=0,help='1 = small rule and diamond under the RR')
-ap.add_argument('--rr',type=float,default=28,help='RR size')
-ap.add_argument('--track',type=float,default=3.0,help='space between the two R')
+ap.add_argument('--rr',type=float,default=23,help='RR size')
+ap.add_argument('--track',type=float,default=2.6,help='space between the two R')
 ap.add_argument('--out',default='sites/key-technologies/brand/rr-seal-fancy.svg')
 A=ap.parse_args();PLAIN=A.sides=='diamond'
 from fontTools.ttLib import TTFont
