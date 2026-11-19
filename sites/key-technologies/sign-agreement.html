@@ -232,7 +232,7 @@ function pkOf(id){for(var i=0;i<cfg.pk.length;i++)if(cfg.pk[i][0]===id)return cf
 /* ---------- header ---------- */
 document.title='Service Agreement | '+cfg.short;
 $('parties').textContent='Key Technologies.si and '+cfg.client;
-$('offer').textContent='Offer valid until '+cfg.ends;
+$('offer').textContent=cfg.ends?'Offer valid until '+cfg.ends:'Offer valid for 10 days';
 if(cfg.logo){$('logo').src='/'+cfg.logo;$('logo').alt=cfg.client+' logo'}else $('logo').classList.add('hide');
 $('nmB').value=cfg.signer||'Shane Christensen';
 
@@ -322,7 +322,7 @@ function pages(){var o=T(),s=esc(cfg.short),
  var P2='<div class="band"></div>'+section(4,o)+section(5,o)+section(6,o);
  var P3='<div class="band"></div>'+section(7,o)+section(8,o)+section(9,o)+section(10,o)+section(11,o);
  var sg=function(t,img,nm,sub,ts){if(S.blank)return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"></div><div class="l">Signature</div><div class="v">'+(nm&&!sub?esc(nm):'&nbsp;')+'</div><div class="l">Name'+(t===cfg.client?' and title':'')+'</div><div class="v">&nbsp;</div><div class="l">Date</div></div>';return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"><img src="'+img+'" alt="Signature"></div><div class="l">Signature</div><div class="v">'+esc(nm)+(sub?', '+esc(sub):'')+'</div><div class="l">Name'+(sub?' and title':'')+'</div><div class="v" style="font-size:15px">'+esc(ts)+'</div><div class="l">Signed (date and time)</div></div>'};
- var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#0a6f99;font-size:19px;margin:20px 0">This offer '+(S.blank?'is good until ':'was good until ')+esc(cfg.ends)+'.</p><h2>Signatures</h2><p>'+(S.blank?'By signing, both sides agree':'By signing on screen, both sides agree')+' to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
+ var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#0a6f99;font-size:19px;margin:20px 0">'+(cfg.ends?'This offer '+(S.blank?'is good until ':'was good until ')+esc(cfg.ends)+'.':'This offer is good for 10 days from the date it is given.')+'</p><h2>Signatures</h2><p>'+(S.blank?'By signing, both sides agree':'By signing on screen, both sides agree')+' to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
  return [P1,P2,P3,P4]}
 function renderPdf(){
  var root=$('pdfroot');root.innerHTML='';var list=pages();
