@@ -76,19 +76,19 @@ canvas.pad{display:block;width:100%;height:170px;border-radius:14px;background:#
 @media(max-width:350px){.wrap{padding:18px 12px 60px}.card{padding:16px 12px 18px}.opt .nm{font-size:16px}.opt .pr{font-size:20px}.opt .dot{width:22px;height:22px}}
 #pdfroot{position:fixed;left:-12000px;top:0;width:816px}
 /* The PDF pages (rendered off screen, one picture per page) */
-.pg{width:816px;height:1056px;position:relative;padding:62px 66px 90px;overflow:hidden;background:#0b1117 radial-gradient(110% 340px at 50% 0,#17303f 0,#0b1117 100%) no-repeat;color:#f6f8fb;font-family:Lato,system-ui,sans-serif}
-.pg .band{position:absolute;left:0;right:0;top:0;height:30px;background:linear-gradient(90deg,#0b1218,#16303f)}
+.pg{width:816px;height:1056px;position:relative;padding:62px 66px 90px;overflow:hidden;background:#fff;color:#14202b;font-family:Lato,system-ui,sans-serif}
+.pg .band{position:absolute;left:0;right:0;top:0;height:30px;background:linear-gradient(90deg,#0b1117,#16303f)}
 .pg .band::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:4px;background:#00a8e1}
 .pg .hd{display:flex;align-items:center;gap:22px;margin:14px 0 22px}
 .pg .hd img{width:92px;height:auto}
-.pg .hd h1{margin:0;text-align:left;font-size:42px;line-height:1.05}
-.pg .hd p{margin:6px 0 0;font-size:16px;color:#aab9ca}
-.pg h2{display:flex;gap:10px;align-items:baseline;margin:22px 0 6px;font-size:21px;font-weight:900;color:#00a8e1}
+.pg .hd h1{margin:0;text-align:left;font-size:42px;line-height:1.05;color:#14202b}
+.pg .hd p{margin:6px 0 0;font-size:16px;color:#3d5262}
+.pg h2{display:flex;gap:10px;align-items:baseline;margin:22px 0 6px;font-size:21px;font-weight:900;color:#0a6f99}
 .pg h2 span{min-width:30px}
-.pg p{margin:0 0 10px;font-size:17px;line-height:1.5;color:#e9eff6}
-.pg .box{background:rgba(0,168,225,.14);border:1.5px solid #00a8e1;border-radius:12px;padding:12px 16px}
-.pg .ex{background:#1a2430;border-left:4px solid #00a8e1;padding:10px 16px}
-.pg .ft{position:absolute;left:66px;right:66px;bottom:34px;display:flex;justify-content:space-between;font-size:12px;color:#8fa2b5;border-top:1px solid #37475a;padding-top:8px}
+.pg p{margin:0 0 10px;font-size:17px;line-height:1.5;color:#14202b}
+.pg .box{background:#eef8fd;border:1.5px solid #00a8e1;border-radius:12px;padding:12px 16px}
+.pg .ex{background:#f4f7f9;border-left:4px solid #00a8e1;padding:10px 16px}
+.pg .ft{position:absolute;left:66px;right:66px;bottom:34px;display:flex;justify-content:space-between;font-size:12px;color:#5b6f7e;border-top:1px solid #d5dee5;padding-top:8px}
 .pg .pkgs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
 .pg .pkgs div{display:flex;align-items:center;gap:12px;border-radius:10px;padding:14px 16px;font-weight:900;font-size:21px;color:#0f171e}
 .pg .pkgs div.k-platinum{color:#fff}
@@ -97,14 +97,14 @@ canvas.pad{display:block;width:100%;height:170px;border-radius:14px;background:#
 .pg .pkgs .sel i::after{content:"";position:absolute;inset:3px;background:#0f171e;border-radius:2px}
 .pg .pkgs .k-platinum.sel i::after{background:#fff}
 .pg .pkgs em{display:block;font-style:normal;font-weight:700;font-size:15px;opacity:.85}
-.pg .pkgs .off{opacity:.6}
+.pg .pkgs .off{opacity:.5}
 .pg .sg{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:16px}
-.pg .sg .c{background:#232f3e;border:1.5px solid #37475a;border-radius:14px;padding:16px 18px}
+.pg .sg .c{background:#f4f7fa;border:1.5px solid #c9d6df;border-radius:14px;padding:16px 18px}
 .pg .sg h3{margin:0 0 12px;font-size:18px;font-weight:900}
-.pg .sg .im{height:84px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.pg .sg .im{height:84px;background:#fff;border:1px solid #c9d6df;border-radius:8px;display:flex;align-items:center;justify-content:center}
 .pg .sg .im img{max-width:100%;max-height:80px}
-.pg .sg .l{margin-top:6px;font-size:13px;color:#aab9ca}
-.pg .sg .v{margin-top:10px;font-size:18px;font-weight:900;border-bottom:1px solid #37475a;padding-bottom:4px}
+.pg .sg .l{margin-top:6px;font-size:13px;color:#5b6f7e}
+.pg .sg .v{margin-top:10px;font-size:18px;font-weight:900;border-bottom:1px solid #c9d6df;padding-bottom:4px}
 </style>
 </head>
 <body>
@@ -268,7 +268,7 @@ function pages(){var o=T(),s=esc(cfg.short),
  var P2='<div class="band"></div>'+section(4,o)+section(5,o)+section(6,o);
  var P3='<div class="band"></div>'+section(7,o)+section(8,o)+section(9,o)+section(10,o)+section(11,o);
  var sg=function(t,img,nm,sub,ts){return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"><img src="'+img+'" alt="Signature"></div><div class="l">Signature</div><div class="v">'+esc(nm)+(sub?', '+esc(sub):'')+'</div><div class="l">Name'+(sub?' and title':'')+'</div><div class="v" style="font-size:15px">'+esc(ts)+'</div><div class="l">Signed (date and time)</div></div>'};
- var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#00a8e1;font-size:19px;margin:20px 0">This offer was good until '+esc(cfg.ends)+'.</p><h2>Signatures</h2><p>By signing on screen, both sides agree to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
+ var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#0a6f99;font-size:19px;margin:20px 0">This offer was good until '+esc(cfg.ends)+'.</p><h2>Signatures</h2><p>By signing on screen, both sides agree to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
  return [P1,P2,P3,P4]}
 function renderPdf(){
  var root=$('pdfroot');root.innerHTML='';var list=pages();
@@ -277,7 +277,7 @@ function renderPdf(){
  var jsPDF=window.jspdf.jsPDF,pdf=new jsPDF({unit:'pt',format:'letter',compress:true});
  pdf.setProperties({title:'Service Agreement - '+cfg.client,subject:'Document ID '+S.id,author:'Key Technologies.si'});
  var chain=Promise.resolve();
- els.forEach(function(el,i){chain=chain.then(function(){return html2canvas(el,{scale:2,backgroundColor:'#0b1117',useCORS:true,logging:false})}).then(function(c){if(i)pdf.addPage('letter');pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,612,792)})});
+ els.forEach(function(el,i){chain=chain.then(function(){return html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false})}).then(function(c){if(i)pdf.addPage('letter');pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,612,792)})});
  return chain.then(function(){root.innerHTML='';return pdf.output('blob')})}
 function fname(){var d=new Date();return 'Service-Agreement-'+cfg.short.replace(/[^A-Za-z0-9]+/g,'-').replace(/-+$/,'')+'-'+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'.pdf'}
 
