@@ -14,7 +14,7 @@
 :root{--bg:#0f171e;--bg2:#121a22;--card:#232f3e;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--key:#00a8e1;--gold:#f0d27c;--dark:#0f171e}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:400 13px/1.3 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-.story{position:relative;width:360px;height:640px;margin:0 auto;padding:30px 20px 24px;display:flex;flex-direction:column;align-items:center;overflow:hidden;background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 60%)}
+.story{position:relative;width:min(100%,360px);height:640px;margin:0 auto;padding:30px 20px 24px;display:flex;flex-direction:column;align-items:center;overflow:hidden;background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 60%)}
 .seal{position:relative;width:92px;height:92px;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
 h1{position:relative;margin:10px 0 3px;font-size:27px;line-height:1.1;font-weight:900;text-align:center;letter-spacing:.01em;color:var(--ink)}
 h1 em{font-style:normal;color:var(--key)}
@@ -43,6 +43,7 @@ h1 em{font-style:normal;color:var(--key)}
 .facts span{border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;white-space:nowrap;color:var(--dim)}
 .foot{position:relative;margin-top:auto;text-align:center;font:700 9.5px/1.4 Lato,sans-serif;letter-spacing:.1em;color:var(--dim)}
 .foot b{color:var(--gold);letter-spacing:.18em}
+@media(max-width:359px){.story{height:auto;min-height:640px;padding-left:14px;padding-right:14px}.row3{gap:6px}.big{padding-left:6px;padding-right:6px}.big h2{font-size:14px}.facts{flex-wrap:wrap}}
 </style>
 </head>
 <body>
