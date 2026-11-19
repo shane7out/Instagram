@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Service Agreement | Key Technologies.si</title>
+<meta name="description" content="A private agreement page: read it, choose a package, sign with your finger and keep a PDF copy.">
+<link rel="canonical" href="https://keytechnologies.si/sign-agreement.html">
+<meta name="theme-color" content="#0f171e">
+<link rel="stylesheet" href="/fonts/lato.css">
+<style>
+/* Key Technologies.si colors, taken from the site: background #0f171e, card #232f3e, line #37475a, text #f6f8fb, soft text #aab9ca, key blue #00a8e1. */
+:root{--bg:#0f171e;--bg2:#121a22;--card:#232f3e;--card2:#1a2430;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--key:#00a8e1;--dark:#0f171e}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:22px 18px 70px}
+.brand{text-align:center;font-size:12px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;color:var(--key)}
+.logo{display:block;width:96px;height:auto;margin:14px auto 6px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
+h1{margin:6px 0 4px;text-align:center;font-size:34px;line-height:1.1;font-weight:900}
+.sub{margin:0 0 12px;text-align:center;color:var(--dim);font-size:16px}
+.pill{display:block;width:fit-content;max-width:100%;margin:0 auto 20px;padding:6px 14px;font-size:12px;border:1px solid rgba(0,168,225,.7);border-radius:99px;background:rgba(0,168,225,.14);color:#9adcf5;font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;text-align:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 20px;margin:0 0 16px}
+.step{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:13px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--key)}
+.step b{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--key);color:var(--dark);font-size:14px;letter-spacing:0}
+.card h2{margin:0 0 6px;font-size:22px;font-weight:900}
+.card h3{margin:20px 0 4px;font-size:18px;font-weight:900;color:var(--key)}
+.card p{margin:0 0 10px;color:#e4ebf3}
+.opts{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:8px}
+.opt{position:relative;display:flex;align-items:center;gap:12px;padding:16px 14px;min-width:0;border-radius:14px;border:2px solid transparent;cursor:pointer;color:var(--dark);font-weight:900;box-shadow:0 5px 14px rgba(0,0,0,.4)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .dot{flex:none;width:26px;height:26px;border-radius:50%;border:3px solid var(--dark);background:rgba(255,255,255,.45)}
+.opt .nm{font-size:19px;letter-spacing:.05em;text-transform:uppercase;flex:1;min-width:0}
+.opt .pr{font-size:23px;white-space:nowrap}
+.opt .pr small{display:block;font-size:11px;letter-spacing:.1em;text-align:right;opacity:.8}
+.opt.on{border-color:#fff;box-shadow:0 0 0 3px var(--key),0 6px 18px rgba(0,0,0,.5)}
+.opt.on .dot{background:var(--dark);box-shadow:inset 0 0 0 4px #fff}
+.k-bronze{background:linear-gradient(135deg,#f0cdaa,#d99b5c)}
+.k-silver{background:linear-gradient(135deg,#f6f8fb,#c0c8d2)}
+.k-gold{background:linear-gradient(135deg,#f8e8b0,#e2bb5c)}
+.k-platinum{background:linear-gradient(135deg,#56606e,#1c232d);color:#fff}
+.k-platinum .dot{border-color:#fff;background:rgba(255,255,255,.15)}
+.k-platinum.on .dot{background:#fff;box-shadow:inset 0 0 0 4px #1c232d}
+.note{margin:8px 0 0;font-size:14px;color:var(--dim)}
+label.f{display:block;margin:14px 0 6px;font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+input[type=text],textarea{width:100%;font:inherit;font-size:19px;color:var(--ink);background:var(--bg2);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--key)}
+textarea{min-height:92px;resize:vertical}
+.padwrap{position:relative;margin-top:6px}
+canvas.pad{display:block;width:100%;height:190px;border-radius:14px;background:#fff;touch-action:none;cursor:crosshair}
+.padhint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:#8c9aa7;font-size:15px;pointer-events:none}
+.padhint.off{display:none}
+.padx{position:absolute;left:14px;bottom:30px;color:#8c9aa7;font-size:26px;pointer-events:none;font-weight:900}
+.row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:900;font-size:19px;border-radius:14px;padding:15px 22px;min-height:54px}
+.btn.main{flex:1 1 220px;background:var(--key);color:var(--dark)}
+.btn.main:active{filter:brightness(.92)}
+.btn.main[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.agree{display:flex;gap:12px;align-items:flex-start;margin-top:16px;font-size:16px;color:#e4ebf3;cursor:pointer}
+.agree input{width:26px;height:26px;margin:2px 0 0;flex:none;accent-color:#00a8e1}
+.err{margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(255,120,100,.14);border:1px solid rgba(255,140,120,.6);color:#ffd2c9;font-size:16px;display:none}
+.err.on{display:block}
+.box{border:1.5px solid var(--key);background:rgba(0,168,225,.12);border-radius:12px;padding:12px 14px;margin:8px 0 12px}
+.box p{margin:0 0 6px}.box p:last-child{margin:0}
+.ex{border-left:4px solid var(--key);background:var(--card2);border-radius:0 10px 10px 0;padding:10px 14px;margin:8px 0 12px}
+.hide{display:none!important}
+.done .big{font-size:26px;font-weight:900;margin:4px 0 6px}
+.sigs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.sigs div{background:#fff;color:var(--dark);border-radius:12px;padding:10px 12px;font-size:13px}
+.sigs img{display:block;width:100%;height:70px;object-fit:contain}
+.id{font:700 13px/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--dim);word-break:break-all}
+@media(max-width:350px){.wrap{padding:18px 12px 60px}.card{padding:16px 12px 18px}.opt .nm{font-size:16px}.opt .pr{font-size:20px}.opt .dot{width:22px;height:22px}}
+#pdfroot{position:fixed;left:-12000px;top:0;width:816px}
+/* The PDF pages (rendered off screen, one picture per page) */
+.pg{width:816px;height:1056px;position:relative;padding:62px 66px 90px;overflow:hidden;background:#0f171e;color:#f6f8fb;font-family:Lato,system-ui,sans-serif}
+.pg .band{position:absolute;left:0;right:0;top:0;height:30px;background:linear-gradient(90deg,#0b1218,#16303f)}
+.pg .band::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:4px;background:#00a8e1}
+.pg .hd{display:flex;align-items:center;gap:22px;margin:14px 0 22px}
+.pg .hd img{width:92px;height:auto}
+.pg .hd h1{margin:0;text-align:left;font-size:42px;line-height:1.05}
+.pg .hd p{margin:6px 0 0;font-size:16px;color:#aab9ca}
+.pg h2{display:flex;gap:10px;align-items:baseline;margin:22px 0 6px;font-size:21px;font-weight:900;color:#00a8e1}
+.pg h2 span{min-width:30px}
+.pg p{margin:0 0 10px;font-size:17px;line-height:1.5;color:#e9eff6}
+.pg .box{background:rgba(0,168,225,.14);border:1.5px solid #00a8e1;border-radius:12px;padding:12px 16px}
+.pg .ex{background:#1a2430;border-left:4px solid #00a8e1;padding:10px 16px}
+.pg .ft{position:absolute;left:66px;right:66px;bottom:34px;display:flex;justify-content:space-between;font-size:12px;color:#8fa2b5;border-top:1px solid #37475a;padding-top:8px}
+.pg .pkgs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+.pg .pkgs div{display:flex;align-items:center;gap:12px;border-radius:10px;padding:14px 16px;font-weight:900;font-size:21px;color:#0f171e}
+.pg .pkgs div.k-platinum{color:#fff}
+.pg .pkgs i{display:block;flex:none;width:22px;height:22px;border:2.5px solid #0f171e;border-radius:4px;background:rgba(255,255,255,.4);position:relative}
+.pg .pkgs .k-platinum i{border-color:#fff;background:transparent}
+.pg .pkgs .sel i::after{content:"";position:absolute;inset:3px;background:#0f171e;border-radius:2px}
+.pg .pkgs .k-platinum.sel i::after{background:#fff}
+.pg .pkgs em{display:block;font-style:normal;font-weight:700;font-size:15px;opacity:.85}
+.pg .pkgs .off{opacity:.38}
+.pg .sg{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:16px}
+.pg .sg .c{background:#232f3e;border:1.5px solid #37475a;border-radius:14px;padding:16px 18px}
+.pg .sg h3{margin:0 0 12px;font-size:18px;font-weight:900}
+.pg .sg .im{height:84px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.pg .sg .im img{max-width:100%;max-height:80px}
+.pg .sg .l{margin-top:6px;font-size:13px;color:#aab9ca}
+.pg .sg .v{margin-top:10px;font-size:18px;font-weight:900;border-bottom:1px solid #37475a;padding-bottom:4px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+
+<div id="bad" class="card hide"><h2>This link is missing its details</h2><p>Ask Shane for a new link. It carries the agreement for you, and this page cannot open without it.</p></div>
+
+<div id="main" class="hide">
+ <div class="brand">Key Technologies.si</div>
+ <img class="logo" id="logo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+ <h1>Service Agreement</h1>
+ <p class="sub" id="parties"></p>
+ <div class="pill" id="offer"></div>
+
+ <div class="card" id="s1">
+  <div class="step"><b>1</b> Choose your package</div>
+  <p class="note" style="margin:0">Tap one. Each is for 1 year.</p>
+  <div class="opts" id="opts"></div>
+ </div>
+
+ <div class="card" id="s2">
+  <div class="step"><b>2</b> Read the agreement</div>
+  <div id="text"></div>
+ </div>
+
+ <div class="card" id="s3">
+  <div class="step"><b>3</b> Sign</div>
+  <label class="f" for="nm">Your name</label>
+  <input type="text" id="nm" autocomplete="name" placeholder="Type your full name">
+  <label class="f" for="tt">Your title</label>
+  <input type="text" id="tt" placeholder="Owner, manager, and so on">
+  <label class="f">Sign here with your finger</label>
+  <div class="padwrap"><canvas class="pad" id="padA"></canvas><div class="padx">&times;</div><div class="padhint" id="hintA">Sign here</div></div>
+  <div class="row"><button class="btn ghost" id="clrA" type="button">Clear</button></div>
+  <label class="agree"><input type="checkbox" id="agA"><span>I have read this agreement. I agree to it, and I agree to sign it on this screen.</span></label>
+  <div class="err" id="errA"></div>
+  <div class="row"><button class="btn main" id="goA" type="button">Sign</button></div>
+ </div>
+
+ <div class="card hide" id="s4">
+  <div class="step"><b>4</b> Key Technologies signs</div>
+  <h2>Pass the phone to Shane</h2>
+  <label class="f" for="f30">In the first 30 days Key will</label>
+  <textarea id="f30" placeholder="Type what Key will do in the first 30 days"></textarea>
+  <label class="f">Signing for Key Technologies.si</label>
+  <input type="text" id="nmB" readonly>
+  <label class="f">Sign here with your finger</label>
+  <div class="padwrap"><canvas class="pad" id="padB"></canvas><div class="padx">&times;</div><div class="padhint" id="hintB">Sign here</div></div>
+  <div class="row"><button class="btn ghost" id="clrB" type="button">Clear</button></div>
+  <label class="agree"><input type="checkbox" id="agB"><span>I agree to this agreement for Key Technologies.si and I agree to sign it on this screen.</span></label>
+  <div class="err" id="errB"></div>
+  <div class="row"><button class="btn main" id="goB" type="button">Finish and make the PDF</button></div>
+ </div>
+
+ <div class="card done hide" id="s5">
+  <div class="step"><b>&#10003;</b> Signed</div>
+  <div class="big" id="doneT">Both sides have signed.</div>
+  <p id="doneP"></p>
+  <div class="sigs" id="sigs"></div>
+  <div class="row">
+   <button class="btn main" id="dl" type="button">Save the PDF</button>
+   <button class="btn main" id="sh" type="button" style="background:#fff">Send a copy</button>
+  </div>
+  <p class="note" id="shn"></p>
+  <p class="id" id="docid"></p>
+ </div>
+</div>
+</div>
+<div id="pdfroot"></div>
+
+<script src="/vendor/html2canvas.min.js"></script>
+<script src="/vendor/jspdf.umd.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')};
+function b64d(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)))}
+var cfg=null;
+try{var m=/[#&]d=([^&]+)/.exec(location.hash);if(m)cfg=JSON.parse(b64d(m[1]))}catch(e){}
+if(!cfg||!cfg.pk||!cfg.client){$('bad').classList.remove('hide');return}
+$('main').classList.remove('hide');
+var S={pkg:null,name:'',title:'',sigA:'',tsA:'',dA:'',f30:'',sigB:'',tsB:'',blob:null,id:''};
+var G=cfg.gr||null;
+function pkOf(id){for(var i=0;i<cfg.pk.length;i++)if(cfg.pk[i][0]===id)return cfg.pk[i];return null}
+
+/* ---------- header ---------- */
+document.title='Service Agreement | '+cfg.short;
+$('parties').textContent='Key Technologies.si and '+cfg.client;
+$('offer').textContent='Offer valid until '+cfg.ends;
+if(cfg.logo){$('logo').src='/'+cfg.logo;$('logo').alt=cfg.client+' logo'}else $('logo').classList.add('hide');
+$('nmB').value=cfg.signer||'Shane Christensen';
+
+/* ---------- the agreement text (used on screen and in the PDF) ---------- */
+function T(){ /* returns {n:{h,html}} */
+ var s=esc(cfg.short),k='Key',o={};
+ o[2]={h:'One year at a time',b:'<p>The year starts on the day Key receives payment and runs for 12 months. Each year stands on its own. A new year starts only if both sides agree in writing and the new payment is made.</p>'};
+ o[3]={h:'Payment',b:'<p>The package fee is paid in full, in advance. Key starts work as soon as payment is received.</p><div class="box"><p><b>Make checks payable to: '+esc(cfg.payee||'Shane Christensen')+'</b></p></div>'};
+ o[4]={h:'What Key does',b:'<p>Key provides the services listed for the chosen package and works on '+s+'\'s account in good faith all year. Key reviews the numbers with '+s+' every month. More work can be added at any time if both sides agree in writing.</p>'+(S.f30?'<p>In the first 30 days Key will: <b>'+esc(S.f30)+'</b></p>':'')};
+ o[5]={h:'What '+s+' does',b:'<p>'+s+' gives Key the access, information and answers Key reasonably needs, and a monthly sales report.</p>'};
+ if(G)o[6]={h:'Platinum only: sales growth fee',b:'<p>On top of the package fee, '+s+' pays Key <b>'+esc(G.pct)+' of sales growth</b>. Each of '+s+'\'s '+esc(G.where)+' is figured on its own, one month at a time:</p><div class="box"><p>1. Take that location\'s <b>gross sales</b> for the month. Alcohol is included. Sales tax is not counted.</p><p>2. Subtract its gross sales for the same month a year earlier, counted the same way.</p><p>3. If the answer is more than zero, <b>'+esc(G.pct)+' of it is owed</b>. If it is zero or less, nothing is owed for that location and nothing carries over.</p></div><div class="ex"><b>Example.</b> At one location, last year\'s month was '+esc(G.last)+' and this year\'s is '+esc(G.now)+'. The growth is '+esc(G.gain)+', and the fee for that month is <b>'+esc(G.fee)+'</b>.</div><p>'+s+' sends the monthly sales report by the 10th of the next month. The fee is due within 15 days after.</p>'};
+ o[7]={h:'Honest numbers',b:'<p>Each side may ask to see the records behind a sales report once a year. If a mistake of more than 5% is found, the side that made it pays for the check.</p>'};
+ o[8]={h:'No cancellation',b:'<div class="box"><p><b>This is a one-year commitment. Once the year starts, '+s+' cannot cancel, and the package fee is not refundable.</b></p></div><p>Key may end this agreement at any time with 30 days\' written notice. If Key does, Key refunds the unused full months of the package fee.</p><p>If Key does not do what it agreed to and does not fix it within 30 days after written notice from '+s+', Key refunds the unused full months of the package fee.</p>'};
+ o[9]={h:'No guarantees',b:'<p>Neither side can promise results. Key will work hard and watch the numbers. '+s+' stays free to run its business its own way.</p>'};
+ o[10]={h:'Rewards',b:'<p>Restaurant Rewards are a perk. They have no cash value and follow the Restaurant Rewards program terms.</p>'};
+ o[11]={h:'Ownership and privacy',b:'<p>'+s+' keeps its name, logo, menu and guest information. Key keeps its own software and tools. Each side keeps the other\'s private information private and follows the law on guest data.</p>'};
+ o[12]={h:'The rest',b:'<p>If any part of this is found not enforceable, the rest stays. Changes must be in writing and signed by both sides. Nevada law applies. Each side\'s total responsibility to the other is limited to the fees paid under this agreement in the last 12 months.</p>'};
+ return o}
+function section(n,o){return o[n]?'<h2><span>'+n+'.</span>'+o[n].h+'</h2>'+o[n].b:''}
+
+/* ---------- screen: packages + text ---------- */
+var opts=$('opts');
+cfg.pk.forEach(function(p){var l=document.createElement('label');l.className='opt k-'+p[0];l.innerHTML='<input type="radio" name="pk" value="'+esc(p[0])+'"><span class="dot"></span><span class="nm">'+esc(p[1])+'</span><span class="pr">'+esc(p[2])+'<small>for 1 year</small></span>';opts.appendChild(l);
+ l.querySelector('input').addEventListener('change',function(){S.pkg=p[0];[].forEach.call(opts.children,function(c){c.classList.toggle('on',c===l)})})});
+function paintText(){var o=T(),h='';[2,3,4,5,6,7,8,9,10,11,12].forEach(function(n){if(o[n])h+='<h3>'+n+'. '+o[n].h+'</h3>'+o[n].b});$('text').innerHTML=h}
+paintText();
+
+/* ---------- signature pads ---------- */
+function Pad(cv,hint){var ctx,drawing=false,ink=false,lx=0,ly=0;
+ function size(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;if(!r.width)return;cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,0,r.width,r.height);ctx.lineWidth=2.8;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#0f171e';ink=false;hint.classList.remove('off')}
+ function pt(e){var r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
+ cv.addEventListener('pointerdown',function(e){e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(x){}drawing=true;var p=pt(e);lx=p[0];ly=p[1];ctx.beginPath();ctx.arc(lx,ly,1.4,0,6.3);ctx.fillStyle='#0f171e';ctx.fill();ink=true;hint.classList.add('off')});
+ cv.addEventListener('pointermove',function(e){if(!drawing)return;e.preventDefault();var p=pt(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p[0],p[1]);ctx.stroke();lx=p[0];ly=p[1]});
+ ['pointerup','pointercancel','pointerleave'].forEach(function(ev){cv.addEventListener(ev,function(){drawing=false})});
+ window.addEventListener('resize',function(){if(!ink)size()});
+ return {size:size,clear:size,has:function(){return ink},png:function(){return cv.toDataURL('image/png')}}}
+var padA=Pad($('padA'),$('hintA')),padB=Pad($('padB'),$('hintB'));
+padA.size();
+$('clrA').onclick=function(){padA.clear()};$('clrB').onclick=function(){padB.clear()};
+
+function stamp(){var d=new Date();return d.toLocaleString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',timeZoneName:'short'})}
+function showErr(id,t){var e=$(id);e.textContent=t;e.classList.toggle('on',!!t);if(t)e.scrollIntoView({block:'center',behavior:'smooth'})}
+
+$('goA').onclick=function(){
+ showErr('errA','');
+ if(!S.pkg)return showErr('errA','Please choose a package first (step 1).');
+ var nm=$('nm').value.trim(),tt=$('tt').value.trim();
+ if(nm.length<3)return showErr('errA','Please type your full name.');
+ if(!tt)return showErr('errA','Please type your title.');
+ if(!padA.has())return showErr('errA','Please sign in the box with your finger.');
+ if(!$('agA').checked)return showErr('errA','Please tick the box to agree.');
+ S.name=nm;S.title=tt;S.sigA=padA.png();S.tsA=stamp();S.dA=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+ [].forEach.call(document.querySelectorAll('#s1 input,#s3 input,#s3 button'),function(x){x.disabled=true});
+ $('s4').classList.remove('hide');padB.size();
+ setTimeout(function(){$('s4').scrollIntoView({behavior:'smooth',block:'start'})},60)};
+
+$('goB').onclick=function(){
+ showErr('errB','');
+ if(!padB.has())return showErr('errB','Please sign in the box.');
+ if(!$('agB').checked)return showErr('errB','Please tick the box to agree.');
+ S.f30=$('f30').value.trim();S.sigB=padB.png();S.tsB=stamp();
+ $('goB').disabled=true;$('goB').textContent='Making the PDF...';
+ finish().catch(function(e){$('goB').disabled=false;$('goB').textContent='Finish and make the PDF';showErr('errB','Sorry, the PDF could not be made on this device ('+(e&&e.message||e)+'). Try again, or use another browser.')})};
+
+/* ---------- the PDF ---------- */
+function sha256(str){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(function(h){return Array.prototype.map.call(new Uint8Array(h),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')})}
+function pkgHtml(){var h='<div class="pkgs">';cfg.pk.forEach(function(p){var on=p[0]===S.pkg;h+='<div class="k-'+esc(p[0])+(on?' sel':' off')+'"><i></i><span>'+esc(p[1])+'<em>'+esc(p[2])+(p[3]?', plus the growth fee in section 6':'')+'</em></span></div>'});return h+'</div>'}
+function pages(){var o=T(),s=esc(cfg.short),
+ logo=cfg.logo?'<img src="/'+esc(cfg.logo)+'" alt="">':'';
+ var P1='<div class="band"></div><div class="hd">'+logo+'<div><h1>Service Agreement</h1><p>Key Technologies.si and '+esc(cfg.client)+'</p></div></div>'
+  +'<p>This agreement is between <b>Key Technologies.si</b>, by '+esc(cfg.signer||'Shane Christensen')+' ("Key"), and <b>'+esc(cfg.client)+'</b> ("'+s+'"). Date: <b>'+esc(S.dA)+'</b></p>'
+  +'<h2><span>1.</span>The package</h2><p>'+s+' chose this package. Each is for 1 year.</p>'+pkgHtml()+section(2,o)+section(3,o);
+ var P2='<div class="band"></div>'+section(4,o)+section(5,o)+section(6,o);
+ var P3='<div class="band"></div>'+section(7,o)+section(8,o)+section(9,o)+section(10,o)+section(11,o);
+ var sg=function(t,img,nm,sub,ts){return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"><img src="'+img+'" alt="Signature"></div><div class="l">Signature</div><div class="v">'+esc(nm)+(sub?', '+esc(sub):'')+'</div><div class="l">Name'+(sub?' and title':'')+'</div><div class="v" style="font-size:15px">'+esc(ts)+'</div><div class="l">Signed (date and time)</div></div>'};
+ var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#00a8e1;font-size:19px;margin:20px 0">This offer was good until '+esc(cfg.ends)+'.</p><h2>Signatures</h2><p>By signing on screen, both sides agree to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
+ return [P1,P2,P3,P4]}
+function renderPdf(){
+ var root=$('pdfroot');root.innerHTML='';var list=pages();
+ list.forEach(function(h,i){var d=document.createElement('div');d.className='pg';d.innerHTML=h+'<div class="ft"><span>Key Technologies.si &middot; Service Agreement &middot; '+esc(cfg.short)+'</span><span>Document ID '+S.id+' &middot; Page '+(i+1)+' of 4</span></div>';root.appendChild(d)});
+ var els=[].slice.call(root.children);
+ var jsPDF=window.jspdf.jsPDF,pdf=new jsPDF({unit:'pt',format:'letter',compress:true});
+ pdf.setProperties({title:'Service Agreement - '+cfg.client,subject:'Document ID '+S.id,author:'Key Technologies.si'});
+ var chain=Promise.resolve();
+ els.forEach(function(el,i){chain=chain.then(function(){return html2canvas(el,{scale:2,backgroundColor:'#0f171e',useCORS:true,logging:false})}).then(function(c){if(i)pdf.addPage('letter');pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,612,792)})});
+ return chain.then(function(){root.innerHTML='';return pdf.output('blob')})}
+function fname(){var d=new Date();return 'Service-Agreement-'+cfg.short.replace(/[^A-Za-z0-9]+/g,'-').replace(/-+$/,'')+'-'+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'.pdf'}
+
+function finish(){
+ var pk=pkOf(S.pkg);
+ return sha256(JSON.stringify([cfg,S.pkg,S.name,S.title,S.f30,S.tsA,S.tsB,S.sigA,S.sigB])).then(function(h){S.id=h.slice(0,16).toUpperCase();return (document.fonts&&document.fonts.ready)||0}).then(function(){return renderPdf()}).then(function(b){
+  S.blob=b;paintDone(pk)})}
+function paintDone(pk){
+ $('s4').classList.add('hide');$('s3').classList.add('hide');$('s5').classList.remove('hide');
+ $('doneP').textContent=S.name+' chose '+pk[1]+' ('+pk[2]+' for 1 year). Signed '+S.tsA+' and '+S.tsB+'. Save the PDF and send a copy to each side.';
+ $('sigs').innerHTML='<div><img alt="Signature" src="'+S.sigA+'">'+esc(S.name)+'</div><div><img alt="Signature" src="'+S.sigB+'">'+esc(cfg.signer||'Shane Christensen')+'</div>';
+ $('docid').textContent='Document ID '+S.id;
+ if(!(navigator.canShare&&navigator.canShare({files:[new File([S.blob],'a.pdf',{type:'application/pdf'})]}))){$('sh').classList.add('hide');$('shn').textContent='Tap Save the PDF, then send it to each side by text or email.'}
+ else $('shn').textContent='Send a copy opens your phone\'s share sheet. Send it to Shane, and keep one for yourself.';
+ window.scrollTo({top:0,behavior:'smooth'})}
+$('dl').onclick=function(){if(!S.blob)return;var u=URL.createObjectURL(S.blob),a=document.createElement('a');a.href=u;a.download=fname();document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove()},3000)};
+$('sh').onclick=function(){if(!S.blob)return;var f=new File([S.blob],fname(),{type:'application/pdf'});navigator.share({files:[f],title:'Service Agreement',text:'Signed service agreement, Document ID '+S.id}).catch(function(){})};
+})();
+</script>
+</body>
+</html>
