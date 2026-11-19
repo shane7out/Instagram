@@ -7,7 +7,7 @@ rewards terms), the owner pages, and redirect stubs."""
 import re, pathlib
 SITE = pathlib.Path('sites/key-technologies')
 SKIP = {'key-pageviews.html', 'key-content-studio.html', 'rewards-layout-preview.html', 'key-rewards-dashboard.html', 'key-rewards-app.html', 'key-rewards-me.html', 'key-rewards-join.html', 'key-rewards-checkin.html', 'rewards.html', 'menu.html', 'my-account.html', 'join-restaurant.html', 'marketplace-demo.html',
-        'restaurant-rewards-treasury.html', 'restaurant-confirm.html', 'restaurant-rewards-uses.html', 'restaurant-rewards-share.html', 'restaurant-rewards-share-gold.html', 'restaurant-rewards-share-story.html', 'restaurant-rewards-share-kt.html', 'sign-agreement.html','dm-composer.html', 'johnny-macs-demo/app.html', 'johnny-macs-demo/cards.html', 'johnny-macs-demo/index.html', 'johnny-macs-demo/wallet.html', 'thin-blue-702-demo/index.html',
+        'restaurant-rewards-treasury.html', 'restaurant-confirm.html', 'restaurant-rewards-uses.html', 'restaurant-rewards-share.html', 'restaurant-rewards-share-gold.html', 'restaurant-rewards-share-story.html', 'restaurant-rewards-share-kt.html', 'sign-agreement.html','outreach.html', 'johnny-macs-demo/app.html', 'johnny-macs-demo/cards.html', 'johnny-macs-demo/index.html', 'johnny-macs-demo/wallet.html', 'thin-blue-702-demo/index.html',
         'spin-terms.html', 'points-terms.html', 'points-privacy.html', 'rewards-terms.html', 'rewards-privacy.html'}
 OLD = re.compile(r'<script>\s*// Lightweight page-view counter.*?</script>\n?', re.S)
 done = 0
