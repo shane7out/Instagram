@@ -59,6 +59,7 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
  function $(i){return document.getElementById(i)}
  function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
  function fmt(c){return String(Math.round(c/100)).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+ function full(t){return new Date(t).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',timeZoneName:'short'})}
  function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
  function conf(k,t){var d=new Date(t);return 'RR-'+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+parseInt(k.slice(1),10)).slice(-4)}
  var accOn=true;
@@ -87,9 +88,9 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
    no.addEventListener('click',function(){if(window.confirm('Decline this payment? The credit goes back to '+(e.fn||'the guest')+'.'))set(k,'declined',no)});
    pend.appendChild(c)});
   if(!dk.length){var li=el('li',null,'Nothing yet.');rec.appendChild(li)}
-  dk.slice(0,15).forEach(function(k){var e=ents[k],li=el('li'),l=el('span'),b=el('b',null,(e.status==='declined'?'Declined, ':'')+(e.fn||'A guest'));l.appendChild(b);l.appendChild(el('small',null,fdate(e.t)+' · '+conf(k,e.t)));li.appendChild(l);li.appendChild(el('span','a',(e.status==='declined'?'':'+')+fmt(e.amt)));rec.appendChild(li)})}
+  dk.slice(0,15).forEach(function(k){var e=ents[k],li=el('li'),l=el('span'),b=el('b',null,(e.status==='declined'?'Declined, ':'')+(e.fn||'A guest'));l.appendChild(b);l.appendChild(el('small',null,'Paid '+full(e.t)+' · '+conf(k,e.t)));if(e.ct)l.appendChild(el('small',null,(e.status==='declined'?'Declined ':'Confirmed ')+full(e.ct)));li.appendChild(l);li.appendChild(el('span','a',(e.status==='declined'?'':'+')+fmt(e.amt)));rec.appendChild(li)})}
  function set(k,v,btn){btn.disabled=true;say('Saving…');
-  RR.db('PUT','rr_ledger/entries/'+k+'/status',v).then(function(r){if(r.status===200){say(v==='confirmed'?'Confirmed. Thank you.':'Declined.');if(v==='confirmed')burst();load()}else{btn.disabled=false;say('That did not save (it may already be handled). Refreshing.');load()}})}
+  RR.db('PATCH','rr_ledger/entries/'+k,{status:v,ct:{'.sv':'timestamp'}}).then(function(r){if(r.status===200){say(v==='confirmed'?'Confirmed. Thank you.':'Declined.');if(v==='confirmed')burst();load()}else{btn.disabled=false;say('That did not save (it may already be handled). Refreshing.');load()}})}
  function open(rid){id=rid;RR.db('GET','rr_ledger/entries',undefined,'orderBy=%22to%22&equalTo=%22'+id+'%22').then(function(r){
    if(r.status===401||r.status===403){RR.signOut();start('That PIN did not open this restaurant.');return}
    $('app').hidden=false;$('rid').textContent='Restaurant ID: '+id;ents=(r.status===200&&r.json)||{};loadAcc();

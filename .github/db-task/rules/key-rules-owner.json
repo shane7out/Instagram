@@ -96,12 +96,12 @@
   ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
   "meta": {
    ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__') && !data.exists() && newData.exists()",
-   ".validate": "newData.hasChildren(['issued','t']) && newData.child('issued').isNumber() && newData.child('issued').val() == 100000000 && newData.child('t').isNumber()"
+   ".validate": "newData.hasChildren(['issued','t']) && newData.child('issued').isNumber() && newData.child('issued').val() == 100000000 && newData.child('t').isNumber() && newData.child('t').val() == now"
   },
   "wallets": {
    "$w": {
     ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__') && !data.exists() && newData.exists()",
-    ".validate": "$w.matches(/^[a-z][a-z0-9]{0,19}$/) && newData.hasChildren(['name','type','t']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 60 && newData.child('type').isString() && (newData.child('type').val() == 'Treasury' || newData.child('type').val() == 'Restaurant' || newData.child('type').val() == 'Organization' || newData.child('type').val() == 'Customer' || newData.child('type').val() == 'Other') && newData.child('t').isNumber() && (!newData.child('rank').exists() || (newData.child('rank').isNumber() && newData.child('rank').val() >= 0 && newData.child('rank').val() <= 9999))",
+    ".validate": "$w.matches(/^[a-z][a-z0-9]{0,19}$/) && newData.hasChildren(['name','type','t']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 60 && newData.child('type').isString() && (newData.child('type').val() == 'Treasury' || newData.child('type').val() == 'Restaurant' || newData.child('type').val() == 'Organization' || newData.child('type').val() == 'Customer' || newData.child('type').val() == 'Other') && newData.child('t').isNumber() && newData.child('t').val() == now && (!newData.child('rank').exists() || (newData.child('rank').isNumber() && newData.child('rank').val() >= 0 && newData.child('rank').val() <= 9999))",
     "name": {},
     "type": {},
     "t": {},
@@ -118,7 +118,7 @@
    ".read": "auth != null && query.orderByChild == 'to' && query.equalTo == auth.token.email.replace('rr-','').replace('@kt-rr.invalid','')",
    "$e": {
     ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__') && !data.exists() && newData.exists()",
-    ".validate": "$e.matches(/^e[0-9]{7}$/) && newData.hasChildren(['t','to','amt']) && newData.child('t').isNumber() && newData.child('amt').isNumber() && newData.child('amt').val() >= 0 && newData.child('amt').val() <= 100000000 && newData.child('amt').val() % 100 == 0 && newData.parent().parent().child('wallets').child(newData.child('to').val()).exists() && (newData.child('kind').val() == 'open' ? newData.child('amt').val() == 0 : (newData.child('kind').val() == 'issue' ? (data.exists() || !data.parent().parent().child('meta').exists()) : (!newData.child('kind').exists() && newData.child('from').exists() && newData.parent().parent().child('wallets').child(newData.child('from').val()).exists() && newData.child('from').val() != newData.child('to').val() && newData.child('amt').val() > 0))) && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 120)) && (!newData.child('fn').exists() || (newData.child('fn').isString() && newData.child('fn').val().length <= 60)) && (!newData.child('tn').exists() || (newData.child('tn').isString() && newData.child('tn').val().length <= 60)) && (!newData.child('status').exists() || (newData.child('status').isString() && (data.exists() ? (newData.child('status').val() == 'pending' || newData.child('status').val() == 'confirmed' || newData.child('status').val() == 'declined') : newData.child('status').val() == 'pending'))) && (newData.child('status').val() != 'pending' || newData.parent().parent().child('accept').child(newData.child('to').val()).val() != false)",
+    ".validate": "$e.matches(/^e[0-9]{7}$/) && newData.hasChildren(['t','to','amt']) && newData.child('t').isNumber() && newData.child('t').val() == (data.exists() ? data.child('t').val() : now) && newData.child('amt').isNumber() && newData.child('amt').val() >= 0 && newData.child('amt').val() <= 100000000 && newData.child('amt').val() % 100 == 0 && newData.parent().parent().child('wallets').child(newData.child('to').val()).exists() && (newData.child('kind').val() == 'open' ? newData.child('amt').val() == 0 : (newData.child('kind').val() == 'issue' ? (data.exists() || !data.parent().parent().child('meta').exists()) : (!newData.child('kind').exists() && newData.child('from').exists() && newData.parent().parent().child('wallets').child(newData.child('from').val()).exists() && newData.child('from').val() != newData.child('to').val() && newData.child('amt').val() > 0))) && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 120)) && (!newData.child('fn').exists() || (newData.child('fn').isString() && newData.child('fn').val().length <= 60)) && (!newData.child('tn').exists() || (newData.child('tn').isString() && newData.child('tn').val().length <= 60)) && (!newData.child('status').exists() || (newData.child('status').isString() && (data.exists() ? (newData.child('status').val() == 'pending' || newData.child('status').val() == 'confirmed' || newData.child('status').val() == 'declined') : newData.child('status').val() == 'pending'))) && (newData.child('status').val() != 'pending' || newData.parent().parent().child('accept').child(newData.child('to').val()).val() != false) && (!newData.child('ct').exists() || (newData.child('ct').isNumber() && (data.child('ct').exists() ? newData.child('ct').val() == data.child('ct').val() : (newData.child('ct').val() == now && (newData.child('status').val() == 'confirmed' || newData.child('status').val() == 'declined') && newData.child('ct').val() >= newData.child('t').val())))) && !(data.exists() && data.child('status').val() == 'pending' && (newData.child('status').val() == 'confirmed' || newData.child('status').val() == 'declined') && !newData.child('ct').exists())",
     "status": {
      ".write": "auth != null && auth.token.email == 'rr-' + data.parent().child('to').val() + '@kt-rr.invalid' && data.val() == 'pending' && (newData.val() == 'confirmed' || newData.val() == 'declined')"
     },
@@ -132,6 +132,10 @@
     "tn": {},
     "$other": {
      ".validate": false
+    },
+    "ct": {
+     ".write": "auth != null && auth.token.email == 'rr-' + data.parent().child('to').val() + '@kt-rr.invalid' && !data.exists() && newData.exists() && data.parent().child('status').val() == 'pending'",
+     ".validate": "newData.isNumber()"
     }
    }
   },

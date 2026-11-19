@@ -747,24 +747,25 @@ const DAYMS = 86400000, HRMS = 3600000;
   // 12. RESTAURANT REWARDS LEDGER (rr_ledger): Treasury PIN account writes, restaurants only confirm their own payments
   // =====================================================================
   const RR = '/rr_ledger';
-  const WAL = (name, type, rank) => Object.assign({ name: name, type: type, t: 1700000000000 }, rank === undefined ? {} : { rank: rank });
+  const SV = { '.sv': 'timestamp' }; // the database's own clock: every record's time must be exactly this
+  const WAL = (name, type, rank) => Object.assign({ name: name, type: type, t: SV }, rank === undefined ? {} : { rank: rank });
   await t('ledger: a visitor cannot read it', 'anon', 'GET', RR, undefined, false);
   await t('ledger: a signed-in stranger cannot read it', 'other', 'GET', RR, undefined, false);
   await t('ledger: the report-PIN account cannot read it', 'viewer', 'GET', RR, undefined, false);
   await t('ledger: the owner can read it', 'owner', 'GET', RR, undefined, true);
   await t('ledger: the Treasury PIN account can read it', 'treasurer', 'GET', RR, undefined, true);
-  const GENESIS = { 'meta': { issued: 100000000, t: 1700000000000 }, 'wallets/treasury': WAL('Restaurant Rewards Treasury', 'Treasury'), 'entries/e0000001': { t: 1700000000000, to: 'treasury', amt: 100000000, kind: 'issue', note: 'Opening balance' } };
+  const GENESIS = { 'meta': { issued: 100000000, t: SV }, 'wallets/treasury': WAL('Restaurant Rewards Treasury', 'Treasury'), 'entries/e0000001': { t: SV, to: 'treasury', amt: 100000000, kind: 'issue', note: 'Opening balance' } };
   await t('ledger: a visitor cannot create the supply', 'anon', 'PATCH', RR, GENESIS, false);
   await t('ledger: a stranger cannot create the supply', 'other', 'PATCH', RR, GENESIS, false);
-  await t('ledger: wrong supply number is refused', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'meta': { issued: 5000, t: 1 } }), false);
-  await t('ledger: a second 1,000,000 issue entry with the first is refused (amount cap)', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'entries/e0000002': { t: 1, to: 'treasury', amt: 100000000, kind: 'issue' } }), true); // creating both at once is allowed only because the supply is not issued yet; the next test checks it cannot happen later
+  await t('ledger: wrong supply number is refused', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'meta': { issued: 5000, t: SV } }), false);
+  await t('ledger: a second 1,000,000 issue entry with the first is refused (amount cap)', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'entries/e0000002': { t: SV, to: 'treasury', amt: 100000000, kind: 'issue' } }), true); // creating both at once is allowed only because the supply is not issued yet; the next test checks it cannot happen later
   await call('admin', 'DELETE', RR);
   await t('ledger: the Treasury PIN account can create the supply (meta + Treasury wallet + opening entry in one go)', 'treasurer', 'PATCH', RR, GENESIS, true);
-  await t('ledger: the supply cannot be issued a second time later', 'treasurer', 'PUT', RR + '/entries/e0000099', { t: 2, to: 'treasury', amt: 100000000, kind: 'issue' }, false);
-  await t('ledger: meta cannot be changed', 'treasurer', 'PUT', RR + '/meta', { issued: 100000000, t: 5 }, false);
-  await t('ledger: wallet w1 (Restaurant) with its opening entry', 'treasurer', 'PATCH', RR, { 'wallets/w1': WAL('Vanilla Rice', 'Restaurant', 1), 'entries/e0000002': { t: 3, to: 'w1', amt: 0, kind: 'open' } }, true);
-  await t('ledger: wallet w2 (Restaurant)', 'treasurer', 'PATCH', RR, { 'wallets/w2': WAL("Johnny Mac's", 'Restaurant', 2), 'entries/e0000003': { t: 4, to: 'w2', amt: 0, kind: 'open' } }, true);
-  await t('ledger: wallet w3 (Customer)', 'treasurer', 'PATCH', RR, { 'wallets/w3': WAL('Alex', 'Customer', 3), 'entries/e0000004': { t: 5, to: 'w3', amt: 0, kind: 'open' } }, true);
+  await t('ledger: the supply cannot be issued a second time later', 'treasurer', 'PUT', RR + '/entries/e0000099', { t: SV, to: 'treasury', amt: 100000000, kind: 'issue' }, false);
+  await t('ledger: meta cannot be changed', 'treasurer', 'PUT', RR + '/meta', { issued: 100000000, t: SV }, false);
+  await t('ledger: wallet w1 (Restaurant) with its opening entry', 'treasurer', 'PATCH', RR, { 'wallets/w1': WAL('Vanilla Rice', 'Restaurant', 1), 'entries/e0000002': { t: SV, to: 'w1', amt: 0, kind: 'open' } }, true);
+  await t('ledger: wallet w2 (Restaurant)', 'treasurer', 'PATCH', RR, { 'wallets/w2': WAL("Johnny Mac's", 'Restaurant', 2), 'entries/e0000003': { t: SV, to: 'w2', amt: 0, kind: 'open' } }, true);
+  await t('ledger: wallet w3 (Customer)', 'treasurer', 'PATCH', RR, { 'wallets/w3': WAL('Alex', 'Customer', 3), 'entries/e0000004': { t: SV, to: 'w3', amt: 0, kind: 'open' } }, true);
   await t('ledger: a wallet cannot be created twice', 'treasurer', 'PUT', RR + '/wallets/w1', WAL('Copy', 'Restaurant'), false);
   await t('ledger: a wallet cannot be renamed', 'treasurer', 'PUT', RR + '/wallets/w1/name', 'Renamed', false);
   await t('ledger: a wallet cannot be deleted', 'treasurer', 'DELETE', RR + '/wallets/w1', undefined, false);
@@ -773,7 +774,7 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('ledger: wallet with an extra field refused', 'treasurer', 'PUT', RR + '/wallets/w4', Object.assign(WAL('X', 'Other'), { balance: 99999 }), false);
   await t('ledger: a visitor cannot create a wallet', 'anon', 'PUT', RR + '/wallets/w5', WAL('X', 'Other'), false);
   await t('ledger: a restaurant account cannot create a wallet', 'rest2', 'PUT', RR + '/wallets/w5', WAL('X', 'Other'), false);
-  const MOVE = (to, amt, extra) => Object.assign({ t: 10, from: 'treasury', to: to, amt: amt }, extra || {});
+  const MOVE = (to, amt, extra) => Object.assign({ t: SV, from: 'treasury', to: to, amt: amt }, extra || {});
   await t('ledger: move credit from the Treasury to w3', 'treasurer', 'PUT', RR + '/entries/e0000005', MOVE('w3', 500000, { note: 'Starting credit' }), true);
   await t('ledger: the owner may also write an entry', 'owner', 'PUT', RR + '/entries/e0000006', MOVE('w1', 10000), true);
   await t('ledger: an entry cannot be overwritten', 'treasurer', 'PUT', RR + '/entries/e0000005', MOVE('w3', 100), false);
@@ -794,10 +795,10 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('ledger: a payment from w3 to restaurant w2 is created as pending', 'treasurer', 'PUT', RR + '/entries/e0000008', MOVE('w2', 8300, { from: 'w3', note: 'Redeemed at Johnny Mac\'s', status: 'pending', fn: 'Alex', tn: "Johnny Mac's" }), true);
   await t('ledger: a payment from w3 to restaurant w1 is created as pending', 'treasurer', 'PUT', RR + '/entries/e0000009', MOVE('w1', 1000, { from: 'w3', status: 'pending', note: 'Redeemed at Vanilla Rice' }), true);
   // restaurants confirm their own payments only
-  await t('restaurant: w2 can confirm its own pending payment', 'rest2', 'PUT', RR + '/entries/e0000008/status', 'confirmed', true);
+  await t('restaurant: w2 can confirm its own pending payment (status + the database time of the decision)', 'rest2', 'PATCH', RR + '/entries/e0000008', { status: 'confirmed', ct: SV }, true);
   await t('restaurant: a confirmed payment cannot be changed again', 'rest2', 'PUT', RR + '/entries/e0000008/status', 'declined', false);
-  await t('restaurant: w2 cannot confirm a payment meant for w1', 'rest2', 'PUT', RR + '/entries/e0000009/status', 'confirmed', false);
-  await t('restaurant: w1 can decline its own pending payment', 'rest1', 'PUT', RR + '/entries/e0000009/status', 'declined', true);
+  await t('restaurant: w2 cannot confirm a payment meant for w1', 'rest2', 'PATCH', RR + '/entries/e0000009', { status: 'confirmed', ct: SV }, false);
+  await t('restaurant: w1 can decline its own pending payment (with the database time)', 'rest1', 'PATCH', RR + '/entries/e0000009', { status: 'declined', ct: SV }, true);
   await call('admin', 'PUT', RR + '/entries/e0000010', MOVE('w2', 700, { from: 'w3', status: 'pending' }));
   await t('restaurant: an invalid status is refused', 'rest2', 'PUT', RR + '/entries/e0000010/status', 'paid', false);
   await t('restaurant: cannot change the amount of a payment', 'rest2', 'PUT', RR + '/entries/e0000010/amt', 100, false);
@@ -831,6 +832,30 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('accept: a payment to a restaurant that is still on is accepted', 'treasurer', 'PUT', RR + '/entries/e0000021', MOVE('w1', 100, { from: 'w3', status: 'pending' }), true);
   await t('accept: restaurant w2 can turn itself back on', 'rest2', 'PUT', RR + '/accept/w2', true, true);
   await t('accept: a payment to w2 works again once it is back on', 'treasurer', 'PUT', RR + '/entries/e0000022', MOVE('w2', 100, { from: 'w3', status: 'pending' }), true);
+
+
+  // ---- the ledger's clock: every time is the DATABASE's own clock, never one a phone sends ----
+  await t('clock: an entry stamped with a made-up past time is refused', 'treasurer', 'PUT', RR + '/entries/e0000030', MOVE('w3', 100, { t: 5 }), false);
+  await t('clock: an entry stamped with a future time is refused', 'treasurer', 'PUT', RR + '/entries/e0000030', MOVE('w3', 100, { t: Date.now() + 30 * 86400000 }), false);
+  await t('clock: an entry stamped with the current phone time (a number) is refused', 'treasurer', 'PUT', RR + '/entries/e0000030', MOVE('w3', 100, { t: Date.now() }), false);
+  await t('clock: an entry stamped with the database time is accepted', 'treasurer', 'PUT', RR + '/entries/e0000030', MOVE('w3', 100, { t: SV }), true);
+  await t('clock: a wallet stamped with a made-up time is refused', 'treasurer', 'PUT', RR + '/wallets/w6', { name: 'Fake time', type: 'Customer', t: 5 }, false);
+  await t('clock: a wallet stamped with the database time is accepted', 'treasurer', 'PUT', RR + '/wallets/w6', { name: 'Real time', type: 'Customer', t: SV }, true);
+  await t('clock: the time of an existing entry cannot be changed', 'treasurer', 'PUT', RR + '/entries/e0000005/t', SV, false);
+  await t('clock: the time of an existing wallet cannot be changed', 'treasurer', 'PUT', RR + '/wallets/w1/t', SV, false);
+  // ---- when a restaurant confirms or declines, the database stamps the exact time of the decision (ct) ----
+  await call('admin', 'PUT', RR + '/entries/e0000040', MOVE('w2', 100, { from: 'w3', status: 'pending', t: SV }));
+  await call('admin', 'PUT', RR + '/entries/e0000041', MOVE('w2', 100, { from: 'w3', status: 'pending', t: SV }));
+  await t('decision time: confirming without the time stamp is refused', 'rest2', 'PUT', RR + '/entries/e0000040/status', 'confirmed', false);
+  await t('decision time: confirming with a made-up time is refused', 'rest2', 'PATCH', RR + '/entries/e0000040', { status: 'confirmed', ct: 5 }, false);
+  await t('decision time: confirming with the phone clock (a number) is refused', 'rest2', 'PATCH', RR + '/entries/e0000040', { status: 'confirmed', ct: Date.now() }, false);
+  await t('decision time: a time stamp with no decision is refused', 'rest2', 'PUT', RR + '/entries/e0000040/ct', SV, false);
+  await t('decision time: confirming with the database time is accepted', 'rest2', 'PATCH', RR + '/entries/e0000040', { status: 'confirmed', ct: SV }, true);
+  await t('decision time: declining with the database time is accepted', 'rest2', 'PATCH', RR + '/entries/e0000041', { status: 'declined', ct: SV }, true);
+  await t('decision time: the decision time cannot be changed afterwards', 'rest2', 'PUT', RR + '/entries/e0000040/ct', SV, false);
+  await t('decision time: the Treasury PIN account cannot stamp a decision time', 'treasurer', 'PUT', RR + '/entries/e0000010/ct', SV, false);
+  await t('decision time: a payment cannot be created with a decision time already on it', 'treasurer', 'PUT', RR + '/entries/e0000042', MOVE('w2', 100, { from: 'w3', status: 'pending', ct: SV, t: SV }), false);
+  await t('decision time: a transfer cannot be created with a decision time', 'treasurer', 'PUT', RR + '/entries/e0000042', MOVE('w3', 100, { ct: SV, t: SV }), false);
 
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
