@@ -98,6 +98,8 @@ canvas.pad{display:block;width:100%;height:170px;border-radius:14px;background:#
 .btn .sp{display:inline-block;width:16px;height:16px;margin-right:8px;vertical-align:-3px;border:3px solid rgba(15,23,30,.3);border-top-color:var(--dark);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .done{text-align:center}
+.paper{margin:16px 0 0;text-align:center}
+.lnk{appearance:none;border:0;background:none;color:#9adcf5;font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;padding:8px}
 .chk{width:64px;height:64px;display:block;margin:2px auto 6px}
 .chk circle{stroke-dasharray:152;stroke-dashoffset:152;animation:draw .7s ease .1s forwards}
 .chk path{stroke-dasharray:44;stroke-dashoffset:44;animation:draw .5s ease .6s forwards}
@@ -152,6 +154,7 @@ canvas.pad{display:block;width:100%;height:170px;border-radius:14px;background:#
   <div class="pill" id="offer"></div>
   <p class="lead">It takes about a minute. Choose your package, read it, and sign with your finger.</p>
   <div class="row"><button class="btn main" id="start" type="button">Get started</button></div>
+  <p class="paper"><button class="lnk" id="paper" type="button">Prefer paper? Get a printable copy</button></p>
  </section>
 
  <section class="st card" id="st1">
@@ -254,7 +257,7 @@ function section(n,o){return o[n]?'<h2><span>'+n+'.</span>'+o[n].h+'</h2>'+o[n].
 var opts=$('opts');
 cfg.pk.forEach(function(p){var l=document.createElement('label');l.className='opt k-'+p[0];l.innerHTML='<input type="radio" name="pk" value="'+esc(p[0])+'"><span class="dot"></span><span class="nm">'+esc(p[1])+'</span><span class="pr">'+esc(p[2])+'<small>for 1 year</small></span>';opts.appendChild(l);
  l.querySelector('input').addEventListener('change',function(){S.pkg=p[0];$('n1').disabled=false;[].forEach.call(opts.children,function(c){c.classList.toggle('on',c===l)})})});
-function paintText(){var o=T(),h='';[2,3,4,5,6,7,8,9,10,11,12].forEach(function(n){if(o[n])h+='<h3>'+n+'. '+o[n].h+'</h3>'+o[n].b});$('text').innerHTML=h}
+function paintText(){var o=T(),h='';[2,3,4,5,6,7,8,9,10,11,12].forEach(function(n){if(o[n])h+='<h3>'+o[n].h+'</h3>'+o[n].b});$('text').innerHTML=h}
 paintText();
 
 
@@ -268,6 +271,8 @@ function go(n){cur=n;steps.forEach(function(el,i){el.classList.toggle('on',i===n
  window.scrollTo({top:0,behavior:'smooth'})}
 function paintPicked(){var pk=pkOf(S.pkg);if(!pk)return;var el=$('picked');el.className='picked k-'+pk[0];el.innerHTML='<span>Your package: '+esc(pk[1])+'</span><span>'+esc(pk[2])+' for 1 year</span>'}
 $('start').onclick=function(){go(1)};
+$('paper').onclick=function(){var b=$('paper'),t=b.textContent;b.disabled=true;b.textContent='Making your paper copy...';S.blank=true;S.id='PAPER';
+ (document.fonts&&document.fonts.ready||Promise.resolve()).then(function(){return renderPdf()}).then(function(bl){var u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=fname().replace('.pdf','-PAPER.pdf');document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove()},3000)}).catch(function(){b.textContent='Sorry, that did not work. Tap to try again.'}).then(function(){S.blank=false;S.id='';b.disabled=false;if(b.textContent.indexOf('Making')===0)b.textContent=t})};
 [].forEach.call(document.querySelectorAll('[data-back]'),function(b){b.onclick=function(){go(cur-1)}});
 $('n1').onclick=function(){if(S.pkg)go(2)};
 $('n2').onclick=function(){go(3)};
@@ -308,20 +313,20 @@ $('goB').onclick=function(){
 
 /* ---------- the PDF ---------- */
 function sha256(str){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(function(h){return Array.prototype.map.call(new Uint8Array(h),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')})}
-function pkgHtml(){var h='<div class="pkgs">';cfg.pk.forEach(function(p){var on=p[0]===S.pkg;h+='<div class="k-'+esc(p[0])+(on?' sel':' off')+'"><i></i><span>'+esc(p[1])+'<em>'+esc(p[2])+(p[3]?', plus the growth fee in section 6':'')+'</em></span></div>'});return h+'</div>'}
+function pkgHtml(){var h='<div class="pkgs">';cfg.pk.forEach(function(p){var on=p[0]===S.pkg;h+='<div class="k-'+esc(p[0])+(S.blank?'':(on?' sel':' off'))+'"><i></i><span>'+esc(p[1])+'<em>'+esc(p[2])+(p[3]?', plus the growth fee in section 6':'')+'</em></span></div>'});return h+'</div>'}
 function pages(){var o=T(),s=esc(cfg.short),
  logo=cfg.logo?'<img src="/'+esc(cfg.logo)+'" alt="">':'';
  var P1='<div class="band"></div><div class="hd">'+logo+'<div><h1>Service Agreement</h1><p>Key Technologies.si and '+esc(cfg.client)+'</p></div></div>'
-  +'<p>This agreement is between <b>Key Technologies.si</b>, by '+esc(cfg.signer||'Shane Christensen')+' ("Key"), and <b>'+esc(cfg.client)+'</b> ("'+s+'"). Date: <b>'+esc(S.dA)+'</b></p>'
-  +'<h2><span>1.</span>The package</h2><p>'+s+' chose this package. Each is for 1 year.</p>'+pkgHtml()+section(2,o)+section(3,o);
+  +'<p>This agreement is between <b>Key Technologies.si</b>, by '+esc(cfg.signer||'Shane Christensen')+' ("Key"), and <b>'+esc(cfg.client)+'</b> ("'+s+'"). Date: <b>'+(S.blank?'______________':esc(S.dA))+'</b></p>'
+  +'<h2><span>1.</span>The package</h2><p>'+s+(S.blank?' chooses one package.':' chose this package.')+' Each is for 1 year.</p>'+pkgHtml()+section(2,o)+section(3,o);
  var P2='<div class="band"></div>'+section(4,o)+section(5,o)+section(6,o);
  var P3='<div class="band"></div>'+section(7,o)+section(8,o)+section(9,o)+section(10,o)+section(11,o);
- var sg=function(t,img,nm,sub,ts){return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"><img src="'+img+'" alt="Signature"></div><div class="l">Signature</div><div class="v">'+esc(nm)+(sub?', '+esc(sub):'')+'</div><div class="l">Name'+(sub?' and title':'')+'</div><div class="v" style="font-size:15px">'+esc(ts)+'</div><div class="l">Signed (date and time)</div></div>'};
- var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#0a6f99;font-size:19px;margin:20px 0">This offer was good until '+esc(cfg.ends)+'.</p><h2>Signatures</h2><p>By signing on screen, both sides agree to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
+ var sg=function(t,img,nm,sub,ts){if(S.blank)return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"></div><div class="l">Signature</div><div class="v">'+(nm&&!sub?esc(nm):'&nbsp;')+'</div><div class="l">Name'+(t===cfg.client?' and title':'')+'</div><div class="v">&nbsp;</div><div class="l">Date</div></div>';return '<div class="c"><h3>'+esc(t)+'</h3><div class="im"><img src="'+img+'" alt="Signature"></div><div class="l">Signature</div><div class="v">'+esc(nm)+(sub?', '+esc(sub):'')+'</div><div class="l">Name'+(sub?' and title':'')+'</div><div class="v" style="font-size:15px">'+esc(ts)+'</div><div class="l">Signed (date and time)</div></div>'};
+ var P4='<div class="band"></div>'+section(12,o)+'<p style="text-align:center;font-weight:900;color:#0a6f99;font-size:19px;margin:20px 0">This offer '+(S.blank?'is good until ':'was good until ')+esc(cfg.ends)+'.</p><h2>Signatures</h2><p>'+(S.blank?'By signing, both sides agree':'By signing on screen, both sides agree')+' to everything on these four pages.</p><div class="sg">'+sg(cfg.client,S.sigA,S.name,S.title,S.tsA)+sg('Key Technologies.si',S.sigB,cfg.signer||'Shane Christensen','',S.tsB)+'</div>';
  return [P1,P2,P3,P4]}
 function renderPdf(){
  var root=$('pdfroot');root.innerHTML='';var list=pages();
- list.forEach(function(h,i){var d=document.createElement('div');d.className='pg';d.innerHTML=h+'<div class="ft"><span>Key Technologies.si &middot; Service Agreement &middot; '+esc(cfg.short)+'</span><span>Document ID '+S.id+' &middot; Page '+(i+1)+' of 4</span></div>';root.appendChild(d)});
+ list.forEach(function(h,i){var d=document.createElement('div');d.className='pg';d.innerHTML=h+'<div class="ft"><span>Key Technologies.si &middot; Service Agreement &middot; '+esc(cfg.short)+'</span><span>'+(S.blank?'Paper copy':'Document ID '+S.id)+' &middot; Page '+(i+1)+' of 4</span></div>';root.appendChild(d)});
  var els=[].slice.call(root.children);
  var jsPDF=window.jspdf.jsPDF,pdf=new jsPDF({unit:'pt',format:'letter',compress:true});
  pdf.setProperties({title:'Service Agreement - '+cfg.client,subject:'Document ID '+S.id,author:'Key Technologies.si'});
