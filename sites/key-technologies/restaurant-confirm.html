@@ -61,7 +61,7 @@ li small{display:block;color:rgba(255,255,255,.7);font-size:12px}li .a{font-weig
  function fmt(c){return String(Math.round(c/100)).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
  function full(t){return new Date(t).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',timeZoneName:'short'})}
  function fdate(t){var d=new Date(t),n=new Date(),tm=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),sd=function(x){return x.getFullYear()+'-'+x.getMonth()+'-'+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);if(sd(d)===sd(n))return 'Today, '+tm;if(sd(d)===sd(y))return 'Yesterday, '+tm;var o={month:'short',day:'numeric'};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleDateString('en-US',o)+', '+tm}
- function conf(k,t){var d=new Date(t);return 'RR-'+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+parseInt(k.slice(1),10)).slice(-4)}
+ function conf(k,t){var d=new Date(t);return 'No. '+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('000'+parseInt(k.slice(1),10)).slice(-4)}
  var accOn=true;
  function paintAcc(){$('acc').className='acc'+(accOn?'':' off');$('accs').textContent=accOn?'You are on the list. Guests can pay you with Restaurant Rewards.':'You are off the list. Guests cannot pay you. Turn it back on any time.';$('accb').textContent=accOn?'Turn off':'Turn on'}
  function loadAcc(){RR.db('GET','rr_ledger/accept/'+id).then(function(r){if(r.status===200){accOn=r.json!==false;paintAcc()}})}
