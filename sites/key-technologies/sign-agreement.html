@@ -74,6 +74,35 @@ canvas.pad{display:block;width:100%;height:170px;border-radius:14px;background:#
 .sigs img{display:block;width:100%;height:70px;object-fit:contain}
 .id{font:700 13px/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--dim);word-break:break-all}
 @media(max-width:350px){.wrap{padding:18px 12px 60px}.card{padding:16px 12px 18px}.opt .nm{font-size:16px}.opt .pr{font-size:20px}.opt .dot{width:22px;height:22px}}
+
+.st{display:none}
+.st.on{display:block;animation:stin .38s cubic-bezier(.2,.7,.2,1) both}
+@keyframes stin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.st.on{animation:none}.chk circle,.chk path{animation:none!important}}
+#st0{text-align:center;padding-top:6px}
+#st0 .logo{width:112px;margin:22px auto 10px}
+#st0 h1{font-size:31px;margin-top:10px}
+.lead{margin:0 auto 20px;max-width:300px;color:#e4ebf3;font-size:15.5px;line-height:1.5;text-wrap:balance}
+#st0 .row{justify-content:center}
+#st0 .btn.main{flex:1 1 auto;max-width:320px}
+.prog{display:flex;gap:6px;margin:2px 0 16px}
+.prog i{flex:1;height:5px;border-radius:99px;background:var(--line);transition:background .35s ease}
+.prog i.on{background:var(--key)}
+.picked{margin:2px 0 10px;padding:10px 12px;border-radius:12px;font-weight:900;font-size:14px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.read{max-height:52vh;overflow:auto;-webkit-overflow-scrolling:touch;padding:2px 12px 12px 2px;border-radius:10px;scrollbar-width:thin;scrollbar-color:#37475a transparent;mask-image:linear-gradient(180deg,#000 88%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,#000 88%,transparent 100%)}
+.read h3:first-child{margin-top:4px}
+.padwrap .clr{position:absolute;right:10px;top:10px;appearance:none;border:0;background:rgba(15,23,30,.08);color:#37475a;font:inherit;font-weight:900;font-size:13px;padding:6px 12px;border-radius:99px;cursor:pointer}
+.btn.white{flex:1 1 220px;background:#fff;color:var(--dark)}
+.row .btn.ghost{flex:0 0 auto}
+.btn.main[disabled]{opacity:.4}
+.btn .sp{display:inline-block;width:16px;height:16px;margin-right:8px;vertical-align:-3px;border:3px solid rgba(15,23,30,.3);border-top-color:var(--dark);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.done{text-align:center}
+.chk{width:64px;height:64px;display:block;margin:2px auto 6px}
+.chk circle{stroke-dasharray:152;stroke-dashoffset:152;animation:draw .7s ease .1s forwards}
+.chk path{stroke-dasharray:44;stroke-dashoffset:44;animation:draw .5s ease .6s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.done .sigs,.done .row{text-align:left}
 #pdfroot{position:fixed;left:-12000px;top:0;width:816px}
 /* The PDF pages (rendered off screen, one picture per page) */
 .pg{width:816px;height:1056px;position:relative;padding:62px 66px 90px;overflow:hidden;background:#fff;color:#14202b;font-family:Lato,system-ui,sans-serif}
@@ -113,62 +142,70 @@ canvas.pad{display:block;width:100%;height:170px;border-radius:14px;background:#
 <div id="bad" class="card hide"><h2>This link is missing its details</h2><p>Ask Shane for a new link. It carries the agreement for you, and this page cannot open without it.</p></div>
 
 <div id="main" class="hide">
- <div class="brand">Key Technologies.si</div>
- <img class="logo" id="logo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
- <h1>Service Agreement</h1>
- <p class="sub" id="parties"></p>
- <div class="pill" id="offer"></div>
+ <div class="prog hide" id="prog" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
- <div class="card" id="s1">
+ <section class="st on" id="st0">
+  <div class="brand">Key Technologies.si</div>
+  <img class="logo" id="logo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+  <h1>Service Agreement</h1>
+  <p class="sub" id="parties"></p>
+  <div class="pill" id="offer"></div>
+  <p class="lead">It takes about a minute. Choose your package, read it, and sign with your finger.</p>
+  <div class="row"><button class="btn main" id="start" type="button">Get started</button></div>
+ </section>
+
+ <section class="st card" id="st1">
   <div class="step"><b>1</b> Choose your package</div>
   <p class="note" style="margin:0">Tap one. Each is for 1 year.</p>
   <div class="opts" id="opts"></div>
- </div>
+  <div class="row"><button class="btn ghost" data-back type="button">Back</button><button class="btn main" id="n1" type="button" disabled>Next</button></div>
+ </section>
 
- <div class="card" id="s2">
+ <section class="st card" id="st2">
   <div class="step"><b>2</b> Read the agreement</div>
-  <div id="text"></div>
- </div>
+  <div class="picked" id="picked"></div>
+  <div class="read" id="text" tabindex="0"></div>
+  <p class="note">Scroll to read it all. You can go back if you want to change your package.</p>
+  <div class="row"><button class="btn ghost" data-back type="button">Back</button><button class="btn main" id="n2" type="button">I have read it</button></div>
+ </section>
 
- <div class="card" id="s3">
+ <section class="st card" id="st3">
   <div class="step"><b>3</b> Sign</div>
   <label class="f" for="nm">Your name</label>
   <input type="text" id="nm" autocomplete="name" placeholder="Type your full name">
   <label class="f" for="tt">Your title</label>
   <input type="text" id="tt" placeholder="Owner, manager, and so on">
   <label class="f">Sign here with your finger</label>
-  <div class="padwrap"><canvas class="pad" id="padA"></canvas><div class="padx">&times;</div><div class="padhint" id="hintA">Sign here</div></div>
-  <div class="row"><button class="btn ghost" id="clrA" type="button">Clear</button></div>
+  <div class="padwrap"><canvas class="pad" id="padA"></canvas><div class="padx">&times;</div><div class="padhint" id="hintA">Sign here</div><button class="clr" id="clrA" type="button">Clear</button></div>
   <label class="agree"><input type="checkbox" id="agA"><span>I have read this agreement. I agree to it, and I agree to sign it on this screen.</span></label>
   <div class="err" id="errA"></div>
-  <div class="row"><button class="btn main" id="goA" type="button">Sign</button></div>
- </div>
+  <div class="row"><button class="btn ghost" data-back type="button">Back</button><button class="btn main" id="goA" type="button">Sign</button></div>
+ </section>
 
- <div class="card hide" id="s4">
+ <section class="st card" id="st4">
   <div class="step"><b>4</b> Key Technologies signs</div>
   <h2>Pass the phone to Shane</h2>
   <label class="f">Signing for Key Technologies.si</label>
   <input type="text" id="nmB" readonly>
   <label class="f">Sign here with your finger</label>
-  <div class="padwrap"><canvas class="pad" id="padB"></canvas><div class="padx">&times;</div><div class="padhint" id="hintB">Sign here</div></div>
-  <div class="row"><button class="btn ghost" id="clrB" type="button">Clear</button></div>
+  <div class="padwrap"><canvas class="pad" id="padB"></canvas><div class="padx">&times;</div><div class="padhint" id="hintB">Sign here</div><button class="clr" id="clrB" type="button">Clear</button></div>
   <label class="agree"><input type="checkbox" id="agB"><span>I agree to this agreement for Key Technologies.si and I agree to sign it on this screen.</span></label>
   <div class="err" id="errB"></div>
   <div class="row"><button class="btn main" id="goB" type="button">Finish and make the PDF</button></div>
- </div>
+ </section>
 
- <div class="card done hide" id="s5">
-  <div class="step"><b>&#10003;</b> Signed</div>
+ <section class="st card done" id="st5">
+  <svg class="chk" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24" fill="none" stroke="#00a8e1" stroke-width="3"/><path d="M15 27l8 8 15-17" fill="none" stroke="#00a8e1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <div class="big" id="doneT">Both sides have signed.</div>
   <p id="doneP"></p>
   <div class="sigs" id="sigs"></div>
   <div class="row">
    <button class="btn main" id="dl" type="button">Save the PDF</button>
-   <button class="btn main" id="sh" type="button" style="background:#fff">Send a copy</button>
+   <button class="btn white" id="sh" type="button">Send a copy</button>
   </div>
   <p class="note" id="shn"></p>
   <p class="id" id="docid"></p>
- </div>
+ </section>
 </div>
 </div>
 <div id="pdfroot"></div>
@@ -216,9 +253,24 @@ function section(n,o){return o[n]?'<h2><span>'+n+'.</span>'+o[n].h+'</h2>'+o[n].
 /* ---------- screen: packages + text ---------- */
 var opts=$('opts');
 cfg.pk.forEach(function(p){var l=document.createElement('label');l.className='opt k-'+p[0];l.innerHTML='<input type="radio" name="pk" value="'+esc(p[0])+'"><span class="dot"></span><span class="nm">'+esc(p[1])+'</span><span class="pr">'+esc(p[2])+'<small>for 1 year</small></span>';opts.appendChild(l);
- l.querySelector('input').addEventListener('change',function(){S.pkg=p[0];[].forEach.call(opts.children,function(c){c.classList.toggle('on',c===l)})})});
+ l.querySelector('input').addEventListener('change',function(){S.pkg=p[0];$('n1').disabled=false;[].forEach.call(opts.children,function(c){c.classList.toggle('on',c===l)})})});
 function paintText(){var o=T(),h='';[2,3,4,5,6,7,8,9,10,11,12].forEach(function(n){if(o[n])h+='<h3>'+n+'. '+o[n].h+'</h3>'+o[n].b});$('text').innerHTML=h}
 paintText();
+
+
+/* ---------- steps ---------- */
+var cur=0,steps=[0,1,2,3,4,5].map(function(i){return $('st'+i)});
+function go(n){cur=n;steps.forEach(function(el,i){el.classList.toggle('on',i===n)});
+ var pr=$('prog');pr.classList.toggle('hide',n===0||n===5);[].forEach.call(pr.children,function(x,i){x.classList.toggle('on',i<n)});
+ if(n===2)paintPicked();
+ if(n===3&&!padA.has())padA.size();
+ if(n===4&&!padB.has())padB.size();
+ window.scrollTo({top:0,behavior:'smooth'})}
+function paintPicked(){var pk=pkOf(S.pkg);if(!pk)return;var el=$('picked');el.className='picked k-'+pk[0];el.innerHTML='<span>Your package: '+esc(pk[1])+'</span><span>'+esc(pk[2])+' for 1 year</span>'}
+$('start').onclick=function(){go(1)};
+[].forEach.call(document.querySelectorAll('[data-back]'),function(b){b.onclick=function(){go(cur-1)}});
+$('n1').onclick=function(){if(S.pkg)go(2)};
+$('n2').onclick=function(){go(3)};
 
 /* ---------- signature pads ---------- */
 function Pad(cv,hint){var ctx,drawing=false,ink=false,lx=0,ly=0;
@@ -230,7 +282,6 @@ function Pad(cv,hint){var ctx,drawing=false,ink=false,lx=0,ly=0;
  window.addEventListener('resize',function(){if(!ink)size()});
  return {size:size,clear:size,has:function(){return ink},png:function(){return cv.toDataURL('image/png')}}}
 var padA=Pad($('padA'),$('hintA')),padB=Pad($('padB'),$('hintB'));
-padA.size();
 $('clrA').onclick=function(){padA.clear()};$('clrB').onclick=function(){padB.clear()};
 
 function stamp(){var d=new Date();return d.toLocaleString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',timeZoneName:'short'})}
@@ -245,16 +296,14 @@ $('goA').onclick=function(){
  if(!padA.has())return showErr('errA','Please sign in the box with your finger.');
  if(!$('agA').checked)return showErr('errA','Please tick the box to agree.');
  S.name=nm;S.title=tt;S.sigA=padA.png();S.tsA=stamp();S.dA=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
- [].forEach.call(document.querySelectorAll('#s1 input,#s3 input,#s3 button'),function(x){x.disabled=true});
- $('s4').classList.remove('hide');padB.size();
- setTimeout(function(){$('s4').scrollIntoView({behavior:'smooth',block:'start'})},60)};
+ go(4)};
 
 $('goB').onclick=function(){
  showErr('errB','');
  if(!padB.has())return showErr('errB','Please sign in the box.');
  if(!$('agB').checked)return showErr('errB','Please tick the box to agree.');
  S.sigB=padB.png();S.tsB=stamp();
- $('goB').disabled=true;$('goB').textContent='Making the PDF...';
+ $('goB').disabled=true;$('goB').innerHTML='<span class="sp"></span>Making your PDF...';
  finish().catch(function(e){$('goB').disabled=false;$('goB').textContent='Finish and make the PDF';showErr('errB','Sorry, the PDF could not be made on this device ('+(e&&e.message||e)+'). Try again, or use another browser.')})};
 
 /* ---------- the PDF ---------- */
@@ -286,7 +335,7 @@ function finish(){
  return sha256(JSON.stringify([cfg,S.pkg,S.name,S.title,S.tsA,S.tsB,S.sigA,S.sigB])).then(function(h){S.id=h.slice(0,16).toUpperCase();return (document.fonts&&document.fonts.ready)||0}).then(function(){return renderPdf()}).then(function(b){
   S.blob=b;paintDone(pk)})}
 function paintDone(pk){
- $('s4').classList.add('hide');$('s3').classList.add('hide');$('s5').classList.remove('hide');
+ go(5);
  $('doneP').textContent=S.name+' chose '+pk[1]+' ('+pk[2]+' for 1 year). Signed '+S.tsA+' and '+S.tsB+'. Save the PDF and send a copy to each side.';
  $('sigs').innerHTML='<div><img alt="Signature" src="'+S.sigA+'">'+esc(S.name)+'</div><div><img alt="Signature" src="'+S.sigB+'">'+esc(cfg.signer||'Shane Christensen')+'</div>';
  $('docid').textContent='Document ID '+S.id;
