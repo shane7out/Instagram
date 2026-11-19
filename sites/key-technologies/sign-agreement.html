@@ -144,8 +144,6 @@ canvas.pad{display:block;width:100%;height:190px;border-radius:14px;background:#
  <div class="card hide" id="s4">
   <div class="step"><b>4</b> Key Technologies signs</div>
   <h2>Pass the phone to Shane</h2>
-  <label class="f" for="f30">In the first 30 days Key will</label>
-  <textarea id="f30" placeholder="Type what Key will do in the first 30 days"></textarea>
   <label class="f">Signing for Key Technologies.si</label>
   <input type="text" id="nmB" readonly>
   <label class="f">Sign here with your finger</label>
@@ -184,7 +182,7 @@ var cfg=null;
 try{var m=/[#&]d=([^&]+)/.exec(location.hash);if(m)cfg=JSON.parse(b64d(m[1]))}catch(e){}
 if(!cfg||!cfg.pk||!cfg.client){$('bad').classList.remove('hide');return}
 $('main').classList.remove('hide');
-var S={pkg:null,name:'',title:'',sigA:'',tsA:'',dA:'',f30:'',sigB:'',tsB:'',blob:null,id:''};
+var S={pkg:null,name:'',title:'',sigA:'',tsA:'',dA:'',sigB:'',tsB:'',blob:null,id:''};
 var G=cfg.gr||null;
 function pkOf(id){for(var i=0;i<cfg.pk.length;i++)if(cfg.pk[i][0]===id)return cfg.pk[i];return null}
 
@@ -197,17 +195,17 @@ $('nmB').value=cfg.signer||'Shane Christensen';
 
 /* ---------- the agreement text (used on screen and in the PDF) ---------- */
 function T(){ /* returns {n:{h,html}} */
- var s=esc(cfg.short),k='Key',o={};
+ var s=esc(cfg.short),sp=/'s$/i.test(cfg.short)?s:(/s$/i.test(cfg.short)?s+'\'':s+'\'s'),o={};
  o[2]={h:'One year at a time',b:'<p>The year starts on the day Key receives payment and runs for 12 months. Each year stands on its own. A new year starts only if both sides agree in writing and the new payment is made.</p>'};
  o[3]={h:'Payment',b:'<p>The package fee is paid in full, in advance. Key starts work as soon as payment is received.</p><div class="box"><p><b>Make checks payable to: '+esc(cfg.payee||'Shane Christensen')+'</b></p></div>'};
- o[4]={h:'What Key does',b:'<p>Key provides the services listed for the chosen package and works on '+s+'\'s account in good faith all year. Key reviews the numbers with '+s+' every month. More work can be added at any time if both sides agree in writing.</p>'+(S.f30?'<p>In the first 30 days Key will: <b>'+esc(S.f30)+'</b></p>':'')};
+ o[4]={h:'What Key does',b:'<p>Key decides what work to do, how, when and with whom, and works on '+sp+' account in good faith all year. Key does not promise any specific work, number of hours, service or result. More work can be added at any time if both sides agree in writing.</p>'};
  o[5]={h:'What '+s+' does',b:'<p>'+s+' gives Key the access, information and answers Key reasonably needs, and a monthly sales report.</p>'};
- if(G)o[6]={h:'Platinum only: sales growth fee',b:'<p>On top of the package fee, '+s+' pays Key <b>'+esc(G.pct)+' of sales growth</b>. Each of '+s+'\'s '+esc(G.where)+' is figured on its own, one month at a time:</p><div class="box"><p>1. Take that location\'s <b>gross sales</b> for the month. Alcohol is included. Sales tax is not counted.</p><p>2. Subtract its gross sales for the same month a year earlier, counted the same way.</p><p>3. If the answer is more than zero, <b>'+esc(G.pct)+' of it is owed</b>. If it is zero or less, nothing is owed for that location and nothing carries over.</p></div><div class="ex"><b>Example.</b> At one location, last year\'s month was '+esc(G.last)+' and this year\'s is '+esc(G.now)+'. The growth is '+esc(G.gain)+', and the fee for that month is <b>'+esc(G.fee)+'</b>.</div><p>'+s+' sends the monthly sales report by the 10th of the next month. The fee is due within 15 days after.</p>'};
+ if(G)o[6]={h:'Platinum only: sales growth fee',b:'<p>On top of the package fee, '+s+' pays Key <b>'+esc(G.pct)+' of sales growth</b>. Each of '+sp+' '+esc(G.where)+' is figured on its own, one month at a time:</p><div class="box"><p>1. Take that location\'s <b>gross sales</b> for the month. Alcohol is included. Sales tax is not counted.</p><p>2. Subtract its gross sales for the same month a year earlier, counted the same way.</p><p>3. If the answer is more than zero, <b>'+esc(G.pct)+' of it is owed</b>. If it is zero or less, nothing is owed for that location and nothing carries over.</p></div><div class="ex"><b>Example.</b> At one location, last year\'s month was '+esc(G.last)+' and this year\'s is '+esc(G.now)+'. The growth is '+esc(G.gain)+', and the fee for that month is <b>'+esc(G.fee)+'</b>.</div><p>'+s+' sends the monthly sales report by the 10th of the next month. The fee is due within 15 days after.</p>'};
  o[7]={h:'Honest numbers',b:'<p>Each side may ask to see the records behind a sales report once a year. If a mistake of more than 5% is found, the side that made it pays for the check.</p>'};
  o[8]={h:'No cancellation',b:'<div class="box"><p><b>This is a one-year commitment. Once the year starts, '+s+' cannot cancel, and the package fee is not refundable.</b></p></div><p>Key may end this agreement at any time with 30 days\' written notice. If Key does, Key refunds the unused full months of the package fee.</p><p>If Key does not do what it agreed to and does not fix it within 30 days after written notice from '+s+', Key refunds the unused full months of the package fee.</p>'};
- o[9]={h:'No guarantees',b:'<p>Neither side can promise results. Key will work hard and watch the numbers. '+s+' stays free to run its business its own way.</p>'};
+ o[9]={h:'No guarantees',b:'<p>Neither side can promise results. '+s+' stays free to run its business its own way.</p>'};
  o[10]={h:'Rewards',b:'<p>Restaurant Rewards are a perk. They have no cash value and follow the Restaurant Rewards program terms.</p>'};
- o[11]={h:'Ownership and privacy',b:'<p>'+s+' keeps its name, logo, menu and guest information. Key keeps its own software and tools. Each side keeps the other\'s private information private and follows the law on guest data.</p>'};
+ o[11]={h:'Ownership and privacy',b:'<p>'+s+' keeps its name, logo, menu and guest information. Key keeps its own software and tools. Key\'s methods, systems, designs, ideas and work stay Key\'s, and '+s+' will not copy them, share them, or have anyone else copy or rebuild them, during or after this agreement. Each side keeps the other\'s private information private and follows the law on guest data.</p>'};
  o[12]={h:'The rest',b:'<p>If any part of this is found not enforceable, the rest stays. Changes must be in writing and signed by both sides. Nevada law applies. Each side\'s total responsibility to the other is limited to the fees paid under this agreement in the last 12 months.</p>'};
  return o}
 function section(n,o){return o[n]?'<h2><span>'+n+'.</span>'+o[n].h+'</h2>'+o[n].b:''}
@@ -252,7 +250,7 @@ $('goB').onclick=function(){
  showErr('errB','');
  if(!padB.has())return showErr('errB','Please sign in the box.');
  if(!$('agB').checked)return showErr('errB','Please tick the box to agree.');
- S.f30=$('f30').value.trim();S.sigB=padB.png();S.tsB=stamp();
+ S.sigB=padB.png();S.tsB=stamp();
  $('goB').disabled=true;$('goB').textContent='Making the PDF...';
  finish().catch(function(e){$('goB').disabled=false;$('goB').textContent='Finish and make the PDF';showErr('errB','Sorry, the PDF could not be made on this device ('+(e&&e.message||e)+'). Try again, or use another browser.')})};
 
@@ -282,7 +280,7 @@ function fname(){var d=new Date();return 'Service-Agreement-'+cfg.short.replace(
 
 function finish(){
  var pk=pkOf(S.pkg);
- return sha256(JSON.stringify([cfg,S.pkg,S.name,S.title,S.f30,S.tsA,S.tsB,S.sigA,S.sigB])).then(function(h){S.id=h.slice(0,16).toUpperCase();return (document.fonts&&document.fonts.ready)||0}).then(function(){return renderPdf()}).then(function(b){
+ return sha256(JSON.stringify([cfg,S.pkg,S.name,S.title,S.tsA,S.tsB,S.sigA,S.sigB])).then(function(h){S.id=h.slice(0,16).toUpperCase();return (document.fonts&&document.fonts.ready)||0}).then(function(){return renderPdf()}).then(function(b){
   S.blob=b;paintDone(pk)})}
 function paintDone(pk){
  $('s4').classList.add('hide');$('s3').classList.add('hide');$('s5').classList.remove('hide');
