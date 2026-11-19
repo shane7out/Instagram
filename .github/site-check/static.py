@@ -83,7 +83,7 @@ for _p in ['rewards.html','my-account.html','menu.html','join-restaurant.html','
         for _need,_why in [('#0f171e','background'),('#00a8e1','blue'),('Lato','font')]:
             if _need.lower() not in _t.lower(): issues.append((_p,'theme drift: missing Key Technologies %s (%s)'%(_why,_need)))
 # private/unlisted pages must stay out of search engines (owner tool and client demos)
-for _p in ['restaurant-rewards-treasury.html','restaurant-confirm.html','restaurant-rewards-uses.html','restaurant-rewards-share.html','restaurant-rewards-share-gold.html','restaurant-rewards-share-story.html','johnny-macs-demo/index.html','johnny-macs-demo/wallet.html','johnny-macs-demo/app.html','johnny-macs-demo/cards.html','thin-blue-702-demo/index.html']:
+for _p in ['restaurant-rewards-treasury.html','restaurant-confirm.html','restaurant-rewards-uses.html','restaurant-rewards-share.html','restaurant-rewards-share-gold.html','restaurant-rewards-share-story.html','restaurant-rewards-share-kt.html','johnny-macs-demo/index.html','johnny-macs-demo/wallet.html','johnny-macs-demo/app.html','johnny-macs-demo/cards.html','thin-blue-702-demo/index.html']:
     if os.path.exists(_p) and 'noindex' not in read(_p): issues.append((_p,'theme drift: private page is missing noindex'))
 HARD=('theme drift','service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
 hard=[i for i in issues if i[1].startswith(HARD)]
