@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>DM Maker | Key Technologies.si</title>
+<meta name="description" content="Owner tool: write a clean, personal Instagram message in seconds. Long names are shortened and long messages are split so they always send.">
+<link rel="canonical" href="https://keytechnologies.si/dm-composer.html">
+<meta name="theme-color" content="#0f171e">
+<link rel="stylesheet" href="/fonts/lato.css">
+<style>
+:root{--bg:#0f171e;--card:#232f3e;--card2:#1a2430;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--key:#00a8e1;--ok:#5fd38d;--bad:#ff8a7a}
+*{box-sizing:border-box}
+html,body{margin:0;background:#0b1117;color:var(--ink);font:400 16px/1.45 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:#0b1117 radial-gradient(110% 420px at 50% 0,#17303f 0,#0b1117 100%) no-repeat}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 70px}
+.brand{text-align:center;font-size:11px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;color:var(--key)}
+h1{margin:8px 0 4px;text-align:center;font-size:28px;line-height:1.1;font-weight:900}
+.sub{margin:0 auto 18px;max-width:340px;text-align:center;color:var(--dim);font-size:14.5px;line-height:1.4;text-wrap:balance}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 15px 17px;margin:0 0 14px}
+.step{margin:0 0 9px;font-size:11.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--key)}
+label{display:block;margin:10px 0 4px;font-size:13px;font-weight:700;color:var(--dim)}
+label:first-of-type{margin-top:0}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:#0f171e;border:1px solid var(--line);border-radius:11px;padding:12px 13px;min-height:46px}
+textarea{min-height:150px;line-height:1.45;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--key);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:380px){.row{grid-template-columns:1fr}}
+.note{margin:6px 0 0;font-size:12.5px;color:var(--dim)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.tab{font:inherit;font-weight:800;font-size:13px;color:var(--dim);background:var(--card2);border:1px solid var(--line);border-radius:10px;min-height:44px;padding:0 6px;cursor:pointer}
+.tab[aria-pressed="true"]{color:#06222f;background:var(--key);border-color:var(--key)}
+.cnt{margin:6px 0 0;font-size:13px;font-weight:700;color:var(--ok)}
+.cnt.split{color:#f3d884}
+.phone{background:#0b1117;border:1px solid var(--line);border-radius:22px;padding:14px 12px 16px}
+.who{text-align:center;font-size:12.5px;font-weight:800;color:var(--dim);margin:0 0 10px}
+.b{max-width:86%;margin:0 0 6px auto;padding:10px 13px;border-radius:20px 20px 6px 20px;background:linear-gradient(135deg,#1a8be0,#0a6fb8);color:#fff;font-size:15.5px;line-height:1.38;white-space:pre-wrap;overflow-wrap:anywhere}
+.part{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 0}
+.part small{color:var(--dim);font-size:12px}
+.btn{display:block;width:100%;min-height:52px;margin:10px 0 0;border:0;border-radius:13px;font:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#06222f;background:linear-gradient(#4fc3f0,#00a8e1)}
+.btn.sm{width:auto;min-height:40px;margin:0;padding:0 16px;font-size:14px}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+a.btn{display:flex;align-items:center;justify-content:center;text-decoration:none}
+.tip{font-size:13px;color:var(--dim);line-height:1.45}
+.tip b{color:var(--ink)}
+.ok{color:var(--ok);font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="brand">Key Technologies</div>
+ <h1>DM Maker</h1>
+ <p class="sub">Type the business once. Get a clean, personal message that always sends.</p>
+
+ <div class="card">
+  <div class="step">1. Who is it for</div>
+  <label for="biz">Business name (paste it any way it appears)</label>
+  <input id="biz" autocomplete="off" autocapitalize="words" placeholder="Example: Tacos El Gordo Las Vegas Strip LLC">
+  <div class="row">
+   <div><label for="short">Name used in the message</label><input id="short" autocomplete="off" autocapitalize="words"></div>
+   <div><label for="first">Their first name (optional)</label><input id="first" autocomplete="off" autocapitalize="words" placeholder="Maria"></div>
+  </div>
+  <p class="note" id="shortNote">Long names are shortened for you. You can change it.</p>
+  <label for="ig">Their Instagram name (optional, no @)</label>
+  <input id="ig" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="tacoselgordo">
+ </div>
+
+ <div class="card">
+  <div class="step">2. Pick the message</div>
+  <div class="tabs" role="group" aria-label="Message">
+   <button class="tab" type="button" data-k="open" aria-pressed="true">First hello</button>
+   <button class="tab" type="button" data-k="follow" aria-pressed="false">Check in</button>
+   <button class="tab" type="button" data-k="ask" aria-pressed="false">&ldquo;How much?&rdquo;</button>
+  </div>
+  <label for="msg">The message (you can change any word)</label>
+  <textarea id="msg"></textarea>
+  <p class="note">Use <b>{name}</b> for the business and <b>{first}</b> for their first name. Your changes are remembered on this phone.</p>
+  <p class="cnt" id="cnt"></p>
+  <button class="btn ghost sm" id="reset" type="button" style="margin-top:8px">Put the original words back</button>
+ </div>
+
+ <div class="card">
+  <div class="step">3. How it will look</div>
+  <div class="phone"><div class="who" id="who">Instagram message</div><div id="bubbles"></div></div>
+  <div id="parts"></div>
+  <a class="btn" id="open" href="#" target="_blank" rel="noopener noreferrer" hidden>Open their Instagram message</a>
+  <p class="tip" style="margin-top:12px"><b>Tap Copy, open Instagram, paste, send.</b> If a message is too long for Instagram it is cut at a full sentence into parts, each with its own Copy button. Send them in order.</p>
+ </div>
+</div>
+<script>
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var SAFE=900; /* Instagram refuses very long messages (about 1,000 characters), so every part stays under 900 */
+ var T={
+  open:"Hey {first}, Las Vegas Restaurants here. Love what you are doing at {name}. I help local businesses put AI to work so they spend less time on busywork. Worth a quick chat?",
+  follow:"Hey {first}, circling back on my note about {name}. No pressure at all. If it is not a fit, just tell me and I will not bug you. If it is, I am happy to find a time that works for you.",
+  ask:"Fair question, {first}. It depends on what {name} needs, so the quickest way is a short call. Does tomorrow or the day after work? Then I can tell you exactly what it would look like."
+ };
+ var cur='open',LS='dmComposerV1';
+ function store(){try{return JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){return {}}}
+ function save(o){try{localStorage.setItem(LS,JSON.stringify(o))}catch(e){}}
+ function tmpl(k){var s=store();return typeof s[k]==='string'?s[k]:T[k]}
+
+ function clean(s){return String(s||'').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u2028\u2029\ufeff]/g,' ').replace(/\s+/g,' ').trim()}
+ function shorten(raw){
+  var n=clean(raw);if(!n)return '';
+  n=n.replace(/\([^)]*\)/g,' ');
+  n=n.split(/\s[-–—|@•:]\s|,|\sat\s|\sby\s/i)[0];
+  var tail=/\s+(llc|l\.l\.c\.|inc\.?|corp\.?|co\.|ltd\.?|las vegas|lv|nv|nevada|the strip|restaurant|restaurants|bar & grill|bar and grill|kitchen & bar|kitchen and bar|& bar|and bar)\.?$/i,g=0,m;
+  while(g++<6&&(m=n.match(tail))){var t=n.replace(tail,'').trim();if(t.length<3)break;n=t}
+  n=clean(n);
+  if(n.length>26){var w=n.split(' '),o='';for(var i=0;i<w.length;i++){var x=(o?o+' ':'')+w[i];if(x.length>26)break;o=x}n=o||n.slice(0,26)}
+  return n;
+ }
+ function fill(t){
+  var nm=clean($('short').value)||'your place',fr=clean($('first').value)||'there';
+  return t.replace(/\{name\}/gi,nm).replace(/\{first\}/gi,fr);
+ }
+ function sentences(t){var out=[],re=/[^.!?\n]+[.!?]*["')]*\s*|\n+/g,m;while((m=re.exec(t)))out.push(m[0]);return out}
+ function split(t){
+  t=t.replace(/[ \t]+\n/g,'\n').trim();
+  if(t.length<=SAFE)return [t];
+  var parts=[],cur2='';
+  function push(){if(cur2.trim())parts.push(cur2.trim());cur2=''}
+  sentences(t).forEach(function(s){
+   if(s.length>SAFE){ /* one huge sentence: cut at words */
+    push();var w=s.split(' ');w.forEach(function(x){if((cur2+' '+x).length>SAFE)push();cur2+=(cur2?' ':'')+x});return}
+   if((cur2+s).length>SAFE)push();cur2+=s});
+  push();return parts;
+ }
+ var curParts=[];
+ function paint(){
+  var text=fill($('msg').value),ps=split(text);curParts=ps;
+  var total=text.length,c=$('cnt');
+  if(ps.length===1){c.className='cnt';c.textContent=total+' characters. Fits in one message.'}
+  else{c.className='cnt split';c.textContent=total+' characters. Too long for one message, so it is split into '+ps.length+' parts that each send.'}
+  var nm=clean($('short').value),ig=clean($('ig').value).replace(/^@/,'').replace(/[^A-Za-z0-9._]/g,'');
+  $('who').textContent=nm?nm:'Instagram message';
+  var b=$('bubbles');b.textContent='';var pa=$('parts');pa.textContent='';
+  ps.forEach(function(p,i){
+   var d=document.createElement('div');d.className='b';d.textContent=p;b.appendChild(d);
+   var r=document.createElement('div');r.className='part';
+   var s=document.createElement('small');s.textContent=(ps.length>1?'Part '+(i+1)+' of '+ps.length+' · ':'')+p.length+' characters';
+   var bt=document.createElement('button');bt.type='button';bt.className='btn sm';bt.textContent=ps.length>1?'Copy part '+(i+1):'Copy message';
+   bt.addEventListener('click',function(){copy(p,bt,ps.length>1?'Copy part '+(i+1):'Copy message')});
+   r.appendChild(s);r.appendChild(bt);pa.appendChild(r)});
+  var o=$('open');if(ig){o.hidden=false;o.href='https://ig.me/m/'+encodeURIComponent(ig)}else{o.hidden=true;o.removeAttribute('href')}
+ }
+ function copy(p,bt,label){
+  function done(){bt.textContent='Copied ✓';setTimeout(function(){bt.textContent=label},1600)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(p).then(done,fb)}else fb();
+  function fb(){var t=document.createElement('textarea');t.value=p;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.focus();t.select();try{document.execCommand('copy');done()}catch(e){bt.textContent='Press and hold the text to copy'}document.body.removeChild(t)}
+ }
+ var shortTouched=false;
+ $('biz').addEventListener('input',function(){
+  var raw=clean(this.value),s=shorten(raw);
+  if(!shortTouched)$('short').value=s;
+  $('shortNote').textContent=raw&&s&&s!==raw&&!shortTouched?'Shortened from: '+raw+'. You can change it.':'Long names are shortened for you. You can change it.';
+  paint()});
+ $('short').addEventListener('input',function(){shortTouched=true;paint()});
+ ['first','ig'].forEach(function(i){$(i).addEventListener('input',paint)});
+ $('msg').addEventListener('input',function(){var s=store();s[cur]=this.value;save(s);paint()});
+ $('reset').addEventListener('click',function(){var s=store();delete s[cur];save(s);$('msg').value=T[cur];paint()});
+ Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.addEventListener('click',function(){
+  cur=b.getAttribute('data-k');Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  $('msg').value=tmpl(cur);paint()})});
+ $('msg').value=tmpl(cur);paint();
+})();
+</script>
+</body>
+</html>
