@@ -57,17 +57,22 @@
   function signOut() { st = null; saveSt(); }
 
   /* A full-screen PIN pad. opts: {title, sub, email(optional fixed), askId(optional {label, placeholder, make(id)->{email,salt}}), salt, onOK(), onSkip({label,fn})} */
-  var css = '#rrGate{position:fixed;inset:0;z-index:2147483000;background:#0f171e;color:#fff;overflow:auto;-webkit-overflow-scrolling:touch;font:400 17px/1.4 Lato,system-ui,-apple-system,sans-serif}' +
-    '#rrGate .in{max-width:340px;margin:0 auto;padding:130px 18px 40px;text-align:center}' +
-    '#rrGate h1{font-size:26px;font-weight:900;margin:0 0 6px}#rrGate p{color:rgba(255,255,255,.8);margin:0 0 16px;font-size:15px}' +
-    '#rrGate .idrow{margin:0 0 12px;text-align:left}#rrGate .idrow label{display:block;font-size:14px;font-weight:700;color:rgba(255,255,255,.8);margin:0 0 5px}' +
-    '#rrGate .idrow input{width:100%;box-sizing:border-box;font:700 20px Lato,system-ui,sans-serif;padding:10px 12px;border-radius:12px;border:2px solid rgba(255,255,255,.45);background:#0f171e;color:#fff;text-transform:lowercase}' +
-    '#rrGate .dots{display:flex;gap:14px;justify-content:center;margin:6px 0 10px;height:20px}#rrGate .dots i{width:16px;height:16px;border-radius:50%;border:2px solid #fff;background:transparent}#rrGate .dots i.on{background:#00a8e1;border-color:#00a8e1}' +
+  /* The PIN screen is the LVR dashboard PIN screen: deep blue glow, six dots, round frosted keys with the phone-style letters, a delete arrow. */
+  var css = '#rrGate{position:fixed;inset:0;z-index:2147483000;color:#fff;overflow:auto;-webkit-overflow-scrolling:touch;font:400 17px/1.4 Lato,system-ui,-apple-system,sans-serif;' +
+    'background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(14,72,168,.55) 0%,transparent 65%),radial-gradient(ellipse 60% 52% at 15% 80%,rgba(0,105,230,.30) 0%,transparent 58%),radial-gradient(ellipse 55% 48% at 85% 18%,rgba(36,12,140,.35) 0%,transparent 56%),radial-gradient(ellipse 45% 38% at 68% 68%,rgba(0,180,255,.16) 0%,transparent 50%),#050b16}' +
+    '#rrGate .in{min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:max(34px,env(safe-area-inset-top,34px)) 18px 30px;text-align:center}' +
+    '#rrGate h1{font-size:12px;font-weight:500;letter-spacing:.04em;color:rgba(255,255,255,.4);margin:0 0 6px}#rrGate p{color:rgba(255,255,255,.55);margin:0 0 26px;font-size:14px}' +
+    '#rrGate .idrow{margin:0 0 22px;text-align:left;width:260px}#rrGate .idrow label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,.6);margin:0 0 5px}' +
+    '#rrGate .idrow input{width:100%;box-sizing:border-box;font:600 20px Lato,system-ui,sans-serif;padding:10px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;text-transform:lowercase}' +
+    '#rrGate .dots{display:flex;gap:20px;justify-content:center;margin:0 0 44px;height:14px}#rrGate .dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);background:transparent;transition:background .12s,transform .1s}#rrGate .dots i.on{background:#fff;border-color:#fff;transform:scale(1.05)}#rrGate .dots.err i{background:#FF453A;border-color:#FF453A;transform:scale(1.1)}' +
     '#rrGate .dots.shake{animation:rrsh .4s}@keyframes rrsh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}' +
-    '#rrGate .msg{min-height:22px;font-weight:700;font-size:15px;margin:0 0 8px}' +
-    '#rrGate .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 auto;max-width:300px}' +
-    '#rrGate .pad button{height:64px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:#16222f;color:#fff;font:900 26px Lato,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}#rrGate .pad button:active{background:#00a8e1;color:#0f171e}#rrGate .pad button.z{grid-column:2}#rrGate .pad button.d{font-size:18px}' +
-    '#rrGate .skip{margin-top:22px;background:none;border:0;color:rgba(255,255,255,.75);font:700 14px Lato,system-ui,sans-serif;text-decoration:underline;cursor:pointer;padding:10px}';
+    '#rrGate .msg{min-height:22px;font-weight:600;font-size:14px;margin:18px 0 0;color:rgba(255,255,255,.85)}' +
+    '#rrGate .pad{display:grid;grid-template-columns:repeat(3,78px);gap:14px 20px;margin:0 auto}' +
+    '#rrGate .pad button{width:78px;height:78px;border-radius:50%;border:0;background:rgba(255,255,255,.175);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation;font-family:Lato,system-ui,sans-serif}' +
+    '#rrGate .pad button:active,#rrGate .pad button.pressed{background:rgba(255,255,255,.58);color:#000}#rrGate .pad button.z{grid-column:2}#rrGate .pad button.d{font-size:28px;font-weight:400}' +
+    '#rrGate .pkn{font-size:32px;font-weight:300;line-height:1;display:block;color:inherit}#rrGate .pkl{font-size:10px;font-weight:600;letter-spacing:2.5px;color:rgba(255,255,255,.9);margin-top:2px;display:block;line-height:1;text-transform:uppercase}#rrGate .pad button:active .pkl,#rrGate .pad button.pressed .pkl{color:#000}' +
+    '#rrGate .skip{margin-top:26px;background:none;border:1px solid rgba(255,255,255,.25);border-radius:10px;color:rgba(255,255,255,.55);font:400 14px Lato,system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;padding:8px 20px}' +
+    '@media(max-height:700px){#rrGate .in{justify-content:flex-start;padding-top:max(26px,env(safe-area-inset-top,26px))}#rrGate .pad{grid-template-columns:repeat(3,66px);gap:10px 16px}#rrGate .pad button{width:66px;height:66px}#rrGate .pkn{font-size:27px}#rrGate .pkl{font-size:9px}#rrGate .dots{margin-bottom:24px}#rrGate p{margin-bottom:14px}#rrGate .msg{margin-top:10px}#rrGate .skip{margin-top:12px}}';
   function gate(o) {
     var old = document.getElementById('rrGate'); if (old) old.remove();
     if (!document.getElementById('rrGateCss')) { var s = document.createElement('style'); s.id = 'rrGateCss'; s.textContent = css; document.head.appendChild(s); }
@@ -78,11 +83,11 @@
     var idIn = null;
     if (o.askId) { var row = mk('div', 'idrow'), lb = mk('label', null, o.askId.label); lb.setAttribute('for', 'rrId'); idIn = mk('input'); idIn.id = 'rrId'; idIn.setAttribute('autocomplete', 'off'); idIn.setAttribute('autocapitalize', 'none'); idIn.setAttribute('spellcheck', 'false'); idIn.maxLength = 20; idIn.placeholder = o.askId.placeholder || ''; try { var last = localStorage.getItem('rrLastId'); if (last) idIn.value = last; } catch (e) {} row.appendChild(lb); row.appendChild(idIn); inn.appendChild(row); }
     var dots = mk('div', 'dots'); for (var i = 0; i < 6; i++) dots.appendChild(mk('i')); inn.appendChild(dots);
-    var msg = mk('div', 'msg'); msg.setAttribute('role', 'alert'); inn.appendChild(msg);
+    var msg = mk('div', 'msg'); msg.setAttribute('role', 'alert');
     var pad = mk('div', 'pad');
     var pin = '', busy = false;
     function paintDots() { var d = dots.children; for (var i = 0; i < 6; i++) d[i].className = i < pin.length ? 'on' : ''; }
-    function bad(t) { msg.textContent = t; dots.classList.remove('shake'); void dots.offsetWidth; dots.classList.add('shake'); setTimeout(function () { pin = ''; paintDots(); }, 600); }
+    function bad(t) { msg.textContent = t; dots.classList.add('err'); dots.classList.remove('shake'); void dots.offsetWidth; dots.classList.add('shake'); setTimeout(function () { pin = ''; dots.classList.remove('err'); paintDots(); }, 600); }
     function press(k) {
       if (busy) return;
       if (k === 'del') { pin = pin.slice(0, -1); paintDots(); return; }
@@ -98,10 +103,12 @@
         .catch(function (e) { bad(e && e.message ? e.message : 'Could not check the PIN. Try again.'); })
         .then(function () { busy = false; });
     }
-    ['1', '2', '3', '4', '5', '6', '7', '8', '9'].forEach(function (k) { var b = mk('button', null, k); b.type = 'button'; b.addEventListener('click', function () { press(k); }); pad.appendChild(b); });
-    var z = mk('button', 'z', '0'); z.type = 'button'; z.addEventListener('click', function () { press('0'); }); pad.appendChild(z);
-    var dl = mk('button', 'd', 'Delete'); dl.type = 'button'; dl.setAttribute('aria-label', 'Delete the last digit'); dl.addEventListener('click', function () { press('del'); }); pad.appendChild(dl);
-    inn.appendChild(pad);
+    var LET = { '1': ' ', '2': 'ABC', '3': 'DEF', '4': 'GHI', '5': 'JKL', '6': 'MNO', '7': 'PQRS', '8': 'TUV', '9': 'WXYZ', '0': '+' };
+    function keyBtn(k, cls) { var b = mk('button', cls || null); b.type = 'button'; b.setAttribute('aria-label', k); b.appendChild(mk('span', 'pkn', k)); b.appendChild(mk('span', 'pkl', LET[k] === ' ' ? '\u00a0' : LET[k])); b.addEventListener('click', function () { press(k); }); return b; }
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9'].forEach(function (k) { pad.appendChild(keyBtn(k)); });
+    pad.appendChild(keyBtn('0', 'z'));
+    var dl = mk('button', 'd', '\u232b'); dl.type = 'button'; dl.setAttribute('aria-label', 'Delete the last digit'); dl.addEventListener('click', function () { press('del'); }); pad.appendChild(dl);
+    inn.appendChild(pad); inn.appendChild(msg);
     if (o.onSkip) { var sk = mk('button', 'skip', o.onSkip.label); sk.type = 'button'; sk.addEventListener('click', function () { g.remove(); document.body.style.overflow = ''; o.onSkip.fn(); }); inn.appendChild(sk); }
     document.addEventListener('keydown', function kd(e) {
       if (!document.getElementById('rrGate')) { document.removeEventListener('keydown', kd); return; }
