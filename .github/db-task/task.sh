@@ -1,3 +1,9 @@
 #!/bin/bash
-# No task queued. (Last: rr_ledger database-clock + decision-time rules, run 535, 555 + 55 passed.)
-echo "no task queued"
+# Rules test in the Firebase emulator (nothing touches the real database): supply raised to 10,000,000 (meta.issued and the entry amount cap 1000000000).
+set +e
+bash .github/db-task/rules/run-owner-rules-test.sh
+A=$?
+bash .github/db-task/rules/run-private-rules-test.sh
+B=$?
+echo "owner suite exit $A, private suite exit $B"
+[ "$A" = "0" ] && [ "$B" = "0" ]

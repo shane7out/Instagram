@@ -255,7 +255,7 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
 <script src="/key-platform/rr-auth.js"></script>
 <script>
 (function(){
- var KEY='rrTreasuryV2',SUPPLY=100000000; /* 1,000,000.00 in hundredths */
+ var KEY='rrTreasuryV3',SUPPLY=1000000000; /* 10,000,000.00 in hundredths. V3 = every browser starts clean from the 10,000,000 opening balance and replays the instructions below. */
  var S,sel='all',canSave=true,DBM=false,synced={w:{},e:{}},syncing=false,hasMeta=false,curRc=null,presId=null,sigPrev='';
  function now(){return Date.now()}
  var BASE_AT=Date.parse('2026-11-18T17:59:41+00:00'); /* when this tool first recorded the Treasury (practice records) */

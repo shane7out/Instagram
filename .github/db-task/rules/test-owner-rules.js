@@ -754,15 +754,15 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('ledger: the report-PIN account cannot read it', 'viewer', 'GET', RR, undefined, false);
   await t('ledger: the owner can read it', 'owner', 'GET', RR, undefined, true);
   await t('ledger: the Treasury PIN account can read it', 'treasurer', 'GET', RR, undefined, true);
-  const GENESIS = { 'meta': { issued: 100000000, t: SV }, 'wallets/treasury': WAL('Restaurant Rewards Treasury', 'Treasury'), 'entries/e0000001': { t: SV, to: 'treasury', amt: 100000000, kind: 'issue', note: 'Opening balance' } };
+  const GENESIS = { 'meta': { issued: 1000000000, t: SV }, 'wallets/treasury': WAL('Restaurant Rewards Treasury', 'Treasury'), 'entries/e0000001': { t: SV, to: 'treasury', amt: 1000000000, kind: 'issue', note: 'Opening balance' } };
   await t('ledger: a visitor cannot create the supply', 'anon', 'PATCH', RR, GENESIS, false);
   await t('ledger: a stranger cannot create the supply', 'other', 'PATCH', RR, GENESIS, false);
   await t('ledger: wrong supply number is refused', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'meta': { issued: 5000, t: SV } }), false);
-  await t('ledger: a second 1,000,000 issue entry with the first is refused (amount cap)', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'entries/e0000002': { t: SV, to: 'treasury', amt: 100000000, kind: 'issue' } }), true); // creating both at once is allowed only because the supply is not issued yet; the next test checks it cannot happen later
+  await t('ledger: a second 10,000,000 issue entry with the first is refused (amount cap)', 'treasurer', 'PATCH', RR, Object.assign({}, GENESIS, { 'entries/e0000002': { t: SV, to: 'treasury', amt: 1000000000, kind: 'issue' } }), true); // creating both at once is allowed only because the supply is not issued yet; the next test checks it cannot happen later
   await call('admin', 'DELETE', RR);
   await t('ledger: the Treasury PIN account can create the supply (meta + Treasury wallet + opening entry in one go)', 'treasurer', 'PATCH', RR, GENESIS, true);
-  await t('ledger: the supply cannot be issued a second time later', 'treasurer', 'PUT', RR + '/entries/e0000099', { t: SV, to: 'treasury', amt: 100000000, kind: 'issue' }, false);
-  await t('ledger: meta cannot be changed', 'treasurer', 'PUT', RR + '/meta', { issued: 100000000, t: SV }, false);
+  await t('ledger: the supply cannot be issued a second time later', 'treasurer', 'PUT', RR + '/entries/e0000099', { t: SV, to: 'treasury', amt: 1000000000, kind: 'issue' }, false);
+  await t('ledger: meta cannot be changed', 'treasurer', 'PUT', RR + '/meta', { issued: 1000000000, t: SV }, false);
   await t('ledger: wallet w1 (Restaurant) with its opening entry', 'treasurer', 'PATCH', RR, { 'wallets/w1': WAL('Vanilla Rice', 'Restaurant', 1), 'entries/e0000002': { t: SV, to: 'w1', amt: 0, kind: 'open' } }, true);
   await t('ledger: wallet w2 (Restaurant)', 'treasurer', 'PATCH', RR, { 'wallets/w2': WAL("Johnny Mac's", 'Restaurant', 2), 'entries/e0000003': { t: SV, to: 'w2', amt: 0, kind: 'open' } }, true);
   await t('ledger: wallet w3 (Customer)', 'treasurer', 'PATCH', RR, { 'wallets/w3': WAL('Alex', 'Customer', 3), 'entries/e0000004': { t: SV, to: 'w3', amt: 0, kind: 'open' } }, true);
