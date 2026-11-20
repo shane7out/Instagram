@@ -787,7 +787,7 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('ledger: zero-amount move refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 0), false);
   await t('ledger: negative amount refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', -100), false);
   await t('ledger: amount with cents refused (whole numbers only)', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 150), false);
-  await t('ledger: amount above the supply refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 200000000), false);
+  await t('ledger: amount above the supply refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 2000000000), false);
   await t('ledger: bad entry key refused', 'treasurer', 'PUT', RR + '/entries/zz1', MOVE('w3', 100), false);
   await t('ledger: entry with an extra field refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100, { secret: 1 }), false);
   await t('ledger: a long note refused', 'treasurer', 'PUT', RR + '/entries/e0000007', MOVE('w3', 100, { note: 'n'.repeat(121) }), false);

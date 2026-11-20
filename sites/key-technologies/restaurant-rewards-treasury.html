@@ -179,6 +179,33 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
 #pres li small{display:block;color:rgba(255,255,255,.7);font-size:12px;line-height:1.25}#pres .a{font-weight:900;white-space:nowrap;text-align:right}#pres .a.in{color:#00a8e1}#pres .a small{font-weight:400}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.two{grid-template-columns:1fr}table{font-size:14px}table:not(.who) th:nth-child(4),table:not(.who) td:nth-child(4){display:none}}
 #dbstat{position:fixed;left:12px;bottom:12px;z-index:60;padding:8px 14px;border-radius:999px;font:700 13px Lato,system-ui,sans-serif;border:1px solid rgba(255,255,255,.4);background:#16222f;color:#fff}#dbstat.ok{border-color:#00a8e1}#dbstat.bad{background:#00a8e1;color:#0f171e;cursor:pointer}
+
+/* History report: a white statement page that prints cleanly */
+body.hlock{overflow:hidden}
+#hrep{position:fixed;inset:0;z-index:90;overflow:auto;-webkit-overflow-scrolling:touch;background:#dfe5ec}
+#hrep .hp{max-width:860px;margin:0 auto;padding:14px 14px 44px;background:#fff;color:#111;min-height:100%;font-size:14px;line-height:1.4}
+#hrep .hbar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+#hrep .hbar button{font:inherit;font-weight:800;font-size:14px;min-height:44px;padding:0 14px;border-radius:11px;border:1.5px solid #9aa7b6;background:#fff;color:#111;cursor:pointer}
+#hrep .hbar button.go{background:#00a8e1;border-color:#00a8e1;color:#04202c}
+#hrep h2{margin:22px 0 8px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#0a6fb8;border-bottom:2px solid #0a6fb8;padding-bottom:4px}
+#hrep h3{margin:0;font-size:22px;line-height:1.2;color:#111}
+#hrep .hsub{margin:2px 0 12px;color:#445}
+#hrep .hgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#hrep .hs{border:1px solid #c4ccd6;border-radius:10px;padding:8px 10px}
+#hrep .hs small{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#556}
+#hrep .hs b{display:block;font-size:22px;line-height:1.2}
+#hrep table{width:100%;border-collapse:collapse;font-size:13.5px;color:#111}
+#hrep th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#556;border-bottom:1.5px solid #333;padding:6px 6px 5px}
+#hrep td{padding:7px 6px;border-bottom:1px solid #d5dbe3;vertical-align:top}
+#hrep .r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#hrep tr.tot td{font-weight:900;border-top:1.5px solid #333;border-bottom:0}
+#hrep td small{display:block;color:#556;font-size:12px}
+#hrep .mv b{display:block}
+#hrep .mut{color:#6a7686}
+#hrep .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;word-break:break-all;color:#334}
+#hrep .hh{border:1px solid #c4ccd6;border-radius:10px;padding:9px 11px;margin:0 0 8px;break-inside:avoid}#hrep .hh.tot{background:#eef3f8;border-color:#333}#hrep .hhd b{display:block;font-size:16px}#hrep .hhd small{display:block;color:#556;font-size:12px}#hrep .hg4{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:6px}#hrep .hg4 small{display:block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#556}#hrep .hg4 b{font-size:16px}
+@media(max-width:520px){#hrep .tw{overflow-x:auto}#hrep table{min-width:430px}}@media(min-width:700px){#hrep .hg4{grid-template-columns:repeat(4,1fr)}}
+@media print{html,body.hlock{overflow:visible!important;height:auto!important;background:#fff!important}body.hlock>*:not(#hrep){display:none!important}#hrep{position:static!important;overflow:visible!important;background:#fff!important}#hrep .hp{max-width:none;padding:0}.noprint{display:none!important}#hrep tr{break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -237,7 +264,7 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
  <p class="fine" id="whosum" style="margin-top:0"></p>
  <div style="overflow-x:auto"><table class="who"><thead><tr><th>Who</th><th>Account number</th><th class="r">Given</th><th class="r">Wallet</th><th class="r">Gift</th></tr></thead><tbody id="whorows"></tbody></table></div>
  <div id="whoclosed" class="fine"></div>
- <div class="tools" style="margin-top:12px"><button class="btn ghost" id="whocsv" type="button">Download who got what (CSV)</button> <button class="btn ghost" id="histcsv" type="button">Download every wallet's full history (CSV)</button></div>
+ <div class="tools" style="margin-top:12px"><button class="btn" id="hrepBtn" type="button">History report: who got what, when, where</button> <button class="btn ghost" id="whocsv" type="button">Download who got what (CSV)</button> <button class="btn ghost" id="histcsv" type="button">Download every wallet's full history (CSV)</button></div>
 </div>
 
 <div class="box">
@@ -249,6 +276,7 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
  <div class="msg" id="tmsg" role="alert"></div>
 </div>
 <div id="pres" class="hide" role="dialog" aria-label="Wallet view"><div class="pc" id="pc"></div></div>
+<div id="hrep" class="hide" role="dialog" aria-label="History report"></div>
 <div id="rdm" class="hide" role="dialog" aria-label="Redeem"><div class="rc" id="rc"></div></div>
 <p class="fine">Restaurant Rewards are a promotional perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. They are not money, a deposit or stored value and cannot be exchanged for cash. This tool only records who holds how many. A wallet named after an outside group is for planning only and does not mean that group has agreed to anything. Before real customers use wallets, have your attorney review the program terms.</p>
 </div>
@@ -278,7 +306,8 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
   {id:'2026-11-18-u',at:'2026-11-19T00:03:48+00:00',create:{name:'Zachary Tollen',type:'Customer'}},{id:'2026-11-18-v',at:'2026-11-19T00:03:48+00:00',from:'treasury',to:'Zachary Tollen',amt:10000,note:'Starting credit'},{id:'2026-11-18-w',at:'2026-11-19T00:03:48+00:00',create:{name:'Gift for Zachary Tollen',type:'Other'}},{id:'2026-11-18-x',at:'2026-11-19T00:03:48+00:00',from:'treasury',to:'Gift for Zachary Tollen',amt:10000,note:'Gift to give'},
   {id:'2026-11-19-a',at:'2026-11-19T00:10:19+00:00',create:{name:'Oak and Bubbles',type:'Customer'}},{id:'2026-11-19-b',at:'2026-11-19T00:10:19+00:00',from:'treasury',to:'Oak and Bubbles',amt:10000,note:'Starting credit'},{id:'2026-11-19-c',at:'2026-11-19T00:10:19+00:00',create:{name:'Gift for Oak and Bubbles',type:'Other'}},{id:'2026-11-19-d',at:'2026-11-19T00:10:19+00:00',from:'treasury',to:'Gift for Oak and Bubbles',amt:10000,note:'Gift to give'},
   {id:'2026-11-19-e',at:'2026-11-19T01:08:35+00:00',create:{name:'Lori',type:'Customer'}},{id:'2026-11-19-f',at:'2026-11-19T01:08:35+00:00',from:'treasury',to:'Lori',amt:100000,note:'Starting credit'},{id:'2026-11-19-g',at:'2026-11-19T01:08:35+00:00',create:{name:'Gift for Lori',type:'Other'}},{id:'2026-11-19-h',at:'2026-11-19T01:08:35+00:00',from:'treasury',to:'Gift for Lori',amt:10000,note:'Gift to give'},
-  {id:'2026-11-19-i',at:'2026-11-19T01:31:12+00:00',create:{name:'Crown',type:'Customer'}},{id:'2026-11-19-j',at:'2026-11-19T01:31:12+00:00',from:'treasury',to:'Crown',amt:10000,note:'Starting credit'},{id:'2026-11-19-k',at:'2026-11-19T01:31:12+00:00',create:{name:'Gift for Crown',type:'Other'}},{id:'2026-11-19-l',at:'2026-11-19T01:31:12+00:00',from:'treasury',to:'Gift for Crown',amt:10000,note:'Gift to give'},{id:'2026-11-19-m',at:'2026-11-19T18:17:53+00:00',close:'PJ'}];
+  {id:'2026-11-19-i',at:'2026-11-19T01:31:12+00:00',create:{name:'Crown',type:'Customer'}},{id:'2026-11-19-j',at:'2026-11-19T01:31:12+00:00',from:'treasury',to:'Crown',amt:10000,note:'Starting credit'},{id:'2026-11-19-k',at:'2026-11-19T01:31:12+00:00',create:{name:'Gift for Crown',type:'Other'}},{id:'2026-11-19-l',at:'2026-11-19T01:31:12+00:00',from:'treasury',to:'Gift for Crown',amt:10000,note:'Gift to give'},{id:'2026-11-19-m',at:'2026-11-19T18:17:53+00:00',close:'PJ'},
+  {id:'2026-11-20-a',at:'2026-11-20T16:18:20+00:00',from:'treasury',to:'Thin Blue 702',amt:500000,note:'Added credit'}];
  function applyInstr(){S.applied=S.applied||[];S.wallets.forEach(function(w){if(w.name==='LVMPD')w.name='Thin Blue 702'});INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;if(x.close){var cw=find(x.close),gw=find('Gift for '+x.close);[cw,gw].forEach(function(id,i){if(!id)return;var a=bal(id);if(a>0)S.entries.push({id:S.next++,t:atT(x),from:id,to:'treasury',amt:a,note:(i?'Gift card':'Wallet')+' closed, credit returned to the Treasury'})});S.applied.push(x.id);return}if(x.create){if(!find(x.create.name))openW(x.create.name,x.create.type,DBM?0:atT(x));S.applied.push(x.id);return}var to=find(x.to);if(!to||bal(x.from)<x.amt)return;if(DBM&&S.entries.some(function(e){return e.to===to&&e.note===x.note&&e.from===x.from})){S.applied.push(x.id);return}S.entries.push({id:S.next++,t:atT(x),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)});sweep()}
  /* Older practice records in this browser were stamped with the moment the page happened to open on that phone. Put the recorded time back (once). */
  function retime(){if(S.retimed3)return;var used={};var sup=S.entries.filter(function(e){return !e.from&&e.kind!=='open'&&e.to==='treasury'})[0];if(sup){sup.t=BASE_AT;var tw=wById('treasury');if(tw)tw.t=BASE_AT}
@@ -556,7 +585,7 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
    if(rows.length)body.appendChild(feed(rows,id,!A));else body.appendChild(el('p','fine','Nothing yet.'))};
   if(A&&A.hasGift){var seg=el('div','seg');[['wallet','Wallet'],['gift','Gift card']].forEach(function(p){var b=el('button',null,p[1]);b.type='button';b.setAttribute('data-k',p[0]);b.addEventListener('click',function(){which=p[0];[].forEach.call(seg.children,function(c){c.className=c.getAttribute('data-k')===which?'on':''});draw()});b.className=p[0]===which?'on':'';seg.appendChild(b)});rc.appendChild(seg)}
   rc.appendChild(body);draw();rc.appendChild(credit());$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
- function etype(e){if(e.kind==='open')return 'Wallet opened';if(!e.from)return 'Opening balance';if(isExp(e))return 'Expired';if(isGiftE(e))return 'Gift given';var tw=wById(e.to);if(tw&&isGiftW(tw)&&e.from==='treasury')return 'Gift card issued';if(isPay(e))return 'Payment';if(e.from==='treasury')return 'Credit from the Treasury';return 'Move'}
+ function etype(e){if(e.kind==='open')return 'Wallet opened';if(e.from&&isClose(e))return /^Gift card/.test(e.note||'')?'Gift card closed':'Wallet closed';if(!e.from)return 'Opening balance';if(isExp(e))return 'Expired';if(isGiftE(e))return 'Gift given';var tw=wById(e.to);if(tw&&isGiftW(tw)&&e.from==='treasury')return 'Gift card issued';if(isPay(e))return 'Payment';if(e.from==='treasury')return 'Credit from the Treasury';return 'Move'}
  /* A fingerprint that chains every record to the one before it (SHA-256). Change, remove or reorder ANY record and every fingerprint after it changes, so a copy of the ledger can be checked against the one on file. */
  function sha256(str){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(function(h){return Array.prototype.map.call(new Uint8Array(h),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')})}
  function chain(){var out=[],prev='',p=Promise.resolve();S.entries.forEach(function(e){p=p.then(function(){return sha256(prev+'|'+[e.id,e.t,e.from||'',e.to,e.amt,e.kind||'',e.note||''].join('|'))}).then(function(h){prev=h;out.push(h)})});return p.then(function(){return out})}
@@ -627,6 +656,52 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
   dl('restaurant-rewards-full-history-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','Full history downloaded: '+n+' records, every wallet and every gift card.')});
  $('whocsv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'},d=whoData(),out=['Who,Type,Account number,Gift card number,Given by the Treasury,Of that as a gift,Received from a gift,Wallet now,Gift card now,Next expiry'];d.rows.forEach(function(r){out.push([q(r.name),q(r.type),q(r.no),q(r.gno),Math.round(r.given/100),Math.round(r.gifts/100),Math.round(r.rcv/100),Math.round(r.wallet/100),Math.round(r.gift/100),q(r.next)].join(','))});dl('restaurant-rewards-who-got-what-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','List downloaded.')});
  $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};chain().then(function(h){var out=['Entry,Time (UTC),Time (local),Confirmation,Type,From,From wallet id,To,To wallet id,Amount,Status,Decision time (UTC),Note,Fingerprint (chained)'];S.entries.forEach(function(e,i){out.push([e.id,q(iso(e.t)),q(when(e.t)),q(conf(e)),q(etype(e)),q(e.kind==='open'?'':(e.from?wname(e.from):'Opening balance')),q(e.from||''),q(wname(e.to)),q(e.to),Math.round(e.amt/100),q(e.status||(e.kind==='open'?'':'confirmed')),q(e.ct?iso(e.ct):''),q(e.note),q(h[i])].join(','))});dl('restaurant-rewards-ledger-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','Ledger downloaded: '+S.entries.length+' records, every one with its exact time.')})});
+
+ /* ---- History report: totals, who got what, and every move with its exact time ---- */
+ var hrepNew=false;
+ function rlabel(id){var w=wById(id);if(id==='treasury')return 'Treasury';if(!w)return 'Outside';return isGiftW(w)?'Gift card for '+giftHolder(w):w.name}
+ function rwhere(id){var w=wById(id);if(id==='treasury')return '';return w&&isGiftW(w)?'gift card':'wallet'}
+ function openReport(){var R=$('hrep');R.className='';R.scrollTop=0;document.body.classList.add('hlock');paintReport()}
+ function closeReport(){$('hrep').className='hide';document.body.classList.remove('hlock')}
+ function paintReport(){
+  var R=$('hrep');R.textContent='';var P=el('div','hp');R.appendChild(P);
+  var bar=el('div','hbar noprint'),mk=function(t,fn,c){var b=el('button',c||'',t);b.type='button';b.addEventListener('click',fn);bar.appendChild(b);return b};
+  mk('Close',closeReport);mk('Print or save as PDF',function(){window.print()},'go');mk(hrepNew?'Show oldest first':'Show newest first',function(){hrepNew=!hrepNew;paintReport()});mk('Download CSV',function(){$('csv').click()});P.appendChild(bar);
+  var tre=bal('treasury'),wal=0,gwal=0,hh=held();S.wallets.forEach(function(w){if(w.id==='treasury')return;if(isGiftW(w))gwal+=shown(w.id);else wal+=shown(w.id)});
+  var mv=S.entries.filter(function(e){return e.kind!=='open'&&e.from}),all=S.entries.slice().sort(function(a,b){return a.t-b.t||a.id-b.id}),rng=all.length?when(all[0].t)+'  to  '+when(all[all.length-1].t):'';
+  P.appendChild(el('h3',null,'Restaurant Rewards history report'));
+  P.appendChild(el('p','hsub','Prepared '+when(Date.now())+'. Every move is listed with the exact time it went through. Nothing is ever edited or deleted.'));
+  var g=el('div','hgrid');[['Issued in total',fmt(SUPPLY)],['In the Treasury',fmt(tre)],['In wallets',fmt(wal)],['In gift cards',fmt(gwal)]].forEach(function(x){var d=el('div','hs');d.appendChild(el('small',null,x[0]));d.appendChild(el('b',null,x[1]));g.appendChild(d)});P.appendChild(g);
+  var ok=(tre+wal+gwal+hh===SUPPLY);P.appendChild(el('p','hsub','Treasury + wallets + gift cards'+(hh?' + '+fmt(hh)+' waiting for confirmation':'')+' = '+fmt(tre+wal+gwal+hh)+(ok?'. Everything adds up.':'. DOES NOT MATCH the issued total.')+'  '+mv.length+' moves recorded. '+rng));
+  /* who got what */
+  P.appendChild(el('h2',null,'Who got what'));
+  var T={a:0,b:0,c:0,d:0},hl=el('div','hlist');
+  S.wallets.filter(function(w){return w.id!=='treasury'&&!isGiftW(w)}).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t}).forEach(function(w){
+   var A=actSums(w),cl=isClosed(w),bx=el('div','hh'),hd=el('div','hhd');
+   hd.appendChild(el('b',null,w.name));hd.appendChild(el('small',null,w.type+(cl?' · closed, credit returned to the Treasury':'')+' · '+numFor(w)));bx.appendChild(hd);
+   var gr=el('div','hg4');[['Wallet from Treasury',fmt(A.putIn)+(A.gifts?' (+'+fmt(A.gifts)+' gifts)':'')],['Gift card from Treasury',fmt(A.gIssued)],['Wallet now',fmt(A.bal)],['Gift card now',fmt(A.gWaiting)]].forEach(function(x){var c=el('div');c.appendChild(el('small',null,x[0]));c.appendChild(el('b',null,x[1]));gr.appendChild(c)});bx.appendChild(gr);hl.appendChild(bx);
+   T.a+=A.putIn;T.b+=A.gIssued;T.c+=A.bal;T.d+=A.gWaiting});
+  var tt=el('div','hh tot'),th2=el('div','hhd');th2.appendChild(el('b',null,'Total, everyone'));tt.appendChild(th2);var g4=el('div','hg4');[['Wallet from Treasury',fmt(T.a)],['Gift card from Treasury',fmt(T.b)],['Wallet now',fmt(T.c)],['Gift card now',fmt(T.d)]].forEach(function(x){var c=el('div');c.appendChild(el('small',null,x[0]));c.appendChild(el('b',null,x[1]));g4.appendChild(c)});tt.appendChild(g4);hl.appendChild(tt);P.appendChild(hl);
+  /* every move */
+  P.appendChild(el('h2',null,'Every move, '+(hrepNew?'newest':'oldest')+' first'));
+  var tw2=el('div','tw'),t2=el('table'),h2=el('thead'),r2=el('tr');['When it went through','What happened','Amount'].forEach(function(x,i){r2.appendChild(el('th',i===2?'r':'',x))});h2.appendChild(r2);t2.appendChild(h2);var b2=el('tbody');
+  var rows=all.slice();if(hrepNew)rows.reverse();
+  rows.forEach(function(e){
+   var tr2=el('tr'),c1=el('td'),isO=e.kind==='open';
+   c1.appendChild(el('b',null,when(e.t)));c1.appendChild(el('small','mono',conf(e)));tr2.appendChild(c1);
+   var c2=el('td','mv'),ty=etype(e),nt=cleanNote(e.note);
+   c2.appendChild(el('b',isO?'mut':'',ty));
+   var fr=!e.from?(isO?'':'Opening balance'):rlabel(e.from)+(rwhere(e.from)&&e.from!=='treasury'?' ('+rwhere(e.from)+')':''),to=rlabel(e.to)+(rwhere(e.to)?' ('+rwhere(e.to)+')':'');
+   c2.appendChild(el('span',isO?'mut':'',isO?to:(e.from?fr+'  →  '+to:to)));
+   var x=[];if(nt&&nt!==ty&&nt!=='Opening balance'&&nt!=='Wallet opened with a zero balance')x.push(nt);if(stTxt(e))x.push(stTxt(e));if(e.ct)x.push((e.status==='declined'?'Declined ':'Confirmed ')+when(e.ct));if(x.length)c2.appendChild(el('small',null,x.join(' · ')));
+   tr2.appendChild(c2);tr2.appendChild(el('td','r'+(isO?' mut':''),isO?'—':fmt(e.amt)));b2.appendChild(tr2)});
+  t2.appendChild(b2);tw2.appendChild(t2);P.appendChild(tw2);
+  var fp=el('p','mono','Computing the ledger fingerprint…');P.appendChild(el('h2',null,'Ledger fingerprint'));P.appendChild(el('p','hsub','A code made from every record in order. If any past record were ever changed, this code would change.'));P.appendChild(fp);
+  chain().then(function(h){fp.textContent=h.length?h[h.length-1]:'(no records)'});
+ }
+ document.body.appendChild($('hrep')); /* must sit directly under the page so printing can show only the report */
+ $('hrepBtn').addEventListener('click',openReport);
+ document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!$('hrep').classList.contains('hide'))closeReport()});
  $('restore').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1||!Array.isArray(o.wallets)||!Array.isArray(o.entries))throw 0;var tot=0;o.entries.forEach(function(e){if(!e.from)tot+=e.amt});if(tot!==SUPPLY)throw 0;
    if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Restaurant Rewards backup.',true)}};r.readAsText(f);this.value=''});
  $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});
