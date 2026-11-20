@@ -221,7 +221,7 @@ body.hlock{overflow:hidden}
 <div class="top" id="modeNote"><b>Owner tool, practice version.</b> Key Rewards have no cash value. This page keeps its records in <b>this browser only</b>, so tap <b>Download backup</b> often.</div>
 <div id="dbstat" class="hide" role="status"></div>
 <div class="col">
-<div class="pbrand">keytechnologies.si</div>
+<div class="pbrand">KeyTechnologies.si</div>
 <h1>Key Rewards Treasury</h1>
 <p>One starting supply, wallets created one by one, and every move of credit written down. Nothing is ever edited or deleted; to fix a mistake, move the credit back.</p>
 
@@ -413,7 +413,7 @@ body.hlock{overflow:hidden}
   bk.appendChild(d('l f','The fine print'));
   ['Key Rewards can be used with participating businesses for special events, meet and greets, VIP experiences and special invites, and we are always adding new ideas.','Never expire. Key Rewards stay in the wallet until they are used. A gift card is a credit to give to a friend or family member; the person who receives the gift gets normal credit.','No cash value. Key Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Key Rewards and gives them away. They are never sold.','Participating businesses can turn acceptance on or off, and add or remove credit, whenever they want. A business on the list above accepts them now. A business not on the list does not accept them.','This is a free trial game and we are trying it out to see where it goes. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost.','Thank you for playing and for believing in the future of this technology.'].forEach(function(x){bk.appendChild(d('t p',x))});
   bkw.appendChild(bk);var sb=d('sbar'),sth=d('sth');sb.appendChild(sth);bkw.appendChild(sb);b.appendChild(bkw);
-  var hr=d('hr');hr.appendChild(d('t h','Tap the card to flip it back.'));hr.appendChild(d('t h c','Design by keytechnologies.si'));b.appendChild(hr);fi.appendChild(b);fl.appendChild(fi);wr.appendChild(fl);
+  var hr=d('hr');hr.appendChild(d('t h','Tap the card to flip it back.'));hr.appendChild(d('t h c','Design by KeyTechnologies.si'));b.appendChild(hr);fi.appendChild(b);fl.appendChild(fi);wr.appendChild(fl);
   var sh=d('shine');wr.appendChild(sh);
   var ZS=[1,1.25,1.5],ZL=['A+','A++','A\u2212'],zi=0;try{zi=Math.max(0,Math.min(2,parseInt(localStorage.getItem('rrZoom')||'0',10)||0))}catch(x){}
   function applyZ(){b.style.setProperty('--z',String(ZS[zi]));zb.textContent=ZL[zi];setTimeout(upd,30)}
@@ -450,7 +450,7 @@ body.hlock{overflow:hidden}
   if(open){c.setAttribute('role','button');c.setAttribute('tabindex','0');c.setAttribute('aria-label','Credit to give, '+fmt(amt)+'. Tap to give it to one person.');c.addEventListener('click',open);c.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}})}
   return c}
  function giftBlock(g,backId){if(giftOut(g)||avail(g.id)<=0)return null;var w=document.createElement('div');w.className='gblock';w.appendChild(giftCard(g,function(){openGive(g.id,backId)}));return w}
- function rrLock(){var l=document.createElement('div');l.className='rrlock';var im=document.createElement('img');im.src='brand/key-gold.svg';im.alt='Key Technologies key';im.width=116;im.height=50;l.appendChild(im);var tt=document.createElement('span');tt.className='rrt';tt.textContent='keytechnologies.si';l.appendChild(tt);return l}
+ function rrLock(){var l=document.createElement('div');l.className='rrlock';var im=document.createElement('img');im.src='brand/key-gold.svg';im.alt='Key Technologies key';im.width=116;im.height=50;l.appendChild(im);var tt=document.createElement('span');tt.className='rrt';tt.textContent='KeyTechnologies.si';l.appendChild(tt);return l}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
@@ -703,6 +703,6 @@ body.hlock{overflow:hidden}
  if(/[?&]demo=1\b/.test(location.search)){$('modeNote').innerHTML='<b>Demo.</b> Sample wallets only. Tap a wallet card, then <b>Show this wallet</b>. Key Rewards have no cash value.';enterLocal()}else if(RR.signedIn()&&RR.email()===RR.TREASURER.email)enterDb();else start();
 })();
 </script>
-<p class="ktcredit" style="text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">keytechnologies.si</a></p>
+<p class="ktcredit" style="text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">KeyTechnologies.si</a></p>
 </body>
 </html>
