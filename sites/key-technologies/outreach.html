@@ -299,11 +299,17 @@ nav .dot{position:absolute;top:5px;right:calc(50% - 22px);min-width:18px;height:
 .prow .t{flex:1 1 auto;min-width:0}
 .prow .t b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .prow .t small{display:block;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modesw{display:flex;gap:0;margin:10px auto 4px;max-width:420px;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;overflow:hidden}
+.modesw button{flex:1;min-height:44px;padding:0 10px;border:0;background:none;color:#fff;font:800 13.5px Lato,system-ui,sans-serif;cursor:pointer}
+.modesw button[aria-pressed="true"]{background:linear-gradient(140deg,#f6d467,#e6b83a 55%,#d7a21e);color:#2b1d05}
+.modenote{text-align:center;font-size:12.5px;color:var(--dim);margin:0 auto 6px;max-width:420px}
 </style>
 </head>
 <body>
 <div class="wrap">
- <div class="brand">Key Technologies</div>
+ <div class="brand" id="brandt">Key Technologies</div>
+ <div class="modesw" role="group" aria-label="Which business are you marketing?"><button type="button" id="mkt">Market Key Technologies</button><button type="button" id="mlv">Market Las Vegas Restaurants</button></div>
+ <div class="modenote" id="modenote"></div>
  <h1 id="h1">Outreach</h1>
  <div class="sync" id="syncl" aria-live="polite"></div>
  <div id="view"></div>
@@ -314,12 +320,19 @@ nav .dot{position:absolute;top:5px;right:calc(50% - 22px);min-width:18px;height:
 <script>
 (function(){
 'use strict';
-var LS='outreachV1',DAY=864e5,FOLLOW_DAYS=3,MAX_FOLLOW=2,CLOSE_DAYS=4,SAFE=900; /* Instagram refuses very long messages (about 1,000 characters), so every part stays under 900 */
-var DEF={
- open:"Hey {first}, Las Vegas Restaurants here. Love what you are doing at {name}. I help local businesses put AI to work so they spend less time on busywork. Worth a quick chat?",
- follow:"Hey {first}, circling back on my note about {name}. No pressure at all. If it is not a fit, just tell me and I will not bug you. If it is, I am happy to find a time that works for you.",
+var MODE='kt';try{if(localStorage.getItem('outreachMode')==='lvr')MODE='lvr'}catch(e){}
+var LS=MODE==='lvr'?'outreachLVR1':'outreachV1',DAY=864e5,FOLLOW_DAYS=3,MAX_FOLLOW=2,CLOSE_DAYS=4,SAFE=900; /* Instagram refuses very long messages (about 1,000 characters), so every part stays under 900 */
+var DEF_KT={
+ open:"Hey {first}, Las Vegas Restaurants here. I also run Key Technologies (keytechnologies.si), where we help local businesses use AI/SI: an AI receptionist that answers calls and texts, websites and apps, and small custom tools that cut the busywork. I would like to give {name} a free look at where it could help. Worth a quick chat?",
+ follow:"Hey {first}, circling back on my note about Key Technologies and {name}. No pressure. The free review is a short call where I look at how {name} runs today and point out where AI/SI could realistically help. If it is not a fit, just tell me and I will not bug you. If it is, what day works?",
+ ask:"Good question, {first}. It depends on what {name} needs. Some businesses start with an AI receptionist for calls and texts, others with a better website or a small custom tool. The quickest way is a short free call, and I will tell you exactly what it would look like. Does tomorrow or the day after work? You can also see more at keytechnologies.si"
+};
+var DEF_LVR={
+ open:"Hey {first}, Las Vegas Restaurants here. We would love to get {name} in front of our Las Vegas followers. Do you have a minute to talk about how we can work together?",
+ follow:"Hey {first}, circling back on my note about {name} and Las Vegas Restaurants. No pressure at all. If it is not a fit, just tell me and I will not bug you. If it is, I am happy to find a time that works for you.",
  ask:"Fair question, {first}. It depends on what {name} needs, so the quickest way is a short call. Does tomorrow or the day after work? Then I can tell you exactly what it would look like."
 };
+var DEF=MODE==='lvr'?DEF_LVR:DEF_KT;
 var MSGN={open:'First hello',follow:'Check in',ask:'Answer'};
 var ST={new:['Not messaged yet','#aab9ca'],sent:['Waiting for a reply','#f3d884'],replied:['They replied','#5fd38d'],call:['Call booked','#4fc3f0'],won:['Client','#5fd38d'],no:['Not interested','#ff8a7a'],cold:['No answer','#8a97a8']};
 var D=load(),canSave=true,tab='today',filter='all',q='',lastFocus=null;
@@ -386,7 +399,7 @@ function copy(p,bt,label){
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(p).then(done,fb)}else fb();
 }
 /* ---------- database: sign-in, sync, and your LVR list ---------- */
-var DBU='https://lvr-data-a60c1-default-rtdb.firebaseio.com',SYNC='/kt_crm/dm_outreach',ADS='/dashboard_adv_crec',ADSDEL='/dashboard_adv_deleted',ADSFLAG='/dashboard/adv_flag_queue';
+var DBU='https://lvr-data-a60c1-default-rtdb.firebaseio.com',SYNC=MODE==='lvr'?'/kt_crm/dm_outreach_lvr':'/kt_crm/dm_outreach',ADS='/dashboard_adv_crec',ADSDEL='/dashboard_adv_deleted',ADSFLAG='/dashboard/adv_flag_queue';
 var synced={},syncState='off',syncTimer=0,pulling=false,pool=null,poolBusy=false,poolErr='',poolCat='all',poolIg=true,poolQ='',poolShow=30,poolN=0;
 function isOwner(){return !!(window.OWNER_AUTH&&window.OWNER_AUTH.signedIn())}
 function dbReq(method,path,body){var o={method:method};if(body!==undefined){o.headers={'Content-Type':'application/json'};o.body=JSON.stringify(body)}
@@ -487,8 +500,16 @@ function nav(){
   if(x[0]==='today'&&dot)b.appendChild(h('span',{class:'dot',text:String(dot)}));
   nv.appendChild(b)});
 }
+function modeUI(){
+ var k=$('mkt'),l=$('mlv');if(!k)return;
+ k.setAttribute('aria-pressed',MODE==='kt'?'true':'false');l.setAttribute('aria-pressed',MODE==='lvr'?'true':'false');
+ $('modenote').textContent=MODE==='kt'?'Selling Key Technologies. Messages go out from the Las Vegas Restaurants Instagram. This list is kept separate.':'Promoting Las Vegas Restaurants. This list is kept separate from the Key Technologies one.';
+ $('brandt').textContent=MODE==='kt'?'Key Technologies':'Las Vegas Restaurants';
+ if(!k.dataset.on){k.dataset.on='1';
+  [['mkt','kt'],['mlv','lvr']].forEach(function(x){$(x[0]).addEventListener('click',function(){if(MODE===x[1])return;try{localStorage.setItem('outreachMode',x[1])}catch(e){}location.reload()})})}
+}
 function render(){
- var v=$('view');v.textContent='';nav();
+ var v=$('view');v.textContent='';nav();modeUI();
  $('h1').textContent={today:'Today',add:'Add businesses',all:'Everyone',more:'Numbers and settings'}[tab];
  ({today:vToday,add:vAdd,all:vAll,more:vMore})[tab](v);
 
@@ -663,6 +684,19 @@ function vMore(v){
  gi.addEventListener('input',function(){var n=Math.max(1,Math.min(200,parseInt(gi.value,10)||25));D.goal=n;save()});
  v.appendChild(h('div',{class:'card'},h('label',{text:'Messages to send each day'}),gi,h('p',{class:'note',text:'Around 20 to 30 a day, written by hand, keeps the Las Vegas Restaurants account safe from Instagram limits.'})));
 
+ if(MODE==='kt'){
+  v.appendChild(h('h2',{text:'Your pitch'}));
+  var pc=h('div',{class:'card'});
+  [['The one line','Key Technologies helps local businesses use AI/SI to save time and stop missing customers.'],
+   ['What it does','An AI receptionist that answers calls and texts, websites and apps, small custom tools, and training so staff can use them.'],
+   ['Why trust it','More than 42 years of hands-on computer and software experience, and 27 services you can try as live demos at keytechnologies.si.'],
+   ['The ask','A free, no-obligation 30-minute review: you look at how they run today and say where AI/SI could realistically help. Nothing to buy.'],
+   ['If they say "how much?"','It depends on what they need, so the call comes first. Do not quote a number in a message.'],
+   ['If they say "is this a bot?"','No, it is Shane. Say so, and offer a call.'],
+   ['If they say "not interested"','Thank them, say you will not message again, and mark them Not interested.'],
+   ['Keep it honest','No made-up results, clients or reviews. Only say what the website says.']].forEach(function(x){pc.appendChild(h('p',{class:'note',style:'margin:8px 0'},h('b',{text:x[0]+': '}),document.createTextNode(x[1])))});
+  v.appendChild(pc);
+ }
  v.appendChild(h('h2',{text:'Your messages'}));
  ['open','follow','ask'].forEach(function(k){
   var ta=h('textarea',{'aria-label':MSGN[k]+' message'}),c=h('p',{class:'cnt'});ta.value=tmpl(k);
