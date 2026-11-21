@@ -562,3 +562,5 @@ Colour versions A-E (bright gold, 24-karat soft shine, brushed, deep yellow gold
  - Treasury screen (tap the gold Treasury card): the card with the full history directly below it, NO heading, newest first, tight rows (what happened, amount, running balance, exact time, Use by/Give by, entry number), same width as the card.
  - Credits last 60 days; gift cards 72 hours; never "Restaurant Rewards"; website name written KeyTechnologies.si.
  - Other looks (silver, graphite, indigo, platinum) are only saved in brand/card-themes.css; do not offer colour changes unless Shane asks.
+
+298. Zach Tolen (Shane, 2026-11-21; spelled TOLEN): wallet "Zach Tolen" with 500 (Starting credit) and a gift card "Gift for Zach Tolen" with 100 (Gift to give), both from the Treasury (INSTR 2026-11-21-i..l, 3:50 PM PST). Treasury now 9,993,900; wallets 5,900; gift cards 200; total 10,000,000. Entry numbers 1121-0012 to 0015. Locked look unchanged.
