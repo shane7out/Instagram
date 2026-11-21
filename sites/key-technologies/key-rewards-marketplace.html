@@ -72,6 +72,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .gcard .b{font-weight:900;font-size:min(11px,7.4cqw);letter-spacing:.05em}.gcard .b2{font-weight:800;font-size:min(7px,4.4cqw);letter-spacing:.4em;text-transform:uppercase;color:#3a2a08;margin-top:1px}
 .gcard .k{display:none}
 .gcard .nm{margin-top:auto;font-weight:900;font-size:min(14px,9.4cqw);letter-spacing:.1em;text-transform:uppercase;line-height:1.15}
+.gcard .val{display:flex;justify-content:space-between;align-items:flex-end;margin-top:6px;padding-top:5px;border-top:1px solid rgba(90,55,0,.35)}.gcard .val small{font-weight:900;font-size:min(8px,5cqw);letter-spacing:.12em;text-transform:uppercase}.gcard .val b{font-size:min(30px,12cqw);line-height:1;font-weight:900}
 .gcard .kind{font-weight:700;font-size:min(10px,6.6cqw);letter-spacing:.06em;color:#3a2a08;margin-top:3px}
 .none{grid-column:1/-1;text-align:center;color:var(--dim);padding:44px 10px}
 .foot{margin:30px 0 0;padding:15px 17px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);color:var(--dim);font-size:14px;line-height:1.5}.foot b{color:#fff}
@@ -184,7 +185,7 @@ function filtersHtml(){
  h+='</ul><h3>Points</h3><div class="pills">';BANDS.forEach(function(b){h+='<button type="button" class="pill'+(st.band===b[0]?" on":"")+'" data-b="'+b[0]+'">'+b[1]+'</button>'});
  h+='</div><h3>Sort by</h3><select class="sort" data-sort aria-label="Sort by"><option value="sug"'+(st.sort==="sug"?" selected":"")+'>Suggested</option><option value="lo"'+(st.sort==="lo"?" selected":"")+'>Points: low to high</option><option value="hi"'+(st.sort==="hi"?" selected":"")+'>Points: high to low</option></select>';return h}
 function artHtml(x){
- if(x.gift)return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(x.n)+'</div><div class="kind">Gift card</div></div></div>';
+ if(x.gift)return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(x.n)+'</div><div class="kind">Gift card</div><div class="val"><small>Rewards points value</small><b>'+x.p+'</b></div></div></div>';
  return '<div class="art"><span class="e" aria-hidden="true">'+x.e+'</span><span class="badge">Sample</span></div>'}
 function heartHtml(x){return '<span class="heart'+(saved[x.id]?" on":"")+'" role="button" tabindex="0" data-h="'+x.id+'" aria-label="'+(saved[x.id]?"Remove from saved":"Save")+' '+esc(x.n)+'" aria-pressed="'+(saved[x.id]?"true":"false")+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9.2-9A5.4 5.4 0 0 1 12 6.6 5.4 5.4 0 0 1 21.2 12C19 16.6 12 21 12 21z"/></svg></span>'}
 function render(){

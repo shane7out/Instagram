@@ -261,6 +261,12 @@ body.hlock{overflow:hidden}
 #rdm .gsum+.gwarn{margin-top:14px}
 /* the card is always the exact size and shape of a bank card (85.6 x 54 mm = 1.586 to 1) */
 .gc,#pres .gc,.wallets .gc{aspect-ratio:1.586/1!important}
+/* gift card shop */
+#rdm .vbox{margin:14px auto 4px;max-width:340px}.gc.voucher .bal small{max-width:none!important;white-space:nowrap}#rdm .vbox .gc{width:100%;max-width:340px;margin:0 auto 10px}#rdm .vbox .gc .num{margin-top:3px}
+#rdm .vhead{margin:24px 0 4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#e8c766;font-weight:900}
+#rdm .vconf p{margin:6px 0 10px;color:rgba(255,255,255,.9)}
+#rdm .vbox .send:disabled{opacity:.6}
+.gc.voucher .num{font-weight:800;letter-spacing:.08em;font-size:min(14px,3.9cqw)!important}
 </style>
 </head>
 <body>
@@ -352,6 +358,7 @@ body.hlock{overflow:hidden}
  var INSTR=[{id:'2026-11-20-a',at:'2026-11-20T16:18:20+00:00',create:{name:'Thin Blue 702',type:'Organization'}},{id:'2026-11-20-b',at:'2026-11-20T16:18:20+00:00',from:'treasury',to:'Thin Blue 702',amt:500000,note:'Starting credit'},
   {id:'2026-11-21-a',at:'2026-11-21T01:27:18+00:00',create:{name:'Crown',type:'Customer'}},{id:'2026-11-21-b',at:'2026-11-21T01:27:18+00:00',from:'treasury',to:'Crown',amt:30000,note:'Starting credit'},
   {id:'2026-11-21-c',at:'2026-11-21T17:00:00+00:00',create:{name:'Oak and Bubbles',type:'Customer'}},{id:'2026-11-21-d',at:'2026-11-21T17:00:00+00:00',from:'treasury',to:'Oak and Bubbles',amt:10000,note:'Starting credit'},
+  {id:'2026-11-21-g',at:'2026-11-21T17:30:00+00:00',create:{name:'Johnny Mac\'s',type:'Restaurant'}},{id:'2026-11-21-h',at:'2026-11-21T17:30:00+00:00',create:{name:'Vanilla Rice\'s Hibachi House',type:'Restaurant'}},
   {id:'2026-11-21-e',at:'2026-11-21T17:00:00+00:00',create:{name:'Gift for Oak and Bubbles',type:'Other'}},{id:'2026-11-21-f',at:'2026-11-21T17:00:00+00:00',from:'treasury',to:'Gift for Oak and Bubbles',amt:10000,note:'Gift to give'}];
  function applyInstr(){S.applied=S.applied||[];S.wallets.forEach(function(w){if(w.name==='LVMPD')w.name='Thin Blue 702'});INSTR.forEach(function(x){if(S.applied.indexOf(x.id)>=0)return;if(x.close){var cw=find(x.close),gw=find('Gift for '+x.close);[cw,gw].forEach(function(id,i){if(!id)return;var a=bal(id);if(a>0)S.entries.push({id:S.next++,t:atT(x),from:id,to:'treasury',amt:a,note:(i?'Gift card':'Wallet')+' closed, credit returned to the Treasury'})});S.applied.push(x.id);return}if(x.create){if(!find(x.create.name))openW(x.create.name,x.create.type,DBM?0:atT(x));S.applied.push(x.id);return}var to=find(x.to);if(!to||bal(x.from)<x.amt)return;if(DBM&&S.entries.some(function(e){return e.to===to&&e.note===x.note&&e.from===x.from})){S.applied.push(x.id);return}S.entries.push({id:S.next++,t:atT(x),from:x.from,to:to,amt:x.amt,note:x.note});S.applied.push(x.id)});sweep()}
  /* Older practice records in this browser were stamped with the moment the page happened to open on that phone. Put the recorded time back (once). */
@@ -585,6 +592,35 @@ body.hlock{overflow:hidden}
    var to=rs[cur],ent={id:S.next++,t:now(),from:id,to:to.id,amt:a,note:'Redeemed at '+to.name,status:'pending'};S.entries.push(ent);save();chime();receipt(ent,id);burst()});
   rc.appendChild(credit());$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
 
+
+ /* ---- Gift cards: trade Key Rewards points for a business's gift card; the card goes into the wallet at once ---- */
+ var GCS=[{biz:"Johnny Mac's",pts:100},{biz:"Vanilla Rice's Hibachi House",pts:100}];
+ function gcOwned(id){return S.entries.filter(function(e){return e.from===id&&/^Redeemed at .+: gift card$/.test(e.note||'')&&e.status!=='declined'})}
+ function voucherCard(biz,pts,sm){var g=el('div','gc voucher'+(sm?' sm':'')),d=function(c,t){return el('div',c,t)};
+  g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2','Rewards'));var cr=el('div','crow');cr.appendChild(rrLock());g.appendChild(cr);
+  g.appendChild(d('nm',biz));g.appendChild(d('num','Gift card'));var bb=d('bal'),sm2=el('small',null,'');sm2.innerHTML='Rewards <span class="pt">points </span>value';bb.appendChild(sm2);bb.appendChild(el('b',null,String(pts)));g.appendChild(bb);return g}
+ function openGiftCards(id){
+  var w=wById(id),rc=$('rc'),have=avail(id);ac();rc.innerHTML='';
+  var hd=el('div','rhead');hd.appendChild(el('h2',null,'Gift cards'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
+  rc.appendChild(el('p','have',w.name+' has '+fmt(have)+' Key Rewards'));
+  rc.appendChild(el('p','gwarn','Trade your rewards points for a gift card. The gift card goes into your wallet right away.'));
+  var msg=el('div','rmsg');msg.setAttribute('role','alert');
+  GCS.forEach(function(c){var a=c.pts*100,box=el('div','vbox');box.appendChild(voucherCard(c.biz,c.pts));
+   var get=el('button','send','Get for '+fmt(a)+' rewards points');get.type='button';get.disabled=have<a;if(have<a)get.textContent='Need '+fmt(a-have)+' more rewards points';
+   var cf=el('div','vconf hide');cf.appendChild(el('p',null,'Trade '+fmt(a)+' rewards points for the '+c.biz+' gift card? The points leave '+w.name+' and the gift card goes into the wallet.'));
+   var yes=el('button','send','Yes, get it');yes.type='button';var no=el('button','more','Go back');no.type='button';cf.appendChild(yes);cf.appendChild(no);
+   get.addEventListener('click',function(){get.classList.add('hide');cf.classList.remove('hide')});no.addEventListener('click',function(){cf.classList.add('hide');get.classList.remove('hide')});
+   yes.addEventListener('click',function(){var bid=find(c.biz);if(!bid){msg.textContent='That business is not set up yet.';msg.className='rmsg err';return}if(avail(id)<a){msg.textContent=w.name+' does not have enough rewards points.';msg.className='rmsg err';return}
+    S.entries.push({id:S.next++,t:now(),from:id,to:bid,amt:a,note:'Redeemed at '+c.biz+': gift card',status:DBM?'pending':undefined});if(!DBM)delete S.entries[S.entries.length-1].status;save();chime();paint();gcDone(id,c)});
+   box.appendChild(get);box.appendChild(cf);rc.appendChild(box)});
+  rc.appendChild(msg);
+  var own=gcOwned(id);rc.appendChild(el('h3','vhead','In your wallet'));
+  if(!own.length)rc.appendChild(el('p','fine','No gift cards yet.'));
+  own.slice().reverse().forEach(function(e){var biz=e.note.replace(/^Redeemed at /,'').replace(/: gift card$/,'');var b=el('div','vbox');b.appendChild(voucherCard(biz,Math.round(e.amt/100)));b.appendChild(el('p','fine',(e.status==='pending'?'Waiting for '+biz+' to confirm. ':'')+'Bought '+when(e.t)+'. Show this card at '+biz+'.'));rc.appendChild(b)});
+  rc.appendChild(credit());$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
+ function gcDone(id,c){var rc=$('rc');ac();rc.innerHTML='';var hd=el('div','rhead');hd.appendChild(el('h2',null,'It’s in your wallet'));var ex=el('button','exit','Done');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide');present(id,true)});hd.appendChild(ex);rc.appendChild(hd);
+  var b=el('div','vbox');b.appendChild(voucherCard(c.biz,c.pts));rc.appendChild(b);rc.appendChild(el('p','gwarn','You traded '+c.pts+' rewards points for the '+c.biz+' gift card. It is in your wallet now. Show it at '+c.biz+'.'));
+  var more=el('button','send','See my gift cards');more.type='button';more.addEventListener('click',function(){openGiftCards(id)});rc.appendChild(more);rc.appendChild(credit());$('rdm').scrollTop=0}
  function whoData(){var rows=[],uniq={},dupe=false,tOut=0,tW=0,tG=0,ret=0,cr=0;S.entries.forEach(function(e){if(isClose(e))cr+=e.amt;if(isExp(e))ret+=e.amt;if(e.from==='treasury'&&e.to!=='treasury'&&credited(e)&&e.kind!=='open')tOut+=e.amt});
   sw().filter(function(w){return w.id!=='treasury'}).forEach(function(w){var giv=0,rcv=0,gs=giftsFor(w),gi=0,gn=0,ex=expInfo(w.id);S.entries.forEach(function(e){if(e.from==='treasury'&&e.to===w.id&&credited(e))giv+=e.amt;if(isGiftE(e)&&e.to===w.id&&credited(e))rcv+=e.amt});
    gs.forEach(function(g){S.entries.forEach(function(e){if(e.from==='treasury'&&e.to===g.id&&credited(e))gi+=e.amt});gn+=avail(g.id)});
@@ -688,7 +724,7 @@ body.hlock{overflow:hidden}
   var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);dn.appendChild(credit());rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id,quiet){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
   var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,true,false):flipCard(w,quiet));presId=id;if(!quiet)countUp(pc.querySelector('.bal b'),shown(id));var isRest=w.type==='Restaurant',row=null;if(isRest&&!DBM){row=el('div','btnrow');pc.appendChild(row)}
-  if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=avail(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});(row||pc).appendChild(rb)}
+  if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=avail(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});(row||pc).appendChild(rb);if(!row&&w.type!=='Restaurant'){var gcb=el('button','rbtn gcb2','Gift cards');gcb.type='button';gcb.addEventListener('click',function(){openGiftCards(id)});pc.appendChild(gcb)}}
   if(isRest&&!DBM){var on=accepts(w.id),tg=el('button','rbtn acc '+(on?'on':'off'),on?'Turn off':'Turn on');tg.type='button';tg.setAttribute('aria-label',on?'This restaurant is accepting rewards. Tap to turn them off.':'Rewards are off here. Tap to turn them on.');tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id,true)});row.appendChild(tg)}else if(isRest)pc.appendChild(el('p','fine','The restaurant controls whether rewards are on or off.'))
   giftsFor(w).forEach(function(g){var gb=giftBlock(g,id);if(gb)pc.appendChild(gb)});
   if(w.id!=='treasury'){var sg=el('button','giftpill','Send a gift');sg.type='button';sg.addEventListener('click',function(){openSendGift(id)});pc.appendChild(sg)}
