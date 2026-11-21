@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
+<!--OWNER-AUTH-START-->
+<script>
+// Owner sign-in (Firebase Auth, email + password). Optional: it stays dormant until ownerAuth/apiKey exists in the
+// database (the Mac script owner-setup.sh puts it there). Once signed in, every request this page makes to the
+// database carries the owner's sign-in token, so database rules can tell the owner from a stranger.
+// The password is never stored. The token lives in this browser tab (or on this Mac if "Stay signed in" is ticked).
+(function () {
+  if (window.OWNER_AUTH) return;
+  var DBH = 'lvr-data-a60c1-default-rtdb.firebaseio.com', SS = 'lvrOwnerAuth', KEEP = 'lvrOwnerAuthKeep', LOCK = 'lvrOwnerAuthLock', TRIES = 'lvrOwnerAuthTries';
+  var lockKey = null, lockSalt = null;
+  var st = null, apiKey = null, keyP = null, origFetch = window.fetch.bind(window), listeners = [];
+  try { st = JSON.parse(sessionStorage.getItem(SS) || localStorage.getItem(KEEP) || 'null'); } catch (e) {}
+  function hasLock() { try { return !!localStorage.getItem(LOCK); } catch (e) { return false; } }
+  function save(keep) {
+    try { sessionStorage.removeItem(SS); localStorage.removeItem(KEEP); } catch (e) {}
+    if (!st) return;
+    if (hasLock() || lockKey) { try { sessionStorage.setItem(SS, JSON.stringify(st)); } catch (e) {} if (lockKey) lockSave(); return; }  // PIN mode: nothing readable is left on the device
+    try { (keep || st.keep ? localStorage : sessionStorage).setItem(keep || st.keep ? KEEP : SS, JSON.stringify(st)); } catch (e) {}
+  }
+  function note() { listeners.forEach(function (f) { try { f(); } catch (e) {} }); render(); }
+  function getKey() {
+    if (apiKey) return Promise.resolve(apiKey);
+    if (!keyP) keyP = origFetch('https://' + DBH + '/ownerAuth/apiKey.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (k) { apiKey = (typeof k === 'string' && k) || null; return apiKey; }).catch(function () { return null; });
+    return keyP;
+  }
+  function refresh() {
+    if (!st || !st.refreshToken) return Promise.resolve(null);
+    return getKey().then(function (k) {
+      if (!k) return null;
+      return origFetch('https://securetoken.googleapis.com/v1/token?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(st.refreshToken) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j) { st = null; save(); note(); return null; }
+          st = { idToken: j.id_token, refreshToken: j.refresh_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000 - 60000, uid: j.user_id, keep: st.keep };
+          save(); return st.idToken;
+        }).catch(function () { return null; });
+    });
+  }
+  function token() { if (!st) return Promise.resolve(null); if (Date.now() < st.exp) return Promise.resolve(st.idToken); return refresh(); }
+  // add the owner token to every database request this page makes
+  window.fetch = function (input, init) {
+    var isStr = typeof input === 'string', url = isStr ? input : (input && input.url) || '';
+    if (!st || url.indexOf(DBH) < 0 || /[?&](auth|access_token)=/.test(url) || !isStr) return origFetch(input, init);
+    return token().then(function (t) {
+      var u = t ? url + (url.indexOf('?') < 0 ? '?' : '&') + 'auth=' + encodeURIComponent(t) : url;
+      return origFetch(u, init).then(function (r) {
+        if (r.status === 401 && init && init.method && init.method !== 'GET') banner('The database refused that change. Sign in as owner (bottom right) and try again.');
+        return r;
+      });
+    });
+  };
+  function signIn(email, pw, keep) {
+    return getKey().then(function (k) {
+      if (!k) throw new Error('Owner sign-in is not set up yet. Run owner-setup.sh on the Mac first.');
+      return origFetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pw, returnSecureToken: true }) })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j && j.error && /PASSWORD|EMAIL|INVALID|CREDENTIAL/i.test(j.error.message || '') ? 'That email or password is not right.' : 'Sign-in did not work. Try again.'); return j; }); });
+    }).then(function (j) {
+      st = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) || 3600) * 1000 - 60000, uid: j.localId, keep: !!keep };
+      save(keep); note(); return st;
+    });
+  }
+  function signOut() { st = null; lockKey = null; lockSalt = null; try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (e) {} save(); note(); }
+  // ---- tiny UI: a button bottom right + a sign-in box
+  var btn = null, bar = null;
+  function render() {
+    if (!document.body) return;
+    if (!btn) {
+      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'ownerAuthBtn';
+      btn.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147482000;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#0d1d33;color:#fff;font:700 13px system-ui,sans-serif;cursor:pointer;display:none;';
+      btn.addEventListener('click', function () { if (st) menu(); else if (hasLock()) unlockUI(); else dialog(); });
+      document.body.appendChild(btn);
+    }
+    getKey().then(function (k) {
+      if (!k) { btn.style.display = 'none'; return; }
+      btn.style.display = 'block';
+      btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
+      btn.setAttribute('aria-label', st ? 'Owner signed in. Open the owner menu' : 'Owner sign-in'); btn.title = st ? 'Owner signed in' : 'Owner sign-in';
+      btn.style.background = st ? '#0f5d34' : '#7a2a00';
+    });
+  }
+  function banner(text) {
+    if (!document.body) return;
+    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; dialog(); }); document.body.appendChild(bar); }
+    bar.textContent = text; bar.style.display = 'block'; setTimeout(function () { if (bar) bar.style.display = 'none'; }, 9000);
+  }
+  function dialog() {
+    var back = document.createElement('div');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and rewards with this login.</p>' +
+      '<label style="display:block;font-weight:700;margin:6px 0 3px;" for="oaEmail">Email</label><input id="oaEmail" type="email" autocomplete="username" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
+      '<label style="display:block;font-weight:700;margin:10px 0 3px;" for="oaPw">Password</label><input id="oaPw" type="password" autocomplete="current-password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
+      '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13.5px;color:#9fb3c8;"><input id="oaKeep" type="checkbox"> Stay signed in on this Mac</label>' +
+      '<p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p>' +
+      '<div style="display:flex;gap:8px;"><button type="button" id="oaNo" style="flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;">Cancel</button><button type="submit" style="flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;">Sign in</button></div></form>';
+    document.body.appendChild(back);
+    var f = back.querySelector('form'), msg = back.querySelector('#oaMsg');
+    back.querySelector('#oaEmail').focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault(); msg.style.color = '#9fb3c8'; msg.textContent = 'Signing in…';
+      signIn(back.querySelector('#oaEmail').value.trim(), back.querySelector('#oaPw').value, back.querySelector('#oaKeep').checked)
+        .then(function () { back.remove(); if (back.querySelector('#oaKeep').checked && !hasLock()) pinSetup(); }).catch(function (er) { msg.style.color = '#ff9a9a'; msg.textContent = er.message || 'Sign-in did not work.'; });
+    });
+  }
+
+  // ---- QUICK-UNLOCK PIN (this device only). Real security stays the email + password login; the PIN just saves typing on a device you trust.
+  // The saved sign-in is encrypted with the PIN (AES-GCM, key from PBKDF2 250,000 rounds) and never stored in plain text. 5 wrong PINs erase it
+  // and ask for the email and password again. The PIN itself is never stored or sent anywhere. Use 6 to 8 digits.
+  var enc = new TextEncoder(), dec = new TextDecoder();
+  function b64(a) { var u = new Uint8Array(a), r = ''; for (var i = 0; i < u.length; i++) r += String.fromCharCode(u[i]); return btoa(r); }
+  function unb64(x) { var b = atob(x), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function deriveKey(pin, salt) {
+    return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']).then(function (k) {
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 250000, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function lockSave() {
+    if (!lockKey || !st || !st.refreshToken) return Promise.resolve();
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, lockKey, enc.encode(JSON.stringify({ refreshToken: st.refreshToken, uid: st.uid }))).then(function (ct) {
+      try { localStorage.setItem(LOCK, JSON.stringify({ s: b64(lockSalt), i: b64(iv), c: b64(ct) })); localStorage.removeItem(KEEP); } catch (e) {}
+    });
+  }
+  function shell(title, intro) {
+    var back = document.createElement('div');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;"></h3><p class="oaIntro" style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;"></p><div class="oaBody"></div><p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p><div class="oaBtns" style="display:flex;gap:8px;"></div></form>';
+    back.querySelector('h3').textContent = title; back.querySelector('.oaIntro').textContent = intro;
+    document.body.appendChild(back); return back;
+  }
+  var PINSTYLE = 'width:100%;padding:12px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:22px;letter-spacing:.3em;text-align:center;box-sizing:border-box;';
+  var BTN1 = 'flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;', BTN2 = 'flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;';
+  function pinSetup() {
+    var back = shell('Quick-unlock PIN', 'Optional. Next time on this device you only type this PIN instead of your email and password. Use 6 to 8 digits you will remember.');
+    back.querySelector('.oaBody').innerHTML = '<input id="oaP1" aria-label="PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '"><input id="oaP2" aria-label="Same PIN again" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Same PIN again" style="' + PINSTYLE + 'margin-top:8px;">';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Skip</button><button type="submit" style="' + BTN2 + '">Save PIN</button>';
+    var msg = back.querySelector('#oaMsg'); back.querySelector('#oaP1').focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    back.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault(); var a = back.querySelector('#oaP1').value, b = back.querySelector('#oaP2').value;
+      if (!/^\d{6,8}$/.test(a)) { msg.textContent = 'Use 6 to 8 digits, numbers only.'; return; }
+      if (a !== b) { msg.textContent = 'The two PINs do not match.'; return; }
+      if (!window.crypto || !crypto.subtle) { msg.textContent = 'This browser cannot do it. Keep using your email and password.'; return; }
+      msg.style.color = '#9fb3c8'; msg.textContent = 'Saving…';
+      lockSalt = crypto.getRandomValues(new Uint8Array(16));
+      deriveKey(a, lockSalt).then(function (k) { lockKey = k; return lockSave(); }).then(function () { try { localStorage.setItem(TRIES, '0'); } catch (er) {} save(); back.remove(); banner('Quick-unlock PIN saved on this device.'); render(); })
+        .catch(function () { lockKey = null; msg.style.color = '#ff9a9a'; msg.textContent = 'Could not save the PIN. Keep using your email and password.'; });
+    });
+  }
+  function unlockUI() {
+    if (document.getElementById('oaUnlock') || !hasLock()) return;
+    var back = shell('Enter your PIN', 'Owner quick-unlock for this device.'); back.id = 'oaUnlock';
+    back.querySelector('.oaBody').innerHTML = '<input id="oaPin" aria-label="PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '">';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Use email and password</button><button type="submit" style="' + BTN2 + '">Unlock</button>';
+    var msg = back.querySelector('#oaMsg'), inp = back.querySelector('#oaPin'); inp.focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); dialog(); });
+    back.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault(); var pin = inp.value, blob = null;
+      try { blob = JSON.parse(localStorage.getItem(LOCK) || 'null'); } catch (er) {}
+      if (!blob || !/^\d{6,8}$/.test(pin)) { msg.textContent = 'Enter your 6 to 8 digit PIN.'; return; }
+      msg.style.color = '#9fb3c8'; msg.textContent = 'Checking…';
+      deriveKey(pin, unb64(blob.s)).then(function (k) {
+        return crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(blob.i) }, k, unb64(blob.c)).then(function (pt) {
+          var p = JSON.parse(dec.decode(pt)); lockKey = k; lockSalt = unb64(blob.s);
+          st = { idToken: null, refreshToken: p.refreshToken, exp: 0, uid: p.uid, keep: true };
+          try { localStorage.setItem(TRIES, '0'); } catch (er) {}
+          return refresh().then(function (t) {
+            if (!t) { try { localStorage.removeItem(LOCK); } catch (er) {} lockKey = null; st = null; back.remove(); banner('Your saved sign-in has expired. Sign in with your email and password.'); dialog(); return; }
+            back.remove(); note();
+          });
+        });
+      }).catch(function () {
+        var n = 0; try { n = (Number(localStorage.getItem(TRIES)) || 0) + 1; localStorage.setItem(TRIES, String(n)); } catch (er) {}
+        if (n >= 5) { try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} back.remove(); banner('Too many wrong PINs. The saved sign-in was erased. Use your email and password.'); dialog(); }
+        else { msg.style.color = '#ff9a9a'; msg.textContent = 'That PIN is not right (' + (5 - n) + ' tries left).'; inp.value = ''; inp.focus(); }
+      });
+    });
+  }
+  function menu() {
+    var back = shell('Owner signed in', hasLock() ? 'Quick-unlock PIN is on for this device.' : 'Quick-unlock PIN is off for this device.');
+    back.querySelector('.oaBtns').style.flexDirection = 'column';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaPinBtn" style="' + BTN2 + '">' + (hasLock() ? 'Change the quick-unlock PIN' : 'Set a quick-unlock PIN') + '</button>' +
+      (hasLock() ? '<button type="button" id="oaPinOff" style="' + BTN1 + '">Remove the quick-unlock PIN</button>' : '') +
+      '<button type="button" id="oaOut" style="' + BTN1 + '">Sign out</button><button type="button" id="oaNo" style="' + BTN1 + '">Close</button>';
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    back.querySelector('#oaOut').addEventListener('click', function () { back.remove(); signOut(); });
+    back.querySelector('#oaPinBtn').addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); } catch (er) {} lockKey = null; pinSetup(); });
+    var off = back.querySelector('#oaPinOff'); if (off) off.addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} lockKey = null; save(true); banner('Quick-unlock PIN removed. This device will ask for your email and password.'); });
+  }
+  window.OWNER_AUTH = { signedIn: function () { return !!st; }, uid: function () { return st && st.uid; }, signIn: signIn, signOut: signOut, dialog: dialog, onChange: function (f) { listeners.push(f); } };
+  function boot() { render(); if (!st && hasLock()) unlockUI(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  // a signed-in token that is older than its life is renewed in the background
+  setInterval(function () { if (st && Date.now() > st.exp - 120000) refresh(); }, 120000);
+})();
+</script>
+<!--OWNER-AUTH-END-->
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Outreach | Key Technologies.si</title>
+<meta name="description" content="Owner tool: send the day's Instagram messages, see who to check in with, and keep track of every business.">
+<meta name="theme-color" content="#0f171e">
+<link rel="stylesheet" href="/fonts/lato.css">
+<style>
+:root{--bg:#0f171e;--card:#232f3e;--card2:#1a2430;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--key:#00a8e1;--ok:#5fd38d;--warn:#f3d884;--bad:#ff8a7a}
+*{box-sizing:border-box}
+html,body{margin:0;background:#0b1117;color:var(--ink);font:400 16px/1.45 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:#0b1117 radial-gradient(110% 380px at 50% 0,#17303f 0,#0b1117 100%) no-repeat;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+body.lock{overflow:hidden}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 20px}
+.brand{text-align:center;font-size:11px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;color:var(--key)}
+h1{margin:6px 0 12px;text-align:center;font-size:26px;line-height:1.1;font-weight:900}
+h2{margin:18px 0 8px;font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--key)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 15px;margin:0 0 12px}
+.today{padding:15px}
+.big{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.big b{font-size:34px;line-height:1;font-weight:900}
+.big span{font-size:14px;color:var(--dim)}
+.bar{height:10px;border-radius:9px;background:#0f171e;border:1px solid var(--line);margin:10px 0 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#1a8be0,#4fc3f0);border-radius:9px;transition:width .4s}
+.bar.done i{background:linear-gradient(90deg,#3fb56f,#5fd38d)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0 0}
+.chip{font-size:12.5px;font-weight:800;padding:5px 10px;border-radius:99px;border:1px solid var(--line);color:var(--dim);background:var(--card2)}
+.chip.on{color:#06222f;background:var(--key);border-color:var(--key)}
+.lead{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin:0 0 8px;min-height:62px;cursor:pointer}
+.lead:active{background:#2b3a4c}
+.lead .t{flex:1 1 auto;min-width:0}
+.lead .t b{display:block;font-size:16.5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lead .t small{display:block;font-size:13px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.go{flex:none;min-width:84px;text-align:center;font-weight:900;font-size:14px;color:#06222f;background:linear-gradient(#4fc3f0,#00a8e1);border-radius:11px;padding:11px 12px}
+.go.soft{color:var(--ink);background:transparent;border:1.5px solid var(--line)}
+.pill{display:inline-block;font-size:11.5px;font-weight:900;letter-spacing:.04em;padding:3px 9px;border-radius:99px;border:1px solid currentColor}
+.empty{padding:20px 12px;text-align:center;color:var(--dim);font-size:15px}
+label{display:block;margin:12px 0 4px;font-size:13px;font-weight:700;color:var(--dim)}
+label:first-child{margin-top:0}
+input,textarea,select{width:100%;font:inherit;color:var(--ink);background:#0f171e;border:1px solid var(--line);border-radius:11px;padding:12px 13px;min-height:48px}
+textarea{min-height:110px;line-height:1.45;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--key);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:380px){.row{grid-template-columns:1fr}}
+.note{margin:6px 0 0;font-size:12.5px;color:var(--dim)}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;margin:10px 0 0;padding:0 14px;border:0;border-radius:13px;font:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#06222f;background:linear-gradient(#4fc3f0,#00a8e1);text-decoration:none;text-align:center}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.green{background:linear-gradient(#7fe3a6,#4fc784)}
+.btn.sm{width:auto;min-height:40px;margin:0;padding:0 14px;font-size:14px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 0}
+.btns .btn{margin:0;min-height:46px;font-size:14px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.tab{font:inherit;font-weight:800;font-size:13px;color:var(--dim);background:var(--card2);border:1px solid var(--line);border-radius:10px;min-height:44px;padding:0 6px;cursor:pointer}
+.tab[aria-pressed="true"]{color:#06222f;background:var(--key);border-color:var(--key)}
+.phone{background:#0b1117;border:1px solid var(--line);border-radius:22px;padding:13px 12px 14px}
+.who{text-align:center;font-size:12.5px;font-weight:800;color:var(--dim);margin:0 0 10px}
+.b{max-width:88%;margin:0 0 6px auto;padding:10px 13px;border-radius:20px 20px 6px 20px;background:linear-gradient(135deg,#1a8be0,#0a6fb8);color:#fff;font-size:15.5px;line-height:1.38;white-space:pre-wrap;overflow-wrap:anywhere}
+.part{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0 0}
+.part small{color:var(--dim);font-size:12px}
+.cnt{margin:6px 0 0;font-size:13px;font-weight:700;color:var(--ok)}
+.cnt.split{color:var(--warn)}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;gap:10px;padding:8px 0;border-top:1px solid rgba(55,71,90,.6);font-size:14px}
+.tl li:first-child{border-top:0}
+.tl time{flex:none;width:122px;color:var(--dim);font-size:12.5px;font-variant-numeric:tabular-nums}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(15,23,30,.97);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(8px)}
+nav div{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+nav button{font:inherit;font-weight:800;font-size:13px;color:var(--dim);background:transparent;border:0;border-radius:12px;min-height:54px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative}
+nav button svg{width:22px;height:22px}
+nav button[aria-current="page"]{color:var(--key);background:rgba(0,168,225,.12)}
+nav .dot{position:absolute;top:5px;right:calc(50% - 22px);min-width:18px;height:18px;border-radius:9px;background:#ff6b5b;color:#fff;font-size:11px;font-weight:900;line-height:18px;text-align:center;padding:0 4px}
+.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,8,12,.72)}
+.sheet[hidden]{display:none}
+.panel{width:100%;max-width:560px;max-height:93vh;max-height:93dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#16212d;border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;padding:14px 16px calc(24px + env(safe-area-inset-bottom))}
+.grab{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px}
+.grab h3{margin:0;font-size:21px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.x{flex:none;font:inherit;font-size:15px;font-weight:900;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:11px;min-height:44px;padding:0 14px;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;max-width:92%;background:#e9f9ef;color:#0d3a1f;font-weight:900;font-size:15px;padding:12px 18px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.toast[hidden]{display:none}
+.banner{background:#33290f;border:1px solid #7a6420;color:#f3e2a6;border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px}
+.banner .btn{margin-top:8px;min-height:44px;font-size:14px;background:#f3d884}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat small{display:block;font-size:11.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.stat b{display:block;font-size:28px;line-height:1.15;font-weight:900;color:var(--key)}
+.chart{display:flex;align-items:flex-end;gap:4px;height:96px;margin:6px 0 0}
+.chart i{flex:1;background:linear-gradient(#4fc3f0,#0a6fb8);border-radius:4px 4px 0 0;min-height:2px}
+.chart.l{height:auto;justify-content:space-between;color:var(--dim);font-size:11.5px;margin-top:4px}
+.fine{font-size:12.5px;color:var(--dim);line-height:1.45}
+#ownerAuthBtn{bottom:calc(76px + env(safe-area-inset-bottom))!important;right:10px!important;padding:8px 12px!important;font-size:12px!important;opacity:.95}
+.sync{text-align:center;font-size:12.5px;min-height:18px;margin:-6px 0 10px;color:var(--dim)}
+.sel{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.tog{display:flex;align-items:center;gap:10px;margin:10px 0 0;font-size:14px;color:var(--ink);min-height:44px}
+.tog input{width:24px;height:24px;min-height:0;flex:none;accent-color:#00a8e1}
+.prow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(55,71,90,.6)}
+.prow:first-child{border-top:0}
+.prow .t{flex:1 1 auto;min-width:0}
+.prow .t b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .t small{display:block;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modesw{display:flex;gap:0;margin:10px auto 4px;max-width:420px;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;overflow:hidden}
+.modesw button{flex:1;min-height:44px;padding:0 10px;border:0;background:none;color:#fff;font:800 13.5px Lato,system-ui,sans-serif;cursor:pointer}
+.modesw button[aria-pressed="true"]{background:linear-gradient(140deg,#f6d467,#e6b83a 55%,#d7a21e);color:#2b1d05}
+.modenote{text-align:center;font-size:12.5px;color:var(--dim);margin:0 auto 6px;max-width:420px}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div style="text-align:center;margin:0 0 6px"><a href="key-room.html" style="color:#aab9ca;font:700 13px Lato,system-ui,sans-serif;text-decoration:none">&larr; Key Tech room</a></div>
+ <div class="brand" id="brandt">Key Technologies</div>
+ <div class="modesw" role="group" aria-label="Which business are you marketing?"><button type="button" id="mkt">Market Key Technologies</button><button type="button" id="mlv">Market Las Vegas Restaurants</button></div>
+ <div class="modenote" id="modenote"></div>
+ <h1 id="h1">Outreach</h1>
+ <div class="sync" id="syncl" aria-live="polite"></div>
+ <div id="view"></div>
+</div>
+<nav aria-label="Pages"><div id="nav"></div></nav>
+<div class="sheet" id="sheet" hidden><div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="stitle"></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+(function(){
+'use strict';
+var MODE='kt';try{if(localStorage.getItem('outreachMode')==='lvr')MODE='lvr'}catch(e){}
+var LS=MODE==='lvr'?'outreachLVR1':'outreachV1',DAY=864e5,FOLLOW_DAYS=3,MAX_FOLLOW=2,CLOSE_DAYS=4,SAFE=900; /* Instagram refuses very long messages (about 1,000 characters), so every part stays under 900 */
+var DEF_KT={
+ open:"Hey {first}, Las Vegas Restaurants here. I also run Key Technologies (keytechnologies.si), where we help local businesses use AI/SI: an AI receptionist that answers calls and texts, websites and apps, and small custom tools that cut the busywork. I would like to give {name} a free look at where it could help. Worth a quick chat?",
+ follow:"Hey {first}, circling back on my note about Key Technologies and {name}. No pressure. The free review is a short call where I look at how {name} runs today and point out where AI/SI could realistically help. If it is not a fit, just tell me and I will not bug you. If it is, what day works?",
+ ask:"Good question, {first}. It depends on what {name} needs. Some businesses start with an AI receptionist for calls and texts, others with a better website or a small custom tool. The quickest way is a short free call, and I will tell you exactly what it would look like. Does tomorrow or the day after work? You can also see more at keytechnologies.si"
+};
+var DEF_LVR={
+ open:"Hey {first}, Las Vegas Restaurants here. We would love to get {name} in front of our Las Vegas followers. Do you have a minute to talk about how we can work together?",
+ follow:"Hey {first}, circling back on my note about {name} and Las Vegas Restaurants. No pressure at all. If it is not a fit, just tell me and I will not bug you. If it is, I am happy to find a time that works for you.",
+ ask:"Fair question, {first}. It depends on what {name} needs, so the quickest way is a short call. Does tomorrow or the day after work? Then I can tell you exactly what it would look like."
+};
+var DEF=MODE==='lvr'?DEF_LVR:DEF_KT;
+var MSGN={open:'First hello',follow:'Check in',ask:'Answer'};
+var ST={new:['Not messaged yet','#aab9ca'],sent:['Waiting for a reply','#f3d884'],replied:['They replied','#5fd38d'],call:['Call booked','#4fc3f0'],won:['Client','#5fd38d'],no:['Not interested','#ff8a7a'],cold:['No answer','#8a97a8']};
+var D=load(),canSave=true,tab='today',filter='all',q='',lastFocus=null;
+function blank(){return {v:1,goal:25,msgs:{},nextId:1,lastBackup:0,leads:[],removed:[]}}
+function load(){try{var o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&Array.isArray(o.leads)){var b=blank();for(var k in o)b[k]=o[k];if(!Array.isArray(b.removed))b.removed=[];b.leads.forEach(function(l){if(!l.key)l.key='m'+l.id+'x'+(+l.t||0).toString(36)});return b}}catch(e){}return blank()}
+function save(noSync){try{localStorage.setItem(LS,JSON.stringify(D));canSave=true}catch(e){canSave=false}if(!noSync)scheduleFlush()}
+function $(i){return document.getElementById(i)}
+function h(tag,a){var e=document.createElement(tag);a=a||{};for(var k in a){var v=a[k];if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,'');else if(v!==false&&v!=null)e.setAttribute(k,v)}
+ for(var i=2;i<arguments.length;i++)add(e,arguments[i]);return e}
+function add(e,c){if(c==null||c===false)return;if(Array.isArray(c)){c.forEach(function(x){add(e,x)});return}e.appendChild(typeof c==='string'?document.createTextNode(c):c)}
+function clean(s){return String(s==null?'':s).replace(/[\u0000-\u001f\u007f\u200b-\u200f\u2028\u2029\ufeff]/g,' ').replace(/\s+/g,' ').trim()}
+function handle(s){s=clean(s).replace(/^(https?:\/\/)?(www\.)?instagram\.com\//i,'').replace(/^@/,'').split(/[\/?#\s]/)[0];return s.replace(/[^A-Za-z0-9._]/g,'').slice(0,30)}
+function shorten(raw){
+ var n=clean(raw);if(!n)return '';
+ n=n.replace(/\([^)]*\)/g,' ');
+ n=n.split(/\s[-–—|@•:]\s|,|\sat\s|\sby\s/i)[0];
+ var tail=/\s+(llc|l\.l\.c\.|inc\.?|corp\.?|co\.|ltd\.?|las vegas|lv|nv|nevada|the strip|restaurant|restaurants|bar & grill|bar and grill|kitchen & bar|kitchen and bar|& bar|and bar)\.?$/i,g=0,m;
+ while(g++<6&&(m=n.match(tail))){var t=n.replace(tail,'').trim();if(t.length<3)break;n=t}
+ n=clean(n);
+ if(n.length>26){var w=n.split(' '),o='';for(var i=0;i<w.length;i++){var x=(o?o+' ':'')+w[i];if(x.length>26)break;o=x}n=o||n.slice(0,26)}
+ return n;
+}
+function tmpl(k){return typeof D.msgs[k]==='string'?D.msgs[k]:DEF[k]}
+function fill(l,t){return t.replace(/\{name\}/gi,l.short||shorten(l.name)||'your place').replace(/\{first\}/gi,clean(l.first)||'there')}
+function sentences(t){var out=[],re=/[^.!?\n]+[.!?]*["')]*\s*|\n+/g,m;while((m=re.exec(t)))out.push(m[0]);return out}
+function split(t){
+ t=t.replace(/[ \t]+\n/g,'\n').trim();if(t.length<=SAFE)return [t];
+ var parts=[],c='';function push(){if(c.trim())parts.push(c.trim());c=''}
+ sentences(t).forEach(function(s){
+  if(s.length>SAFE){push();s.split(' ').forEach(function(x){if((c+' '+x).length>SAFE)push();c+=(c?' ':'')+x});return}
+  if((c+s).length>SAFE)push();c+=s});
+ push();return parts;
+}
+function fmtT(t){return new Date(t).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit'})}
+function dayKey(t){var d=new Date(t);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function ago(t){var a=new Date(),b=new Date(t),n=Math.round((new Date(a.getFullYear(),a.getMonth(),a.getDate())-new Date(b.getFullYear(),b.getMonth(),b.getDate()))/DAY);return n<=0?'today':n===1?'yesterday':n+' days ago'}
+function find(id){for(var i=0;i<D.leads.length;i++)if(D.leads[i].id===id)return D.leads[i];return null}
+function lastSent(l){var t=0;l.ev.forEach(function(e){if(e.k==='sent'&&e.t>t)t=e.t});return t}
+function nSent(l,m){return l.ev.filter(function(e){return e.k==='sent'&&(!m||e.m===m)}).length}
+function status(l){
+ if(l.stage==='replied')return 'reply';if(l.stage==='new')return 'new';
+ if(l.stage==='sent'){var age=Date.now()-lastSent(l),f=nSent(l,'follow');if(f<MAX_FOLLOW&&age>=FOLLOW_DAYS*DAY)return 'due';if(f>=MAX_FOLLOW&&age>=CLOSE_DAYS*DAY)return 'close';return 'wait'}
+ return 'other';
+}
+function ev(l,o){o.t=Date.now();l.ev.push(o);save()}
+function addLead(name,first,ig,type,note,extra){
+ name=clean(name);if(!name)return {err:'Type the business name.'};
+ ig=handle(ig);var sh=shorten(name).toLowerCase();
+ for(var i=0;i<D.leads.length;i++){var x=D.leads[i];if((extra&&extra.key&&x.key===extra.key)||(ig&&x.ig&&x.ig.toLowerCase()===ig.toLowerCase())||(x.short||'').toLowerCase()===sh)return {err:x.name+' is already on your list.',dup:true}}
+ var l={id:D.nextId++,key:(extra&&extra.key)||('m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),name:name,short:shorten(name),first:clean(first),ig:ig,type:clean(type),note:clean(note),stage:'new',t:Date.now(),ev:[{t:Date.now(),k:'added'}]};
+ if(extra&&extra.adv!=null)l.adv=extra.adv;
+ D.leads.unshift(l);if(!(extra&&extra.nosave))save();return {lead:l};
+}
+function logSent(l,key,parts){
+ ev(l,{k:'sent',m:key,n:parts>1?parts+' parts':''});
+ if(l.stage==='new'||l.stage==='cold')l.stage='sent';
+ save();
+}
+function setStage(l,s){l.stage=s;ev(l,{k:'stage',s:s})}
+function toast(m){var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.i);toast.i=setTimeout(function(){t.hidden=true},2600)}
+function copy(p,bt,label){
+ function done(){bt.textContent='Copied ✓';setTimeout(function(){bt.textContent=label},1600)}
+ function fb(){var t=document.createElement('textarea');t.value=p;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.focus();t.select();try{document.execCommand('copy');done()}catch(e){bt.textContent='Press and hold the text'}document.body.removeChild(t)}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(p).then(done,fb)}else fb();
+}
+/* ---------- database: sign-in, sync, and your LVR list ---------- */
+var DBU='https://lvr-data-a60c1-default-rtdb.firebaseio.com',SYNC=MODE==='lvr'?'/kt_crm/dm_outreach_lvr':'/kt_crm/dm_outreach',ADS='/dashboard_adv_crec',ADSDEL='/dashboard_adv_deleted',ADSFLAG='/dashboard/adv_flag_queue';
+var synced={},syncState='off',syncTimer=0,pulling=false,pool=null,poolBusy=false,poolErr='',poolCat='all',poolIg=true,poolQ='',poolShow=30,poolN=0;
+function isOwner(){return !!(window.OWNER_AUTH&&window.OWNER_AUTH.signedIn())}
+function dbReq(method,path,body){var o={method:method};if(body!==undefined){o.headers={'Content-Type':'application/json'};o.body=JSON.stringify(body)}
+ return fetch(DBU+path+'.json',o).then(function(r){if(!r.ok)throw new Error('db '+r.status);return method==='GET'?r.json():r})}
+function setSync(st){
+ syncState=st;var e=$('syncl');if(!e)return;
+ var T={off:'Saved on this phone only. Sign in as owner (bottom right) to save to your database.',saving:'Saving to your database…',ok:'Saved to your database ✓',err:'Could not reach the database. Everything is kept on this phone and will upload on the next try.',pull:'Loading from your database…'};
+ e.textContent=window.OWNER_AUTH?(T[st]||''):'';e.style.color=st==='ok'?'var(--ok)':st==='err'?'var(--bad)':'var(--dim)';
+}
+function normEv(e){return {t:+e.t,k:clean(e.k),m:clean(e.m),s:clean(e.s),n:clean(e.n)}}
+function pack(l){return {key:l.key,name:l.name,short:l.short||'',first:l.first||'',ig:l.ig||'',type:l.type||'',note:l.note||'',stage:l.stage,t:l.t,adv:l.adv==null?null:l.adv,ev:l.ev.map(normEv),u:l.u||l.t}}
+function sig(p){var q={};for(var k in p)q[k]=p[k];q.u=0;return JSON.stringify(q)}
+function scheduleFlush(){if(!isOwner())return;clearTimeout(syncTimer);syncTimer=setTimeout(flush,700)}
+function flush(){
+ if(!isOwner()||pulling)return Promise.resolve();
+ var jobs=[];
+ D.leads.forEach(function(l){if(!l.key)return;var p=pack(l),sg=sig(p);if(synced[l.key]===sg)return;l.u=Date.now();p.u=l.u;
+  jobs.push(dbReq('PUT',SYNC+'/'+l.key,p).then(function(){synced[l.key]=sg}))});
+ (D.removed||[]).slice().forEach(function(k){jobs.push(dbReq('DELETE',SYNC+'/'+k).then(function(){D.removed=D.removed.filter(function(x){return x!==k});delete synced[k]}))});
+ if(!jobs.length)return Promise.resolve();
+ setSync('saving');
+ return Promise.all(jobs).then(function(){save(true);setSync('ok')},function(){setSync('err')});
+}
+function derive(ev,fb){var st=null;ev.forEach(function(e){if(e.k==='added'){if(st==null)st='new'}else if(e.k==='stage'&&ST[e.s])st=e.s;else if(e.k==='sent'&&(st==null||st==='new'||st==='cold'))st='sent'});return st||(ST[fb]?fb:'new')}
+function normRemote(k,r){
+ if(!r||typeof r!=='object'||!clean(r.name))return null;
+ var ev=r.ev;if(ev&&!Array.isArray(ev))ev=Object.keys(ev).map(function(x){return ev[x]});
+ ev=(ev||[]).filter(function(e){return e&&+e.t}).map(normEv);
+ var l={key:k,name:clean(r.name),short:clean(r.short)||shorten(r.name),first:clean(r.first),ig:handle(r.ig),type:clean(r.type),note:clean(r.note),stage:ST[r.stage]?r.stage:'new',t:+r.t||Date.now(),ev:ev,u:+r.u||0};
+ if(r.adv!=null)l.adv=r.adv;l.stage=derive(ev,l.stage);return l;
+}
+function byKey(k){for(var i=0;i<D.leads.length;i++)if(D.leads[i].key===k)return D.leads[i];return null}
+function mergeInto(l,r){
+ var seen={},ev=[];l.ev.concat(r.ev).forEach(function(e){var x=normEv(e),id=x.t+'|'+x.k+'|'+x.m+'|'+x.s;if(!seen[id]){seen[id]=1;ev.push(x)}});
+ ev.sort(function(a,b){return a.t-b.t});
+ var nw=(r.u||0)>(l.u||0)?r:l;
+ l.ev=ev;['name','short','first','ig','type','note'].forEach(function(f){l[f]=nw[f]||''});
+ l.stage=derive(ev,nw.stage);if(l.adv==null&&r.adv!=null)l.adv=r.adv;l.u=Math.max(l.u||0,r.u||0);
+}
+function pull(){
+ if(!isOwner()||pulling)return Promise.resolve();
+ pulling=true;setSync('pull');
+ return dbReq('GET',SYNC).then(function(o){
+  o=o||{};var added=0,rm=D.removed||[];
+  Object.keys(o).forEach(function(k){
+   if(rm.indexOf(k)>=0)return;var r=normRemote(k,o[k]);if(!r)return;var l=byKey(k);
+   if(!l){r.id=D.nextId++;D.leads.push(r);added++}else mergeInto(l,r);
+   synced[k]=sig(pack(r))});
+  pulling=false;save(true);setSync('ok');render();
+  if(added)toast('Loaded '+added+' from your database');
+  return flush();
+ }).catch(function(){pulling=false;setSync('err')});
+}
+function loadPool(){
+ if(!isOwner()||poolBusy)return;poolBusy=true;poolErr='';render();
+ Promise.all([dbReq('GET',ADS),dbReq('GET',ADSDEL).catch(function(){return {}}),dbReq('GET',ADSFLAG).catch(function(){return {}})]).then(function(r){
+  var a=r[0]||{},del=r[1]||{},fl=r[2]||{},out=[];
+  Object.keys(a).forEach(function(k){var x=a[k];if(!x||typeof x!=='object'||del[k]||fl[k])return;var name=clean(x.name);if(!name)return;
+   var num=x.num!=null?x.num:k,kk=String(num).replace(/[^A-Za-z0-9_-]/g,'');if(!kk)return;
+   out.push({key:'a'+kk,num:num,name:name,cat:clean(x.cat||x.category)||'Other',ig:handle(x.ig),owner:clean(x.owner)})});
+  out.sort(function(x,y){return x.name.localeCompare(y.name)});pool=out;poolBusy=false;render();
+ }).catch(function(){poolBusy=false;poolErr='Could not load the list. Check your connection and that you are signed in as owner.';render()});
+}
+function ownerFirst(o){
+ o=clean(o).replace(/^(dr|mr|mrs|ms|atty|attorney|prof)\.?\s+/i,'');var w=o.split(' ');
+ if(w.length<2||w.length>3||!/^[A-Za-z][A-Za-z'\-]{1,15}$/.test(w[0]))return '';
+ if(/\b(law|firm|group|llc|inc|dental|clinic|center|centre|associates|company|services|realty|team|and|&)\b/i.test(o))return '';
+ return w[0].charAt(0).toUpperCase()+w[0].slice(1).toLowerCase();
+}
+function have(){var k={},g={},n={};D.leads.forEach(function(l){k[l.key]=1;if(l.ig)g[l.ig.toLowerCase()]=1;n[(l.short||'').toLowerCase()]=1});return {k:k,g:g,n:n}}
+function inList(p,hv){return !!(hv.k[p.key]||(p.ig&&hv.g[p.ig.toLowerCase()])||hv.n[shorten(p.name).toLowerCase()])}
+function addFromPool(p){return addLead(p.name,ownerFirst(p.owner),p.ig,p.cat,'',{key:p.key,adv:p.num,nosave:true})}
+if(window.OWNER_AUTH)window.OWNER_AUTH.onChange(function(){if(isOwner()){pull()}else{setSync('off')}render()});
+window.addEventListener('online',function(){scheduleFlush()});
+/* ---------- counts ---------- */
+function sentToday(){var k=dayKey(Date.now()),n=0;D.leads.forEach(function(l){l.ev.forEach(function(e){if(e.k==='sent'&&dayKey(e.t)===k)n++})});return n}
+function lists(){
+ var o={reply:[],due:[],close:[],neu:[]};
+ D.leads.forEach(function(l){var s=status(l);if(s==='reply')o.reply.push(l);else if(s==='due')o.due.push(l);else if(s==='close')o.close.push(l);else if(s==='new')o.neu.push(l)});
+ o.reply.sort(function(a,b){return a.ev[a.ev.length-1].t-b.ev[b.ev.length-1].t});
+ o.due.sort(function(a,b){return lastSent(a)-lastSent(b)});
+ o.neu.sort(function(a,b){return a.t-b.t});
+ return o;
+}
+/* ---------- chrome ---------- */
+var ICON={
+ today:'<path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
+ add:'<path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
+ all:'<path d="M5 7h14M5 12h14M5 17h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
+ more:'<circle cx="6" cy="12" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor"/><circle cx="18" cy="12" r="1.9" fill="currentColor"/>'
+};
+function nav(){
+ var L=lists(),dot=L.reply.length+L.due.length,nv=$('nav');nv.textContent='';
+ [['today','Today'],['add','Add'],['all','Everyone'],['more','More']].forEach(function(x){
+  var b=h('button',{type:'button','aria-current':tab===x[0]?'page':false,onclick:function(){tab=x[0];q='';render();window.scrollTo(0,0)}});
+  var s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');s.innerHTML=ICON[x[0]];
+  b.appendChild(s);b.appendChild(document.createTextNode(x[1]));
+  if(x[0]==='today'&&dot)b.appendChild(h('span',{class:'dot',text:String(dot)}));
+  nv.appendChild(b)});
+}
+function modeUI(){
+ var k=$('mkt'),l=$('mlv');if(!k)return;
+ k.setAttribute('aria-pressed',MODE==='kt'?'true':'false');l.setAttribute('aria-pressed',MODE==='lvr'?'true':'false');
+ $('modenote').textContent=MODE==='kt'?'Selling Key Technologies. Messages go out from the Las Vegas Restaurants Instagram. This list is kept separate.':'Promoting Las Vegas Restaurants. This list is kept separate from the Key Technologies one.';
+ $('brandt').textContent=MODE==='kt'?'Key Technologies':'Las Vegas Restaurants';
+ if(!k.dataset.on){k.dataset.on='1';
+  [['mkt','kt'],['mlv','lvr']].forEach(function(x){$(x[0]).addEventListener('click',function(){if(MODE===x[1])return;try{localStorage.setItem('outreachMode',x[1])}catch(e){}location.reload()})})}
+}
+function render(){
+ var v=$('view');v.textContent='';nav();modeUI();
+ $('h1').textContent={today:'Today',add:'Add businesses',all:'Everyone',more:'Numbers and settings'}[tab];
+ ({today:vToday,add:vAdd,all:vAll,more:vMore})[tab](v);
+
+ if(!isOwner()&&syncState!=='off')setSync('off');else setSync(syncState);
+ if(!canSave)v.insertBefore(h('div',{class:'banner',text:'This browser is not saving. Turn off private browsing, or your list will be lost.'}),v.firstChild);
+}
+/* ---------- Today ---------- */
+function leadRow(l,label,soft,sub){
+ var s=ST[l.stage];
+ return h('button',{type:'button',class:'lead',onclick:function(){openLead(l.id)}},
+  h('span',{class:'t'},h('b',{text:l.short||l.name}),h('small',{text:sub})),
+  h('span',{class:'go'+(soft?' soft':''),text:label}));
+}
+function subFor(l){
+ var ig=l.ig?'@'+l.ig:'no Instagram name yet';
+ if(l.stage==='new')return ig+' · added '+ago(l.t);
+ if(l.stage==='replied')return ig+' · they replied';
+ var ls=lastSent(l);return ig+(ls?' · messaged '+ago(ls):'');
+}
+function vToday(v){
+ var L=lists(),n=sentToday(),g=Math.max(1,+D.goal||25),pc=Math.min(100,Math.round(n/g*100));
+ var hd=h('div',{class:'card today'},
+  h('div',{class:'big'},h('b',{text:n+' of '+g}),h('span',{text:'messages sent today'})),
+  h('div',{class:'bar'+(n>=g?' done':'')},h('i',{style:'width:'+pc+'%'})),
+  h('div',{class:'chips'},
+   h('span',{class:'chip',text:L.reply.length+' to answer'}),
+   h('span',{class:'chip',text:L.due.length+' check-ins due'}),
+   h('span',{class:'chip',text:L.neu.length+' ready for a first hello'})));
+ v.appendChild(hd);
+ if(n>=g)v.appendChild(h('div',{class:'banner',style:'background:#0f2c1d;border-color:#2f7d52;color:#b9efcf',text:'Daily goal reached. Nice work.'}));
+ var bk=D.leads.length&&(!D.lastBackup||Date.now()-D.lastBackup>7*DAY);
+ if(bk){var bn=h('div',{class:'banner'},h('div',{text:'Your list lives on this phone. Save a backup copy so it is never lost.'}),h('button',{type:'button',class:'btn',text:'Download a backup',onclick:function(){backup();render()}}));v.appendChild(bn)}
+ if(!D.leads.length){v.appendChild(h('div',{class:'card'},h('div',{class:'empty',text:'Nothing here yet. Add the businesses you want to message, then come back.'}),h('button',{type:'button',class:'btn',text:'Add businesses',onclick:function(){tab='add';render()}})));return}
+ function sec(t,arr,label,soft,max){
+  if(!arr.length)return;v.appendChild(h('h2',{text:t+' ('+arr.length+')'}));
+  arr.slice(0,max||99).forEach(function(l){v.appendChild(leadRow(l,label,soft,subFor(l)))});
+  if(max&&arr.length>max)v.appendChild(h('button',{type:'button',class:'btn ghost',text:'Show all '+arr.length,onclick:function(){filter='new';tab='all';render()}}));
+ }
+ sec('Answer them',L.reply,'Answer');
+ sec('Check in today',L.due,'Check in');
+ sec('Send a first hello',L.neu,'Send',false,12);
+ sec('No answer, close it out',L.close,'Close',true);
+ if(!L.reply.length&&!L.due.length&&!L.neu.length&&!L.close.length)v.appendChild(h('div',{class:'card'},h('div',{class:'empty',text:'You are all caught up. Add more businesses to keep going.'})));
+}
+/* ---------- Add ---------- */
+function poolCard(v){
+ var c=h('div',{class:'card'});v.appendChild(c);
+ c.appendChild(h('div',{class:'step',style:'margin:0 0 8px;font-size:11.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--key)',text:'From your LVR list'}));
+ if(!window.OWNER_AUTH){c.appendChild(h('p',{class:'note',text:'Owner sign-in is not available on this page.'}));return}
+ if(!isOwner()){
+  c.appendChild(h('p',{class:'tip',style:'margin:0',text:'Sign in as owner to pull businesses straight from your LVR advertiser list. Nothing from the list is ever saved on this page for strangers to see.'}));
+  c.appendChild(h('button',{type:'button',class:'btn',text:'Sign in as owner',onclick:function(){window.OWNER_AUTH.dialog()}}));return}
+ if(poolBusy){c.appendChild(h('p',{class:'note',text:'Loading your LVR list…'}));return}
+ if(!pool){
+  if(poolErr)c.appendChild(h('p',{class:'note',style:'color:var(--bad)',text:poolErr}));
+  c.appendChild(h('button',{type:'button',class:'btn',style:poolErr?'':'margin-top:0',text:poolErr?'Try again':'Load my LVR list',onclick:loadPool}));
+  if(!poolErr)setTimeout(loadPool,0);return}
+ var sum=h('p',{class:'note',style:'margin:0 0 4px'}),cs=h('select',{'aria-label':'Kind of business'}),sq=h('input',{type:'search',placeholder:'Search the list',value:poolQ,'aria-label':'Search the LVR list',autocomplete:'off'}),
+  tg=h('input',{type:'checkbox','aria-label':'Only ones with an Instagram name'}),nn=h('input',{type:'number',inputmode:'numeric',min:'1',max:'200','aria-label':'How many to add',value:String(poolN||D.goal)}),box=h('div',{style:'margin-top:8px'}),addb=h('button',{type:'button',class:'btn'});
+ tg.checked=poolIg;
+ c.appendChild(sum);
+ c.appendChild(h('label',{text:'Kind of business'}));c.appendChild(cs);
+ c.appendChild(h('label',{text:'Search'}));c.appendChild(sq);
+ c.appendChild(h('label',{class:'tog'},tg,h('span',{text:'Only ones with an Instagram name'})));
+ c.appendChild(h('label',{text:'How many to add to my list at once'}));c.appendChild(nn);c.appendChild(addb);
+ c.appendChild(box);
+ function avail(){
+  var hv=have(),q=poolQ.toLowerCase().trim();
+  return pool.filter(function(p){return !inList(p,hv)&&(!poolIg||p.ig)&&(poolCat==='all'||p.cat===poolCat)&&(!q||(p.name+' '+p.ig+' '+p.cat+' '+p.owner).toLowerCase().indexOf(q)>=0)});
+ }
+ function cats(){var hv=have(),m={};pool.forEach(function(p){if(inList(p,hv)||(poolIg&&!p.ig))return;m[p.cat]=(m[p.cat]||0)+1});return m}
+ function paint(){
+  var a=avail(),m=cats(),names=Object.keys(m).sort(function(x,y){return m[y]-m[x]}),tot=0;names.forEach(function(x){tot+=m[x]});
+  if(poolCat!=='all'&&!m[poolCat])poolCat='all';
+  cs.textContent='';cs.appendChild(h('option',{value:'all',text:'All kinds ('+tot+')'}));names.forEach(function(x){cs.appendChild(h('option',{value:x,text:x+' ('+m[x]+')'}))});cs.value=poolCat;
+  var inT=pool.length-pool.filter(function(p){return !inList(p,have())}).length;
+  sum.textContent=pool.length+' businesses in your LVR list. '+inT+' already in your tracker. '+a.length+' match right now.';
+  var n=Math.max(1,Math.min(200,parseInt(nn.value,10)||D.goal)),k=Math.min(n,a.length);
+  addb.textContent=a.length?'Add the next '+k+' to my list':'Nothing left to add here';addb.disabled=!a.length;
+  box.textContent='';
+  a.slice(0,poolShow).forEach(function(p){
+   box.appendChild(h('div',{class:'prow'},h('span',{class:'t'},h('b',{text:p.name}),h('small',{text:p.cat+(p.ig?' · @'+p.ig:' · no Instagram name')})),
+    h('button',{type:'button',class:'btn sm',text:'Add',onclick:function(){var r=addFromPool(p);if(r.lead){save();toast('Added '+r.lead.short);nav();paint()}else toast(r.err||'Already added')}})))});
+  if(a.length>poolShow)box.appendChild(h('button',{type:'button',class:'btn ghost',text:'Show more ('+(a.length-poolShow)+' left)',onclick:function(){poolShow+=40;paint()}}));
+  if(!a.length)box.appendChild(h('p',{class:'note',text:'No one matches. Try another kind of business, or turn off the Instagram filter.'}));
+ }
+ cs.addEventListener('change',function(){poolCat=cs.value;poolShow=30;paint()});
+ sq.addEventListener('input',function(){poolQ=sq.value;poolShow=30;paint()});
+ tg.addEventListener('change',function(){poolIg=tg.checked;poolShow=30;paint()});
+ nn.addEventListener('input',function(){poolN=parseInt(nn.value,10)||0;paint()});
+ addb.addEventListener('click',function(){
+  var a=avail(),n=Math.max(1,Math.min(200,parseInt(nn.value,10)||D.goal)),add=0;
+  a.slice(0,n).forEach(function(p){if(addFromPool(p).lead)add++});
+  if(add){save();toast('Added '+add+'. Open Today to start sending.');nav()}paint();
+ });
+ paint();
+}
+function vAdd(v){
+ if(window.OWNER_AUTH)poolCard(v);
+ var nm=h('input',{id:'a_n',autocomplete:'off',autocapitalize:'words',placeholder:'Example: Tacos El Gordo Las Vegas LLC'}),
+  fr=h('input',{id:'a_f',autocomplete:'off',autocapitalize:'words',placeholder:'Maria'}),
+  ig=h('input',{id:'a_i',autocomplete:'off',autocapitalize:'off',spellcheck:'false',placeholder:'tacoselgordo'}),
+  ty=h('input',{id:'a_t',autocomplete:'off',placeholder:'Example: restaurant, salon, gym'}),
+  nt=h('input',{id:'a_o',autocomplete:'off',placeholder:'Anything to remember'}),
+  sn=h('p',{class:'note',text:'Long names are shortened for you.'}),msg=h('p',{class:'note'});
+ nm.addEventListener('input',function(){var s=shorten(nm.value);sn.textContent=s&&s!==clean(nm.value)?'Will be used as: '+s:'Long names are shortened for you.'});
+ function addOne(){
+  var r=addLead(nm.value,fr.value,ig.value,ty.value,nt.value);
+  if(r.err){msg.style.color='var(--bad)';msg.textContent=r.err;return}
+  toast('Added '+r.lead.short);[nm,fr,ig,ty,nt].forEach(function(i){i.value=''});sn.textContent='Long names are shortened for you.';msg.textContent='';nav();nm.focus();
+ }
+ v.appendChild(h('div',{class:'card'},
+  h('label',{for:'a_n',text:'Business name (paste it any way it appears)'}),nm,sn,
+  h('div',{class:'row'},h('div',{},h('label',{for:'a_f',text:'Their first name (optional)'}),fr),h('div',{},h('label',{for:'a_i',text:'Instagram name, no @'}),ig)),
+  h('div',{class:'row'},h('div',{},h('label',{for:'a_t',text:'Kind of business (optional)'}),ty),h('div',{},h('label',{for:'a_o',text:'Note (optional)'}),nt)),
+  msg,h('button',{type:'button',class:'btn',text:'Add this business',onclick:addOne})));
+ var bulk=h('textarea',{id:'a_b',placeholder:'Tacos El Gordo, @tacoselgordo\nThe Daily Grind Cafe, instagram.com/dailygrindlv\nSunset Salon',autocapitalize:'off',spellcheck:'false'}),bm=h('p',{class:'note'});
+ v.appendChild(h('h2',{text:'Or paste a whole list'}));
+ v.appendChild(h('div',{class:'card'},h('label',{for:'a_b',text:'One business per line: name, then their Instagram name'}),bulk,bm,
+  h('button',{type:'button',class:'btn ghost',text:'Add them all',onclick:function(){
+   var added=0,skipped=0;
+   bulk.value.split(/\n/).forEach(function(line){
+    line=clean(line.replace(/\t/g,','));if(!line)return;
+    var p=line.split(/\s*[,|]\s*/),name=p[0],ig='';
+    for(var i=1;i<p.length;i++){if(/^@|instagram\.com\//i.test(p[i])||/^[A-Za-z0-9._]{3,30}$/.test(p[i])){ig=p[i];break}}
+    var r=addLead(name,'',ig,'','');if(r.lead)added++;else skipped++});
+   bm.style.color='var(--ok)';bm.textContent=added+' added'+(skipped?', '+skipped+' skipped (already on the list or empty)':'')+'.';bulk.value='';nav()}})));
+}
+/* ---------- Everyone ---------- */
+function vAll(v){
+ var cnt={all:D.leads.length};Object.keys(ST).forEach(function(k){cnt[k]=0});D.leads.forEach(function(l){cnt[l.stage]++});
+ var s=h('input',{type:'search',placeholder:'Search by name or Instagram',value:q,'aria-label':'Search',autocomplete:'off'});
+ v.appendChild(s);
+ var chips=h('div',{class:'chips',style:'margin:10px 0 12px'});
+ [['all','Everyone']].concat(Object.keys(ST).map(function(k){return [k,ST[k][0]]})).forEach(function(x){
+  if(x[0]!=='all'&&!cnt[x[0]]&&filter!==x[0])return;
+  chips.appendChild(h('button',{type:'button',class:'chip'+(filter===x[0]?' on':''),style:'font:inherit;font-weight:800;font-size:12.5px;cursor:pointer;min-height:36px',text:x[1]+' '+(cnt[x[0]]||0),onclick:function(){filter=x[0];render()}}))});
+ v.appendChild(chips);
+ var box=h('div');v.appendChild(box);
+ function paint(){
+  box.textContent='';var qq=s.value.toLowerCase().trim(),n=0;q=s.value;
+  D.leads.forEach(function(l){
+   if(filter!=='all'&&l.stage!==filter)return;
+   if(qq&&(l.name+' '+l.ig+' '+l.short+' '+l.first).toLowerCase().indexOf(qq)<0)return;
+   n++;var st=ST[l.stage];
+   box.appendChild(h('button',{type:'button',class:'lead',onclick:function(){openLead(l.id)}},
+    h('span',{class:'t'},h('b',{text:l.short||l.name}),h('small',{text:subFor(l)})),
+    h('span',{class:'pill',style:'color:'+st[1],text:st[0]})))});
+  if(!n)box.appendChild(h('div',{class:'empty',text:D.leads.length?'No one matches.':'No businesses yet. Tap Add.'}));
+ }
+ s.addEventListener('input',paint);paint();
+}
+/* ---------- More ---------- */
+function vMore(v){
+ var tot=D.leads.length,msent=0,messaged=0,replied=0,calls=0,won=0,days=[],k;
+ for(var i=13;i>=0;i--){var t=Date.now()-i*DAY;days.push({k:dayKey(t),n:0,d:new Date(t)})}
+ D.leads.forEach(function(l){var m=nSent(l);msent+=m;if(m)messaged++;
+  var r=l.ev.some(function(e){return e.k==='stage'&&(e.s==='replied'||e.s==='call'||e.s==='won')});if(r)replied++;
+  if(l.ev.some(function(e){return e.k==='stage'&&(e.s==='call'||e.s==='won')}))calls++;
+  if(l.stage==='won')won++;
+  l.ev.forEach(function(e){if(e.k==='sent'){var d=dayKey(e.t);days.forEach(function(x){if(x.k===d)x.n++})}})});
+ var mx=Math.max.apply(null,days.map(function(x){return x.n}).concat([1]));
+ var st=h('div',{class:'stats'});
+ [['Businesses',tot],['Messages sent',msent],['Replies',replied],['Reply rate',messaged?Math.round(replied/messaged*100)+'%':'0%'],['Calls booked',calls],['Clients',won]].forEach(function(x){st.appendChild(h('div',{class:'stat'},h('small',{text:x[0]}),h('b',{text:String(x[1])})))});
+ v.appendChild(st);
+ var ch=h('div',{class:'chart'});days.forEach(function(x){ch.appendChild(h('i',{style:'height:'+Math.max(2,Math.round(x.n/mx*100))+'%',title:x.n+' sent'}))});
+ var lb=h('div',{class:'chart l'},h('span',{text:days[0].d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}),h('span',{text:'Messages sent, last 14 days'}),h('span',{text:'today'}));
+ v.appendChild(h('div',{class:'card'},ch,lb));
+
+ v.appendChild(h('h2',{text:'Daily goal'}));
+ var gi=h('input',{type:'number',inputmode:'numeric',min:'1',max:'200',value:String(D.goal),'aria-label':'Messages per day'});
+ gi.addEventListener('input',function(){var n=Math.max(1,Math.min(200,parseInt(gi.value,10)||25));D.goal=n;save()});
+ v.appendChild(h('div',{class:'card'},h('label',{text:'Messages to send each day'}),gi,h('p',{class:'note',text:'Around 20 to 30 a day, written by hand, keeps the Las Vegas Restaurants account safe from Instagram limits.'})));
+
+ if(MODE==='kt'){
+  v.appendChild(h('h2',{text:'Your pitch'}));
+  var pc=h('div',{class:'card'});
+  [['The one line','Key Technologies helps local businesses use AI/SI to save time and stop missing customers.'],
+   ['What it does','An AI receptionist that answers calls and texts, websites and apps, small custom tools, and training so staff can use them.'],
+   ['Why trust it','More than 42 years of hands-on computer and software experience, and 27 services you can try as live demos at keytechnologies.si.'],
+   ['The ask','A free, no-obligation 30-minute review: you look at how they run today and say where AI/SI could realistically help. Nothing to buy.'],
+   ['If they say "how much?"','It depends on what they need, so the call comes first. Do not quote a number in a message.'],
+   ['If they say "is this a bot?"','No, it is Shane. Say so, and offer a call.'],
+   ['If they say "not interested"','Thank them, say you will not message again, and mark them Not interested.'],
+   ['Keep it honest','No made-up results, clients or reviews. Only say what the website says.']].forEach(function(x){pc.appendChild(h('p',{class:'note',style:'margin:8px 0'},h('b',{text:x[0]+': '}),document.createTextNode(x[1])))});
+  v.appendChild(pc);
+ }
+ v.appendChild(h('h2',{text:'Your messages'}));
+ ['open','follow','ask'].forEach(function(k){
+  var ta=h('textarea',{'aria-label':MSGN[k]+' message'}),c=h('p',{class:'cnt'});ta.value=tmpl(k);
+  function cc(){c.textContent=ta.value.length+' characters'+(ta.value.length>SAFE?'. Too long for one message, so it will be split into parts.':'.');c.className='cnt'+(ta.value.length>SAFE?' split':'')}
+  ta.addEventListener('input',function(){D.msgs[k]=ta.value;save();cc()});cc();
+  v.appendChild(h('div',{class:'card'},h('label',{text:{open:'First hello',follow:'Check in (after 3 days of no reply)',ask:'Answer ("how much?" or "what do you do?")'}[k]}),ta,c,
+   h('button',{type:'button',class:'btn ghost sm',style:'margin-top:8px',text:'Put the original words back',onclick:function(){delete D.msgs[k];save();ta.value=DEF[k];cc()}})))});
+ v.appendChild(h('p',{class:'fine',text:'Use {name} for the business and {first} for their first name.'}));
+
+ if(window.OWNER_AUTH&&isOwner()){
+  v.appendChild(h('h2',{text:'Database'}));
+  v.appendChild(h('div',{class:'card'},h('p',{class:'note',style:'margin:0',text:'Your list is saved to your private database, so your phone and computer show the same thing. Only the signed-in owner can read it.'}),
+   h('button',{type:'button',class:'btn ghost',text:'Refresh from the database',onclick:function(){pull().then(function(){toast('Up to date')})}}),
+   h('button',{type:'button',class:'btn ghost',text:'Reload my LVR list',onclick:function(){pool=null;poolErr='';tab='add';render()}})));
+ }
+ v.appendChild(h('h2',{text:'Backup'}));
+ var bm=h('p',{class:'note',text:D.lastBackup?'Last backup: '+fmtT(D.lastBackup):'No backup yet.'}),fi=h('input',{type:'file',accept:'application/json,.json',hidden:true});
+ fi.addEventListener('change',function(){var f=fi.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{restore(JSON.parse(r.result))}catch(e){toast('That file is not an Outreach backup.')}fi.value=''};r.readAsText(f)});
+ v.appendChild(h('div',{class:'card'},
+  h('button',{type:'button',class:'btn',style:'margin-top:0',text:'Download a backup',onclick:function(){backup();bm.textContent='Last backup: '+fmtT(D.lastBackup)}}),
+  h('button',{type:'button',class:'btn ghost',text:'Download the list as a spreadsheet',onclick:csv}),
+  h('button',{type:'button',class:'btn ghost',text:'Restore from a backup',onclick:function(){fi.click()}}),fi,bm,
+  h('p',{class:'fine',style:'margin-top:8px',text:'Everything is saved on this phone only. Tap Download a backup every few days and keep the file somewhere safe.'})));
+}
+function dl(name,type,text){var b=new Blob([text],{type:type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500)}
+function stamp(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function backup(){D.lastBackup=Date.now();save();dl('outreach-backup-'+stamp()+'.json','application/json',JSON.stringify(D,null,1));toast('Backup saved')}
+function restore(o){
+ if(!o||!Array.isArray(o.leads))throw new Error('x');
+ if(!window.confirm('Replace your whole list with this backup ('+o.leads.length+' businesses)?'))return;
+ var oldKeys=D.leads.map(function(x){return x.key});var b=blank();b.goal=Math.max(1,Math.min(200,+o.goal||25));b.msgs=(o.msgs&&typeof o.msgs==='object')?o.msgs:{};
+ o.leads.forEach(function(l){if(!l||!clean(l.name))return;b.leads.push({id:b.nextId++,key:/^[A-Za-z0-9_-]{3,60}$/.test(l.key||'')?l.key:('m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),adv:l.adv==null?undefined:l.adv,u:+l.u||0,name:clean(l.name),short:clean(l.short)||shorten(l.name),first:clean(l.first),ig:handle(l.ig),type:clean(l.type),note:clean(l.note),stage:ST[l.stage]?l.stage:'new',t:+l.t||Date.now(),ev:Array.isArray(l.ev)?l.ev.filter(function(e){return e&&+e.t}).map(function(e){return {t:+e.t,k:clean(e.k),m:clean(e.m),s:clean(e.s),n:clean(e.n)}}):[]})});
+ var nk={};b.leads.forEach(function(x){nk[x.key]=1});D=b;D.removed=oldKeys.filter(function(k){return k&&!nk[k]});D.lastBackup=Date.now();save();render();toast('Backup restored')
+}
+function csv(){
+ function c(x){x=String(x==null?'':x);if(/^[=+\-@]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'}
+ var rows=[['Business','Short name','First name','Instagram','Kind','Status','Messages sent','First message','Last message','Note']];
+ D.leads.forEach(function(l){var s=l.ev.filter(function(e){return e.k==='sent'});rows.push([l.name,l.short,l.first,l.ig,l.type,ST[l.stage][0],s.length,s.length?fmtT(s[0].t):'',s.length?fmtT(s[s.length-1].t):'',l.note])});
+ dl('outreach-list-'+stamp()+'.csv','text/csv',rows.map(function(r){return r.map(c).join(',')}).join('\r\n'));
+}
+/* ---------- sheet: one business ---------- */
+function closeSheet(){$('sheet').hidden=true;document.body.classList.remove('lock');render();if(lastFocus&&lastFocus.focus&&document.contains(lastFocus))try{lastFocus.focus()}catch(e){}}
+function openSheet(){if($('sheet').hidden)lastFocus=document.activeElement;$('sheet').hidden=false;document.body.classList.add('lock');$('panel').scrollTop=0}
+$('sheet').addEventListener('click',function(e){if(e.target===this)closeSheet()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('sheet').hidden)closeSheet()});
+function openLead(id){
+ var l=find(id);if(!l)return;var P=$('panel');P.textContent='';
+ var s=ST[l.stage],stt=status(l),key=stt==='due'||stt==='close'?'follow':(l.stage==='replied'?'ask':(l.stage==='new'?'open':(nSent(l)?'follow':'open')));
+ P.appendChild(h('div',{class:'grab'},h('h3',{id:'stitle',text:l.name}),h('button',{type:'button',class:'x',text:'Done',onclick:closeSheet})));
+ P.appendChild(h('div',{},h('span',{class:'pill',style:'color:'+s[1],text:s[0]}),h('span',{class:'fine',style:'margin-left:8px',text:l.ig?'@'+l.ig:'no Instagram name yet'})));
+ if(stt==='due')P.appendChild(h('p',{class:'fine',style:'margin:8px 0 0',text:'It has been '+Math.floor((Date.now()-lastSent(l))/DAY)+' days with no reply. Time for a check-in.'}));
+ if(stt==='close')P.appendChild(h('p',{class:'fine',style:'margin:8px 0 0',text:'Two check-ins and no answer. It is fine to close this one out.'}));
+ /* send */
+ P.appendChild(h('h2',{text:'Send a message'}));
+ var tabs=h('div',{class:'tabs'}),body=h('div');
+ var sendKeys=[['open','First hello'],['follow','Check in'],['ask','Answer']];
+ function paintMsg(){
+  Array.prototype.forEach.call(tabs.children,function(b,i){b.setAttribute('aria-pressed',sendKeys[i][0]===key?'true':'false')});
+  body.textContent='';
+  var text=fill(l,tmpl(key)),ps=split(text);
+  var ph=h('div',{class:'phone'},h('div',{class:'who',text:l.short||l.name}));ps.forEach(function(p){ph.appendChild(h('div',{class:'b',text:p}))});body.appendChild(ph);
+  body.appendChild(h('p',{class:'cnt'+(ps.length>1?' split':''),text:ps.length>1?text.length+' characters. Too long for one message, so it is split into '+ps.length+' parts. Send them in order.':text.length+' characters. Fits in one message.'}));
+  ps.forEach(function(p,i){var lab=ps.length>1?'Copy part '+(i+1)+' of '+ps.length:'Copy message';
+   var b=h('button',{type:'button',class:'btn',text:lab,onclick:function(){copy(p,b,lab)}});body.appendChild(b)});
+  if(l.ig)body.appendChild(h('a',{class:'btn ghost',href:'https://ig.me/m/'+encodeURIComponent(l.ig),target:'_blank',rel:'noopener noreferrer',text:'Open their Instagram message'}));
+  else body.appendChild(h('p',{class:'note',text:'Add their Instagram name below to get a one-tap button that opens their messages.'}));
+  body.appendChild(h('button',{type:'button',class:'btn green',text:'I sent it ✓',onclick:function(){logSent(l,key,ps.length);toast('Logged '+fmtT(Date.now()));closeSheet()}}));
+  body.appendChild(h('p',{class:'note',text:'Tap this after you send it. It saves the time to the second.'}));
+ }
+ sendKeys.forEach(function(x){tabs.appendChild(h('button',{type:'button',class:'tab',text:x[1],onclick:function(){key=x[0];paintMsg()}}))});
+ P.appendChild(tabs);P.appendChild(body);paintMsg();
+ /* what happened */
+ P.appendChild(h('h2',{text:'What happened'}));
+ var wh=h('div',{class:'btns'});
+ [['replied','They replied'],['call','Call booked'],['won','Became a client'],['no','Not interested'],['cold','No answer'],['sent','Back to waiting']].forEach(function(x){
+  if(x[0]===l.stage)return;wh.appendChild(h('button',{type:'button',class:'btn ghost',text:x[1],onclick:function(){setStage(l,x[0]);toast(ST[x[0]][0]);openLead(l.id)}}))});
+ P.appendChild(wh);
+ /* notes */
+ P.appendChild(h('h2',{text:'Notes'}));
+ var nt=h('textarea',{'aria-label':'Notes',placeholder:'What they said, what to remember',style:'min-height:90px'});nt.value=l.note||'';
+ nt.addEventListener('input',function(){l.note=nt.value;save()});P.appendChild(nt);
+ /* history */
+ P.appendChild(h('h2',{text:'History'}));
+ var tl=h('ul',{class:'tl'});
+ l.ev.slice().reverse().forEach(function(e){
+  var t=e.k==='added'?'Added to your list':e.k==='sent'?({open:'First hello',follow:'Check in',ask:'Answer'}[e.m]||'Message')+' sent'+(e.n?' ('+e.n+')':''):e.k==='stage'?(ST[e.s]?ST[e.s][0]:e.s):e.k;
+  tl.appendChild(h('li',{},h('time',{text:fmtT(e.t)}),h('span',{text:t})))});
+ P.appendChild(tl);
+ /* edit */
+ P.appendChild(h('h2',{text:'Edit details'}));
+ var en=h('input',{value:l.name,'aria-label':'Business name'}),es=h('input',{value:l.short||'','aria-label':'Name used in messages'}),ef=h('input',{value:l.first||'','aria-label':'First name'}),ei=h('input',{value:l.ig||'',autocapitalize:'off',spellcheck:'false','aria-label':'Instagram name'}),sv=h('button',{type:'button',class:'btn ghost',text:'Save changes'});
+ sv.addEventListener('click',function(){var nn=clean(en.value);if(!nn){toast('The name cannot be empty');return}
+  if(nn!==l.name&&clean(es.value)===(l.short||''))es.value=shorten(nn);
+  l.name=nn;l.short=clean(es.value)||shorten(nn);l.first=clean(ef.value);l.ig=handle(ei.value);save();toast('Saved');openLead(l.id)});
+ P.appendChild(h('div',{class:'card'},h('label',{text:'Business name'}),en,h('label',{text:'Name used in the message'}),es,h('div',{class:'row'},h('div',{},h('label',{text:'First name'}),ef),h('div',{},h('label',{text:'Instagram name'}),ei)),sv));
+ P.appendChild(h('button',{type:'button',class:'btn ghost',style:'color:var(--bad);border-color:rgba(255,138,122,.5)',text:'Remove this business',onclick:function(){if(window.confirm('Remove '+l.name+' and its history from your list?')){D.leads=D.leads.filter(function(x){return x.id!==l.id});if(l.key)D.removed.push(l.key);save();closeSheet()}}}));
+ openSheet();
+}
+render();
+if(isOwner())pull();
+})();
+</script>
+</body>
+</html>
