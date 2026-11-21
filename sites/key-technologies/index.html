@@ -1992,7 +1992,7 @@
   })();
 </script>
 <script src="key-platform/kp-sound.js" defer></script>
-<script>/*home-top*/(function(){document.querySelectorAll('header a[href="index.html"],.mobile-menu a[href="index.html"]').forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();var r=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;window.scrollTo({top:0,behavior:r?"auto":"smooth"});try{history.replaceState(null,"","index.html")}catch(x){}});});})();</script>
+<script>/*home-top*/(function(){document.querySelectorAll('header a[href="index.html"],.mobile-menu a[href="index.html"]').forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();var mm=document.getElementById("mobileMenu"),bb=document.getElementById("burgerBtn");if(mm&&mm.classList.contains("open")){mm.classList.remove("open");if(bb){bb.setAttribute("aria-expanded","false");bb.setAttribute("aria-label","Open menu")}}var r=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;window.scrollTo({top:0,behavior:r?"auto":"smooth"});try{history.replaceState(null,"","index.html")}catch(x){}});});})();</script>
 <script src="key-platform/pv.js" defer></script>
 <!--KTCTA--><script src="/cta-bar.js" defer></script><!--/KTCTA-->
 </body>
