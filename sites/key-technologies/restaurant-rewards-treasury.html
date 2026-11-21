@@ -479,7 +479,7 @@ body.hlock{overflow:hidden}
   if(open){c.setAttribute('role','button');c.setAttribute('tabindex','0');c.setAttribute('aria-label','Credit to give, '+fmt(amt)+'. Tap to give it to one person.');c.addEventListener('click',open);c.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}})}
   return c}
  function giftBlock(g,backId){if(giftOut(g)||avail(g.id)<=0)return null;var w=document.createElement('div');w.className='gblock';w.appendChild(giftCard(g,function(){openGive(g.id,backId)}));return w}
- function rrLock(){var l=document.createElement('div');l.className='rrlock';var im=document.createElement('img');im.src='brand/key-gold-polished.svg';im.alt='Key';im.width=116;im.height=50;l.appendChild(im);return l}
+ function rrLock(){var l=document.createElement('div');l.className='rrlock';var im=document.createElement('img');im.src='brand/key-gold.svg';im.alt='Key';im.width=116;im.height=50;l.appendChild(im);return l}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
