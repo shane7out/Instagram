@@ -512,3 +512,5 @@ Colour versions A-E (bright gold, 24-karat soft shine, brushed, deep yellow gold
 274. Gift screens shown to Shane (Send a gift, Give your gift, confirm step). Fixed: the "Go back" button was visible on the first Give screen (an id-level .more rule beat .hide); it now only appears at the confirm step. Added a little space between the "credit to give" box and the sentence under it.
 
 275. Gift screens alignment check (Shane: "make sure this lines up also"): measured the left and right margins of every block on the Give your gift, Send a gift and Redeem screens at 9 phone sizes - all symmetric and on one shared left/right edge (no change needed). Made the titles consistent: "Wallet", "Give your gift", "Send a gift", "Redeem" all 18px now (the gift screens were 24px).
+
+276. Newest on top everywhere (Shane, 2026-11-21): the history report now opens newest first (it was oldest first; the button still switches). The main transaction list and every wallet / gift card activity list were already newest first. The CSV download stays oldest first on purpose (an accounting export reads in order).

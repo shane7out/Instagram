@@ -707,7 +707,7 @@ body.hlock{overflow:hidden}
  $('csv').addEventListener('click',function(){var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};chain().then(function(h){var out=['Entry,Time (UTC),Time (local),Confirmation,Type,From,From wallet id,To,To wallet id,Amount,Status,Decision time (UTC),Note,Fingerprint (chained)'];S.entries.forEach(function(e,i){out.push([e.id,q(iso(e.t)),q(when(e.t)),q(conf(e)),q(etype(e)),q(e.kind==='open'?'':(e.from?wname(e.from):'Opening balance')),q(e.from||''),q(wname(e.to)),q(e.to),Math.round(e.amt/100),q(e.status||(e.kind==='open'?'':'confirmed')),q(e.ct?iso(e.ct):''),q(e.note),q(h[i])].join(','))});dl('key-rewards-ledger-'+stamp()+'.csv','text/csv',out.join('\n'));say('tmsg','Ledger downloaded: '+S.entries.length+' records, every one with its exact time.')})});
 
  /* ---- History report: totals, who got what, and every move with its exact time ---- */
- var hrepNew=false;
+ var hrepNew=true;
  function rlabel(id){var w=wById(id);if(id==='treasury')return 'Treasury';if(!w)return 'Outside';return isGiftW(w)?'Gift card for '+giftHolder(w):w.name}
  function rwhere(id){var w=wById(id);if(id==='treasury')return '';return w&&isGiftW(w)?'gift card':'wallet'}
  function openReport(){var R=$('hrep');R.className='';R.scrollTop=0;document.body.classList.add('hlock');paintReport()}
