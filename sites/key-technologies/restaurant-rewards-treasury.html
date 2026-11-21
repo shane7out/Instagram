@@ -233,11 +233,8 @@ body.hlock{overflow:hidden}
 /* bigger KeyTechnologies.si on the card */
 .gc .brand{font-size:min(19px,5.5cqw)}.gc .brand2{font-size:min(11.5px,3.2cqw);letter-spacing:.5em}.gc.sm .brand{font-size:min(19px,5.5cqw)}
 #pres .gc.sm .brand{font-size:5.9cqw;letter-spacing:.06em}#pres .gc.sm .brand2{font-size:3.1cqw}
-/* light engraved pattern over the whole card with the Key Technologies key in it (behind the writing, never over it). The small key logo in the corner is gone. */
-.gc::after,.gc.sm::after,#pres .gc.sm::after{display:block!important;content:""!important;position:absolute!important;inset:0!important;left:0!important;top:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;transform:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:url(brand/card-pattern.svg) center/cover no-repeat!important;opacity:1!important;mix-blend-mode:normal!important;pointer-events:none;z-index:0}
-.gc.back::after,.gc.gift::after{display:none!important}
-#pres .gc.sm::after{background-image:url(brand/card-pattern-sm.svg)!important}
-.gc .rrlock{display:none!important}
+/* the card is the plain gold card with the Key Technologies key in the top right corner (patterns and silhouettes are off for now) */
+.gc::after,.gc.sm::after,#pres .gc.sm::after{display:none!important}
 /* the small print every real card carries: stays on the face, under the balance, never over it (deploy 2) */
 .gc .fineprint{position:absolute!important;left:20px;right:20px;bottom:6px;z-index:2;font-size:7.5px;font-weight:700;letter-spacing:.08em;line-height:1;color:rgba(43,29,5,.78);text-shadow:0 1px 0 rgba(255,255,255,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gc .bal{padding-bottom:13px!important}
