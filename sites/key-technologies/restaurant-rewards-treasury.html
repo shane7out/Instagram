@@ -267,6 +267,20 @@ body.hlock{overflow:hidden}
 #rdm .vconf p{margin:6px 0 10px;color:rgba(255,255,255,.9)}
 #rdm .vbox .send:disabled{opacity:.6}
 .gc.voucher .num{font-weight:800;letter-spacing:.08em;font-size:min(14px,3.9cqw)!important}
+/* Shane 2026-11-21: graphite cards (dark charcoal, soft light from the top right, fine brushed lines, white type). Same shape, layout and labels. */
+.gc,#pres .gc,.wallets .gc{background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,rgba(0,0,0,0) 1px 3px),radial-gradient(ellipse 95% 70% at 108% 8%,rgba(255,255,255,.34) 0%,rgba(255,255,255,.12) 42%,rgba(255,255,255,0) 66%),radial-gradient(ellipse 130% 60% at -10% 100%,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 60%),linear-gradient(145deg,#4a4b4f 0%,#303134 45%,#222326 100%)!important;color:#fff!important;box-shadow:0 10px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.18)!important}
+.gc,.gc *,#pres .gc *{color:#fff!important;text-shadow:none!important}
+.gc .brand,.gc .brand2,.gc .nm,.gc .num,.gc .bal b,.gc .bal small,.gc .fineprint,.gc .gnote,.gc .gtag,.gc .gla,.gc .glab,.gc .gtitle,.gc .exp,.gc .cd,.gc .cdr{text-shadow:none!important}
+.gc .brand2,.gc .kind,.gc .fineprint,.gc .bal small,.gc .bal small .pt,.gc .glab,.gc .exp,.gc .cd,.gc .cdr{color:rgba(255,255,255,.78)!important}
+.gc .cd.soon,.gc .cdr.soon{color:#ffd9a0!important}
+.gc .rrlock img{filter:brightness(0) invert(1)!important}
+.gc::before,#pres .gc::before{filter:invert(1)!important;opacity:.06!important}
+.gc .bal{border-top:1px solid rgba(255,255,255,.28)!important;box-shadow:none!important}
+.gc.gift .gtag{border-color:rgba(255,255,255,.7)!important}
+.gc.back .bkw::after{background:linear-gradient(rgba(34,35,38,0),rgba(34,35,38,.96))!important}
+.gc.back .sbar{background:rgba(255,255,255,.25)!important}.gc.back .sth{background:#fff!important}
+.gc.back .strip{background:linear-gradient(#0d0d0e,#050505)!important}
+.gc.back .strip .st{color:#e8c766!important}
 </style>
 </head>
 <body>
@@ -511,7 +525,7 @@ body.hlock{overflow:hidden}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
   var tre=bal('treasury'),tot=0,wal=0;S.wallets.forEach(function(w){var b=bal(w.id);tot+=b;if(w.id!=='treasury')wal+=b});
-  whoPaint();$('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);var ret=0;S.entries.forEach(function(e){if(isExp(e))ret+=e.amt});var ex14=expiring(14);$('expnote').textContent='Key Rewards never expire. Credit stays in the wallet until it is used.';
+  whoPaint();$('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);var ret=0;S.entries.forEach(function(e){if(isExp(e))ret+=e.amt});var ex14=expiring(14);$('expnote').textContent='Credit is good for 60 days from the day it is issued. A gift card must be given within 72 hours. What is not used goes back to the Treasury.';
   var hh=held(),ck=$('check');if(tot+hh===SUPPLY){ck.className='check';ck.textContent='Everything adds up: the Treasury plus all wallets'+(hh?' plus '+fmt(hh)+' waiting for a restaurant to confirm':'')+' equals '+fmt(SUPPLY)+' Key Rewards.'}else{ck.className='check bad';ck.textContent='Warning: the wallets add up to '+fmt(tot)+', not '+fmt(SUPPLY-hh)+'. Download a backup and check the list below.'}
   var box=$('wallets');box.innerHTML='';
   sw().forEach(function(w){var b=gcard(w,true,true);b.setAttribute('aria-pressed',String(sel===w.id));b.setAttribute('aria-label',w.name+', balance '+fmt(shown(w.id)));b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
