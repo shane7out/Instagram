@@ -473,3 +473,5 @@ KNOWN GAPS (told to Shane): (a) the time a restaurant CONFIRMS or declines a pay
 255. Read-only check (db-task run 540, 2026-11-21): live pages carry the new PIN pad + Face ID code (rr-auth.js faceid2, modern key). The database does NOT have the Mac setup yet: _debug/rrpin empty (the script's "SENT report" never arrived), rr_ledger empty and readable without sign-in (so the ledger rules are not deployed). Next: Shane runs rr-pin-setup.sh on the Mac (Return, PIN twice, owner email/password).
 
 256. Home button in the top bar of the open phone menu (index.html): it now closes the menu and returns to the top of the home page, same as the X. Other pages already go to index.html. Tested on a phone-size browser.
+
+257. Space between the small key + label ("SERVICES" etc.) and the heading under it: .eyebrow-mark now has 22px below it on all 11 pages that use it. Checked no sideways overflow on phone width.
