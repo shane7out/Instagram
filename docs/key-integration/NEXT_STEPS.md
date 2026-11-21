@@ -502,3 +502,5 @@ KNOWN GAPS (told to Shane): (a) the time a restaurant CONFIRMS or declines a pay
 Colour versions A-E (bright gold, 24-karat soft shine, brushed, deep yellow gold, champagne) sent to Shane; none applied yet.
 
 270. Brushed gold (version C) is now the card face everywhere (fine vertical brushing over a brighter true gold). A very light watermark of the logo key (opacity .08, ~56% of the card width, behind the writing, not on the card back) sits in the background. Alignment pass: the amount, the expiry line, the divider and the key all end on the same right edge (wallet screen key moved to the card padding); left edges already shared one line. Gift card face tightened earlier. 15-size fit test passed.
+
+271. Card label: "Balance" is now "Rewards balance" on wallet and gift cards, and "Treasury rewards balance" on the Treasury card (Shane asked for "rewards points balance"; chose "rewards balance" because the product is called Key Rewards everywhere and the wording never says points; the longer text would not fit beside the amount on small phones). One-line change if he prefers the other wording.
