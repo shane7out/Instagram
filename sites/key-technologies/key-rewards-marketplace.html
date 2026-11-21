@@ -56,6 +56,9 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .card{position:relative;display:block;width:100%;padding:0;border:0;background:none;color:#fff;text-align:left;cursor:pointer;border-radius:12px}
 .card:focus-visible{outline:3px solid var(--key);outline-offset:2px}
 .art{position:relative;aspect-ratio:1/1;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#2a3f55,#16222f 70%)}
+.art.gift{aspect-ratio:auto;background:none;display:block;border-radius:0;overflow:visible}
+.gifts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,340px));gap:18px 16px;margin:0 0 22px}
+.pd .art.gift{padding:22px 20px;display:flex;align-items:center}
 .art .e{font-size:clamp(46px,9vw,64px);line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}
 .badge{position:absolute;left:8px;top:8px;font-size:10.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:rgba(15,23,30,.82);color:var(--gold);border:1px solid rgba(232,199,102,.5)}
 .heart{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(15,23,30,.72);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -64,7 +67,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .pts{font-size:19px;font-weight:900;color:var(--gold);line-height:1.2}.pts i{font-style:normal;font-size:12px;letter-spacing:.08em;margin-left:4px;color:var(--dim);font-weight:800;text-transform:uppercase}
 .ttl{margin:1px 0 0;font-size:15px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .where{margin:1px 0 0;font-size:13px;color:var(--dim)}
-.gcard{position:relative;isolation:isolate;overflow:hidden;width:100%;height:100%;border-radius:12px;padding:6%;display:flex;flex-direction:column;color:#0f171e;text-align:left;container-type:inline-size;background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(140deg,#f6d467 0%,#e6b83a 55%,#d7a21e 100%)}
+.gcard{position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:1.586/1;height:auto;border-radius:12px;padding:6%;display:flex;flex-direction:column;color:#0f171e;text-align:left;container-type:inline-size;background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(140deg,#f6d467 0%,#e6b83a 55%,#d7a21e 100%)}
 .gcard::before{content:"";position:absolute;inset:0;z-index:-1;background:url(brand/key-icon.svg) 50% 45%/80% auto no-repeat;opacity:.08}
 .gcard .b{font-weight:900;font-size:min(11px,7.4cqw);letter-spacing:.05em}.gcard .b2{font-weight:800;font-size:min(7px,4.4cqw);letter-spacing:.4em;text-transform:uppercase;color:#3a2a08;margin-top:1px}
 .gcard .k{display:none}
@@ -99,6 +102,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#fff;color:#0f171e;font-weight:800;padding:10px 16px;border-radius:999px;z-index:90;font-size:14px;display:none}
 .ktcredit{text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78}
 @media(max-width:899px){.bar .in{flex-wrap:wrap;row-gap:8px}.logo{flex:1}.sbox{order:5;flex:1 1 100%}.fbtn{order:3}}
+@media(max-width:639px){.gifts{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -115,6 +119,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
   <div class="mpills" id="mp" role="group" aria-label="Categories"></div>
   <div class="note"><b>Preview.</b> The two gift cards are the first offers. Listings marked <b>Sample</b> show how more will look; partner businesses set their own offers and points.</div>
   <div class="mh"><h1 id="mt">Today&rsquo;s picks</h1><span id="mc"></span></div>
+  <div class="gifts" id="gifts"></div>
   <div class="grid" id="grid"></div>
   <div class="foot"><b>The honest part.</b> Key Rewards points have no cash value and cannot be bought, sold or exchanged for cash. They are good for 60 days from the day they are issued. Each offer is set by the business that provides it, can change or end at any time, and nothing on this page is a promise. Listings marked Sample are examples, not offers yet.</div>
   <div class="cta"><a class="btn" href="index.html#contact">Want your business on the marketplace?</a></div>
@@ -179,7 +184,7 @@ function filtersHtml(){
  h+='</ul><h3>Points</h3><div class="pills">';BANDS.forEach(function(b){h+='<button type="button" class="pill'+(st.band===b[0]?" on":"")+'" data-b="'+b[0]+'">'+b[1]+'</button>'});
  h+='</div><h3>Sort by</h3><select class="sort" data-sort aria-label="Sort by"><option value="sug"'+(st.sort==="sug"?" selected":"")+'>Suggested</option><option value="lo"'+(st.sort==="lo"?" selected":"")+'>Points: low to high</option><option value="hi"'+(st.sort==="hi"?" selected":"")+'>Points: high to low</option></select>';return h}
 function artHtml(x){
- if(x.gift)return '<div class="art" style="background:none"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(x.n)+'</div><div class="kind">Gift card</div></div></div>';
+ if(x.gift)return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(x.n)+'</div><div class="kind">Gift card</div></div></div>';
  return '<div class="art"><span class="e" aria-hidden="true">'+x.e+'</span><span class="badge">Sample</span></div>'}
 function heartHtml(x){return '<span class="heart'+(saved[x.id]?" on":"")+'" role="button" tabindex="0" data-h="'+x.id+'" aria-label="'+(saved[x.id]?"Remove from saved":"Save")+' '+esc(x.n)+'" aria-pressed="'+(saved[x.id]?"true":"false")+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9.2-9A5.4 5.4 0 0 1 12 6.6 5.4 5.4 0 0 1 21.2 12C19 16.6 12 21 12 21z"/></svg></span>'}
 function render(){
@@ -189,7 +194,10 @@ function render(){
  document.getElementById("mt").textContent=st.q.trim()?'Results for \u201c'+st.q.trim()+'\u201d':(st.cat==="all"?"Today\u2019s picks":cn[1]);
  var sf0=document.getElementById("sf");if(sf0)sf0.innerHTML=filtersHtml();
  document.getElementById("mc").textContent=items.length+(items.length===1?" listing":" listings");
- document.getElementById("grid").innerHTML=items.length?items.map(function(x){return '<div style="position:relative"><button type="button" class="card" data-o="'+x.id+'" aria-label="'+esc(x.n)+', '+x.p+' rewards points. Open details.">'+artHtml(x)+'<div class="meta"><div class="pts">'+x.p+'<i>pts</i></div><p class="ttl">'+esc(x.gift?x.n+' gift card':x.n)+'</p><p class="where">'+LOC+'</p></div></button>'+heartHtml(x)+'</div>'}).join(""):'<div class="none">'+(st.cat==="saved"?"Nothing saved yet. Tap the heart on a listing to save it.":"Nothing matches. Try another word, like \u201chaircut\u201d, \u201ctint\u201d or \u201cbowling\u201d.")+'</div>'}
+ var gifts=items.filter(function(x){return x.gift}),rest=items.filter(function(x){return !x.gift});
+ function cell(x){return '<div style="position:relative"><button type="button" class="card" data-o="'+x.id+'" aria-label="'+esc(x.n)+', '+x.p+' rewards points. Open details.">'+artHtml(x)+'<div class="meta"><div class="pts">'+x.p+'<i>pts</i></div><p class="ttl">'+esc(x.gift?x.n+' gift card':x.n)+'</p><p class="where">'+LOC+'</p></div></button>'+heartHtml(x)+'</div>'}
+ var gh=document.getElementById("gifts");gh.innerHTML=gifts.map(cell).join("");gh.style.display=gifts.length?"":"none";
+ document.getElementById("grid").innerHTML=rest.length?rest.map(cell).join(""):(gifts.length?"":'<div class="none">'+(st.cat==="saved"?"Nothing saved yet. Tap the heart on a listing to save it.":"Nothing matches. Try another word, like \u201chaircut\u201d, \u201ctint\u201d or \u201cbowling\u201d.")+'</div>')}
 function toast(t){var e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
 var lastFocus=null;
 function openPanel(html){lastFocus=document.activeElement;document.getElementById("panel").innerHTML='<button type="button" class="closex" id="cx" aria-label="Close">&times;</button>'+html;document.getElementById("ov").classList.add("show");document.body.style.overflow="hidden";document.getElementById("cx").focus()}
