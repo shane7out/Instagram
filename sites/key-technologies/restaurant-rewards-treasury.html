@@ -281,6 +281,13 @@ body.hlock{overflow:hidden}
 .gc.back .sbar{background:rgba(255,255,255,.25)!important}.gc.back .sth{background:#fff!important}
 .gc.back .strip{background:linear-gradient(#0d0d0e,#050505)!important}
 .gc.back .strip .st{color:#e8c766!important}
+/* Shane 2026-11-21: indigo cards (deep blue-violet, brightest bottom-left, soft ring on the right), no key watermark. Overrides the graphite block above. */
+.gc,#pres .gc,.wallets .gc{background:radial-gradient(circle at 78% 50%,rgba(255,255,255,0) 0 40%,rgba(165,160,255,.30) 44%,rgba(165,160,255,.10) 54%,rgba(255,255,255,0) 62%),radial-gradient(ellipse 90% 90% at 8% 105%,rgba(91,92,255,.75) 0%,rgba(91,92,255,0) 60%),linear-gradient(135deg,#2c2aa6 0%,#161468 45%,#0a0840 100%)!important;border:1px solid rgba(190,190,255,.35)!important;box-shadow:0 12px 26px rgba(5,5,40,.6)!important}
+.gc::before,#pres .gc::before{display:none!important}
+.gc .brand2,.gc .kind,.gc .fineprint,.gc .bal small,.gc .bal small .pt,.gc .glab,.gc .exp,.gc .cd,.gc .cdr{color:rgba(230,230,255,.82)!important}
+.gc .bal{border-top-color:rgba(200,200,255,.35)!important}
+.gc.back .bkw::after{background:linear-gradient(rgba(14,12,80,0),rgba(14,12,80,.96))!important}
+.gc.back .strip{background:linear-gradient(#05051e,#020210)!important}
 </style>
 </head>
 <body>
