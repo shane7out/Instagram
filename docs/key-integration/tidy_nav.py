@@ -40,6 +40,22 @@ for f in sorted(glob.glob(SITE + '**/*.html', recursive=True)):
     for blk in BLOCKS:
         t = blk.sub(lambda m: GUIDES_LI.sub(add_lang, m.group(0)), t)
     t = t.replace(' &middot; Any language</p>', '</p>')
+    # 6. "About Shane" is the SECOND item of the phone menu, right after Home (Shane: "the first one home, the second one about me, it is hidden too far down")
+    ABOUT_LI = re.compile(r'[ \t]*<li><a href="[^"]*#about">About Shane</a></li>[ \t]*\n?')
+    HOME_LI = re.compile(r'(<li><a href="([^"]*)index\.html">Home</a></li>)')
+    def about_second(m):
+        blk = m.group(0)
+        mm = ABOUT_LI.search(blk)
+        if not mm: return blk
+        li = mm.group(0).strip()
+        hm = HOME_LI.search(blk)
+        if not hm: return blk
+        # already second? (Home, then About)
+        if blk[hm.end():].lstrip().startswith(li): return blk
+        blk = ABOUT_LI.sub('', blk)
+        hm = HOME_LI.search(blk)
+        return blk[:hm.end()] + '\n    ' + li + blk[hm.end():]
+    t = re.sub(r'<div class="mobile-menu".*?\n</div>', about_second, t, flags=re.S)
     if rel != 'book.html':
         def book_btn(m):
             base = m.group(1)
