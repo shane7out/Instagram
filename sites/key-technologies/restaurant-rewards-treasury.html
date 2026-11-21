@@ -247,6 +247,7 @@ body.hlock{overflow:hidden}
 .gc::before,#pres .gc::before{display:none!important;animation:none!important}
 .gc .brand,.gc .brand2,.gc .nm,.gc .num,.gc .bal b,.gc .bal small,.gc .fineprint,.gc .gnote,.gc .gtag,.gc .gla,.gc .glab,.gc .gtitle,.gc .exp{text-shadow:0 1px 0 rgba(255,228,150,.38)!important}
 .gc:not(.gift):not(.back) .nm{margin-top:auto;margin-bottom:0}.gc:not(.gift):not(.back) .num{margin-top:5px;padding-top:0}
+.gc.gift .brand2{display:none}.gc.gift .gtitle{margin-top:3px;line-height:1.05}.gc.gift .glab{padding-top:2px}.gc.gift .bal{margin-top:5px}.gc.gift .bal b{font-size:min(30px,8.4cqw)}
 </style>
 </head>
 <body>
@@ -389,11 +390,11 @@ body.hlock{overflow:hidden}
  function stTxt(e){return e.status==='pending'?'Waiting for confirmation':(e.status==='declined'?'Declined':'')}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id&&credited(e))b+=e.amt;if(e.from===id&&debited(e))b-=e.amt});return b}
  var DAY=86400000,LC={k:'',v:null};
- /* Credit expires 90 days after the day it is issued (the card counts down from 89), unless said otherwise: Vanilla Rice's wallet 60 days; Thin Blue 702 wallet end of March 2027. A gift card (a credit to give) is good for only 72 hours after it is issued; when it is given, the person who gets it receives normal credit (90 days from the day it is given). */
- var FOREVER=8.64e15; /* Key Rewards never expire */
- function expFor(n,t,gift){return FOREVER;if(gift)return t+72*3600000;if(/^Thin Blue 702$/i.test(n))return new Date(2027,2,31,23,59,59).getTime();if(/^Vanilla Rice/i.test(n))return t+60*DAY;return t+90*DAY}
+ /* Shane (2026-11-21): every credit is good for 60 days from the day it is issued (the card counts down from 59). A gift card (a credit to give) is good for only 72 hours after it is issued; when it is given, the person who gets it receives normal credit (60 days from the day it is given). What is left after that expires and goes back to the Treasury. */
+ var FOREVER=8.64e15; /* only used to mean 'no date' */
+ function expFor(n,t,gift){if(gift)return t+72*3600000;return t+60*DAY}
  function expAt(e){var w=wById(e.to);return expFor(w?String(w.name):'',e.t,!!w&&isGiftW(w))}
- /* Every credit sent from the Treasury is stamped with the day it was issued. It keeps that date wherever it goes (spent, gifted, paid to a restaurant). Oldest credit is used first. After 90 days what is left expires and goes back to the Treasury. */
+ /* Every credit sent from the Treasury is stamped with the day it was issued. It keeps that date wherever it goes (spent, gifted, paid to a restaurant). Oldest credit is used first. After 60 days what is left expires and goes back to the Treasury. */
  function lotsNow(){var T=now(),k=S.entries.length+':'+S.entries.map(function(e){return e.status||'-'}).join('')+':'+Math.floor(T/60000);if(LC.k===k&&LC.v)return LC.v;
   var W={};S.wallets.forEach(function(w){W[w.id]={v:[],x:0}});
   function adv(at){for(var id in W){if(id==='treasury')continue;var o=W[id],keep=[];o.v.forEach(function(l){if(l.ex<=at){o.x+=l.amt;o.xl=Math.max(o.xl||0,l.ex)}else keep.push(l)});o.v=keep}}
@@ -446,7 +447,7 @@ body.hlock{overflow:hidden}
   bk.appendChild(d('l','Where to use it'));var rs=sw().filter(function(x){return x.type==='Restaurant'&&accepts(x.id)}).map(function(x){return x.name});bk.appendChild(d('t',rs.length?rs.join(' · '):'No restaurant is accepting right now.'));
   bk.appendChild(d('l','What it is for'));bk.appendChild(d('t s','Food and gratuity. Dinner parties and special events. Meet and greets. Experiences. VIP experiences and special invites. And new ideas all the time.'));bk.appendChild(d('l f','How to use it'));['1. Tap Redeem.','2. Pick the restaurant and type how much.','3. Tap Send and show the cashier the confirmation.'].forEach(function(x){bk.appendChild(d('t s',x))});bk.appendChild(d('t s','Use your rewards for food and gratuity (tip).'));
   bk.appendChild(d('l f','The fine print'));
-  ['Key Rewards can be used with participating businesses for special events, meet and greets, VIP experiences and special invites, and we are always adding new ideas.','Never expire. Key Rewards stay in the wallet until they are used. A gift card is a credit to give to a friend or family member; the person who receives the gift gets normal credit.','No cash value. Key Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Key Rewards and gives them away. They are never sold.','Participating businesses can turn acceptance on or off, and add or remove credit, whenever they want. A business on the list above accepts them now. A business not on the list does not accept them.','This is a free trial game and we are trying it out to see where it goes. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost.','Thank you for playing and for believing in the future of this technology.'].forEach(function(x){bk.appendChild(d('t p',x))});
+  ['Key Rewards can be used with participating businesses for special events, meet and greets, VIP experiences and special invites, and we are always adding new ideas.','Use within 60 days. Key Rewards are good for 60 days from the day they are issued, and what is not used by then goes back to Key Technologies. A gift card is a credit to give to a friend or family member; it must be given within 72 hours, and the person who receives the gift gets normal credit with a new 60 days.','No cash value. Key Rewards are not money and cannot be exchanged for cash.','Not for sale. Key Technologies creates Key Rewards and gives them away. They are never sold.','Participating businesses can turn acceptance on or off, and add or remove credit, whenever they want. A business on the list above accepts them now. A business not on the list does not accept them.','This is a free trial game and we are trying it out to see where it goes. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost.','Thank you for playing and for believing in the future of this technology.'].forEach(function(x){bk.appendChild(d('t p',x))});
   bkw.appendChild(bk);var sb=d('sbar'),sth=d('sth');sb.appendChild(sth);bkw.appendChild(sb);b.appendChild(bkw);
   var hr=d('hr');hr.appendChild(d('t h','Tap the card to flip it back.'));hr.appendChild(d('t h c','Design by KeyTechnologies.si'));b.appendChild(hr);fi.appendChild(b);fl.appendChild(fi);wr.appendChild(fl);
   var sh=d('shine');wr.appendChild(sh);
@@ -592,7 +593,7 @@ body.hlock{overflow:hidden}
    else{r.t=isClose(e)?'Wallet closed, credit returned to the Treasury':isTake(e)?'Taken back by the Treasury':isExp(e)?'Expired':isPay(e)?'Paid '+wname(e.to):(isGiftW(wById(e.to))?'Gift of '+fmt(e.amt)+' for '+giftHolder(wById(e.to)):'Sent to '+wname(e.to));r.sign=(e.status==='declined'||id==='treasury')?'':'−'}
    rows.push(finishRow(r,nt))});
   return rows}
- function finishRow(r,nt){var e=r.e;r.sub=when(e.t);var x=[];if(nt&&!isPay(e)&&!isGiftE(e)&&nt!=='Opening balance'&&nt!=='Wallet opened with a zero balance')x.push(nt);if(stTxt(e))x.push(stTxt(e));if(e.ct)x.push((e.status==='declined'?'Declined ':'Confirmed ')+when(e.ct));x.push(conf(e));r.s2=x;return r}
+ function finishRow(r,nt){var e=r.e;r.sub=when(e.t);var x=[];if(nt&&!isPay(e)&&!isGiftE(e)&&nt!=='Opening balance'&&nt!=='Wallet opened with a zero balance')x.push(nt);if(stTxt(e))x.push(stTxt(e));if(e.from==='treasury'&&e.amt&&e.status!=='declined'&&!isTake(e)&&e.kind!=='open'){var xw=wById(e.to),xg=!!xw&&isGiftW(xw),xa=expAt(e);x.push(xg?'Give by '+new Date(xa).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):'Use by '+new Date(xa).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}if(e.ct)x.push((e.status==='declined'?'Declined ':'Confirmed ')+when(e.ct));x.push(conf(e));r.s2=x;return r}
  function rowLi(r,id,compact){var e=r.e,li=el('li'),l=el('span'),b=el('b',null,r.t);l.appendChild(b);l.appendChild(el('small',null,r.sub));if(!compact)l.appendChild(el('small',null,r.s2.join(' \u00b7 ')));li.title='Recorded '+iso(e.t)+' (UTC)';li.appendChild(l);
   if(r.amt!==null){var dc=e.status==='declined',a=el('span','a'+(r.inn&&!dc&&!r.tag?' in':''),r.sign+fmt(r.amt));a.appendChild(el('small',null,r.tag?r.tag:(r.run===null?'':'Balance '+fmt(r.run))));li.appendChild(a)}
   if(isPay(e)){li.className='tap';li.setAttribute('role','button');li.setAttribute('tabindex','0');var open=function(){receipt(e,id)};li.addEventListener('click',open);li.addEventListener('keydown',function(ev){if(ev.key==='Enter')open()})}return li}
@@ -707,7 +708,7 @@ body.hlock{overflow:hidden}
   var tre=bal('treasury'),wal=0,gwal=0,hh=held();S.wallets.forEach(function(w){if(w.id==='treasury')return;if(isGiftW(w))gwal+=shown(w.id);else wal+=shown(w.id)});
   var mv=S.entries.filter(function(e){return e.kind!=='open'&&e.from}),all=S.entries.slice().sort(function(a,b){return a.t-b.t||a.id-b.id}),rng=all.length?when(all[0].t)+'  to  '+when(all[all.length-1].t):'';
   P.appendChild(el('div','hbrand','Key Technologies'));P.appendChild(el('h3',null,'Key Rewards history report'));
-  P.appendChild(el('p','hsub','Prepared '+when(Date.now())+'. Every move is listed with the exact time it went through. Nothing is ever edited or deleted.'));
+  P.appendChild(el('p','hsub','Prepared '+when(Date.now())+'. Every move is listed with the exact time it went through. Nothing is ever edited or deleted. Key Rewards must be used within 60 days of the day they are issued; a gift card must be given within 72 hours.'));
   var g=el('div','hgrid');[['Issued in total',fmt(SUPPLY)],['In the Treasury',fmt(tre)],['In wallets',fmt(wal)],['In gift cards',fmt(gwal)]].forEach(function(x){var d=el('div','hs');d.appendChild(el('small',null,x[0]));d.appendChild(el('b',null,x[1]));g.appendChild(d)});P.appendChild(g);
   var ok=(tre+wal+gwal+hh===SUPPLY);P.appendChild(el('p','hsub','Treasury + wallets + gift cards'+(hh?' + '+fmt(hh)+' waiting for confirmation':'')+' = '+fmt(tre+wal+gwal+hh)+(ok?'. Everything adds up.':'. DOES NOT MATCH the issued total.')+'  '+mv.length+(mv.length===1?' move':' moves')+' recorded. '+rng));
   /* who got what */
@@ -730,7 +731,7 @@ body.hlock{overflow:hidden}
    c2.appendChild(el('b',isO?'mut':'',ty));
    var fr=!e.from?(isO?'':'Opening balance'):rlabel(e.from)+(rwhere(e.from)&&e.from!=='treasury'?' ('+rwhere(e.from)+')':''),to=rlabel(e.to)+(rwhere(e.to)?' ('+rwhere(e.to)+')':'');
    c2.appendChild(el('span',isO?'mut':'',isO?to:(e.from?fr+'  →  '+to:to)));
-   var x=[];if(nt&&nt!==ty&&nt!=='Opening balance'&&nt!=='Wallet opened with a zero balance')x.push(nt);if(stTxt(e))x.push(stTxt(e));if(e.ct)x.push((e.status==='declined'?'Declined ':'Confirmed ')+when(e.ct));if(x.length)c2.appendChild(el('small',null,x.join(' · ')));
+   var x=[];if(nt&&nt!==ty&&nt!=='Opening balance'&&nt!=='Wallet opened with a zero balance')x.push(nt);if(stTxt(e))x.push(stTxt(e));if(e.from==='treasury'&&e.amt&&e.status!=='declined'&&!isTake(e)&&e.kind!=='open'){var xw=wById(e.to),xg=!!xw&&isGiftW(xw),xa=expAt(e);x.push(xg?'Give by '+new Date(xa).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):'Use by '+new Date(xa).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}if(e.ct)x.push((e.status==='declined'?'Declined ':'Confirmed ')+when(e.ct));if(x.length)c2.appendChild(el('small',null,x.join(' · ')));
    tr2.appendChild(c2);tr2.appendChild(el('td','r'+(isO?' mut':''),isO?'—':fmt(e.amt)));b2.appendChild(tr2)});
   t2.appendChild(b2);tw2.appendChild(t2);P.appendChild(tw2);
   var fp=el('p','mono','Computing the ledger fingerprint…');P.appendChild(el('h2',null,'Ledger fingerprint'));P.appendChild(el('p','hsub','A code made from every record in order. If any past record were ever changed, this code would change.'));P.appendChild(fp);
