@@ -318,7 +318,7 @@ body.hlock{overflow:hidden}
  <p class="fine" id="whosum" style="margin-top:0"></p>
  <div style="overflow-x:auto"><table class="who"><thead><tr><th>Who</th><th>Account number</th><th class="r">Given</th><th class="r">Wallet</th><th class="r">Gift</th></tr></thead><tbody id="whorows"></tbody></table></div>
  <div id="whoclosed" class="fine"></div>
- <div class="tools" style="margin-top:12px"><button class="btn" id="hrepBtn" type="button">History report: who got what, when, where</button> <button class="btn ghost" id="whocsv" type="button">Download who got what (CSV)</button> <button class="btn ghost" id="histcsv" type="button">Download every wallet's full history (CSV)</button></div>
+ <div class="tools" style="margin-top:12px"><button class="btn" id="hrepBtn" type="button">History report: who got what, when, where</button> <button class="btn ghost" id="whocsv" type="button">Download who got what (CSV)</button> <button class="btn ghost" id="histcsv" type="button">Download every wallet's full history (CSV)</button> <a class="btn ghost" href="key-rewards-marketplace.html" style="text-decoration:none;display:inline-block">Marketplace</a></div>
 </div>
 
 <div class="box">
@@ -693,7 +693,7 @@ body.hlock{overflow:hidden}
   if(id==='treasury'){var rows=actRows(w).reverse(),h3a=el('h3',null,'Activity');pc.appendChild(h3a);var ul=el('ul');rows.slice(0,2).forEach(function(r){ul.appendChild(rowLi(r,id,true))});if(rows.length)pc.appendChild(ul);else h3a.remove();if(rows.length){var mb=el('button','more','All activity ('+rows.length+')');mb.type='button';mb.addEventListener('click',function(){openActivity(id)});pc.appendChild(mb)}}
   else{var A=actSums(w),box=el('div','acts');var ab=function(label,key){var b=el('button','actb');b.type='button';b.appendChild(el('b',null,label));b.appendChild(el('span','ch','\u203a'));b.addEventListener('click',function(){openActivity(id,key)});box.appendChild(b)};
    ab('Wallet history','wallet');if(A.hasGift)ab('Gift card history','gift');pc.appendChild(box)}
-  var ul2=el('a','uses','What can I use my rewards for?');ul2.href='restaurant-rewards-uses.html';pc.appendChild(ul2);
+  var ul2=el('a','uses','What can I use my rewards for?');ul2.href='restaurant-rewards-uses.html';pc.appendChild(ul2);var mk2=el('a','uses','Open the marketplace');mk2.href='key-rewards-marketplace.html';pc.appendChild(mk2);
   pc.appendChild(credit());$('pres').classList.remove('hide');if(!quiet)rollAll();document.body.style.overflow='hidden';$('pres').scrollTop=0}
  $('lock').addEventListener('click',function(){RR.signOut();location.reload()});
  $('showAll').addEventListener('click',function(){sel='all';paint()});
