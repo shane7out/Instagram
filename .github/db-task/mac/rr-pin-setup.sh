@@ -75,6 +75,17 @@ const derive = (pin, salt) => crypto.pbkdf2Sync(pin, salt, 150000, 32, 'sha256')
               fs.writeFileSync(path.join(os.homedir(), '.lvr', 'treasurer-uid'), UID + '\n');
               log('Saved the Treasury account id on this Mac (~/.lvr/treasurer-uid).');
               didTreasurer = true;
+              // One PIN for everything: the same 6 digits also open the read-only visitor report (key-pageviews.html).
+              try {
+                const VE = 'report-viewer@kt-report.invalid', VPW = derive(p1, 'kt-report-viewer-v1');
+                const vl = await post(`${idt}/projects/${PROJECT}/accounts:lookup`, { email: [VE] });
+                const vex = vl.s === 200 && vl.j.users && vl.j.users[0];
+                const vr = vex ? await post(`${idt}/projects/${PROJECT}/accounts:update`, { localId: vex.localId, password: VPW }) : await post(`${idt}/projects/${PROJECT}/accounts`, { email: VE, password: VPW, emailVerified: false });
+                log('Report PIN (same 6 digits) -> HTTP ' + vr.s);
+                const vs = await post(`${idt}/accounts:signInWithPassword?key=${encodeURIComponent(apiKey)}`, { email: VE, password: VPW, returnSecureToken: true }, { 'Content-Type': 'application/json' });
+                if (vs.s === 200 && vs.j.idToken && /^[A-Za-z0-9]{20,40}$/.test(vs.j.localId)) { fs.writeFileSync(path.join(os.homedir(), '.lvr', 'viewer-uid'), vs.j.localId + '\n'); log('The same PIN now also opens the visitor report.'); }
+                else log('Could not set the report PIN (HTTP ' + vs.s + '). Run viewer-pin-setup.sh later.');
+              } catch (e) { log('Report PIN step skipped: ' + e.message); }
             }
           }
         }

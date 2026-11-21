@@ -475,3 +475,5 @@ KNOWN GAPS (told to Shane): (a) the time a restaurant CONFIRMS or declines a pay
 256. Home button in the top bar of the open phone menu (index.html): it now closes the menu and returns to the top of the home page, same as the X. Other pages already go to index.html. Tested on a phone-size browser.
 
 257. Space between the small key + label ("SERVICES" etc.) and the heading under it: .eyebrow-mark now has 22px below it on all 11 pages that use it. Checked no sideways overflow on phone width.
+
+258. One PIN for everything: rr-pin-setup.sh, when it sets the Treasury PIN, now sets the SAME 6 digits on the read-only visitor-report account too (report-viewer@kt-report.invalid, salt kt-report-viewer-v1, same derivation as key-pageviews.html) and saves ~/.lvr/viewer-uid so the rules step keeps that account's read access. Shane's screen: key-pageviews.html showed "That PIN is not right" because the report PIN had been set to something else/never. The "Sign in as owner instead" button is the real owner email+password account (full write access); it is NOT changed to the PIN (a 6-digit number would be a much weaker master password). Offered to Shane as a decision.
