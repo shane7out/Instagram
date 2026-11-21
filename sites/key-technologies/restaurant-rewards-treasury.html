@@ -233,6 +233,12 @@ body.hlock{overflow:hidden}
 /* bigger KeyTechnologies.si on the card */
 .gc .brand{font-size:min(19px,5.5cqw)}.gc .brand2{font-size:min(11.5px,3.2cqw);letter-spacing:.5em}.gc.sm .brand{font-size:min(19px,5.5cqw)}
 #pres .gc.sm .brand{font-size:5.9cqw;letter-spacing:.06em}#pres .gc.sm .brand2{font-size:3.1cqw}
+/* see-through engraved emblem in the middle of every card (behind the writing, never covers it) */
+.gc::after{display:block!important;content:"";position:absolute;left:50%;top:42.5%;right:auto;width:auto;height:41%;aspect-ratio:1;transform:translate(-50%,-50%);border:0;border-radius:0;box-shadow:none;background:url(brand/card-emblem.svg) center/contain no-repeat;opacity:.9;pointer-events:none;z-index:0;mix-blend-mode:multiply}
+.gc.sm::after,#pres .gc.sm::after{display:block!important}
+.gc.back::after{display:none!important}
+.gc.gift::after{display:none!important}
+#pres .gc.sm::after{left:74%;top:41%;height:42%}
 </style>
 </head>
 <body>
