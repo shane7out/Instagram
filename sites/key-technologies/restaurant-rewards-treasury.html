@@ -243,8 +243,12 @@ body.hlock{overflow:hidden}
 #pres .gc.sm .bal{padding-bottom:4.8cqw!important}
 
 /* Shane 2026-11-21: calmer card. Name above the number, no bright streak, deeper even gold, crisp text, real-card corners. */
-.gc{border-radius:14px;background:linear-gradient(140deg,#d6a93d 0%,#c8982c 50%,#ba8920 100%);box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,232,160,.3),inset 0 -1px 3px rgba(70,40,0,.3)}
-.gc::before,#pres .gc::before{display:none!important;animation:none!important}
+.gc{border-radius:14px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(140deg,#f6d467 0%,#e6b83a 55%,#d7a21e 100%);box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,232,160,.3),inset 0 -1px 3px rgba(70,40,0,.3)}
+.gc::before,#pres .gc::before{content:"";display:block!important;animation:none!important;position:absolute;inset:0;z-index:-1;pointer-events:none;background:url(brand/key-gold.svg) 50% 38%/56% auto no-repeat!important;background-size:56% auto!important;background-position:50% 38%!important;opacity:.08}
+.gc.back::before,#pres .gc.back::before{display:none!important}.gc{isolation:isolate}
+#pres .gc.sm .rrlock{right:14px;top:10px}
+/* everything lines up: the amount and the expiry line end exactly where the key and the divider end */
+.gc .bal{padding-right:0!important}.gc .bal b,.gc .exp{margin-right:0}
 .gc .brand,.gc .brand2,.gc .nm,.gc .num,.gc .bal b,.gc .bal small,.gc .fineprint,.gc .gnote,.gc .gtag,.gc .gla,.gc .glab,.gc .gtitle,.gc .exp{text-shadow:0 1px 0 rgba(255,228,150,.38)!important}
 .gc:not(.gift):not(.back) .nm{margin-top:auto;margin-bottom:0}.gc:not(.gift):not(.back) .num{margin-top:5px;padding-top:0}
 .gc.gift .brand2{display:none}.gc.gift .gtitle{margin-top:3px;line-height:1.05}.gc.gift .glab{padding-top:2px}.gc.gift .bal{margin-top:5px}.gc.gift .bal b{font-size:min(30px,8.4cqw)}
