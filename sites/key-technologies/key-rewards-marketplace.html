@@ -77,11 +77,11 @@ h1{font-size:clamp(30px,6.5vw,46px);line-height:1.1;margin:8px 0 10px;font-weigh
 <header class="hero">
  <div class="eyebrow">Key Rewards</div>
  <h1>Marketplace</h1>
- <p class="lead">Use your rewards points on food, beauty, sports, fitness and fun around town.</p>
+ <p class="lead">Use your rewards points on food, beauty, sports, fitness, auto, home services and fun around town.</p>
  <div class="banner"><b>Preview.</b> The gift cards below are the first offers. Listings marked <b>Sample</b> show how more offers will look. Partner businesses set their own offers and points.</div>
 </header>
 
-<input class="search" id="q" type="search" placeholder="Search: haircut, bowling, pickleball&hellip;" aria-label="Search the marketplace" autocomplete="off">
+<input class="search" id="q" type="search" placeholder="Search: haircut, window tint, pickleball&hellip;" aria-label="Search the marketplace" autocomplete="off">
 <div class="chips" id="chips" role="group" aria-label="Categories"></div>
 
 <div id="featWrap">
@@ -101,7 +101,7 @@ h1{font-size:clamp(30px,6.5vw,46px);line-height:1.1;margin:8px 0 10px;font-weigh
 <script>
 (function(){
 "use strict";
-var CATS=[["all","All"],["gift","Gift cards"],["beauty","Salon & beauty"],["sports","Sports & games"],["fitness","Fitness & wellness"],["food","Food & drink"],["fun","Fun & experiences"]];
+var CATS=[["all","All"],["gift","Gift cards"],["beauty","Salon & beauty"],["sports","Sports & games"],["fitness","Fitness & wellness"],["food","Food & drink"],["fun","Fun & experiences"],["auto","Auto & window tint"],["home","Home services"]];
 var GIFTS=[{n:"Johnny Mac\u2019s",kind:"Gift card",pts:100},{n:"Vanilla Rice\u2019s Hibachi House",kind:"Gift card",pts:100}];
 /* sample listings: [name, category, emoji, note, points] */
 var S=[
@@ -121,7 +121,13 @@ var S=[
 ["Dinner for two","food","\ud83c\udf7d\ufe0f","Tasting menu",200],["Brunch","food","\ud83e\udd5e","Weekend table",70],["Coffee and pastry","food","\u2615","Any size",10],["Dessert flight","food","\ud83c\udf70","Shared",35],
 ["Happy hour tab","food","\ud83c\udf79","Appetizers",55],["Pizza night","food","\ud83c\udf55","Large pie",40],["Sushi set","food","\ud83c\udf63","Chef\u2019s choice",80],["Taco night","food","\ud83c\udf2e","Table of tacos",35],
 ["Escape room","fun","\ud83d\udddd\ufe0f","Up to 6 people",110],["Arcade card","fun","\ud83d\udd79\ufe0f","Game credits",30],["Movie night","fun","\ud83c\udfac","Two tickets",50],["Live show seats","fun","\ud83c\udfad","Reserved",250],
-["Karaoke room","fun","\ud83c\udfa4","One hour",70],["Painting class","fun","\ud83c\udfa8","Sip and paint",65],["Cooking class","fun","\ud83d\udc68\u200d\ud83c\udf73","Hands-on",95],["Laser tag","fun","\ud83d\udd2b","Two rounds",45]
+["Karaoke room","fun","\ud83c\udfa4","One hour",70],["Painting class","fun","\ud83c\udfa8","Sip and paint",65],["Cooking class","fun","\ud83d\udc68\u200d\ud83c\udf73","Hands-on",95],["Laser tag","fun","\ud83d\udd2b","Two rounds",45],
+["Window tint, front two windows","auto","\ud83d\udd76\ufe0f","Legal-limit film",90],["Window tint, full car","auto","\ud83d\ude97","All side and rear glass",220],["Ceramic window tint","auto","\u2728","Heat-blocking film",320],["Windshield sun strip","auto","\u2600\ufe0f","Top of the glass",40],
+["Home or office window film","auto","\ud83c\udfe0","Per window",70],["Car wash and wax","auto","\ud83d\udebf","Hand finish",55],["Interior and exterior detail","auto","\ud83e\uddfd","Full detail",180],["Oil change","auto","\ud83d\udee2\ufe0f","Most vehicles",65],
+["Tire rotation and check","auto","\ud83d\udd27","Safety check",35],["Windshield chip repair","auto","\ud83d\udd0d","Stops the crack",50],["Paint protection","auto","\ud83d\udee1\ufe0f","Gloss coat",260],["Headlight restoration","auto","\ud83d\udca1","Clear and bright",60],
+["House cleaning","home","\ud83e\uddf9","Up to 3 hours",140],["Carpet cleaning","home","\ud83e\uddfc","Two rooms",90],["Lawn care visit","home","\ud83c\udf3f","Mow and edge",60],["Pool cleaning","home","\ud83c\udfca","One visit",70],
+["Pest control","home","\ud83d\udc1c","Home treatment",85],["Handyman, one hour","home","\ud83d\udd28","Small repairs",75],["Window washing","home","\ud83e\uddfd","Inside and out",80],["Pressure washing","home","\ud83d\udca6","Driveway or patio",110],
+["AC tune-up","home","\u2744\ufe0f","Before summer",95],["Appliance repair visit","home","\ud83d\udd0c","Diagnosis",65],["Garage door service","home","\ud83d\udeaa","Tune and test",80],["Moving help, two hours","home","\ud83d\udce6","Two movers",150]
 ];
 var cat="all",q="";
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -140,7 +146,7 @@ function render(){
   if(items.length)out+='<div class="sechead"><h2>'+esc(c[1])+'</h2><span>'+items.length+' sample '+(items.length===1?"listing":"listings")+'</span></div><div class="grid">'+items.join("")+'</div>';
  });
  if(cat==="gift")out="";
- if(!showGift&&!out)out='<div class="grid"><div class="none">Nothing matches. Try another word, like \u201chaircut\u201d or \u201cbowling\u201d.</div></div>';
+ if(!showGift&&!out)out='<div class="grid"><div class="none">Nothing matches. Try another word, like \u201chaircut\u201d, \u201ctint\u201d or \u201cbowling\u201d.</div></div>';
  document.getElementById("rest").innerHTML=out;
 }
 var lastFocus=null;
