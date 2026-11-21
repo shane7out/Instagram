@@ -24,3 +24,7 @@ for f in sorted(SITE.rglob('*.html')):
     if s != o:
         f.write_text(s, encoding='utf-8'); done += 1
 print('light look and the Light/Dark button removed from', done, 'page(s)')
+
+# Shane (2026-11-21): "AI/SI everywhere". Always the last page change, so regenerated pages get it again.
+import subprocess as _sp, sys as _sys
+_sp.run([_sys.executable, str(pathlib.Path(__file__).resolve().parent / 'apply_aisi.py')], check=False)
