@@ -6,7 +6,7 @@
 # Locks YOUR Key Technologies data to YOUR login: the lead list (names, emails, phones), the page-view log and the CRM can then
 # be READ only by you, signed in. Website visitors can still SEND a lead and still be counted, but can no longer read, change
 # or delete anything. Also stops anyone replacing the stored sign-in key. Same safety as deploy-owner-rules.sh: it saves a copy
-# of your current rules first, only ADDS these five sections (the Restaurant Rewards ledger is the fifth), reads the result back, runs live checks, and PUTS YOUR OLD RULES
+# of your current rules first, only ADDS these five sections (the Key Rewards ledger is the fifth), reads the result back, runs live checks, and PUTS YOUR OLD RULES
 # BACK AUTOMATICALLY if any check fails. To undo later by hand:  bash undo-key-rules.sh
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
@@ -60,7 +60,7 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
   fragText = fragText.split('__VIEWER_UID__').join(VUID); log(VUID === 'NOVIEWER' ? 'No report PIN account yet (owner-only read of the page views).' : 'Report PIN account found: it may read the page views.');
   // the Treasury PIN account (made by rr-pin-setup.sh); without it the placeholder becomes a value no real account can have
   let TUID = 'NOTREASURER'; try { const tf = path.join(os.homedir(), '.lvr', 'treasurer-uid'); if (fs.existsSync(tf)) { const v = fs.readFileSync(tf, 'utf8').trim(); if (/^[A-Za-z0-9]{20,40}$/.test(v)) TUID = v; } } catch (e) {}
-  fragText = fragText.split('__TREASURER_UID__').join(TUID); log(TUID === 'NOTREASURER' ? 'No Treasury PIN account yet (only you, signed in, can use the Restaurant Rewards ledger).' : 'Treasury PIN account found: it may keep the Restaurant Rewards ledger.');
+  fragText = fragText.split('__TREASURER_UID__').join(TUID); log(TUID === 'NOTREASURER' ? 'No Treasury PIN account yet (only you, signed in, can use the Key Rewards ledger).' : 'Treasury PIN account found: it may keep the Key Rewards ledger.');
   let frag; try { frag = JSON.parse(fragText); } catch (e) { log('Could not read the owner rules file - nothing changed.'); return report(); }
   for (const k of SECTIONS) if (!frag[k]) { log('Owner rules file is missing section ' + k + ' - nothing changed.'); return report(); }
   const merged = JSON.parse(liveText); for (const k of SECTIONS) merged.rules[k] = frag[k];
@@ -79,9 +79,9 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
     ['YOU can read the page views', await status(`${DB}/key_pageviews/hits.json?shallow=true&auth=${A}`), 200],
     ['a stranger cannot read the CRM', await status(`${DB}/kt_crm/prospects.json?shallow=true`), 401],
     ['YOU can read the CRM', await status(`${DB}/kt_crm/prospects.json?shallow=true&auth=${A}`), 200],
-    ['a stranger cannot read the Restaurant Rewards ledger', await status(`${DB}/rr_ledger.json?shallow=true`), 401],
-    ['YOU can read the Restaurant Rewards ledger', await status(`${DB}/rr_ledger.json?shallow=true&auth=${A}`), 200],
-    ['a stranger cannot write to the Restaurant Rewards ledger', await status(`${DB}/rr_ledger/wallets/zzprobe.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'x', type: 'Other', t: 1 }) }), 401],
+    ['a stranger cannot read the Key Rewards ledger', await status(`${DB}/rr_ledger.json?shallow=true`), 401],
+    ['YOU can read the Key Rewards ledger', await status(`${DB}/rr_ledger.json?shallow=true&auth=${A}`), 200],
+    ['a stranger cannot write to the Key Rewards ledger', await status(`${DB}/rr_ledger/wallets/zzprobe.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'x', type: 'Other', t: 1 }) }), 401],
   ];
   // a visitor can still send a lead (then you delete the test lead), and cannot change it afterwards
   const lr = await fetch(`${DB}/key_leads/leads.json`, { method: 'POST', headers: J, body: JSON.stringify({ source: 'zz_probe' }) });

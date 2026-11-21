@@ -2,7 +2,7 @@
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/rr-pin-setup.sh?$(date +%s)" -o /tmp/rr-pin-setup.sh && bash /tmp/rr-pin-setup.sh
 #
-# Makes the PINs for the Restaurant Rewards Treasury. It asks "who is this PIN for?":
+# Makes the PINs for the Key Rewards Treasury. It asks "who is this PIN for?":
 #   * press Return  -> YOUR Treasury PIN (6 digits). It opens keytechnologies.si/restaurant-rewards-treasury.html and lets that
 #                      page save every wallet and every move permanently in the database. After that it also runs the database-rules
 #                      step (asks for your OWNER email + password, saves a backup first, rolls itself back if a check fails).
@@ -87,7 +87,7 @@ const derive = (pin, salt) => crypto.pbkdf2Sync(pin, salt, 150000, 32, 'sha256')
     try { execSync('curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); } catch (e) { log('The rules step did not finish - run it again.'); }
     await new Promise(r => setTimeout(r, 2000));
     const a = await status(`${DB}/rr_ledger.json?shallow=true`);
-    log((a === 401 || a === 403 ? 'OK   ' : 'FAIL ') + 'a stranger cannot read the Restaurant Rewards ledger (HTTP ' + a + ')');
+    log((a === 401 || a === 403 ? 'OK   ' : 'FAIL ') + 'a stranger cannot read the Key Rewards ledger (HTTP ' + a + ')');
   }
   log('Done. Treasury: keytechnologies.si/restaurant-rewards-treasury.html  Restaurants confirm at: keytechnologies.si/restaurant-confirm.html');
   await report();

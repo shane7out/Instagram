@@ -354,7 +354,7 @@ body.hlock{overflow:hidden}
    if(r.status!==200){DBM=false;start('Could not reach the database. Check your connection and try again, or use the practice version.');return}
    var logos={};try{logos=JSON.parse(localStorage.getItem('rrLogosV1'))||{}}catch(e){}
    if(r.json&&r.json.meta){S=fromRem(r.json);hasMeta=true;S.logos=logos;markSynced();sigPrev=sig(S);applyInstr()}
-   else{var c=localCandidate();S=c||fresh();if(!c){S.seeded2=false}S.logos=c&&c.logos?c.logos:logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
+   else{/* first sign-in: the permanent ledger starts clean from the saved instructions (10,000,000 and Thin Blue 702 at 5,000); practice records in this browser are NOT carried over */S=fresh();S.seeded2=false;S.logos=logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Key Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';
    sel='all';paint();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
