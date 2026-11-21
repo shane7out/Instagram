@@ -65,3 +65,39 @@
 /* ---- same, marketplace gift cards ---- */
 .gcard{background:radial-gradient(circle at 80% 52%,rgba(232,199,102,0) 0 38%,rgba(232,199,102,.40) 42%,rgba(232,199,102,.14) 52%,rgba(232,199,102,0) 61%),radial-gradient(ellipse 80% 80% at 6% 108%,rgba(232,199,102,.28) 0%,rgba(232,199,102,0) 60%),linear-gradient(135deg,#4a5666 0%,#27303c 26%,#10151c 52%,#323d4b 78%,#161c25 100%)!important;border:2px solid rgba(225,235,248,.6)!important;color:#eef3f9!important}
 .gcard::before{display:none!important}.gcard *{color:#eef3f9!important}.gcard .b2,.gcard .kind,.gcard .val small{color:rgba(238,243,249,.8)!important}.gcard .val{border-top-color:rgba(225,235,248,.35)!important}
+
+/* ---- platinum blue-steel with gold ring (the "sun"), removed from the live page ---- */
+/* Shane 2026-11-21: platinum = Johnny Mac's blue-steel platinum (sign-agreement.html .k-platinum), no key silhouette, soft gold ring and glow like the indigo card he liked, white type, pale silver edge. */
+.gc,#pres .gc,.wallets .gc{background:radial-gradient(circle at 80% 52%,rgba(232,199,102,0) 0 38%,rgba(232,199,102,.40) 42%,rgba(232,199,102,.14) 52%,rgba(232,199,102,0) 61%),radial-gradient(ellipse 80% 80% at 6% 108%,rgba(232,199,102,.28) 0%,rgba(232,199,102,0) 60%),linear-gradient(135deg,#4a5666 0%,#27303c 26%,#10151c 52%,#323d4b 78%,#161c25 100%)!important;border:2px solid rgba(225,235,248,.6)!important;color:#eef3f9!important;box-shadow:0 12px 26px rgba(0,0,0,.55)!important}
+.gc::before,#pres .gc::before{display:none!important}
+.gc,.gc *,#pres .gc *{color:#eef3f9!important;text-shadow:none!important}
+.gc .brand,.gc .brand2,.gc .nm,.gc .num,.gc .bal b,.gc .bal small,.gc .fineprint,.gc .gnote,.gc .gtag,.gc .gla,.gc .glab,.gc .gtitle,.gc .exp,.gc .cd,.gc .cdr{text-shadow:none!important}
+.gc .brand2,.gc .kind,.gc .fineprint,.gc .bal small,.gc .bal small .pt,.gc .glab,.gc .exp,.gc .cd,.gc .cdr{color:rgba(238,243,249,.8)!important}
+.gc .cd.soon,.gc .cdr.soon{color:#ffd9a0!important}
+.gc .rrlock img{filter:brightness(0) invert(1) sepia(.35) saturate(2) hue-rotate(-8deg) brightness(1.1)!important}
+.gc .bal{border-top:1px solid rgba(225,235,248,.35)!important;box-shadow:none!important}
+.gc.gift .gtag{border-color:rgba(238,243,249,.7)!important}
+.gc.back .bkw::after{background:linear-gradient(rgba(16,21,28,0),rgba(16,21,28,.96))!important}
+.gc.back .sbar{background:rgba(238,243,249,.25)!important}.gc.back .sth{background:#eef3f9!important}
+.gc.back .strip{background:linear-gradient(#0b0e13,#020304)!important}#pres .gc.back .strip,#pres .gc.back .strip *,.gc.back .strip,.gc.back .strip *{color:#e8c766!important}
+
+/* ---- FANCY GOLD (live): Treasury page ---- */
+/* Shane 2026-11-21: FANCY GOLD. Rich brushed gold with a foil highlight, a fine engraved line pattern, a double engraved border, embossed type, and the key picture next to the name (not in the corner). No key silhouette. */
+.gc,#pres .gc,.wallets .gc{background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,250,210,.50) 40%,rgba(255,255,255,0) 52%),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(135deg,#a6720f 0%,#e8bd45 16%,#fbe48e 33%,#dba623 52%,#f7d96f 70%,#bd8a12 86%,#e6b93e 100%)!important;box-shadow:0 14px 28px rgba(0,0,0,.55),inset 0 0 0 1px rgba(110,70,0,.55),inset 0 0 0 4px rgba(255,238,170,.45),inset 0 0 0 5px rgba(110,70,0,.30)!important;border:0!important}
+.gc:not(.back)::before,#pres .gc:not(.back)::before{display:block!important;content:""!important;position:absolute!important;inset:0!important;background:repeating-radial-gradient(circle at 92% 8%,rgba(110,70,0,.11) 0 1px,rgba(110,70,0,0) 1px 6px)!important;filter:none!important;opacity:1!important;z-index:-1!important;animation:none!important;mix-blend-mode:multiply}
+.gc.back::before,#pres .gc.back::before{display:none!important}
+.gc,.gc *,#pres .gc *{color:#1c1405!important}
+.gc .brand,.gc .brand2,.gc .nm,.gc .num,.gc .bal b,.gc .bal small,.gc .fineprint,.gc .gnote,.gc .gtag,.gc .gla,.gc .glab,.gc .gtitle,.gc .exp,.gc .cd,.gc .cdr{text-shadow:0 1px 0 rgba(255,244,190,.75),0 -1px 0 rgba(90,55,0,.20)!important}
+.gc .brand2,.gc .fineprint,.gc .bal small,.gc .bal small .pt,.gc .glab,.gc .cd,.gc .cdr,.gc .exp{color:#4a3208!important}
+.gc .bal{border-top:1px solid rgba(110,70,0,.55)!important;box-shadow:0 -1px 0 rgba(255,244,190,.7)!important}
+.gc .crow,.gc .rrlock{display:none!important}
+.gc:not(.back) .brand::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-icon.svg) center/contain no-repeat;filter:drop-shadow(0 1px 0 rgba(255,244,190,.8))}
+.gc.back .bkw::after{background:linear-gradient(rgba(214,165,50,0),rgba(214,165,50,.96))!important}
+.gc.back .strip{background:linear-gradient(#1b1b1b,#0b0b0b)!important}.gc.back .strip,.gc.back .strip *{color:#e8c766!important;text-shadow:none!important}
+
+/* ---- FANCY GOLD: marketplace gift cards ---- */
+.gcard{background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,250,210,.50) 40%,rgba(255,255,255,0) 52%),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(135deg,#a6720f 0%,#e8bd45 16%,#fbe48e 33%,#dba623 52%,#f7d96f 70%,#bd8a12 86%,#e6b93e 100%)!important;box-shadow:inset 0 0 0 1px rgba(110,70,0,.55),inset 0 0 0 4px rgba(255,238,170,.45),inset 0 0 0 5px rgba(110,70,0,.30)!important;color:#1c1405!important}
+.gcard::before{content:"";background:repeating-radial-gradient(circle at 92% 8%,rgba(110,70,0,.11) 0 1px,rgba(110,70,0,0) 1px 6px)!important;opacity:1!important;filter:none!important;mix-blend-mode:multiply}
+.gcard *{color:#1c1405!important}.gcard .b2,.gcard .kind,.gcard .val small{color:#4a3208!important}
+.gcard .b::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-icon.svg) center/contain no-repeat}
+.gcard .val{border-top-color:rgba(110,70,0,.55)!important}
