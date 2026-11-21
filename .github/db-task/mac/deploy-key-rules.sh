@@ -38,10 +38,20 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
   const apiKey = await (await fetch(DB + '/ownerAuth/apiKey.json')).json();
   if (!apiKey) { log('The admin sign-in key is not stored yet. Run owner-setup.sh first - nothing changed.'); return report(); }
   // prove the owner login works BEFORE anything is uploaded
-  const email = ask('Owner email: ', false).trim().toLowerCase(), pw = ask('Owner password (hidden): ', true);
-  const si = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(apiKey)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw, returnSecureToken: true }) });
-  const sj = await si.json().catch(() => ({}));
-  if (!si.ok || !sj.idToken) { log('Owner sign-in failed (HTTP ' + si.status + ') - nothing changed.'); return report(); }
+  let sj = {}, signedOK = false;
+  for (let tryN = 1; tryN <= 3 && !signedOK; tryN++) {
+    let email = '';
+    while (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      email = ask('Owner email (type it on the keyboard, it is the email you sign in with as owner): ', false).trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) console.log('That is not an email address (it looks like something else was pasted). Please type the owner email.');
+    }
+    const pw = ask('Owner password (hidden): ', true);
+    const si = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(apiKey)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw, returnSecureToken: true }) });
+    sj = await si.json().catch(() => ({}));
+    if (si.ok && sj.idToken) { signedOK = true; break; }
+    log('Owner sign-in failed (HTTP ' + si.status + ')' + (tryN < 3 ? ' - try again (' + (3 - tryN) + ' left).' : ' - nothing changed.'));
+  }
+  if (!signedOK) return report();
   if (sj.localId !== UID) { log('Signed in, but the owner id does not match the saved one - nothing changed.'); return report(); }
   const ID = sj.idToken; log('Owner sign-in works.');
   const rulesUrl = `${DB}/.settings/rules.json?access_token=${encodeURIComponent(TOKEN)}`;
