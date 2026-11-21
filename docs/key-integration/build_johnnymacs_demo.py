@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Builds the Johnny Mac's DEMO page for keytechnologies.si: the real Johnny Mac's site
-(sites/johnny-macs/index.html) with a Restaurant Rewards section built in, using SAMPLE data only.
+(sites/johnny-macs/index.html) with a Key Rewards section built in, using SAMPLE data only.
 Output: sites/key-technologies/johnny-macs-demo/index.html (+ img/). Unlisted and noindex until the client agrees.
 Run: python3 sites/johnny-macs/build.py && python3 docs/key-integration/build_johnnymacs_demo.py
 """
@@ -49,11 +49,11 @@ CSS = r'''
 sub('</style>', CSS + '</style>')
 
 BAR = ('<div class="demobar"><b>Demo.</b> A sample restaurant website built by <a href="https://keytechnologies.si/">Key Technologies</a> '
-       'with Restaurant Rewards built in. Every member, balance and receipt below is sample data.<span class="dm"><a href="app.html">1. Working account demo</a><a href="../restaurant-rewards-treasury.html?demo=1">2. Rewards wallet and Treasury demo</a><a href="wallet.html">3. The 4 simple steps</a><a href="cards.html">4. Gold wallet card</a><a href="../restaurant-rewards-uses.html">5. What you can use RR for</a></span></div>')
+       'with Key Rewards built in. Every member, balance and receipt below is sample data.<span class="dm"><a href="app.html">1. Working account demo</a><a href="../restaurant-rewards-treasury.html?demo=1">2. Rewards wallet and Treasury demo</a><a href="wallet.html">3. The 4 simple steps</a><a href="cards.html">4. Gold wallet card</a><a href="../restaurant-rewards-uses.html">5. What you can use RR for</a></span></div>')
 sub('<body>\n', '<body>\n' + BAR + '\n')
 
 SECTION = '''<section id="rewards"><div class="wrap">
- <h2>Restaurant Rewards</h2>
+ <h2>Key Rewards</h2>
  <p class="byKey"><span>Powered by <b>Key Technologies</b>. Same wallet at every participating restaurant.</span></p>
  <p class="sub">Earn rewards every time you eat here, and use them for free food. One rewards balance that works at every participating restaurant.</p>
  <div class="rw">
@@ -74,7 +74,7 @@ SECTION = '''<section id="rewards"><div class="wrap">
     <li>Use rewards for free food at participating restaurants.</li>
     <li>No password and no app to download.</li>
    </ul>
-   <p class="rwnote">Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Real offers and amounts are set by each restaurant.</p>
+   <p class="rwnote">Rewards are a free perk with no cash value. Key Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Real offers and amounts are set by each restaurant.</p>
   </div>
  </div>
 </div></section>

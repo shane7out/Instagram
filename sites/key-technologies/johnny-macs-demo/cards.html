@@ -4,8 +4,8 @@
 <meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Restaurant Rewards Wallet Demo | Key Technologies.si</title>
-<meta name="description" content="A mobile-wallet demo: your Restaurant Rewards cards, tap one, type how much to use, and redeem. Sample data only.">
+<title>Key Rewards Wallet Demo | Key Technologies.si</title>
+<meta name="description" content="A mobile-wallet demo: your Key Rewards cards, tap one, type how much to use, and redeem. Sample data only.">
 <meta name="theme-color" content="#0f171e">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
@@ -87,7 +87,7 @@ ul.act{list-style:none;margin:0;padding:2px 14px;background:var(--card);border:1
  <h2>Activity</h2><ul class="act" id="act"></ul>
 </section>
 
-<p class="fine">Restaurant Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Card numbers here are made up and are not payment cards.</p>
+<p class="fine">Key Rewards are a free perk with no cash value. Key Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. Card numbers here are made up and are not payment cards.</p>
 </div>
 <script>
 (function(){
@@ -105,7 +105,7 @@ ul.act{list-style:none;margin:0;padding:2px 14px;background:var(--card);border:1
  function when(t){var d=new Date(t);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function card(c,asButton){var g=el(asButton?'button':'div','gc');if(asButton)g.type='button';
-  g.appendChild(el('div','brand','Restaurant Rewards'));g.appendChild(el('div','tb',fmt(c.bal)));g.appendChild(el('div','nm',c.name));var cr=el('div','crow');cr.appendChild(el('div','chip'));var lk=el('div','rrlock'),ri=document.createElement('img');ri.src='../brand/rr-emboss.svg';ri.alt='Restaurant Rewards seal';ri.width=189;ri.height=54;lk.appendChild(ri);cr.appendChild(lk);g.appendChild(cr);g.appendChild(el('div','num',c.num));
+  g.appendChild(el('div','brand','Key Rewards'));g.appendChild(el('div','tb',fmt(c.bal)));g.appendChild(el('div','nm',c.name));var cr=el('div','crow');cr.appendChild(el('div','chip'));var lk=el('div','rrlock'),ri=document.createElement('img');ri.src='../brand/rr-emboss.svg';ri.alt='Key Rewards seal';ri.width=189;ri.height=54;lk.appendChild(ri);cr.appendChild(lk);g.appendChild(cr);g.appendChild(el('div','num',c.num));
   var b=el('div','bal');b.appendChild(el('small',null,'Balance'));b.appendChild(el('b',null,fmt(c.bal)));g.appendChild(b);return g}
  function home(){$('home').classList.remove('hide');$('detail').classList.add('hide');cur=null;var st=$('stack');st.innerHTML='';
   $('count').textContent=S.cards.length+' cards';
@@ -117,7 +117,7 @@ ul.act{list-style:none;margin:0;padding:2px 14px;background:var(--card);border:1
  function say(t,err){var m=$('msg');m.textContent=t;m.className='msg'+(err?' err':'')}
  function redeem(a){if(a===null||a<=0){say('Please type an amount, like 25 or 83',true);$('amt').focus();return}
   if(a>cur.bal){say('This card only has '+fmt(cur.bal)+'. Please type a smaller amount.',true);return}
-  cur.bal-=a;cur.log.push({k:'out',w:'Used at '+cur.name,a:a,t:Date.now()});$('amt').value='';say('Done. You used '+fmt(a)+' Restaurant Rewards at '+cur.name+'.');paintDetail(true)}
+  cur.bal-=a;cur.log.push({k:'out',w:'Used at '+cur.name,a:a,t:Date.now()});$('amt').value='';say('Done. You used '+fmt(a)+' Key Rewards at '+cur.name+'.');paintDetail(true)}
  $('redeem').addEventListener('click',function(){redeem(parse($('amt').value))});
  $('amt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();redeem(parse($('amt').value))}});
  $('all').addEventListener('click',function(){redeem(cur.bal>0?cur.bal:null)});

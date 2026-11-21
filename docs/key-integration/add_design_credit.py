@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Puts a small "Design by KeyTechnologies.si" line at the bottom of every Restaurant Rewards page that is a normal scrolling page
+"""Puts a small "Design by KeyTechnologies.si" line at the bottom of every Key Rewards page that is a normal scrolling page
 (Shane, 2026-11-18: "a design by keytechnologies.si on every single page, we're going to start really marketing this").
 Idempotent (marker <!--KTCREDIT-->). Run AFTER build_wallet_demos.py (that generator rewrites the two wallet demo pages).
 The one-screen app pages (key-rewards-app, key-rewards-me, key-rewards-dashboard, my-account, menu) are NOT touched here: they are the live member

@@ -39,8 +39,8 @@ def flat_text(text,cx,y,size,ls):
     return ' '.join(out)
 def dia(x,y,s=1.6): return f'<rect x="{x-s/2}" y="{y-s/2}" width="{s}" height="{s}" fill="{K}" transform="rotate(45 {x} {y})"/>'
 def circ(r,sw=.6): return f'<circle cx="50" cy="50" r="{r}" fill="none" stroke="{K}" stroke-width="{sw}"/>'
-svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Restaurant Rewards (RR)">
-<title>Restaurant Rewards (RR)</title>
+svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Key Rewards">
+<title>Key Rewards</title>
 <defs><filter id="emb" x="-15%" y="-15%" width="130%" height="130%">
  <feGaussianBlur in="SourceAlpha" stdDeviation=".5" result="a"/>
  <feOffset in="a" dx="-1.2" dy="-1.4" result="ho"/><feComposite in="ho" in2="SourceAlpha" operator="out" result="h"/>

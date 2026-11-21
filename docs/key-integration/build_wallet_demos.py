@@ -75,7 +75,7 @@ def page(c):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>%(title)s | Key Technologies.si</title>
-<meta name="description" content="A simple four-step demo of how Restaurant Rewards move through a restaurant account. Sample numbers only.">
+<meta name="description" content="A simple four-step demo of how Key Rewards move through a restaurant account. Sample numbers only.">
 <meta name="theme-color" content="#0f171e">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>%(css)s</style>
@@ -96,8 +96,8 @@ def page(c):
  var C=%(cfg)s,cur=1,wallet,alex,rest,secs=[1,2,3,4].map(function(i){return document.getElementById('s'+i)}),dots=document.querySelectorAll('.dots i'),lab=document.getElementById('stepLabel');
  function $(i){return document.getElementById(i)}
  function fmt(c){return String(Math.round(c/100)).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
- function R(el,c){if(el)el.innerHTML=fmt(c)+'<span>Restaurant Rewards</span>'}
- function P(el,c){el.innerHTML=fmt(c)+'<small>Restaurant Rewards</small>'}
+ function R(el,c){if(el)el.innerHTML=fmt(c)+'<span>Key Rewards</span>'}
+ function P(el,c){el.innerHTML=fmt(c)+'<small>Key Rewards</small>'}
  function paint(){R($('w2'),wallet);P($('c2'),alex);R($('w3'),wallet);P($('c3'),alex);R($('r3'),rest);R($('w4'),wallet)}
  var acts=[];function addAct(who,what,amt,inn){acts.unshift({who:who,what:what,amt:amt,inn:inn});var ul=$('actList');if(!ul)return;ul.innerHTML='';acts.forEach(function(a){var li=document.createElement('li');var d=document.createElement('span');d.innerHTML='<b></b><small></small>';d.querySelector('b').textContent=a.what;d.querySelector('small').textContent=a.who+' \u00b7 Today';var m=document.createElement('span');m.className='amt'+(a.inn?' in':'');m.textContent=(a.inn?'+':'\u2212')+fmt(a.amt);li.appendChild(d);li.appendChild(m);ul.appendChild(li)})}
  function show(n){cur=n;secs.forEach(function(s,i){s.classList.toggle('hide',i!==n-1)});[].forEach.call(dots,function(d,i){d.classList.toggle('on',i<n)});lab.textContent='Step '+n+' of 4';window.scrollTo(0,0);var h=secs[n-1].querySelector('h1');if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}}
@@ -110,7 +110,7 @@ def page(c):
   if(a===null||a<=0){$('err').textContent='Please type an amount, like 83';$('amt').focus();return}
   if(a>alex){$('err').textContent='Alex only has '+fmt(alex)+'. Please type a smaller amount.';$('amt').focus();return}
   $('err').textContent='';alex-=a;if(C.toRest){rest+=a}else{wallet+=a}paint();addAct(C.toRest?"Johnny Mac's account":C.acctName,'Redeemed by Alex',a,true);
-  $('m3').textContent='Alex used '+fmt(a)+' Restaurant Rewards. '+C.m3;$('m3').classList.remove('hide');$('rbox').classList.add('hide');$('n3').classList.remove('hide');$('n3').focus()}
+  $('m3').textContent='Alex used '+fmt(a)+' Key Rewards. '+C.m3;$('m3').classList.remove('hide');$('rbox').classList.add('hide');$('n3').classList.remove('hide');$('n3').focus()}
  $('redeem').addEventListener('click',redeem);
  $('amt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();redeem()}});
  $('all').addEventListener('click',function(){$('amt').value=fmt(alex);redeem()});
@@ -124,18 +124,18 @@ def page(c):
 
 JOHNNY_BODY = '''<section id="s1">
 <h1>This is your account.</h1>
-<p class="say">500 Restaurant Rewards are in it for Johnny Mac's.</p>
-<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num">500<span>Restaurant Rewards</span></div></div>
-<p>Customers earn Restaurant Rewards from your account when they eat with you.</p>
+<p class="say">500 Key Rewards are in it for Johnny Mac's.</p>
+<div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num">500<span>Key Rewards</span></div></div>
+<p>Customers earn Key Rewards from your account when they eat with you.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
 <section id="s2" class="hide">
-<h1>A customer earns Restaurant Rewards.</h1>
+<h1>A customer earns Key Rewards.</h1>
 <p class="say">Alex eats at Johnny Mac's and sends in the receipt.</p>
 <div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
 <p class="result hide pop" id="m2"></p>
-<button class="btn" type="button" id="earn">Alex earns 150 Restaurant Rewards</button>
+<button class="btn" type="button" id="earn">Alex earns 150 Key Rewards</button>
 <button class="btn hide" type="button" data-next id="n2">Next</button>
 </section>
 <section id="s3" class="hide">
@@ -144,36 +144,36 @@ JOHNNY_BODY = '''<section id="s1">
 <div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="w3" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <p class="result hide pop" id="m3"></p>
-<div id="rbox"><label class="lab" for="amt">How many Restaurant Rewards does Alex use?</label>
+<div id="rbox"><label class="lab" for="amt">How many Key Rewards does Alex use?</label>
 <div class="redeemrow"><input id="amt" type="text" inputmode="numeric" autocomplete="off" placeholder="Type an amount, like 83" aria-describedby="err"><button class="btn" type="button" id="redeem">Redeem</button></div>
-<button class="linkbtn" type="button" id="all">Use all of Alex's Restaurant Rewards</button>
+<button class="linkbtn" type="button" id="all">Use all of Alex's Key Rewards</button>
 <p class="err" id="err" role="alert"></p></div>
 <button class="btn hide" type="button" data-next id="n3">Next</button>
 </section>
 <section id="s4" class="hide">
 <h1>That's it.</h1>
-<p class="say">The Restaurant Rewards Alex used went back into your account.</p>
+<p class="say">The Key Rewards Alex used went back into your account.</p>
 <div class="wallet"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="w4"></div></div>
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
 <ul class="big"><li>Alex got free food and will come back.</li><li>You see every Restaurant Reward used, and when.</li><li>Nothing to install. Nothing to learn.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
-<p class="fine">Restaurant Rewards are a free perk for customers, with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
+<p class="fine">Key Rewards are a free perk for customers, with no cash value. Key Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This demo uses made-up numbers. The final details are agreed with each restaurant.</p>
 </section>'''
 
 TB_BODY = '''<section id="s1">
 <h1>This is the Thin Blue 702 account.</h1>
-<p class="say">777 Restaurant Rewards are in it.</p>
-<div class="wallet"><div class="ahead"><b>Thin Blue 702</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><div class="gnum">RR 0777 0001 0233</div><small>Available balance</small><div class="num">777<span>Restaurant Rewards</span></div></div>
-<p>Restaurant Rewards from this account can be used at restaurants in the Restaurant Rewards network.</p>
+<p class="say">777 Key Rewards are in it.</p>
+<div class="wallet"><div class="ahead"><b>Thin Blue 702</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><div class="gnum">RR 0777 0001 0233</div><small>Available balance</small><div class="num">777<span>Key Rewards</span></div></div>
+<p>Key Rewards from this account can be used at restaurants in the Key Rewards network.</p>
 <button class="btn" type="button" data-next>Next</button>
 </section>
 <section id="s2" class="hide">
-<h1>A person gets Restaurant Rewards.</h1>
-<p class="say">Alex receives 150 Restaurant Rewards from the Thin Blue 702 account.</p>
+<h1>A person gets Key Rewards.</h1>
+<p class="say">Alex receives 150 Key Rewards from the Thin Blue 702 account.</p>
 <div class="wallet"><div class="ahead"><b>Thin Blue 702</b><span>Rewards Account &bull;&bull;&bull;&bull; 0777</span></div><div class="gnum">RR 0777 0001 0233</div><small>Available balance</small><div class="num" id="w2" aria-live="polite"></div></div>
 <div class="cust"><b>Alex</b><span class="n" id="c2" aria-live="polite"></span></div>
 <p class="result hide pop" id="m2"></p>
-<button class="btn" type="button" id="earn">Alex gets 150 Restaurant Rewards</button>
+<button class="btn" type="button" id="earn">Alex gets 150 Key Rewards</button>
 <button class="btn hide" type="button" data-next id="n2">Next</button>
 </section>
 <section id="s3" class="hide">
@@ -183,28 +183,28 @@ TB_BODY = '''<section id="s1">
 <div class="cust"><b>Alex</b><span class="n" id="c3" aria-live="polite"></span></div>
 <div class="wallet small"><div class="ahead"><b>Johnny Mac's</b><span>Rewards Account &bull;&bull;&bull;&bull; 0511</span></div><div class="gnum">RR 0511 0001 0042</div><small>Available balance</small><div class="num" id="r3" aria-live="polite"></div></div>
 <p class="result hide pop" id="m3"></p>
-<div id="rbox"><label class="lab" for="amt">How many Restaurant Rewards does Alex use?</label>
+<div id="rbox"><label class="lab" for="amt">How many Key Rewards does Alex use?</label>
 <div class="redeemrow"><input id="amt" type="text" inputmode="numeric" autocomplete="off" placeholder="Type an amount, like 83" aria-describedby="err"><button class="btn" type="button" id="redeem">Redeem</button></div>
-<button class="linkbtn" type="button" id="all">Use all of Alex's Restaurant Rewards</button>
+<button class="linkbtn" type="button" id="all">Use all of Alex's Key Rewards</button>
 <p class="err" id="err" role="alert"></p></div>
 <button class="btn hide" type="button" data-next id="n3">Next</button>
 </section>
 <section id="s4" class="hide">
 <h1>That's it.</h1>
-<p class="say">The Restaurant Rewards Alex used moved into the restaurant's account.</p>
+<p class="say">The Key Rewards Alex used moved into the restaurant's account.</p>
 <div class="act"><h2>Recent activity</h2><ul id="actList"></ul></div>
-<ul class="big"><li>Alex got a free meal.</li><li>The restaurant got the Restaurant Rewards.</li><li>You can see where every Restaurant Reward went.</li><li>Any restaurant that joins accepts the same Restaurant Rewards.</li></ul>
+<ul class="big"><li>Alex got a free meal.</li><li>The restaurant got the Key Rewards.</li><li>You can see where every Restaurant Reward went.</li><li>Any restaurant that joins accepts the same Key Rewards.</li></ul>
 <button class="btn ghost" type="button" id="again">Show me again</button>
-<p class="fine"><b>Example only.</b> Restaurant Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. All names and numbers are made up to show the idea.</p>
+<p class="fine"><b>Example only.</b> Key Rewards are a free perk with no cash value. Key Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. All names and numbers are made up to show the idea.</p>
 </section>'''
 
 PAGES = [
  (os.path.join(SITE, 'johnny-macs-demo/wallet.html'), dict(title="Johnny Mac's Account Demo", head="Johnny Mac's Rewards", logo='img/logo.png',
    banner="Sample people and sample numbers. Nothing here is real or connected to a bank or a register.", body=JOHNNY_BODY,
-   js=dict(acctName="Johnny Mac's account", start=50000, give=15000, restStart=0, toRest=False, m2='150 Restaurant Rewards moved from your account to Alex.', m3='They went back into your account.'))),
+   js=dict(acctName="Johnny Mac's account", start=50000, give=15000, restStart=0, toRest=False, m2='150 Key Rewards moved from your account to Alex.', m3='They went back into your account.'))),
  (os.path.join(SITE, 'thin-blue-702-demo/index.html'), dict(title="Thin Blue 702 Account Example", head="Thin Blue 702 Rewards (example)", logo='',
    banner="Example only. Made-up people and numbers.", body=TB_BODY,
-   js=dict(acctName='Thin Blue 702 account', start=77700, give=15000, restStart=0, toRest=True, m2='150 Restaurant Rewards moved from the Thin Blue 702 account to Alex.', m3='They went into Johnny Mac\'s account.'))),
+   js=dict(acctName='Thin Blue 702 account', start=77700, give=15000, restStart=0, toRest=True, m2='150 Key Rewards moved from the Thin Blue 702 account to Alex.', m3='They went into Johnny Mac\'s account.'))),
 ]
 for path, c in PAGES:
     os.makedirs(os.path.dirname(path), exist_ok=True)

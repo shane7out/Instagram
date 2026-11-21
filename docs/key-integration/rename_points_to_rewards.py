@@ -30,10 +30,10 @@ def rename_text(s):
     # terms pages keep working under new names
     s = s.replace('points-terms.html', 'rewards-terms.html').replace('points-privacy.html', 'rewards-privacy.html')
     if not re.search(r'(?i)point', s): return s
-    s = s.replace('Las Vegas Restaurant Points', 'Las Vegas Restaurant Rewards')
+    s = s.replace('Las Vegas Restaurant Points', 'Las Vegas Key Rewards')
     t, keep = protect(s)
     t = re.sub(r'LVR Points', 'LVR Rewards', t)
-    t = re.sub(r'Las Vegas Restaurant Points', 'Las Vegas Restaurant Rewards', t)
+    t = re.sub(r'Las Vegas Restaurant Points', 'Las Vegas Key Rewards', t)
     t = re.sub(r'\b1 point\b', '1 reward', t)
     t = re.sub(r'\bPOINTS\b', 'REWARDS', t)
     t = re.sub(r'\bPoints\b', 'Rewards', t)

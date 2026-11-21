@@ -83,7 +83,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
   </div>
 </header>
 <div class="mobile-menu" id="mobileMenu">
-  <a class="mm-account" id="mmAccount" href="../rewards.html"><span>Log in</span><small>Restaurant Rewards member</small></a>
+  <a class="mm-account" id="mmAccount" href="../rewards.html"><span>Log in</span><small>Key Rewards member</small></a>
   <div class="mm-cta-row">
     <a class="btn btn-primary" href="../book.html">Book a Call</a>
     <a class="btn btn-ghost" href="../index.html#audit">Free Website Audit</a>
@@ -103,7 +103,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
     <li><a href="../index.html#about">About Shane</a></li>
     <li><a href="../index.html#locations">Locations</a></li>
     <li><a href="../index.html#faq">FAQ</a></li>
-    <li><a href="../rewards.html">Restaurant Rewards</a></li>
+    <li><a href="../rewards.html">Key Rewards</a></li>
   </ul>
   <a class="btn btn-primary" style="width:100%" href="../index.html#lead-short">Get My Free Review</a>
 </div>
@@ -124,7 +124,7 @@ def shell(title, desc, path, body, ld_graph, crumbs):
       <li><a href="../index.html#about">About</a></li>
       <li><a href="../index.html#locations">Locations</a></li>
       <li><a href="../index.html#faq">FAQ</a></li>
-      <li><a href="../rewards.html">Restaurant Rewards</a></li>
+      <li><a href="../rewards.html">Key Rewards</a></li>
       <li><a href="../privacy.html">Privacy</a></li>
       <li><a href="../terms.html">Terms</a></li>
     </ul>
@@ -862,20 +862,20 @@ G11['body'] = f"""<article class="wrap guide">
 </article>"""
 GUIDES['G11'] = G11
 
-# ================= Guide 12: restaurant rewards programs =================
+# ================= Guide 12: key rewards programs =================
 G12 = dict(slug='restaurant-rewards-program', date='2026-11-07',
-  title='How a Restaurant Rewards Program Works | Key Technologies.si',
-  desc='A plain guide to restaurant rewards programs: how points or rewards work, what expiry dates mean, who covers the cost, and what to check before you start.',
-  h1='How a restaurant rewards program works, and what to check before you start',
-  short='A plain guide to restaurant rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.')
+  title='How a Key Rewards Program Works | Key Technologies.si',
+  desc='A plain guide to key rewards programs: how points or rewards work, what expiry dates mean, who covers the cost, and what to check before you start.',
+  h1='How a key rewards program works, and what to check before you start',
+  short='A plain guide to key rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.')
 G12['faq'] = [
- ('What is a restaurant rewards program?', 'A way for guests to earn something for coming back, usually points or rewards they can trade for free food. The restaurant decides what a reward is worth, where it can be used and how long it lasts.'),
+ ('What is a key rewards program?', 'A way for guests to earn something for coming back, usually points or rewards they can trade for free food. The restaurant decides what a reward is worth, where it can be used and how long it lasts.'),
  ('Who pays for the free food?', 'The restaurant that honors the offer. Before you start, decide how many rewards you are willing to honor and put a cap on it, so you always know the most the program could cost.'),
  ('Should rewards expire?', 'Many programs use an expiry date so rewards do not pile up forever. If you use one, tell guests the date when they earn the rewards and do not shorten it afterward. Rules about expiring rewards differ by place, so check with an attorney.'),
  ('Can rewards be exchanged for cash?', 'Most programs say no: rewards can only be used for free food at the participating restaurants and have no cash value. Keeping them food-only keeps the program simple and avoids stored-value questions.'),
  ('How do you stop people gaming it?', 'Confirm who is really there before rewards are given out, allow one check-in per person per event, and set a cap on what one person can receive. A person on staff approving the guest list is the simplest control.')]
 G12['body'] = f"""<article class="wrap guide">
-{crumbs_html([('Home','../index.html'),('Guides','index.html'),('How a restaurant rewards program works','')])}
+{crumbs_html([('Home','../index.html'),('Guides','index.html'),('How a key rewards program works','')])}
 <h1>{esc(G12['h1'])}</h1>
 <p class="byline">Key Technologies &middot; Published November 7, 2026</p>
 <div class="tldr"><b>Short answer:</b> a rewards program gives guests a reason to return. Decide what a reward can be used for, who covers it, when it expires and how you stop abuse, and write it down in plain terms before the first guest earns anything.</div>
@@ -1101,7 +1101,7 @@ def build():
     t = open(p, encoding='utf-8').read()
     if '## Guides' not in t:
         block = '## Guides\n' + '\n'.join(f'- [{g["h1"][0].upper() + g["h1"][1:]}]({BASE}guides/{g["slug"]}.html): {g["short"]}' for g in GUIDES.values()) + '\n\n'
-        t = t.replace('## Restaurant Rewards', block + '## Restaurant Rewards', 1)
+        t = t.replace('## Key Rewards', block + '## Key Rewards', 1)
     for g in GUIDES.values():
         url = f'{BASE}guides/{g["slug"]}.html'
         if url not in t:

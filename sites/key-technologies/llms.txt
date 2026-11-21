@@ -55,13 +55,13 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [What a business dashboard should show (and what to leave off)](https://keytechnologies.si/guides/business-dashboard-what-to-track.html): A plain guide to what belongs on a small-business dashboard, with examples for restaurants, practices and firms, and how to start.
 - [How Key Technologies works with a business, step by step](https://keytechnologies.si/guides/how-we-work.html): What happens from the first free call to a working system, and how you stay in control at every step.
 - [AI phone answering for dental and law offices: what it should and should not do](https://keytechnologies.si/guides/ai-phone-answering-dental-law.html): How AI phone answering works for a dental or law office, what it should hand to a person, and what to check before turning it on.
-- [How a restaurant rewards program works, and what to check before you start](https://keytechnologies.si/guides/restaurant-rewards-program.html): A plain guide to restaurant rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.
+- [How a key rewards program works, and what to check before you start](https://keytechnologies.si/guides/restaurant-rewards-program.html): A plain guide to key rewards: how they work, who pays, what expiry dates mean, and the questions to settle first.
 - [Frequently asked questions about Key Technologies](https://keytechnologies.si/guides/frequently-asked-questions.html): Plain answers about the free call, what AI/SI means, who owns your accounts, permission levels, the demos and Key Rewards.
 - [IPhone app, Android app, APK or web app? A plain guide to building a mobile app](https://keytechnologies.si/guides/iphone-android-apk-mobile-app-guide.html): What iPhone apps, Android apps, an APK file, cross-platform apps and installable web apps are, and how a business owner can choose.
 - [White hat, gray hat, black hat: what the terms mean, and why it matters for your business](https://keytechnologies.si/guides/white-hat-gray-hat-black-hat-explained.html): A plain guide to white hat, gray hat and black hat hackers, how attackers and defenders now use the same AI tool, and what to ask before anyone tests your security.
 
-## Restaurant Rewards (Las Vegas Restaurants)
-- [Restaurant Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.
+## Key Rewards (Las Vegas Restaurants)
+- [Key Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.
 - [Rewards demo](https://keytechnologies.si/key-platform/demos/rewards.html)
 - [Program terms](https://keytechnologies.si/rewards-terms.html) and [privacy](https://keytechnologies.si/rewards-privacy.html)
 

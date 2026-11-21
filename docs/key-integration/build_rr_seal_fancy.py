@@ -14,7 +14,7 @@ ap.add_argument('--bottom',default='REWARDS',help='ring text, bottom')
 ap.add_argument('--mark',default='RR',help='centre monogram')
 ap.add_argument('--topsize',type=float,default=8.2)
 ap.add_argument('--toptrack',type=float,default=1.25)
-ap.add_argument('--label',default='Restaurant Rewards (RR)')
+ap.add_argument('--label',default='Key Rewards')
 ap.add_argument('--out',default='sites/key-technologies/brand/rr-seal-fancy.svg')
 A=ap.parse_args();PLAIN=A.sides=='diamond'
 from fontTools.ttLib import TTFont

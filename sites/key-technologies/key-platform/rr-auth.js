@@ -1,4 +1,4 @@
-/* Restaurant Rewards: PIN sign-in and database calls, shared by the Treasury page and the restaurant confirm page.
+/* Key Rewards: PIN sign-in and database calls, shared by the Treasury page and the restaurant confirm page.
    A 6-digit PIN is turned (PBKDF2, in this browser) into the password of one sign-in account; the PIN itself is never sent or saved.
    The session lives in this tab only (sessionStorage), so a new tab or a closed browser asks for the PIN again. */
 (function () {

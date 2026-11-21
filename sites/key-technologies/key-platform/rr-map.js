@@ -1,4 +1,4 @@
-/* Restaurant Rewards: "Where you can use it" list + in-page map. Drop <div data-rr-where></div> on a page and load this script.
+/* Key Rewards: "Where you can use it" list + in-page map. Drop <div data-rr-where></div> on a page and load this script.
    The map is an embedded map: visitors never leave the page. Example restaurants only (labeled). Key Technologies look. */
 (function () {
   var PLACES = [
@@ -33,7 +33,7 @@
 
   function init(box) {
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
-    var html = '<div class="rrw"><h2>Where you can use Restaurant Rewards</h2>' +
+    var html = '<div class="rrw"><h2>Where you can use Key Rewards</h2>' +
       '<p class="rrsub">One rewards balance, accepted at every participating restaurant. Tap a restaurant or an address and the map moves right here. You never leave this page.</p>' +
       '<div class="rrgrid"><div class="rrlist">';
     PLACES.forEach(function (p, pi) {

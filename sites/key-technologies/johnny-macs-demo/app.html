@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Johnny Mac's Rewards App Demo | Key Technologies.si</title>
-<meta name="description" content="A working demo: the restaurant gives Restaurant Rewards, the customer logs in, uses them, and both sides see every move. Sample data only.">
+<meta name="description" content="A working demo: the restaurant gives Key Rewards, the customer logs in, uses them, and both sides see every move. Sample data only.">
 <meta name="theme-color" content="#0f171e">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
@@ -76,10 +76,10 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
 
 <details class="guide" open><summary>Demo guide: 5 steps</summary>
 <ol id="guide">
- <li data-k="gave">Johnny Mac's gives Restaurant Rewards to Alex.</li>
+ <li data-k="gave">Johnny Mac's gives Key Rewards to Alex.</li>
  <li data-k="login">Alex logs in on his phone.</li>
  <li data-k="saw">Alex sees his balance and every time rewards came in or went out.</li>
- <li data-k="used">Alex uses some of his Restaurant Rewards at Johnny Mac's.</li>
+ <li data-k="used">Alex uses some of his Key Rewards at Johnny Mac's.</li>
  <li data-k="rest">Johnny Mac's sees that use in its own account.</li>
 </ol></details>
 <div class="next" id="next" role="status"></div>
@@ -91,9 +91,9 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
 
 <!-- ============ RESTAURANT VIEW ============ -->
 <section id="vRest" aria-labelledby="tabRest">
- <div class="gc" style="margin:0 0 12px"><div class="brand">Restaurant Rewards</div><div class="nm">Johnny Mac's</div><div class="crow"><div class="chip"></div><div class="rrlock"><img src="../brand/rr-emboss.svg" alt="Restaurant Rewards seal" width="189" height="54"></div></div><div class="num">0511 0001 0042</div><div class="bal"><small>Balance</small><b id="rBal"></b></div></div>
+ <div class="gc" style="margin:0 0 12px"><div class="brand">Key Rewards</div><div class="nm">Johnny Mac's</div><div class="crow"><div class="chip"></div><div class="rrlock"><img src="../brand/rr-emboss.svg" alt="Key Rewards seal" width="189" height="54"></div></div><div class="num">0511 0001 0042</div><div class="bal"><small>Balance</small><b id="rBal"></b></div></div>
  <div class="two"><div class="stat"><b id="rGiven"></b><small>given to customers</small></div><div class="stat"><b id="rBack"></b><small>used and returned</small></div></div>
- <div class="box"><label for="gwho">Give Restaurant Rewards to</label>
+ <div class="box"><label for="gwho">Give Key Rewards to</label>
   <select id="gwho"><option value="alex">Alex</option><option value="maria">Maria</option><option value="sam">Sam</option></select>
   <div class="row"><input id="gamt" inputmode="numeric" autocomplete="off" placeholder="Amount, like 150" aria-label="Amount to give"><button class="btn" id="give" type="button">Give</button></div>
   <div class="msg" id="gmsg" role="alert"></div></div>
@@ -110,16 +110,16 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
   <p class="fine" style="margin-top:12px">No password. In the real app, each customer has a private link from sign-up. Phone numbers here are made up.</p>
  </div>
  <div id="app" class="hide">
-  <div class="gc" style="margin:0 0 12px"><div class="brand">Restaurant Rewards</div><div class="nm" id="cName"></div><div class="crow"><div class="chip"></div><div class="rrlock"><img src="../brand/rr-emboss.svg" alt="Restaurant Rewards seal" width="189" height="54"></div></div><div class="num" id="cNum"></div><div class="bal"><small>Balance</small><b id="cBal"></b></div></div>
-  <div class="box"><label for="uamt">Use Restaurant Rewards at Johnny Mac's</label>
+  <div class="gc" style="margin:0 0 12px"><div class="brand">Key Rewards</div><div class="nm" id="cName"></div><div class="crow"><div class="chip"></div><div class="rrlock"><img src="../brand/rr-emboss.svg" alt="Key Rewards seal" width="189" height="54"></div></div><div class="num" id="cNum"></div><div class="bal"><small>Balance</small><b id="cBal"></b></div></div>
+  <div class="box"><label for="uamt">Use Key Rewards at Johnny Mac's</label>
    <div class="row"><input id="uamt" inputmode="numeric" autocomplete="off" placeholder="Type an amount, like 83" aria-label="Amount to use"><button class="btn" id="use" type="button">Redeem</button></div>
-   <button class="ghost" id="useAll" type="button">Use all of my Restaurant Rewards</button>
+   <button class="ghost" id="useAll" type="button">Use all of my Key Rewards</button>
    <div class="msg" id="umsg" role="alert"></div></div>
   <h2>My activity</h2><ul class="act" id="cAct"></ul>
   <button class="ghost" id="logout" type="button">Log out</button>
  </div>
 </section>
-<p class="fine">Restaurant Rewards are a free perk with no cash value. Restaurant Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This is a demo with made-up people and numbers; the final details are agreed with each restaurant.</p>
+<p class="fine">Key Rewards are a free perk with no cash value. Key Rewards can be used for food, gratuity, dinner parties, special events, meet and greets and special invites. This is a free trial game and we are trying it out. Key Technologies is not responsible if the database has a problem, goes down, or anything is lost. Thank you for playing and for believing in the future of this technology. This is a demo with made-up people and numbers; the final details are agreed with each restaurant.</p>
 </div>
 <script>
 (function(){
@@ -158,13 +158,13 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:4px solid 
  $('give').addEventListener('click',function(){var a=parse($('gamt').value),m=$('gmsg');m.className='msg';
   if(a===null||a<=0){m.textContent='Please type an amount, like 150';m.className='msg err';$('gamt').focus();return}
   if(a>restBal()){m.textContent='Johnny Mac’s account only has '+fmt(restBal())+'.';m.className='msg err';return}
-  var w=$('gwho').value;S.events.push({t:Date.now(),type:'give',who:w,amt:a});$('gamt').value='';m.textContent='Done. '+fmt(a)+' Restaurant Rewards given to '+PEOPLE[w].n+'.';paint()});
+  var w=$('gwho').value;S.events.push({t:Date.now(),type:'give',who:w,amt:a});$('gamt').value='';m.textContent='Done. '+fmt(a)+' Key Rewards given to '+PEOPLE[w].n+'.';paint()});
  $('loginBtn').addEventListener('click',function(){S.who=$('phone').value;paint()});
  $('logout').addEventListener('click',function(){S.who=null;paint()});
  function redeem(a){var m=$('umsg');m.className='msg';var bal=custBal(S.who);
   if(a===null||a<=0){m.textContent='Please type an amount, like 83';m.className='msg err';$('uamt').focus();return}
   if(a>bal){m.textContent='You only have '+fmt(bal)+'. Please type a smaller amount.';m.className='msg err';return}
-  S.events.push({t:Date.now(),type:'use',who:S.who,amt:a});$('uamt').value='';m.textContent='Done. You used '+fmt(a)+' Restaurant Rewards at Johnny Mac’s.';paint()}
+  S.events.push({t:Date.now(),type:'use',who:S.who,amt:a});$('uamt').value='';m.textContent='Done. You used '+fmt(a)+' Key Rewards at Johnny Mac’s.';paint()}
  $('use').addEventListener('click',function(){redeem(parse($('uamt').value))});
  $('uamt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();redeem(parse($('uamt').value))}});
  $('gamt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('give').click()}});

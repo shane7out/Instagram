@@ -54,7 +54,7 @@ S = [
  ('php-wordpress-migration', '21', 'PHP & WordPress Migration', 'Move off PHP and WordPress to a modern custom stack.', 'migration', 'Plan a migration', 'Describe the current site to see a plan and an example redirect map.', ['For sites flagged by our free audit, or anyone who wants out', 'Redirects so search rankings are kept', 'Tested, with a rollback ready']),
  ('private-llm', '22', 'Private LLM Setup', 'Your own private AI that knows your business and keeps it private.', 'privatellm', 'Ask the private assistant', 'Sign in as staff or as the owner and ask about a document.', ['Loaded with your own documents and records', 'Isolated, never used to train anyone else\'s model', 'Managed by us with login access, or handed to you']),
  ('cybersecurity', '23', 'Agentic Security & Network Hardening', 'AI works for the bad guys too. We put it to work for you: agents that watch for threats, with a person in charge.', 'hardening', 'Run an example security check', 'Run the check on a fictional office and read the fix plan. In a real setup, an AI agent watches for the same kinds of problems and a person approves any change.', ['AI/SI is a tool: good people use it to protect, bad people use it to attack. We use it to protect you',  'AI agents that watch for suspicious activity and flag it, inside limits you set', 'A person approves anything that changes your systems', 'Passwords, access, networks, backups and exposed systems', 'Findings explained in plain language', 'Backed by a decade of hands-on security experience']),
- ('rewards', 'P', 'Restaurant Rewards', 'One universal rewards balance. Earn at any participating restaurant and use it at any of them.', 'points', 'Try the rewards program', 'Earn from a receipt, take the free spin, and use rewards for food.', ['Earn 1 reward per $1 on checked receipts', 'A free spin that comes and goes', 'Rewards used only for food at participating restaurants']),
+ ('rewards', 'P', 'Key Rewards', 'One universal rewards balance. Earn at any participating restaurant and use it at any of them.', 'points', 'Try the rewards program', 'Earn from a receipt, take the free spin, and use rewards for food.', ['Earn 1 reward per $1 on checked receipts', 'A free spin that comes and goes', 'Rewards used only for food at participating restaurants']),
 ]
 EXISTING = {'13': ('Email Automation', '../email/index.html', 'Sorts the inbox and drafts replies that a person approves.'), '16': ('Phone & Text Answering', '../voice/index.html', 'An AI receptionist that answers calls and captures leads.')}  # '24' Sales Partner Network demo taken down at Shane's request (2026-11-05)
 
@@ -82,8 +82,8 @@ def page(i, s):
     nav += ('<a href="%s.html">&larr; %s</a>' % (prev[0], prev[2])) if prev else '<span></span>'
     nav += ('<a href="%s.html">%s &rarr;</a>' % (nxt[0], nxt[2])) if nxt else '<a href="../index.html#library">All demos &rarr;</a>'
     nav += '</div>'
-    label = ('New' if num == '00' else 'Service %s' % num) if num != 'P' else 'Restaurant Rewards'
-    cta = '<a class="btn btn-primary" href="../../index.html#contact">Talk to us about this</a>' if num != 'P' else '<a class="btn btn-primary" href="../../rewards.html">Join Restaurant Rewards</a>'
+    label = ('New' if num == '00' else 'Service %s' % num) if num != 'P' else 'Key Rewards'
+    cta = '<a class="btn btn-primary" href="../../index.html#contact">Talk to us about this</a>' if num != 'P' else '<a class="btn btn-primary" href="../../rewards.html">Join Key Rewards</a>'
     ghost = '<a class="btn btn-ghost" href="../../index.html#services">See all services</a>' if num != 'P' else '<a class="btn btn-ghost" href="../index.html#library">All demos</a>'
     body = '''<section class="page active" style="display:block;padding-top:6px">
 <a class="kp-back" href="../index.html#library">&larr; All demos</a>
