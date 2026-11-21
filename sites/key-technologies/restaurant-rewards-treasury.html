@@ -282,6 +282,11 @@ body.hlock{overflow:hidden}
 .gc .brand2{display:none!important}
 .gc:not(.back):not(.gift):not(.voucher) .nm{margin-top:auto}
 #pres .thist{margin:4px auto 0}#pres .pc>.thist,#pres .pc>h3{width:min(100%,var(--cw))!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}#pres .pc>h3{display:block!important}#pres .pc>ul.thist{display:block!important}
+#pres .thist{margin-top:10px!important;padding:0 12px!important;border-radius:14px!important}
+#pres .thist li{padding:6px 0!important;gap:8px!important;font-size:14px!important;line-height:1.2!important}
+#pres .thist li b{font-size:14px;font-weight:800}
+#pres .thist li small{font-size:11px!important;line-height:1.2!important}
+#pres .thist li>span:last-child,#pres .thist li>b:last-child{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -743,7 +748,7 @@ body.hlock{overflow:hidden}
   if(isRest&&!DBM){var on=accepts(w.id),tg=el('button','rbtn acc '+(on?'on':'off'),on?'Turn off':'Turn on');tg.type='button';tg.setAttribute('aria-label',on?'This restaurant is accepting rewards. Tap to turn them off.':'Rewards are off here. Tap to turn them on.');tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id,true)});row.appendChild(tg)}else if(isRest)pc.appendChild(el('p','fine','The restaurant controls whether rewards are on or off.'))
   giftsFor(w).forEach(function(g){var gb=giftBlock(g,id);if(gb)pc.appendChild(gb)});
   if(w.id!=='treasury'){var sg=el('button','giftpill','Send a gift');sg.type='button';sg.addEventListener('click',function(){openSendGift(id)});pc.appendChild(sg)}
-  if(id==='treasury'){var rows=actRows(w).reverse(),h3a=el('h3',null,'History, newest first ('+rows.length+')');pc.appendChild(h3a);var ul=el('ul','thist');rows.forEach(function(r){ul.appendChild(rowLi(r,id,false))});if(rows.length)pc.appendChild(ul);else h3a.remove()}
+  if(id==='treasury'){var rows=actRows(w).reverse(),ul=el('ul','thist');rows.forEach(function(r){ul.appendChild(rowLi(r,id,false))});if(rows.length)pc.appendChild(ul)}
   else{var A=actSums(w),box=el('div','acts');var ab=function(label,key){var b=el('button','actb');b.type='button';b.appendChild(el('b',null,label));b.appendChild(el('span','ch','\u203a'));b.addEventListener('click',function(){openActivity(id,key)});box.appendChild(b)};
    ab('Wallet history','wallet');if(A.hasGift)ab('Gift card history','gift');pc.appendChild(box)}
   var ul2=el('a','uses','What can I use my rewards for?');ul2.href='restaurant-rewards-uses.html';pc.appendChild(ul2);var mk2=el('a','uses','Open the marketplace');mk2.href='key-rewards-marketplace.html';pc.appendChild(mk2);
