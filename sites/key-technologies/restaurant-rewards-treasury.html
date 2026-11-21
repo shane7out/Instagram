@@ -254,6 +254,9 @@ body.hlock{overflow:hidden}
 .gc.gift .brand2{display:none}.gc.gift .gtitle{margin-top:3px;line-height:1.05}.gc.gift .glab{padding-top:2px}.gc.gift .bal{margin-top:5px}.gc.gift .bal b{font-size:min(30px,8.4cqw)}
 .gc .bal small{max-width:54%;line-height:1.3}
 @container (max-width:250px){#pres .gc .bal small{font-size:10px;letter-spacing:.1em;max-width:none;white-space:nowrap}#pres .gc .bal small .pt{display:none}#pres .gc .cd{white-space:nowrap;font-size:9.5px}}
+/* Shane 2026-11-21: the Wallet header, the footer credit and the "what can I use" link now share the card's exact width and centre line, so every left and right edge on the wallet screen lines up */
+#pres .pc>.phead,#pres .pc>.kt,#pres .pc>.uses{width:min(100%,var(--cw))!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}
+#pres .phead h2{font-size:17px;letter-spacing:.01em}
 </style>
 </head>
 <body>
