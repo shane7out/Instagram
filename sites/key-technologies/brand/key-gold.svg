@@ -7,6 +7,6 @@
 <g filter="url(#d)">
 <path fill-rule="evenodd" fill="url(#g)" stroke="#6b4606" stroke-width="3" d="M90 12a78 78 0 1 0 71 110h122v24h28v-24h26v24h28v-24h30V70H161A78 78 0 0 0 90 12zm0 46a32 32 0 1 1 0 64 32 32 0 0 1 0-64z"/>
 <path fill="url(#s)" d="M90 20a70 70 0 0 0-52 24 70 70 0 0 1 100 6 70 70 0 0 0-48-30z"/>
-<rect x="166" y="74" width="246" height="10" rx="5" fill="#fff6c4" opacity=".45"/>
+<rect x="170" y="74" width="212" height="10" rx="5" fill="#fff6c4" opacity=".45"/>
 </g>
 </svg>
