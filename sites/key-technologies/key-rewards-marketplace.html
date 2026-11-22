@@ -125,6 +125,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .tcard .wants{display:flex;align-items:center;gap:10px;padding-top:9px;border-top:1px dashed rgba(255,255,255,.28)}
 .tcard .wants .sw{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,#f6d467,#d7a21e);color:#2b1d05;font-weight:900}
 .tcard .wants small{display:block;font-size:14px;letter-spacing:.02em;color:var(--gold);font-weight:900}.tcard .wants b{font-size:16px}
+.pd{perspective:1000px}.pd .art.gift .gcard{animation:kpop .7s cubic-bezier(.2,.9,.25,1.08) both}@keyframes kpop{from{transform:rotateX(60deg) rotateY(-28deg) translateZ(-240px) scale(.6);opacity:0}to{transform:none;opacity:1}}@media(prefers-reduced-motion:reduce){.pd .art.gift .gcard{animation:none}}
 .big.go{display:flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
 .offerf{margin:12px 0 0;padding:12px;border-radius:12px;background:var(--panel2)}.offerf label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:10px 0 4px}.offerf label:first-child{margin-top:0}
 .offerf select,.offerf input{width:100%;height:44px;border-radius:10px;border:1.5px solid rgba(255,255,255,.28);background:#0f171e;color:#fff;font:inherit;font-size:16px;padding:0 10px}
@@ -254,10 +255,10 @@ function tradeCell(t){return '<button type="button" class="tcard" data-t="'+t.id
 function tradeList(){var q=st.q.trim().toLowerCase();return T.filter(function(t){return !q||(t.n+" "+t.want+" "+t.who).toLowerCase().indexOf(q)>=0})}
 function tradeDetail(t){
  var art=tradeArt(t).replace('class="art gift"','class="art gift" aria-hidden="true"'),v=t.v||t.p;
- var go=t.gift?'<a class="big go" href="restaurant-rewards-treasury.html">Tap here to trade '+v+' keys</a>':'<button type="button" class="big" disabled style="opacity:.6;cursor:default">Coming soon</button>';
+ var go=t.gift?'<a class="big go" href="restaurant-rewards-treasury.html?trade='+encodeURIComponent(t.n)+'">Tap here to trade '+v+' keys</a>':'<button type="button" class="big" disabled style="opacity:.6;cursor:default">Coming soon</button>';
  openPanel('<div class="pd">'+art+'<div class="info"><div class="pp">'+v+'<i>keys</i></div><h2 id="dt">'+esc(t.n)+' gift card</h2><div class="sub">'+esc(t.who)+' &middot; '+LOC+'</div>'+
   '<div class="acts">'+go+'</div>'+
-  '<h3>How it works</h3><ol><li>Open your Key Rewards wallet.</li><li>Tap this card in the Swap row.</li><li>Confirm. The '+v+' keys leave your wallet and the gift card goes in.</li></ol>'+
+  '<h3>How it works</h3><ol><li>Open your Key Rewards wallet.</li><li>Pick your wallet. A trade box pops up for this card.</li><li>Tap Yes. The '+v+' keys leave your wallet and the gift card goes in at once.</li></ol>'+
   '<h3>Good to know</h3><ul><li>Keys are your Key Rewards points. If you have 5,000 keys, you have 5,000 rewards points.</li>'+(t.sample?'<li>This is a sample card. It shows how a real one will look. A business has not joined for it yet.</li>':'')+'<li>Key Rewards points have no cash value and are good for 60 days from the day they are issued.</li></ul></div></div>')}
 function toast(t){var e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
 var lastFocus=null;

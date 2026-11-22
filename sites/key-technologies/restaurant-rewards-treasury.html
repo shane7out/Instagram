@@ -293,6 +293,21 @@ body.hlock{overflow:hidden}
 .swapit{flex:none;width:min(62%,176px);scroll-snap-align:start;background:none;border:0;padding:0;color:#fff;font:inherit;text-align:center;cursor:pointer}.swapit.soon{cursor:default;opacity:.92}
 .swapit .gc{width:100%!important;margin:0!important}.swapit span{display:block;margin-top:5px;font-size:12.5px;font-weight:800;color:#e8c766}.swapit.soon span{color:rgba(255,255,255,.72);font-weight:700}
 .swapit .gc .nm{font-size:min(12px,9cqw)!important}
+
+.swapit{padding:6px 6px 8px!important;border-radius:16px!important;border:2px solid transparent!important;-webkit-tap-highlight-color:transparent}.swapit:not(.own):not(.soon):hover,.swapit:not(.own):active{background:rgba(232,199,102,.12)!important;border-color:rgba(232,199,102,.6)!important}.swapit span{font-size:14px!important}.swapit.own{cursor:default}
+.tpov{position:fixed;inset:0;z-index:300;background:rgba(5,9,13,.95);display:flex;align-items:center;justify-content:center;padding:16px;perspective:1100px;overflow:auto}
+.tpbox{width:min(100%,420px);margin:auto;text-align:center;color:#fff;transform-style:preserve-3d}
+.tp3d{width:min(100%,340px);margin:0 auto 18px;transform-style:preserve-3d;animation:tppop .75s cubic-bezier(.2,.9,.25,1.08) both,tpfloat 5s ease-in-out .8s infinite}
+.tp3d.done{animation:tpspin .9s cubic-bezier(.3,.8,.3,1) both,tpfloat 5s ease-in-out 1s infinite}
+@keyframes tppop{from{transform:rotateX(62deg) rotateY(-32deg) translateZ(-280px) scale(.55);opacity:0}to{transform:none;opacity:1}}
+@keyframes tpfloat{0%,100%{transform:rotateY(-6deg) rotateX(3deg)}50%{transform:rotateY(6deg) rotateX(-3deg)}}
+@keyframes tpspin{from{transform:rotateY(0) scale(1)}50%{transform:rotateY(180deg) scale(1.08)}to{transform:rotateY(360deg) scale(1)}}
+.tp3d .gc{width:100%!important;margin:0!important;box-shadow:0 26px 44px rgba(0,0,0,.6)}
+.tpov .tpq{font-size:26px;font-weight:900;line-height:1.2;margin:4px 6px 8px;color:#fff!important;opacity:1!important;text-shadow:none!important}.tpov .tps{font-size:19px;line-height:1.4;color:#f1f1f1!important;opacity:1!important;margin:0 6px 18px}
+.tpyes{display:block;width:100%;min-height:72px;font:900 25px Lato,system-ui,sans-serif;border:0;border-radius:18px;background:linear-gradient(140deg,#f6d467,#e6b83a 55%,#d7a21e);color:#2b1d05;cursor:pointer;margin:0 0 12px}
+.tpno{display:block;width:100%;min-height:58px;font:800 20px Lato,system-ui,sans-serif;border:2px solid rgba(255,255,255,.45);border-radius:16px;background:none;color:#fff;cursor:pointer}
+.tpyes:focus-visible,.tpno:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.tp3d,.tp3d.done{animation:none}}
 </style>
 </head>
 <body>
@@ -631,10 +646,28 @@ body.hlock{overflow:hidden}
   g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2','Rewards'));var cr=el('div','crow');cr.appendChild(rrLock());g.appendChild(cr);
   g.appendChild(d('nm',biz));g.appendChild(d('num','Gift card'));var bb=d('bal'),sm2=el('small',null,'');sm2.innerHTML='Rewards <span class="pt">points </span>value';bb.appendChild(sm2);bb.appendChild(el('b',null,String(pts)));g.appendChild(bb);return g}
  var GCSAMPLE=[['Haircut and style',60],['Window tint, front two windows',90],['Bowling, one hour lane',90],['Interior and exterior detail',180],['Dinner for two',200],['House cleaning',140]];
- function swapStrip(id){var wrap=el('div','swapbar'),h=el('div','swaph');h.appendChild(el('b',null,'Tap a card to trade'));var m=el('a',null,'You have '+fmt(avail(id))+' keys');m.href='key-rewards-marketplace.html';h.appendChild(m);wrap.appendChild(h);
+ var PT=(function(){var m=location.search.match(/[?&]trade=([^&]+)/);try{return m?decodeURIComponent(m[1]).replace(/[’]/g,"'").toLowerCase():null}catch(e){return null}})();
+ function tradePop(id,c,soon){var a=(c.pts||c[1])*100,have=avail(id),biz=c.biz||c[0],pts=c.pts||c[1];ac();
+  var ov=el('div','tpov');ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Trade for the '+biz+' gift card');
+  var bx=el('div','tpbox');ov.appendChild(bx);var cw=el('div','tp3d');cw.appendChild(voucherCard(biz,pts));bx.appendChild(cw);
+  var q=el('p','tpq'),sub=el('p','tps');bx.appendChild(q);bx.appendChild(sub);
+  var yes=el('button','tpyes'),no=el('button','tpno');yes.type='button';no.type='button';
+  var onKey=function(e){if(e.key==='Escape')close()};function close(){document.removeEventListener('keydown',onKey);ov.remove()}document.addEventListener('keydown',onKey);
+  no.addEventListener('click',close);ov.addEventListener('click',function(e){if(e.target===ov)close()});
+  if(soon){q.textContent='Coming soon';sub.textContent='A business has not joined for this card yet. Johnny Mac’s and Vanilla Rice’s are ready now.';no.textContent='OK';bx.appendChild(no)}
+  else if(have<a){q.textContent='You need '+fmt(a-have)+' more keys';sub.textContent='This card costs '+pts+' keys. You have '+fmt(have)+'.';no.textContent='OK';bx.appendChild(no)}
+  else{q.textContent='Trade '+pts+' keys for this gift card?';sub.textContent='You have '+fmt(have)+' keys. You will have '+fmt(have-a)+' left.';yes.textContent='Yes, trade';no.textContent='Not now';bx.appendChild(yes);bx.appendChild(no);
+   yes.addEventListener('click',function(){var bid=find(biz);if(!bid){sub.textContent='That business is not set up yet.';return}if(avail(id)<a){sub.textContent='Not enough keys.';return}
+    S.entries.push({id:S.next++,t:now(),from:id,to:bid,amt:a,note:'Redeemed at '+biz+': gift card',status:DBM?'pending':undefined});if(!DBM)delete S.entries[S.entries.length-1].status;save();chime();paint();burst();
+    cw.classList.add('done');q.textContent='It’s in your wallet!';sub.textContent=(DBM?'Waiting for '+biz+' to confirm. ':'')+'Show it at '+biz+'.';yes.remove();no.textContent='Done';no.className='tpyes';no.onclick=null;
+    var nn=no.cloneNode(true);no.parentNode.replaceChild(nn,no);nn.addEventListener('click',function(){close();present(id,true)});nn.focus()})}
+  document.body.appendChild(ov);(bx.querySelector('.tpyes')||bx.querySelector('.tpno')).focus()}
+ function swapStrip(id){var wrap=el('div','swapbar');
+  var own=gcOwned(id);if(own.length){var h0=el('div','swaph');h0.appendChild(el('b',null,'Your gift cards'));wrap.appendChild(h0);var r0=el('div','swaprow');own.slice().reverse().forEach(function(e){var biz=e.note.replace(/^Redeemed at /,'').replace(/: gift card$/,''),it=el('div','swapit own');it.appendChild(voucherCard(biz,Math.round(e.amt/100),true));it.appendChild(el('span',null,(e.status==='pending'?'Waiting for '+biz:'Show this at '+biz)));r0.appendChild(it)});wrap.appendChild(r0)}
+  var h=el('div','swaph');h.appendChild(el('b',null,'Tap a card to trade'));var m=el('a',null,'You have '+fmt(avail(id))+' keys');m.href='#';h.appendChild(m);wrap.appendChild(h);
   var row=el('div','swaprow');row.setAttribute('role','list');
-  GCS.forEach(function(c){var it=el('button','swapit');it.type='button';it.setAttribute('role','listitem');it.setAttribute('aria-label',c.biz+' gift card, '+c.pts+' keys. Tap to trade.');it.appendChild(voucherCard(c.biz,c.pts,true));it.appendChild(el('span',null,'Tap to trade \u00b7 '+c.pts+' keys'));it.addEventListener('click',function(){openGiftCards(id)});row.appendChild(it)});
-  GCSAMPLE.forEach(function(c){var it=el('div','swapit soon');it.setAttribute('role','listitem');it.appendChild(voucherCard(c[0],c[1],true));it.appendChild(el('span',null,'Sample \u00b7 '+c[1]+' keys, coming soon'));row.appendChild(it)});
+  GCS.forEach(function(c){var it=el('button','swapit');it.type='button';it.setAttribute('role','listitem');it.setAttribute('aria-label',c.biz+' gift card, '+c.pts+' keys. Tap anywhere to trade.');it.appendChild(voucherCard(c.biz,c.pts,true));it.appendChild(el('span',null,'Tap to trade · '+c.pts+' keys'));it.addEventListener('click',function(){tradePop(id,c)});row.appendChild(it)});
+  GCSAMPLE.forEach(function(c){var it=el('button','swapit soon');it.type='button';it.setAttribute('role','listitem');it.setAttribute('aria-label',c[0]+' sample gift card, coming soon');it.appendChild(voucherCard(c[0],c[1],true));it.appendChild(el('span',null,'Sample · '+c[1]+' keys, coming soon'));it.addEventListener('click',function(){tradePop(id,c,true)});row.appendChild(it)});
   wrap.appendChild(row);return wrap}
  function openGiftCards(id){
   var w=wById(id),rc=$('rc'),have=avail(id);ac();rc.innerHTML='';
@@ -760,7 +793,7 @@ body.hlock{overflow:hidden}
   if(stt==='pending'&&!DBM){var cb=el('button','send','Confirm (practice)');cb.type='button';cb.addEventListener('click',function(){e.status='confirmed';e.ct=now();save();chime();receipt(e,backId)});dn.appendChild(cb);var db2=el('button','more','Decline (practice)');db2.type='button';db2.addEventListener('click',function(){e.status='declined';e.ct=now();save();receipt(e,backId)});dn.appendChild(db2)}
   var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);dn.appendChild(credit());rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id,quiet){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
-  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,true,false):flipCard(w,quiet));if(w.id!=='treasury'&&w.type!=='Restaurant'&&!isGiftW(w))pc.appendChild(swapStrip(id));presId=id;if(!quiet)countUp(pc.querySelector('.bal b'),shown(id));var isRest=w.type==='Restaurant',row=null;if(isRest&&!DBM){row=el('div','btnrow');pc.appendChild(row)}
+  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,true,false):flipCard(w,quiet));if(w.id!=='treasury'&&w.type!=='Restaurant'&&!isGiftW(w)){pc.appendChild(swapStrip(id));if(PT){var tc=GCS.filter(function(c){return c.biz.replace(/[\u2019]/g,"'").toLowerCase()===PT})[0];PT=null;if(tc)setTimeout(function(){tradePop(id,tc)},600)}}presId=id;if(!quiet)countUp(pc.querySelector('.bal b'),shown(id));var isRest=w.type==='Restaurant',row=null;if(isRest&&!DBM){row=el('div','btnrow');pc.appendChild(row)}
   if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=avail(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});(row||pc).appendChild(rb);if(!row&&w.type!=='Restaurant'){var gcb=el('button','rbtn gcb2','Gift cards');gcb.type='button';gcb.addEventListener('click',function(){openGiftCards(id)});pc.appendChild(gcb)}}
   if(isRest&&!DBM){var on=accepts(w.id),tg=el('button','rbtn acc '+(on?'on':'off'),on?'Turn off':'Turn on');tg.type='button';tg.setAttribute('aria-label',on?'This restaurant is accepting rewards. Tap to turn them off.':'Rewards are off here. Tap to turn them on.');tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id,true)});row.appendChild(tg)}else if(isRest)pc.appendChild(el('p','fine','The restaurant controls whether rewards are on or off.'))
   giftsFor(w).forEach(function(g){var gb=giftBlock(g,id);if(gb)pc.appendChild(gb)});
