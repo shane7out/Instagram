@@ -167,7 +167,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 "use strict";
 var CATS=[["all","Browse all","\ud83d\udecd\ufe0f"],["saved","Saved","\u2764\ufe0f"],["trade","Trade board","\ud83d\udd01"],["gift","Gift cards","\ud83c\udf81"],["beauty","Salon & beauty","\ud83d\udc87"],["sports","Sports & games","\ud83c\udfc5"],["fitness","Fitness & wellness","\ud83e\uddd8"],["food","Food & drink","\ud83c\udf7d\ufe0f"],["fun","Fun & experiences","\ud83c\udfad"],["auto","Auto & window tint","\ud83d\ude97"],["home","Home services","\ud83c\udfe0"]];
 var LOC="Las Vegas, NV";
-var G=[["Johnny Mac\u2019s","gift","\ud83c\udf81","Gift card",100,"Johnny Mac\u2019s"],["Vanilla Rice\u2019s Hibachi House","gift","\ud83c\udf81","Gift card",100,"Vanilla Rice\u2019s Hibachi House"]];
+var G=[["Vanilla Rice\u2019s Hibachi House","gift","\ud83c\udf81","Gift card",100,"Vanilla Rice\u2019s Hibachi House"],["Johnny Mac\u2019s","gift","\ud83c\udf81","Gift card",100,"Johnny Mac\u2019s"]];
 /* sample listings: [name, category, emoji, note, points] */
 var S=[
 ["Haircut","beauty","\u2702\ufe0f","Cut and style",60],["Barber cut + beard trim","beauty","\ud83d\udc88","Walk-ins welcome",70],["Hair color","beauty","\ud83c\udfa8","Single process",150],["Blowout","beauty","\ud83d\udc87","Wash and style",50],
@@ -198,8 +198,8 @@ var ALL=G.map(function(g){return {n:g[0],c:g[1],e:g[2],note:g[3],p:g[4],biz:g[5]
 ALL.forEach(function(x,i){x.id=i});
 
 var T=[
-{who:"Johnny Mac\u2019s",tag:"Key Rewards partner",gift:true,n:"Johnny Mac\u2019s",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
 {who:"Vanilla Rice\u2019s Hibachi House",tag:"Key Rewards partner",gift:true,n:"Vanilla Rice\u2019s Hibachi House",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
+{who:"Johnny Mac\u2019s",tag:"Key Rewards partner",gift:true,n:"Johnny Mac\u2019s",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
 {who:"Sample window tint shop",n:"Window tint, front two windows",v:90,e:"\ud83d\udd76\ufe0f",note:"Legal-limit film",want:"A haircut, plus 20 points",pts:20,sample:true},
 {who:"Sample salon",n:"Haircut and style",v:60,e:"\u2702\ufe0f",note:"Cut and style",want:"Window tint or a car detail",pts:0,sample:true},
 {who:"Sample bowling alley",n:"Bowling, one hour lane",v:90,e:"\ud83c\udfb3",note:"Up to 6 people",want:"A tennis hour, or 90 points",pts:90,sample:true},
