@@ -46,6 +46,7 @@ h1{font-size:30px;line-height:1.2;margin:6px 0 10px;text-align:center;font-weigh
 </div>
 <a class="go" id="claim" href="key-giveaway.html">Go back and claim your keys</a>
 <a class="btn" href="key-rewards-marketplace.html">Open the marketplace</a>
+<a class="btn" id="wl" href="key-waitlist.html">Join the Las Vegas waiting list</a>
 <p class="note">Keys have no cash value and cannot be sold or exchanged for cash. Keys are good for 60 days from the day they are issued. Offers are set by the businesses that provide them and can change or end at any time.</p>
 </main>
 <script>
@@ -53,6 +54,7 @@ h1{font-size:30px;line-height:1.2;margin:6px 0 10px;text-align:center;font-weigh
 "use strict";
 var q=new URLSearchParams(location.search),g=(q.get("g")||"").toLowerCase(),demo=q.get("demo")==="1";
 if(/^[a-z0-9]{16,40}$/.test(g)){document.getElementById("claim").href="key-giveaway.html?g="+encodeURIComponent(g)+(demo?"&demo=1":"")}
+if(demo){document.getElementById("wl").href="key-waitlist.html?demo=1"}
 if(demo){var d=document.createElement("p");d.className="demo";d.textContent="Practice mode. Nothing here is real.";document.getElementById("demo").appendChild(d)}
 if(window.KGT)KGT.start("uses",/^[a-z0-9]{16,40}$/.test(g)?g:"",demo);
 })();

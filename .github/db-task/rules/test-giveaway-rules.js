@@ -79,5 +79,20 @@ const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@
   await t('the owner can read the visits', 'owner', 'GET', '/key_visits', undefined, true);
   await t('the Treasury PIN account can read the visits', 'treasurer', 'GET', '/key_visits', undefined, true);
   await t('a stranger cannot delete a visit', 'anon', 'DELETE', V + '/pg1abcdef', undefined, false);
+  // standing waiting list (one entry per email, the key is a SHA-256 of the email)
+  const H1 = 'a'.repeat(64), H2 = 'b'.repeat(64);
+  await t('a visitor joins the standing waiting list', 'anon', 'PUT', '/key_waitlist/' + H1, claim(), true);
+  await t('the same email cannot be added twice', 'anon', 'PUT', '/key_waitlist/' + H1, claim({ first: 'Eve' }), false);
+  await t('another person joins', 'anon', 'PUT', '/key_waitlist/' + H2, claim({ first: 'Dee', email: 'dee@example.com' }), true);
+  await t('an entry must use a 64-character email fingerprint', 'anon', 'PUT', '/key_waitlist/notahash', claim(), false);
+  await t('an entry needs both permissions', 'anon', 'PUT', '/key_waitlist/' + 'c'.repeat(64), claim({ smsOk: false }), false);
+  await t('an entry must be a Las Vegas address', 'anon', 'PUT', '/key_waitlist/' + 'd'.repeat(64), claim({ city: 'Phoenix' }), false);
+  await t('an entry with extra fields is refused', 'anon', 'PUT', '/key_waitlist/' + 'e'.repeat(64), claim({ hack: 1 }), false);
+  await t('a stranger cannot read the standing waiting list', 'anon', 'GET', '/key_waitlist', undefined, false);
+  await t('a stranger cannot read one entry', 'anon', 'GET', '/key_waitlist/' + H1, undefined, false);
+  await t('a stranger cannot delete an entry', 'anon', 'DELETE', '/key_waitlist/' + H1, undefined, false);
+  await t('the owner can read the standing waiting list', 'owner', 'GET', '/key_waitlist', undefined, true);
+  await t('the Treasury PIN account can read it', 'treasurer', 'GET', '/key_waitlist', undefined, true);
+  await t('the owner can remove an entry', 'owner', 'DELETE', '/key_waitlist/' + H2, undefined, true);
   console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
 })();
