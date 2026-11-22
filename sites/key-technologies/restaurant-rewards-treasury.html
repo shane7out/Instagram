@@ -308,6 +308,8 @@ body.hlock{overflow:hidden}
 .tpno{display:block;width:100%;min-height:58px;font:800 20px Lato,system-ui,sans-serif;border:2px solid rgba(255,255,255,.45);border-radius:16px;background:none;color:#fff;cursor:pointer}
 .tpyes:focus-visible,.tpno:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.tp3d,.tp3d.done{animation:none}}
+
+#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
 </style>
 </head>
 <body>
@@ -347,6 +349,15 @@ body.hlock{overflow:hidden}
   <label for="mnote">Note (optional)</label><input id="mnote" maxlength="80" autocomplete="off" placeholder="Example: Starting credit">
   <button class="btn" id="mmove" type="button">Move credit</button>
   <div class="msg" id="mmsg" role="alert"></div>
+ </div>
+ <div class="box" id="gvbox">
+  <h2>Giveaway links</h2>
+  <p class="fine" style="margin-top:0">Make a link, share it, and the first person who claims it gets the keys. They fill in a short form. You give the keys when you are ready.</p>
+  <label for="gvlab">Name of the giveaway</label><input id="gvlab" maxlength="60" autocomplete="off" placeholder="Example: Grand opening giveaway">
+  <label for="gvkeys">Keys to give</label><input id="gvkeys" inputmode="numeric" autocomplete="off" value="25">
+  <button class="btn" id="gvmake" type="button">Make the link</button>
+  <div class="msg" id="gvmsg" role="alert"></div>
+  <div id="gvlist"></div>
  </div>
 </div>
 
@@ -441,8 +452,8 @@ body.hlock{overflow:hidden}
    else{/* first sign-in: the permanent ledger starts clean from the saved instructions (10,000,000 and Thin Blue 702 at 5,000); practice records in this browser are NOT carried over */S=fresh();S.seeded2=false;S.logos=logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Key Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';
-   sel='all';paint();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
- function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint()}
+   sel='all';paint();gvRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
+ function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender()}
  var idleT=null;function idle(){var go=function(){clearTimeout(idleT);idleT=setTimeout(function(){RR.signOut();location.reload()},15*60*1000)};['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()}
  function start(msg){RR.gate({title:'Key Rewards Treasury',sub:msg||'Type your Treasury PIN.',email:RR.TREASURER.email,salt:RR.TREASURER.salt,onOK:enterDb,onSkip:{label:'Use the practice version (this browser only)',fn:enterLocal}})}
  function $(i){return document.getElementById(i)}
@@ -597,13 +608,38 @@ body.hlock{overflow:hidden}
   if(a===null||a<=0){say('tmsg','Please type a whole number, like 500.',true);return}if(a>have){say('tmsg',nm+' only holds '+fmt(have)+'.',true);return}
   if(!window.confirm('Take back '+fmt(a)+' from '+nm+' and put it back in the Treasury?'))return;
   S.entries.push({id:S.next++,t:now(),from:id,to:'treasury',amt:a,note:'Taken back by the Treasury'});say('tmsg','Took back '+fmt(a)+' from '+nm+'. It is back in the Treasury.');paint()}
+ /* ---- Giveaway links: make a link, the first person to claim it gets the keys, you give them when ready ---- */
+ function gvGet(cb){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kgLocal')||'{}')||{}}catch(e){}cb(o);return}RR.db('GET','key_giveaways').then(function(r){cb(r.status===200&&r.json?r.json:{})})}
+ function gvSetLocal(o){try{localStorage.setItem('kgLocal',JSON.stringify(o))}catch(e){}}
+ function gvLink(gid){return location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-giveaway.html?g='+gid+(DBM?'':'&demo=1')}
+ function gvSay(t,bad){var m=$('gvmsg');m.textContent=t;m.className='msg '+(bad?'err':'ok')}
+ function gvMake(){var lab=$('gvlab').value.trim(),k=Math.round(Number(String($('gvkeys').value).replace(/,/g,'')));
+  if(!lab){gvSay('Give the giveaway a name first.',true);return}if(!(k>=1&&k<=100000)){gvSay('Type how many keys, from 1 to 100,000.',true);return}
+  var a=new Uint8Array(20);crypto.getRandomValues(a);var gid='';for(var i=0;i<a.length;i++)gid+=(a[i]%36).toString(36);
+  var done=function(){$('gvlab').value='';gvSay('Your link is ready. Copy it or share it below.',false);gvRender()};
+  if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kgLocal')||'{}')||{}}catch(e){}o[gid]={label:lab,keys:k,createdAt:Date.now()};gvSetLocal(o);done();return}
+  $('gvmake').disabled=true;RR.db('PUT','key_giveaways/'+gid,{label:lab,keys:k,createdAt:{'.sv':'timestamp'}}).then(function(r){$('gvmake').disabled=false;if(r.status===200)done();else gvSay('The database did not accept that. Sign in again and try once more.',true)})}
+ function gvGive(gid,g,btn){var c=g.claim,nm=(c.first+' '+c.last).replace(/\s+/g,' ').trim().slice(0,40),n=nm,i=2;while(find(n)){n=nm+' '+i;i++}
+  btn.disabled=true;var id=openW(n,'Customer');S.entries.push({id:S.next++,t:now(),from:'treasury',to:id,amt:g.keys*100,note:('Giveaway: '+g.label).slice(0,70)});save();chime();paint();
+  if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kgLocal')||'{}')||{}}catch(e){}if(o[gid]&&o[gid].claim){o[gid].claim.paid=true;o[gid].claim.wallet=n}gvSetLocal(o);gvRender();return}
+  RR.db('PATCH','key_giveaways/'+gid+'/claim',{paid:true,paidAt:{'.sv':'timestamp'},wallet:n}).then(function(){gvRender()})}
+ function gvRender(){var box=$('gvlist');if(!box)return;gvGet(function(o){box.innerHTML='';var ids=Object.keys(o).sort(function(a,b){return (o[b].createdAt||0)-(o[a].createdAt||0)});
+  if(!ids.length){box.appendChild(el('p','fine','No giveaway links yet.'));return}
+  ids.forEach(function(gid){var g=o[gid],row=el('div','gvrow');row.appendChild(el('b',null,String(g.label)+' · '+g.keys+' keys'));
+   if(!g.claim){row.appendChild(el('p','fine','Open. The first person to claim it gets it.'));var li=el('input');li.readOnly=true;li.value=gvLink(gid);li.setAttribute('aria-label','Giveaway link');li.addEventListener('focus',function(){li.select()});row.appendChild(li);
+    var bt=el('div','tools');var cp=el('button','btn','Copy link');cp.type='button';cp.addEventListener('click',function(){var d=function(){cp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(li.value).then(d,function(){li.select();d()});else{li.select();try{document.execCommand('copy')}catch(e){}d()}});bt.appendChild(cp);
+    if(navigator.share){var sh=el('button','btn ghost','Share');sh.type='button';sh.addEventListener('click',function(){navigator.share({title:'Claim your Key Rewards',text:'Claim your '+g.keys+' keys. The first person to claim it gets it.',url:li.value}).catch(function(){})});bt.appendChild(sh)}row.appendChild(bt)}
+   else{var c=g.claim;row.appendChild(el('p','fine','Claimed by '+c.first+' '+c.last+' · '+c.email+' · '+c.phone+' · '+when(c.at)));
+    if(c.paid)row.appendChild(el('p','fine','Keys given. Wallet: '+(c.wallet||'')));else{var gb=el('button','btn','Give '+g.keys+' keys now');gb.type='button';gb.addEventListener('click',function(){gvGive(gid,g,gb)});row.appendChild(gb)}}
+   box.appendChild(row)});
+  var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',gvRender);box.appendChild(rf)})}
  function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
   if(a===null||a<=0){say('mmsg','Please type a whole number, like 25000.',true);$('mamt').focus();return}
   if(a>shown(f)){say('mmsg',wname(f)+' only has '+fmt(shown(f))+'. Please type a smaller amount.',true);return}
   S.entries.push({id:S.next++,t:now(),from:f,to:t,amt:a,note:$('mnote').value.replace(/\s+/g,' ').trim().slice(0,80)});
   $('mamt').value='';$('mnote').value='';say('mmsg','Moved '+fmt(a)+' Key Rewards from '+wname(f)+' to '+wname(t)+'.');paint()}
- $('mmove').addEventListener('click',move);
+ $('mmove').addEventListener('click',move);$('gvmake').addEventListener('click',gvMake);
  $('mamt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();move()}});
  $('logoIn').addEventListener('change',function(){var f=this.files[0],inp=this;if(!f||sel==='all')return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=240,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.logos=S.logos||{};S.logos[sel]=S.logos[sel]||[];if(S.logos[sel].length>=3){say('tmsg','A wallet can show up to 3 logos. Remove one first.',true);return}S.logos[sel].push(c.toDataURL('image/png'));say('tmsg','Logo added.');paint()};im.onerror=function(){say('tmsg','That file could not be read as a picture.',true)};im.src=r.result};r.readAsDataURL(f);inp.value=''});
  $('present').addEventListener('click',function(){if(sel!=='all')present(sel)});

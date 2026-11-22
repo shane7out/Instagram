@@ -146,5 +146,40 @@
     ".validate": "$w.matches(/^[a-z][a-z0-9]{0,19}$/) && newData.isBoolean()"
    }
   }
+ },
+ "key_giveaways": {
+  ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
+  "$gid": {
+   ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
+   ".validate": "!newData.exists() || (newData.hasChildren(['label','keys','createdAt']) && newData.child('label').isString() && newData.child('label').val().length >= 1 && newData.child('label').val().length <= 80 && newData.child('keys').isNumber() && newData.child('keys').val() >= 1 && newData.child('keys').val() <= 100000 && newData.child('keys').val() % 1 == 0 && newData.child('createdAt').isNumber())",
+   "label": {
+    ".read": true
+   },
+   "keys": {
+    ".read": true
+   },
+   "createdAt": {},
+   "claim": {
+    "at": {
+     ".read": true
+    },
+    ".write": "!data.exists() && newData.exists() && root.child('key_giveaways').child($gid).child('keys').exists()",
+    ".validate": "newData.hasChildren(['first','last','email','phone','at','consent']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && (!newData.child('paid').exists() || newData.child('paid').isBoolean()) && (!newData.child('paidAt').exists() || newData.child('paidAt').isNumber()) && (!newData.child('wallet').exists() || (newData.child('wallet').isString() && newData.child('wallet').val().length <= 80))",
+    "first": {},
+    "last": {},
+    "email": {},
+    "phone": {},
+    "consent": {},
+    "paid": {},
+    "paidAt": {},
+    "wallet": {},
+    "$other": {
+     ".validate": false
+    }
+   },
+   "$other": {
+    ".validate": false
+   }
+  }
  }
 }

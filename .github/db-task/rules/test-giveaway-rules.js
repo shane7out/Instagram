@@ -1,0 +1,48 @@
+/* Emulator test for the key_giveaways rules (first person to claim wins; claims are private). Run by run-giveaway-rules-test.sh */
+const NS = 'demo-lvr-default-rtdb', BASE = 'http://127.0.0.1:9000';
+const b64u = o => Buffer.from(JSON.stringify(o)).toString('base64url');
+const jwt = uid => b64u({ alg: 'none', typ: 'JWT' }) + '.' + b64u({ uid, user_id: uid, sub: uid, iat: Math.floor(Date.now() / 1000) }) + '.';
+const TOK = { owner: jwt('TESTOWNER'), treasurer: jwt('TESTTREASURER'), other: jwt('SOMEONE-ELSE') };
+async function call(who, method, p, body) {
+  const auth = TOK[who] ? '&auth=' + TOK[who] : '';
+  const r = await fetch(`${BASE}${p}.json?ns=${NS}${auth}`, { method, headers: Object.assign({ 'Content-Type': 'application/json' }, who === 'admin' ? { Authorization: 'Bearer owner' } : {}), body: body === undefined ? undefined : JSON.stringify(body) });
+  return { s: r.status, t: await r.text() };
+}
+let pass = 0, fail = 0;
+const t = async (name, who, method, p, body, allow, expectBody) => {
+  const r = await call(who, method, p, body), ok = (r.s === 200) === allow && (expectBody === undefined || r.t === expectBody);
+  ok ? pass++ : fail++; console.log((ok ? 'PASS' : 'FAIL') + '  [' + who + '] ' + name + (ok ? '' : '  (HTTP ' + r.s + ' ' + r.t.slice(0, 90) + ')'));
+};
+const G = '/key_giveaways/abcd1234efgh5678ijkl9012', G2 = '/key_giveaways/zzzz1234efgh5678ijkl9012';
+const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@example.com', phone: '7025550100', at: { '.sv': 'timestamp' }, consent: true }, extra || {});
+(async () => {
+  const mk = { label: 'Grand opening', keys: 25, createdAt: { '.sv': 'timestamp' } };
+  await t('a stranger cannot make a giveaway', 'anon', 'PUT', G, mk, false);
+  await t('a signed-in stranger cannot make a giveaway', 'other', 'PUT', G, mk, false);
+  await t('the owner makes a giveaway', 'owner', 'PUT', G, mk, true);
+  await t('the Treasury PIN account makes a giveaway', 'treasurer', 'PUT', G2, mk, true);
+  await t('keys above the limit are refused', 'owner', 'PUT', '/key_giveaways/limit1234limit1234limit', Object.assign({}, mk, { keys: 1e9 }), false);
+  await t('fractional keys are refused', 'owner', 'PUT', '/key_giveaways/frac12345frac12345frac1', Object.assign({}, mk, { keys: 2.5 }), false);
+  await t('a stranger cannot read the giveaway list', 'anon', 'GET', '/key_giveaways', undefined, false);
+  await t('a stranger cannot read a whole giveaway', 'anon', 'GET', G, undefined, false);
+  await t('the page can read the label', 'anon', 'GET', G + '/label', undefined, true, '"Grand opening"');
+  await t('the page can read the keys', 'anon', 'GET', G + '/keys', undefined, true, '25');
+  await t('the page can see nobody has claimed yet', 'anon', 'GET', G + '/claim/at', undefined, true, 'null');
+  await t('a claim on a giveaway that does not exist is refused', 'anon', 'PUT', '/key_giveaways/nothere1234nothere1234no/claim', claim(), false);
+  await t('a claim without consent is refused', 'anon', 'PUT', G + '/claim', claim({ consent: false }), false);
+  await t('a claim with a bad email is refused', 'anon', 'PUT', G + '/claim', claim({ email: 'not-an-email' }), false);
+  await t('a claim with a made-up time is refused', 'anon', 'PUT', G + '/claim', claim({ at: 5 }), false);
+  await t('a claim with a missing name is refused', 'anon', 'PUT', G + '/claim', { email: 'a@b.co', phone: '7025550100', at: { '.sv': 'timestamp' }, consent: true }, false);
+  await t('a claim with extra fields is refused', 'anon', 'PUT', G + '/claim', claim({ paid: true, hack: 1 }), false);
+  await t('the FIRST visitor claims it', 'anon', 'PUT', G + '/claim', claim(), true);
+  await t('the SECOND visitor is refused', 'anon', 'PUT', G + '/claim', claim({ first: 'Bob', email: 'bob@example.com' }), false);
+  await t('nobody can overwrite the claim', 'other', 'PUT', G + '/claim', claim({ first: 'Eve' }), false);
+  await t('the page can now see it was claimed', 'anon', 'GET', G + '/claim/at', undefined, true);
+  await t('a stranger cannot read who claimed it', 'anon', 'GET', G + '/claim', undefined, false);
+  await t('a stranger cannot read the claimed name', 'anon', 'GET', G + '/claim/email', undefined, false);
+  await t('the owner can read the claim', 'owner', 'GET', G + '/claim', undefined, true);
+  await t('the owner marks the keys as given', 'owner', 'PATCH', G + '/claim', { paid: true, paidAt: { '.sv': 'timestamp' }, wallet: 'Ann Lee' }, true);
+  await t('the Treasury PIN account can read the list', 'treasurer', 'GET', '/key_giveaways', undefined, true);
+  await t('a stranger cannot delete a claim', 'anon', 'DELETE', G + '/claim', undefined, false);
+  console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
+})();
