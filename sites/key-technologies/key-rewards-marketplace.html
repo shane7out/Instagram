@@ -129,6 +129,8 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .offerf select,.offerf input{width:100%;height:44px;border-radius:10px;border:1.5px solid rgba(255,255,255,.28);background:#0f171e;color:#fff;font:inherit;font-size:16px;padding:0 10px}
 .pd .tart{padding:22px 20px;display:flex;align-items:center;justify-content:center}.pd .tart .tile{width:100%}
 @media(max-width:759px){.pd .tart{padding:48px 20px 14px}}
+.art.gift{position:relative}.art.samp .badge{left:auto;right:10px;top:9px;z-index:3}
+.art.gift .gcard .nm{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -196,14 +198,14 @@ ALL.forEach(function(x,i){x.id=i});
 var T=[
 {who:"Johnny Mac\u2019s",tag:"Key Rewards partner",gift:true,n:"Johnny Mac\u2019s",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
 {who:"Vanilla Rice\u2019s Hibachi House",tag:"Key Rewards partner",gift:true,n:"Vanilla Rice\u2019s Hibachi House",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
-{who:"Sample window tint shop",n:"Window tint, front two windows",e:"\ud83d\udd76\ufe0f",note:"Legal-limit film",want:"A haircut, plus 20 points",pts:20,sample:true},
-{who:"Sample salon",n:"Haircut and style",e:"\u2702\ufe0f",note:"Cut and style",want:"Window tint or a car detail",pts:0,sample:true},
-{who:"Sample bowling alley",n:"Bowling, one hour lane",e:"\ud83c\udfb3",note:"Up to 6 people",want:"A tennis hour, or 90 points",pts:90,sample:true},
-{who:"Sample cleaning service",n:"House cleaning",e:"\ud83e\uddf9",note:"Up to 3 hours",want:"A handyman hour, plus 30 points",pts:30,sample:true},
-{who:"Sample trainer",n:"Personal training session",e:"\ud83d\udcaa",note:"One session",want:"A 60 minute massage",pts:0,sample:true},
-{who:"Sample detail shop",n:"Interior and exterior detail",e:"\ud83e\uddfd",note:"Full detail",want:"Two lawn care visits",pts:0,sample:true},
-{who:"Sample neighbor",n:"Dinner for two",e:"\ud83c\udf7d\ufe0f",note:"Tasting menu",want:"Pool cleaning, or 200 points",pts:200,sample:true},
-{who:"Sample pool service",n:"Pool cleaning, one visit",e:"\ud83c\udfca",note:"Chemicals checked",want:"An AC tune-up",pts:0,sample:true}
+{who:"Sample window tint shop",n:"Window tint, front two windows",v:90,e:"\ud83d\udd76\ufe0f",note:"Legal-limit film",want:"A haircut, plus 20 points",pts:20,sample:true},
+{who:"Sample salon",n:"Haircut and style",v:60,e:"\u2702\ufe0f",note:"Cut and style",want:"Window tint or a car detail",pts:0,sample:true},
+{who:"Sample bowling alley",n:"Bowling, one hour lane",v:90,e:"\ud83c\udfb3",note:"Up to 6 people",want:"A tennis hour, or 90 points",pts:90,sample:true},
+{who:"Sample cleaning service",n:"House cleaning",v:140,e:"\ud83e\uddf9",note:"Up to 3 hours",want:"A handyman hour, plus 30 points",pts:30,sample:true},
+{who:"Sample trainer",n:"Personal training session",v:90,e:"\ud83d\udcaa",note:"One session",want:"A 60 minute massage",pts:0,sample:true},
+{who:"Sample detail shop",n:"Interior and exterior detail",v:180,e:"\ud83e\uddfd",note:"Full detail",want:"Two lawn care visits",pts:0,sample:true},
+{who:"Sample neighbor",n:"Dinner for two",v:200,e:"\ud83c\udf7d\ufe0f",note:"Tasting menu",want:"Pool cleaning, or 200 points",pts:200,sample:true},
+{who:"Sample pool service",n:"Pool cleaning, one visit",v:70,e:"\ud83c\udfca",note:"Chemicals checked",want:"An AC tune-up",pts:0,sample:true}
 ];
 T.forEach(function(t,i){t.id=i});
 var offers={};try{offers=JSON.parse(localStorage.getItem("krmOffers")||"{}")||{}}catch(e){offers={}}
@@ -228,7 +230,7 @@ function filtersHtml(){
  h+='</div><h3>Sort by</h3><select class="sort" data-sort aria-label="Sort by"><option value="sug"'+(st.sort==="sug"?" selected":"")+'>Suggested</option><option value="lo"'+(st.sort==="lo"?" selected":"")+'>Points: low to high</option><option value="hi"'+(st.sort==="hi"?" selected":"")+'>Points: high to low</option></select>';return h}
 function artHtml(x){
  if(x.gift)return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(x.n)+'</div><div class="kind">Gift card</div><div class="val"><small>Rewards points value</small><b>'+x.p+'</b></div></div></div>';
- return '<div class="art"><span class="e" aria-hidden="true">'+x.e+'</span><span class="badge">Sample</span></div>'}
+ return '<div class="art gift samp"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(x.n)+'</div><div class="kind">Sample gift card &middot; '+esc(x.note)+'</div><div class="val"><small>Rewards points value</small><b>'+x.p+'</b></div></div></div>'}
 function heartHtml(x){return '<span class="heart'+(saved[x.id]?" on":"")+'" role="button" tabindex="0" data-h="'+x.id+'" aria-label="'+(saved[x.id]?"Remove from saved":"Save")+' '+esc(x.n)+'" aria-pressed="'+(saved[x.id]?"true":"false")+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9.2-9A5.4 5.4 0 0 1 12 6.6 5.4 5.4 0 0 1 21.2 12C19 16.6 12 21 12 21z"/></svg></span>'}
 function render(){
  var side=document.getElementById("side");side.innerHTML=filtersHtml();
@@ -247,11 +249,11 @@ function render(){
 
 function tradeArt(t){
  if(t.gift)return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(t.n)+'</div><div class="kind">Gift card</div><div class="val"><small>Rewards points value</small><b>'+t.p+'</b></div></div></div>';
- return '<div class="tile"><span class="e" aria-hidden="true">'+t.e+'</span><div><b>'+esc(t.n)+'</b><span>'+esc(t.note)+'</span></div></div>'}
+ return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(t.n)+'</div><div class="kind">'+(t.sample?'Sample gift card':'Gift card')+' &middot; '+esc(t.note)+'</div><div class="val"><small>Rewards points value</small><b>'+(t.v||t.p)+'</b></div></div></div>'}
 function tradeCell(t){return '<button type="button" class="tcard" data-t="'+t.id+'" aria-label="'+esc((t.gift?t.n+' gift card':t.n)+', would trade for '+t.want+'. Open trade.')+'"><div class="tl"><span>Offering</span><i>'+esc(t.who)+'</i></div>'+tradeArt(t)+'<div class="wants"><span class="sw" aria-hidden="true">&#8644;</span><div><small>Would trade for</small><b>'+esc(t.want)+'</b></div></div></button>'}
 function tradeList(){var q=st.q.trim().toLowerCase();return T.filter(function(t){return !q||(t.n+" "+t.want+" "+t.who).toLowerCase().indexOf(q)>=0})}
 function tradeDetail(t){
- var art=t.gift?tradeArt(t).replace('class="art gift"','class="art gift" aria-hidden="true"'):'<div class="tart" aria-hidden="true">'+tradeArt(t)+'</div>';
+ var art=tradeArt(t).replace('class="art gift"','class="art gift" aria-hidden="true"');
  var sent=offers[t.id];
  openPanel('<div class="pd">'+art+'<div class="info"><div class="pp">'+(t.pts?t.pts:'Open')+'<i>'+(t.pts?'points, or a trade':'to offers')+'</i></div><h2 id="dt">'+esc(t.gift?t.n+' gift card':t.n)+'</h2><div class="sub">Offered by '+esc(t.who)+' &middot; '+LOC+'</div>'+
   '<h3>Would trade for</h3><p><b style="color:#fff">'+esc(t.want)+'</b></p>'+

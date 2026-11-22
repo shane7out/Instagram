@@ -287,6 +287,12 @@ body.hlock{overflow:hidden}
 #pres .thist li b{font-size:14px;font-weight:800}
 #pres .thist li small{font-size:11px!important;line-height:1.2!important}
 #pres .thist li>span:last-child,#pres .thist li>b:last-child{white-space:nowrap}
+
+.swapbar{width:min(100%,var(--cw,304px));margin:12px auto 4px}.swaph{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 6px;font-size:13px}.swaph b{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#e8c766}.swaph a{color:#9fd4ff;font-weight:700}
+.swaprow{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}.swaprow::-webkit-scrollbar{display:none}
+.swapit{flex:none;width:min(62%,176px);scroll-snap-align:start;background:none;border:0;padding:0;color:#fff;font:inherit;text-align:center;cursor:pointer}.swapit.soon{cursor:default;opacity:.92}
+.swapit .gc{width:100%!important;margin:0!important}.swapit span{display:block;margin-top:5px;font-size:12.5px;font-weight:800;color:#e8c766}.swapit.soon span{color:rgba(255,255,255,.72);font-weight:700}
+.swapit .gc .nm{font-size:min(12px,9cqw)!important}
 </style>
 </head>
 <body>
@@ -624,6 +630,12 @@ body.hlock{overflow:hidden}
  function voucherCard(biz,pts,sm){var g=el('div','gc voucher'+(sm?' sm':'')),d=function(c,t){return el('div',c,t)};
   g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2','Rewards'));var cr=el('div','crow');cr.appendChild(rrLock());g.appendChild(cr);
   g.appendChild(d('nm',biz));g.appendChild(d('num','Gift card'));var bb=d('bal'),sm2=el('small',null,'');sm2.innerHTML='Rewards <span class="pt">points </span>value';bb.appendChild(sm2);bb.appendChild(el('b',null,String(pts)));g.appendChild(bb);return g}
+ var GCSAMPLE=[['Haircut and style',60],['Window tint, front two windows',90],['Bowling, one hour lane',90],['Interior and exterior detail',180],['Dinner for two',200],['House cleaning',140]];
+ function swapStrip(id){var wrap=el('div','swapbar'),h=el('div','swaph');h.appendChild(el('b',null,'Swap for a gift card'));var m=el('a',null,'See all');m.href='key-rewards-marketplace.html';h.appendChild(m);wrap.appendChild(h);
+  var row=el('div','swaprow');row.setAttribute('role','list');
+  GCS.forEach(function(c){var it=el('button','swapit');it.type='button';it.setAttribute('role','listitem');it.setAttribute('aria-label',c.biz+' gift card, '+c.pts+' rewards points. Tap to swap.');it.appendChild(voucherCard(c.biz,c.pts,true));it.appendChild(el('span',null,'Swap for '+c.pts));it.addEventListener('click',function(){openGiftCards(id)});row.appendChild(it)});
+  GCSAMPLE.forEach(function(c){var it=el('div','swapit soon');it.setAttribute('role','listitem');it.appendChild(voucherCard(c[0],c[1],true));it.appendChild(el('span',null,'Sample, coming soon'));row.appendChild(it)});
+  wrap.appendChild(row);return wrap}
  function openGiftCards(id){
   var w=wById(id),rc=$('rc'),have=avail(id);ac();rc.innerHTML='';
   var hd=el('div','rhead');hd.appendChild(el('h2',null,'Gift cards'));var ex=el('button','exit','Back');ex.type='button';ex.addEventListener('click',function(){$('rdm').classList.add('hide')});hd.appendChild(ex);rc.appendChild(hd);
@@ -748,7 +760,7 @@ body.hlock{overflow:hidden}
   if(stt==='pending'&&!DBM){var cb=el('button','send','Confirm (practice)');cb.type='button';cb.addEventListener('click',function(){e.status='confirmed';e.ct=now();save();chime();receipt(e,backId)});dn.appendChild(cb);var db2=el('button','more','Decline (practice)');db2.type='button';db2.addEventListener('click',function(){e.status='declined';e.ct=now();save();receipt(e,backId)});dn.appendChild(db2)}
   var ok=el('button',stt==='pending'&&!DBM?'more':'send','Done');ok.type='button';ok.addEventListener('click',function(){curRc=null;$('rdm').classList.add('hide');paint();present(backId)});dn.appendChild(ok);dn.appendChild(credit());rc.appendChild(dn);$('rdm').classList.remove('hide');$('rdm').scrollTop=0}
  function present(id,quiet){var w=S.wallets.filter(function(x){return x.id===id})[0],pc=$('pc');pc.innerHTML='';
-  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,true,false):flipCard(w,quiet));presId=id;if(!quiet)countUp(pc.querySelector('.bal b'),shown(id));var isRest=w.type==='Restaurant',row=null;if(isRest&&!DBM){row=el('div','btnrow');pc.appendChild(row)}
+  var hd=el('div','phead');hd.appendChild(el('h2',null,'Wallet'));var ex=el('button','exit','Close');ex.type='button';ex.addEventListener('click',function(){presId=null;$('pres').classList.add('hide');document.body.style.overflow=''});hd.appendChild(ex);pc.appendChild(hd);pc.appendChild(w.id==='treasury'?gcard(w,true,false):flipCard(w,quiet));if(w.id!=='treasury'&&w.type!=='Restaurant'&&!isGiftW(w))pc.appendChild(swapStrip(id));presId=id;if(!quiet)countUp(pc.querySelector('.bal b'),shown(id));var isRest=w.type==='Restaurant',row=null;if(isRest&&!DBM){row=el('div','btnrow');pc.appendChild(row)}
   if(DBM&&w.type==='Restaurant')pc.appendChild(el('p','fine','Restaurant ID for confirming payments: '+w.id+'. The restaurant opens keytechnologies.si/restaurant-confirm.html and types this ID and its own PIN.'));var canR=(w.id!=='treasury');if(canR){var rb=el('button','rbtn','Redeem');rb.type='button';rb.disabled=avail(id)<=0;rb.addEventListener('click',function(){openRedeem(id)});(row||pc).appendChild(rb);if(!row&&w.type!=='Restaurant'){var gcb=el('button','rbtn gcb2','Gift cards');gcb.type='button';gcb.addEventListener('click',function(){openGiftCards(id)});pc.appendChild(gcb)}}
   if(isRest&&!DBM){var on=accepts(w.id),tg=el('button','rbtn acc '+(on?'on':'off'),on?'Turn off':'Turn on');tg.type='button';tg.setAttribute('aria-label',on?'This restaurant is accepting rewards. Tap to turn them off.':'Rewards are off here. Tap to turn them on.');tg.addEventListener('click',function(){S.accept=S.accept||{};S.accept[w.id]=!on;save();paint();present(w.id,true)});row.appendChild(tg)}else if(isRest)pc.appendChild(el('p','fine','The restaurant controls whether rewards are on or off.'))
   giftsFor(w).forEach(function(g){var gb=giftBlock(g,id);if(gb)pc.appendChild(gb)});
