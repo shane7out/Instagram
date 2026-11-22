@@ -91,7 +91,7 @@
 .gc .brand2,.gc .fineprint,.gc .bal small,.gc .bal small .pt,.gc .glab,.gc .cd,.gc .cdr,.gc .exp{color:#4a3208!important}
 .gc .bal{border-top:1px solid rgba(110,70,0,.55)!important;box-shadow:0 -1px 0 rgba(255,244,190,.7)!important}
 .gc .crow,.gc .rrlock{display:none!important}
-.gc:not(.back) .brand::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-icon.svg) center/contain no-repeat;filter:drop-shadow(0 1px 0 rgba(255,244,190,.8))}
+.gc:not(.back) .brand::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-card.svg) center/contain no-repeat;filter:drop-shadow(0 1px 0 rgba(255,244,190,.8))}
 .gc.back .bkw::after{background:linear-gradient(rgba(214,165,50,0),rgba(214,165,50,.96))!important}
 .gc.back .strip{background:linear-gradient(#1b1b1b,#0b0b0b)!important}.gc.back .strip,.gc.back .strip *{color:#e8c766!important;text-shadow:none!important}
 
@@ -99,5 +99,5 @@
 .gcard{background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,250,210,.50) 40%,rgba(255,255,255,0) 52%),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(135deg,#a6720f 0%,#e8bd45 16%,#fbe48e 33%,#dba623 52%,#f7d96f 70%,#bd8a12 86%,#e6b93e 100%)!important;box-shadow:inset 0 0 0 1px rgba(110,70,0,.55),inset 0 0 0 4px rgba(255,238,170,.45),inset 0 0 0 5px rgba(110,70,0,.30)!important;color:#1c1405!important}
 .gcard::before{content:"";background:repeating-radial-gradient(circle at 92% 8%,rgba(110,70,0,.11) 0 1px,rgba(110,70,0,0) 1px 6px)!important;opacity:1!important;filter:none!important;mix-blend-mode:multiply}
 .gcard *{color:#1c1405!important}.gcard .b2,.gcard .kind,.gcard .val small{color:#4a3208!important}
-.gcard .b::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-icon.svg) center/contain no-repeat}
+.gcard .b::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-card.svg) center/contain no-repeat}
 .gcard .val{border-top-color:rgba(110,70,0,.55)!important}
