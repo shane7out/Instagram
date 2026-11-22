@@ -288,7 +288,7 @@ body.hlock{overflow:hidden}
 #pres .thist li small{font-size:11px!important;line-height:1.2!important}
 #pres .thist li>span:last-child,#pres .thist li>b:last-child{white-space:nowrap}
 
-.swapbar{width:min(100%,var(--cw,304px));margin:12px auto 4px}.swaph{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 6px;font-size:13px}.swaph b{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#e8c766}.swaph a{color:#9fd4ff;font-weight:700}
+.swapbar{width:min(100%,var(--cw,304px));margin:12px auto 4px}.swaph{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 6px;font-size:13px}.swaph b{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#e8c766}.swaph a{color:#e8c766;font-weight:800;text-decoration:none;pointer-events:none}
 .swaprow{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}.swaprow::-webkit-scrollbar{display:none}
 .swapit{flex:none;width:min(62%,176px);scroll-snap-align:start;background:none;border:0;padding:0;color:#fff;font:inherit;text-align:center;cursor:pointer}.swapit.soon{cursor:default;opacity:.92}
 .swapit .gc{width:100%!important;margin:0!important}.swapit span{display:block;margin-top:5px;font-size:12.5px;font-weight:800;color:#e8c766}.swapit.soon span{color:rgba(255,255,255,.72);font-weight:700}
@@ -631,10 +631,10 @@ body.hlock{overflow:hidden}
   g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2','Rewards'));var cr=el('div','crow');cr.appendChild(rrLock());g.appendChild(cr);
   g.appendChild(d('nm',biz));g.appendChild(d('num','Gift card'));var bb=d('bal'),sm2=el('small',null,'');sm2.innerHTML='Rewards <span class="pt">points </span>value';bb.appendChild(sm2);bb.appendChild(el('b',null,String(pts)));g.appendChild(bb);return g}
  var GCSAMPLE=[['Haircut and style',60],['Window tint, front two windows',90],['Bowling, one hour lane',90],['Interior and exterior detail',180],['Dinner for two',200],['House cleaning',140]];
- function swapStrip(id){var wrap=el('div','swapbar'),h=el('div','swaph');h.appendChild(el('b',null,'Swap for a gift card'));var m=el('a',null,'See all');m.href='key-rewards-marketplace.html';h.appendChild(m);wrap.appendChild(h);
+ function swapStrip(id){var wrap=el('div','swapbar'),h=el('div','swaph');h.appendChild(el('b',null,'Tap a card to trade'));var m=el('a',null,'You have '+fmt(avail(id))+' keys');m.href='key-rewards-marketplace.html';h.appendChild(m);wrap.appendChild(h);
   var row=el('div','swaprow');row.setAttribute('role','list');
-  GCS.forEach(function(c){var it=el('button','swapit');it.type='button';it.setAttribute('role','listitem');it.setAttribute('aria-label',c.biz+' gift card, '+c.pts+' rewards points. Tap to swap.');it.appendChild(voucherCard(c.biz,c.pts,true));it.appendChild(el('span',null,'Swap for '+c.pts));it.addEventListener('click',function(){openGiftCards(id)});row.appendChild(it)});
-  GCSAMPLE.forEach(function(c){var it=el('div','swapit soon');it.setAttribute('role','listitem');it.appendChild(voucherCard(c[0],c[1],true));it.appendChild(el('span',null,'Sample, coming soon'));row.appendChild(it)});
+  GCS.forEach(function(c){var it=el('button','swapit');it.type='button';it.setAttribute('role','listitem');it.setAttribute('aria-label',c.biz+' gift card, '+c.pts+' keys. Tap to trade.');it.appendChild(voucherCard(c.biz,c.pts,true));it.appendChild(el('span',null,'Tap to trade \u00b7 '+c.pts+' keys'));it.addEventListener('click',function(){openGiftCards(id)});row.appendChild(it)});
+  GCSAMPLE.forEach(function(c){var it=el('div','swapit soon');it.setAttribute('role','listitem');it.appendChild(voucherCard(c[0],c[1],true));it.appendChild(el('span',null,'Sample \u00b7 '+c[1]+' keys, coming soon'));row.appendChild(it)});
   wrap.appendChild(row);return wrap}
  function openGiftCards(id){
   var w=wById(id),rc=$('rc'),have=avail(id);ac();rc.innerHTML='';
