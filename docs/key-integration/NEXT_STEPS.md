@@ -564,3 +564,5 @@ Colour versions A-E (bright gold, 24-karat soft shine, brushed, deep yellow gold
  - Other looks (silver, graphite, indigo, platinum) are only saved in brand/card-themes.css; do not offer colour changes unless Shane asks.
 
 298. Zach Tolen (Shane, 2026-11-21; spelled TOLEN): wallet "Zach Tolen" with 500 (Starting credit) and a gift card "Gift for Zach Tolen" with 100 (Gift to give), both from the Treasury (INSTR 2026-11-21-i..l, 3:50 PM PST). Treasury now 9,993,900; wallets 5,900; gift cards 200; total 10,000,000. Entry numbers 1121-0012 to 0015. Locked look unchanged.
+
+299. Crown friend gift and Enrique Labrador (Shane, 2026-11-22): "Gift for Crown" gift card with 100 (INSTR 2026-11-22-a/b) and wallet "Enrique Labrador" with 5,000 Starting credit (INSTR 2026-11-22-c/d), all from the Treasury. Treasury now 9,988,800; wallets and gift cards still total 10,000,000. Enrique has no friend gift card yet (not asked). Treasury database lock still waits on the owner password reset at Shane's Mac.
