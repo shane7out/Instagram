@@ -23,5 +23,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: sites/key-technologies
+      # GitHub sometimes needs a few seconds before the uploaded site files show up (deploy runs 664-667 said "Found 0 artifacts")
+      - name: Wait for the uploaded site to register
+        run: sleep 25
       - id: deployment
         uses: actions/deploy-pages@v4
