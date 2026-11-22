@@ -310,6 +310,8 @@ body.hlock{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.tp3d,.tp3d.done{animation:none}}
 
 #gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
+#dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
+#dnbox .dnrec{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#dnbox .dnimg{display:block;width:140px;max-height:200px;object-fit:cover;border-radius:8px;background:#fff;margin:6px 0;cursor:zoom-in}#dnbox .dnimg.big{width:100%;max-height:none;object-fit:contain;cursor:zoom-out}#dnbox .dnwarn{margin:6px 0;color:#ffd27a;font-weight:700;font-size:14px}
 </style>
 </head>
 <body>
@@ -358,6 +360,16 @@ body.hlock{overflow:hidden}
   <button class="btn" id="gvmake" type="button">Make the link</button>
   <div class="msg" id="gvmsg" role="alert"></div>
   <div id="gvlist"></div>
+ </div>
+ <div class="box" id="dnbox">
+  <h2>Dine and earn offers</h2>
+  <p class="fine" style="margin-top:0">Send people to a restaurant. After they eat they send a photo of the receipt, you check it, and you give them keys. Each offer has its own link.</p>
+  <label for="dnrest">Restaurant</label><input id="dnrest" list="dnrests" maxlength="80" autocomplete="off" placeholder="Example: Johnny Mac's"><datalist id="dnrests"></datalist>
+  <label for="dnkeys">Keys for each approved receipt</label><input id="dnkeys" inputmode="numeric" autocomplete="off" value="25">
+  <label for="dnnote">Message on the page (optional)</label><input id="dnnote" maxlength="140" autocomplete="off" placeholder="Example: Try the hibachi. Show your receipt after you eat.">
+  <button class="btn" id="dnmake" type="button">Make the offer link</button>
+  <div class="msg" id="dnmsg" role="alert"></div>
+  <div id="dnlist"></div>
  </div>
 </div>
 
@@ -452,8 +464,8 @@ body.hlock{overflow:hidden}
    else{/* first sign-in: the permanent ledger starts clean from the saved instructions (10,000,000 and Thin Blue 702 at 5,000); practice records in this browser are NOT carried over */S=fresh();S.seeded2=false;S.logos=logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Key Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';
-   sel='all';paint();gvRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
- function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender()}
+   sel='all';paint();gvRender();dnRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
+ function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender()}
  var idleT=null;function idle(){var go=function(){clearTimeout(idleT);idleT=setTimeout(function(){RR.signOut();location.reload()},15*60*1000)};['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()}
  function start(msg){RR.gate({title:'Key Rewards Treasury',sub:msg||'Type your Treasury PIN.',email:RR.TREASURER.email,salt:RR.TREASURER.salt,onOK:enterDb,onSkip:{label:'Use the practice version (this browser only)',fn:enterLocal}})}
  function $(i){return document.getElementById(i)}
@@ -633,13 +645,50 @@ body.hlock{overflow:hidden}
     if(c.paid)row.appendChild(el('p','fine','Keys given. Wallet: '+(c.wallet||'')));else{var gb=el('button','btn','Give '+g.keys+' keys now');gb.type='button';gb.addEventListener('click',function(){gvGive(gid,g,gb)});row.appendChild(gb)}}
    box.appendChild(row)});
   var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',gvRender);box.appendChild(rf)})}
+ /* ---- Dine and earn: an offer link per restaurant; people send a receipt photo; you check it and give keys ---- */
+ function dnGet(cb){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}cb(o);return}RR.db('GET','key_dine').then(function(r){cb(r.status===200&&r.json?r.json:{})})}
+ function dnSetLocal(o){try{localStorage.setItem('kdLocal',JSON.stringify(o))}catch(e){}}
+ function dnLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-dine.html?o='+id+(DBM?'':'&demo=1')}
+ function dnSay(t,bad){var m=$('dnmsg');m.textContent=t;m.className='msg '+(bad?'err':'ok')}
+ function dnMake(){var rest=$('dnrest').value.trim(),k=Math.round(Number(String($('dnkeys').value).replace(/,/g,''))),note=$('dnnote').value.trim();
+  if(!rest){dnSay('Type the restaurant name first.',true);return}if(!(k>=1&&k<=100000)){dnSay('Type how many keys, from 1 to 100,000.',true);return}
+  var a=new Uint8Array(20);crypto.getRandomValues(a);var id='';for(var i=0;i<a.length;i++)id+=(a[i]%36).toString(36);
+  var rec={rest:rest,keys:k};if(note)rec.note=note;var done=function(){$('dnrest').value='';$('dnnote').value='';dnSay('The offer link is ready. Copy it or share it below.',false);dnRender()};
+  if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}rec.createdAt=Date.now();o[id]=rec;dnSetLocal(o);done();return}
+  rec.createdAt={'.sv':'timestamp'};$('dnmake').disabled=true;RR.db('PUT','key_dine/'+id,rec).then(function(r){$('dnmake').disabled=false;if(r.status===200)done();else dnSay('The database did not accept that. Sign in again and try once more.',true)})}
+ function dnPatch(oid,rid,patch,after){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}var t=o[oid];if(t&&rid)t=t.receipts&&t.receipts[rid];if(t)Object.keys(patch).forEach(function(k){if(k!=='paidAt')t[k]=patch[k]});dnSetLocal(o);after();return}
+  RR.db('PATCH','key_dine/'+oid+(rid?'/receipts/'+rid:''),patch).then(function(){after()})}
+ function dnApprove(oid,o,rid,r,btn){var nm=(r.first+' '+r.last).replace(/\s+/g,' ').trim().slice(0,40),wid=find(nm);btn.disabled=true;if(!wid)wid=openW(nm,'Customer');
+  S.entries.push({id:S.next++,t:now(),from:'treasury',to:wid,amt:o.keys*100,note:('Dine and earn: '+o.rest).slice(0,70)});save();chime();paint();
+  dnPatch(oid,rid,{status:'approved',paid:true,paidAt:{'.sv':'timestamp'},wallet:nm},dnRender)}
+ function dnRender(){var box=$('dnlist');if(!box)return;var dl=$('dnrests');if(dl){dl.innerHTML='';S.wallets.filter(function(w){return w.type==='Restaurant'}).forEach(function(w){var op=document.createElement('option');op.value=w.name;dl.appendChild(op)})}
+  dnGet(function(all){box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
+  if(!ids.length){box.appendChild(el('p','fine','No offers yet.'));return}
+  ids.forEach(function(oid){var o=all[oid],row=el('div','gvrow'),rc=o.receipts||{},rids=Object.keys(rc).sort(function(a,b){return (rc[b].at||0)-(rc[a].at||0)});
+   var pend=rids.filter(function(k){return !rc[k].status});
+   row.appendChild(el('b',null,o.rest+' · '+o.keys+' keys per receipt'+(o.open===false?' · stopped':'')));
+   row.appendChild(el('p','fine',pend.length+' waiting to check · '+rids.filter(function(k){return rc[k].status==='approved'}).length+' approved'));
+   var li=el('input');li.readOnly=true;li.value=dnLink(oid);li.setAttribute('aria-label','Offer link');li.addEventListener('focus',function(){li.select()});row.appendChild(li);
+   var bt=el('div','tools');var cp=el('button','btn','Copy link');cp.type='button';cp.addEventListener('click',function(){var d=function(){cp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(li.value).then(d,function(){li.select();d()});else{li.select();try{document.execCommand('copy')}catch(e){}d()}});bt.appendChild(cp);
+   if(navigator.share){var sh=el('button','btn ghost','Share');sh.type='button';sh.addEventListener('click',function(){navigator.share({title:'Dine and earn Key Points',text:'Eat at '+o.rest+', send your receipt, earn '+o.keys+' Key Points.',url:li.value}).catch(function(){})});bt.appendChild(sh)}
+   var st=el('button','btn ghost',o.open===false?'Start again':'Stop this offer');st.type='button';st.addEventListener('click',function(){dnPatch(oid,null,{open:o.open===false},dnRender)});bt.appendChild(st);row.appendChild(bt);
+   pend.forEach(function(k){var r=rc[k],card=el('div','dnrec'),nm=(r.first+' '+r.last).replace(/\s+/g,' ').trim().slice(0,40),has=find(nm);
+    card.appendChild(el('b',null,r.first+' '+r.last));card.appendChild(el('p','fine',r.email+' · '+r.phone+' · sent '+when(r.at)+(r.rno?' · receipt no. '+r.rno:'')));
+    var dup=rids.filter(function(x){return x!==k&&rc[x].email&&r.email&&rc[x].email.toLowerCase()===r.email.toLowerCase()||x!==k&&r.rno&&rc[x].rno===r.rno}).length;
+    if(dup)card.appendChild(el('p','dnwarn','Careful: '+dup+' other receipt'+(dup>1?'s':'')+' here has the same email or receipt number.'));
+    var im=el('img','dnimg');im.alt='Receipt from '+nm;im.src=r.photo;im.addEventListener('click',function(){im.classList.toggle('big')});card.appendChild(im);
+    card.appendChild(el('p','fine','Keys will go to: '+nm+(has?' (existing wallet)':' (new wallet)')));
+    var ab=el('button','btn','Approve and give '+o.keys+' keys');ab.type='button';ab.addEventListener('click',function(){dnApprove(oid,o,k,r,ab)});var db=el('button','btn ghost','Decline');db.type='button';db.addEventListener('click',function(){db.disabled=true;dnPatch(oid,k,{status:'declined'},dnRender)});
+    var tb=el('div','tools');tb.appendChild(ab);tb.appendChild(db);card.appendChild(tb);row.appendChild(card)});
+   box.appendChild(row)});
+  var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',dnRender);box.appendChild(rf)})}
  function move(){if(S.wallets.length<2){say('mmsg','Create a wallet first, then you can move credit to it.',true);return}var f=$('mfrom').value,t=$('mto').value,a=parse($('mamt').value);
   if(f===t){say('mmsg','Pick two different wallets.',true);return}
   if(a===null||a<=0){say('mmsg','Please type a whole number, like 25000.',true);$('mamt').focus();return}
   if(a>shown(f)){say('mmsg',wname(f)+' only has '+fmt(shown(f))+'. Please type a smaller amount.',true);return}
   S.entries.push({id:S.next++,t:now(),from:f,to:t,amt:a,note:$('mnote').value.replace(/\s+/g,' ').trim().slice(0,80)});
   $('mamt').value='';$('mnote').value='';say('mmsg','Moved '+fmt(a)+' Key Rewards from '+wname(f)+' to '+wname(t)+'.');paint()}
- $('mmove').addEventListener('click',move);$('gvmake').addEventListener('click',gvMake);
+ $('mmove').addEventListener('click',move);$('gvmake').addEventListener('click',gvMake);$('dnmake').addEventListener('click',dnMake);
  $('mamt').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();move()}});
  $('logoIn').addEventListener('change',function(){var f=this.files[0],inp=this;if(!f||sel==='all')return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=240,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.logos=S.logos||{};S.logos[sel]=S.logos[sel]||[];if(S.logos[sel].length>=3){say('tmsg','A wallet can show up to 3 logos. Remove one first.',true);return}S.logos[sel].push(c.toDataURL('image/png'));say('tmsg','Logo added.');paint()};im.onerror=function(){say('tmsg','That file could not be read as a picture.',true)};im.src=r.result};r.readAsDataURL(f);inp.value=''});
  $('present').addEventListener('click',function(){if(sel!=='all')present(sel)});
