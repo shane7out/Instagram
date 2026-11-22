@@ -8,7 +8,7 @@ cp "$HERE/key-rules-owner.json" "$HERE/test-giveaway-rules.js" .
 node -e '
 const fs=require("fs");
 const k=JSON.parse(fs.readFileSync("key-rules-owner.json","utf8").split("__OWNER_UID__").join("TESTOWNER").split("__VIEWER_UID__").join("TESTVIEWER").split("__TREASURER_UID__").join("TESTTREASURER"));
-fs.writeFileSync("database.rules.json",JSON.stringify({rules:{key_giveaways:k.key_giveaways}},null,1));'
+fs.writeFileSync("database.rules.json",JSON.stringify({rules:{key_giveaways:k.key_giveaways,key_visits:k.key_visits}},null,1));'
 cat > firebase.json <<'JSON'
 { "database": { "rules": "database.rules.json" }, "emulators": { "database": { "port": 9000 }, "ui": { "enabled": false } } }
 JSON

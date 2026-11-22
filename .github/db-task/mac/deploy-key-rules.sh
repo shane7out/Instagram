@@ -6,7 +6,7 @@
 # Locks YOUR Key Technologies data to YOUR login: the lead list (names, emails, phones), the page-view log and the CRM can then
 # be READ only by you, signed in. Website visitors can still SEND a lead and still be counted, but can no longer read, change
 # or delete anything. Also stops anyone replacing the stored sign-in key. Same safety as deploy-owner-rules.sh: it saves a copy
-# of your current rules first, only ADDS these seven sections (the Key Rewards ledger is the fifth, the giveaway claim links the sixth, the dine-and-earn receipts the seventh), reads the result back, runs live checks, and PUTS YOUR OLD RULES
+# of your current rules first, only ADDS these eight sections (the Key Rewards ledger is the fifth, the giveaway claim links the sixth, the dine-and-earn receipts the seventh, the page-visit log the eighth), reads the result back, runs live checks, and PUTS YOUR OLD RULES
 # BACK AUTOMATICALLY if any check fails. To undo later by hand:  bash undo-key-rules.sh
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 const FRAG = 'https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/rules/key-rules-owner.json?cb=' + Date.now();
-const SECTIONS = ['ownerAuth', 'key_leads', 'key_pageviews', 'kt_crm', 'rr_ledger', 'key_giveaways', 'key_dine'];
+const SECTIONS = ['ownerAuth', 'key_leads', 'key_pageviews', 'kt_crm', 'rr_ledger', 'key_giveaways', 'key_dine', 'key_visits'];
 const mask = s => String(s).replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL]').replace(/AIza[0-9A-Za-z_-]{20,}/g, '[KEY]').replace(/ya29\.[0-9A-Za-z._-]+/g, '[TOKEN]');
 const out = [], log = s => { const m = mask(s); out.push(m); console.log(m); };
 function ask(q, hidden) {
@@ -96,6 +96,8 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
     ['a stranger cannot read the receipts', await status(`${DB}/key_dine.json?shallow=true`), 401],
     ['YOU can read the receipts', await status(`${DB}/key_dine.json?shallow=true&auth=${A}`), 200],
     ['a stranger cannot make a dine-and-earn offer', await status(`${DB}/key_dine/zzprobe.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rest: 'x', keys: 1, createdAt: 1 }) }), 401],
+    ['a stranger cannot read who looked at the pages', await status(`${DB}/key_visits.json?shallow=true`), 401],
+    ['YOU can read who looked at the pages', await status(`${DB}/key_visits.json?shallow=true&auth=${A}`), 200],
     ['a stranger cannot make a giveaway', await status(`${DB}/key_giveaways/zzprobe.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ label: 'x', keys: 1, createdAt: 1 }) }), 401],
     ['a stranger cannot write to the Key Rewards ledger', await status(`${DB}/rr_ledger/wallets/zzprobe.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'x', type: 'Other', t: 1 }) }), 401],
   ];

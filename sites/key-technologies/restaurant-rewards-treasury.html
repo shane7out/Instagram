@@ -309,9 +309,13 @@ body.hlock{overflow:hidden}
 .tpyes:focus-visible,.tpno:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.tp3d,.tp3d.done{animation:none}}
 
-#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
+#gvbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#gvbox .kvrow{padding:8px 0;border-top:1px solid rgba(255,255,255,.12)}#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
 #dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
 #dnbox .dnrec{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#dnbox .dnimg{display:block;width:140px;max-height:200px;object-fit:cover;border-radius:8px;background:#fff;margin:6px 0;cursor:zoom-in}#dnbox .dnimg.big{width:100%;max-height:none;object-fit:contain;cursor:zoom-out}#dnbox .dnwarn{margin:6px 0;color:#ffd27a;font-weight:700;font-size:14px}
+
+.gc .fineprint,.gc.sm .fineprint{font-size:11px!important;letter-spacing:.02em!important;font-weight:800!important;color:rgba(43,29,5,.92)!important;text-shadow:none!important}
+#pres .gc .fineprint,#pres .gc.sm .fineprint{font-size:4cqw!important;letter-spacing:.02em!important;bottom:2cqw!important}
+.swapit .gc .nm{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;font-size:min(10.5px,7.6cqw)!important;line-height:1.15!important}
 </style>
 </head>
 <body>
@@ -360,6 +364,9 @@ body.hlock{overflow:hidden}
   <button class="btn" id="gvmake" type="button">Make the link</button>
   <div class="msg" id="gvmsg" role="alert"></div>
   <div id="gvlist"></div>
+  <h3 style="margin:18px 0 6px">Who looked at the pages</h3>
+  <p class="fine" style="margin-top:0">Each person who opens the giveaway page or the &ldquo;what you can get&rdquo; page, and how long they stayed. If they sign up, you see their name.</p>
+  <div id="kvlist"></div>
  </div>
  <div class="box" id="dnbox">
   <h2>Dine and earn offers</h2>
@@ -641,10 +648,19 @@ body.hlock{overflow:hidden}
    if(!g.claim){row.appendChild(el('p','fine','Open. The first person to claim it gets it.'));var li=el('input');li.readOnly=true;li.value=gvLink(gid);li.setAttribute('aria-label','Giveaway link');li.addEventListener('focus',function(){li.select()});row.appendChild(li);
     var bt=el('div','tools');var cp=el('button','btn','Copy link');cp.type='button';cp.addEventListener('click',function(){var d=function(){cp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(li.value).then(d,function(){li.select();d()});else{li.select();try{document.execCommand('copy')}catch(e){}d()}});bt.appendChild(cp);
     if(navigator.share){var sh=el('button','btn ghost','Share');sh.type='button';sh.addEventListener('click',function(){navigator.share({title:'Claim your Key Rewards',text:'Claim your '+g.keys+' keys. The first person to claim it gets it.',url:li.value}).catch(function(){})});bt.appendChild(sh)}row.appendChild(bt)}
-   else{var c=g.claim;row.appendChild(el('p','fine','Claimed by '+c.first+' '+c.last+' · '+c.email+' · '+c.phone+' · '+when(c.at)));
+   else{var c=g.claim;row.appendChild(el('p','fine','Claimed by '+c.first+' '+c.last+' · '+c.email+' · '+c.phone+' · Instagram @'+String(c.ig||'').replace(/^@+/,'')+' · '+(c.street||'')+', '+(c.city||'')+' '+(c.state||'')+' '+(c.zip||'')+' · '+when(c.at)+(c.emailOk&&c.smsOk?' · OK to email and text':'')));
     if(c.paid)row.appendChild(el('p','fine','Keys given. Wallet: '+(c.wallet||'')));else{var gb=el('button','btn','Give '+g.keys+' keys now');gb.type='button';gb.addEventListener('click',function(){gvGive(gid,g,gb)});row.appendChild(gb)}}
+   var wl=g.waitlist?Object.keys(g.waitlist).map(function(k){return g.waitlist[k]}).sort(function(x,y){return (x.at||0)-(y.at||0)}):[];
+   if(wl.length){row.appendChild(el('p','fine','Waiting list: '+wl.length));var ul=el('ul','wl');wl.forEach(function(w){ul.appendChild(el('li',null,w.first+' '+w.last+' · '+w.email+' · '+w.phone+' · Instagram @'+String(w.ig||'').replace(/^@+/,'')+' · '+(w.street||'')+', '+(w.city||'')+' '+(w.zip||'')+' · '+when(w.at)))});row.appendChild(ul)}
    box.appendChild(row)});
-  var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',gvRender);box.appendChild(rf)})}
+  var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',gvRender);box.appendChild(rf);kvRender(o)})}
+ function kvRender(gv){var box=$('kvlist');if(!box)return;var show=function(v){box.innerHTML='';var names={};Object.keys(gv||{}).forEach(function(k){var g=gv[k];if(g.claim&&g.claim.vid)names[g.claim.vid]=g.claim.first+' '+g.claim.last+' (won)';if(g.waitlist)Object.keys(g.waitlist).forEach(function(w){var x=g.waitlist[w];if(x.vid&&!names[x.vid])names[x.vid]=x.first+' '+x.last+' (waiting list)'})});
+  var vs=Object.keys(v||{}).map(function(id){var pg=v[id],ks=Object.keys(pg),last=0,tot=0,by={};ks.forEach(function(k){var p=pg[k];last=Math.max(last,p.at||0);tot+=p.secs||0;by[p.page]=by[p.page]||{n:0,s:0};by[p.page].n++;by[p.page].s+=p.secs||0});return {id:id,last:last,tot:tot,by:by}}).sort(function(a,b){return b.last-a.last}).slice(0,60);
+  if(!vs.length){box.appendChild(el('p','fine','Nobody has opened the pages yet.'));return}
+  var lab={claim:'Giveaway page',uses:'What you can get page'};
+  vs.forEach(function(x){var r=el('div','kvrow');r.appendChild(el('b',null,names[x.id]||'Not signed up yet'));var parts=Object.keys(x.by).map(function(p){return (lab[p]||p)+': '+x.by[p].s+' sec'+(x.by[p].n>1?' ('+x.by[p].n+' visits)':'')});r.appendChild(el('p','fine',parts.join(' · ')+' · last seen '+when(x.last)));box.appendChild(r)})};
+  if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kvLocal')||'{}')||{}}catch(e){}show(o);return}
+  RR.db('GET','key_visits').then(function(r){show(r.status===200&&r.json?r.json:{})})}
  /* ---- Dine and earn: an offer link per restaurant; people send a receipt photo; you check it and give keys ---- */
  function dnGet(cb){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}cb(o);return}RR.db('GET','key_dine').then(function(r){cb(r.status===200&&r.json?r.json:{})})}
  function dnSetLocal(o){try{localStorage.setItem('kdLocal',JSON.stringify(o))}catch(e){}}

@@ -164,17 +164,50 @@
      ".read": true
     },
     ".write": "!data.exists() && newData.exists() && root.child('key_giveaways').child($gid).child('keys').exists()",
-    ".validate": "newData.hasChildren(['first','last','email','phone','at','consent']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && (!newData.child('paid').exists() || newData.child('paid').isBoolean()) && (!newData.child('paidAt').exists() || newData.child('paidAt').isNumber()) && (!newData.child('wallet').exists() || (newData.child('wallet').isString() && newData.child('wallet').val().length <= 80))",
+    ".validate": "newData.hasChildren(['first','last','email','phone','ig','street','city','state','zip','at','consent','emailOk','smsOk']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('ig').isString() && newData.child('ig').val().matches(/^@?[A-Za-z0-9._]{1,30}$/) && newData.child('street').isString() && newData.child('street').val().length >= 3 && newData.child('street').val().length <= 100 && newData.child('city').isString() && newData.child('city').val().length >= 2 && newData.child('city').val().length <= 60 && newData.child('city').val().toLowerCase().contains('las vegas') && newData.child('state').val() == 'NV' && newData.child('zip').isString() && newData.child('zip').val().matches(/^89[0-9][0-9][0-9]$/) && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && newData.child('emailOk').val() == true && newData.child('smsOk').val() == true && (!newData.child('vid').exists() || (newData.child('vid').isString() && newData.child('vid').val().matches(/^[a-z0-9]{16,40}$/))) && (!newData.child('rv').exists() || (newData.child('rv').isString() && newData.child('rv').val().length <= 20)) && (!newData.child('paid').exists() || newData.child('paid').isBoolean()) && (!newData.child('paidAt').exists() || newData.child('paidAt').isNumber()) && (!newData.child('wallet').exists() || (newData.child('wallet').isString() && newData.child('wallet').val().length <= 80))",
     "first": {},
     "last": {},
     "email": {},
     "phone": {},
+    "ig": {},
+    "street": {},
+    "city": {},
+    "state": {},
+    "zip": {},
     "consent": {},
+    "emailOk": {},
+    "smsOk": {},
+    "vid": {},
+    "rv": {},
     "paid": {},
     "paidAt": {},
     "wallet": {},
     "$other": {
      ".validate": false
+    }
+   },
+   "waitlist": {
+    "$wid": {
+     ".write": "!data.exists() && newData.exists() && !newData.child('paid').exists() && root.child('key_giveaways').child($gid).child('keys').exists()",
+     ".validate": "newData.hasChildren(['first','last','email','phone','ig','street','city','state','zip','at','consent','emailOk','smsOk']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('ig').isString() && newData.child('ig').val().matches(/^@?[A-Za-z0-9._]{1,30}$/) && newData.child('street').isString() && newData.child('street').val().length >= 3 && newData.child('street').val().length <= 100 && newData.child('city').isString() && newData.child('city').val().length >= 2 && newData.child('city').val().length <= 60 && newData.child('city').val().toLowerCase().contains('las vegas') && newData.child('state').val() == 'NV' && newData.child('zip').isString() && newData.child('zip').val().matches(/^89[0-9][0-9][0-9]$/) && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && newData.child('emailOk').val() == true && newData.child('smsOk').val() == true && (!newData.child('vid').exists() || (newData.child('vid').isString() && newData.child('vid').val().matches(/^[a-z0-9]{16,40}$/))) && (!newData.child('rv').exists() || (newData.child('rv').isString() && newData.child('rv').val().length <= 20))",
+     "$other": {
+      ".validate": false
+     },
+     "first": {},
+     "last": {},
+     "email": {},
+     "phone": {},
+     "ig": {},
+     "street": {},
+     "city": {},
+     "state": {},
+     "zip": {},
+     "at": {},
+     "consent": {},
+     "emailOk": {},
+     "smsOk": {},
+     "vid": {},
+     "rv": {}
     }
    },
    "$other": {
@@ -223,6 +256,24 @@
    },
    "$other": {
     ".validate": false
+   }
+  }
+ },
+ "key_visits": {
+  ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
+  "$vid": {
+   ".validate": "$vid.matches(/^[a-z0-9]{16,40}$/)",
+   "$pid": {
+    ".write": "(auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')) || ($pid.matches(/^[a-z0-9]{8,24}$/) && (!data.exists() || newData.exists()))",
+    ".validate": "newData.hasChildren(['page','at','secs']) && newData.child('page').isString() && newData.child('page').val().length >= 1 && newData.child('page').val().length <= 40 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : newData.child('at').val() == data.child('at').val()) && newData.child('secs').isNumber() && newData.child('secs').val() >= 0 && newData.child('secs').val() <= 7200 && (!data.exists() ? newData.child('secs').val() == 0 : newData.child('secs').val() >= data.child('secs').val()) && (!newData.child('g').exists() || (newData.child('g').isString() && newData.child('g').val().length <= 40)) && (!newData.child('ref').exists() || (newData.child('ref').isString() && newData.child('ref').val().length <= 80))",
+    "page": {},
+    "at": {},
+    "secs": {},
+    "g": {},
+    "ref": {},
+    "$other": {
+     ".validate": false
+    }
    }
   }
  }

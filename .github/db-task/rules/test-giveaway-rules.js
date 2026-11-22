@@ -14,7 +14,7 @@ const t = async (name, who, method, p, body, allow, expectBody) => {
   ok ? pass++ : fail++; console.log((ok ? 'PASS' : 'FAIL') + '  [' + who + '] ' + name + (ok ? '' : '  (HTTP ' + r.s + ' ' + r.t.slice(0, 90) + ')'));
 };
 const G = '/key_giveaways/abcd1234efgh5678ijkl9012', G2 = '/key_giveaways/zzzz1234efgh5678ijkl9012';
-const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@example.com', phone: '7025550100', at: { '.sv': 'timestamp' }, consent: true }, extra || {});
+const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@example.com', phone: '7025550100', ig: '@ann.lee', street: '123 Fremont St', city: 'Las Vegas', state: 'NV', zip: '89101', at: { '.sv': 'timestamp' }, consent: true, emailOk: true, smsOk: true, vid: 'abcdefghijklmnop1234', rv: 'v1' }, extra || {});
 (async () => {
   const mk = { label: 'Grand opening', keys: 25, createdAt: { '.sv': 'timestamp' } };
   await t('a stranger cannot make a giveaway', 'anon', 'PUT', G, mk, false);
@@ -33,6 +33,15 @@ const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@
   await t('a claim with a bad email is refused', 'anon', 'PUT', G + '/claim', claim({ email: 'not-an-email' }), false);
   await t('a claim with a made-up time is refused', 'anon', 'PUT', G + '/claim', claim({ at: 5 }), false);
   await t('a claim with a missing name is refused', 'anon', 'PUT', G + '/claim', { email: 'a@b.co', phone: '7025550100', at: { '.sv': 'timestamp' }, consent: true }, false);
+  await t('a claim without email permission is refused', 'anon', 'PUT', G + '/claim', claim({ emailOk: false }), false);
+  await t('a claim without text-message permission is refused', 'anon', 'PUT', G + '/claim', claim({ smsOk: false }), false);
+  await t('a claim without an Instagram handle is refused', 'anon', 'PUT', G + '/claim', (() => { const x = claim(); delete x.ig; return x; })(), false);
+  await t('a claim with a bad Instagram handle is refused', 'anon', 'PUT', G + '/claim', claim({ ig: 'not a handle!' }), false);
+  await t('a claim without a street address is refused', 'anon', 'PUT', G + '/claim', (() => { const x = claim(); delete x.street; return x; })(), false);
+  await t('a claim from outside Las Vegas is refused', 'anon', 'PUT', G + '/claim', claim({ city: 'Reno' }), false);
+  await t('a claim from another state is refused', 'anon', 'PUT', G + '/claim', claim({ state: 'CA' }), false);
+  await t('a claim with a non-Las Vegas ZIP is refused', 'anon', 'PUT', G + '/claim', claim({ zip: '90210' }), false);
+  await t('a claim with a bad visitor id is refused', 'anon', 'PUT', G + '/claim', claim({ vid: 'x' }), false);
   await t('a claim with extra fields is refused', 'anon', 'PUT', G + '/claim', claim({ paid: true, hack: 1 }), false);
   await t('the FIRST visitor claims it', 'anon', 'PUT', G + '/claim', claim(), true);
   await t('the SECOND visitor is refused', 'anon', 'PUT', G + '/claim', claim({ first: 'Bob', email: 'bob@example.com' }), false);
@@ -44,5 +53,31 @@ const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@
   await t('the owner marks the keys as given', 'owner', 'PATCH', G + '/claim', { paid: true, paidAt: { '.sv': 'timestamp' }, wallet: 'Ann Lee' }, true);
   await t('the Treasury PIN account can read the list', 'treasurer', 'GET', '/key_giveaways', undefined, true);
   await t('a stranger cannot delete a claim', 'anon', 'DELETE', G + '/claim', undefined, false);
+  // waiting list
+  await t('a visitor can join the waiting list after the claim', 'anon', 'PUT', G + '/waitlist/w1', claim({ first: 'Bob', email: 'bob@example.com' }), true);
+  await t('a second person can join the waiting list', 'anon', 'PUT', G + '/waitlist/w2', claim({ first: 'Cy', email: 'cy@example.com' }), true);
+  await t('a waiting-list entry cannot be overwritten', 'anon', 'PUT', G + '/waitlist/w1', claim({ first: 'Eve' }), false);
+  await t('a waiting-list entry needs both permissions', 'anon', 'PUT', G + '/waitlist/w3', claim({ smsOk: false }), false);
+  await t('a waiting-list entry must be a Las Vegas address', 'anon', 'PUT', G + '/waitlist/w4', claim({ city: 'Denver' }), false);
+  await t('a waiting-list entry for a giveaway that does not exist is refused', 'anon', 'PUT', '/key_giveaways/nothere1234nothere1234no/waitlist/w1', claim(), false);
+  await t('a stranger cannot read the waiting list', 'anon', 'GET', G + '/waitlist', undefined, false);
+  await t('the owner can read the waiting list', 'owner', 'GET', G + '/waitlist', undefined, true);
+  // visitor tracking
+  const V = '/key_visits/abcdefghijklmnop1234';
+  const vis = (extra) => Object.assign({ page: 'claim', at: { '.sv': 'timestamp' }, secs: 0, g: 'abcd1234efgh5678ijkl9012' }, extra || {});
+  await t('a visit can be logged', 'anon', 'PUT', V + '/pg1abcdef', vis(), true);
+  await t('a visit with a made-up start time is refused', 'anon', 'PUT', V + '/pg2abcdef', vis({ at: 5 }), false);
+  await t('a new visit must start at zero seconds', 'anon', 'PUT', V + '/pg3abcdef', vis({ secs: 50 }), false);
+  await t('time on the page can go up', 'anon', 'PATCH', V + '/pg1abcdef', { secs: 47 }, true);
+  await t('time on the page cannot go back down', 'anon', 'PATCH', V + '/pg1abcdef', { secs: 3 }, false);
+  await t('time on the page has a ceiling', 'anon', 'PATCH', V + '/pg1abcdef', { secs: 99999 }, false);
+  await t('the start time cannot be changed', 'anon', 'PATCH', V + '/pg1abcdef', { at: 12345 }, false);
+  await t('a bad visitor id is refused', 'anon', 'PUT', '/key_visits/x/pg1abcdef', vis(), false);
+  await t('a visit with extra fields is refused', 'anon', 'PUT', V + '/pg4abcdef', vis({ hack: 1 }), false);
+  await t('a stranger cannot read the visits', 'anon', 'GET', '/key_visits', undefined, false);
+  await t('a stranger cannot read one visitor', 'anon', 'GET', V, undefined, false);
+  await t('the owner can read the visits', 'owner', 'GET', '/key_visits', undefined, true);
+  await t('the Treasury PIN account can read the visits', 'treasurer', 'GET', '/key_visits', undefined, true);
+  await t('a stranger cannot delete a visit', 'anon', 'DELETE', V + '/pg1abcdef', undefined, false);
   console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
 })();
