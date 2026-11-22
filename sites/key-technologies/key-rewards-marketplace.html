@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Key Rewards Marketplace</title>
-<meta name="description" content="Browse what Key Rewards points can be used for: gift cards, salon and beauty, sports, fitness and fun. A preview of the marketplace.">
+<meta name="description" content="Barter and trade with Key Rewards points: offer a service or a gift card, say what you would take in return, and even out the difference with points. A preview of the marketplace.">
 <meta name="theme-color" content="#0f171e">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
@@ -82,7 +82,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 @media(min-width:760px){.ov{align-items:center;padding:20px}}
 .panel{background:#16222f;width:100%;max-height:92vh;overflow-y:auto;border-radius:20px 20px 0 0;border:1px solid var(--line)}
 @media(min-width:760px){.panel{max-width:860px;border-radius:20px}}
-.pd{display:grid;grid-template-columns:1fr}
+.pd{display:grid;grid-template-columns:1fr;clear:both}
 @media(min-width:760px){.pd{grid-template-columns:1.05fr 1fr}}
 .pd .art{border-radius:0;aspect-ratio:1/1}
 @media(max-width:759px){.pd .art{aspect-ratio:4/3;border-radius:20px 20px 0 0}.pd .art .e{font-size:80px}}
@@ -100,7 +100,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .seller b{display:block;font-size:15.5px}.seller span{font-size:13px;color:var(--dim)}
 .closex{position:sticky;top:0;float:right;margin:10px 10px -46px 0;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:rgba(15,23,30,.85);color:#fff;font-size:20px;cursor:pointer}
 .sheetf{padding:18px 16px 24px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#fff;color:#0f171e;font-weight:800;padding:10px 16px;border-radius:999px;z-index:90;font-size:14px;display:none}
+.toast{position:fixed;width:max-content;max-width:calc(100vw - 32px);text-align:center;left:50%;bottom:22px;transform:translateX(-50%);background:#fff;color:#0f171e;font-weight:800;padding:10px 16px;border-radius:999px;z-index:90;font-size:14px;display:none}
 .ktcredit{text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78}
 @media(max-width:899px){.bar .in{flex-wrap:wrap;row-gap:8px}.logo{flex:1}.sbox{order:5;flex:1 1 100%}.fbtn{order:3}}
 @media(max-width:639px){.gifts{grid-template-columns:1fr}}
@@ -110,6 +110,25 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 .gcard .b::before{content:"";display:inline-block;width:2.5em;height:1.05em;margin-right:.5em;vertical-align:-.12em;background:url(brand/key-icon.svg) center/contain no-repeat}
 .gcard .val{border-top-color:rgba(110,70,0,.55)!important}
 .gcard .b2{display:none!important}
+.bart{margin:2px 0 12px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1b2a3a,#16222f);border:1px solid rgba(232,199,102,.55)}
+.bart h2{margin:0 0 4px;font-size:19px;font-weight:900;color:#f6e7b4}.bart p{margin:0;color:var(--dim);font-size:14.5px;line-height:1.45}
+.tb{margin:0 0 26px}.tb h2{margin:0 0 2px;font-size:19px;font-weight:900}.tb .tsub{margin:0 0 12px;color:var(--dim);font-size:13.5px}
+.tbg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.tcard{display:flex;flex-direction:column;gap:10px;width:100%;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:#fff;text-align:left;font:inherit;cursor:pointer}
+.tcard:focus-visible{outline:3px solid var(--key);outline-offset:2px}
+.tcard .tl{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:900;color:var(--gold)}
+.tcard .tl i{font-style:normal;letter-spacing:.04em;text-transform:none;font-weight:700;color:var(--dim);font-size:12.5px}
+.tcard .art.gift{margin:0}
+.tcard .tile,.pd .tile{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:radial-gradient(circle at 20% 20%,#2a3f55,#16222f 75%)}
+.tcard .tile .e,.pd .tile .e{flex:none;width:52px;height:52px;border-radius:12px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:28px}
+.tcard .tile b,.pd .tile b{display:block;font-size:16px;line-height:1.25}.tcard .tile div span,.pd .tile div span{display:block;font-size:13px;color:var(--dim)}
+.tcard .wants{display:flex;align-items:center;gap:10px;padding-top:9px;border-top:1px dashed rgba(255,255,255,.28)}
+.tcard .wants .sw{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,#f6d467,#d7a21e);color:#2b1d05;font-weight:900}
+.tcard .wants small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:900}.tcard .wants b{font-size:15px}
+.offerf{margin:12px 0 0;padding:12px;border-radius:12px;background:var(--panel2)}.offerf label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:10px 0 4px}.offerf label:first-child{margin-top:0}
+.offerf select,.offerf input{width:100%;height:44px;border-radius:10px;border:1.5px solid rgba(255,255,255,.28);background:#0f171e;color:#fff;font:inherit;font-size:16px;padding:0 10px}
+.pd .tart{padding:22px 20px;display:flex;align-items:center;justify-content:center}.pd .tart .tile{width:100%}
+@media(max-width:759px){.pd .tart{padding:48px 20px 14px}}
 </style>
 </head>
 <body>
@@ -124,11 +143,13 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
  <aside class="side" id="side" aria-label="Filters"></aside>
  <main class="main">
   <div class="mpills" id="mp" role="group" aria-label="Categories"></div>
-  <div class="note"><b>Preview.</b> The two gift cards are the first offers. Listings marked <b>Sample</b> show how more will look; partner businesses set their own offers and points.</div>
+  <div class="bart"><h2>Barter and trade with Key Rewards points</h2><p>Offer a service, a gift card or something you have. Say what you would take in return. Use Key Rewards points to even out the difference. Businesses and neighbors can trade with each other, one on one.</p></div>
+  <div class="note"><b>Preview.</b> The two gift cards are real first offers. Everything marked <b>Sample</b> shows how trades will look; partner businesses and members set their own offers and points.</div>
   <div class="mh"><h1 id="mt">Today&rsquo;s picks</h1><span id="mc"></span></div>
+  <div class="tb" id="tb"></div>
   <div class="gifts" id="gifts"></div>
   <div class="grid" id="grid"></div>
-  <div class="foot"><b>The honest part.</b> Key Rewards points have no cash value and cannot be bought, sold or exchanged for cash. They are good for 60 days from the day they are issued. Each offer is set by the business that provides it, can change or end at any time, and nothing on this page is a promise. Listings marked Sample are examples, not offers yet.</div>
+  <div class="foot"><b>The honest part.</b> Key Rewards points have no cash value and cannot be bought, sold or exchanged for cash. They are good for 60 days from the day they are issued. Trades are agreements between the two members or businesses, who are each responsible for their own taxes and for what they trade. Each offer is set by the business that provides it, can change or end at any time, and nothing on this page is a promise. Listings marked Sample are examples, not offers yet.</div>
   <div class="cta"><a class="btn" href="index.html#contact">Want your business on the marketplace?</a></div>
   <p class="ktcredit"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">KeyTechnologies.si</a></p>
  </main>
@@ -140,7 +161,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
 <script>
 (function(){
 "use strict";
-var CATS=[["all","Browse all","\ud83d\udecd\ufe0f"],["saved","Saved","\u2764\ufe0f"],["gift","Gift cards","\ud83c\udf81"],["beauty","Salon & beauty","\ud83d\udc87"],["sports","Sports & games","\ud83c\udfc5"],["fitness","Fitness & wellness","\ud83e\uddd8"],["food","Food & drink","\ud83c\udf7d\ufe0f"],["fun","Fun & experiences","\ud83c\udfad"],["auto","Auto & window tint","\ud83d\ude97"],["home","Home services","\ud83c\udfe0"]];
+var CATS=[["all","Browse all","\ud83d\udecd\ufe0f"],["saved","Saved","\u2764\ufe0f"],["trade","Trade board","\ud83d\udd01"],["gift","Gift cards","\ud83c\udf81"],["beauty","Salon & beauty","\ud83d\udc87"],["sports","Sports & games","\ud83c\udfc5"],["fitness","Fitness & wellness","\ud83e\uddd8"],["food","Food & drink","\ud83c\udf7d\ufe0f"],["fun","Fun & experiences","\ud83c\udfad"],["auto","Auto & window tint","\ud83d\ude97"],["home","Home services","\ud83c\udfe0"]];
 var LOC="Las Vegas, NV";
 var G=[["Johnny Mac\u2019s","gift","\ud83c\udf81","Gift card",100,"Johnny Mac\u2019s"],["Vanilla Rice\u2019s Hibachi House","gift","\ud83c\udf81","Gift card",100,"Vanilla Rice\u2019s Hibachi House"]];
 /* sample listings: [name, category, emoji, note, points] */
@@ -171,6 +192,21 @@ var S=[
 ];
 var ALL=G.map(function(g){return {n:g[0],c:g[1],e:g[2],note:g[3],p:g[4],biz:g[5],gift:true}}).concat(S.map(function(s){return {n:s[0],c:s[1],e:s[2],note:s[3],p:s[4],sample:true}}));
 ALL.forEach(function(x,i){x.id=i});
+
+var T=[
+{who:"Johnny Mac\u2019s",tag:"Key Rewards partner",gift:true,n:"Johnny Mac\u2019s",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
+{who:"Vanilla Rice\u2019s Hibachi House",tag:"Key Rewards partner",gift:true,n:"Vanilla Rice\u2019s Hibachi House",p:100,want:"Key Rewards points",pts:100,wn:"100 points"},
+{who:"Sample window tint shop",n:"Window tint, front two windows",e:"\ud83d\udd76\ufe0f",note:"Legal-limit film",want:"A haircut, plus 20 points",pts:20,sample:true},
+{who:"Sample salon",n:"Haircut and style",e:"\u2702\ufe0f",note:"Cut and style",want:"Window tint or a car detail",pts:0,sample:true},
+{who:"Sample bowling alley",n:"Bowling, one hour lane",e:"\ud83c\udfb3",note:"Up to 6 people",want:"A tennis hour, or 90 points",pts:90,sample:true},
+{who:"Sample cleaning service",n:"House cleaning",e:"\ud83e\uddf9",note:"Up to 3 hours",want:"A handyman hour, plus 30 points",pts:30,sample:true},
+{who:"Sample trainer",n:"Personal training session",e:"\ud83d\udcaa",note:"One session",want:"A 60 minute massage",pts:0,sample:true},
+{who:"Sample detail shop",n:"Interior and exterior detail",e:"\ud83e\uddfd",note:"Full detail",want:"Two lawn care visits",pts:0,sample:true},
+{who:"Sample neighbor",n:"Dinner for two",e:"\ud83c\udf7d\ufe0f",note:"Tasting menu",want:"Pool cleaning, or 200 points",pts:200,sample:true},
+{who:"Sample pool service",n:"Pool cleaning, one visit",e:"\ud83c\udfca",note:"Chemicals checked",want:"An AC tune-up",pts:0,sample:true}
+];
+T.forEach(function(t,i){t.id=i});
+var offers={};try{offers=JSON.parse(localStorage.getItem("krmOffers")||"{}")||{}}catch(e){offers={}}
 var st={cat:"all",q:"",band:"all",sort:"sug"};
 var saved={};try{saved=JSON.parse(localStorage.getItem("krmSaved")||"{}")||{}}catch(e){saved={}}
 function save(){try{localStorage.setItem("krmSaved",JSON.stringify(saved))}catch(e){}}
@@ -184,7 +220,7 @@ function list(){var q=st.q.trim().toLowerCase();var out=ALL.filter(function(x){
  if(q&&(x.n+" "+x.note+" "+(x.biz||"")+" "+x.c).toLowerCase().indexOf(q)<0)return false;return true});
  if(st.sort==="lo")out=out.slice().sort(function(a,b){return a.p-b.p||a.id-b.id});
  if(st.sort==="hi")out=out.slice().sort(function(a,b){return b.p-a.p||a.id-b.id});return out}
-function count(c){return ALL.filter(function(x){return c==="all"?true:c==="saved"?!!saved[x.id]:x.c===c}).length}
+function count(c){if(c==="trade")return T.length;return ALL.filter(function(x){return c==="all"?true:c==="saved"?!!saved[x.id]:x.c===c}).length}
 function filtersHtml(){
  var h='<h2>Marketplace</h2><div class="loc"><span aria-hidden="true">\ud83d\udccd</span><span>'+LOC+' &middot; 25 miles</span></div><h3>Categories</h3><ul class="cats">';
  CATS.forEach(function(c){h+='<li><button type="button" class="'+(st.cat===c[0]?"on":"")+'" data-c="'+c[0]+'"><span class="ci" aria-hidden="true">'+c[2]+'</span><span>'+esc(c[1])+'</span><span class="n">'+count(c[0])+'</span></button></li>'});
@@ -200,11 +236,29 @@ function render(){
  var items=list();var cn=CATS.filter(function(c){return c[0]===st.cat})[0];
  document.getElementById("mt").textContent=st.q.trim()?'Results for \u201c'+st.q.trim()+'\u201d':(st.cat==="all"?"Today\u2019s picks":cn[1]);
  var sf0=document.getElementById("sf");if(sf0)sf0.innerHTML=filtersHtml();
- document.getElementById("mc").textContent=items.length+(items.length===1?" listing":" listings");
+ document.getElementById("mc").textContent=(st.cat==="trade"?tradeList().length+" trades":items.length+(items.length===1?" listing":" listings"));
+ var tradeOnly=st.cat==="trade";var showT=(st.cat==="all"||tradeOnly)&&st.band==="all";var tl=showT?tradeList():[];
+ var tbEl=document.getElementById("tb");tbEl.style.display=tl.length?"":"none";tbEl.innerHTML=tl.length?'<h2>Trade board</h2><p class="tsub">Offer something, say what you would take. Points even out the difference.</p><div class="tbg">'+tl.map(tradeCell).join("")+"</div>":"";
+ if(tradeOnly){items=[];document.getElementById("mt").textContent="Trade board"}
  var gifts=items.filter(function(x){return x.gift}),rest=items.filter(function(x){return !x.gift});
  function cell(x){return '<div style="position:relative"><button type="button" class="card" data-o="'+x.id+'" aria-label="'+esc(x.n)+', '+x.p+' rewards points. Open details.">'+artHtml(x)+'<div class="meta"><div class="pts">'+x.p+'<i>pts</i></div><p class="ttl">'+esc(x.gift?x.n+' gift card':x.n)+'</p><p class="where">'+LOC+'</p></div></button>'+heartHtml(x)+'</div>'}
  var gh=document.getElementById("gifts");gh.innerHTML=gifts.map(cell).join("");gh.style.display=gifts.length?"":"none";
- document.getElementById("grid").innerHTML=rest.length?rest.map(cell).join(""):(gifts.length?"":'<div class="none">'+(st.cat==="saved"?"Nothing saved yet. Tap the heart on a listing to save it.":"Nothing matches. Try another word, like \u201chaircut\u201d, \u201ctint\u201d or \u201cbowling\u201d.")+'</div>')}
+ document.getElementById("grid").innerHTML=rest.length?rest.map(cell).join(""):((gifts.length||tl.length)?"":'<div class="none">'+(st.cat==="saved"?"Nothing saved yet. Tap the heart on a listing to save it.":"Nothing matches. Try another word, like \u201chaircut\u201d, \u201ctint\u201d or \u201cbowling\u201d.")+'</div>')}
+
+function tradeArt(t){
+ if(t.gift)return '<div class="art gift"><div class="gcard"><div class="b">KeyTechnologies.si</div><div class="b2">Rewards</div><img class="k" src="brand/key-icon.svg" alt="" width="42" height="18"><div class="nm">'+esc(t.n)+'</div><div class="kind">Gift card</div><div class="val"><small>Rewards points value</small><b>'+t.p+'</b></div></div></div>';
+ return '<div class="tile"><span class="e" aria-hidden="true">'+t.e+'</span><div><b>'+esc(t.n)+'</b><span>'+esc(t.note)+'</span></div></div>'}
+function tradeCell(t){return '<button type="button" class="tcard" data-t="'+t.id+'" aria-label="'+esc((t.gift?t.n+' gift card':t.n)+', would trade for '+t.want+'. Open trade.')+'"><div class="tl"><span>Offering</span><i>'+esc(t.who)+'</i></div>'+tradeArt(t)+'<div class="wants"><span class="sw" aria-hidden="true">&#8644;</span><div><small>Would trade for</small><b>'+esc(t.want)+'</b></div></div></button>'}
+function tradeList(){var q=st.q.trim().toLowerCase();return T.filter(function(t){return !q||(t.n+" "+t.want+" "+t.who).toLowerCase().indexOf(q)>=0})}
+function tradeDetail(t){
+ var art=t.gift?tradeArt(t).replace('class="art gift"','class="art gift" aria-hidden="true"'):'<div class="tart" aria-hidden="true">'+tradeArt(t)+'</div>';
+ var sent=offers[t.id];
+ openPanel('<div class="pd">'+art+'<div class="info"><div class="pp">'+(t.pts?t.pts:'Open')+'<i>'+(t.pts?'points, or a trade':'to offers')+'</i></div><h2 id="dt">'+esc(t.gift?t.n+' gift card':t.n)+'</h2><div class="sub">Offered by '+esc(t.who)+' &middot; '+LOC+'</div>'+
+  '<h3>Would trade for</h3><p><b style="color:#fff">'+esc(t.want)+'</b></p>'+
+  '<div class="offerf"><label for="of1">I would offer</label><select id="of1"><option>Key Rewards points</option><option>A service</option><option>An item</option><option>A mix of points and a service</option></select><label for="of2">How many points (optional)</label><input id="of2" type="number" inputmode="numeric" min="0" max="100000" value="'+(t.pts||'')+'"><label for="of3">Say what you are offering</label><input id="of3" type="text" maxlength="80" placeholder="For example: a haircut and 20 points"></div>'+
+  '<div class="acts"><button type="button" class="big" data-so="'+t.id+'">'+(sent?"Offer sent. Send another":"Send my offer")+'</button></div>'+
+  (t.gift?'<h3>How it works</h3><ol><li>Send your offer.</li><li>'+esc(t.who)+' accepts.</li><li>The gift card goes into your Key Rewards wallet and the points go to them.</li></ol>':'<h3>How it works</h3><ol><li>Send your offer.</li><li>'+esc(t.who)+' can accept, change it, or say no.</li><li>You two agree on the time and place. Points even out any difference.</li></ol>')+
+  '<h3>Good to know</h3><ul><li>'+(t.sample?'This is a sample trade. It shows how a real one will look, and nobody is notified yet.':'Preview: your offer is saved on this device only. Nobody is notified yet.')+'</li><li>Key Rewards points have no cash value and are good for 60 days from the day they are issued.</li><li>Each trade is between the two parties, who are each responsible for their own taxes.</li></ul></div></div>')}
 function toast(t){var e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
 var lastFocus=null;
 function openPanel(html){lastFocus=document.activeElement;document.getElementById("panel").innerHTML='<button type="button" class="closex" id="cx" aria-label="Close">&times;</button>'+html;document.getElementById("ov").classList.add("show");document.body.style.overflow="hidden";document.getElementById("cx").focus()}
@@ -222,6 +276,8 @@ document.addEventListener("click",function(e){var t=e.target;
  var c=t.closest("[data-c]");if(c){st.cat=c.getAttribute("data-c");render();var f=document.getElementById("ov");if(f.classList.contains("show")&&f.getAttribute("data-f")){closePanel()}return}
  var b=t.closest("[data-b]");if(b){st.band=b.getAttribute("data-b");render();return}
  var h=t.closest("[data-h]");if(h){var id=h.getAttribute("data-h");if(saved[id])delete saved[id];else saved[id]=1;save();render();toast(saved[id]?"Saved":"Removed from saved");return}
+ var tt=t.closest("[data-t]");if(tt){tradeDetail(T[+tt.getAttribute("data-t")]);return}
+ var so=t.closest("[data-so]");if(so){var tid=so.getAttribute("data-so");offers[tid]=1;try{localStorage.setItem("krmOffers",JSON.stringify(offers))}catch(e){}so.textContent="Offer sent. Send another";toast("Offer saved on this device. Preview only, nobody is notified yet.");return}
  var o=t.closest("[data-o]");if(o){detail(ALL[+o.getAttribute("data-o")]);return}
  if(t.closest("#cx")){closePanel();return}
  var r=t.closest("[data-r]");if(r){var x=ALL[+r.getAttribute("data-r")];toast(x.gift?"Open your wallet, tap Redeem, choose "+x.biz+".":"We will let you know when it is available.");return}
