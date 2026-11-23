@@ -66,7 +66,7 @@ form.box input:focus{border-color:#00a8e1;box-shadow:0 0 0 4px rgba(0,168,225,.2
 .seatbox h2:not(:first-child){margin-top:26px}.team p{margin:0 0 12px}.team p:last-of-type{margin-bottom:16px}
 </style>
 <script src="key-platform/kg-track.js"></script>
-<meta property="og:type" content="website"><meta property="og:site_name" content="Key Rewards"><meta property="og:title" content="Get your free keys | Key Rewards"><meta property="og:description" content="Room 2 is open with 20 seats. Free keys for Las Vegas locals. Use them, trade them, win big."><meta property="og:image" content="https://keytechnologies.si/brand/key-rewards-og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://keytechnologies.si/brand/key-rewards-og.png"></head>
+<meta property="og:type" content="website"><meta property="og:site_name" content="Key Rewards"><meta property="og:title" content="Get your free keys | Key Rewards"><meta property="og:description" content="Room 2 is open with 20 seats. Free keys for Las Vegas locals. Use them, trade them, win big."><meta property="og:image" content="https://keytechnologies.si/brand/key-rewards-og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://keytechnologies.si/brand/key-rewards-og.png"><script src="key-top.js"></script></head>
 <body>
 <main class="wrap" id="app" aria-live="polite"><p class="brandline">KeyTechnologies.si</p><p class="lead">Loading&hellip;</p></main>
 <script>
@@ -80,7 +80,7 @@ function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null
 function lget(){try{return JSON.parse(localStorage.getItem("kwLocal")||"{}")||{}}catch(e){return {}}}
 function lset(o){try{localStorage.setItem("kwLocal",JSON.stringify(o))}catch(e){}}
 function mine(v){try{if(v===undefined)return localStorage.getItem("kwMine"+(DEMO?"Demo":""));localStorage.setItem("kwMine"+(DEMO?"Demo":""),v)}catch(e){return null}}
-function head(){app.innerHTML="";app.appendChild(el("p","fromline","@LasVegas_Restaurants"));app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
+function head(){app.innerHTML="";if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
 function hero(){var h=el("div","hero"),im=el("img");im.src="brand/key-gold.svg";im.alt="A gold key";h.appendChild(im);var b=el("div","big25","KEY REWARDS");b.style.fontSize="34px";b.style.letterSpacing=".08em";b.style.margin="4px 0 2px";h.appendChild(b);return h}
 var SRC=(q.get("s")||"").replace(/[^a-z0-9_-]/gi,"").slice(0,40);
 function whatBtn(){var a=el("a","what","What can you do with keys?"),qs=[];if(DEMO)qs.push("demo=1");if(SRC)qs.push("s="+encodeURIComponent(SRC));a.href="key-what-you-get.html"+(qs.length?"?"+qs.join("&"):"");return a}
@@ -94,7 +94,7 @@ function done(first,again){head();var s=el("div","state box");var ck=el("div","s
  var how=el("div","trust");["Next, we verify you on Instagram. Then your keys are ready.","Use your keys. Unused keys disappear after 60 days, even if you give them to a friend.","The more you use them, the more you receive.","Check your wallet often. We will be running giveaways inside it.","Find your rewards any time: go to keytechnologies.si, tap the menu, then tap Log in.","Earn more: ask us, repost us, upload your receipts, tell your friends."].forEach(function(t){how.appendChild(el("p",null,t))});s.appendChild(how);
  s.appendChild(el("p","lead","One more thing: follow us on Instagram so you never miss it."));var f2=el("a","follow","Follow us on Instagram");f2.href="https://instagram.com/lasvegas_restaurants";f2.target="_blank";f2.rel="noopener";s.appendChild(f2);app.appendChild(s);app.appendChild(whatBtn());var ib=el("a","what","Share an idea");ib.href="key-ideas.html"+(DEMO?"?demo=1":"");app.appendChild(ib)}
 function form(){head();
- app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Get your free keys"));app.appendChild(hero());app.appendChild(el("div","uses"));
+ app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Get your free keys"));app.appendChild(el("div","uses"));
  app.appendChild(el("p","grp","ROOM 1 IS FULL. ROOM 2 IS OPEN: 20 SEATS. They will fill fast. Room 3 opens next."));app.appendChild(el("p","lead","Thank you for following Las Vegas Restaurants. It has been 10 years, and we built Key Technologies. To say thank you, we are giving out Key Rewards."));
  app.appendChild(el("p","elig","This first group is for people who live in Las Vegas and have an Instagram account. We verify every member on Instagram before we give out keys. We are starting in Las Vegas, and we plan to open it up worldwide soon."));var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Join the waiting list"));f.appendChild(el("p","quick","It takes about 30 seconds. Please read everything first so you are okay with it. We will never ask you for money."));
  var inp={};

@@ -43,7 +43,7 @@ input[readonly]{opacity:.85}input:focus{outline:none;border-color:var(--accent)}
 @media(prefers-reduced-motion:reduce){.cf{display:none}}
 </style>
 <script src="key-platform/kg-track.js"></script>
-</head>
+<script src="key-top.js"></script></head>
 <body>
 <main class="wrap" id="app" aria-live="polite"><p class="brandline">KeyTechnologies.si</p><p class="lead">Loading&hellip;</p></main>
 <script>
@@ -64,7 +64,7 @@ function jget(path){return fetch(DB+encodeURIComponent(G)+path+".json").then(fun
 function load(){
  if(DEMO){var o=lget()[G];return Promise.resolve(o?{label:o.label,keys:o.keys,claimed:!!o.claim}:null)}
  return Promise.all([jget("/label"),jget("/keys"),jget("/claim/at")]).then(function(a){return a[1]?{label:a[0]||"Giveaway",keys:a[1],claimed:!!a[2]}:null})}
-function head(){app.innerHTML="";app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
+function head(){app.innerHTML="";if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
 function hero(keys){var h=el("div","hero"),im=el("img");im.src="brand/key-gold.svg";im.alt="A gold key";h.appendChild(im);var b=el("div","big25",fmtKeys(keys));b.appendChild(el("span",null,"KEYS"));h.appendChild(b);return h}
 function whatHref(){return "key-what-you-get.html?g="+encodeURIComponent(G)+(DEMO?"&demo=1":"")}
 function whatBtn(){var a=el("a","what","What can you get with the keys?");a.href=whatHref();return a}

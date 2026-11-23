@@ -45,7 +45,7 @@ input:focus{outline:none;border-color:var(--accent)}
 .cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.cf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cfall 2.2s cubic-bezier(.2,.7,.3,1) forwards}@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 @media(prefers-reduced-motion:reduce){.gcard{animation:none}.cf{display:none}}
 </style>
-</head>
+<script src="key-top.js"></script></head>
 <body>
 <main class="wrap" id="app" aria-live="polite"><p class="brandline">KeyTechnologies.si</p><p class="lead">Loading&hellip;</p></main>
 <script>
@@ -64,7 +64,7 @@ function jget(path){return fetch(DB+encodeURIComponent(O)+path+".json").then(fun
 function load(){
  if(DEMO){var o=lget()[O];return Promise.resolve(o?{rest:o.rest,keys:o.keys,note:o.note||"",open:o.open!==false}:null)}
  return Promise.all([jget("/rest"),jget("/keys"),jget("/note"),jget("/open")]).then(function(a){return a[1]?{rest:a[0]||"Restaurant",keys:a[1],note:a[2]||"",open:a[3]!==false}:null})}
-function head(){app.innerHTML="";app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
+function head(){app.innerHTML="";if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
 function card(info){var c=el("div","gcard"),b=el("div","b"),im=el("img");im.src="brand/key-badge.svg";im.alt="";b.appendChild(im);b.appendChild(document.createTextNode("KeyTechnologies.si"));c.appendChild(b);
  c.appendChild(el("div","nm",info.rest));c.appendChild(el("div","kind","Dine and earn"));var v=el("div","val");v.appendChild(el("small",null,"keys for your receipt"));v.appendChild(el("b",null,fmtKeys(info.keys)));c.appendChild(v);return c}
 function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var box=el("div","cf"),cols=["#00a8e1","#33bce8","#0086b3","#ffffff","#00a8e1"];for(var i=0;i<48;i++){var p=el("i");p.style.left=Math.random()*100+"%";p.style.background=cols[i%5];p.style.animationDelay=(Math.random()*.5)+"s";box.appendChild(p)}document.body.appendChild(box);setTimeout(function(){box.remove()},3200)}
