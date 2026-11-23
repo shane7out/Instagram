@@ -5,5 +5,5 @@
 <radialGradient id="b" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#26303a"/><stop offset="1" stop-color="#0b1117"/></radialGradient>
 </defs>
 <circle cx="50" cy="50" r="47" fill="url(#b)" stroke="url(#r)" stroke-width="4.5"/>
-<g transform="translate(16.9 34) scale(.267)"><path fill-rule="evenodd" fill="url(#k)" d="M94.3 48H240V100H216V86H198V100H178V72H94.3A44 44 0 1 1 94.3 48Z M52 43a17 17 0 1 0 0 34a17 17 0 1 0 0-34Z"/></g>
+<g transform="translate(13.4 32) scale(.3)"><path fill-rule="evenodd" fill="url(#k)" d="M30 20h40a22 22 0 0 1 22 22v36a22 22 0 0 1-22 22H30A22 22 0 0 1 8 78V42a22 22 0 0 1 22-22Zm10 26a8 8 0 0 0-8 8v12a8 8 0 0 0 8 8h20a8 8 0 0 0 8-8V54a8 8 0 0 0-8-8Z"/><path fill="url(#k)" d="M88 52h140a8 8 0 0 1 8 8v0a8 8 0 0 1-8 8h-12v20a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6V68h-12v14a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6V68H88Z"/></g>
 </svg>
