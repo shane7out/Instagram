@@ -681,3 +681,5 @@ NEXT: real offers (members post their own, stored in the database with owner mod
 355. NO TRADING FROM THE WALLET (Shane, 2026-11-23): the "Tap a card to trade" gift-card strip and the wallet's "Gift cards" trade button are hidden for every wallet (`NOTRADE=true` in restaurant-rewards-treasury.html); trading happens in the marketplace. Still in the wallet: the balance card, Redeem (use keys at a restaurant), the gift-for-a-friend card and Send a gift, histories, "Open the marketplace". Flip NOTRADE to false to bring the strip back. The `?trade=` deep link still works and was left alone.
 
 356. WALLET CLOSE BUTTON IS A SMALL X (Shane, 2026-11-23): the "Close" pill on the wallet screen is now a small X in the top right corner (fixed to the corner, 40 px tap area, aria-label "Close", keyboard focus ring). Other screens (Redeem, Gift cards, Send a gift) keep their "Back" buttons.
+
+357. WALLET SCREEN: NO TITLE WORD (Shane, 2026-11-23): the "Wallet" heading above the card is removed; the screen is the card, a thin white X in the top right, and the buttons. Screen readers still hear "Wallet view" from the dialog label.
