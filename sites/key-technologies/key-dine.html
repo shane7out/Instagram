@@ -10,13 +10,13 @@
 <link rel="icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
-:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.18);--gold:#e8c766}
+:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.18);--gold:#D4A017}
 *{box-sizing:border-box}html{overflow-x:hidden}
 body{margin:0;background:var(--bg);color:#fff;font:400 18px/1.5 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
 .wrap{max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 36px;perspective:1100px}
 .brandline{text-align:center;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:0 0 14px}
 h1{font-size:30px;line-height:1.15;margin:12px 0 8px;text-align:center;font-weight:900}
-.lead{text-align:center;color:#f1f1f1;margin:0 0 18px}
+.lead{text-align:center;color:#ffffff;margin:0 0 18px}
 .gcard{position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:1.586/1;border-radius:14px;padding:6%;display:flex;flex-direction:column;color:#1c1405;text-align:left;container-type:inline-size;margin:0 auto 18px;box-shadow:0 24px 44px rgba(0,0,0,.6);animation:pop .8s cubic-bezier(.2,.9,.25,1.08) both;
  background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,250,210,.50) 40%,rgba(255,255,255,0) 52%),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(135deg,#a6720f 0%,#e8bd45 16%,#fbe48e 33%,#dba623 52%,#f7d96f 70%,#bd8a12 86%,#e6b93e 100%);border:1px solid rgba(110,70,0,.5)}
 .gcard::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-radial-gradient(circle at 92% 8%,rgba(110,70,0,.11) 0 1px,rgba(110,70,0,0) 1px 6px);mix-blend-mode:multiply}
@@ -32,16 +32,16 @@ label{display:block;font-size:14px;letter-spacing:.1em;text-transform:uppercase;
 input[type=text],input[type=email],input[type=tel]{display:block;width:100%;height:60px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:#0f171e;color:#fff;font:inherit;font-size:21px;padding:0 14px}
 input:focus{outline:none;border-color:var(--gold)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:380px){.row2{grid-template-columns:1fr}}
-.chk{display:flex;gap:12px;align-items:flex-start;margin:18px 0 6px;font-size:16px;line-height:1.4;color:#f1f1f1}.chk input{flex:none;width:28px;height:28px;margin:2px 0 0;accent-color:#e6b83a}
-.chk a{color:#9fd4ff}
-.go{display:block;width:100%;min-height:72px;margin-top:16px;border:0;border-radius:18px;background:linear-gradient(140deg,#f6d467,#e6b83a 55%,#d7a21e);color:#2b1d05;font:900 25px Lato,system-ui,sans-serif;cursor:pointer}
+.chk{display:flex;gap:12px;align-items:flex-start;margin:18px 0 6px;font-size:16px;line-height:1.4;color:#ffffff}.chk input{flex:none;width:28px;height:28px;margin:2px 0 0;accent-color:#D4A017}
+.chk a{color:#D4A017}
+.go{display:block;width:100%;min-height:72px;margin-top:16px;border:0;border-radius:18px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#2b1d05;font:900 25px Lato,system-ui,sans-serif;cursor:pointer}
 .go:disabled{opacity:.6;cursor:default}.go:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 .err{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:rgba(255,90,110,.14);border:1px solid rgba(255,90,110,.6);color:#ffd5da;font-size:17px;display:none}.err.on{display:block}
 .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
-.fine{font-size:14px;line-height:1.5;color:rgba(255,255,255,.82);margin:16px 4px 0;text-align:center}.fine a{color:#9fd4ff}
+.fine{font-size:14px;line-height:1.5;color:rgba(255,255,255,.82);margin:16px 4px 0;text-align:center}.fine a{color:#D4A017}
 .state{text-align:center}.state .big{font-size:56px;line-height:1;margin:8px 0}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:16px;border:2px solid rgba(255,255,255,.45);color:#fff;font-weight:800;font-size:20px;margin-top:12px}
-.demo{margin:0 0 12px;padding:8px 12px;border-radius:10px;background:rgba(232,199,102,.12);border:1px solid rgba(232,199,102,.5);color:#f6e7b4;font-size:14px;text-align:center}
+.demo{margin:0 0 12px;padding:8px 12px;border-radius:10px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.5);color:#D4A017;font-size:14px;text-align:center}
 .cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.cf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cfall 2.2s cubic-bezier(.2,.7,.3,1) forwards}@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 @media(prefers-reduced-motion:reduce){.gcard{animation:none}.cf{display:none}}
 </style>
@@ -65,7 +65,7 @@ function load(){
 function head(){app.innerHTML="";app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
 function card(info){var c=el("div","gcard"),b=el("div","b"),im=el("img");im.src="brand/key-badge.svg";im.alt="";b.appendChild(im);b.appendChild(document.createTextNode("KeyTechnologies.si"));c.appendChild(b);
  c.appendChild(el("div","nm",info.rest));c.appendChild(el("div","kind","Dine and earn"));var v=el("div","val");v.appendChild(el("small",null,"Key Points for your receipt"));v.appendChild(el("b",null,fmtKeys(info.keys)));c.appendChild(v);return c}
-function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var box=el("div","cf"),cols=["#f2d06b","#e0a82e","#00a8e1","#ffffff","#9fd6f2"];for(var i=0;i<48;i++){var p=el("i");p.style.left=Math.random()*100+"%";p.style.background=cols[i%5];p.style.animationDelay=(Math.random()*.5)+"s";box.appendChild(p)}document.body.appendChild(box);setTimeout(function(){box.remove()},3200)}
+function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var box=el("div","cf"),cols=["#D4A017","#E0A91F","#B8860B","#ffffff","#D4A017"];for(var i=0;i<48;i++){var p=el("i");p.style.left=Math.random()*100+"%";p.style.background=cols[i%5];p.style.animationDelay=(Math.random()*.5)+"s";box.appendChild(p)}document.body.appendChild(box);setTimeout(function(){box.remove()},3200)}
 function stateScreen(icon,title,text){head();var s=el("div","state box");if(icon)s.appendChild(el("div","big",icon));s.appendChild(el("h1",null,title));s.appendChild(el("p","lead",text));var a=el("a","btn","See what Key Points can do");a.href="restaurant-rewards-uses.html";s.appendChild(a);app.appendChild(s)}
 function sent(info,first){head();app.appendChild(card(info));var s=el("div","state box");s.appendChild(el("div","big","🧾"));s.appendChild(el("h1",null,"Thank you!"));
  s.appendChild(el("p","lead",(first?first+", we":"We")+" got your receipt. When it checks out, "+fmtKeys(info.keys)+" Key Points go into your wallet. We will email and text you."));
@@ -93,7 +93,7 @@ function form(info){head();app.appendChild(card(info));
  var pv=el("img");pv.alt="Your receipt";pv.style.cssText="display:none;width:100%;max-height:340px;object-fit:contain;border-radius:12px;background:#fff;margin-top:6px";f.appendChild(pv);
  var photo=null;pi.addEventListener("change",function(){photo=null;pv.style.display="none";if(!pi.files||!pi.files[0])return;shrink(pi.files[0],function(d){if(!d){bad("That photo would not load. Please try again, or take a new photo.");return}er.className="err";photo=d;pv.src=d;pv.style.display="block"})});
  var hp=el("div","hp"),hl=el("label",null,"Leave this empty"),hi=el("input");hi.type="text";hi.name="website";hi.tabIndex=-1;hi.autocomplete="off";hl.setAttribute("for","website");hi.id="website";hp.appendChild(hl);hp.appendChild(hi);hp.setAttribute("aria-hidden","true");f.appendChild(hp);
- var ck=el("label","chk");ck.style.cssText="text-transform:none;letter-spacing:0;color:#f1f1f1;font-size:16px;font-weight:400";var cb=el("input");cb.type="checkbox";cb.id="consent";ck.appendChild(cb);
+ var ck=el("label","chk");ck.style.cssText="text-transform:none;letter-spacing:0;color:#ffffff;font-size:16px;font-weight:400";var cb=el("input");cb.type="checkbox";cb.id="consent";ck.appendChild(cb);
  var ct=el("span");ct.appendChild(document.createTextNode("I agree that Key Technologies may keep my receipt photo, name, email and phone to check my visit, set up my Key Points wallet and contact me. I understand Key Points have no cash value. "));var pa=el("a",null,"Privacy");pa.href="rewards-privacy.html";pa.target="_blank";pa.rel="noopener";ct.appendChild(pa);ck.appendChild(ct);f.appendChild(ck);
  var er=el("div","err");er.setAttribute("role","alert");f.appendChild(er);
  var go=el("button","go","Send my receipt");go.type="submit";f.appendChild(go);
