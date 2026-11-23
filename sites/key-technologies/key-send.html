@@ -52,13 +52,15 @@ video{width:100%;border-radius:14px;margin-top:10px;background:#000}
 <div id="toBox"></div>
 <div id="amt" style="display:none"><label>How many keys?</label><div class="chips" id="chips"></div>
 <button class="btn" id="go" type="button">Send</button></div>
+<label for="ig">Or send to an Instagram handle</label><input type="text" id="ig" maxlength="31" autocomplete="off" autocapitalize="none" placeholder="@theirhandle">
+<button class="btn o" id="igb" type="button">Send to this handle</button>
 <button class="btn o" id="scan" type="button">Scan a code with my camera</button>
 <video id="vid" playsinline muted style="display:none"></video>
 <p class="note" id="scanmsg">Or just open your phone camera and point it at your friend's code. It brings you back here.</p>
 <a class="btn o" href="key-send.html?to=demo-ann&amp;n=Ann">Practice: pretend I scanned Ann</a></div>
 
 <div class="box hist"><h2>Your practice history</h2><div id="hist"><p>Nothing yet.</p></div></div>
-<p class="note">Only send keys to people you are with. Keys are not for sale and we never take cash. Never send keys for money. In practice you can send up to 50 at a time and 100 a day.</p>
+<p class="note">In the real version, a handle must be confirmed first, so keys only go to the person who really owns it. Only send keys to people you are with. Keys are not for sale and we never take cash. Never send keys for money. In practice you can send up to 50 at a time and 100 a day.</p>
 </main>
 <div class="ov" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovt"><div class="pop" id="pop"></div></div>
 <script>
@@ -94,6 +96,7 @@ $("go").onclick=function(){
  $("yes").onclick=function(){bal-=amt;sentToday+=amt;hist.unshift({d:-amt,t:"sent to "+nm});save();drawBal();drawHist();
   pop('<div class="ok"><svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="#00a8e1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></div><h2 id="ovt">Sent</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p>This was practice. No real keys moved.</p><button class="btn" id="x">Done</button>');
   $("pop").querySelector("b").textContent=nm;$("x").onclick=closePop}};
+$("igb").onclick=function(){var h=$("ig").value.trim().replace(/^@+/,"");if(!/^[A-Za-z0-9._]{1,30}$/.test(h)){$("scanmsg").textContent="Type their Instagram handle, like @theirhandle. Letters, numbers, dots and underscores only.";return}to="ig:"+h.toLowerCase();toName="@"+h;drawTo();$("scanmsg").textContent="Pick an amount and send."};
 $("me").addEventListener("input",drawQR);
 /* camera scan: works in browsers that have BarcodeDetector; everyone else uses the normal phone camera */
 var stream=null,scanning=false;

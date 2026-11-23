@@ -381,6 +381,12 @@ body.hlock{overflow:hidden}
   <p class="fine" style="margin-top:0">People who joined from the waiting list page. Everyone here said yes to emails and texts. Share this link: <b id="wllink"></b></p>
   <div id="wllist"></div>
  </div>
+ <div class="box" id="twbox">
+  <h2>Trading watch</h2>
+  <p class="fine" style="margin-top:0">Every trade between two wallets, newest first, and who is trading most. Keys issued from the Treasury are not counted here. Members trade with each other; Key Technologies does not buy or sell keys.</p>
+  <div id="twsum"></div>
+  <div id="twlist"></div>
+ </div>
  <div class="box" id="dnbox">
   <h2>Dine and earn offers</h2>
   <p class="fine" style="margin-top:0">Send people to a restaurant. After they eat they send a photo of the receipt, you check it, and you give them keys. Each offer has its own link.</p>
@@ -484,8 +490,8 @@ body.hlock{overflow:hidden}
    else{/* first sign-in: the permanent ledger starts clean from the saved instructions (10,000,000 and Thin Blue 702 at 5,000); practice records in this browser are NOT carried over */S=fresh();S.seeded2=false;S.logos=logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Key Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';
-   sel='all';paint();gvRender();dnRender();wlRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
- function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender();wlRender()}
+   sel='all';paint();gvRender();dnRender();wlRender();twRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
+ function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender();wlRender();twRender()}
  var idleT=null;function idle(){var go=function(){clearTimeout(idleT);idleT=setTimeout(function(){RR.signOut();location.reload()},15*60*1000)};['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()}
  function start(msg){RR.gate({title:'Key Rewards Treasury',sub:msg||'Type your Treasury PIN.',email:RR.TREASURER.email,salt:RR.TREASURER.salt,onOK:enterDb,onSkip:{label:'Use the practice version (this browser only)',fn:enterLocal}})}
  function $(i){return document.getElementById(i)}
@@ -600,7 +606,7 @@ body.hlock{overflow:hidden}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
   var tre=bal('treasury'),tot=0,wal=0;S.wallets.forEach(function(w){var b=bal(w.id);tot+=b;if(w.id!=='treasury')wal+=b});
-  whoPaint();$('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);var ret=0;S.entries.forEach(function(e){if(isExp(e))ret+=e.amt});var ex14=expiring(14);$('expnote').textContent='Credit is good for 60 days from the day it is issued. A gift card must be given within 72 hours. What is not used goes back to the Treasury.';
+  whoPaint();twRender();$('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);var ret=0;S.entries.forEach(function(e){if(isExp(e))ret+=e.amt});var ex14=expiring(14);$('expnote').textContent='Credit is good for 60 days from the day it is issued. A gift card must be given within 72 hours. What is not used goes back to the Treasury.';
   var hh=held(),ck=$('check');if(tot+hh===SUPPLY){ck.className='check';ck.textContent='Everything adds up: the Treasury plus all wallets'+(hh?' plus '+fmt(hh)+' waiting for a restaurant to confirm':'')+' equals '+fmt(SUPPLY)+' Key Rewards.'}else{ck.className='check bad';ck.textContent='Warning: the wallets add up to '+fmt(tot)+', not '+fmt(SUPPLY-hh)+'. Download a backup and check the list below.'}
   var box=$('wallets');box.innerHTML='';
   sw().forEach(function(w){var b=gcard(w,true,true);b.setAttribute('aria-pressed',String(sel===w.id));b.setAttribute('aria-label',w.name+', balance '+fmt(shown(w.id)));b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
@@ -712,6 +718,15 @@ body.hlock{overflow:hidden}
    box.appendChild(row)});
   var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',dnRender);box.appendChild(rf)})}
  /* ---- Standing waiting list (key-waitlist.html) ---- */
+ function twRender(){var sm=$('twsum'),ls=$('twlist');if(!sm||!ls)return;sm.innerHTML='';ls.innerHTML='';
+  var tr=S.entries.filter(function(e){return e.from&&e.to&&e.from!=='treasury'&&e.to!=='treasury'&&e.amt>0}).sort(function(a,b){return b.t-a.t});
+  if(!tr.length){sm.appendChild(el('p','fine','No trades yet. When members trade with each other, every trade shows up here.'));return}
+  var agg={};tr.forEach(function(e){[['from','sent'],['to','recv']].forEach(function(p){var id=e[p[0]],w=wById(id);if(!w)return;var a=agg[id]||(agg[id]={n:w.name,c:0,sent:0,recv:0,last:0});a.c++;a[p[1]]+=e.amt;if(e.t>a.last)a.last=e.t})});
+  var rows=Object.keys(agg).map(function(k){return agg[k]}).sort(function(a,b){return b.c-a.c||b.last-a.last});
+  sm.appendChild(el('h3',null,'Who is trading ('+rows.length+')'));
+  rows.forEach(function(a){sm.appendChild(el('p','fine','\u2022 '+a.n+': '+a.c+' trade'+(a.c===1?'':'s')+', sent '+fmt(a.sent)+', received '+fmt(a.recv)+', last '+fdate(a.last)))});
+  ls.appendChild(el('h3',null,'Latest trades'));
+  tr.slice(0,25).forEach(function(e){var f=wById(e.from),t=wById(e.to);ls.appendChild(el('p','fine',fdate(e.t)+': '+(f?f.name:'?')+' \u2192 '+(t?t.name:'?')+', '+fmt(e.amt)+' keys'+(e.note?' ('+e.note+')':'')))})}
  function wlRender(){var box=$('wllist');if(!box)return;var lk=$('wllink');if(lk)lk.textContent=location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-waitlist.html'+(DBM?'':'?demo=1');
   var show=function(o){box.innerHTML='';var ids=Object.keys(o||{}).sort(function(a,b){return (o[b].at||0)-(o[a].at||0)}),rows=ids.map(function(k){return o[k]});
    box.appendChild(el('p','fine',rows.length+' on the waiting list'));
