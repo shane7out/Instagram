@@ -10,14 +10,14 @@
 <link rel="icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
-:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.18);--gold:#D4A017}
+:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.18);--accent:#00a8e1}
 *{box-sizing:border-box}html{overflow-x:hidden}
 body{margin:0;background:var(--bg);color:#fff;font:400 18px/1.5 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
 .wrap{max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 36px;perspective:1100px}
-.brandline{text-align:center;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:0 0 14px}
+.brandline{text-align:center;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:900;margin:0 0 14px}
 h1{font-size:30px;line-height:1.15;margin:12px 0 8px;text-align:center;font-weight:900}
 .lead{text-align:center;color:#ffffff;margin:0 0 18px}
-.gcard{position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:1.586/1;border-radius:14px;padding:6%;display:flex;flex-direction:column;color:#1c1405;text-align:left;container-type:inline-size;margin:0 auto 18px;box-shadow:0 24px 44px rgba(0,0,0,.6);animation:pop .8s cubic-bezier(.2,.9,.25,1.08) both;
+.gcard{position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:1.586/1;border-radius:14px;padding:6%;display:flex;flex-direction:column;color:#0f171e;text-align:left;container-type:inline-size;margin:0 auto 18px;box-shadow:0 24px 44px rgba(0,0,0,.6);animation:pop .8s cubic-bezier(.2,.9,.25,1.08) both;
  background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,250,210,.50) 40%,rgba(255,255,255,0) 52%),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(135deg,#a6720f 0%,#e8bd45 16%,#fbe48e 33%,#dba623 52%,#f7d96f 70%,#bd8a12 86%,#e6b93e 100%);border:1px solid rgba(110,70,0,.5)}
 .gcard::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-radial-gradient(circle at 92% 8%,rgba(110,70,0,.11) 0 1px,rgba(110,70,0,0) 1px 6px);mix-blend-mode:multiply}
 .gcard .b{display:flex;align-items:center;font-weight:900;font-size:min(14px,5.4cqw);letter-spacing:.04em}.gcard .b img{width:2.1em;height:2.1em;margin-right:.55em;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(60,35,0,.45))}
@@ -28,20 +28,20 @@ h1{font-size:30px;line-height:1.15;margin:12px 0 8px;text-align:center;font-weig
 @keyframes pop{from{transform:rotateX(62deg) rotateY(-32deg) translateZ(-280px) scale(.55);opacity:0}to{transform:none;opacity:1}}
 @keyframes float{0%,100%{transform:rotateY(-5deg) rotateX(2deg)}50%{transform:rotateY(5deg) rotateX(-2deg)}}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 16px}
-label{display:block;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:14px 0 6px}label:first-of-type{margin-top:0}
+label{display:block;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:900;margin:14px 0 6px}label:first-of-type{margin-top:0}
 input[type=text],input[type=email],input[type=tel]{display:block;width:100%;height:60px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:#0f171e;color:#fff;font:inherit;font-size:21px;padding:0 14px}
-input:focus{outline:none;border-color:var(--gold)}
+input:focus{outline:none;border-color:var(--accent)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:380px){.row2{grid-template-columns:1fr}}
-.chk{display:flex;gap:12px;align-items:flex-start;margin:18px 0 6px;font-size:16px;line-height:1.4;color:#ffffff}.chk input{flex:none;width:28px;height:28px;margin:2px 0 0;accent-color:#D4A017}
-.chk a{color:#D4A017}
-.go{display:block;width:100%;min-height:72px;margin-top:16px;border:0;border-radius:18px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#2b1d05;font:900 25px Lato,system-ui,sans-serif;cursor:pointer}
+.chk{display:flex;gap:12px;align-items:flex-start;margin:18px 0 6px;font-size:16px;line-height:1.4;color:#ffffff}.chk input{flex:none;width:28px;height:28px;margin:2px 0 0;accent-color:#00a8e1}
+.chk a{color:#00a8e1}
+.go{display:block;width:100%;min-height:72px;margin-top:16px;border:0;border-radius:18px;background:#00a8e1;color:#0f171e;font:900 25px Lato,system-ui,sans-serif;cursor:pointer}
 .go:disabled{opacity:.6;cursor:default}.go:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 .err{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:rgba(255,90,110,.14);border:1px solid rgba(255,90,110,.6);color:#ffd5da;font-size:17px;display:none}.err.on{display:block}
 .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
-.fine{font-size:14px;line-height:1.5;color:rgba(255,255,255,.82);margin:16px 4px 0;text-align:center}.fine a{color:#D4A017}
+.fine{font-size:14px;line-height:1.5;color:rgba(255,255,255,.82);margin:16px 4px 0;text-align:center}.fine a{color:#00a8e1}
 .state{text-align:center}.state .big{font-size:56px;line-height:1;margin:8px 0}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:16px;border:2px solid rgba(255,255,255,.45);color:#fff;font-weight:800;font-size:20px;margin-top:12px}
-.demo{margin:0 0 12px;padding:8px 12px;border-radius:10px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.5);color:#D4A017;font-size:14px;text-align:center}
+.demo{margin:0 0 12px;padding:8px 12px;border-radius:10px;background:rgba(0,168,225,.12);border:1px solid rgba(0,168,225,.5);color:#00a8e1;font-size:14px;text-align:center}
 .cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.cf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cfall 2.2s cubic-bezier(.2,.7,.3,1) forwards}@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 @media(prefers-reduced-motion:reduce){.gcard{animation:none}.cf{display:none}}
 </style>
@@ -65,7 +65,7 @@ function load(){
 function head(){app.innerHTML="";app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
 function card(info){var c=el("div","gcard"),b=el("div","b"),im=el("img");im.src="brand/key-badge.svg";im.alt="";b.appendChild(im);b.appendChild(document.createTextNode("KeyTechnologies.si"));c.appendChild(b);
  c.appendChild(el("div","nm",info.rest));c.appendChild(el("div","kind","Dine and earn"));var v=el("div","val");v.appendChild(el("small",null,"Key Points for your receipt"));v.appendChild(el("b",null,fmtKeys(info.keys)));c.appendChild(v);return c}
-function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var box=el("div","cf"),cols=["#D4A017","#E0A91F","#B8860B","#ffffff","#D4A017"];for(var i=0;i<48;i++){var p=el("i");p.style.left=Math.random()*100+"%";p.style.background=cols[i%5];p.style.animationDelay=(Math.random()*.5)+"s";box.appendChild(p)}document.body.appendChild(box);setTimeout(function(){box.remove()},3200)}
+function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var box=el("div","cf"),cols=["#00a8e1","#33bce8","#0086b3","#ffffff","#00a8e1"];for(var i=0;i<48;i++){var p=el("i");p.style.left=Math.random()*100+"%";p.style.background=cols[i%5];p.style.animationDelay=(Math.random()*.5)+"s";box.appendChild(p)}document.body.appendChild(box);setTimeout(function(){box.remove()},3200)}
 function stateScreen(icon,title,text){head();var s=el("div","state box");if(icon)s.appendChild(el("div","big",icon));s.appendChild(el("h1",null,title));s.appendChild(el("p","lead",text));var a=el("a","btn","See what Key Points can do");a.href="restaurant-rewards-uses.html";s.appendChild(a);app.appendChild(s)}
 function sent(info,first){head();app.appendChild(card(info));var s=el("div","state box");s.appendChild(el("div","big","🧾"));s.appendChild(el("h1",null,"Thank you!"));
  s.appendChild(el("p","lead",(first?first+", we":"We")+" got your receipt. When it checks out, "+fmtKeys(info.keys)+" Key Points go into your wallet. We will email and text you."));
@@ -109,7 +109,7 @@ function form(info){head();app.appendChild(card(info));
   if(!cb.checked)return bad("Please tick the box to say you agree.",cb);
   if(hi.value){sent(info,v.first);return}
   go.disabled=true;go.textContent="Sending…";submit(v,photo,function(ok){
-   if(ok){sent(info,v.first)}else{go.disabled=false;go.textContent="Send my receipt";bad("That did not go through. Please check your connection and tap the gold button again.")}})})}
+   if(ok){sent(info,v.first)}else{go.disabled=false;go.textContent="Send my receipt";bad("That did not go through. Please check your connection and tap the blue button again.")}})})}
 function rid(){var a=new Uint8Array(12),s="r";crypto.getRandomValues(a);for(var i=0;i<a.length;i++)s+=(a[i]%36).toString(36);return s}
 function submit(v,photo,done){
  var rec={first:v.first,last:v.last,email:v.email,phone:v.phone,consent:true,photo:photo};if(v.rno)rec.rno=v.rno;

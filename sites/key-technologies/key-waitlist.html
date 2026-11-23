@@ -10,37 +10,37 @@
 <link rel="icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
-:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.2);--gold:#D4A017}
+:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.2);--accent:#00a8e1}
 *{box-sizing:border-box}html{overflow-x:hidden}
 body{margin:0;background:var(--bg);color:#fff;font:400 18px/1.55 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
 .wrap{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 40px}
-.brandline{text-align:center;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:0 0 12px}
-.pill{display:block;width:max-content;margin:0 auto 12px;padding:8px 26px;border-radius:999px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#2b1d05;font-weight:900;font-size:18px;letter-spacing:.18em}
+.brandline{text-align:center;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:900;margin:0 0 12px}
+.pill{display:block;width:max-content;margin:0 auto 12px;padding:8px 26px;border-radius:999px;background:#00a8e1;color:#0f171e;font-weight:900;font-size:18px;letter-spacing:.18em}
 h1{font-size:29px;line-height:1.2;margin:6px 0 10px;text-align:center;font-weight:900}
 h2{font-size:24px;line-height:1.25;margin:0 0 10px;font-weight:900}
 .lead{text-align:center;color:#ffffff;margin:0 0 16px;font-size:19px}
-.hero{background:var(--panel);border:1px solid rgba(212,160,23,.55);border-radius:20px;padding:20px 14px 18px;text-align:center;margin:0 0 16px}
+.hero{background:var(--panel);border:1px solid rgba(0,168,225,.55);border-radius:20px;padding:20px 14px 18px;text-align:center;margin:0 0 16px}
 .hero img{display:block;width:50%;max-width:210px;height:auto;margin:6px auto 10px}
-.big25{font-size:84px;line-height:1;font-weight:900;color:#D4A017;letter-spacing:-.02em}.big25 span{display:block;font-size:26px;letter-spacing:.2em;font-weight:900;color:#fff;margin-top:2px}
-.what{display:block;width:100%;text-align:center;text-decoration:none;min-height:64px;line-height:1.2;padding:18px 14px;border-radius:16px;border:2px solid var(--gold);color:#D4A017;font-weight:900;font-size:21px;margin:0 0 18px;background:rgba(212,160,23,.08)}
+.big25{font-size:84px;line-height:1;font-weight:900;color:#00a8e1;letter-spacing:-.02em}.big25 span{display:block;font-size:26px;letter-spacing:.2em;font-weight:900;color:#fff;margin-top:2px}
+.what{display:block;width:100%;text-align:center;text-decoration:none;min-height:64px;line-height:1.2;padding:18px 14px;border-radius:16px;border:2px solid var(--accent);color:#00a8e1;font-weight:900;font-size:21px;margin:0 0 18px;background:rgba(0,168,225,.08)}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 16px;margin:0 0 16px}
-label{display:block;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:14px 0 6px}
+label{display:block;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:900;margin:14px 0 6px}
 input[type=text],input[type=email],input[type=tel]{display:block;width:100%;height:60px;border-radius:14px;border:2px solid rgba(255,255,255,.4);background:#0f171e;color:#fff;font:inherit;font-size:21px;padding:0 14px}
-input[readonly]{opacity:.85}input:focus{outline:none;border-color:var(--gold)}
+input[readonly]{opacity:.85}input:focus{outline:none;border-color:var(--accent)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:380px){.row2{grid-template-columns:1fr}}.row3{display:grid;grid-template-columns:88px 1fr;gap:10px}
-.chk{display:flex;gap:12px;align-items:flex-start;margin:16px 0 0;font-size:17px;line-height:1.45;color:#fff;text-transform:none;letter-spacing:0;font-weight:400}.chk input{flex:none;width:30px;height:30px;margin:1px 0 0;accent-color:#D4A017}
-.rules{background:#101a24;border:2px solid rgba(212,160,23,.5);border-radius:14px;padding:14px 16px 6px;margin:18px 0 4px}.rules h3{margin:0 0 8px;font-size:21px;font-weight:900;color:#D4A017}.rules ol{margin:0;padding-left:24px}.rules li{margin:0 0 10px;font-size:17px;line-height:1.5;color:#ffffff}
-.go{display:block;width:100%;min-height:72px;margin-top:18px;border:0;border-radius:18px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#2b1d05;font:900 24px Lato,system-ui,sans-serif;cursor:pointer}
+.chk{display:flex;gap:12px;align-items:flex-start;margin:16px 0 0;font-size:17px;line-height:1.45;color:#fff;text-transform:none;letter-spacing:0;font-weight:400}.chk input{flex:none;width:30px;height:30px;margin:1px 0 0;accent-color:#00a8e1}
+.quick{margin:-4px 0 6px;font-size:18px;color:#fff;font-weight:700}.city{margin:12px 0 0;font-size:18px;color:#fff;font-weight:700}.rules summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-size:20px;font-weight:900;color:#00a8e1;list-style:none}.rules summary::-webkit-details-marker{display:none}.rules summary::after{content:" \25BE";margin-left:8px}.rules[open] summary{margin-bottom:8px}.rules{background:#101a24;border:2px solid rgba(0,168,225,.5);border-radius:14px;padding:14px 16px 6px;margin:18px 0 4px}.rules h3{margin:0 0 8px;font-size:21px;font-weight:900;color:#00a8e1}.rules ol{margin:0;padding-left:24px}.rules li{margin:0 0 10px;font-size:17px;line-height:1.5;color:#ffffff}
+.go{display:block;width:100%;min-height:72px;margin-top:18px;border:0;border-radius:18px;background:#00a8e1;color:#0f171e;font:900 24px Lato,system-ui,sans-serif;cursor:pointer}
 .go:disabled{opacity:.6;cursor:default}.go:focus-visible,.what:focus-visible{outline:3px solid #00a8e1;outline-offset:3px}
 .err{margin:14px 0 0;padding:14px 16px;border-radius:12px;background:rgba(255,90,110,.16);border:1px solid rgba(255,90,110,.7);color:#ffe0e4;font-size:18px;display:none}.err.on{display:block}
 .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
-.note{font-size:17px;line-height:1.5;color:#ffffff;margin:14px 2px 0;text-align:center}.note a{color:#D4A017}
+.note{font-size:17px;line-height:1.5;color:#ffffff;margin:14px 2px 0;text-align:center}.note a{color:#00a8e1}
 .state{text-align:center}.state .em{font-size:56px;line-height:1;margin:6px 0}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:16px;border:2px solid rgba(255,255,255,.5);color:#fff;font-weight:800;font-size:20px;margin-top:12px}
-.demo{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.5);color:#D4A017;font-size:16px;text-align:center}
-.uses{margin-top:22px}.uses h2{text-align:center}.use{display:flex;gap:14px;align-items:flex-start;padding:14px 4px;border-top:1px solid rgba(255,255,255,.16)}.use .ui{flex:none;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(140deg,#E0A91F,#B8860B)}.use b{display:block;font-size:19px}.use div span{display:block;font-size:17px;color:#f0f0f0;line-height:1.45}
-.steps{background:#16222f;border:1px solid rgba(212,160,23,.55);border-radius:18px;padding:6px 16px;margin:0 0 16px}.step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(255,255,255,.16)}.step:first-child{border-top:0}.step .n{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;background:linear-gradient(140deg,#E0A91F,#B8860B);color:#2b1d05}.step b{display:block;font-size:21px;line-height:1.25}.step span.t{display:block;font-size:18px;color:#f0f0f0;line-height:1.5}.follow{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:14px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#2b1d05;font-weight:900;font-size:20px;margin-top:10px}
-.can{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 14px}.can span{padding:8px 14px;border-radius:999px;border:1.5px solid rgba(212,160,23,.7);color:#D4A017;font-weight:900;font-size:16px}.team{background:#16222f;border:1px solid rgba(212,160,23,.55);border-radius:18px;padding:18px 16px;margin:0 0 16px;text-align:center}.team h2{font-size:22px;margin:0 0 8px}.team p{margin:0;font-size:18px;color:#fff}
+.demo{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(0,168,225,.12);border:1px solid rgba(0,168,225,.5);color:#00a8e1;font-size:16px;text-align:center}
+.uses{margin-top:22px}.uses h2{text-align:center}.use{display:flex;gap:14px;align-items:flex-start;padding:14px 4px;border-top:1px solid rgba(255,255,255,.16)}.use .ui{flex:none;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:#00a8e1}.use b{display:block;font-size:19px}.use div span{display:block;font-size:17px;color:#f0f0f0;line-height:1.45}
+.steps{background:#16222f;border:1px solid rgba(0,168,225,.55);border-radius:18px;padding:6px 16px;margin:0 0 16px}.step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(255,255,255,.16)}.step:first-child{border-top:0}.step .n{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;background:#00a8e1;color:#0f171e}.step b{display:block;font-size:21px;line-height:1.25}.step span.t{display:block;font-size:18px;color:#f0f0f0;line-height:1.5}.follow{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:14px;background:#00a8e1;color:#0f171e;font-weight:900;font-size:20px;margin-top:10px}
+.can{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 14px}.can span{padding:8px 14px;border-radius:999px;border:1.5px solid rgba(0,168,225,.7);color:#00a8e1;font-weight:900;font-size:16px}.team{background:#16222f;border:1px solid rgba(0,168,225,.55);border-radius:18px;padding:18px 16px;margin:0 0 16px;text-align:center}.team h2{font-size:22px;margin:0 0 8px}.team p{margin:0;font-size:18px;color:#fff}
 .cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.cf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cfall 2.2s cubic-bezier(.2,.7,.3,1) forwards}@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 @media(prefers-reduced-motion:reduce){.cf{display:none}}
 </style>
@@ -72,56 +72,46 @@ function done(first,again){head();var s=el("div","state box");s.appendChild(el("
  s.appendChild(el("p","lead",(first?first+", thank you. ":"Thank you. ")+"We saved your spot for your free Reward Key. We will email and text you when keys go out. One more thing: follow us on Instagram so you never miss it."));var f2=el("a","follow","Follow us on Instagram");f2.href="https://instagram.com/lasvegas_restaurants";f2.target="_blank";f2.rel="noopener";s.appendChild(f2);app.appendChild(s);app.appendChild(whatBtn())}
 function form(){head();
  app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Get your free Reward Key"));app.appendChild(hero());
- app.appendChild(el("p","lead","As a thank-you to our Las Vegas Restaurants community, we are giving every person one free Reward Key. Join the waiting list and we will tell you the moment keys go out."));
- var stp=el("div","steps");
- function step(n,t,x,extra){var r=el("div","step"),c=el("span","n",String(n)),d=el("div");d.appendChild(el("b",null,t));if(x)d.appendChild(el("span","t",x));if(extra)d.appendChild(extra);r.appendChild(c);r.appendChild(d);stp.appendChild(r)}
- var fl=el("a","follow","Follow @lasvegas_restaurants");fl.href="https://instagram.com/lasvegas_restaurants";fl.target="_blank";fl.rel="noopener";
- step(1,"Follow us on Instagram","",fl);
- step(2,"Join the waiting list below","It takes about 30 seconds.");
- step(3,"Get your key","We email and text you when keys go out.");
- app.appendChild(stp);
- var can=el("div","can");["Trade it","Get stuff","Experiences","Big things planned"].forEach(function(t){can.appendChild(el("span",null,t))});app.appendChild(can);app.appendChild(whatBtn());
- var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Join the waiting list"));
+ app.appendChild(el("p","lead","Las Vegas Restaurants is 10 years old. To say thank you, we are giving every person one free Reward Key. Join the waiting list and we will tell you the moment keys go out."));
+ var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Join the waiting list"));f.appendChild(el("p","quick","It takes about 30 seconds."));
  var inp={};
  function field(id,lab,type,ac,mode,max){var l=el("label",null,lab);l.setAttribute("for",id);var i=el("input");i.id=id;i.type=type;i.name=id;i.autocomplete=ac;if(mode)i.inputMode=mode;i.maxLength=max||60;inp[id]=i;return [l,i]}
  function add(x,wrap){var w=wrap||f;w.appendChild(x[0]);w.appendChild(x[1])}
  var r1=el("div","row2"),d1=el("div"),d2=el("div");add(field("first","First name","text","given-name"),d1);add(field("last","Last name","text","family-name"),d2);r1.appendChild(d1);r1.appendChild(d2);f.appendChild(r1);
  add(field("ig","Instagram handle","text","off",null,31));inp.ig.placeholder="@yourhandle";inp.ig.autocapitalize="none";inp.ig.setAttribute("autocorrect","off");
  add(field("phone","Mobile phone","tel","tel","tel",30));add(field("email","Email","email","email","email",254));
- add(field("street","Street address","text","street-address",null,100));
- var r3=el("div","row3"),c1=el("div"),c2=el("div");add(field("state","State","text","off",null,2),c1);add(field("city","City","text","address-level2",null,60),c2);r3.appendChild(c1);r3.appendChild(c2);f.appendChild(r3);
- inp.state.value="NV";inp.state.readOnly=true;inp.city.value="Las Vegas";add(field("zip","ZIP code","text","postal-code","numeric",5));
+ var r3=el("div","row2"),c1=el("div"),c2=el("div");add(field("street","Street address","text","street-address",null,100),c1);add(field("zip","ZIP code","text","postal-code","numeric",5),c2);r3.appendChild(c1);r3.appendChild(c2);f.appendChild(r3);
+ f.appendChild(el("p","city","City: Las Vegas, Nevada"));
  var hp=el("div","hp"),hl=el("label",null,"Leave this empty"),hi=el("input");hi.type="text";hi.name="website";hi.tabIndex=-1;hi.autocomplete="off";hl.setAttribute("for","website");hi.id="website";hp.appendChild(hl);hp.appendChild(hi);hp.setAttribute("aria-hidden","true");f.appendChild(hp);
- var ru=el("div","rules"),rh=el("h3",null,"The rules. Please read them."),ol=el("ol");RULES.forEach(function(t){var li=el("li");li.innerHTML=t;ol.appendChild(li)});ru.appendChild(rh);ru.appendChild(ol);f.appendChild(ru);
  var cks={};
  function chk(id,html){var l=el("label","chk"),c=el("input");c.type="checkbox";c.id=id;l.appendChild(c);var sp=el("span");sp.innerHTML=html;l.appendChild(sp);f.appendChild(l);cks[id]=c}
- chk("lv","I live in Las Vegas, Nevada.");
- chk("em","<b>Yes, you can email me.</b> I agree to get emails from Key Technologies about the waiting list and giveaways.");
- chk("sm","<b>Yes, you can text me.</b> I agree to get text messages from Key Technologies at the phone number above. Message and data rates may apply. Reply STOP to stop.");
- chk("ag","I have read the rules above and I agree to follow them.");
+ chk("lv","I live in Las Vegas, Nevada, and I agree to the rules below.");
+ chk("em","<b>Yes, email and text me</b> about my key and what is next. Message and data rates may apply. Reply STOP to stop texts.");
+ cks.ag=cks.lv;cks.sm=cks.em;
+ var ru=el("details","rules"),rs=el("summary",null,"Read the rules"),ol=el("ol");RULES.forEach(function(t){var li=el("li");li.innerHTML=t;ol.appendChild(li)});ru.appendChild(rs);ru.appendChild(ol);f.appendChild(ru);
  var pn=el("p","note");pn.appendChild(document.createTextNode("How we use your information: "));var pl=el("a",null,"read our privacy page");pl.href="rewards-privacy.html";pl.target="_blank";pl.rel="noopener";pn.appendChild(pl);pn.appendChild(document.createTextNode("."));f.appendChild(pn);
  var er=el("div","err");er.setAttribute("role","alert");f.appendChild(er);
  var go=el("button","go","Join the waiting list");go.type="submit";f.appendChild(go);
  app.appendChild(f);
- var tm=el("div","team");tm.appendChild(el("h2",null,"From the team behind Las Vegas Restaurants"));tm.appendChild(el("p",null,"Key Technologies and Las Vegas Restaurants are the same team. Key Technologies is our next venture, and this is our way of saying thank you to the Las Vegas community that made it possible."));
+ var can=el("div","can");["Eat at restaurants","Trade it","Get stuff","Experiences","Lots more coming"].forEach(function(t){can.appendChild(el("span",null,t))});app.appendChild(can);app.appendChild(whatBtn());
+ var tm=el("div","team");tm.appendChild(el("h2",null,"From the team behind Las Vegas Restaurants"));tm.appendChild(el("p",null,"Key Technologies and Las Vegas Restaurants are the same team. It has been 10 years of Las Vegas Restaurants, and this is our way of saying thank you. Keys are just the start. We have a lot of ideas coming."));
  var tl=el("a","follow","Follow @lasvegas_restaurants");tl.href="https://instagram.com/lasvegas_restaurants";tl.target="_blank";tl.rel="noopener";tm.appendChild(tl);app.appendChild(tm);
  function bad(m,focus){er.textContent=m;er.className="err on";if(focus){focus.focus();try{focus.scrollIntoView({block:"center"})}catch(e){}}}
  f.addEventListener("submit",function(ev){ev.preventDefault();er.className="err";
-  var v={first:inp.first.value.trim(),last:inp.last.value.trim(),ig:inp.ig.value.trim().replace(/^@+/,""),phone:inp.phone.value.trim(),email:inp.email.value.trim(),street:inp.street.value.trim(),city:inp.city.value.trim(),state:"NV",zip:inp.zip.value.trim()};
+  var v={first:inp.first.value.trim(),last:inp.last.value.trim(),ig:inp.ig.value.trim().replace(/^@+/,""),phone:inp.phone.value.trim(),email:inp.email.value.trim(),street:inp.street.value.trim(),city:"Las Vegas",state:"NV",zip:inp.zip.value.trim()};
   if(!v.first)return bad("Please type your first name.",inp.first);if(!v.last)return bad("Please type your last name.",inp.last);
   if(!/^[A-Za-z0-9._]{1,30}$/.test(v.ig))return bad("Please type your Instagram handle, like @yourhandle. Letters, numbers, dots and underscores only.",inp.ig);
   if(v.phone.replace(/\D/g,"").length<10)return bad("Please type your mobile phone number with the area code.",inp.phone);
   if(!validEmail(v.email))return bad("Please type a real email address, like name@example.com.",inp.email);
   if(v.street.length<3)return bad("Please type your street address.",inp.street);
-  if(v.city.toLowerCase().indexOf("las vegas")<0)return bad("This waiting list is only for people who live in Las Vegas. The city must be Las Vegas.",inp.city);
   if(!/^89\d{3}$/.test(v.zip))return bad("Please type your 5 digit Las Vegas ZIP code. It starts with 89.",inp.zip);
-  if(!cks.lv.checked)return bad("Please tick the box to say you live in Las Vegas, Nevada.",cks.lv);
-  if(!cks.em.checked)return bad("To join, please tick the box that says we can email you.",cks.em);
+  if(!cks.lv.checked)return bad("Please tick the first box to say you live in Las Vegas and agree to the rules.",cks.lv);
+  if(!cks.em.checked)return bad("Please tick the box that says we can email and text you.",cks.em);
   if(!cks.sm.checked)return bad("To join, please tick the box that says we can text you.",cks.sm);
   if(!cks.ag.checked)return bad("Please tick the box to say you agree to the rules.",cks.ag);
   if(hi.value){done(v.first);return}
   go.disabled=true;go.textContent="Sending…";
-  var again=function(){go.disabled=false;go.textContent="Join the waiting list";bad("That did not go through. Please check your connection and tap the gold button again.")};
+  var again=function(){go.disabled=false;go.textContent="Join the waiting list";bad("That did not go through. Please check your connection and tap the blue button again.")};
   join(v,function(ok){if(ok){mine("1");done(v.first)}else again()})})}
 function rec(v){var r={first:v.first,last:v.last,email:v.email,phone:v.phone,ig:v.ig,street:v.street,city:v.city,state:"NV",zip:v.zip,consent:true,emailOk:true,smsOk:true,rv:"v1"};if(VID)r.vid=VID;return r}
 function join(v,cb){var r=rec(v);

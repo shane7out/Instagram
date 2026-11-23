@@ -10,26 +10,26 @@
 <link rel="icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
-:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.2);--gold:#D4A017}
+:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.2);--accent:#00a8e1}
 *{box-sizing:border-box}html{overflow-x:hidden}
 body{margin:0;background:var(--bg);color:#fff;font:400 18px/1.55 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
 .wrap{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 40px}
-.brandline{text-align:center;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:0 0 12px}
+.brandline{text-align:center;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:900;margin:0 0 12px}
 h1{font-size:31px;line-height:1.2;margin:6px 0 10px;text-align:center;font-weight:900}
-h2{font-size:24px;line-height:1.25;margin:26px 0 6px;font-weight:900;color:var(--gold)}
+h2{font-size:24px;line-height:1.25;margin:26px 0 6px;font-weight:900;color:var(--accent)}
 .sub{margin:0 0 12px;color:#fff;font-size:18px}
 .lead{text-align:center;color:#fff;margin:0 0 18px;font-size:19px}
 .key{display:block;width:34%;max-width:130px;height:auto;margin:6px auto 12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px 16px;margin:0 0 14px}
 .use{display:flex;gap:14px;align-items:flex-start;padding:18px 0;border-top:1px solid rgba(255,255,255,.16)}.use:first-child{border-top:0}
-.ui{flex:none;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(140deg,#E0A91F,#B8860B)}
+.ui{flex:none;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:#00a8e1}
 .use b{display:block;font-size:22px;line-height:1.25;margin-bottom:2px}.use span.t{display:block;font-size:18px;color:#fff;line-height:1.5}
-.plan{border-color:rgba(212,160,23,.65)}.plan .tag{display:inline-block;margin:0 0 6px;padding:4px 12px;border-radius:999px;border:1.5px solid var(--gold);color:var(--gold);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
-.go{display:block;width:100%;text-align:center;text-decoration:none;min-height:72px;border-radius:18px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#1c1405;font:900 23px/72px Lato,system-ui,sans-serif;margin:18px 0 12px}
-.btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:16px;border:2px solid var(--gold);color:var(--gold);font-weight:800;font-size:20px;margin:0 0 12px}
-.team{background:var(--panel);border:1px solid rgba(212,160,23,.55);border-radius:18px;padding:18px 16px;margin:22px 0 14px;text-align:center}.team h2{margin:0 0 8px;color:#fff;font-size:22px}.team p{margin:0 0 4px;font-size:18px}
+.plan{border-color:rgba(0,168,225,.65)}.plan .tag{display:inline-block;margin:0 0 6px;padding:4px 12px;border-radius:999px;border:1.5px solid var(--accent);color:var(--accent);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.go{display:block;width:100%;text-align:center;text-decoration:none;min-height:72px;border-radius:18px;background:#00a8e1;color:#0f171e;font:900 23px/72px Lato,system-ui,sans-serif;margin:18px 0 12px}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:16px;border:2px solid var(--accent);color:var(--accent);font-weight:800;font-size:20px;margin:0 0 12px}
+.team{background:var(--panel);border:1px solid rgba(0,168,225,.55);border-radius:18px;padding:18px 16px;margin:22px 0 14px;text-align:center}.team h2{margin:0 0 8px;color:#fff;font-size:22px}.team p{margin:0 0 4px;font-size:18px}
 .note{font-size:17px;line-height:1.5;color:#fff;margin:14px 2px 0;text-align:center}
-.demo{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.5);color:var(--gold);font-size:16px;text-align:center}
+.demo{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(0,168,225,.12);border:1px solid rgba(0,168,225,.5);color:var(--accent);font-size:16px;text-align:center}
 .go:focus-visible,.btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
 </style>
 <script src="key-platform/kg-track.js"></script>
@@ -40,19 +40,19 @@ h2{font-size:24px;line-height:1.25;margin:26px 0 6px;font-weight:900;color:var(-
 <div id="demo"></div>
 <img class="key" src="brand/key-gold.svg" alt="A gold key" width="260" height="120">
 <h1>What your Reward Key can do</h1>
-<p class="lead">Keys are rewards points. Here is what they are for, and what we are building next.</p>
+<p class="lead">Keys are rewards points. Use them to eat at restaurants, trade, get stuff and have experiences. And that is only the start. We have a lot of ideas coming.</p>
 
-<h2>Use it today</h2>
+<h2>What you can do</h2>
 <div class="card">
+ <div class="use"><span class="ui" aria-hidden="true">&#x1F37D;&#xFE0F;</span><div><b>Eat at restaurants</b><span class="t">Use keys for food and gratuity (the tip) at partner restaurants. We start in Las Vegas and want to grow to restaurants around the world.</span></div></div>
  <div class="use"><span class="ui" aria-hidden="true">&#x1F501;</span><div><b>Trade it</b><span class="t">Trade your keys for gift cards from partner businesses. Tap a card and it goes into your wallet. You can also trade with other members.</span></div></div>
  <div class="use"><span class="ui" aria-hidden="true">&#x1F6CD;&#xFE0F;</span><div><b>Get stuff</b><span class="t">Gift cards, services and offers from local businesses, all in the marketplace.</span></div></div>
- <div class="use"><span class="ui" aria-hidden="true">&#x1F37D;&#xFE0F;</span><div><b>Restaurants</b><span class="t">Food and gratuity (the tip) at partner restaurants.</span></div></div>
  <div class="use"><span class="ui" aria-hidden="true">&#x1F39F;&#xFE0F;</span><div><b>Experiences</b><span class="t">Launch nights, tastings, watch parties and celebrations.</span></div></div>
  <div class="use"><span class="ui" aria-hidden="true">&#x2B50;</span><div><b>VIP and meet and greets</b><span class="t">Reserved tables, special access, and time with the people behind the food and the city.</span></div></div>
 </div>
 
 <h2>Big things planned</h2>
-<p class="sub">We have some big plans for what keys can unlock. These are plans, not offers yet.</p>
+<p class="sub">We have a lot of ideas coming, and some big plans for what keys can do. These are plans, not offers yet.</p>
 <div class="card plan">
  <div class="use"><span class="ui" aria-hidden="true">&#x2708;&#xFE0F;</span><div><span class="tag">Planned</span><b>Travel</b><span class="t">Weekend getaways, trips and vacations arranged with partners.</span></div></div>
  <div class="use"><span class="ui" aria-hidden="true">&#x1F697;</span><div><span class="tag">Planned</span><b>Cars</b><span class="t">Car experiences and deals with partner dealers.</span></div></div>
@@ -64,7 +64,7 @@ h2{font-size:24px;line-height:1.25;margin:26px 0 6px;font-weight:900;color:var(-
 
 <div class="team">
  <h2>From the team behind Las Vegas Restaurants</h2>
- <p>Key Technologies and Las Vegas Restaurants are the same team. This is our thank-you to the Las Vegas community.</p>
+ <p>Key Technologies and Las Vegas Restaurants are the same team. It has been 10 years of Las Vegas Restaurants, and this is our way of saying thank you. Keys are just the start. We have a lot of ideas coming.</p>
 </div>
 <a class="btn" href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">Follow @lasvegas_restaurants</a>
 <p class="note">Keys have no cash value and cannot be sold or exchanged for cash. Keys are good for 60 days from the day they are issued. Offers are set by the businesses that provide them and can change or end at any time.</p>
