@@ -338,6 +338,10 @@ body.hlock{overflow:hidden}
 
 /* wallet buttons: same softly rounded corners as the history box, not a pill */
 #pres .rbtn,#pres .giftpill,#pres .btnrow .rbtn{border-radius:12px!important;background:rgba(0,168,225,.14)}
+
+/* rooms directory */
+.rmrow{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}.rmtab{min-width:84px;padding:8px 12px;border-radius:12px;border:1.5px solid rgba(0,168,225,.7);background:rgba(0,168,225,.14);color:#fff;font:800 16px Lato,system-ui,sans-serif;cursor:pointer;text-align:center}.rmtab small{display:block;font-size:13px;font-weight:700;color:rgba(255,255,255,.85)}.rmtab.on{background:#00a8e1;color:#0f171e}.rmtab.on small{color:#0f171e}
+.rmh{margin:6px 0 8px;font-size:18px}.rmseat{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:0 0 6px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:#16222f;font-size:16px}.rmseat .rmn{flex:none;width:64px;font-weight:800;color:#7fd4f3}.rmseat b{flex:1;min-width:0;overflow-wrap:anywhere}.rmseat .rmk{flex:none;font-weight:700}.rmseat.open{border-style:dashed;opacity:.7}.rmseat i{font-style:normal}
 </style>
 <link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png"></head>
 <body>
@@ -389,6 +393,12 @@ body.hlock{overflow:hidden}
   <h3 style="margin:18px 0 6px">Who looked at the pages</h3>
   <p class="fine" style="margin-top:0">Each person who opens the giveaway page or the &ldquo;what you can get&rdquo; page, and how long they stayed. If they sign up, you see their name.</p>
   <div id="kvlist"></div>
+ </div>
+ <div class="box" id="rmbox">
+  <h2>Rooms</h2>
+  <p class="fine" style="margin-top:0">20 seats in every room, in the order people got keys. Tap a room to see who is in it. Restaurants and gift wallets are not in rooms.</p>
+  <div id="rmtabs"></div>
+  <div id="rmlist"></div>
  </div>
  <div class="box" id="wlbox">
   <h2>Waiting list</h2>
@@ -462,6 +472,18 @@ body.hlock{overflow:hidden}
  function fresh(){var t=DBM?now():BASE_AT;return {v:1,wallets:[{id:'treasury',name:'Key Rewards Treasury',type:'Shane\'s wallet',t:t}],entries:[{id:1,t:t,from:null,to:'treasury',amt:SUPPLY,note:'Opening balance'}],next:2,nextW:1}}
  function load(){try{var j=localStorage.getItem(KEY);if(j){var o=JSON.parse(j);if(o&&o.v===1&&o.wallets&&o.entries)return o}}catch(e){canSave=false}return fresh()}
  var ROOMSIZE=20;function roomOf(r){return Math.max(1,Math.ceil((r||1)/ROOMSIZE))}function seatOf(r){return ((Math.max(1,r||1)-1)%ROOMSIZE)+1}
+ /* A seat is the order people got keys. Restaurants, gift wallets, closed wallets and the Treasury are not in rooms. */
+ function isMember(w){return !!w&&w.id!=='treasury'&&!isGiftW(w)&&w.type!=='Restaurant'&&!isClosed(w)}
+ function members(){return S.wallets.filter(isMember).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t})}
+ function seatNo(w){var m=members();for(var i=0;i<m.length;i++)if(m[i].id===w.id)return i+1;return 0}
+ var curRoom=1;
+ function roomsRender(){var tb=$('rmtabs'),ls=$('rmlist');if(!tb||!ls)return;tb.innerHTML='';ls.innerHTML='';
+  var m=members(),lastRoom=Math.max(1,Math.ceil(m.length/ROOMSIZE)),shown=lastRoom+1;if(curRoom>shown)curRoom=1;
+  var row=el('div','rmrow');for(var r=1;r<=shown;r++)(function(r){var n=Math.min(ROOMSIZE,Math.max(0,m.length-(r-1)*ROOMSIZE)),b=el('button','rmtab'+(r===curRoom?' on':''),'Room '+r);b.type='button';b.setAttribute('aria-pressed',r===curRoom?'true':'false');b.appendChild(el('small',null,n+' of '+ROOMSIZE));b.addEventListener('click',function(){curRoom=r;roomsRender()});row.appendChild(b)})(r);tb.appendChild(row);
+  ls.appendChild(el('h3','rmh','Room '+curRoom));
+  for(var k=1;k<=ROOMSIZE;k++){var idx=(curRoom-1)*ROOMSIZE+k-1,w=m[idx],li=el('div','rmseat'+(w?'':' open'));li.appendChild(el('span','rmn','Seat '+k));
+   if(w){li.appendChild(el('b',null,w.name));li.appendChild(el('span','rmk',fmt(shown0(w.id))+' keys'))}else li.appendChild(el('i',null,'Open'));ls.appendChild(li)}}
+ function shown0(id){return shown(id)}
  function nextRank(){var m=0;S.wallets.forEach(function(w){if(w.id!=='treasury'&&(w.rank||0)>m)m=w.rank});return m+1}
  function openW(name,type,t0){var id='w'+(S.nextW++),t=t0||now();S.wallets.push({id:id,name:name,type:type,t:t,rank:nextRank()});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}
  /* Instructions from Shane, applied once per browser when the page opens (so every browser shows the same starting position). */
@@ -510,8 +532,8 @@ body.hlock{overflow:hidden}
    else{/* first sign-in: the permanent ledger starts clean from the saved instructions (10,000,000 and Thin Blue 702 at 5,000); practice records in this browser are NOT carried over */S=fresh();S.seeded2=false;S.logos=logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Key Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';
-   sel='all';paint();gvRender();dnRender();wlRender();twRender();idRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
- function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender();wlRender();twRender();idRender()}
+   sel='all';paint();gvRender();dnRender();wlRender();twRender();idRender();roomsRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
+ function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender();wlRender();twRender();idRender();roomsRender()}
  var idleT=null;function idle(){var go=function(){clearTimeout(idleT);idleT=setTimeout(function(){RR.signOut();location.reload()},15*60*1000)};['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()}
  function start(msg){RR.gate({title:'Key Rewards Treasury',sub:msg||'Type your Treasury PIN.',email:RR.TREASURER.email,salt:RR.TREASURER.salt,onOK:enterDb,onSkip:{label:'Use the practice version (this browser only)',fn:enterLocal}})}
  function $(i){return document.getElementById(i)}
@@ -569,7 +591,7 @@ body.hlock{overflow:hidden}
  /* A 16-digit card number for every wallet and gift card: it starts with 9 (no bank uses 9, so it can never be mistaken for a Visa, Mastercard or other bank card) and ends with 5683 (L-O-V-E on a phone keypad: L=5, O=6, V=8, E=3). The 10 digits after the 9 come from the wallet's own number (w12 -> 12) through a one-to-one scramble, so it looks random, never changes, and TWO WALLETS CAN NEVER GET THE SAME NUMBER. One more digit (just before 5683) is chosen on purpose so the number FAILS the bank-card (Luhn) check and can never be a real card number. */
  function cardNo(w){if(w.id==='treasury')return '7777 7777 7777 7777'; /* the Treasury card is all sevens; it deliberately fails the bank-card checksum, like every other number here */ var m=/\d+/.exec(String(w.id)),idx=BigInt(m?m[0]:'0'),M=10000000000n,n=(idx*6123456789n+2718281828n)%M,dg=('9'+String(n).padStart(10,'0')+'0'+'5683').split('').map(Number),sum=0;for(var i=dg.length-1,k=0;i>=0;i--,k++){if(i===11)continue;var v=dg[i];if(k%2===1){v*=2;if(v>9)v-=9}sum+=v}var x=0;for(;x<10;x++){var f=x*2>9?x*2-9:x*2;if((sum+f)%10===0)break}dg[11]=(x+1)%10;return dg.join('').replace(/(\d{4})(?=\d)/g,'$1 ')}
  function numFor(w){return cardNo(w)}
- function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2',(w.id!=='treasury'&&w.rank)?'Room '+roomOf(w.rank)+' \u00b7 Seat '+seatOf(w.rank)+' of '+ROOMSIZE:'Rewards points'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}var nmT=w.id==='treasury'?'Treasury':w.name,nmE=d('nm',nmT);var cr=d('crow');var xi=expInfo(w.id);cr.appendChild(rrLock());g.appendChild(cr);g.appendChild(nmE);g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.innerHTML='Rewards <span class="pt">points </span>balance';if(!btn&&xi&&xi.tabs.length>1){sm2.textContent=xi.tabs.length+' tabs \u203a';sm2.className='tabsl';sm2.setAttribute('role','button');sm2.setAttribute('tabindex','0');sm2.setAttribute('aria-label',xi.tabs.length+' tabs, each with its own countdown. Tap to see them.');var otb=function(ev){ev.stopPropagation();ev.preventDefault();openTabs(w.id)};sm2.addEventListener('click',otb);sm2.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' ')otb(ev)})}var b2=document.createElement('b');b2.textContent=fmt(shown(w.id));var bl=d('bl');bl.appendChild(sm2);bl.appendChild(b2);bb.appendChild(bl);var rt=d('rt');if(xi)rt.appendChild(cdEl(xi));bb.appendChild(rt);g.appendChild(bb);g.appendChild(d('fineprint','No cash value. Not a debit or credit card.'));if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
+ function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2',seatNo(w)?'Room '+roomOf(seatNo(w))+' \u00b7 Seat '+seatOf(seatNo(w))+' of '+ROOMSIZE:'Rewards points'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}var nmT=w.id==='treasury'?'Treasury':w.name,nmE=d('nm',nmT);var cr=d('crow');var xi=expInfo(w.id);cr.appendChild(rrLock());g.appendChild(cr);g.appendChild(nmE);g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.innerHTML='Rewards <span class="pt">points </span>balance';if(!btn&&xi&&xi.tabs.length>1){sm2.textContent=xi.tabs.length+' tabs \u203a';sm2.className='tabsl';sm2.setAttribute('role','button');sm2.setAttribute('tabindex','0');sm2.setAttribute('aria-label',xi.tabs.length+' tabs, each with its own countdown. Tap to see them.');var otb=function(ev){ev.stopPropagation();ev.preventDefault();openTabs(w.id)};sm2.addEventListener('click',otb);sm2.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' ')otb(ev)})}var b2=document.createElement('b');b2.textContent=fmt(shown(w.id));var bl=d('bl');bl.appendChild(sm2);bl.appendChild(b2);bb.appendChild(bl);var rt=d('rt');if(xi)rt.appendChild(cdEl(xi));bb.appendChild(rt);g.appendChild(bb);g.appendChild(d('fineprint','No cash value. Not a debit or credit card.'));if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
  /* Back of the card: tap the card to flip it. Where it can be used and how to use it. */
  var RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
  function countUp(b,to){var n=b&&b.firstChild;if(RM||!n||n.nodeType!==3)return;var t0=performance.now(),D=850;(function f(t){var k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);n.nodeValue=fmt(Math.round(to*e));if(k<1)requestAnimationFrame(f)})(t0)}
@@ -626,7 +648,7 @@ body.hlock{overflow:hidden}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
   var tre=bal('treasury'),tot=0,wal=0;S.wallets.forEach(function(w){var b=bal(w.id);tot+=b;if(w.id!=='treasury')wal+=b});
-  whoPaint();twRender();$('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);var ret=0;S.entries.forEach(function(e){if(isExp(e))ret+=e.amt});var ex14=expiring(14);$('expnote').textContent='Credit is good for 60 days from the day it is issued. A gift card must be given within 14 days. What is not used goes back to the Treasury.';
+  whoPaint();twRender();roomsRender();$('sTotal').textContent=fmt(SUPPLY);$('sTre').textContent=fmt(tre);$('sWal').textContent=fmt(wal);var ret=0;S.entries.forEach(function(e){if(isExp(e))ret+=e.amt});var ex14=expiring(14);$('expnote').textContent='Credit is good for 60 days from the day it is issued. A gift card must be given within 14 days. What is not used goes back to the Treasury.';
   var hh=held(),ck=$('check');if(tot+hh===SUPPLY){ck.className='check';ck.textContent='Everything adds up: the Treasury plus all wallets'+(hh?' plus '+fmt(hh)+' waiting for a restaurant to confirm':'')+' equals '+fmt(SUPPLY)+' Key Rewards.'}else{ck.className='check bad';ck.textContent='Warning: the wallets add up to '+fmt(tot)+', not '+fmt(SUPPLY-hh)+'. Download a backup and check the list below.'}
   var box=$('wallets');box.innerHTML='';
   sw().forEach(function(w){var b=gcard(w,true,true);b.setAttribute('aria-pressed',String(sel===w.id));b.setAttribute('aria-label',w.name+', balance '+fmt(shown(w.id)));b.addEventListener('click',function(){sel=(sel===w.id?'all':w.id);paint()});box.appendChild(b)});
