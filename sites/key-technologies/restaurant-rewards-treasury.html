@@ -277,6 +277,11 @@ body.hlock{overflow:hidden}
 .gc .bal{border-top:1px solid rgba(110,70,0,.55)!important;box-shadow:0 -1px 0 rgba(255,244,190,.7)!important}
 .gc .crow,.gc .rrlock{display:none!important}
 .gc:not(.back) .brand::before{content:"";display:inline-block;width:2.1em;height:2.1em;margin-right:.55em;vertical-align:-.62em;background:url(brand/key-badge.svg) center/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(60,35,0,.45))}
+/* Shane 2026-11-23: KeyTechnologies.si at the top left, the round key logo at the top right and bigger, the key sits inside the circle with room around it, name and number closer together */
+.gc:not(.back) .brand::before{display:none!important}
+.gc:not(.back)::after,#pres .gc:not(.back)::after,.gc.sm:not(.back)::after,#pres .gc.sm:not(.back)::after{content:""!important;display:block!important;position:absolute!important;right:4.4cqw!important;top:3.6cqw!important;left:auto!important;bottom:auto!important;width:18cqw!important;height:18cqw!important;border:0!important;border-radius:50%!important;opacity:1!important;transform:none!important;animation:none!important;background:url(brand/key-badge.svg) center/contain no-repeat!important;box-shadow:0 2px 6px rgba(60,35,0,.5);filter:none!important;z-index:2;pointer-events:none}
+.gc .gtitle,.gc .glab{padding-right:20cqw}
+.gc .nm{line-height:1.05!important}.gc .nm+.num{margin-top:0!important;padding-top:0!important;line-height:1.1!important}.gc:not(.gift):not(.back) .num{margin-top:0!important}
 .gc.back .bkw::after{background:linear-gradient(rgba(214,165,50,0),rgba(214,165,50,.96))!important}
 .gc.back .strip{background:linear-gradient(#1b1b1b,#0b0b0b)!important}.gc.back .strip,.gc.back .strip *{color:#e8c766!important;text-shadow:none!important}
 .gc .brand2{display:none!important}
