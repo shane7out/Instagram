@@ -27,9 +27,9 @@ function init(){
   var cp=/(^|\s)c(\s|$)/.test(h.className),rooms=cp?[1,2,3,4]:[1,2,3,4,5],widths=cp?[100,88,76,64]:[100,86,72,58,46],dots="";for(var d=0;d<20;d++)dots+="<i></i>";
   for(var r=0;r<rooms.length;r++){
    var n=rooms[r],cls="dr"+(r?" f"+(r+1):"")+(n===you?" you":"");
-   html+='<div class="'+cls+'" style="width:'+widths[r]+'%"><b>Room '+n+'</b><small>'+(r===0?"20 people":"20 people")+'</small><div class="pp">'+dots+'</div>'+(n===you?'<span class="yh">YOU ARE HERE</span>':'')+'</div>';
+   html+='<div class="'+cls+'" style="width:'+widths[r]+'%"><b>Room '+n+'</b><small>'+"20 people"+'</small><div class="pp">'+dots+'</div>'+(n===you?'<span class="yh">YOU ARE HERE</span>':'')+'</div>';
   }
-  html+='<div class="inf" aria-hidden="true">&infin;</div><div class="iw">20 people in every room. It never ends.'+(cp?'':'')+'</div>';
+  html+='<div class="inf" aria-hidden="true">&infin;</div><div class="iw">20 people in every room. It never ends.'+'</div>';
   if(you>rooms.length)html+='<div class="dr you" style="width:60%;margin-top:12px"><b>Room '+you+'</b><small>20 people</small><span class="yh">YOU ARE HERE</span></div>';
   h.innerHTML=html;
  }

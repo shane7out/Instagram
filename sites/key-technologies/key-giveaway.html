@@ -7,7 +7,7 @@
 <title>Las Vegas giveaway: claim your keys | Key Technologies.si</title>
 <meta name="description" content="If you live in Las Vegas, keytechnologies.si is giving away keys. The first person to claim 25 keys gets them.">
 <meta name="theme-color" content="#0f171e">
-<link rel="icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
 :root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.2);--accent:#00a8e1}
@@ -54,6 +54,8 @@ var q=new URLSearchParams(location.search),G=(q.get("g")||"").toLowerCase(),DEMO
 var app=document.getElementById("app"),RULES=["This promotion is for people who live in Las Vegas, Nevada. You must enter your real Las Vegas address.", "The first eligible person to finish this form wins <b>25 keys</b>. Keys are rewards points. Everyone after that can join the waiting list.", "No purchase is needed.", "Keys have no cash value. They cannot be sold or exchanged for cash. They are good for 60 days from the day they are issued.", "By signing up you agree that Key Technologies may send you <b>emails</b> and <b>text messages</b> about this promotion, your keys and what is happening next. Message and data rates may apply. Message frequency varies. To stop texts, reply STOP. To stop emails, use the unsubscribe link in any email.", "Key Technologies can change or end this promotion at any time, and can remove keys or a member who breaks these rules or gives false information.", "We use your name, Instagram handle, phone, email and address to run this promotion, set up your wallet and contact you.", "This promotion is not sponsored, endorsed or run by Instagram."];
 var VID=window.KGT?KGT.vid():"";
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+var SV={bag:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',ticket:'<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/>',food:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',star:'<path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',check:'<circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/>',note:'<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'};
+function ico(c,n){var d=document.createElement("div");d.className=c;d.setAttribute("aria-hidden","true");if(n==="key"){d.innerHTML='<img src="brand/key-gold.svg" alt="" width="104" style="max-width:40%;height:auto;margin:6px auto 2px;display:block">'}else{d.innerHTML='<svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#00a8e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+(SV[n]||SV.check)+'</svg>'}return d}
 function fmtKeys(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",")}
 function mine(v){try{if(v===undefined)return localStorage.getItem("kgMine:"+G);localStorage.setItem("kgMine:"+G,v)}catch(e){return null}}
 function lget(){try{return JSON.parse(localStorage.getItem("kgLocal")||"{}")||{}}catch(e){return {}}}
@@ -68,18 +70,18 @@ function whatHref(){return "key-what-you-get.html?g="+encodeURIComponent(G)+(DEM
 function whatBtn(){var a=el("a","what","What can you get with the keys?");a.href=whatHref();return a}
 function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var box=el("div","cf"),cols=["#00a8e1","#33bce8","#0086b3","#ffffff","#00a8e1"];for(var i=0;i<48;i++){var p=el("i");p.style.left=Math.random()*100+"%";p.style.background=cols[i%5];p.style.animationDelay=(Math.random()*.5)+"s";box.appendChild(p)}document.body.appendChild(box);setTimeout(function(){box.remove()},3200)}
 function uses(){var w=el("div","uses");w.appendChild(el("h2",null,"What you can use it for"));
- [["🛍️","The marketplace","Trade your keys for gift cards and more."],["🎟️","Events","Launch nights, tastings, watch parties and celebrations."],["🍽️","Restaurants","Food and gratuity at partner restaurants."],["⭐","VIP invites","Reserved tables and special access."],["🤝","Meet and greets","Time with the people behind the food and the city."]].forEach(function(u){var r=el("div","use"),i=el("span","ui",u[0]),t=el("div");i.setAttribute("aria-hidden","true");t.appendChild(el("b",null,u[1]));t.appendChild(el("span",null,u[2]));r.appendChild(i);r.appendChild(t);w.appendChild(r)});
+ [["bag","The marketplace","Trade your keys for gift cards and more."],["ticket","Events","Launch nights, tastings, watch parties and celebrations."],["food","Restaurants","Food and gratuity at partner restaurants."],["star","VIP invites","Reserved tables and special access."],["users","Meet and greets","Time with the people behind the food and the city."]].forEach(function(u){var r=el("div","use"),i=el("span","ui");i.innerHTML='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#00a8e1" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+SV[u[0]]+"</svg>",t=el("div");i.setAttribute("aria-hidden","true");t.appendChild(el("b",null,u[1]));t.appendChild(el("span",null,u[2]));r.appendChild(i);r.appendChild(t);w.appendChild(r)});
  var a=el("a","btn","See everything it can do");a.href=whatHref();w.appendChild(a);return w}
-function stateScreen(emoji,title,text){head();var s=el("div","state box");if(emoji)s.appendChild(el("div","em",emoji));s.appendChild(el("h1",null,title));s.appendChild(el("p","lead",text));app.appendChild(s)}
-function won(info,first){head();app.appendChild(hero(info.keys));var s=el("div","state box");s.appendChild(el("div","em","✅"));s.appendChild(el("h1",null,"It’s yours!"));
+function stateScreen(emoji,title,text){head();var s=el("div","state box");if(emoji)s.appendChild(ico("em",emoji));s.appendChild(el("h1",null,title));s.appendChild(el("p","lead",text));app.appendChild(s)}
+function won(info,first){head();app.appendChild(hero(info.keys));var s=el("div","state box");s.appendChild(ico("em","check"));s.appendChild(el("h1",null,"It’s yours!"));
  s.appendChild(el("p","lead",(first?first+", ":"")+fmtKeys(info.keys)+" keys are on the way to your wallet. We will email and text you when it is ready."));
- var a=el("a","btn","Open the marketplace");a.href="key-rewards-marketplace.html";s.appendChild(a);app.appendChild(s);app.appendChild(uses());confetti()}
-function listed(first){head();var s=el("div","state box");s.appendChild(el("div","em","📝"));s.appendChild(el("h1",null,"You are on the waiting list"));
+ var a=el("a","btn","Open the marketplace");a.href="key-rewards-marketplace.html";s.appendChild(a);app.appendChild(s);app.appendChild(uses())}
+function listed(first){head();var s=el("div","state box");s.appendChild(ico("em","note"));s.appendChild(el("h1",null,"You are on the waiting list"));
  s.appendChild(el("p","lead",(first?first+", thank you. ":"Thank you. ")+"Someone else claimed these keys first. We saved your spot and we will email and text you when more keys are given away."));
  app.appendChild(s);app.appendChild(whatBtn())}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
 function form(info,waiting){head();
- if(waiting){var s=el("div","state box");s.appendChild(el("div","em","🙌"));s.appendChild(el("h1",null,"Someone was just a little faster"));s.appendChild(el("p","lead","The "+fmtKeys(info.keys)+" keys have been claimed. Fill in the form to get on the waiting list. We will email and text you about the next giveaway."));app.appendChild(s)}
+ if(waiting){var s=el("div","state box");s.appendChild(ico("em","users"));s.appendChild(el("h1",null,"Someone was just a little faster"));s.appendChild(el("p","lead","The "+fmtKeys(info.keys)+" keys have been claimed. Fill in the form to get on the waiting list. We will email and text you about the next giveaway."));app.appendChild(s)}
  else{app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"If you live in Las Vegas, keytechnologies.si is giving away keys"));app.appendChild(hero(info.keys));
   app.appendChild(el("p","lead","The first person to claim it gets it. Everyone after that can join the waiting list."));app.appendChild(whatBtn())}
  var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,waiting?"Join the waiting list":"Claim your "+fmtKeys(info.keys)+" keys"));
@@ -125,7 +127,7 @@ function form(info,waiting){head();
   if(waiting){joinList(v,function(ok){if(ok){mine("w");listed(v.first)}else again()});return}
   claim(v,function(res){
    if(res==="ok"){mine("1");won(info,v.first)}
-   else if(res==="taken"){joinList(v,function(ok){if(ok){mine("w");stateScreen("🙌","Someone was just a little faster","The "+fmtKeys(info.keys)+" keys were claimed a moment before you. Good news: we added you to the waiting list. We will email and text you about the next giveaway.")}else again()})}
+   else if(res==="taken"){joinList(v,function(ok){if(ok){mine("w");stateScreen("users","Someone was just a little faster","The "+fmtKeys(info.keys)+" keys were claimed a moment before you. Good news: we added you to the waiting list. We will email and text you about the next giveaway.")}else again()})}
    else again()})})}
 function rid(p){var a=new Uint8Array(12),s=p;crypto.getRandomValues(a);for(var i=0;i<a.length;i++)s+=(a[i]%36).toString(36);return s}
 function rec(v){var r={first:v.first,last:v.last,email:v.email,phone:v.phone,ig:v.ig,street:v.street,city:v.city,state:"NV",zip:v.zip,consent:true,emailOk:true,smsOk:true,rv:"v1"};if(VID)r.vid=VID;return r}
@@ -139,11 +141,11 @@ function joinList(v,done){var r=rec(v);
  if(DEMO){var o=lget(),g=o[G];if(!g)return done(false);g.waitlist=g.waitlist||{};r.at=Date.now();g.waitlist[rid("w")]=r;lset(o);return done(true)}
  r.at={".sv":"timestamp"};
  fetch(DB+encodeURIComponent(G)+"/waitlist/"+rid("w")+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)}).then(function(x){done(x.ok)}).catch(function(){done(false)})}
-if(!/^[a-z0-9]{16,40}$/.test(G)){stateScreen("🔑","This link is not active","Check the link you were sent, or ask the person who gave it to you.")}
+if(!/^[a-z0-9]{16,40}$/.test(G)){stateScreen("key","This link is not active","Check the link you were sent, or ask the person who gave it to you.")}
 else{
  if(window.KGT)KGT.start("claim",G,DEMO);
  load().then(function(info){
- if(!info)return stateScreen("🔑","This link is not active","Check the link you were sent, or ask the person who gave it to you.");
+ if(!info)return stateScreen("key","This link is not active","Check the link you were sent, or ask the person who gave it to you.");
  if(mine()==="1")return won(info,"");
  if(mine()==="w")return listed("");
  form(info,info.claimed)})}

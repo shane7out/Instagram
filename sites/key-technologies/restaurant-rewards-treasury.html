@@ -242,9 +242,9 @@ body.hlock{overflow:hidden}
 #pres .gc.sm .fineprint{left:4.6cqw;right:4.6cqw;bottom:2cqw;font-size:2.35cqw}
 #pres .gc.sm .bal{padding-bottom:4.8cqw!important}
 
-/* Shane 2026-11-21: calmer card. Name above the number, no bright streak, deeper even gold, crisp text, real-card corners. */
+/* calmer card. Name above the number, no bright streak, deeper even gold, crisp text, real-card corners. */
 .gc{border-radius:14px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(140deg,#f6d467 0%,#e6b83a 55%,#d7a21e 100%);box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,232,160,.3),inset 0 -1px 3px rgba(70,40,0,.3)}
-.gc::before,#pres .gc::before{content:"";display:block!important;animation:none!important;position:absolute;inset:0;z-index:-1;pointer-events:none;background:url(brand/key-icon.svg) 50% 38%/56% auto no-repeat!important;background-size:56% auto!important;background-position:50% 38%!important;opacity:.08}
+.gc::before,#pres .gc::before{content:"";display:block!important;animation:none!important;position:absolute;inset:0;z-index:-1;pointer-events:none;background:url(brand/key-gold.svg) 50% 38%/56% auto no-repeat!important;background-size:56% auto!important;background-position:50% 38%!important;opacity:.08}
 .gc.back::before,#pres .gc.back::before{display:none!important}.gc{isolation:isolate}
 #pres .gc.sm .rrlock{right:14px;top:10px}
 /* everything lines up: the amount and the expiry line end exactly where the key and the divider end */
@@ -254,7 +254,7 @@ body.hlock{overflow:hidden}
 .gc.gift .brand2{display:none}.gc.gift .gtitle{margin-top:3px;line-height:1.05}.gc.gift .glab{padding-top:2px}.gc.gift .bal{margin-top:5px}.gc.gift .bal b{font-size:min(30px,8.4cqw)}
 .gc .bal small{max-width:54%;line-height:1.3}
 @container (max-width:250px){#pres .gc .bal small{font-size:10px;letter-spacing:.1em;max-width:none;white-space:nowrap}#pres .gc .bal small .pt{display:none}#pres .gc .cd{white-space:nowrap;font-size:9.5px}}
-/* Shane 2026-11-21: the Wallet header, the footer credit and the "what can I use" link now share the card's exact width and centre line, so every left and right edge on the wallet screen lines up */
+/* the Wallet header, the footer credit and the "what can I use" link now share the card's exact width and centre line, so every left and right edge on the wallet screen lines up */
 #pres .pc>.phead,#pres .pc>.kt,#pres .pc>.uses{width:min(100%,var(--cw))!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}
 #pres .phead h2,#rdm .rhead h2{font-size:18px;letter-spacing:.01em;line-height:1.2}
 #rdm .hide,#rdm .more.hide,#pres .more.hide{display:none!important}
@@ -267,7 +267,7 @@ body.hlock{overflow:hidden}
 #rdm .vconf p{margin:6px 0 10px;color:rgba(255,255,255,.9)}
 #rdm .vbox .send:disabled{opacity:.6}
 .gc.voucher .num{font-weight:800;letter-spacing:.08em;font-size:min(14px,3.9cqw)!important}
-/* Shane 2026-11-21: FANCY GOLD. Rich brushed gold with a foil highlight, a fine engraved line pattern, a double engraved border, embossed type, and the key picture next to the name (not in the corner). No key silhouette. */
+/* FANCY GOLD. Rich brushed gold with a foil highlight, a fine engraved line pattern, a double engraved border, embossed type, and the key picture next to the name (not in the corner). No key silhouette. */
 .gc,#pres .gc,.wallets .gc{background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,250,210,.50) 40%,rgba(255,255,255,0) 52%),repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(135deg,#a6720f 0%,#e8bd45 16%,#fbe48e 33%,#dba623 52%,#f7d96f 70%,#bd8a12 86%,#e6b93e 100%)!important;box-shadow:0 14px 28px rgba(0,0,0,.55),inset 0 0 0 1px rgba(110,70,0,.55),inset 0 0 0 4px rgba(255,238,170,.45),inset 0 0 0 5px rgba(110,70,0,.30)!important;border:0!important}
 .gc:not(.back)::before,#pres .gc:not(.back)::before{display:block!important;content:""!important;position:absolute!important;inset:0!important;background:repeating-radial-gradient(circle at 92% 8%,rgba(110,70,0,.11) 0 1px,rgba(110,70,0,0) 1px 6px)!important;filter:none!important;opacity:1!important;z-index:-1!important;animation:none!important;mix-blend-mode:multiply}
 .gc.back::before,#pres .gc.back::before{display:none!important}
@@ -277,7 +277,7 @@ body.hlock{overflow:hidden}
 .gc .bal{border-top:1px solid rgba(110,70,0,.55)!important;box-shadow:0 -1px 0 rgba(255,244,190,.7)!important}
 .gc .crow,.gc .rrlock{display:none!important}
 .gc:not(.back) .brand::before{content:"";display:inline-block;width:2.1em;height:2.1em;margin-right:.55em;vertical-align:-.62em;background:url(brand/key-badge.svg) center/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(60,35,0,.45))}
-/* Shane 2026-11-23: KeyTechnologies.si at the top left, the round key logo at the top right and bigger, the key sits inside the circle with room around it, name and number closer together */
+/* KeyTechnologies.si at the top left, the round key logo at the top right and bigger, the key sits inside the circle with room around it, name and number closer together */
 .gc:not(.back) .brand::before{display:none!important}
 .gc:not(.back)::after,#pres .gc:not(.back)::after,.gc.sm:not(.back)::after,#pres .gc.sm:not(.back)::after{content:""!important;display:block!important;position:absolute!important;right:4.4cqw!important;top:3.6cqw!important;left:auto!important;bottom:auto!important;width:18cqw!important;height:18cqw!important;border:0!important;border-radius:50%!important;opacity:1!important;transform:none!important;animation:none!important;background:url(brand/key-badge.svg) center/contain no-repeat!important;box-shadow:0 2px 6px rgba(60,35,0,.5);filter:none!important;z-index:2;pointer-events:none}
 .gc .gtitle,.gc .glab{padding-right:20cqw}
@@ -330,7 +330,7 @@ body.hlock{overflow:hidden}
 .gc.gift .brand2{display:none!important}
 .gc .bal .rt{white-space:nowrap}.gc .bal .rt .exp,.gc .bal .rt .cd{margin:0!important;white-space:nowrap!important;font-size:min(12px,3.7cqw)!important;text-align:right}
 </style>
-</head>
+<link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png"></head>
 <body>
 <div class="top" id="modeNote"><b>Owner tool, practice version.</b> Key Rewards have no cash value. This page keeps its records in <b>this browser only</b>, so tap <b>Download backup</b> often.</div>
 <div id="dbstat" class="hide" role="status"></div>
@@ -516,7 +516,7 @@ body.hlock{overflow:hidden}
  function stTxt(e){return e.status==='pending'?'Waiting for confirmation':(e.status==='declined'?'Declined':'')}
  function bal(id){var b=0;S.entries.forEach(function(e){if(e.to===id&&credited(e))b+=e.amt;if(e.from===id&&debited(e))b-=e.amt});return b}
  var DAY=86400000,LC={k:'',v:null};
- /* Shane (2026-11-21): every credit is good for 60 days from the day it is issued (the card counts down from 59). A gift card (a credit to give) is good for 14 days after it is issued (Shane, 2026-11-23: was 72 hours); when it is given, the person who gets it receives normal credit (60 days from the day it is given). What is left after that expires and goes back to the Treasury. */
+ /* every credit is good for 60 days from the day it is issued (the card counts down from 59). A gift card (a credit to give) is good for 14 days after it is issued (Shane, 2026-11-23: was 72 hours); when it is given, the person who gets it receives normal credit (60 days from the day it is given). What is left after that expires and goes back to the Treasury. */
  var FOREVER=8.64e15; /* only used to mean 'no date' */
  function expFor(n,t,gift){if(gift)return t+14*DAY;return t+60*DAY}
  function expAt(e){var w=wById(e.to);return expFor(w?String(w.name):'',e.t,!!w&&isGiftW(w))}
@@ -558,7 +558,7 @@ body.hlock{overflow:hidden}
  function sw(){return S.wallets.filter(function(w){return !isGiftW(w)&&!isClosed(w)}).sort(function(a,b){return (a.id==='treasury'?0:(a.rank||999))-(b.id==='treasury'?0:(b.rank||999))})}
  function wname(id){for(var i=0;i<S.wallets.length;i++)if(S.wallets[i].id===id)return S.wallets[i].name;return 'Outside'}
  /* A 16-digit card number for every wallet and gift card: it starts with 9 (no bank uses 9, so it can never be mistaken for a Visa, Mastercard or other bank card) and ends with 5683 (L-O-V-E on a phone keypad: L=5, O=6, V=8, E=3). The 10 digits after the 9 come from the wallet's own number (w12 -> 12) through a one-to-one scramble, so it looks random, never changes, and TWO WALLETS CAN NEVER GET THE SAME NUMBER. One more digit (just before 5683) is chosen on purpose so the number FAILS the bank-card (Luhn) check and can never be a real card number. */
- function cardNo(w){if(w.id==='treasury')return '7777 7777 7777 7777'; /* Shane 2026-11-21: the Treasury card is all sevens; it deliberately fails the bank-card checksum, like every other number here */ var m=/\d+/.exec(String(w.id)),idx=BigInt(m?m[0]:'0'),M=10000000000n,n=(idx*6123456789n+2718281828n)%M,dg=('9'+String(n).padStart(10,'0')+'0'+'5683').split('').map(Number),sum=0;for(var i=dg.length-1,k=0;i>=0;i--,k++){if(i===11)continue;var v=dg[i];if(k%2===1){v*=2;if(v>9)v-=9}sum+=v}var x=0;for(;x<10;x++){var f=x*2>9?x*2-9:x*2;if((sum+f)%10===0)break}dg[11]=(x+1)%10;return dg.join('').replace(/(\d{4})(?=\d)/g,'$1 ')}
+ function cardNo(w){if(w.id==='treasury')return '7777 7777 7777 7777'; /* the Treasury card is all sevens; it deliberately fails the bank-card checksum, like every other number here */ var m=/\d+/.exec(String(w.id)),idx=BigInt(m?m[0]:'0'),M=10000000000n,n=(idx*6123456789n+2718281828n)%M,dg=('9'+String(n).padStart(10,'0')+'0'+'5683').split('').map(Number),sum=0;for(var i=dg.length-1,k=0;i>=0;i--,k++){if(i===11)continue;var v=dg[i];if(k%2===1){v*=2;if(v>9)v-=9}sum+=v}var x=0;for(;x<10;x++){var f=x*2>9?x*2-9:x*2;if((sum+f)%10===0)break}dg[11]=(x+1)%10;return dg.join('').replace(/(\d{4})(?=\d)/g,'$1 ')}
  function numFor(w){return cardNo(w)}
  function gcard(w,sm,btn){var g=document.createElement('div');g.className='gc'+(sm?' sm':'');var d=function(c,t){var e=document.createElement('div');e.className=c;if(t!=null)e.textContent=t;return e};g.appendChild(d('brand','KeyTechnologies.si'));g.appendChild(d('brand2',(w.id!=='treasury'&&w.rank)?'Room '+roomOf(w.rank):'Rewards points'));var L=(S.logos&&S.logos[w.id])||[];if(L.length){var lg=d('lgs');L.forEach(function(u){var im=document.createElement('img');im.src=u;im.alt='';lg.appendChild(im)});g.appendChild(lg)}var nmT=w.id==='treasury'?'Treasury':w.name,nmE=d('nm',nmT);var cr=d('crow');var xi=expInfo(w.id);cr.appendChild(rrLock());g.appendChild(cr);g.appendChild(nmE);g.appendChild(d('num',numFor(w)));var bb=d('bal');var sm2=document.createElement('small');sm2.innerHTML='Rewards <span class="pt">points </span>balance';if(!btn&&xi&&xi.tabs.length>1){sm2.textContent=xi.tabs.length+' tabs \u203a';sm2.className='tabsl';sm2.setAttribute('role','button');sm2.setAttribute('tabindex','0');sm2.setAttribute('aria-label',xi.tabs.length+' tabs, each with its own countdown. Tap to see them.');var otb=function(ev){ev.stopPropagation();ev.preventDefault();openTabs(w.id)};sm2.addEventListener('click',otb);sm2.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' ')otb(ev)})}var b2=document.createElement('b');b2.textContent=fmt(shown(w.id));var bl=d('bl');bl.appendChild(sm2);bl.appendChild(b2);bb.appendChild(bl);var rt=d('rt');if(xi)rt.appendChild(cdEl(xi));bb.appendChild(rt);g.appendChild(bb);g.appendChild(d('fineprint','No cash value. Not a debit or credit card.'));if(btn){var w2=document.createElement('button');w2.type='button';w2.className='gcb';w2.appendChild(g);return w2}return g}
  /* Back of the card: tap the card to flip it. Where it can be used and how to use it. */
@@ -612,7 +612,7 @@ body.hlock{overflow:hidden}
   if(open){c.setAttribute('role','button');c.setAttribute('tabindex','0');c.setAttribute('aria-label','Credit to give, '+fmt(amt)+'. Tap to give it to one person.');c.addEventListener('click',open);c.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}})}
   return c}
  function giftBlock(g,backId){if(giftOut(g)||avail(g.id)<=0)return null;var w=document.createElement('div');w.className='gblock';w.appendChild(giftCard(g,function(){openGive(g.id,backId)}));return w}
- function rrLock(){var l=document.createElement('div');l.className='rrlock';var im=document.createElement('img');im.src='brand/key-icon.svg';im.alt='Key';im.width=116;im.height=50;l.appendChild(im);return l}
+ function rrLock(){var l=document.createElement('div');l.className='rrlock';var im=document.createElement('img');im.src='brand/key-gold.svg';im.alt='Key';im.width=116;im.height=50;l.appendChild(im);return l}
  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
  function say(id,t,err){var m=$(id);m.textContent=t;m.className='msg'+(err?' err':'')}
  function paint(){
@@ -716,7 +716,7 @@ body.hlock{overflow:hidden}
    row.appendChild(el('p','fine',pend.length+' waiting to check · '+rids.filter(function(k){return rc[k].status==='approved'}).length+' approved'));
    var li=el('input');li.readOnly=true;li.value=dnLink(oid);li.setAttribute('aria-label','Offer link');li.addEventListener('focus',function(){li.select()});row.appendChild(li);
    var bt=el('div','tools');var cp=el('button','btn','Copy link');cp.type='button';cp.addEventListener('click',function(){var d=function(){cp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(li.value).then(d,function(){li.select();d()});else{li.select();try{document.execCommand('copy')}catch(e){}d()}});bt.appendChild(cp);
-   if(navigator.share){var sh=el('button','btn ghost','Share');sh.type='button';sh.addEventListener('click',function(){navigator.share({title:'Dine and earn Key Points',text:'Eat at '+o.rest+', send your receipt, earn '+o.keys+' Key Points.',url:li.value}).catch(function(){})});bt.appendChild(sh)}
+   if(navigator.share){var sh=el('button','btn ghost','Share');sh.type='button';sh.addEventListener('click',function(){navigator.share({title:'Dine and earn keys',text:'Eat at '+o.rest+', send your receipt, earn '+o.keys+' keys.',url:li.value}).catch(function(){})});bt.appendChild(sh)}
    var st=el('button','btn ghost',o.open===false?'Start again':'Stop this offer');st.type='button';st.addEventListener('click',function(){dnPatch(oid,null,{open:o.open===false},dnRender)});bt.appendChild(st);row.appendChild(bt);
    pend.forEach(function(k){var r=rc[k],card=el('div','dnrec'),nm=(r.first+' '+r.last).replace(/\s+/g,' ').trim().slice(0,40),has=find(nm);
     card.appendChild(el('b',null,r.first+' '+r.last));card.appendChild(el('p','fine',r.email+' · '+r.phone+' · sent '+when(r.at)+(r.rno?' · receipt no. '+r.rno:'')));

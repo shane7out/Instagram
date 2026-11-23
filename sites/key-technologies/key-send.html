@@ -7,7 +7,7 @@
 <title>Send keys in person | Key Technologies.si</title>
 <meta name="description" content="Practice: send keys to a friend in person by scanning a code.">
 <meta name="theme-color" content="#0f171e">
-<link rel="icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
 :root{--bg:#0f171e;--panel:#16222f;--accent:#00a8e1}
@@ -41,7 +41,7 @@ video{width:100%;border-radius:14px;margin-top:10px;background:#000}
 <p class="demo">Practice. Nothing here is real yet. No keys move.</p>
 
 <div class="box"><div class="bal"><small>YOUR KEYS</small><span id="bal">100</span></div>
-<p style="margin:10px 0 0">Practice: these keys expire in <b>14 days</b>.</p>
+<p style="margin:10px 0 0">Practice: these keys have <b>14 days</b> left. Real keys last 60 days from the day they are issued.</p>
 <label for="me">Your name</label><input type="text" id="me" maxlength="30" autocomplete="off" placeholder="Your name here"></div>
 
 <div class="box" id="recv"><h2>Get keys from a friend</h2>
@@ -91,7 +91,7 @@ $("go").onclick=function(){
  if(amt>bal){pop('<h2 id="ovt">Not enough keys</h2><p>You have '+bal+' keys.</p><button class="btn" id="x">OK</button>');$("x").onclick=closePop;return}
  if(sentToday+amt>100){pop('<h2 id="ovt">Daily limit</h2><p>You can send up to 100 keys a day in practice.</p><button class="btn" id="x">OK</button>');$("x").onclick=closePop;return}
  var nm=toName||"your friend";
- pop('<h2 id="ovt">Please confirm</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p style="font-size:19px">These keys keep their date. They still expire in 14 days for your friend.</p><button class="btn" id="yes">Yes, send</button><button class="btn o" id="no">Cancel</button>');
+ pop('<h2 id="ovt">Please confirm</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p style="font-size:19px">These keys keep their date. They keep their own expiry date. In this practice they have 14 days left.</p><button class="btn" id="yes">Yes, send</button><button class="btn o" id="no">Cancel</button>');
  $("pop").querySelector("b").textContent=nm;
  $("no").onclick=closePop;
  $("yes").onclick=function(){bal-=amt;sentToday+=amt;hist.unshift({d:-amt,t:"sent to "+nm});save();drawBal();drawHist();
