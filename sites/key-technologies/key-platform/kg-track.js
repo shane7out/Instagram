@@ -9,8 +9,9 @@
   function start(page, g, demo) {
     var v = vid(), pid = rnd(12), secs = 0, last = Date.now(), sent = -1, live = true;
     var rec = { page: String(page).slice(0, 40), secs: 0 }; if (g) rec.g = String(g).slice(0, 40);
-    if (demo) { var o = lget(); o[v] = o[v] || {}; var r = { page: rec.page, at: Date.now(), secs: 0 }; if (g) r.g = rec.g; o[v][pid] = r; lset(o); }
-    else { var b = { page: rec.page, at: { '.sv': 'timestamp' }, secs: 0 }; if (g) b.g = rec.g; try { fetch(DB + v + '/' + pid + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b), keepalive: true }).catch(function () {}); } catch (e) {} }
+    var src = ''; try { src = (new URLSearchParams(location.search).get('s') || '').replace(/[^a-z0-9_-]/gi, '').slice(0, 40); } catch (e) {} if (src) rec.ref = src;
+    if (demo) { var o = lget(); o[v] = o[v] || {}; var r = { page: rec.page, at: Date.now(), secs: 0 }; if (g) r.g = rec.g; if (rec.ref) r.ref = rec.ref; o[v][pid] = r; lset(o); }
+    else { var b = { page: rec.page, at: { '.sv': 'timestamp' }, secs: 0 }; if (g) b.g = rec.g; if (rec.ref) b.ref = rec.ref; try { fetch(DB + v + '/' + pid + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b), keepalive: true }).catch(function () {}); } catch (e) {} }
     function flush() {
       if (secs === sent) return; sent = secs;
       if (demo) { var o = lget(); if (o[v] && o[v][pid]) { o[v][pid].secs = secs; lset(o); } return; }

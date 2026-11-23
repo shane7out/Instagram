@@ -668,10 +668,10 @@ body.hlock{overflow:hidden}
    box.appendChild(row)});
   var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',gvRender);box.appendChild(rf);kvRender(o)})}
  function kvRender(gv){var box=$('kvlist');if(!box)return;var show=function(v){box.innerHTML='';var names={};Object.keys(gv||{}).forEach(function(k){var g=gv[k];if(g.claim&&g.claim.vid)names[g.claim.vid]=g.claim.first+' '+g.claim.last+' (won)';if(g.waitlist)Object.keys(g.waitlist).forEach(function(w){var x=g.waitlist[w];if(x.vid&&!names[x.vid])names[x.vid]=x.first+' '+x.last+' (waiting list)'})});
-  var vs=Object.keys(v||{}).map(function(id){var pg=v[id],ks=Object.keys(pg),last=0,tot=0,by={};ks.forEach(function(k){var p=pg[k];last=Math.max(last,p.at||0);tot+=p.secs||0;by[p.page]=by[p.page]||{n:0,s:0};by[p.page].n++;by[p.page].s+=p.secs||0});return {id:id,last:last,tot:tot,by:by}}).sort(function(a,b){return b.last-a.last}).slice(0,60);
+  var vs=Object.keys(v||{}).map(function(id){var pg=v[id],ks=Object.keys(pg),last=0,tot=0,by={},refs={};ks.forEach(function(k){var p=pg[k];if(p.ref)refs[p.ref]=1;last=Math.max(last,p.at||0);tot+=p.secs||0;by[p.page]=by[p.page]||{n:0,s:0};by[p.page].n++;by[p.page].s+=p.secs||0});return {id:id,last:last,tot:tot,by:by,refs:Object.keys(refs)}}).sort(function(a,b){return b.last-a.last}).slice(0,60);
   if(!vs.length){box.appendChild(el('p','fine','Nobody has opened the pages yet.'));return}
   var lab={claim:'Giveaway page',uses:'What you can get page',waitlist:'Waiting list page'};
-  vs.forEach(function(x){var r=el('div','kvrow');r.appendChild(el('b',null,names[x.id]||'Not signed up yet'));var parts=Object.keys(x.by).map(function(p){return (lab[p]||p)+': '+x.by[p].s+' sec'+(x.by[p].n>1?' ('+x.by[p].n+' visits)':'')});r.appendChild(el('p','fine',parts.join(' · ')+' · last seen '+when(x.last)));box.appendChild(r)})};
+  vs.forEach(function(x){var r=el('div','kvrow');r.appendChild(el('b',null,names[x.id]||'Not signed up yet'));var parts=Object.keys(x.by).map(function(p){return (lab[p]||p)+': '+x.by[p].s+' sec'+(x.by[p].n>1?' ('+x.by[p].n+' visits)':'')});r.appendChild(el('p','fine',parts.join(' · ')+(x.refs.length?' · came from '+x.refs.join(', '):'')+' · last seen '+when(x.last)));box.appendChild(r)})};
   if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kvLocal')||'{}')||{}}catch(e){}show(o);return}
   RR.db('GET','key_visits').then(function(r){show(r.status===200&&r.json?r.json:{})})}
  /* ---- Dine and earn: an offer link per restaurant; people send a receipt photo; you check it and give keys ---- */
