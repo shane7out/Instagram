@@ -4,8 +4,8 @@
 <meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Las Vegas waiting list | Key Technologies.si</title>
-<meta name="description" content="Get on the Key Technologies waiting list. If you live in Las Vegas, we will tell you when more keys are given away.">
+<title>Las Vegas keys sign-up | Key Technologies.si</title>
+<meta name="description" content="Sign up for your keys. If you live in Las Vegas, follow us on Instagram, sign up, and we will tell you when keys are given out.">
 <meta name="theme-color" content="#0f171e">
 <link rel="icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
@@ -39,6 +39,7 @@ input[readonly]{opacity:.85}input:focus{outline:none;border-color:var(--gold)}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:16px;border:2px solid rgba(255,255,255,.5);color:#fff;font-weight:800;font-size:20px;margin-top:12px}
 .demo{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(232,199,102,.12);border:1px solid rgba(232,199,102,.5);color:#f6e7b4;font-size:16px;text-align:center}
 .uses{margin-top:22px}.uses h2{text-align:center}.use{display:flex;gap:14px;align-items:flex-start;padding:14px 4px;border-top:1px solid rgba(255,255,255,.16)}.use .ui{flex:none;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(140deg,#f6d467,#d7a21e)}.use b{display:block;font-size:19px}.use div span{display:block;font-size:17px;color:#f0f0f0;line-height:1.45}
+.steps{background:#16222f;border:1px solid rgba(232,199,102,.55);border-radius:18px;padding:6px 16px;margin:0 0 16px}.step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(255,255,255,.16)}.step:first-child{border-top:0}.step .n{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;background:linear-gradient(140deg,#f6d467,#d7a21e);color:#2b1d05}.step b{display:block;font-size:21px;line-height:1.25}.step span.t{display:block;font-size:18px;color:#f0f0f0;line-height:1.5}.follow{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:14px;background:linear-gradient(140deg,#f6d467,#e6b83a 55%,#d7a21e);color:#2b1d05;font-weight:900;font-size:20px;margin-top:10px}
 .cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.cf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cfall 2.2s cubic-bezier(.2,.7,.3,1) forwards}@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 @media(prefers-reduced-motion:reduce){.cf{display:none}}
 </style>
@@ -58,19 +59,26 @@ function lget(){try{return JSON.parse(localStorage.getItem("kwLocal")||"{}")||{}
 function lset(o){try{localStorage.setItem("kwLocal",JSON.stringify(o))}catch(e){}}
 function mine(v){try{if(v===undefined)return localStorage.getItem("kwMine"+(DEMO?"Demo":""));localStorage.setItem("kwMine"+(DEMO?"Demo":""),v)}catch(e){return null}}
 function head(){app.innerHTML="";app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
-function hero(){var h=el("div","hero"),im=el("img");im.src="brand/key-gold.svg";im.alt="A gold key";h.appendChild(im);var b=el("div","big25","WAITING LIST");b.style.fontSize="34px";b.style.letterSpacing=".08em";b.style.margin="4px 0 2px";h.appendChild(b);return h}
+function hero(){var h=el("div","hero"),im=el("img");im.src="brand/key-gold.svg";im.alt="A gold key";h.appendChild(im);var b=el("div","big25","SIGN UP");b.style.fontSize="34px";b.style.letterSpacing=".08em";b.style.margin="4px 0 2px";h.appendChild(b);return h}
 function whatBtn(){var a=el("a","what","What can you get with the keys?");a.href="key-what-you-get.html"+(DEMO?"?demo=1":"");return a}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
 function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++)s+=("0"+a[i].toString(16)).slice(-2);return s}
 function fingerprint(email){var t=email.trim().toLowerCase();
  if(window.crypto&&crypto.subtle&&window.TextEncoder)return crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)).then(hex);
  var a=new Uint8Array(32);crypto.getRandomValues(a);return Promise.resolve(hex(a.buffer))}
-function done(first,again){head();var s=el("div","state box");s.appendChild(el("div","em","📝"));s.appendChild(el("h1",null,"You are on the waiting list"));
- s.appendChild(el("p","lead",(first?first+", thank you. ":"Thank you. ")+"We saved your spot. We will email and text you when more keys are given away."));app.appendChild(s);app.appendChild(whatBtn())}
+function done(first,again){head();var s=el("div","state box");s.appendChild(el("div","em","📝"));s.appendChild(el("h1",null,"You are signed up"));
+ s.appendChild(el("p","lead",(first?first+", thank you. ":"Thank you. ")+"We saved your spot. We will email and text you when keys are given out. One more thing: follow us on Instagram so you see every giveaway."));var f2=el("a","follow","Follow us on Instagram");f2.href="https://instagram.com/lasvegas_restaurants";f2.target="_blank";f2.rel="noopener";s.appendChild(f2);app.appendChild(s);app.appendChild(whatBtn())}
 function form(){head();
- app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Get on the waiting list for keys"));app.appendChild(hero());
- app.appendChild(el("p","lead","If you live in Las Vegas, join the list. We will email and text you when keytechnologies.si gives away more keys."));app.appendChild(whatBtn());
- var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Join the waiting list"));
+ app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Sign up for your keys"));app.appendChild(hero());
+ app.appendChild(el("p","lead","If you live in Las Vegas, here is how to get your keys."));
+ var stp=el("div","steps");
+ function step(n,t,x,extra){var r=el("div","step"),c=el("span","n",String(n)),d=el("div");d.appendChild(el("b",null,t));d.appendChild(el("span","t",x));if(extra)d.appendChild(extra);r.appendChild(c);r.appendChild(d);stp.appendChild(r)}
+ var fl=el("a","follow","Follow us on Instagram");fl.href="https://instagram.com/lasvegas_restaurants";fl.target="_blank";fl.rel="noopener";
+ step(1,"Follow us on Instagram","We post every giveaway there. Follow @lasvegas_restaurants so you never miss one.",fl);
+ step(2,"Sign up below","Fill in the short form and tick the boxes.");
+ step(3,"Get your keys","When keys are given out, we email and text you.");
+ app.appendChild(stp);app.appendChild(whatBtn());
+ var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Step 2: Sign up"));
  var inp={};
  function field(id,lab,type,ac,mode,max){var l=el("label",null,lab);l.setAttribute("for",id);var i=el("input");i.id=id;i.type=type;i.name=id;i.autocomplete=ac;if(mode)i.inputMode=mode;i.maxLength=max||60;inp[id]=i;return [l,i]}
  function add(x,wrap){var w=wrap||f;w.appendChild(x[0]);w.appendChild(x[1])}
@@ -90,7 +98,7 @@ function form(){head();
  chk("ag","I have read the rules above and I agree to follow them.");
  var pn=el("p","note");pn.appendChild(document.createTextNode("How we use your information: "));var pl=el("a",null,"read our privacy page");pl.href="rewards-privacy.html";pl.target="_blank";pl.rel="noopener";pn.appendChild(pl);pn.appendChild(document.createTextNode("."));f.appendChild(pn);
  var er=el("div","err");er.setAttribute("role","alert");f.appendChild(er);
- var go=el("button","go","Join the waiting list");go.type="submit";f.appendChild(go);
+ var go=el("button","go","Sign up for my keys");go.type="submit";f.appendChild(go);
  app.appendChild(f);
  function bad(m,focus){er.textContent=m;er.className="err on";if(focus){focus.focus();try{focus.scrollIntoView({block:"center"})}catch(e){}}}
  f.addEventListener("submit",function(ev){ev.preventDefault();er.className="err";
@@ -108,7 +116,7 @@ function form(){head();
   if(!cks.ag.checked)return bad("Please tick the box to say you agree to the rules.",cks.ag);
   if(hi.value){done(v.first);return}
   go.disabled=true;go.textContent="Sending…";
-  var again=function(){go.disabled=false;go.textContent="Join the waiting list";bad("That did not go through. Please check your connection and tap the gold button again.")};
+  var again=function(){go.disabled=false;go.textContent="Sign up for my keys";bad("That did not go through. Please check your connection and tap the gold button again.")};
   join(v,function(ok){if(ok){mine("1");done(v.first)}else again()})})}
 function rec(v){var r={first:v.first,last:v.last,email:v.email,phone:v.phone,ig:v.ig,street:v.street,city:v.city,state:"NV",zip:v.zip,consent:true,emailOk:true,smsOk:true,rv:"v1"};if(VID)r.vid=VID;return r}
 function join(v,cb){var r=rec(v);
