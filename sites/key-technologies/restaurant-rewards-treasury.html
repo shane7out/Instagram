@@ -396,7 +396,7 @@ body.hlock{overflow:hidden}
  </div>
  <div class="box" id="rmbox">
   <h2>Rooms</h2>
-  <p class="fine" style="margin-top:0">20 seats in every room, in the order people got keys. Tap a room to see who is in it. Restaurants and gift wallets are not in rooms.</p>
+  <p class="fine" style="margin-top:0">20 seats in every room, in the order people got keys. Room 1 is full, so new people start in Room 2. Tap a room to see who is in it. Restaurants and gift wallets are not in rooms.</p>
   <div id="rmtabs"></div>
   <div id="rmlist"></div>
  </div>
@@ -475,14 +475,17 @@ body.hlock{overflow:hidden}
  /* A seat is the order people got keys. Restaurants, gift wallets, closed wallets and the Treasury are not in rooms. */
  function isMember(w){return !!w&&w.id!=='treasury'&&!isGiftW(w)&&w.type!=='Restaurant'&&!isClosed(w)}
  function members(){return S.wallets.filter(isMember).sort(function(a,b){return (a.rank||999)-(b.rank||999)||a.t-b.t})}
- function seatNo(w){var m=members();for(var i=0;i<m.length;i++)if(m[i].id===w.id)return i+1;return 0}
+ var ROOM1_PEOPLE=5,FULLROOMS=1; /* Room 1 is full (its other seats are taken by people not yet in the ledger); new members start in Room 2 */
+ function seatNum(idx){return idx<ROOM1_PEOPLE?idx+1:FULLROOMS*ROOMSIZE+(idx-ROOM1_PEOPLE)+1}
+ function seatNo(w){var m=members();for(var i=0;i<m.length;i++)if(m[i].id===w.id)return seatNum(i);return 0}
  var curRoom=1;
  function roomsRender(){var tb=$('rmtabs'),ls=$('rmlist');if(!tb||!ls)return;tb.innerHTML='';ls.innerHTML='';
-  var m=members(),lastRoom=Math.max(1,Math.ceil(m.length/ROOMSIZE)),shown=lastRoom+1;if(curRoom>shown)curRoom=1;
-  var row=el('div','rmrow');for(var r=1;r<=shown;r++)(function(r){var n=Math.min(ROOMSIZE,Math.max(0,m.length-(r-1)*ROOMSIZE)),b=el('button','rmtab'+(r===curRoom?' on':''),'Room '+r);b.type='button';b.setAttribute('aria-pressed',r===curRoom?'true':'false');b.appendChild(el('small',null,n+' of '+ROOMSIZE));b.addEventListener('click',function(){curRoom=r;roomsRender()});row.appendChild(b)})(r);tb.appendChild(row);
-  ls.appendChild(el('h3','rmh','Room '+curRoom));
-  for(var k=1;k<=ROOMSIZE;k++){var idx=(curRoom-1)*ROOMSIZE+k-1,w=m[idx],li=el('div','rmseat'+(w?'':' open'));li.appendChild(el('span','rmn','Seat '+k));
-   if(w){li.appendChild(el('b',null,w.name));li.appendChild(el('span','rmk',fmt(shown0(w.id))+' keys'))}else li.appendChild(el('i',null,'Open'));ls.appendChild(li)}}
+  var m=members(),bySeat={},maxSeat=FULLROOMS*ROOMSIZE;m.forEach(function(w,i){var n=seatNum(i);bySeat[n]=w;if(n>maxSeat)maxSeat=n});
+  var shown=Math.max(FULLROOMS+1,Math.ceil(maxSeat/ROOMSIZE)+1);if(curRoom>shown)curRoom=1;
+  var row=el('div','rmrow');for(var r=1;r<=shown;r++)(function(r){var n=0;for(var k=(r-1)*ROOMSIZE+1;k<=r*ROOMSIZE;k++)if(bySeat[k]||(r<=FULLROOMS))n++;var b=el('button','rmtab'+(r===curRoom?' on':''),'Room '+r);b.type='button';b.setAttribute('aria-pressed',r===curRoom?'true':'false');b.appendChild(el('small',null,r<=FULLROOMS?'full':(n+' of '+ROOMSIZE)));b.addEventListener('click',function(){curRoom=r;roomsRender()});row.appendChild(b)})(r);tb.appendChild(row);
+  ls.appendChild(el('h3','rmh','Room '+curRoom+(curRoom<=FULLROOMS?' (full)':'')));
+  for(var k=1;k<=ROOMSIZE;k++){var sn=(curRoom-1)*ROOMSIZE+k,w=bySeat[sn],li=el('div','rmseat'+(w?'':' open'));li.appendChild(el('span','rmn','Seat '+k));
+   if(w){li.appendChild(el('b',null,w.name));li.appendChild(el('span','rmk',fmt(shown0(w.id))+' keys'))}else li.appendChild(el('i',null,curRoom<=FULLROOMS?'Taken, not in the ledger yet':'Open'));ls.appendChild(li)}}
  function shown0(id){return shown(id)}
  function nextRank(){var m=0;S.wallets.forEach(function(w){if(w.id!=='treasury'&&(w.rank||0)>m)m=w.rank});return m+1}
  function openW(name,type,t0){var id='w'+(S.nextW++),t=t0||now();S.wallets.push({id:id,name:name,type:type,t:t,rank:nextRank()});S.entries.push({id:S.next++,t:t,from:null,to:id,amt:0,kind:'open',note:'Wallet opened with a zero balance'});return id}

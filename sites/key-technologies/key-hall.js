@@ -15,19 +15,20 @@ var css=".hall{position:relative;max-width:440px;margin:16px auto;padding:6px 0 
 +".hall .inf{font-size:64px;line-height:1;font-weight:900;color:#00a8e1;margin-top:2px}"
 +".hall .iw{font-size:20px;font-weight:900;margin-top:2px}"
 +".hall.c{margin:8px auto}.hall.c .dr{padding:4px 8px 7px;margin-bottom:5px;border-radius:22px 22px 6px 6px}.hall.c .dr b{font-size:20px}.hall.c .dr small{display:none}.hall.c .pp{grid-template-columns:repeat(20,1fr);max-width:300px;gap:2px;margin-top:6px}.hall.c .inf{font-size:44px}.hall.c .iw{font-size:18px;line-height:1.25}.hall.c .dr.you .yh{margin-top:6px}"
++".hall .dr b em{font-style:normal;display:inline-block;margin-left:10px;padding:2px 10px;border-radius:999px;font-size:15px;letter-spacing:.1em;vertical-align:middle}.hall .dr b em.fl{background:rgba(255,255,255,.18);color:#fff}.hall .dr b em.op{background:#00a8e1;color:#0f171e}"
 +"@media (prefers-reduced-motion:no-preference){.hall .dr.you{animation:hallglow 2.4s ease-in-out infinite}@keyframes hallglow{50%{box-shadow:0 0 0 8px rgba(0,168,225,.55)}}}";
 function init(){
  if(!document.getElementById("hallcss")){var st=document.createElement("style");st.id="hallcss";st.textContent=css;document.head.appendChild(st)}
  var all=document.querySelectorAll(".hall:not([data-done])");
  for(var k=0;k<all.length;k++){
   var h=all[k];h.setAttribute("data-done","1");h.setAttribute("role","img");
-  var you=parseInt(h.getAttribute("data-you")||"0",10)||0;
+  var you=parseInt(h.getAttribute("data-you")||"0",10)||0;var full=parseInt(h.getAttribute("data-full")||"0",10)||0,opn=parseInt(h.getAttribute("data-open")||"0",10)||0;
   h.setAttribute("aria-label","A hallway of rooms. Room 1, Room 2, Room 3 and on with no end. Each room holds 20 people."+(you?" You are in Room "+you+".":""));
   var html='<svg class="wl" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0L36 100M100 0L64 100" stroke="rgba(0,168,225,.35)" stroke-width="1.2" fill="none" vector-effect="non-scaling-stroke"/></svg>';
   var cp=/(^|\s)c(\s|$)/.test(h.className),rooms=cp?[1,2,3,4]:[1,2,3,4,5],widths=cp?[100,88,76,64]:[100,86,72,58,46],dots="";for(var d=0;d<20;d++)dots+="<i></i>";
   for(var r=0;r<rooms.length;r++){
    var n=rooms[r],cls="dr"+(r?" f"+(r+1):"")+(n===you?" you":"");
-   html+='<div class="'+cls+'" style="width:'+widths[r]+'%"><b>Room '+n+'</b><small>'+"20 people"+'</small><div class="pp">'+dots+'</div>'+(n===you?'<span class="yh">YOU ARE HERE</span>':'')+'</div>';
+   html+='<div class="'+cls+'" style="width:'+widths[r]+'%"><b>Room '+n+(n<=full?'<em class="fl">FULL</em>':(n===opn?'<em class="op">OPEN NOW</em>':''))+'</b><small>'+"20 people"+'</small><div class="pp">'+dots+'</div>'+(n===you?'<span class="yh">YOU ARE HERE</span>':'')+'</div>';
   }
   html+='<div class="inf" aria-hidden="true">&infin;</div><div class="iw">20 people in every room. It never ends.'+'</div>';
   if(you>rooms.length)html+='<div class="dr you" style="width:60%;margin-top:12px"><b>Room '+you+'</b><small>20 people</small><span class="yh">YOU ARE HERE</span></div>';
