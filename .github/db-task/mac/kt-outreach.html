@@ -322,22 +322,23 @@ nav .dot{position:absolute;top:5px;right:calc(50% - 22px);min-width:18px;height:
 'use strict';
 var MODE='kt';try{if(localStorage.getItem('outreachMode')==='lvr')MODE='lvr'}catch(e){}
 var LS=MODE==='lvr'?'outreachLVR1':'outreachV1',DAY=864e5,FOLLOW_DAYS=3,MAX_FOLLOW=2,CLOSE_DAYS=4,SAFE=900; /* Instagram refuses very long messages (about 1,000 characters), so every part stays under 900 */
+var MAXMSG=300; /* every message is kept SHORT: a hard limit of 300 characters */
 var DEF_KT={
- open:"Hey {first}, Las Vegas Restaurants here. I also run Key Technologies (keytechnologies.si), where we help local businesses use AI/SI: an AI receptionist that answers calls and texts, websites and apps, and small custom tools that cut the busywork. I would like to give {name} a free look at where it could help. Worth a quick chat?",
- follow:"Hey {first}, circling back on my note about Key Technologies and {name}. No pressure. The free review is a short call where I look at how {name} runs today and point out where AI/SI could realistically help. If it is not a fit, just tell me and I will not bug you. If it is, what day works?",
- ask:"Good question, {first}. It depends on what {name} needs. Some businesses start with an AI receptionist for calls and texts, others with a better website or a small custom tool. The quickest way is a short free call, and I will tell you exactly what it would look like. Does tomorrow or the day after work? You can also see more at keytechnologies.si"
+ open:"Hey {first}, Las Vegas Restaurants here. I also run Key Technologies, AI/SI tools for local businesses. Can I show {name} one quick free idea? keytechnologies.si",
+ follow:"Hey {first}, circling back. Happy to show {name} one free idea, 10 minutes, no pressure. Does any day this week work?",
+ ask:"Sure {first}. We build AI receptionists, websites and small tools for local businesses. Want a free 10 minute look at {name}? keytechnologies.si"
 };
 var DEF_LVR={
- open:"Hey {first}, Las Vegas Restaurants here. We would love to get {name} in front of our Las Vegas followers. Do you have a minute to talk about how we can work together?",
- follow:"Hey {first}, circling back on my note about {name} and Las Vegas Restaurants. No pressure at all. If it is not a fit, just tell me and I will not bug you. If it is, I am happy to find a time that works for you.",
- ask:"Fair question, {first}. It depends on what {name} needs, so the quickest way is a short call. Does tomorrow or the day after work? Then I can tell you exactly what it would look like."
+ open:"Hey {first}, Las Vegas Restaurants here. We would love to feature {name} to our Las Vegas followers. Got a minute to chat?",
+ follow:"Hey {first}, circling back on {name} and Las Vegas Restaurants. Happy to find a time that works. If it is not a fit, just say so.",
+ ask:"Fair question, {first}. It depends on what {name} needs, so a short call is quickest. Does tomorrow or the day after work?"
 };
 var DEF=MODE==='lvr'?DEF_LVR:DEF_KT;
 var MSGN={open:'First hello',follow:'Check in',ask:'Answer'};
 var ST={new:['Not messaged yet','#aab9ca'],sent:['Waiting for a reply','#f3d884'],replied:['They replied','#5fd38d'],call:['Call booked','#4fc3f0'],won:['Client','#5fd38d'],no:['Not interested','#ff8a7a'],cold:['No answer','#8a97a8']};
 var D=load(),canSave=true,tab='today',filter='all',q='',lastFocus=null;
-function blank(){return {v:1,goal:25,msgs:{},nextId:1,lastBackup:0,leads:[],removed:[]}}
-function load(){try{var o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&Array.isArray(o.leads)){var b=blank();for(var k in o)b[k]=o[k];if(!Array.isArray(b.removed))b.removed=[];b.leads.forEach(function(l){if(!l.key)l.key='m'+l.id+'x'+(+l.t||0).toString(36)});return b}}catch(e){}return blank()}
+function blank(){return {v:1,goal:25,pace:20,msgs:{},nextId:1,lastBackup:0,leads:[],removed:[]}}
+function load(){try{var o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&Array.isArray(o.leads)){var b=blank();for(var k in o)b[k]=o[k];if(!Array.isArray(b.removed))b.removed=[];b.leads.forEach(function(l){if(!l.key)l.key='m'+l.id+'x'+(+l.t||0).toString(36)});Object.keys(b.msgs||{}).forEach(function(k){if(typeof b.msgs[k]==='string'&&b.msgs[k].length>MAXMSG)delete b.msgs[k]});return b}}catch(e){}return blank()}
 function save(noSync){try{localStorage.setItem(LS,JSON.stringify(D));canSave=true}catch(e){canSave=false}if(!noSync)scheduleFlush()}
 function $(i){return document.getElementById(i)}
 function h(tag,a){var e=document.createElement(tag);a=a||{};for(var k in a){var v=a[k];if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,'');else if(v!==false&&v!=null)e.setAttribute(k,v)}
@@ -355,7 +356,7 @@ function shorten(raw){
  if(n.length>26){var w=n.split(' '),o='';for(var i=0;i<w.length;i++){var x=(o?o+' ':'')+w[i];if(x.length>26)break;o=x}n=o||n.slice(0,26)}
  return n;
 }
-function tmpl(k){return typeof D.msgs[k]==='string'?D.msgs[k]:DEF[k]}
+function tmpl(k){return typeof D.msgs[k]==='string'&&D.msgs[k].length<=MAXMSG?D.msgs[k]:DEF[k]}
 function fill(l,t){return t.replace(/\{name\}/gi,l.short||shorten(l.name)||'your place').replace(/\{first\}/gi,clean(l.first)||'there')}
 function sentences(t){var out=[],re=/[^.!?\n]+[.!?]*["')]*\s*|\n+/g,m;while((m=re.exec(t)))out.push(m[0]);return out}
 function split(t){
@@ -539,6 +540,8 @@ function vToday(v){
    h('span',{class:'chip',text:L.due.length+' check-ins due'}),
    h('span',{class:'chip',text:L.neu.length+' ready for a first hello'})));
  v.appendChild(hd);
+ var rdy=L.neu.length+L.due.length+L.reply.length;
+ if(rdy)v.appendChild(h('button',{type:'button',class:'btn green',style:'font-size:19px;padding:16px',text:'Start sending ('+rdy+' ready)',onclick:function(){startSend()}}));
  if(n>=g)v.appendChild(h('div',{class:'banner',style:'background:#0f2c1d;border-color:#2f7d52;color:#b9efcf',text:'Daily goal reached. Nice work.'}));
  var bk=D.leads.length&&(!D.lastBackup||Date.now()-D.lastBackup>7*DAY);
  if(bk){var bn=h('div',{class:'banner'},h('div',{text:'Your list lives on this phone. Save a backup copy so it is never lost.'}),h('button',{type:'button',class:'btn',text:'Download a backup',onclick:function(){backup();render()}}));v.appendChild(bn)}
@@ -568,7 +571,7 @@ function poolCard(v){
   c.appendChild(h('button',{type:'button',class:'btn',style:poolErr?'':'margin-top:0',text:poolErr?'Try again':'Load my LVR list',onclick:loadPool}));
   if(!poolErr)setTimeout(loadPool,0);return}
  var sum=h('p',{class:'note',style:'margin:0 0 4px'}),cs=h('select',{'aria-label':'Kind of business'}),sq=h('input',{type:'search',placeholder:'Search the list',value:poolQ,'aria-label':'Search the LVR list',autocomplete:'off'}),
-  tg=h('input',{type:'checkbox','aria-label':'Only ones with an Instagram name'}),nn=h('input',{type:'number',inputmode:'numeric',min:'1',max:'200','aria-label':'How many to add',value:String(poolN||D.goal)}),box=h('div',{style:'margin-top:8px'}),addb=h('button',{type:'button',class:'btn'});
+  tg=h('input',{type:'checkbox','aria-label':'Only ones with an Instagram name'}),nn=h('input',{type:'number',inputmode:'numeric',min:'1',max:'500','aria-label':'How many to add',value:String(poolN||D.goal)}),box=h('div',{style:'margin-top:8px'}),addb=h('button',{type:'button',class:'btn'});
  tg.checked=poolIg;
  c.appendChild(sum);
  c.appendChild(h('label',{text:'Kind of business'}));c.appendChild(cs);
@@ -587,7 +590,7 @@ function poolCard(v){
   cs.textContent='';cs.appendChild(h('option',{value:'all',text:'All kinds ('+tot+')'}));names.forEach(function(x){cs.appendChild(h('option',{value:x,text:x+' ('+m[x]+')'}))});cs.value=poolCat;
   var inT=pool.length-pool.filter(function(p){return !inList(p,have())}).length;
   sum.textContent=pool.length+' businesses in your LVR list. '+inT+' already in your tracker. '+a.length+' match right now.';
-  var n=Math.max(1,Math.min(200,parseInt(nn.value,10)||D.goal)),k=Math.min(n,a.length);
+  var n=Math.max(1,Math.min(500,parseInt(nn.value,10)||D.goal)),k=Math.min(n,a.length);
   addb.textContent=a.length?'Add the next '+k+' to my list':'Nothing left to add here';addb.disabled=!a.length;
   box.textContent='';
   a.slice(0,poolShow).forEach(function(p){
@@ -601,7 +604,7 @@ function poolCard(v){
  tg.addEventListener('change',function(){poolIg=tg.checked;poolShow=30;paint()});
  nn.addEventListener('input',function(){poolN=parseInt(nn.value,10)||0;paint()});
  addb.addEventListener('click',function(){
-  var a=avail(),n=Math.max(1,Math.min(200,parseInt(nn.value,10)||D.goal)),add=0;
+  var a=avail(),n=Math.max(1,Math.min(500,parseInt(nn.value,10)||D.goal)),add=0;
   a.slice(0,n).forEach(function(p){if(addFromPool(p).lead)add++});
   if(add){save();toast('Added '+add+'. Open Today to start sending.');nav()}paint();
  });
@@ -680,9 +683,12 @@ function vMore(v){
  v.appendChild(h('div',{class:'card'},ch,lb));
 
  v.appendChild(h('h2',{text:'Daily goal'}));
- var gi=h('input',{type:'number',inputmode:'numeric',min:'1',max:'200',value:String(D.goal),'aria-label':'Messages per day'});
- gi.addEventListener('input',function(){var n=Math.max(1,Math.min(200,parseInt(gi.value,10)||25));D.goal=n;save()});
- v.appendChild(h('div',{class:'card'},h('label',{text:'Messages to send each day'}),gi,h('p',{class:'note',text:'Around 20 to 30 a day, written by hand, keeps the Las Vegas Restaurants account safe from Instagram limits.'})));
+ var gi=h('input',{type:'number',inputmode:'numeric',min:'1',max:'500',value:String(D.goal),'aria-label':'Messages per day'});
+ var gw=h('p',{class:'note',style:'color:#f3d884'});function gwr(){gw.textContent=D.goal>100?'Heads up: Instagram can slow down or restrict an account that sends hundreds of new messages a day, especially fast. Spread them out through the day and keep the pace timer on.':''}gwr();
+ gi.addEventListener('input',function(){var n=Math.max(1,Math.min(500,parseInt(gi.value,10)||25));D.goal=n;save();gwr()});
+ var pi=h('input',{type:'number',inputmode:'numeric',min:'0',max:'300',value:String(D.pace==null?20:D.pace),'aria-label':'Seconds to wait between messages'});
+ pi.addEventListener('input',function(){var n=Math.max(0,Math.min(300,parseInt(pi.value,10)||0));D.pace=n;save()});
+ v.appendChild(h('div',{class:'card'},h('label',{text:'Messages to send each day (up to 500)'}),gi,gw,h('label',{text:'Seconds to wait between messages'}),pi,h('p',{class:'note',text:'In Start sending, the Next button waits this long so the messages go out at a human pace.'})));
 
  if(MODE==='kt'){
   v.appendChild(h('h2',{text:'Your pitch'}));
@@ -699,12 +705,12 @@ function vMore(v){
  }
  v.appendChild(h('h2',{text:'Your messages'}));
  ['open','follow','ask'].forEach(function(k){
-  var ta=h('textarea',{'aria-label':MSGN[k]+' message'}),c=h('p',{class:'cnt'});ta.value=tmpl(k);
-  function cc(){c.textContent=ta.value.length+' characters'+(ta.value.length>SAFE?'. Too long for one message, so it will be split into parts.':'.');c.className='cnt'+(ta.value.length>SAFE?' split':'')}
+  var ta=h('textarea',{'aria-label':MSGN[k]+' message',maxlength:String(MAXMSG)}),c=h('p',{class:'cnt'});ta.value=tmpl(k);
+  function cc(){c.textContent=ta.value.length+' of '+MAXMSG+' characters. Short messages get more replies.';c.className='cnt'+(ta.value.length>=MAXMSG?' split':'')}
   ta.addEventListener('input',function(){D.msgs[k]=ta.value;save();cc()});cc();
   v.appendChild(h('div',{class:'card'},h('label',{text:{open:'First hello',follow:'Check in (after 3 days of no reply)',ask:'Answer ("how much?" or "what do you do?")'}[k]}),ta,c,
    h('button',{type:'button',class:'btn ghost sm',style:'margin-top:8px',text:'Put the original words back',onclick:function(){delete D.msgs[k];save();ta.value=DEF[k];cc()}})))});
- v.appendChild(h('p',{class:'fine',text:'Use {name} for the business and {first} for their first name.'}));
+ v.appendChild(h('p',{class:'fine',text:'Use {name} for the business and {first} for their first name. Messages are limited to '+MAXMSG+' characters so they stay short.'}));
 
  if(window.OWNER_AUTH&&isOwner()){
   v.appendChild(h('h2',{text:'Database'}));
@@ -727,7 +733,7 @@ function backup(){D.lastBackup=Date.now();save();dl('outreach-backup-'+stamp()+'
 function restore(o){
  if(!o||!Array.isArray(o.leads))throw new Error('x');
  if(!window.confirm('Replace your whole list with this backup ('+o.leads.length+' businesses)?'))return;
- var oldKeys=D.leads.map(function(x){return x.key});var b=blank();b.goal=Math.max(1,Math.min(200,+o.goal||25));b.msgs=(o.msgs&&typeof o.msgs==='object')?o.msgs:{};
+ var oldKeys=D.leads.map(function(x){return x.key});var b=blank();b.goal=Math.max(1,Math.min(500,+o.goal||25));b.msgs=(o.msgs&&typeof o.msgs==='object')?o.msgs:{};
  o.leads.forEach(function(l){if(!l||!clean(l.name))return;b.leads.push({id:b.nextId++,key:/^[A-Za-z0-9_-]{3,60}$/.test(l.key||'')?l.key:('m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),adv:l.adv==null?undefined:l.adv,u:+l.u||0,name:clean(l.name),short:clean(l.short)||shorten(l.name),first:clean(l.first),ig:handle(l.ig),type:clean(l.type),note:clean(l.note),stage:ST[l.stage]?l.stage:'new',t:+l.t||Date.now(),ev:Array.isArray(l.ev)?l.ev.filter(function(e){return e&&+e.t}).map(function(e){return {t:+e.t,k:clean(e.k),m:clean(e.m),s:clean(e.s),n:clean(e.n)}}):[]})});
  var nk={};b.leads.forEach(function(x){nk[x.key]=1});D=b;D.removed=oldKeys.filter(function(k){return k&&!nk[k]});D.lastBackup=Date.now();save();render();toast('Backup restored')
 }
@@ -738,10 +744,41 @@ function csv(){
  dl('outreach-list-'+stamp()+'.csv','text/csv',rows.map(function(r){return r.map(c).join(',')}).join('\r\n'));
 }
 /* ---------- sheet: one business ---------- */
-function closeSheet(){$('sheet').hidden=true;document.body.classList.remove('lock');render();if(lastFocus&&lastFocus.focus&&document.contains(lastFocus))try{lastFocus.focus()}catch(e){}}
+function closeSheet(){clearInterval(sendWait);$('sheet').hidden=true;document.body.classList.remove('lock');render();if(lastFocus&&lastFocus.focus&&document.contains(lastFocus))try{lastFocus.focus()}catch(e){}}
 function openSheet(){if($('sheet').hidden)lastFocus=document.activeElement;$('sheet').hidden=false;document.body.classList.add('lock');$('panel').scrollTop=0}
 $('sheet').addEventListener('click',function(e){if(e.target===this)closeSheet()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('sheet').hidden)closeSheet()});
+/* ---------- Start sending: one business at a time, fast ---------- */
+var sendQ=[],sendWait=0;
+function pickNext(){
+ var L=lists(),q=L.reply.concat(L.due,L.neu),done=pickNext.skip||{};
+ return q.filter(function(l){return !done[l.id]})[0]||null;
+}
+function startSend(){pickNext.skip={};openSheet();paintSend()}
+function paintSend(){
+ var P=$('panel');P.textContent='';clearInterval(sendWait);
+ var l=pickNext(),n=sentToday(),g=Math.max(1,+D.goal||25);
+ P.appendChild(h('div',{class:'grab'},h('h3',{id:'stitle',text:n+' of '+g+' sent today'}),h('button',{type:'button',class:'x',text:'Stop',onclick:closeSheet})));
+ if(!l){P.appendChild(h('div',{class:'card'},h('div',{class:'empty',text:'Nobody is waiting. You are all caught up.'})));P.appendChild(h('button',{type:'button',class:'btn',text:'Done',onclick:closeSheet}));return}
+ var stt=status(l),key=stt==='due'||stt==='close'?'follow':(l.stage==='replied'?'ask':(l.stage==='new'?'open':(nSent(l)?'follow':'open')));
+ var text=fill(l,tmpl(key)),ps=split(text);
+ P.appendChild(h('div',{},h('span',{class:'pill',style:'color:'+ST[l.stage][1],text:MSGN[key]}),h('span',{class:'fine',style:'margin-left:8px',text:l.ig?'@'+l.ig:'no Instagram name yet'})));
+ P.appendChild(h('h2',{text:l.name}));
+ var ph=h('div',{class:'phone'},h('div',{class:'who',text:l.short||l.name}));ps.forEach(function(x){ph.appendChild(h('div',{class:'b',text:x}))});P.appendChild(ph);
+ P.appendChild(h('p',{class:'cnt',text:text.length+' characters'}));
+ var go=h('button',{type:'button',class:'btn',style:'font-size:18px;padding:15px',text:l.ig?'1. Copy the message and open Instagram':'1. Copy the message'});
+ go.addEventListener('click',function(){navigator.clipboard&&navigator.clipboard.writeText(ps.join('\n\n')).then(function(){toast('Copied. Paste it into Instagram and send.')},function(){toast('Could not copy. Use Copy in the business page.')});if(l.ig)window.open('https://ig.me/m/'+encodeURIComponent(l.ig),'_blank','noopener')});
+ P.appendChild(go);
+ var nx=h('button',{type:'button',class:'btn green',style:'font-size:18px;padding:15px',text:'2. I sent it. Next'});
+ var wait=Math.max(0,D.pace==null?20:D.pace),left=wait;
+ function lbl(){nx.textContent=left>0?'2. I sent it. Next ('+left+'s)':'2. I sent it. Next';nx.disabled=false;nx.style.opacity=left>0?'.55':'1'}lbl();
+ nx.addEventListener('click',function(){if(left>0){toast('Wait '+left+' more seconds. Slow and steady keeps the account safe.');return}logSent(l,key,ps.length);paintSend()});
+ P.appendChild(nx);
+ P.appendChild(h('button',{type:'button',class:'btn ghost',text:'Skip this one',onclick:function(){pickNext.skip[l.id]=1;paintSend()}}));
+ P.appendChild(h('button',{type:'button',class:'btn ghost',text:'Open full details',onclick:function(){openLead(l.id)}}));
+ if(wait>0){sendWait=setInterval(function(){left--;if(left<=0){left=0;clearInterval(sendWait)}lbl()},1000)}
+ $('panel').scrollTop=0;
+}
 function openLead(id){
  var l=find(id);if(!l)return;var P=$('panel');P.textContent='';
  var s=ST[l.stage],stt=status(l),key=stt==='due'||stt==='close'?'follow':(l.stage==='replied'?'ask':(l.stage==='new'?'open':(nSent(l)?'follow':'open')));
