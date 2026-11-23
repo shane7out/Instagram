@@ -5,7 +5,7 @@
 var S='fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"';
 function ic(p){return '<svg viewBox="0 0 24 24" width="30" height="30" '+S+' stroke-width="1.7" aria-hidden="true">'+p+'</svg>'}
 var USE=[
- ["Food giveaways","Free meals at Las Vegas restaurants",ic('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>')],
+ ["Food giveaways","Free meals at the restaurants we work with, all around the world",ic('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>')],
  ["Experiences","Events, VIP nights and more",ic('<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/>')],
  ["Meet and greets","Meet people and the places you love",ic('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>')],
  ["Trade and barter","List, buy and trade in the marketplace",ic('<path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>')]
