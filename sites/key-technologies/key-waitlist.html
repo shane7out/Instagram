@@ -4,8 +4,8 @@
 <meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Join the Las Vegas waiting list | Key Technologies.si</title>
-<meta name="description" content="Key Rewards: free keys are coming soon. If you live in Las Vegas, join the waiting list and we will tell you when keys are given out.">
+<title>Get your free Reward Key | Key Technologies.si</title>
+<meta name="description" content="From the team behind Las Vegas Restaurants: we are giving every person one free Reward Key. If you live in Las Vegas, join the waiting list.">
 <meta name="theme-color" content="#0f171e">
 <link rel="icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
@@ -40,6 +40,7 @@ input[readonly]{opacity:.85}input:focus{outline:none;border-color:var(--gold)}
 .demo{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.5);color:#D4A017;font-size:16px;text-align:center}
 .uses{margin-top:22px}.uses h2{text-align:center}.use{display:flex;gap:14px;align-items:flex-start;padding:14px 4px;border-top:1px solid rgba(255,255,255,.16)}.use .ui{flex:none;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(140deg,#E0A91F,#B8860B)}.use b{display:block;font-size:19px}.use div span{display:block;font-size:17px;color:#f0f0f0;line-height:1.45}
 .steps{background:#16222f;border:1px solid rgba(212,160,23,.55);border-radius:18px;padding:6px 16px;margin:0 0 16px}.step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(255,255,255,.16)}.step:first-child{border-top:0}.step .n{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;background:linear-gradient(140deg,#E0A91F,#B8860B);color:#2b1d05}.step b{display:block;font-size:21px;line-height:1.25}.step span.t{display:block;font-size:18px;color:#f0f0f0;line-height:1.5}.follow{display:block;width:100%;text-align:center;text-decoration:none;min-height:60px;line-height:60px;border-radius:14px;background:linear-gradient(140deg,#E0A91F,#D4A017 55%,#B8860B);color:#2b1d05;font-weight:900;font-size:20px;margin-top:10px}
+.can{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 14px}.can span{padding:8px 14px;border-radius:999px;border:1.5px solid rgba(212,160,23,.7);color:#D4A017;font-weight:900;font-size:16px}.team{background:#16222f;border:1px solid rgba(212,160,23,.55);border-radius:18px;padding:18px 16px;margin:0 0 16px;text-align:center}.team h2{font-size:22px;margin:0 0 8px}.team p{margin:0;font-size:18px;color:#fff}
 .cf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.cf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:cfall 2.2s cubic-bezier(.2,.7,.3,1) forwards}@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 @media(prefers-reduced-motion:reduce){.cf{display:none}}
 </style>
@@ -52,33 +53,35 @@ input[readonly]{opacity:.85}input:focus{outline:none;border-color:var(--gold)}
 "use strict";
 var DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_waitlist/";
 var q=new URLSearchParams(location.search),DEMO=q.get("demo")==="1";
-var app=document.getElementById("app"),RULES=["This waiting list is for people who live in Las Vegas, Nevada. You must enter your real Las Vegas address.", "Joining the list does not promise you anything. We will tell you when keys or other offers are available, and who gets them is up to Key Technologies.", "No purchase is needed.", "Keys are rewards points. They have no cash value. They cannot be sold or exchanged for cash. When keys are given out, they are good for 60 days from the day they are issued.", "By signing up you agree that Key Technologies may send you <b>emails</b> and <b>text messages</b> about this waiting list, giveaways and what is happening next. Message and data rates may apply. Message frequency varies. To stop texts, reply STOP. To stop emails, use the unsubscribe link in any email.", "Key Technologies can change or end the waiting list or any promotion at any time, and can remove a person who breaks these rules or gives false information.", "We use your name, Instagram handle, phone, email and address to run the waiting list and contact you.", "This is not sponsored, endorsed or run by Instagram."];
+var app=document.getElementById("app"),RULES=["This waiting list is for people who live in Las Vegas, Nevada. You must enter your real Las Vegas address.", "<b>One Reward Key per person.</b> The number of keys is limited. Keys are given out in the order people join the waiting list, while keys last. Joining the list does not guarantee a key.", "No purchase is needed.", "Keys are rewards points. They have no cash value. They cannot be sold or exchanged for cash. When keys are given out, they are good for 60 days from the day they are issued.", "By joining you agree that Key Technologies may send you <b>emails</b> and <b>text messages</b> about this waiting list, your key and what is happening next. Message and data rates may apply. Message frequency varies. To stop texts, reply STOP. To stop emails, use the unsubscribe link in any email.", "Key Technologies can change or end the waiting list or any promotion at any time, and can remove a person who breaks these rules or gives false information.", "We use your name, Instagram handle, phone, email and address to run the waiting list and contact you.", "This is not sponsored, endorsed or run by Instagram."];
 var VID=window.KGT?KGT.vid():"";
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function lget(){try{return JSON.parse(localStorage.getItem("kwLocal")||"{}")||{}}catch(e){return {}}}
 function lset(o){try{localStorage.setItem("kwLocal",JSON.stringify(o))}catch(e){}}
 function mine(v){try{if(v===undefined)return localStorage.getItem("kwMine"+(DEMO?"Demo":""));localStorage.setItem("kwMine"+(DEMO?"Demo":""),v)}catch(e){return null}}
 function head(){app.innerHTML="";app.appendChild(el("p","brandline","KeyTechnologies.si"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
-function hero(){var h=el("div","hero"),im=el("img");im.src="brand/key-gold.svg";im.alt="A gold key";h.appendChild(im);var b=el("div","big25","KEY REWARDS");b.style.fontSize="34px";b.style.letterSpacing=".08em";b.style.margin="4px 0 2px";h.appendChild(b);return h}
-function whatBtn(){var a=el("a","what","What can you get with the keys?");a.href="key-what-you-get.html"+(DEMO?"?demo=1":"");return a}
+function hero(){var h=el("div","hero"),im=el("img");im.src="brand/key-gold.svg";im.alt="A gold key";h.appendChild(im);var b=el("div","big25","REWARD KEY");b.style.fontSize="34px";b.style.letterSpacing=".08em";b.style.margin="4px 0 2px";h.appendChild(b);return h}
+var SRC=(q.get("s")||"").replace(/[^a-z0-9_-]/gi,"").slice(0,40);
+function whatBtn(){var a=el("a","what","What can you do with a key?"),qs=[];if(DEMO)qs.push("demo=1");if(SRC)qs.push("s="+encodeURIComponent(SRC));a.href="key-what-you-get.html"+(qs.length?"?"+qs.join("&"):"");return a}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
 function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++)s+=("0"+a[i].toString(16)).slice(-2);return s}
 function fingerprint(email){var t=email.trim().toLowerCase();
  if(window.crypto&&crypto.subtle&&window.TextEncoder)return crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)).then(hex);
  var a=new Uint8Array(32);crypto.getRandomValues(a);return Promise.resolve(hex(a.buffer))}
 function done(first,again){head();var s=el("div","state box");s.appendChild(el("div","em","📝"));s.appendChild(el("h1",null,"You are on the waiting list"));
- s.appendChild(el("p","lead",(first?first+", thank you. ":"Thank you. ")+"We saved your spot. We will email and text you when keys are given out. One more thing: follow us on Instagram so you see every giveaway."));var f2=el("a","follow","Follow us on Instagram");f2.href="https://instagram.com/lasvegas_restaurants";f2.target="_blank";f2.rel="noopener";s.appendChild(f2);app.appendChild(s);app.appendChild(whatBtn())}
+ s.appendChild(el("p","lead",(first?first+", thank you. ":"Thank you. ")+"We saved your spot for your free Reward Key. We will email and text you when keys go out. One more thing: follow us on Instagram so you never miss it."));var f2=el("a","follow","Follow us on Instagram");f2.href="https://instagram.com/lasvegas_restaurants";f2.target="_blank";f2.rel="noopener";s.appendChild(f2);app.appendChild(s);app.appendChild(whatBtn())}
 function form(){head();
- app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Join the waiting list for free keys"));app.appendChild(hero());
- app.appendChild(el("p","lead","We will be giving out free keys soon. If you live in Las Vegas, join the waiting list and be the first to know."));
+ app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Get your free Reward Key"));app.appendChild(hero());
+ app.appendChild(el("p","lead","As a thank-you to our Las Vegas Restaurants community, we are giving every person one free Reward Key. Join the waiting list and we will tell you the moment keys go out."));
  var stp=el("div","steps");
- function step(n,t,x,extra){var r=el("div","step"),c=el("span","n",String(n)),d=el("div");d.appendChild(el("b",null,t));d.appendChild(el("span","t",x));if(extra)d.appendChild(extra);r.appendChild(c);r.appendChild(d);stp.appendChild(r)}
- var fl=el("a","follow","Follow us on Instagram");fl.href="https://instagram.com/lasvegas_restaurants";fl.target="_blank";fl.rel="noopener";
- step(1,"Follow us on Instagram","We post every giveaway there. Follow @lasvegas_restaurants so you never miss one.",fl);
- step(2,"Join the waiting list below","Fill in the short form and tick the boxes.");
- step(3,"Be first in line","When free keys go out, we email and text you.");
- app.appendChild(stp);app.appendChild(whatBtn());
- var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Step 2: Join the waiting list"));
+ function step(n,t,x,extra){var r=el("div","step"),c=el("span","n",String(n)),d=el("div");d.appendChild(el("b",null,t));if(x)d.appendChild(el("span","t",x));if(extra)d.appendChild(extra);r.appendChild(c);r.appendChild(d);stp.appendChild(r)}
+ var fl=el("a","follow","Follow @lasvegas_restaurants");fl.href="https://instagram.com/lasvegas_restaurants";fl.target="_blank";fl.rel="noopener";
+ step(1,"Follow us on Instagram","",fl);
+ step(2,"Join the waiting list below","It takes about 30 seconds.");
+ step(3,"Get your key","We email and text you when keys go out.");
+ app.appendChild(stp);
+ var can=el("div","can");["Trade it","Get stuff","Experiences","Big things planned"].forEach(function(t){can.appendChild(el("span",null,t))});app.appendChild(can);app.appendChild(whatBtn());
+ var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Join the waiting list"));
  var inp={};
  function field(id,lab,type,ac,mode,max){var l=el("label",null,lab);l.setAttribute("for",id);var i=el("input");i.id=id;i.type=type;i.name=id;i.autocomplete=ac;if(mode)i.inputMode=mode;i.maxLength=max||60;inp[id]=i;return [l,i]}
  function add(x,wrap){var w=wrap||f;w.appendChild(x[0]);w.appendChild(x[1])}
@@ -100,6 +103,8 @@ function form(){head();
  var er=el("div","err");er.setAttribute("role","alert");f.appendChild(er);
  var go=el("button","go","Join the waiting list");go.type="submit";f.appendChild(go);
  app.appendChild(f);
+ var tm=el("div","team");tm.appendChild(el("h2",null,"From the team behind Las Vegas Restaurants"));tm.appendChild(el("p",null,"Key Technologies and Las Vegas Restaurants are the same team. Key Technologies is our next venture, and this is our way of saying thank you to the Las Vegas community that made it possible."));
+ var tl=el("a","follow","Follow @lasvegas_restaurants");tl.href="https://instagram.com/lasvegas_restaurants";tl.target="_blank";tl.rel="noopener";tm.appendChild(tl);app.appendChild(tm);
  function bad(m,focus){er.textContent=m;er.className="err on";if(focus){focus.focus();try{focus.scrollIntoView({block:"center"})}catch(e){}}}
  f.addEventListener("submit",function(ev){ev.preventDefault();er.className="err";
   var v={first:inp.first.value.trim(),last:inp.last.value.trim(),ig:inp.ig.value.trim().replace(/^@+/,""),phone:inp.phone.value.trim(),email:inp.email.value.trim(),street:inp.street.value.trim(),city:inp.city.value.trim(),state:"NV",zip:inp.zip.value.trim()};
