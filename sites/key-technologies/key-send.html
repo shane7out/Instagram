@@ -92,7 +92,7 @@ $("go").onclick=function(){
  $("pop").querySelector("b").textContent=nm;
  $("no").onclick=closePop;
  $("yes").onclick=function(){bal-=amt;sentToday+=amt;hist.unshift({d:-amt,t:"sent to "+nm});save();drawBal();drawHist();
-  pop('<div class="ok">\u2705</div><h2 id="ovt">Sent</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p>This was practice. No real keys moved.</p><button class="btn" id="x">Done</button>');
+  pop('<div class="ok"><svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="#00a8e1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></div><h2 id="ovt">Sent</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p>This was practice. No real keys moved.</p><button class="btn" id="x">Done</button>');
   $("pop").querySelector("b").textContent=nm;$("x").onclick=closePop}};
 $("me").addEventListener("input",drawQR);
 /* camera scan: works in browsers that have BarcodeDetector; everyone else uses the normal phone camera */
