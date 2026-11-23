@@ -29,7 +29,7 @@ p{margin:0;font-size:21px;line-height:1.45}.sm{font-size:19px;color:rgba(255,255
 .bar button{width:48px;height:48px;border-radius:50%;border:2px solid var(--accent);background:transparent;color:#fff;font-size:26px;line-height:1;cursor:pointer;flex:none}.bar button:disabled{opacity:.3;cursor:default}
 .bar .ct{flex:1;text-align:center;font-size:22px;font-weight:900;letter-spacing:.02em}
 .bar .jn{flex:none;min-height:48px;display:flex;align-items:center;padding:0 20px;border-radius:14px;background:var(--accent);color:#0f171e;font-weight:900;font-size:18px;text-decoration:none}
-.bar button:focus-visible,.bar .jn:focus-visible,.top a:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.sl:focus-visible{outline:3px solid #00a8e1;outline-offset:-3px}.bar button:focus-visible,.bar .jn:focus-visible,.top a:focus-visible{outline:3px solid #fff;outline-offset:2px}
 @media(max-height:640px){h1{font-size:34px}h2{font-size:30px}p{font-size:19px}.key{width:150px}}
 
 .swc{display:flex;align-items:center;gap:12px;margin-top:6px;font-size:26px;font-weight:900;color:var(--accent);letter-spacing:.04em}@media(prefers-reduced-motion:no-preference){.swc svg{animation:swn 1.3s ease-in-out infinite}@keyframes swn{0%,100%{transform:translateX(0)}50%{transform:translateX(-12px)}}}.from{font-size:25px;font-weight:900;color:#fff;letter-spacing:0;padding:8px 16px;max-width:100%;border:2px solid var(--accent);border-radius:999px;background:rgba(0,168,225,.14)}.dm{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;width:250px}.dm>*{flex:none}.dm .ok{width:250px;text-align:center}
@@ -68,7 +68,7 @@ var q=new URLSearchParams(location.search),src=(q.get("s")||"").replace(/[^a-z0-
 var last=document.getElementById("s9");
 if(src){var su=document.getElementById("signup");su.setAttribute("data-src",su.getAttribute("data-src")+"&s="+encodeURIComponent(src))}
 var sl=[].slice.call(rail.children),n=sl.length,idx=0,ids={};
-sl.forEach(function(e,i){if(e.id)ids[e.id]=i;e.setAttribute("aria-label","Screen "+(i+1)+" of "+n);e.setAttribute("role","group")});
+sl.forEach(function(e,i){if(e.id)ids[e.id]=i;e.setAttribute("aria-label","Screen "+(i+1)+" of "+n);e.setAttribute("role","group");if(!e.classList.contains("fr"))e.setAttribute("tabindex","0")});
 var HIDE=".klw,.brandline,.pbrand,.fromline,.back,#ktop,.top .brand,.uses,a[aria-label=\"Key Rewards\"]{display:none!important}body{padding-top:0!important}";
 function wire(fr){fr.addEventListener("load",function(){try{var d=fr.contentDocument;var st=d.createElement("style");st.textContent=HIDE;d.head.appendChild(st);
  var x0=0,y0=0,ok=false;
