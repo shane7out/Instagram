@@ -381,6 +381,11 @@ body.hlock{overflow:hidden}
   <p class="fine" style="margin-top:0">People who joined from the waiting list page. Everyone here said yes to emails and texts. Share this link: <b id="wllink"></b></p>
   <div id="wllist"></div>
  </div>
+ <div class="box" id="idbox">
+  <h2>Ideas and comments</h2>
+  <p class="fine" style="margin-top:0">What members send from the ideas page: <b id="idlink"></b></p>
+  <div id="idlist"></div>
+ </div>
  <div class="box" id="twbox">
   <h2>Trading watch</h2>
   <p class="fine" style="margin-top:0">Every trade between two wallets, newest first, and who is trading most. Keys issued from the Treasury are not counted here. Members trade with each other; Key Technologies does not buy or sell keys.</p>
@@ -490,8 +495,8 @@ body.hlock{overflow:hidden}
    else{/* first sign-in: the permanent ledger starts clean from the saved instructions (10,000,000 and Thin Blue 702 at 5,000); practice records in this browser are NOT carried over */S=fresh();S.seeded2=false;S.logos=logos;seed();applyInstr();hasMeta=false;synced={w:{},e:{}}}
    $('modeNote').innerHTML='<b>Owner tool.</b> Key Rewards have no cash value. Every wallet and move is saved permanently in the database, behind your PIN.';
    ['restore','reset'].forEach(function(id){var n=$(id);if(n)(n.tagName==='INPUT'?n.parentNode:n).style.display='none'});$('lock').style.display='';
-   sel='all';paint();gvRender();dnRender();wlRender();twRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
- function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender();wlRender();twRender()}
+   sel='all';paint();gvRender();dnRender();wlRender();twRender();idRender();setInterval(poll,15000);document.addEventListener('visibilitychange',poll);idle()})}
+ function enterLocal(){DBM=false;S=load();seed();applyInstr();retime();paint();gvRender();dnRender();wlRender();twRender();idRender()}
  var idleT=null;function idle(){var go=function(){clearTimeout(idleT);idleT=setTimeout(function(){RR.signOut();location.reload()},15*60*1000)};['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,go,{passive:true})});go()}
  function start(msg){RR.gate({title:'Key Rewards Treasury',sub:msg||'Type your Treasury PIN.',email:RR.TREASURER.email,salt:RR.TREASURER.salt,onOK:enterDb,onSkip:{label:'Use the practice version (this browser only)',fn:enterLocal}})}
  function $(i){return document.getElementById(i)}
@@ -718,6 +723,10 @@ body.hlock{overflow:hidden}
    box.appendChild(row)});
   var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',dnRender);box.appendChild(rf)})}
  /* ---- Standing waiting list (key-waitlist.html) ---- */
+ function idRender(){var box=$('idlist');if(!box)return;var lk=$('idlink');if(lk)lk.textContent=location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-ideas.html'+(DBM?'':'?demo=1');
+  var show=function(rows){box.innerHTML='';box.appendChild(el('p','fine',rows.length+' idea'+(rows.length===1?'':'s')));rows.slice(0,40).forEach(function(w){box.appendChild(el('p','fine','@'+String(w.ig||'').replace(/^@+/,'')+' · '+when(w.at)+': '+String(w.text||'')))})};
+  if(!DBM){var o=[];try{o=JSON.parse(localStorage.getItem('kiLocal')||'[]')||[]}catch(e){}show(o);return}
+  RR.db('GET','key_ideas').then(function(r){var m=r.status===200&&r.json?r.json:{};show(Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return (b.at||0)-(a.at||0)}))})}
  function twRender(){var sm=$('twsum'),ls=$('twlist');if(!sm||!ls)return;sm.innerHTML='';ls.innerHTML='';
   var tr=S.entries.filter(function(e){return e.from&&e.to&&e.from!=='treasury'&&e.to!=='treasury'&&e.amt>0}).sort(function(a,b){return b.t-a.t});
   if(!tr.length){sm.appendChild(el('p','fine','No trades yet. When members trade with each other, every trade shows up here.'));return}
@@ -729,10 +738,13 @@ body.hlock{overflow:hidden}
   tr.slice(0,25).forEach(function(e){var f=wById(e.from),t=wById(e.to);ls.appendChild(el('p','fine',fdate(e.t)+': '+(f?f.name:'?')+' \u2192 '+(t?t.name:'?')+', '+fmt(e.amt)+' keys'+(e.note?' ('+e.note+')':'')))})}
  function wlRender(){var box=$('wllist');if(!box)return;var lk=$('wllink');if(lk)lk.textContent=location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-waitlist.html'+(DBM?'':'?demo=1');
   var show=function(o){box.innerHTML='';var ids=Object.keys(o||{}).sort(function(a,b){return (o[b].at||0)-(o[a].at||0)}),rows=ids.map(function(k){return o[k]});
-   box.appendChild(el('p','fine',rows.length+' on the waiting list, '+rows.filter(function(w){return w.trade===true}).length+' open to trading'));
+   box.appendChild(el('p','fine',rows.length+' on the waiting list, '+rows.filter(function(w){return w.verified===true}).length+' verified, '+rows.filter(function(w){return w.trade===true}).length+' open to trading. Verify each person on Instagram before you give them keys.'));
    if(!rows.length)return;
-   var ul=el('ul','wl');rows.forEach(function(w){ul.appendChild(el('li',null,w.first+' '+w.last+' · '+w.email+' · '+w.phone+' · Instagram @'+String(w.ig||'').replace(/^@+/,'')+' · '+(w.street||'')+', '+(w.city||'')+' '+(w.state||'')+' '+(w.zip||'')+' · open to trading: '+(w.trade===true?'yes':'no')+' · joined '+when(w.at)))});box.appendChild(ul);
-   var cp=el('button','btn','Copy the list for a spreadsheet');cp.type='button';cp.addEventListener('click',function(){var head=['First name','Last name','Email','Phone','Instagram','Street','City','State','ZIP','Open to trading','Joined'].join('\t'),lines=rows.map(function(w){return [w.first,w.last,w.email,w.phone,'@'+String(w.ig||'').replace(/^@+/,''),w.street,w.city,w.state,w.zip,(w.trade===true?'yes':'no'),new Date(w.at).toISOString()].map(function(x){return String(x==null?'':x).replace(/[\t\r\n]+/g,' ')}).join('\t')}),txt=[head].concat(lines).join('\n'),d=function(){cp.textContent='Copied '+rows.length};if(navigator.clipboard)navigator.clipboard.writeText(txt).then(d,function(){cp.textContent='Could not copy'});else cp.textContent='Could not copy'});box.appendChild(cp);
+   var ul=el('ul','wl');ids.forEach(function(k){var w=o[k],li=el('li',null,w.first+' '+w.last+' · '+w.email+' · '+w.phone+' · Instagram @'+String(w.ig||'').replace(/^@+/,'')+' · ZIP '+(w.zip||'')+' · open to trading: '+(w.trade===true?'yes':'no')+' · '+(w.verified===true?'VERIFIED':'not verified yet')+' · joined '+when(w.at));
+    var vb=el('button','btn ghost',w.verified===true?'Remove verified':'Mark verified');vb.type='button';vb.addEventListener('click',function(){var nv=!(w.verified===true);vb.disabled=true;
+     if(!DBM){var lo={};try{lo=JSON.parse(localStorage.getItem('kwLocal')||'{}')||{}}catch(e){}if(lo[k]){lo[k].verified=nv;lo[k].verifiedAt=Date.now();try{localStorage.setItem('kwLocal',JSON.stringify(lo))}catch(e){}}wlRender();return}
+     RR.db('PATCH','key_waitlist/'+k,{verified:nv,verifiedAt:{'.sv':'timestamp'}}).then(function(){wlRender()},function(){vb.disabled=false})});li.appendChild(vb);ul.appendChild(li)});box.appendChild(ul);
+   var cp=el('button','btn','Copy the list for a spreadsheet');cp.type='button';cp.addEventListener('click',function(){var head=['First name','Last name','Email','Phone','Instagram','Street','City','State','ZIP','Open to trading','Verified','Joined'].join('\t'),lines=rows.map(function(w){return [w.first,w.last,w.email,w.phone,'@'+String(w.ig||'').replace(/^@+/,''),w.street,w.city,w.state,w.zip,(w.trade===true?'yes':'no'),(w.verified===true?'yes':'no'),new Date(w.at).toISOString()].map(function(x){return String(x==null?'':x).replace(/[\t\r\n]+/g,' ')}).join('\t')}),txt=[head].concat(lines).join('\n'),d=function(){cp.textContent='Copied '+rows.length};if(navigator.clipboard)navigator.clipboard.writeText(txt).then(d,function(){cp.textContent='Could not copy'});else cp.textContent='Could not copy'});box.appendChild(cp);
    var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',wlRender);box.appendChild(rf)};
   if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kwLocal')||'{}')||{}}catch(e){}show(o);return}
   RR.db('GET','key_waitlist').then(function(r){show(r.status===200&&r.json?r.json:{})})}

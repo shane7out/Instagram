@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 const FRAG = 'https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/rules/key-rules-owner.json?cb=' + Date.now();
-const SECTIONS = ['ownerAuth', 'key_leads', 'key_pageviews', 'kt_crm', 'rr_ledger', 'key_giveaways', 'key_dine', 'key_visits', 'key_waitlist'];
+const SECTIONS = ['ownerAuth', 'key_leads', 'key_pageviews', 'kt_crm', 'rr_ledger', 'key_giveaways', 'key_dine', 'key_visits', 'key_waitlist', 'key_ideas'];
 const mask = s => String(s).replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL]').replace(/AIza[0-9A-Za-z_-]{20,}/g, '[KEY]').replace(/ya29\.[0-9A-Za-z._-]+/g, '[TOKEN]');
 const out = [], log = s => { const m = mask(s); out.push(m); console.log(m); };
 function ask(q, hidden) {
