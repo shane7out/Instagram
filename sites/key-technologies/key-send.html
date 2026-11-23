@@ -41,6 +41,7 @@ video{width:100%;border-radius:14px;margin-top:10px;background:#000}
 <p class="demo">Practice. Nothing here is real yet. No keys move.</p>
 
 <div class="box"><div class="bal"><small>YOUR KEYS</small><span id="bal">100</span></div>
+<p style="margin:10px 0 0">Practice: these keys expire in <b>14 days</b>.</p>
 <label for="me">Your name</label><input type="text" id="me" maxlength="30" autocomplete="off" placeholder="Your name here"></div>
 
 <div class="box" id="recv"><h2>Get keys from a friend</h2>
@@ -90,11 +91,11 @@ $("go").onclick=function(){
  if(amt>bal){pop('<h2 id="ovt">Not enough keys</h2><p>You have '+bal+' keys.</p><button class="btn" id="x">OK</button>');$("x").onclick=closePop;return}
  if(sentToday+amt>100){pop('<h2 id="ovt">Daily limit</h2><p>You can send up to 100 keys a day in practice.</p><button class="btn" id="x">OK</button>');$("x").onclick=closePop;return}
  var nm=toName||"your friend";
- pop('<h2 id="ovt">Please confirm</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><button class="btn" id="yes">Yes, send</button><button class="btn o" id="no">Cancel</button>');
+ pop('<h2 id="ovt">Please confirm</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p style="font-size:19px">These keys keep their date. They still expire in 14 days for your friend.</p><button class="btn" id="yes">Yes, send</button><button class="btn o" id="no">Cancel</button>');
  $("pop").querySelector("b").textContent=nm;
  $("no").onclick=closePop;
  $("yes").onclick=function(){bal-=amt;sentToday+=amt;hist.unshift({d:-amt,t:"sent to "+nm});save();drawBal();drawHist();
-  pop('<div class="ok"><svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="#00a8e1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></div><h2 id="ovt">Sent</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p>This was practice. No real keys moved.</p><button class="btn" id="x">Done</button>');
+  pop('<div class="ok"><svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="#00a8e1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></div><h2 id="ovt">Sent</h2><div class="big">'+amt+' keys</div><p>to <b></b></p><p>They still expire in 14 days. This was practice. No real keys moved.</p><button class="btn" id="x">Done</button>');
   $("pop").querySelector("b").textContent=nm;$("x").onclick=closePop}};
 $("igb").onclick=function(){var h=$("ig").value.trim().replace(/^@+/,"");if(!/^[A-Za-z0-9._]{1,30}$/.test(h)){$("scanmsg").textContent="Type their Instagram handle, like @theirhandle. Letters, numbers, dots and underscores only.";return}to="ig:"+h.toLowerCase();toName="@"+h;drawTo();$("scanmsg").textContent="Pick an amount and send."};
 $("me").addEventListener("input",drawQR);

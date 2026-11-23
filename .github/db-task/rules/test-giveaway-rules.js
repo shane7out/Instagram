@@ -88,6 +88,8 @@ const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@
   await t('an entry needs both permissions', 'anon', 'PUT', '/key_waitlist/' + 'c'.repeat(64), claim({ smsOk: false }), false);
   await t('an entry must be a Las Vegas address', 'anon', 'PUT', '/key_waitlist/' + 'd'.repeat(64), claim({ city: 'Phoenix' }), false);
   await t('an entry without a street address is accepted (ZIP is enough)', 'anon', 'PUT', '/key_waitlist/' + 'f'.repeat(64), (() => { const x = claim(); delete x.street; return x; })(), true);
+  await t('an entry that says yes to trading is accepted', 'anon', 'PUT', '/key_waitlist/' + 'a1'.repeat(32), claim({ trade: true }), true);
+  await t('an entry with a trade value that is not true or false is refused', 'anon', 'PUT', '/key_waitlist/' + 'b2'.repeat(32), claim({ trade: 'yes' }), false);
   await t('an entry with extra fields is refused', 'anon', 'PUT', '/key_waitlist/' + 'e'.repeat(64), claim({ hack: 1 }), false);
   await t('a stranger cannot read the standing waiting list', 'anon', 'GET', '/key_waitlist', undefined, false);
   await t('a stranger cannot read one entry', 'anon', 'GET', '/key_waitlist/' + H1, undefined, false);
