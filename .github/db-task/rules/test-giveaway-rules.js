@@ -90,6 +90,8 @@ const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@
   await t('an entry without a street address is refused', 'anon', 'PUT', '/key_waitlist/' + 'f'.repeat(64), (() => { const x = claim(); delete x.street; return x; })(), false);
   await t('an entry that says yes to trading is accepted', 'anon', 'PUT', '/key_waitlist/' + 'a1'.repeat(32), claim({ trade: true }), true);
   await t('an entry with a trade value that is not true or false is refused', 'anon', 'PUT', '/key_waitlist/' + 'b2'.repeat(32), claim({ trade: 'yes' }), false);
+  await t('an entry that confirms an active Instagram account is accepted', 'anon', 'PUT', '/key_waitlist/' + 'a4'.repeat(32), claim({ igActive: true }), true);
+  await t('an entry that says the Instagram account is not active is refused', 'anon', 'PUT', '/key_waitlist/' + 'b4'.repeat(32), claim({ igActive: false }), false);
   await t('a stranger cannot mark themselves verified', 'anon', 'PUT', '/key_waitlist/' + 'c3'.repeat(32), claim({ verified: true }), false);
   await t('the owner can mark a person verified', 'owner', 'PATCH', '/key_waitlist/' + H1, { verified: true, verifiedAt: Date.now() }, true);
   await t('an entry with extra fields is refused', 'anon', 'PUT', '/key_waitlist/' + 'e'.repeat(64), claim({ hack: 1 }), false);
