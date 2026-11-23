@@ -6,17 +6,17 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Key Rewards | Taking you to the waiting list</title>
 <meta name="theme-color" content="#0f171e">
-<noscript><meta http-equiv="refresh" content="0; url=/key-waitlist.html"></noscript>
+<noscript><meta http-equiv="refresh" content="0; url=/key-tour.html"></noscript>
 <style>body{margin:0;background:#0f171e;color:#fff;font:400 20px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px}a{color:#e8c766}</style>
 </head>
 <body>
-<p>Taking you to your keys&hellip;<br><a href="/key-waitlist.html" id="go">Tap here if nothing happens</a></p>
+<p>Taking you to your keys&hellip;<br><a href="/key-tour.html" id="go">Tap here if nothing happens</a></p>
 <script>
 /* keytechnologies.si/keys  ->  the Las Vegas waiting list page, or a specific giveaway when the link has ?g=<id>.
    ?s=<name> says which story or post sent the person (for example ?s=story1); it is kept and recorded with the visit. */
 (function () {
   var q = new URLSearchParams(location.search), g = (q.get('g') || '').toLowerCase(), s = (q.get('s') || q.get('src') || '').replace(/[^a-z0-9_-]/gi, '').slice(0, 40);
-  var dest = /^[a-z0-9]{16,40}$/.test(g) ? '/key-giveaway.html?g=' + g : '/key-waitlist.html';
+  var dest = /^[a-z0-9]{16,40}$/.test(g) ? '/key-giveaway.html?g=' + g : '/key-tour.html';
   if (s) dest += (dest.indexOf('?') < 0 ? '?' : '&') + 's=' + encodeURIComponent(s);
   document.getElementById('go').href = dest;
   location.replace(dest);
