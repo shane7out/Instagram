@@ -685,3 +685,5 @@ NEXT: real offers (members post their own, stored in the database with owner mod
 357. WALLET SCREEN: NO TITLE WORD (Shane, 2026-11-23): the "Wallet" heading above the card is removed; the screen is the card, a thin white X in the top right, and the buttons. Screen readers still hear "Wallet view" from the dialog label.
 
 358. WALLET BUTTONS MATCH THE HISTORY BOX (Shane, 2026-11-23): Redeem, Send a gift and the other wallet buttons use the same softly rounded corners (12 px) as the Wallet history / Gift card history box instead of the full pill shape.
+
+359. ROOM AND SEAT ON THE CARD (Shane, 2026-11-23): the wallet card now reads "ROOM 15 · SEAT 20 OF 20" (room = ceil(number / 20), seat = position inside the room; Thin Blue 702 = Room 1 · Seat 1 of 20). `seatOf()` next to `roomOf()` in restaurant-rewards-treasury.html. Sample card shows "Room 1 · Seat 7 of 20"; tour wallet screen and the Rule Book (rule 2) mention room and seat. The wallet number and the seat are two different things: the card number is unchanged.
