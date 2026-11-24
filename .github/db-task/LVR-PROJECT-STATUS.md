@@ -1609,3 +1609,5 @@ Shane: the "Owner sign-in" button, bottom right, covered the "Dating" chip on th
 OPEN: "Johnny Max" new client site on the PIN page. No site with that name exists in the repo (only sites/key-technologies and sites/private-table), so Claude asked Shane which site he means (name or address) before adding a chip.
 
 - 2026-11-17: Teppan Take Out (@teppantakeout, 1745 S Rainbow Blvd Suite C, hibachi take out) added from Shane's screenshot as num 60071 (db-task run 528, dedup first, num claimed atomically, status pending, attempts written, VERIFIED). ZIP and phone not on the profile.
+
+- 2026-11-24: Wings Korean Chicken - Las Vegas (@wingskoreanchicken_lasvegas, 5105 S Fort Apache Rd D105, business phone as printed in the bio, wingskorchicken.com) added from Shane's screenshot as num 60072 (db-task run 542, dedup scan of 2,186 live records found no match, num claimed atomically, status pending, attempts written, VERIFIED). Email and owner not on the profile.
