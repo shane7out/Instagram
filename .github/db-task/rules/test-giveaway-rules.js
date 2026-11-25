@@ -111,5 +111,25 @@ const claim = (extra) => Object.assign({ first: 'Ann', last: 'Lee', email: 'ann@
   await t('the owner can read the standing waiting list', 'owner', 'GET', '/key_waitlist', undefined, true);
   await t('the Treasury PIN account can read it', 'treasurer', 'GET', '/key_waitlist', undefined, true);
   await t('the owner can remove an entry', 'owner', 'DELETE', '/key_waitlist/' + H2, undefined, true);
+  // ---- sign-up pause switch, 18+ and rules agreement (2026-11-25) ----
+  const P1 = 'e'.repeat(64), P2 = 'f'.repeat(64), P3 = '1'.repeat(64), P4 = '2'.repeat(64), P5 = '3'.repeat(64);
+  await t('a visitor can read the sign-up pause switch', 'anon', 'GET', '/key_settings/signupsPaused', undefined, true);
+  await t('a visitor cannot read the settings folder', 'anon', 'GET', '/key_settings', undefined, false);
+  await t('a visitor cannot flip the pause switch', 'anon', 'PUT', '/key_settings/signupsPaused', true, false);
+  await t('a signed-in stranger cannot flip the pause switch', 'other', 'PUT', '/key_settings/signupsPaused', true, false);
+  await t('the pause switch only takes true or false', 'owner', 'PUT', '/key_settings/signupsPaused', 'yes', false);
+  await t('the new sign-up (18+, rules agreed, form v2) is accepted', 'anon', 'PUT', '/key_waitlist/' + P1, claim({ email: 'p1@example.com', ageOk: true, rulesOk: true, rv: 'v2' }), true);
+  await t('an old-form sign-up (no ageOk, rulesOk) is still accepted', 'anon', 'PUT', '/key_waitlist/' + P2, claim({ email: 'p2@example.com' }), true);
+  await t('ageOk false is refused', 'anon', 'PUT', '/key_waitlist/' + P3, claim({ email: 'p3@example.com', ageOk: false }), false);
+  await t('rulesOk false is refused', 'anon', 'PUT', '/key_waitlist/' + P3, claim({ email: 'p3@example.com', rulesOk: false }), false);
+  await t('the owner pauses sign-ups', 'owner', 'PUT', '/key_settings/signupsPaused', true, true);
+  await t('while paused a visitor cannot join', 'anon', 'PUT', '/key_waitlist/' + P4, claim({ email: 'p4@example.com', ageOk: true, rulesOk: true }), false);
+  await t('while paused the owner can still edit an entry', 'owner', 'PATCH', '/key_waitlist/' + P1, { verified: true, verifiedAt: 1 }, true);
+  await t('while paused the PIN account can still edit an entry', 'treasurer', 'PATCH', '/key_waitlist/' + P1, { verified: false, verifiedAt: 2 }, true);
+  await t('the PIN account can open sign-ups again', 'treasurer', 'PUT', '/key_settings/signupsPaused', false, true);
+  await t('after opening a visitor can join', 'anon', 'PUT', '/key_waitlist/' + P4, claim({ email: 'p4@example.com', ageOk: true, rulesOk: true }), true);
+  await t('removing the switch also leaves sign-ups open', 'owner', 'DELETE', '/key_settings/signupsPaused', undefined, true);
+  await t('with no switch a visitor can join', 'anon', 'PUT', '/key_waitlist/' + P5, claim({ email: 'p5@example.com', ageOk: true, rulesOk: true }), true);
+  await t('a visitor cannot self-verify on joining', 'anon', 'PUT', '/key_waitlist/' + '4'.repeat(64), claim({ email: 'p6@example.com', verified: true, verifiedAt: 3 }), false);
   console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
 })();

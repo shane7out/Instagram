@@ -89,11 +89,12 @@ function hex(buf){var a=new Uint8Array(buf),s="";for(var i=0;i<a.length;i++)s+=(
 function fingerprint(email){var t=email.trim().toLowerCase();
  if(window.crypto&&crypto.subtle&&window.TextEncoder)return crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)).then(hex);
  var a=new Uint8Array(32);crypto.getRandomValues(a);return Promise.resolve(hex(a.buffer))}
-function done(first,again){head();var s=el("div","state box");var ck=el("div","seal");ck.innerHTML='<svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="#00a8e1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>';s.appendChild(ck);s.appendChild(el("h1",null,"Your place is reserved"));
- s.appendChild(el("p","lead",(first?first+", welcome. You are ":"Welcome. You are ")+"one of the first members of Key Rewards. We are building this slowly on purpose, and we have a feeling it is going to get really big. We will email and text you when your keys are ready. Nothing else to do."));
- var how=el("div","trust");["Next, we verify you on Instagram. Then your keys are ready.","Use your keys. Unused keys disappear after 60 days, even if you give them to a friend.","The more you use them, the more you receive.","Check your wallet often. We will be running giveaways inside it.","Find your rewards any time: go to keytechnologies.si, tap the menu, then tap Log in.","Earn more: ask us, repost us, upload your receipts, tell your friends."].forEach(function(t){how.appendChild(el("p",null,t))});s.appendChild(how);
+function done(first,again){head();var s=el("div","state box");var ck=el("div","seal");ck.innerHTML='<svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="#00a8e1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>';s.appendChild(ck);s.appendChild(el("h1",null,"You are on the list"));
+ s.appendChild(el("p","lead",(first?first+", welcome. You are ":"Welcome. You are ")+"one of the first people on the Key Rewards list. We are building this slowly on purpose, and we have a feeling it is going to get really big. Joining does not guarantee keys. We will email and text you about your keys. Nothing else to do."));
+ var how=el("div","trust");["Next, we check your Instagram by hand. If you are approved, we will tell you about your keys.","Keys do not last forever. Unused keys disappear after 60 days, even if you give them to a friend.","Your wallet is still being built. We will let you know when it is ready.","Questions? Message @LasVegas_Restaurants on Instagram.","Tell your friends about Key Rewards. Meeting up with other members is optional."].forEach(function(t){how.appendChild(el("p",null,t))});s.appendChild(how);
  s.appendChild(el("p","lead","One more thing: follow us on Instagram so you never miss it."));var f2=el("a","follow","Follow us on Instagram");f2.href="https://instagram.com/lasvegas_restaurants";f2.target="_blank";f2.rel="noopener";s.appendChild(f2);app.appendChild(s);app.appendChild(whatBtn());var ib=el("a","what","Share an idea");ib.href="key-ideas.html"+(DEMO?"?demo=1":"");app.appendChild(ib)}
-function form(){head();
+var SHOWN=Date.now();
+function form(){head();SHOWN=Date.now();
  app.appendChild(el("span","pill","LAS VEGAS"));app.appendChild(el("h1",null,"Get your free keys"));app.appendChild(el("div","uses"));
  app.appendChild(el("p","grp","ROOM 1 IS FULL. ROOM 2 IS OPEN: 20 SEATS. They will fill fast. Room 3 opens next."));app.appendChild(el("p","lead","Thank you for following Las Vegas Restaurants. It has been 10 years, and we built Key Technologies. To say thank you, we are giving out Key Rewards. And we are going to be having parties! Go to parties, events and great food, and meet and greet."));
  app.appendChild(el("p","elig","This first group is for people who live in Las Vegas and follow us on Instagram. Your Instagram account must be active: you posted in the last 60 days. We check every member on Instagram before we give out keys. We are starting in Las Vegas, and we plan to open it up worldwide soon."));var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Join the waiting list"));f.appendChild(el("p","quick","It takes about 30 seconds. Please read everything first so you are okay with it. We will never ask you for money."));
@@ -110,8 +111,9 @@ function form(){head();
  var cks={};
  function chk(id,html){var l=el("label","chk"),c=el("input");c.type="checkbox";c.id=id;l.appendChild(c);var sp=el("span");sp.innerHTML=html;l.appendChild(sp);f.appendChild(l);cks[id]=c}
  chk("ia","<b>My Instagram account is active.</b> I posted in the last 60 days, and I follow @LasVegas_Restaurants.");
- chk("em","<b>Yes, send me updates by email and text.</b> You can opt out any time: reply STOP.");
- cks.lv=cks.em;cks.ag=cks.em;cks.sm=cks.em;
+ chk("ag","<b>I am 18 or older, and I agree to the <a href=\"key-rules.html\" target=\"_blank\" rel=\"noopener\">Rule Book</a> and the <a href=\"rewards-privacy.html\" target=\"_blank\" rel=\"noopener\">privacy page</a>.</b>");
+ chk("em","<b>Yes, send me updates by email and text.</b> Message and data rates may apply. Message frequency varies. Reply STOP to stop or HELP for help. You can opt out any time.");
+ cks.lv=cks.em;cks.sm=cks.em;
  chk("tr","<b>Optional:</b> I am open to trading and giving keys to friends, family and other members.");
  var ru=el("details","rules"),rs=el("summary",null,"Read the full rules"),ol=el("ol");RULES.forEach(function(t){var li=el("li");li.innerHTML=t;ol.appendChild(li)});ru.appendChild(rs);ru.appendChild(ol);f.appendChild(ru);
  var rb=el("a","what","Read the Rule Book");rb.href="key-rules.html";f.appendChild(rb);var pn=el("p","note");pn.appendChild(document.createTextNode("How we use your information: "));var pl=el("a",null,"read our privacy page");pl.href="rewards-privacy.html";pl.target="_blank";pl.rel="noopener";pn.appendChild(pl);pn.appendChild(document.createTextNode("."));f.appendChild(pn);
@@ -134,13 +136,18 @@ function form(){head();
   if(!cks.lv.checked)return bad("Please tick the box so we can send you updates.",cks.lv);
   if(!cks.em.checked)return bad("Please tick the box so we can send you updates.",cks.em);
   if(!cks.sm.checked)return bad("To join, please tick the box that says we can text you.",cks.sm);
-  if(!cks.ag.checked)return bad("Please tick the box to say you agree to the rules.",cks.ag);
-  if(hi.value){done(v.first);return}
-  go.disabled=true;go.textContent="Sending…";
+  if(!cks.ag.checked)return bad("Please tick the box to say you are 18 or older and agree to the rules and the privacy page.",cks.ag);
+  if(hi.value||Date.now()-SHOWN<3000){done(v.first);return}
+  go.disabled=true;go.textContent="Checking…";
+  paused(function(p){if(p){go.disabled=false;go.textContent="Save my spot";return bad("Sign-ups are paused right now. Please check back soon, and follow @LasVegas_Restaurants on Instagram for news.")}go.textContent="Sending…";doJoin()});
+  function doJoin(){
   var again=function(){go.disabled=false;go.textContent="Save my spot";bad("That did not go through. Please check your connection and tap the blue button again.")};
-  join(v,function(ok){if(ok){mine("1");done(v.first)}else again()})})}
-function rec(v){var r={first:v.first,last:v.last,email:v.email,phone:v.phone,ig:v.ig,street:v.street,city:v.city,state:"NV",zip:v.zip,consent:true,emailOk:true,smsOk:true,igActive:true,trade:!!v.trade,rv:"v1"};if(VID)r.vid=VID;return r}
-function join(v,cb){var r=rec(v);
+  join(v,function(ok){if(ok){mine("1");done(v.first)}else again()})}})}
+/* The sign-up switch doubles as a rules marker: once the new database rules are live the switch is set to true or false (never empty). Until then we send the older record shape the old rules accept, so a sign-up is never lost. */
+var RULES_NEW=false;
+function paused(cb){if(DEMO){RULES_NEW=true;return cb(false)}fetch("https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_settings/signupsPaused.json").then(function(r){return r.ok?r.json():null}).then(function(v){RULES_NEW=(v===true||v===false);cb(v===true)}).catch(function(){cb(false)})}
+function rec(v){var r={first:v.first,last:v.last,email:v.email,phone:v.phone,ig:v.ig,street:v.street,city:v.city,state:"NV",zip:v.zip,consent:true,emailOk:true,smsOk:true,igActive:true,ageOk:true,rulesOk:true,trade:!!v.trade,rv:"v2"};if(VID)r.vid=VID;return r}
+function join(v,cb){var r=rec(v);if(!RULES_NEW){delete r.ageOk;delete r.rulesOk}
  fingerprint(v.email).then(function(id){
   if(DEMO){var o=lget();if(!o[id]){r.at=Date.now();o[id]=r;lset(o)}return cb(true)}
   r.at={".sv":"timestamp"};
