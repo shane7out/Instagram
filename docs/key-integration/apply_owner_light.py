@@ -4,7 +4,7 @@ Appends ONE override <style id="ktowner-light"> to each owner/admin page: it re-
 and fixes the few hard-coded dark colours (top strip, sign-in pill, form fields). Idempotent (replaces its own block). Colours only: no script, text or data is touched.
 Run from the repo root. The pages in .github/db-task/mac are put live by Shane's Mac deploy scripts; the site pages deploy with the website."""
 import os, re
-FILES = ['.github/db-task/mac/kt-crm.html', '.github/db-task/mac/key-leads.html', '.github/db-task/mac/key-advertisers.html', '.github/db-task/mac/key-room.html',
+FILES = ['.github/db-task/mac/kt-crm.html', '.github/db-task/mac/kt-outreach.html', '.github/db-task/mac/key-leads.html', '.github/db-task/mac/key-advertisers.html', '.github/db-task/mac/key-room.html',
          '.github/db-task/mac/lvr-points-admin.html', '.github/db-task/mac/lvr-coupons-admin.html', '.github/db-task/mac/lvr-invoice.html',
          ]
 # Shane, 2026-11-17: the two owner pages that are part of the public website (Owner report, Content Studio) use the site's dark look with the bright blue,

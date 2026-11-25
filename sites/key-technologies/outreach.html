@@ -391,14 +391,14 @@ var MODE='kt';try{if(localStorage.getItem('outreachMode')==='lvr')MODE='lvr'}cat
 var LS=MODE==='lvr'?'outreachLVR1':'outreachV1',DAY=864e5,FOLLOW_DAYS=3,MAX_FOLLOW=2,CLOSE_DAYS=4,SAFE=900; /* Instagram refuses very long messages (about 1,000 characters), so every part stays under 900 */
 var MAXMSG=300; /* every message is kept SHORT: a hard limit of 300 characters */
 var DEF_KT={
- open:"Hey {first}, Las Vegas Restaurants here. I also run Key Technologies, AI/SI tools for local businesses. Can I show {name} one quick free idea? keytechnologies.si",
- follow:"Hey {first}, circling back. Happy to show {name} one free idea, 10 minutes, no pressure. Does any day this week work?",
- ask:"Sure {first}. We build AI receptionists, websites and small tools for local businesses. Want a free 10 minute look at {name}? keytechnologies.si"
+ open:"Hi {first}, we follow {name} and admire what you have built. Key Technologies helps Las Vegas businesses save time with AI/SI: an AI receptionist that answers calls and texts, websites, and custom tools. May we send you a free review with two practical ideas for {name}? keytechnologies.si",
+ follow:"Hi {first}, a quick follow-up on my note about {name}. The free review is a short look at how {name} runs today, with two practical ideas you could use right away. If the timing is not right, no problem at all. Would a short call this week suit you?",
+ ask:"Thank you for asking, {first}. We build AI receptionists, websites and custom tools for local businesses, scoped to what {name} actually needs. The best first step is a short call, so we can recommend the right fit. Does tomorrow or the day after work? keytechnologies.si"
 };
 var DEF_LVR={
- open:"Hey {first}, Las Vegas Restaurants here. We would love to feature {name} to our Las Vegas followers. Got a minute to chat?",
- follow:"Hey {first}, circling back on {name} and Las Vegas Restaurants. Happy to find a time that works. If it is not a fit, just say so.",
- ask:"Fair question, {first}. It depends on what {name} needs, so a short call is quickest. Does tomorrow or the day after work?"
+ open:"Hey {first}, Las Vegas Restaurants here. We would love to get {name} in front of our Las Vegas followers. Do you have a minute to talk about how we can work together?",
+ follow:"Hey {first}, circling back on my note about {name} and Las Vegas Restaurants. No pressure at all. If it is not a fit, just tell me and I will not bug you. If it is, I am happy to find a time that works for you.",
+ ask:"Fair question, {first}. It depends on what {name} needs, so the quickest way is a short call. Does tomorrow or the day after work? Then I can tell you exactly what it would look like."
 };
 var DEF=MODE==='lvr'?DEF_LVR:DEF_KT;
 var MSGN={open:'First hello',follow:'Check in',ask:'Answer'};

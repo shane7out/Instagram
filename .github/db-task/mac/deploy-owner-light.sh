@@ -13,7 +13,7 @@ CB="?cb=$(date +%s)"
 LOG=/tmp/ownerlight.txt
 : > "$LOG"
 cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
-PAGES="kt-crm.html key-leads.html key-advertisers.html key-room.html lvr-points-admin.html lvr-coupons-admin.html lvr-invoice.html"
+PAGES="kt-crm.html key-leads.html key-advertisers.html key-room.html kt-outreach.html lvr-points-admin.html lvr-coupons-admin.html lvr-invoice.html"
 rm -rf /tmp/ownerlight-new && mkdir -p /tmp/ownerlight-new
 curl -sL -o /tmp/ownerlight-snippet.html "$RAWB/owner-light.snippet.html$CB"
 curl -sL -o /tmp/ownerlight-auth.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html$CB"
