@@ -1,6 +1,7 @@
 #!/bin/bash
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-keypad.sh?$(date +%s)" -o /tmp/deploy-dashboard-keypad.sh && bash /tmp/deploy-dashboard-keypad.sh
+# (also: the Ads tab gets a toggle that decides whether the DMs and emails use the Las Vegas Restaurants or the Key Technologies message)
 # BLUE EVERYWHERE (Shane, 2026-11-25: "always make it the one on the left, blue... I don't want to ever see white again"). Two steps, one command:
 #  1) the LIVE dashboard: removes the "Johnny Mac's" chip from the PIN page, removes the light keypad block if an earlier run added it (the blue round LVR keypad stays as it is),
 #     and the owner key at the bottom now opens a blue PIN pad (the same PIN as the Treasury) instead of the email and password box;
@@ -33,6 +34,11 @@ echo "patcher: $(wc -c < /tmp/patch-dashboard-keypad.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-keypad.js "$IDX" /tmp/owner-auth.snippet.html >> "$LOG" 2>&1
 PATCH_RC=$?
 echo "patch exit: $PATCH_RC" >> "$LOG"
+# the Ads tab message toggle (Las Vegas Restaurants / Key Technologies); not fatal if the live page differs: the dashboard is released either way and the log says so
+curl -sL -o /tmp/patch-dashboard-ads.js "$RAWB/patch-dashboard-ads.js"
+echo "ads patcher: $(wc -c < /tmp/patch-dashboard-ads.js) bytes" >> "$LOG"
+node /tmp/patch-dashboard-ads.js "$IDX" >> "$LOG" 2>&1
+echo "ads patch exit: $?" >> "$LOG"
 
 if [ "$PATCH_RC" != "0" ]; then
   echo "PATCH REPORTED A FAILURE — restoring and stopping, nothing deployed" >> "$LOG"
@@ -103,7 +109,7 @@ sleep 3
 curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live.html
 echo "-- live check --" >> "$LOG"
 echo "live version : $(grep -ao 'APP_VERSION=[0-9]*' /tmp/live.html | head -1)" >> "$LOG"
-for MARK in 'OWNERPIN01'; do
+for MARK in 'OWNERPIN01' 'ADSMSG01'; do
   echo "live has $MARK (should be 1 or more): $(grep -c "$MARK" /tmp/live.html)" >> "$LOG"
   echo "live Johnny Mac chip (should be 0): $(grep -c "JOHNNYMACS-START" /tmp/live.html)" >> "$LOG"
 done

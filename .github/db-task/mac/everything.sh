@@ -20,7 +20,7 @@ if ! grep -q "ALL CHECKS PASSED" /tmp/deploy-key-rules.sh.log; then
 fi
 step "STEP 2 of 5 - Prospect CRM tool" deploy-kt-crm-cars.sh
 step "STEP 3 of 5 - Key Technologies DM room (professional business messages, blue look, PIN pad)" deploy-kt-outreach.sh
-step "STEP 4 of 5 - blue look, owner PIN pad, restaurant message restored, Johnny Mac's chip out" deploy-dashboard-keypad.sh
+step "STEP 4 of 5 - blue look, owner PIN pad, restaurant message restored, Ads tab message toggle, Johnny Mac's chip out" deploy-dashboard-keypad.sh
 step "STEP 5 of 5 - weekly backup" backup-setup.sh
 echo; echo "=================================================="
 echo "  SUMMARY"
