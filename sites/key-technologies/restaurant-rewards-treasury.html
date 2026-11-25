@@ -315,7 +315,7 @@ body.hlock{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.tp3d,.tp3d.done{animation:none}}
 
 #wlbox .chk{border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;background:rgba(255,255,255,.05)}#wlbox .chk h3{margin:0 0 4px;font-size:17px}#wlbox .wlrow{border-top:1px solid rgba(255,255,255,.12);padding:8px 0}#wlbox .wlrow summary{cursor:pointer;font-size:14px;line-height:1.5}#wlbox .wlrow .btn{margin:6px 8px 6px 0}#wlbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#wlbox .btn{margin:6px 8px 0 0}#gvbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#gvbox .kvrow{padding:8px 0;border-top:1px solid rgba(255,255,255,.12)}#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
-#dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
+#owebox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#owebox .gvrow input{width:100%;margin:6px 0;font-size:16px}#owebox .btn{margin:6px 8px 0 0}#dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
 #dnbox .dnrec{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#dnbox .dnimg{display:block;width:140px;max-height:200px;object-fit:cover;border-radius:8px;background:#fff;margin:6px 0;cursor:zoom-in}#dnbox .dnimg.big{width:100%;max-height:none;object-fit:contain;cursor:zoom-out}#dnbox .dnwarn{margin:6px 0;color:#ffd27a;font-weight:700;font-size:14px}
 
 .gc .fineprint,.gc.sm .fineprint{font-size:11px!important;letter-spacing:.02em!important;font-weight:800!important;color:rgba(43,29,5,.92)!important;text-shadow:none!important}
@@ -418,11 +418,17 @@ body.hlock{overflow:hidden}
   <div id="twsum"></div>
   <div id="twlist"></div>
  </div>
+ <div class="box" id="owebox">
+  <h2>What restaurants owe you</h2>
+  <p class="fine" style="margin-top:0">Real money, not keys. Every approved receipt adds your share (before tax) to what that restaurant owes you. Record each payment you get and the balance goes down. Only receipts you approve count.</p>
+  <div id="owelist"></div>
+ </div>
  <div class="box" id="dnbox">
   <h2>Dine and earn offers</h2>
   <p class="fine" style="margin-top:0">Send people to a restaurant. After they eat they send a photo of the receipt, you check it, and you give them keys. Each offer has its own link.</p>
   <label for="dnrest">Restaurant</label><input id="dnrest" list="dnrests" maxlength="80" autocomplete="off" placeholder="Example: Johnny Mac's"><datalist id="dnrests"></datalist>
   <label for="dnkeys">Keys for each approved receipt</label><input id="dnkeys" inputmode="numeric" autocomplete="off" value="25">
+  <label for="dnpct">Your share of the bill from this restaurant (percent)</label><input id="dnpct" inputmode="numeric" autocomplete="off" value="25">
   <label for="dnnote">Message on the page (optional)</label><input id="dnnote" maxlength="140" autocomplete="off" placeholder="Example: Try the hibachi. Show your receipt after you eat.">
   <button class="btn" id="dnmake" type="button">Make the offer link</button>
   <div class="msg" id="dnmsg" role="alert"></div>
@@ -732,23 +738,48 @@ body.hlock{overflow:hidden}
  function dnSetLocal(o){try{localStorage.setItem('kdLocal',JSON.stringify(o))}catch(e){}}
  function dnLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-dine.html?o='+id+(DBM?'':'&demo=1')}
  function dnSay(t,bad){var m=$('dnmsg');m.textContent=t;m.className='msg '+(bad?'err':'ok')}
- function dnMake(){var rest=$('dnrest').value.trim(),k=Math.round(Number(String($('dnkeys').value).replace(/,/g,''))),note=$('dnnote').value.trim();
+ function dnMake(){var rest=$('dnrest').value.trim(),k=Math.round(Number(String($('dnkeys').value).replace(/,/g,''))),note=$('dnnote').value.trim(),pc=Math.round(Number(String($('dnpct').value).replace(/[%\s]/g,'')));
   if(!rest){dnSay('Type the restaurant name first.',true);return}if(!(k>=1&&k<=100000)){dnSay('Type how many keys, from 1 to 100,000.',true);return}
   var a=new Uint8Array(20);crypto.getRandomValues(a);var id='';for(var i=0;i<a.length;i++)id+=(a[i]%36).toString(36);
-  var rec={rest:rest,keys:k};if(note)rec.note=note;var done=function(){$('dnrest').value='';$('dnnote').value='';dnSay('The offer link is ready. Copy it or share it below.',false);dnRender()};
+  if(!(pc>=0&&pc<=100)){dnSay('Type your share as a percent from 0 to 100, like 25.',true);return}var rec={rest:rest,keys:k,pct:pc};if(note)rec.note=note;var done=function(){$('dnrest').value='';$('dnnote').value='';dnSay('The offer link is ready. Copy it or share it below.',false);dnRender()};
   if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}rec.createdAt=Date.now();o[id]=rec;dnSetLocal(o);done();return}
   rec.createdAt={'.sv':'timestamp'};$('dnmake').disabled=true;RR.db('PUT','key_dine/'+id,rec).then(function(r){$('dnmake').disabled=false;if(r.status===200)done();else dnSay('The database did not accept that. Sign in again and try once more.',true)})}
  function dnPatch(oid,rid,patch,after){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}var t=o[oid];if(t&&rid)t=t.receipts&&t.receipts[rid];if(t)Object.keys(patch).forEach(function(k){if(k!=='paidAt')t[k]=patch[k]});dnSetLocal(o);after();return}
   RR.db('PATCH','key_dine/'+oid+(rid?'/receipts/'+rid:''),patch).then(function(){after()})}
- function dnApprove(oid,o,rid,r,btn){var nm=(r.first+' '+r.last).replace(/\s+/g,' ').trim().slice(0,40),wid=find(nm);btn.disabled=true;if(!wid)wid=openW(nm,'Customer');
+ function dnApprove(oid,o,rid,r,btn,cents){var nm=(r.first+' '+r.last).replace(/\s+/g,' ').trim().slice(0,40),wid=find(nm);btn.disabled=true;if(!wid)wid=openW(nm,'Customer');
   S.entries.push({id:S.next++,t:now(),from:'treasury',to:wid,amt:o.keys*100,note:('Dine and earn: '+o.rest).slice(0,70)});save();chime();paint();
-  dnPatch(oid,rid,{status:'approved',paid:true,paidAt:{'.sv':'timestamp'},wallet:nm},dnRender)}
+  dnPatch(oid,rid,{status:'approved',paid:true,paidAt:{'.sv':'timestamp'},wallet:nm,amountCents:cents},dnRender)}
+ /* ---- What restaurants owe you (your share of the bill, before tax): approved receipts x your percent, minus payments you recorded ---- */
+ function usd(c){return (c<0?'-':'')+'$'+(Math.abs(c)/100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+ function dnPay(oid,cents,note,after){var id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}var t=o[oid];if(t){t.payments=t.payments||{};t.payments[id]={amountCents:cents,at:Date.now(),note:note||''};dnSetLocal(o)}after();return}
+  var rec={amountCents:cents,at:{'.sv':'timestamp'}};if(note)rec.note=note;RR.db('PUT','key_dine/'+oid+'/payments/'+id,rec).then(function(r){if(r.status===200)after();else dnSay('The database did not accept that payment. Sign in again and try once more.',true)})}
+ function dnUnpay(oid,pid,after){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}if(o[oid]&&o[oid].payments)delete o[oid].payments[pid];dnSetLocal(o);after();return}RR.db('DELETE','key_dine/'+oid+'/payments/'+pid).then(function(){after()})}
+ function oweRender(all){var box=$('owelist');if(!box)return;box.innerHTML='';
+  var groups={},order=[];Object.keys(all||{}).forEach(function(oid){var o=all[oid],gk=String(o.rest||'').trim().toLowerCase();if(!gk)return;var g=groups[gk];if(!g){g=groups[gk]={name:o.rest,first:oid,n:0,spend:0,comm:0,paid:0,pays:[],rows:[]};order.push(gk)}
+   var pct=(o.pct==null?25:o.pct),rc=o.receipts||{};Object.keys(rc).forEach(function(rid){var r=rc[rid];if(r.status==='approved'&&typeof r.amountCents==='number'){var c=Math.round(r.amountCents*pct/100);g.n++;g.spend+=r.amountCents;g.comm+=c;g.rows.push({at:r.paidAt||r.at||0,rno:r.rno||'',who:(r.first+' '+r.last).trim(),amt:r.amountCents,pct:pct,c:c})}});
+   var py=o.payments||{};Object.keys(py).forEach(function(pid){g.paid+=py[pid].amountCents||0;g.pays.push({oid:oid,pid:pid,at:py[pid].at||0,c:py[pid].amountCents||0,note:py[pid].note||''})})});
+  if(!order.length){box.appendChild(el('p','fine','Nothing yet. Make an offer below, send guests, and approve their receipts.'));return}
+  var tot=0;order.forEach(function(k){tot+=groups[k].comm-groups[k].paid});
+  var big=el('p','fine');big.style.cssText='font-size:22px;font-weight:900;margin:6px 0 2px';big.textContent='Total owed to you: '+usd(tot);box.appendChild(big);
+  order.sort(function(a,b){return (groups[b].comm-groups[b].paid)-(groups[a].comm-groups[a].paid)});
+  order.forEach(function(k){var g=groups[k],bal=g.comm-g.paid,row=el('div','gvrow');
+   row.appendChild(el('b',null,g.name+' owes you '+usd(bal)));
+   row.appendChild(el('p','fine',g.n+' approved receipt'+(g.n===1?'':'s')+' · guests spent '+usd(g.spend)+' before tax · your share '+usd(g.comm)+' · paid so far '+usd(g.paid)));
+   var pi=el('input');pi.setAttribute('inputmode','decimal');pi.setAttribute('autocomplete','off');pi.placeholder='Payment received, like 250.00';pi.setAttribute('aria-label','Payment received from '+g.name);
+   var ni=el('input');ni.maxLength=100;ni.setAttribute('autocomplete','off');ni.placeholder='Note (check number, date) - optional';ni.setAttribute('aria-label','Note for the payment');
+   var pb=el('button','btn','Record payment');pb.type='button';pb.addEventListener('click',function(){var v=Number(String(pi.value).replace(/[$,\s]/g,''));if(!(v>=0.01&&v<=1000000)){pi.focus();dnSay('Type the payment in dollars, like 250.00.',true);return}pb.disabled=true;dnPay(g.first,Math.round(v*100),ni.value.trim(),dnRender)});
+   row.appendChild(pi);row.appendChild(ni);var tl=el('div','tools');tl.appendChild(pb);
+   var cs=el('button','btn ghost','Copy statement');cs.type='button';cs.addEventListener('click',function(){var L=['Statement for '+g.name,'Approved receipts: '+g.n,'Guest spend before tax: '+usd(g.spend),'Your share due: '+usd(g.comm),'Payments received: '+usd(g.paid),'Balance due: '+usd(bal),'','Date | Guest | Amount before tax | Share'];g.rows.sort(function(a,b){return a.at-b.at}).forEach(function(r){L.push(new Date(r.at).toISOString().slice(0,10)+' | '+r.who+' | '+usd(r.amt)+' | '+r.pct+'% = '+usd(r.c))});var t=L.join('\n'),d=function(){cs.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,function(){cs.textContent='Could not copy'});else cs.textContent='Could not copy'});tl.appendChild(cs);row.appendChild(tl);
+   g.pays.sort(function(a,b){return b.at-a.at}).slice(0,5).forEach(function(p){var line=el('p','fine',usd(p.c)+' received '+when(p.at)+(p.note?' · '+p.note:'')+' ');var rm=el('button','btn ghost','Remove');rm.type='button';rm.style.cssText='min-height:32px;padding:2px 10px;font-size:13px;margin-left:6px';rm.addEventListener('click',function(){rm.disabled=true;dnUnpay(p.oid,p.pid,dnRender)});line.appendChild(rm);row.appendChild(line)});
+   box.appendChild(row)});
+  var sp=el('button','btn ghost','Copy every approved receipt for a spreadsheet');sp.type='button';sp.addEventListener('click',function(){var L=['Restaurant\tDate\tReceipt no\tGuest\tAmount before tax\tYour share %\tYour share'];order.forEach(function(k){groups[k].rows.sort(function(a,b){return a.at-b.at}).forEach(function(r){L.push([groups[k].name,new Date(r.at).toISOString().slice(0,10),r.rno,r.who,(r.amt/100).toFixed(2),r.pct,(r.c/100).toFixed(2)].map(function(x){return String(x).replace(/[\t\r\n]+/g,' ')}).join('\t'))})});var t=L.join('\n'),d=function(){sp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,function(){sp.textContent='Could not copy'});else sp.textContent='Could not copy'});box.appendChild(sp)}
  function dnRender(){var box=$('dnlist');if(!box)return;var dl=$('dnrests');if(dl){dl.innerHTML='';S.wallets.filter(function(w){return w.type==='Restaurant'}).forEach(function(w){var op=document.createElement('option');op.value=w.name;dl.appendChild(op)})}
-  dnGet(function(all){box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
+  dnGet(function(all){oweRender(all);box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
   if(!ids.length){box.appendChild(el('p','fine','No offers yet.'));return}
   ids.forEach(function(oid){var o=all[oid],row=el('div','gvrow'),rc=o.receipts||{},rids=Object.keys(rc).sort(function(a,b){return (rc[b].at||0)-(rc[a].at||0)});
    var pend=rids.filter(function(k){return !rc[k].status});
-   row.appendChild(el('b',null,o.rest+' · '+o.keys+' keys per receipt'+(o.open===false?' · stopped':'')));
+   row.appendChild(el('b',null,o.rest+' · '+o.keys+' keys per receipt · your share '+(o.pct==null?25:o.pct)+'%'+(o.open===false?' · stopped':'')));
    row.appendChild(el('p','fine',pend.length+' waiting to check · '+rids.filter(function(k){return rc[k].status==='approved'}).length+' approved'));
    var li=el('input');li.readOnly=true;li.value=dnLink(oid);li.setAttribute('aria-label','Offer link');li.addEventListener('focus',function(){li.select()});row.appendChild(li);
    var bt=el('div','tools');var cp=el('button','btn','Copy link');cp.type='button';cp.addEventListener('click',function(){var d=function(){cp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(li.value).then(d,function(){li.select();d()});else{li.select();try{document.execCommand('copy')}catch(e){}d()}});bt.appendChild(cp);
@@ -760,7 +791,9 @@ body.hlock{overflow:hidden}
     if(dup)card.appendChild(el('p','dnwarn','Careful: '+dup+' other receipt'+(dup>1?'s':'')+' here has the same email or receipt number.'));
     var im=el('img','dnimg');im.alt='Receipt from '+nm;im.src=r.photo;im.addEventListener('click',function(){im.classList.toggle('big')});card.appendChild(im);
     card.appendChild(el('p','fine','Keys will go to: '+nm+(has?' (existing wallet)':' (new wallet)')));
-    var ab=el('button','btn','Approve and give '+o.keys+' keys');ab.type='button';ab.addEventListener('click',function(){dnApprove(oid,o,k,r,ab)});var db=el('button','btn ghost','Decline');db.type='button';db.addEventListener('click',function(){db.disabled=true;dnPatch(oid,k,{status:'declined'},dnRender)});
+    var al=el('label',null,'Amount before tax and tip (dollars). Check it against the photo.');al.setAttribute('for','dnamt'+k);var ai=el('input');ai.id='dnamt'+k;ai.setAttribute('inputmode','decimal');ai.setAttribute('autocomplete','off');ai.value=(typeof r.spentCents==='number'?(r.spentCents/100).toFixed(2):'');ai.placeholder='48.50';card.appendChild(al);card.appendChild(ai);
+    card.appendChild(el('p','fine',typeof r.spentCents==='number'?'The guest wrote '+usd(r.spentCents)+'.':'The guest did not write an amount. Type it from the photo.'));
+    var ab=el('button','btn','Approve and give '+o.keys+' keys');ab.type='button';ab.addEventListener('click',function(){var v=Number(String(ai.value).replace(/[$,\s]/g,''));if(!(v>=0.01&&v<=10000)){ai.focus();dnSay('Type the amount before tax from the receipt, like 48.50, then approve.',true);return}dnApprove(oid,o,k,r,ab,Math.round(v*100))});var db=el('button','btn ghost','Decline');db.type='button';db.addEventListener('click',function(){db.disabled=true;dnPatch(oid,k,{status:'declined'},dnRender)});
     var tb=el('div','tools');tb.appendChild(ab);tb.appendChild(db);card.appendChild(tb);row.appendChild(card)});
    box.appendChild(row)});
   var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',dnRender);box.appendChild(rf)})}

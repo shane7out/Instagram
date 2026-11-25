@@ -219,7 +219,7 @@
   ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
   "$oid": {
    ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
-   ".validate": "!newData.exists() || (newData.hasChildren(['rest','keys','createdAt']) && newData.child('rest').isString() && newData.child('rest').val().length >= 1 && newData.child('rest').val().length <= 80 && newData.child('keys').isNumber() && newData.child('keys').val() >= 1 && newData.child('keys').val() <= 100000 && newData.child('keys').val() % 1 == 0 && newData.child('createdAt').isNumber() && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 140)) && (!newData.child('open').exists() || newData.child('open').isBoolean()))",
+   ".validate": "!newData.exists() || (newData.hasChildren(['rest','keys','createdAt']) && newData.child('rest').isString() && newData.child('rest').val().length >= 1 && newData.child('rest').val().length <= 80 && newData.child('keys').isNumber() && newData.child('keys').val() >= 1 && newData.child('keys').val() <= 100000 && newData.child('keys').val() % 1 == 0 && newData.child('createdAt').isNumber() && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 140)) && (!newData.child('open').exists() || newData.child('open').isBoolean()) && (!newData.child('pct').exists() || (newData.child('pct').isNumber() && newData.child('pct').val() >= 0 && newData.child('pct').val() <= 100 && newData.child('pct').val() % 1 == 0)))",
    "rest": {
     ".read": true
    },
@@ -236,7 +236,7 @@
    "receipts": {
     "$rid": {
      ".write": "!data.exists() && newData.exists() && !newData.child('status').exists() && !newData.child('paid').exists() && root.child('key_dine').child($oid).child('keys').exists() && root.child('key_dine').child($oid).child('open').val() != false",
-     ".validate": "newData.hasChildren(['first','last','email','phone','at','consent','photo']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && newData.child('photo').isString() && newData.child('photo').val().length >= 200 && newData.child('photo').val().length <= 450000 && newData.child('photo').val().matches(/^data:image[/](jpeg|png);base64,/) && (!newData.child('rno').exists() || (newData.child('rno').isString() && newData.child('rno').val().length <= 40)) && (!newData.child('status').exists() || newData.child('status').val() == 'approved' || newData.child('status').val() == 'declined') && (!newData.child('paid').exists() || newData.child('paid').isBoolean()) && (!newData.child('paidAt').exists() || newData.child('paidAt').isNumber()) && (!newData.child('wallet').exists() || (newData.child('wallet').isString() && newData.child('wallet').val().length <= 80))",
+     ".validate": "newData.hasChildren(['first','last','email','phone','at','consent','photo']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && newData.child('photo').isString() && newData.child('photo').val().length >= 200 && newData.child('photo').val().length <= 450000 && newData.child('photo').val().matches(/^data:image[/](jpeg|png);base64,/) && (!newData.child('rno').exists() || (newData.child('rno').isString() && newData.child('rno').val().length <= 40)) && (!newData.child('status').exists() || newData.child('status').val() == 'approved' || newData.child('status').val() == 'declined') && (!newData.child('paid').exists() || newData.child('paid').isBoolean()) && (!newData.child('paidAt').exists() || newData.child('paidAt').isNumber()) && (!newData.child('wallet').exists() || (newData.child('wallet').isString() && newData.child('wallet').val().length <= 80)) && (!newData.child('spentCents').exists() || (newData.child('spentCents').isNumber() && newData.child('spentCents').val() >= 1 && newData.child('spentCents').val() <= 1000000 && newData.child('spentCents').val() % 1 == 0)) && (!newData.child('amountCents').exists() || (newData.child('amountCents').isNumber() && newData.child('amountCents').val() >= 1 && newData.child('amountCents').val() <= 1000000 && newData.child('amountCents').val() % 1 == 0 && (auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__'))))",
      "first": {},
      "last": {},
      "email": {},
@@ -249,6 +249,20 @@
      "paid": {},
      "paidAt": {},
      "wallet": {},
+     "spentCents": {},
+     "amountCents": {},
+     "$other": {
+      ".validate": false
+     }
+    }
+   },
+   "pct": {},
+   "payments": {
+    "$pid": {
+     ".validate": "!newData.exists() || (newData.hasChildren(['amountCents','at']) && newData.child('amountCents').isNumber() && newData.child('amountCents').val() >= 1 && newData.child('amountCents').val() <= 100000000 && newData.child('amountCents').val() % 1 == 0 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 100)))",
+     "amountCents": {},
+     "at": {},
+     "note": {},
      "$other": {
       ".validate": false
      }
