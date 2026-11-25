@@ -468,7 +468,7 @@ function copy(p,bt,label){
 }
 /* ---------- database: sign-in, sync, and your LVR list ---------- */
 var DBU='https://lvr-data-a60c1-default-rtdb.firebaseio.com',SYNC=MODE==='lvr'?'/kt_crm/dm_outreach_lvr':'/kt_crm/dm_outreach',ADS='/dashboard_adv_crec',ADSDEL='/dashboard_adv_deleted',ADSFLAG='/dashboard/adv_flag_queue';
-var synced={},syncState='off',syncTimer=0,pulling=false,pool=null,poolBusy=false,poolErr='',poolCat='all',poolIg=true,poolQ='',poolShow=30,poolN=0;
+var synced={},syncState='off',syncTimer=0,pulling=false,pool=null,poolBusy=false,poolErr='',poolCat='all',poolIg=true,poolSkipAds=true,poolQ='',poolShow=30,poolN=0;
 function isOwner(){return !!(window.OWNER_AUTH&&window.OWNER_AUTH.signedIn())}
 function dbReq(method,path,body){var o={method:method};if(body!==undefined){o.headers={'Content-Type':'application/json'};o.body=JSON.stringify(body)}
  return fetch(DBU+path+'.json',o).then(function(r){if(!r.ok)throw new Error('db '+r.status);return method==='GET'?r.json():r})}
@@ -523,11 +523,13 @@ function pull(){
 }
 function loadPool(){
  if(!isOwner()||poolBusy)return;poolBusy=true;poolErr='';render();
- Promise.all([dbReq('GET',ADS),dbReq('GET',ADSDEL).catch(function(){return {}}),dbReq('GET',ADSFLAG).catch(function(){return {}})]).then(function(r){
-  var a=r[0]||{},del=r[1]||{},fl=r[2]||{},out=[];
+ var ADVN='/dashboard_advertisers/',soft=function(sub){return dbReq('GET',ADVN+sub).catch(function(){return {}})};
+ Promise.all([dbReq('GET',ADS),dbReq('GET',ADSDEL).catch(function(){return {}}),dbReq('GET',ADSFLAG).catch(function(){return {}}),soft('dm'),soft('notinterested'),soft('problem'),soft('ghosted'),soft('deleted')]).then(function(r){
+  var a=r[0]||{},del=r[1]||{},fl=r[2]||{},adm=r[3]||{},ani=r[4]||{},apr=r[5]||{},agh=r[6]||{},adl=r[7]||{},out=[];
   Object.keys(a).forEach(function(k){var x=a[k];if(!x||typeof x!=='object'||del[k]||fl[k])return;var name=clean(x.name);if(!name)return;
    var num=x.num!=null?x.num:k,kk=String(num).replace(/[^A-Za-z0-9_-]/g,'');if(!kk)return;
-   out.push({key:'a'+kk,num:num,name:name,cat:clean(x.cat||x.category)||'Other',ig:handle(x.ig),owner:clean(x.owner)})});
+   if(ani[num]||apr[num]||agh[num]||adl[num])return; /* not interested, problem, ghosted or deleted in the Ads tab: never offered here */
+   out.push({key:'a'+kk,num:num,name:name,cat:clean(x.cat||x.category)||'Other',ig:handle(x.ig),owner:clean(x.owner),dmd:!!(adm[num]&&adm[num]!=='pending')})});
   out.sort(function(x,y){return x.name.localeCompare(y.name)});pool=out;poolBusy=false;render();
  }).catch(function(){poolBusy=false;poolErr='Could not load the list. Check your connection and that you are signed in as owner.';render()});
 }
@@ -639,24 +641,25 @@ function poolCard(v){
   if(!poolErr)setTimeout(loadPool,0);return}
  var sum=h('p',{class:'note',style:'margin:0 0 4px'}),cs=h('select',{'aria-label':'Kind of business'}),sq=h('input',{type:'search',placeholder:'Search the list',value:poolQ,'aria-label':'Search the LVR list',autocomplete:'off'}),
   tg=h('input',{type:'checkbox','aria-label':'Only ones with an Instagram name'}),nn=h('input',{type:'number',inputmode:'numeric',min:'1',max:'500','aria-label':'How many to add',value:String(poolN||D.goal)}),box=h('div',{style:'margin-top:8px'}),addb=h('button',{type:'button',class:'btn'});
- tg.checked=poolIg;
+ tg.checked=poolIg;var sk=h('input',{type:'checkbox','aria-label':'Skip ones already messaged in the Ads tab'});sk.checked=poolSkipAds;
  c.appendChild(sum);
  c.appendChild(h('label',{text:'Kind of business'}));c.appendChild(cs);
  c.appendChild(h('label',{text:'Search'}));c.appendChild(sq);
  c.appendChild(h('label',{class:'tog'},tg,h('span',{text:'Only ones with an Instagram name'})));
+ c.appendChild(h('label',{class:'tog'},sk,h('span',{text:'Skip ones already messaged in the Ads tab'})));
  c.appendChild(h('label',{text:'How many to add to my list at once'}));c.appendChild(nn);c.appendChild(addb);
  c.appendChild(box);
  function avail(){
   var hv=have(),q=poolQ.toLowerCase().trim();
-  return pool.filter(function(p){return !inList(p,hv)&&(!poolIg||p.ig)&&(poolCat==='all'||p.cat===poolCat)&&(!q||(p.name+' '+p.ig+' '+p.cat+' '+p.owner).toLowerCase().indexOf(q)>=0)});
+  return pool.filter(function(p){return !inList(p,hv)&&(!poolSkipAds||!p.dmd)&&(!poolIg||p.ig)&&(poolCat==='all'||p.cat===poolCat)&&(!q||(p.name+' '+p.ig+' '+p.cat+' '+p.owner).toLowerCase().indexOf(q)>=0)});
  }
- function cats(){var hv=have(),m={};pool.forEach(function(p){if(inList(p,hv)||(poolIg&&!p.ig))return;m[p.cat]=(m[p.cat]||0)+1});return m}
+ function cats(){var hv=have(),m={};pool.forEach(function(p){if(inList(p,hv)||(poolSkipAds&&p.dmd)||(poolIg&&!p.ig))return;m[p.cat]=(m[p.cat]||0)+1});return m}
  function paint(){
   var a=avail(),m=cats(),names=Object.keys(m).sort(function(x,y){return m[y]-m[x]}),tot=0;names.forEach(function(x){tot+=m[x]});
   if(poolCat!=='all'&&!m[poolCat])poolCat='all';
   cs.textContent='';cs.appendChild(h('option',{value:'all',text:'All kinds ('+tot+')'}));names.forEach(function(x){cs.appendChild(h('option',{value:x,text:x+' ('+m[x]+')'}))});cs.value=poolCat;
   var inT=pool.length-pool.filter(function(p){return !inList(p,have())}).length;
-  sum.textContent=pool.length+' businesses in your LVR list. '+inT+' already in your tracker. '+a.length+' match right now.';
+  var nd=pool.filter(function(p){return p.dmd}).length;sum.textContent=pool.length+' businesses in your LVR list. '+inT+' already in your tracker'+(nd?', '+nd+' already messaged in the Ads tab':'')+'. '+a.length+' match right now.';
   var n=Math.max(1,Math.min(500,parseInt(nn.value,10)||D.goal)),k=Math.min(n,a.length);
   addb.textContent=a.length?'Add the next '+k+' to my list':'Nothing left to add here';addb.disabled=!a.length;
   box.textContent='';
@@ -669,6 +672,7 @@ function poolCard(v){
  cs.addEventListener('change',function(){poolCat=cs.value;poolShow=30;paint()});
  sq.addEventListener('input',function(){poolQ=sq.value;poolShow=30;paint()});
  tg.addEventListener('change',function(){poolIg=tg.checked;poolShow=30;paint()});
+ sk.addEventListener('change',function(){poolSkipAds=sk.checked;poolShow=30;paint()});
  nn.addEventListener('input',function(){poolN=parseInt(nn.value,10)||0;paint()});
  addb.addEventListener('click',function(){
   var a=avail(),n=Math.max(1,Math.min(500,parseInt(nn.value,10)||D.goal)),add=0;
