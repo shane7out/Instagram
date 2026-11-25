@@ -10,7 +10,13 @@ const fs = require('fs');
 const file = process.argv[2];
 if (!file) { console.error('usage: node patch-dashboard-ads.js index.html'); process.exit(1); }
 let s = fs.readFileSync(file, 'utf8');
-if (/ADSMSG02/.test(s)) { console.log('ADSMSG02 already present, skipping'); process.exit(0); }
+// The contact email for replies is handed in by the deploy script (REPLY_EMAIL, typed by Shane in Terminal) so it is never written into this public file.
+const REPLY = (process.env.REPLY_EMAIL || '').trim();
+if (REPLY && !/^[^\s@'"\\<>]+@[^\s@'"\\<>]+\.[^\s@'"\\<>]+$/.test(REPLY)) { console.error('ADSMSG02: REPLY_EMAIL does not look like an email address - nothing changed'); process.exit(4); }
+if (/ADSMSG02/.test(s)) {
+  if (!REPLY) { console.log('ADSMSG02 already present, skipping'); process.exit(0); }
+  console.log('ADSMSG02 present: refreshing it with the contact email');
+}
 
 // 1) the five places that hold the old sponsorship message. Skipped (not an error) when version 1 already replaced them.
 const reMsg = /'Hello '\+(\w+)\+',\\n\\nMy name is Shane Christensen\.[^;]{0,1800}?\(\d{3}\) \d{3}-\d{4}'/g;
@@ -23,6 +29,7 @@ console.log('ADSMSG02: email message replaced ' + cMail + ' time(s); DM messages
 if ((cMail < 1 || cMsg < 1) && !had1) { console.error('ADSMSG02: the live page does not have the old messages in the expected shape - nothing changed'); process.exit(1); }
 
 // 2) take out version 1 (toggle block and script) if it is there
+s = s.replace(/<!--ADSMSG-TOGGLE-START-->[\s\S]*?<!--ADSMSG-TOGGLE-END-->/, '');
 s = s.replace(/<div id="adsmsg-toggle"[\s\S]*?<\/pre><\/details><\/div>/, '');
 s = s.replace(/<!--ADSMSG-START-->[\s\S]*?<!--ADSMSG-END-->/, '');
 
@@ -54,8 +61,8 @@ const TOG =
 '<a href="/kt-outreach.html" onclick="advOpenDmRoom()" style="' + GHO + 'text-align:center;text-decoration:none;">Open the DM room (same list, one by one)</a>' +
 '</div></details></div>';
 let anchored = 0;
-s = s.replace(/<div id="ads-subtabs"/, (m) => { anchored++; return TOG + m; });
-if (!anchored) { s = s.replace(/<div id="adv-search-row"/, (m) => { anchored++; return TOG + m; }); }
+s = s.replace(/<div id="ads-subtabs"/, (m) => { anchored++; return '<!--ADSMSG-TOGGLE-START-->' + TOG + '<!--ADSMSG-TOGGLE-END-->' + m; });
+if (!anchored) { s = s.replace(/<div id="adv-search-row"/, (m) => { anchored++; return '<!--ADSMSG-TOGGLE-START-->' + TOG + '<!--ADSMSG-TOGGLE-END-->' + m; }); }
 if (!anchored) { console.error('ADSMSG02: could not find the top of the Ads tab - nothing changed'); process.exit(2); }
 
 // 4) the messages, the switches and the email tools
@@ -63,7 +70,7 @@ const JS = `
 <script>
 /* ADSMSG02 */
 (function(){
-  var MK='lv_ads_msg_mode_v1',KK='lv_ads_msg_kind_v1',AK='lv_ads_addr_v1';
+  var MK='lv_ads_msg_mode_v1',KK='lv_ads_msg_kind_v1',AK='lv_ads_addr_v1',REPLY=__REPLY__;
   function ls(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}
   function lset(k,v){try{localStorage.setItem(k,v)}catch(e){}}
   function mode(){return ls(MK)==='kt'?'kt':'lvr'}
@@ -102,7 +109,7 @@ const JS = `
   };
   M.lvr.first.body=M.lvr.first.dm; // the first sponsorship message reads the same as an email
   window._advDMText=function(n){n=n||'there';return M[mode()][kind()].dm(n)};
-  window._advMailParts=function(n){n=n||'there';var m=M[mode()][kind()];return {subject:m.subject(n),body:m.body(n)+foot()}};
+  window._advMailParts=function(n){n=n||'there';var m=M[mode()][kind()];return {subject:m.subject(n),body:m.body(n)+(REPLY?'\\n'+REPLY:'')+foot()}};
   function nm(a){var o=(typeof advNameOverrideMap!=='undefined'&&advNameOverrideMap[a.num]);return o||a.name||'there'}
   function rows(){
     var list=(typeof _advVFiltered!=='undefined'&&_advVFiltered&&_advVFiltered.length)?_advVFiltered:[],incl=!!(document.getElementById('adsmsg-incl')&&document.getElementById('adsmsg-incl').checked);
@@ -174,6 +181,6 @@ const JS = `
 </script>
 `;
 if (!/<\/body>/.test(s)) { console.error('ADSMSG02: no </body> found - nothing changed'); process.exit(3); }
-s = s.replace(/<\/body>/, () => '<!--ADSMSG-START-->' + JS + '<!--ADSMSG-END--></body>');
+s = s.replace(/<\/body>/, () => '<!--ADSMSG-START-->' + JS.replace('__REPLY__', JSON.stringify(REPLY)) + '<!--ADSMSG-END--></body>');
 fs.writeFileSync(file, s);
-console.log('ADSMSG02 applied (toggle, follow-up, mail-merge sheet, mark as emailed, DM room link)');
+console.log('ADSMSG02 applied (toggle, follow-up, mail-merge sheet, mark as emailed, DM room link' + (REPLY ? '; every email ends with the contact email' : '') + ')');

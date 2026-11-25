@@ -25,7 +25,16 @@ if (snipFile) {
 }
 
 // (4) the restaurant DM
-if (/DMRESTORE02/.test(s)) console.log('DMRESTORE02 already present, skipping');
+const REPLY = (process.env.REPLY_EMAIL || '').trim();
+if (REPLY && !/^[^\s@'"\\<>]+@[^\s@'"\\<>]+\.[^\s@'"\\<>]+$/.test(REPLY)) { console.error('DMRESTORE02: REPLY_EMAIL does not look like an email address - nothing changed'); process.exit(4); }
+if (/DMRESTORE02/.test(s)) {
+  if (!REPLY) console.log('DMRESTORE02 already present, skipping');
+  else {
+    const re = /(DMRESTORE02[\s\S]*?'Creator of @lasvegas_restaurants\\n' \+\n    ')[^']+(';)/;
+    if (re.test(s)) { s = s.replace(re, (m, a, b) => a + REPLY + b); console.log('DMRESTORE02: contact email updated'); }
+    else console.log('DMRESTORE02: present but the signature was not found - left as it is');
+  }
+}
 else {
   const reShort = /  \/\/ DMSHORT01[^\n]*\n  return 'Hi ' \+ n \+ '!\\n\\n' \+[\s\S]*?'Shane\\n' \+\n    '[^']+';/;
   const reOrig = /  return 'Hi ' \+ n \+ ',\\n\\n' \+\n    'My name is Shane Christensen[\s\S]*?'Cell: \([0-9]{3}\) [0-9]{3}-[0-9]{4}';/;
@@ -33,7 +42,7 @@ else {
   const m = s.match(reRestored) || s.match(reShort) || s.match(reOrig);
   if (!m) console.log('DMRESTORE01: the restaurant message was not found in the expected shape - left as it is');
   else {
-    const em = m[0].match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+    const em = REPLY ? [REPLY] : m[0].match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
     if (!em) console.log('DMRESTORE01: no contact email found in the current message - left as it is');
     else {
       const L = [

@@ -5,9 +5,21 @@
 #   3) the Key Technologies DM room with the new professional messages
 #   4) blue look on the dashboard and the owner pages, the restaurant message restored (no introduction at the top), Johnny Mac's chip removed, the owner key opens the PIN pad
 #   5) weekly database backup (set up once)
+# FIRST it asks once for the contact email that goes at the end of every message (restaurant DM signature + Ads-tab emails). It is typed here, never stored in the public repository; Return keeps what is on the dashboard now.
 # You type the owner email (on the keyboard) and the owner password twice (steps 1 and 4). Nothing is saved except the backup sign-in token on this Mac (~/.lvr).
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/everything.sh?$(date +%s)" -o /tmp/everything.sh && bash /tmp/everything.sh
 set +e
+echo
+echo "Which email should every message end with, so replies come to you?"
+echo "(for example Shane@keytechnologies.si - or just press Return to keep what is on the dashboard now)"
+while true; do
+  printf "Contact email: "; read -r REPLY_EMAIL < /dev/tty
+  REPLY_EMAIL="$(echo "$REPLY_EMAIL" | tr -d ' ')"
+  if [ -z "$REPLY_EMAIL" ]; then echo "  OK - keeping the current one."; break; fi
+  if echo "$REPLY_EMAIL" | grep -Eq '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'; then echo "  OK - every message will end with $REPLY_EMAIL"; break; fi
+  echo "  That does not look like an email address - try again."
+done
+export REPLY_EMAIL
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
 step() {  # step "title" script-name
   echo; echo "=================================================="; echo "  $1"; echo "=================================================="
