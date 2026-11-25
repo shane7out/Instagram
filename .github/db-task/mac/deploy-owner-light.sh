@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh
-# Gives your private owner pages a LIGHT background and the blue key, and adds the optional quick-unlock PIN to the sign-in box (Shane, 2026-11-10). It takes each page's CURRENT LIVE copy, adds ONE colour-only style block
+# Gives your private owner pages the LVR PIN BLUE (no white; before 2026-11-25 it was a light look) and the blue key, and adds the optional quick-unlock PIN to the sign-in box (Shane, 2026-11-10). It takes each page's CURRENT LIVE copy, adds ONE colour-only style block
 # and recolours the key mark, and puts it back. No script, text or data is changed, and nothing else that is waiting in the repo goes live with it.
 # Pages: Prospect CRM, Leads, Advertisers, Key Room, Rewards (Points) admin, Coupons admin, Invoice. A page that cannot be fetched is skipped. Nothing is uploaded if a check fails.
 set +e
@@ -42,7 +42,7 @@ for (const f of process.env.DOPAGES.trim().split(/\s+/)) {
   if (authSnip.includes('quick-unlock') && s.includes('<!--OWNER-AUTH-START-->')) { s = s.replace(/<!--OWNER-AUTH-START-->[\s\S]*?<!--OWNER-AUTH-END-->/, () => authSnip); console.log(f + ': sign-in box updated (quick-unlock PIN)'); }
   const blocks = [...s.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   blocks.forEach((m, i) => { fs.writeFileSync('/tmp/_ol_block.js', m[1]); const r = cp.spawnSync('node', ['--check', '/tmp/_ol_block.js'], { encoding: 'utf8' }); if (r.status) { console.log(f + ' script ' + i + ' SYNTAX CHECK FAILED'); bad++; } });
-  fs.writeFileSync(p, s); console.log(f + ': light style added, key recoloured, ' + blocks.length + ' script blocks parse');
+  fs.writeFileSync(p, s); console.log(f + ': blue style added, key recoloured, ' + blocks.length + ' script blocks parse');
 }
 process.exit(bad ? 2 : 0);
 NODE
@@ -57,6 +57,6 @@ ALLOK=1
 for f in $DOPAGES; do
   CODE=$(curl -s -o "/tmp/live-ol-$f" -w '%{http_code}' "$LIVE/$f?cb=$(date +%s)")
   HAS=$(grep -c 'ktowner-light' "/tmp/live-ol-$f" 2>/dev/null)
-  if [ "$CODE" = "200" ] && [ "${HAS:-0}" -ge 1 ]; then echo "OK   $f is live with the light look" | tee -a "$LOG"; else echo "FAIL $f (HTTP $CODE) - not confirmed" | tee -a "$LOG"; ALLOK=0; fi
+  if [ "$CODE" = "200" ] && [ "${HAS:-0}" -ge 1 ]; then echo "OK   $f is live with the blue look" | tee -a "$LOG"; else echo "FAIL $f (HTTP $CODE) - not confirmed" | tee -a "$LOG"; ALLOK=0; fi
 done
-if [ "$ALLOK" = "1" ]; then echo "OWNER PAGES LIGHT: all done. Refresh each page once (pull down or Cmd+Shift+R)."; else echo "NOT ALL CONFIRMED - see above (log: $LOG)."; exit 1; fi
+if [ "$ALLOK" = "1" ]; then echo "OWNER PAGES BLUE: all done. Refresh each page once (pull down or Cmd+Shift+R)."; else echo "NOT ALL CONFIRMED - see above (log: $LOG)."; exit 1; fi

@@ -1,10 +1,11 @@
 #!/bin/bash
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-keypad.sh?$(date +%s)" -o /tmp/deploy-dashboard-keypad.sh && bash /tmp/deploy-dashboard-keypad.sh
-# KEYPAD MATCH + JOHNNY MAC'S CHIP OUT (Shane, 2026-11-25). Takes the LIVE dashboard copy and (1) removes the "Johnny Mac's" chip from the PIN page,
-# (2) restyles the PIN keypad so it looks exactly like the Key Tech Room keypad (light page, white rounded keys, thin dots). CSS only: no PIN number,
-# no PIN logic, no data and no rule is touched. Checks every script parses first; if anything fails it restores the old page and uploads nothing.
-# Safe to run twice. Keeps index.html.bak-keypad. The Johnny Mac's site page itself (johnny-macs.html) is left on the hosting, only the chip goes.
+# BLUE EVERYWHERE (Shane, 2026-11-25: "always make it the one on the left, blue... I don't want to ever see white again"). Two steps, one command:
+#  1) the LIVE dashboard: removes the "Johnny Mac's" chip from the PIN page and removes the light keypad block if an earlier run added it (the blue round LVR keypad stays as it is);
+#  2) the owner pages (Key Room, Prospect CRM, Leads, Advertisers, Rewards admin, Coupons admin, Invoice): the white look is replaced by the LVR PIN blue, and the Key Room keypad becomes the same round blue keypad.
+# Colours and one chip only: no PIN number, PIN logic, data or rule is touched. Every page is syntax-checked first; if a check fails the old page is put back and nothing is uploaded.
+# Safe to run twice. Keeps index.html.bak-keypad (and .bak-ownerlight for the owner pages). The Johnny Mac's site page itself is left on the hosting, only the chip goes.
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
@@ -99,9 +100,11 @@ sleep 3
 curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live.html
 echo "-- live check --" >> "$LOG"
 echo "live version : $(grep -ao 'APP_VERSION=[0-9]*' /tmp/live.html | head -1)" >> "$LOG"
-for MARK in 'KEYPADMATCH01'; do
-  echo "live has $MARK : $(grep -c "$MARK" /tmp/live.html)" >> "$LOG"
+for MARK in 'JOHNNYMACS-START'; do
+  echo "live still has $MARK (should be 0): $(grep -c "$MARK" /tmp/live.html)" >> "$LOG"
 done
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keypad.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "live Johnny Mac chip left: $(grep -c 'href="/johnny-macs.html"' /tmp/live.html)" >> "$LOG"; echo "==== done ===="; cat "$LOG"
+echo "---- now the owner pages (blue instead of white) ----"
+curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh

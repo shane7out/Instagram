@@ -309,28 +309,39 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 <style id="ktowner-light">
-:root{--bg:#f4f8fd!important;--bg-2:#ffffff!important;--card:#ffffff!important;--line:#d6e2f2!important;--ink:#0b1b4d!important;--ink-dim:#46598a!important;--key-light:#0a6fb8!important;--key-blue:#0a6fb8!important;--good:#0a6fb8;color-scheme:light;}
-html,body{background:#f4f8fd!important;color:#0b1b4d!important;}
-#pin-screen{background:#f4f8fd!important;}
-.pin-logo{color:#0a6fb8!important;}
-#hnav{background:#ffffff!important;border-bottom:1px solid #d6e2f2;}
-#hnav .hn-btn{border-color:#cbdaf0!important;background:#fff!important;color:#0b1b4d!important;}
-input,select,textarea{background:#ffffff!important;color:#0b1b4d!important;border-color:#c9d9f1!important;}
-input::placeholder,textarea::placeholder{color:#8a9bbd!important;}
-button,.btn{border-color:#cbdaf0;}
-header{background:#ffffff!important;border-bottom-color:#d6e2f2!important;}
-table th{color:#46598a!important;}table td,table th{border-color:#dbe6f6!important;}
+/* OWNERBLUE01 (Shane, 2026-11-25: "I don't want to ever see white again... make everything the same color as the LVR pin"). Same id as the old light block so the deploy script swaps it. */
+:root{--bg:#07142b!important;--bg-2:#0e2347!important;--card:rgba(255,255,255,.07)!important;--line:rgba(255,255,255,.18)!important;--ink:#ffffff!important;--ink-dim:rgba(255,255,255,.66)!important;--key-light:#90CAF9!important;--key-blue:#1493FF!important;--good:#4fd1a5;color-scheme:dark;}
+html,body{background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(14,72,168,.55) 0%,transparent 65%),radial-gradient(ellipse 60% 52% at 15% 80%,rgba(0,105,230,.30) 0%,transparent 58%),radial-gradient(ellipse 55% 48% at 85% 18%,rgba(36,12,140,.35) 0%,transparent 56%),radial-gradient(ellipse 45% 38% at 68% 68%,rgba(0,180,255,.16) 0%,transparent 50%),#050b16!important;background-attachment:fixed!important;color:#ffffff!important;}
+#pin-screen{background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(14,72,168,.55) 0%,transparent 65%),radial-gradient(ellipse 60% 52% at 15% 80%,rgba(0,105,230,.30) 0%,transparent 58%),radial-gradient(ellipse 55% 48% at 85% 18%,rgba(36,12,140,.35) 0%,transparent 56%),radial-gradient(ellipse 45% 38% at 68% 68%,rgba(0,180,255,.16) 0%,transparent 50%),#050b16!important;}
+.pin-logo{color:#90CAF9!important;}
+.pin-sub{color:rgba(255,255,255,.55)!important;}
+.pin-dots{gap:20px!important;margin-bottom:44px!important;}
+.pin-dot{width:14px!important;height:14px!important;border-radius:50%!important;border:1.5px solid rgba(255,255,255,.6)!important;background:transparent!important;box-shadow:none!important;}
+.pin-dot.filled{background:#ffffff!important;border-color:#ffffff!important;transform:scale(1.05);}
+.pin-dot.error{background:#FF453A!important;border-color:#FF453A!important;}
+.pin-grid{display:grid!important;grid-template-columns:repeat(3,78px)!important;gap:14px 20px!important;width:auto!important;}
+.pin-key{width:78px!important;height:78px!important;border-radius:50%!important;background:rgba(255,255,255,.175)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:none!important;box-shadow:none!important;color:#ffffff!important;font-size:34px!important;font-weight:300!important;line-height:1!important;padding:0!important;}
+.pin-key:active{background:rgba(255,255,255,.58)!important;color:#000!important;}
+.pin-key.empty{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+.pin-msg{color:#FF453A!important;}
+#hnav{background:rgba(5,11,22,.85)!important;border-bottom:1px solid rgba(255,255,255,.14)!important;}
+#hnav .hn-btn{border-color:rgba(255,255,255,.25)!important;background:rgba(255,255,255,.08)!important;color:#ffffff!important;}
+input,select,textarea{background:rgba(255,255,255,.08)!important;color:#ffffff!important;border-color:rgba(255,255,255,.22)!important;}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.45)!important;}
+option{background:#0e2347!important;color:#ffffff!important;}
+button,.btn{border-color:rgba(255,255,255,.25);}
+header{background:rgba(5,11,22,.6)!important;border-bottom-color:rgba(255,255,255,.14)!important;}
+table th{color:rgba(255,255,255,.66)!important;}table td,table th{border-color:rgba(255,255,255,.12)!important;}
 .tabs button[aria-selected=true]{color:#fff!important;}
 #gate button{color:#fff!important;}
-#gateMsg{color:#8a4b00!important;}
-dialog,.modal,.sheet{background:#ffffff!important;color:#0b1b4d!important;}
-dialog::backdrop{background:rgba(8,20,50,.45)!important;}
-button[style*="2147482000"]{background:#ffffff!important;color:#0b1b4d!important;border-color:#9cb7dc!important;box-shadow:0 2px 10px rgba(20,60,140,.18)!important;}
-div[style*="2147482500"]{background:rgba(8,20,50,.45)!important;}
-div[style*="2147482500"] > form{background:#ffffff!important;color:#0b1b4d!important;border-color:#d6e2f2!important;box-shadow:0 20px 50px rgba(10,30,80,.25);}
-div[style*="2147482500"] > form p:not(#oaMsg),div[style*="2147482500"] > form label{color:#46598a!important;}
-div[style*="2147482500"] > form #oaMsg[style*="9fb3c8"]{color:#46598a!important;}
-div[style*="2147482500"] > form #oaNo{color:#0b1b4d!important;border-color:#9cb7dc!important;}
+#gateMsg{color:#ffcf8a!important;}
+dialog,.modal,.sheet{background:#0e2347!important;color:#ffffff!important;}
+dialog::backdrop{background:rgba(0,0,0,.6)!important;}
+button[style*="2147482000"]{background:rgba(13,29,51,.92)!important;color:#ffffff!important;border-color:rgba(255,255,255,.35)!important;}
+div[style*="2147482500"]{background:rgba(0,0,0,.65)!important;}
+div[style*="2147482500"] > form{background:#0e2347!important;color:#ffffff!important;border-color:rgba(255,255,255,.2)!important;}
+div[style*="2147482500"] > form p:not(#oaMsg),div[style*="2147482500"] > form label{color:rgba(255,255,255,.66)!important;}
+div[style*="2147482500"] > form #oaNo{color:#ffffff!important;border-color:rgba(255,255,255,.3)!important;}
 </style></head>
 <body>
 
