@@ -67,7 +67,7 @@
     if (!btn) {
       btn = document.createElement('button'); btn.type = 'button'; btn.id = 'ownerAuthBtn';
       btn.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147482000;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#0d1d33;color:#fff;font:700 13px system-ui,sans-serif;cursor:pointer;display:none;';
-      btn.addEventListener('click', function () { if (st) menu(); else if (hasLock()) unlockUI(); else dialog(); });
+      btn.addEventListener('click', function () { if (st) menu(); else pinPad(); });
       document.body.appendChild(btn);
     }
     getKey().then(function (k) {
@@ -80,8 +80,74 @@
   }
   function banner(text) {
     if (!document.body) return;
-    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; dialog(); }); document.body.appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; pinPad(); }); document.body.appendChild(bar); }
     bar.textContent = text; bar.style.display = 'block'; setTimeout(function () { if (bar) bar.style.display = 'none'; }, 9000);
+  }
+  // OWNERPIN01 (Shane, 2026-11-25: "I just want to do pin numbers everywhere", no emails and passwords): the owner button opens the blue round PIN pad (same look as the LVR PIN screen).
+  // The 6-digit PIN is turned (PBKDF2, in this browser) into the password of the Treasury PIN account, i.e. the SAME PIN as the Treasury page. The database rules let that account open the
+  // Key Technologies website information (leads, CRM, page views) and nothing in the LVR program. The PIN is never stored or sent. Email + password stays under the pad for the LVR rewards admin.
+  var PIN_EMAIL = 'treasurer@kt-rr.invalid', PIN_SALT = 'kt-rr-treasurer-v1';
+  var PADCSS = '#oaPad{position:fixed;inset:0;z-index:2147483000;color:#fff;overflow:hidden;overscroll-behavior:none;touch-action:manipulation;font:400 17px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;' +
+    'background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(14,72,168,.55) 0%,transparent 65%),radial-gradient(ellipse 60% 52% at 15% 80%,rgba(0,105,230,.30) 0%,transparent 58%),radial-gradient(ellipse 55% 48% at 85% 18%,rgba(36,12,140,.35) 0%,transparent 56%),radial-gradient(ellipse 45% 38% at 68% 68%,rgba(0,180,255,.16) 0%,transparent 50%),#050b16}' +
+    '#oaPad .in{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 16px 60px;text-align:center;box-sizing:border-box}' +
+    '#oaPad h1{font-size:15px;font-weight:700;letter-spacing:.06em;color:#90CAF9;margin:0 0 6px;text-transform:uppercase}#oaPad p{color:rgba(255,255,255,.55);margin:0 0 26px;font-size:14px}' +
+    '#oaPad .dots{display:flex;gap:20px;justify-content:center;margin:0 0 40px;height:14px}#oaPad .dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);background:transparent}#oaPad .dots i.on{background:#fff;border-color:#fff}#oaPad .dots.err i{background:#FF453A;border-color:#FF453A}' +
+    '#oaPad .msg{height:20px;font-weight:700;font-size:13px;margin:22px 0 0;color:#FF453A}#oaPad .msg.ok{color:rgba(255,255,255,.7)}' +
+    '#oaPad .pad{display:grid;grid-template-columns:repeat(3,78px);gap:14px 20px;margin:0 auto}' +
+    '#oaPad .pad button{width:78px;height:78px;border-radius:50%;border:0;background:rgba(255,255,255,.175);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);color:#fff;font:300 34px/1 -apple-system,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}' +
+    '#oaPad .pad button:active{background:rgba(255,255,255,.58);color:#000}#oaPad .pad button.d{font-size:28px;font-weight:400}#oaPad .pad button.e{visibility:hidden}#oaPad .pad button:focus-visible{outline:2px solid #fff;outline-offset:3px}' +
+    '#oaPad .links{position:absolute;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom,16px));display:flex;gap:22px;justify-content:center}#oaPad .links button{background:none;border:0;color:rgba(255,255,255,.55);font:600 14px system-ui,sans-serif;padding:10px 12px;cursor:pointer}' +
+    '@media(max-height:700px){#oaPad .pad{grid-template-columns:repeat(3,66px);gap:10px 16px}#oaPad .pad button{width:66px;height:66px;font-size:27px}#oaPad .dots{margin-bottom:24px}#oaPad p{margin-bottom:14px}}';
+  function pinDerive(pin) {
+    var e = new TextEncoder();
+    return crypto.subtle.importKey('raw', e.encode(pin), 'PBKDF2', false, ['deriveBits']).then(function (k) {
+      return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: e.encode(PIN_SALT), iterations: 150000, hash: 'SHA-256' }, k, 256);
+    }).then(function (bits) { var u = new Uint8Array(bits), t = ''; for (var i = 0; i < u.length; i++) t += String.fromCharCode(u[i]); return btoa(t).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); });
+  }
+  function pinPad() {
+    if (document.getElementById('oaPad') || !document.body) return;
+    if (!document.getElementById('oaPadCss')) { var cs = document.createElement('style'); cs.id = 'oaPadCss'; cs.textContent = PADCSS; document.head.appendChild(cs); }
+    var g = document.createElement('div'); g.id = 'oaPad'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-label', 'Owner PIN');
+    var inn = document.createElement('div'); inn.className = 'in'; g.appendChild(inn);
+    function mk(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    inn.appendChild(mk('h1', null, 'Owner unlock')); inn.appendChild(mk('p', null, 'Type your 6-digit PIN.'));
+    var dots = mk('div', 'dots'); for (var i = 0; i < 6; i++) dots.appendChild(mk('i')); inn.appendChild(dots);
+    var pad = mk('div', 'pad'), msg = mk('div', 'msg'); msg.setAttribute('role', 'alert');
+    var pin = '', busy = false;
+    function paint() { for (var i = 0; i < 6; i++) dots.children[i].className = i < pin.length ? 'on' : ''; }
+    function bad(t) { msg.className = 'msg'; msg.textContent = t; dots.classList.add('err'); setTimeout(function () { pin = ''; dots.classList.remove('err'); paint(); }, 700); }
+    function submit() {
+      if (!window.crypto || !crypto.subtle) { bad('This browser cannot check a PIN.'); return; }
+      busy = true; msg.className = 'msg ok'; msg.textContent = 'Checking...';
+      pinDerive(pin).then(function (pw) {
+        return getKey().then(function (k) {
+          if (!k) throw new Error('PIN sign-in is not set up yet.');
+          return origFetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: PIN_EMAIL, password: pw, returnSecureToken: true }) });
+        });
+      }).then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok) { var m = (j && j.error && j.error.message) || ''; throw new Error(/TOO_MANY/i.test(m) ? 'Too many tries. Wait a few minutes.' : /EMAIL_NOT_FOUND/i.test(m) ? 'PIN sign-in is not set up yet.' : 'That PIN is not right.'); }
+          st = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) || 3600) * 1000 - 60000, uid: j.localId, keep: false, pin: true };
+          save(); g.remove(); note();
+        });
+      }).catch(function (e) { bad(e && e.message ? e.message : 'Could not check the PIN. Try again.'); }).then(function () { busy = false; });
+    }
+    function press(k) {
+      if (busy) return;
+      if (k === 'del') { pin = pin.slice(0, -1); paint(); return; }
+      if (pin.length >= 6) return;
+      pin += k; msg.textContent = ''; paint(); if (pin.length === 6) submit();
+    }
+    function kb(k, cls, label) { var b = mk('button', cls, label || k); b.type = 'button'; b.setAttribute('aria-label', k === 'del' ? 'Delete the last digit' : k); b.addEventListener('click', function () { press(k); }); return b; }
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9'].forEach(function (k) { pad.appendChild(kb(k)); });
+    var em = mk('button', 'e'); em.type = 'button'; em.tabIndex = -1; em.setAttribute('aria-hidden', 'true'); pad.appendChild(em);
+    pad.appendChild(kb('0')); pad.appendChild(kb('del', 'd', '⌫'));
+    inn.appendChild(pad); inn.appendChild(msg);
+    var links = mk('div', 'links'), no = mk('button', null, 'Cancel'), pw = mk('button', null, 'Use email and password'); no.type = pw.type = 'button';
+    no.addEventListener('click', function () { g.remove(); }); pw.addEventListener('click', function () { g.remove(); dialog(); });
+    links.appendChild(no); links.appendChild(pw); g.appendChild(links);
+    document.addEventListener('keydown', function onk(e) { if (!document.getElementById('oaPad')) { document.removeEventListener('keydown', onk); return; } if (/^[0-9]$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') press('del'); else if (e.key === 'Escape') g.remove(); });
+    document.body.appendChild(g);
   }
   function dialog() {
     var back = document.createElement('div');
@@ -177,18 +243,19 @@
     });
   }
   function menu() {
-    var back = shell('Owner signed in', hasLock() ? 'Quick-unlock PIN is on for this device.' : 'Quick-unlock PIN is off for this device.');
+    var pinMode = !!(st && st.pin);
+    var back = shell('Owner signed in', pinMode ? 'You are signed in with your PIN. The Key Technologies website information is open.' : (hasLock() ? 'Quick-unlock PIN is on for this device.' : 'Signed in with email and password.'));
     back.querySelector('.oaBtns').style.flexDirection = 'column';
-    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaPinBtn" style="' + BTN2 + '">' + (hasLock() ? 'Change the quick-unlock PIN' : 'Set a quick-unlock PIN') + '</button>' +
-      (hasLock() ? '<button type="button" id="oaPinOff" style="' + BTN1 + '">Remove the quick-unlock PIN</button>' : '') +
+    back.querySelector('.oaBtns').innerHTML = (pinMode ? '<button type="button" id="oaPw" style="' + BTN2 + '">Sign in with email and password (LVR rewards admin)</button>' : '') +
+      (!pinMode && hasLock() ? '<button type="button" id="oaPinOff" style="' + BTN1 + '">Remove the quick-unlock PIN</button>' : '') +
       '<button type="button" id="oaOut" style="' + BTN1 + '">Sign out</button><button type="button" id="oaNo" style="' + BTN1 + '">Close</button>';
     back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
     back.querySelector('#oaOut').addEventListener('click', function () { back.remove(); signOut(); });
-    back.querySelector('#oaPinBtn').addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); } catch (er) {} lockKey = null; pinSetup(); });
-    var off = back.querySelector('#oaPinOff'); if (off) off.addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} lockKey = null; save(true); banner('Quick-unlock PIN removed. This device will ask for your email and password.'); });
+    var pw = back.querySelector('#oaPw'); if (pw) pw.addEventListener('click', function () { back.remove(); signOut(); dialog(); });
+    var off = back.querySelector('#oaPinOff'); if (off) off.addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} lockKey = null; save(true); banner('Quick-unlock PIN removed.'); });
   }
-  window.OWNER_AUTH = { signedIn: function () { return !!st; }, uid: function () { return st && st.uid; }, signIn: signIn, signOut: signOut, dialog: dialog, onChange: function (f) { listeners.push(f); } };
-  function boot() { render(); if (!st && hasLock()) unlockUI(); }
+  window.OWNER_AUTH = { signedIn: function () { return !!st; }, uid: function () { return st && st.uid; }, signIn: signIn, signOut: signOut, dialog: pinPad, passwordDialog: dialog, onChange: function (f) { listeners.push(f); } };
+  function boot() { render(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   // a signed-in token that is older than its life is renewed in the background
   setInterval(function () { if (st && Date.now() > st.exp - 120000) refresh(); }, 120000);

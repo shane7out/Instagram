@@ -2,7 +2,8 @@
 # Run on the Mac (one command):
 #   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-keypad.sh?$(date +%s)" -o /tmp/deploy-dashboard-keypad.sh && bash /tmp/deploy-dashboard-keypad.sh
 # BLUE EVERYWHERE (Shane, 2026-11-25: "always make it the one on the left, blue... I don't want to ever see white again"). Two steps, one command:
-#  1) the LIVE dashboard: removes the "Johnny Mac's" chip from the PIN page and removes the light keypad block if an earlier run added it (the blue round LVR keypad stays as it is);
+#  1) the LIVE dashboard: removes the "Johnny Mac's" chip from the PIN page, removes the light keypad block if an earlier run added it (the blue round LVR keypad stays as it is),
+#     and the owner key at the bottom now opens a blue PIN pad (the same PIN as the Treasury) instead of the email and password box;
 #  2) the owner pages (Key Room, Prospect CRM, Leads, Advertisers, Rewards admin, Coupons admin, Invoice): the white look is replaced by the LVR PIN blue, and the Key Room keypad becomes the same round blue keypad.
 # Colours and one chip only: no PIN number, PIN logic, data or rule is touched. Every page is syntax-checked first; if a check fails the old page is put back and nothing is uploaded.
 # Safe to run twice. Keeps index.html.bak-keypad (and .bak-ownerlight for the owner pages). The Johnny Mac's site page itself is left on the hosting, only the chip goes.
@@ -26,8 +27,10 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # 1) the patch
 # ---------------------------------------------------------------------------
 curl -sL -o /tmp/patch-dashboard-keypad.js "$RAWB/patch-dashboard-keypad.js"
+curl -sL -o /tmp/owner-auth.snippet.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html?$(date +%s)"
+echo "pin sign-in code: $(wc -c < /tmp/owner-auth.snippet.html) bytes" >> "$LOG"
 echo "patcher: $(wc -c < /tmp/patch-dashboard-keypad.js) bytes" >> "$LOG"
-node /tmp/patch-dashboard-keypad.js "$IDX" >> "$LOG" 2>&1
+node /tmp/patch-dashboard-keypad.js "$IDX" /tmp/owner-auth.snippet.html >> "$LOG" 2>&1
 PATCH_RC=$?
 echo "patch exit: $PATCH_RC" >> "$LOG"
 
@@ -100,8 +103,9 @@ sleep 3
 curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live.html
 echo "-- live check --" >> "$LOG"
 echo "live version : $(grep -ao 'APP_VERSION=[0-9]*' /tmp/live.html | head -1)" >> "$LOG"
-for MARK in 'JOHNNYMACS-START'; do
-  echo "live still has $MARK (should be 0): $(grep -c "$MARK" /tmp/live.html)" >> "$LOG"
+for MARK in 'OWNERPIN01'; do
+  echo "live has $MARK (should be 1 or more): $(grep -c "$MARK" /tmp/live.html)" >> "$LOG"
+  echo "live Johnny Mac chip (should be 0): $(grep -c "JOHNNYMACS-START" /tmp/live.html)" >> "$LOG"
 done
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keypad.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'

@@ -39,7 +39,7 @@ for (const f of process.env.DOPAGES.trim().split(/\s+/)) {
   s = s.replace(/<style id="ktowner-light">[\s\S]*?<\/style>/g, '');
   s = s.replace(/<linearGradient id="(k[a-z]*\d*)"[^>]*>[\s\S]*?<\/linearGradient>/g, m => m.replace(/(stop-color=")#([0-9a-fA-F]{6})(")/g, (a, b, c, d) => b + '#' + (MAP[c.toLowerCase()] || c) + d));
   s = s.replace('</head>', snippet + '</head>');
-  if (authSnip.includes('quick-unlock') && s.includes('<!--OWNER-AUTH-START-->')) { s = s.replace(/<!--OWNER-AUTH-START-->[\s\S]*?<!--OWNER-AUTH-END-->/, () => authSnip); console.log(f + ': sign-in box updated (quick-unlock PIN)'); }
+  if (authSnip.includes('OWNERPIN01') && s.includes('<!--OWNER-AUTH-START-->')) { s = s.replace(/<!--OWNER-AUTH-START-->[\s\S]*?<!--OWNER-AUTH-END-->/, () => authSnip); console.log(f + ': sign-in box updated (blue PIN pad)'); }
   const blocks = [...s.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   blocks.forEach((m, i) => { fs.writeFileSync('/tmp/_ol_block.js', m[1]); const r = cp.spawnSync('node', ['--check', '/tmp/_ol_block.js'], { encoding: 'utf8' }); if (r.status) { console.log(f + ' script ' + i + ' SYNTAX CHECK FAILED'); bad++; } });
   fs.writeFileSync(p, s); console.log(f + ': blue style added, key recoloured, ' + blocks.length + ' script blocks parse');

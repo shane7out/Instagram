@@ -857,6 +857,24 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('decision time: a payment cannot be created with a decision time already on it', 'treasurer', 'PUT', RR + '/entries/e0000042', MOVE('w2', 100, { from: 'w3', status: 'pending', ct: SV, t: SV }), false);
   await t('decision time: a transfer cannot be created with a decision time', 'treasurer', 'PUT', RR + '/entries/e0000042', MOVE('w3', 100, { ct: SV, t: SV }), false);
 
+  // ---- PIN-ONLY OWNER UNLOCK (2026-11-25): the Treasury PIN account opens the Key Technologies website information (leads, CRM, page views), and nothing LVR ----
+  await call('admin', 'PUT', '/key_leads/leads/PL1', { source: 'x', email: 'pin@example.com', name: 'Pin Lead' });
+  await call('admin', 'PUT', '/kt_crm/prospects/p1', { name: 'Pin Prospect' });
+  await call('admin', 'PUT', '/key_pageviews/hits/index_html/h1', { t: 1 });
+  await t('pin unlock: the PIN account can read the leads', 'treasurer', 'GET', '/key_leads/leads', undefined, true);
+  await t('pin unlock: the PIN account can change a lead', 'treasurer', 'PATCH', '/key_leads/leads/PL1', { name: 'Edited' }, true);
+  await t('pin unlock: the PIN account can delete a lead', 'treasurer', 'DELETE', '/key_leads/leads/PL1', undefined, true);
+  await t('pin unlock: the PIN account can read the CRM', 'treasurer', 'GET', '/kt_crm/prospects', undefined, true);
+  await t('pin unlock: the PIN account can write the CRM', 'treasurer', 'PUT', '/kt_crm/prospects/p2', { name: 'New' }, true);
+  await t('pin unlock: the PIN account can read the page views', 'treasurer', 'GET', '/key_pageviews/hits', undefined, true);
+  await t('pin unlock: the PIN account cannot change the page-view log', 'treasurer', 'DELETE', '/key_pageviews/hits/index_html/h1', undefined, false);
+  await t('pin unlock: a visitor still cannot read the leads', 'anon', 'GET', '/key_leads/leads', undefined, false);
+  await t('pin unlock: a visitor still cannot read the CRM', 'anon', 'GET', '/kt_crm/prospects', undefined, false);
+  await t('pin unlock: a signed-in stranger still cannot read the CRM', 'other', 'GET', '/kt_crm/prospects', undefined, false);
+  await t('pin unlock: the report-PIN account still cannot read the leads', 'viewer', 'GET', '/key_leads/leads', undefined, false);
+  await t('pin unlock: the report-PIN account still cannot read the CRM', 'viewer', 'GET', '/kt_crm/prospects', undefined, false);
+  await t('pin unlock: the PIN account cannot change the sign-in key', 'treasurer', 'PUT', '/ownerAuth/apiKey', 'x', false);
+
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.log('TEST HARNESS ERROR', e); process.exit(2); });
