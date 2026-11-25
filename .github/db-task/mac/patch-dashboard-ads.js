@@ -46,21 +46,21 @@ const JS = `
     'Here is how it works: $50/month, month-to-month, cancel anytime. I repost directly from your page to my Stories twice a month, every two weeks. No extra work on your end: I pick a post or reel you already have and share it with my audience.\\n\\n'+
     'It is a direct line to people in your area. Would you like to try it?\\n\\n'+
     'Best,\\nShane Christensen\\nCreator of @lasvegas_restaurants'};
-  var KT_DM=function(n){return 'Hello '+n+', we follow your page and admire what you have built. Key Technologies helps Las Vegas businesses save time with AI/SI: an AI receptionist that answers calls and texts, websites, and custom tools. May we send you a free review with two practical ideas for '+n+'? keytechnologies.si'};
+  var KT_DM=function(n){return 'Hi '+n+'! We help local Las Vegas businesses save time with AI/SI, like an AI receptionist that answers calls and texts, plus websites and small custom tools. Would you like a free, friendly look at where it could help '+n+'? No pressure at all. keytechnologies.si'};
   var KT_MAIL_BODY=function(n){return 'Hello '+n+' team,\\n\\n'+
-    'We follow '+n+' and admire what you have built.\\n\\n'+
-    'Key Technologies helps Las Vegas businesses save time and win more customers with AI/SI. We build:\\n'+
-    '- an AI receptionist that answers calls and texts around the clock\\n'+
-    '- websites and booking tools that work on every phone\\n'+
-    '- custom tools that take repetitive office work off your plate\\n\\n'+
-    'We would like to send you a free review of '+n+': a short, plain-language look at where AI/SI could realistically help, with two practical ideas you can use right away. There is no obligation.\\n\\n'+
-    'Would a 10 minute call this week suit you? Reply to this message and we will find a time that works.\\n\\n'+
-    'Best regards,\\nShane Christensen\\nKey Technologies\\nkeytechnologies.si'};
+    'We hope your week is going well!\\n\\n'+
+    'We help local Las Vegas businesses save time with AI/SI, and we thought '+n+' might enjoy a couple of ideas. Things like:\\n'+
+    '- an AI receptionist that answers calls and texts, so nothing gets missed\\n'+
+    '- a website or booking page that works nicely on every phone\\n'+
+    '- small custom tools that take repetitive office work off your plate\\n\\n'+
+    'If that sounds interesting, we would be happy to put together a free, friendly review of '+n+' with two practical ideas. No pressure and no obligation.\\n\\n'+
+    'Would a quick 10 minute chat this week be okay? Just reply and we will find a time that works for you.\\n\\n'+
+    'Warm regards,\\nShane Christensen\\nKey Technologies\\nkeytechnologies.si'};
   var AKEY='lv_ads_addr_v1';
   function addr(){try{return (localStorage.getItem(AKEY)||'').trim()}catch(e){return ''}}
   function foot(){var a=addr();return '\\n\\nIf you would rather not hear from us, reply "no thanks" and we will not contact you again.'+(a?'\\n'+a:'')}
   window._advDMText=function(n){n=n||'there';return mode()==='kt'?KT_DM(n):LVR_DM(n)};
-  window._advMailParts=function(n){n=n||'there';return mode()==='kt'?{subject:'A free AI/SI review for '+n,body:KT_MAIL_BODY(n)+foot()}:{subject:'Sponsorship spot on @lasvegas_restaurants',body:LVR_DM(n)+foot()}};
+  window._advMailParts=function(n){n=n||'there';return mode()==='kt'?{subject:'A free idea or two for '+n,body:KT_MAIL_BODY(n)+foot()}:{subject:'Sponsorship spot on @lasvegas_restaurants',body:LVR_DM(n)+foot()}};
   function paint(){
     var m=mode(),a=document.getElementById('adsmsg-lvr'),b=document.getElementById('adsmsg-kt'),pre=document.getElementById('adsmsg-pre');
     if(a&&b){
