@@ -438,8 +438,8 @@ var DEF=MODE==='lvr'?DEF_LVR:DEF_KT;
 var MSGN={open:'First hello',follow:'Check in',ask:'Answer'};
 var ST={new:['Not messaged yet','#aab9ca'],sent:['Waiting for a reply','#f3d884'],replied:['They replied','#5fd38d'],call:['Call booked','#4fc3f0'],won:['Client','#5fd38d'],no:['Not interested','#ff8a7a'],cold:['No answer','#8a97a8']};
 var D=load(),canSave=true,tab='today',filter='all',q='',lastFocus=null;
-function blank(){return {v:1,goal:25,pace:20,msgs:{},nextId:1,lastBackup:0,leads:[],removed:[]}}
-function load(){try{var o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&Array.isArray(o.leads)){var b=blank();for(var k in o)b[k]=o[k];if(!Array.isArray(b.removed))b.removed=[];b.leads.forEach(function(l){if(!l.key)l.key='m'+l.id+'x'+(+l.t||0).toString(36)});Object.keys(b.msgs||{}).forEach(function(k){if(typeof b.msgs[k]==='string'&&b.msgs[k].length>MAXMSG)delete b.msgs[k]});return b}}catch(e){}return blank()}
+function blank(){return {v:1,goal:60,pace:20,msgs:{},nextId:1,lastBackup:0,leads:[],removed:[]}}
+function load(){try{var o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&Array.isArray(o.leads)){var b=blank();for(var k in o)b[k]=o[k];if(!Array.isArray(b.removed))b.removed=[];if(!b.goalSet&&(!b.goal||b.goal===25))b.goal=60;b.leads.forEach(function(l){if(!l.key)l.key='m'+l.id+'x'+(+l.t||0).toString(36)});Object.keys(b.msgs||{}).forEach(function(k){if(typeof b.msgs[k]==='string'&&b.msgs[k].length>MAXMSG)delete b.msgs[k]});return b}}catch(e){}return blank()}
 function save(noSync){try{localStorage.setItem(LS,JSON.stringify(D));canSave=true}catch(e){canSave=false}if(!noSync)scheduleFlush()}
 function $(i){return document.getElementById(i)}
 function h(tag,a){var e=document.createElement(tag);a=a||{};for(var k in a){var v=a[k];if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,'');else if(v!==false&&v!=null)e.setAttribute(k,v)}
@@ -634,7 +634,7 @@ function subFor(l){
  var ls=lastSent(l);return ig+(ls?' · messaged '+ago(ls):'');
 }
 function vToday(v){
- var L=lists(),n=sentToday(),g=Math.max(1,+D.goal||25),pc=Math.min(100,Math.round(n/g*100));
+ var L=lists(),n=sentToday(),g=Math.max(1,+D.goal||60),pc=Math.min(100,Math.round(n/g*100));
  var hd=h('div',{class:'card today'},
   h('div',{class:'big'},h('b',{text:n+' of '+g}),h('span',{text:'messages sent today'})),
   h('div',{class:'bar'+(n>=g?' done':'')},h('i',{style:'width:'+pc+'%'})),
@@ -790,7 +790,7 @@ function vMore(v){
  v.appendChild(h('h2',{text:'Daily goal'}));
  var gi=h('input',{type:'number',inputmode:'numeric',min:'1',max:'500',value:String(D.goal),'aria-label':'Messages per day'});
  var gw=h('p',{class:'note',style:'color:#f3d884'});function gwr(){gw.textContent=D.goal>100?'Heads up: Instagram can slow down or restrict an account that sends hundreds of new messages a day, especially fast. Spread them out through the day and keep the pace timer on.':''}gwr();
- gi.addEventListener('input',function(){var n=Math.max(1,Math.min(500,parseInt(gi.value,10)||25));D.goal=n;save();gwr()});
+ gi.addEventListener('input',function(){var n=Math.max(1,Math.min(500,parseInt(gi.value,10)||60));D.goal=n;D.goalSet=true;save();gwr()});
  var pi=h('input',{type:'number',inputmode:'numeric',min:'0',max:'300',value:String(D.pace==null?20:D.pace),'aria-label':'Seconds to wait between messages'});
  pi.addEventListener('input',function(){var n=Math.max(0,Math.min(300,parseInt(pi.value,10)||0));D.pace=n;save()});
  v.appendChild(h('div',{class:'card'},h('label',{text:'Messages to send each day (up to 500)'}),gi,gw,h('label',{text:'Seconds to wait between messages'}),pi,h('p',{class:'note',text:'In Start sending, the Next button waits this long so the messages go out at a human pace.'})));
@@ -838,7 +838,7 @@ function backup(){D.lastBackup=Date.now();save();dl('outreach-backup-'+stamp()+'
 function restore(o){
  if(!o||!Array.isArray(o.leads))throw new Error('x');
  if(!window.confirm('Replace your whole list with this backup ('+o.leads.length+' businesses)?'))return;
- var oldKeys=D.leads.map(function(x){return x.key});var b=blank();b.goal=Math.max(1,Math.min(500,+o.goal||25));b.msgs=(o.msgs&&typeof o.msgs==='object')?o.msgs:{};
+ var oldKeys=D.leads.map(function(x){return x.key});var b=blank();b.goal=Math.max(1,Math.min(500,+o.goal||60));b.msgs=(o.msgs&&typeof o.msgs==='object')?o.msgs:{};
  o.leads.forEach(function(l){if(!l||!clean(l.name))return;b.leads.push({id:b.nextId++,key:/^[A-Za-z0-9_-]{3,60}$/.test(l.key||'')?l.key:('m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),adv:l.adv==null?undefined:l.adv,u:+l.u||0,name:clean(l.name),short:clean(l.short)||shorten(l.name),first:clean(l.first),ig:handle(l.ig),type:clean(l.type),note:clean(l.note),stage:ST[l.stage]?l.stage:'new',t:+l.t||Date.now(),ev:Array.isArray(l.ev)?l.ev.filter(function(e){return e&&+e.t}).map(function(e){return {t:+e.t,k:clean(e.k),m:clean(e.m),s:clean(e.s),n:clean(e.n)}}):[]})});
  var nk={};b.leads.forEach(function(x){nk[x.key]=1});D=b;D.removed=oldKeys.filter(function(k){return k&&!nk[k]});D.lastBackup=Date.now();save();render();toast('Backup restored')
 }
@@ -862,7 +862,7 @@ function pickNext(){
 function startSend(){pickNext.skip={};openSheet();paintSend()}
 function paintSend(){
  var P=$('panel');P.textContent='';clearInterval(sendWait);
- var l=pickNext(),n=sentToday(),g=Math.max(1,+D.goal||25);
+ var l=pickNext(),n=sentToday(),g=Math.max(1,+D.goal||60);
  P.appendChild(h('div',{class:'grab'},h('h3',{id:'stitle',text:n+' of '+g+' sent today'}),h('button',{type:'button',class:'x',text:'Stop',onclick:closeSheet})));
  if(!l){P.appendChild(h('div',{class:'card'},h('div',{class:'empty',text:'Nobody is waiting. You are all caught up.'})));P.appendChild(h('button',{type:'button',class:'btn',text:'Done',onclick:closeSheet}));return}
  var stt=status(l),key=stt==='due'||stt==='close'?'follow':(l.stage==='replied'?'ask':(l.stage==='new'?'open':(nSent(l)?'follow':'open')));
