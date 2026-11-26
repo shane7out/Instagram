@@ -1101,7 +1101,7 @@ body.hlock{overflow:hidden}
   var tre=bal('treasury'),wal=0,gwal=0,hh=held();S.wallets.forEach(function(w){if(w.id==='treasury')return;if(isGiftW(w))gwal+=shown(w.id);else wal+=shown(w.id)});
   var mv=S.entries.filter(function(e){return e.kind!=='open'&&e.from}),all=S.entries.slice().sort(function(a,b){return a.t-b.t||a.id-b.id}),rng=all.length?when(all[0].t)+'  to  '+when(all[all.length-1].t):'';
   P.appendChild(el('div','hbrand','Key Technologies'));P.appendChild(el('h3',null,'Key Rewards history report'));
-  P.appendChild(el('p','hsub','Prepared '+when(Date.now())+'. Every move is listed with the exact time it went through. Nothing is ever edited or deleted. Key Rewards must be used within 60 days of the day they are issued; a gift card must be given within 72 hours.'));
+  P.appendChild(el('p','hsub','Prepared '+when(Date.now())+'. Every move is listed with the exact time it went through. Nothing is ever edited or deleted. Key Rewards must be used within 60 days of the day they are issued; a gift card must be given within 14 days.'));
   var g=el('div','hgrid');[['Issued in total',fmt(SUPPLY)],['In the Treasury',fmt(tre)],['In wallets',fmt(wal)],['In gift cards',fmt(gwal)]].forEach(function(x){var d=el('div','hs');d.appendChild(el('small',null,x[0]));d.appendChild(el('b',null,x[1]));g.appendChild(d)});P.appendChild(g);
   var ok=(tre+wal+gwal+hh===SUPPLY);P.appendChild(el('p','hsub','Treasury + wallets + gift cards'+(hh?' + '+fmt(hh)+' waiting for confirmation':'')+' = '+fmt(tre+wal+gwal+hh)+(ok?'. Everything adds up.':'. DOES NOT MATCH the issued total.')+'  '+mv.length+(mv.length===1?' move':' moves')+' recorded. '+rng));
   /* who got what */
