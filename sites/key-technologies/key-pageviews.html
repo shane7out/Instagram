@@ -307,7 +307,7 @@
   #gate button.linkbtn{background:none;border:none;color:rgba(255,255,255,.45);font-size:13px;font-weight:600;text-decoration:underline;cursor:pointer;padding:10px;margin-top:10px;font-family:inherit;}
   #gate .shake{animation:pvshake .4s;} @keyframes pvshake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
   body.pvlock #ownerAuthBtn{display:none!important;}
-  #bioOffer{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:2147482200;background:#12243a;border:1.5px solid rgba(20,147,255,.4);border-radius:16px;padding:16px 22px;width:min(300px,calc(100vw - 32px));text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  #bioOffer{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:2147482200;background:#12243a;border:1.5px solid rgba(20,147,255,.4);border-radius:16px;padding:16px 22px;width:min(300px,calc(100vw - 32px));text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
   #bioOffer[hidden]{display:none;} #bioOffer .bo-t{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
   #bioOffer .bo-b{display:flex;gap:10px;justify-content:center;} #bioOffer .bo-b button{border:none;border-radius:10px;padding:9px 20px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;}
   #bioYes{background:#1493FF;color:#fff;} #bioNo{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);} #bioOffer .bo-m{color:#9fd6f2;font-size:12.5px;margin-top:8px;min-height:0;}
@@ -365,7 +365,7 @@
   .bartrack{height:5px;background:#17212c;border-radius:4px;margin-top:3px;}
   .bartrack i{display:block;height:5px;border-radius:4px;background:var(--key-blue);}
   .empty{color:var(--ink-dim);font-size:13.5px;padding:6px 0;}
-  .more-link{display:block;margin-top:8px;font-size:13px;font-weight:700;background:none;border:0;color:var(--key-light);padding:4px 0;cursor:pointer;text-align:left;font-family:inherit;}
+  .more-link{display:block;margin-top:8px;font-size:13px;font-weight:700;background:none;border:0;color:var(--key-light);padding:11px 0;min-height:40px;cursor:pointer;text-align:left;font-family:inherit;}
 
   #chart{width:100%;height:92px;display:block;}
   .legend{font-size:11px;color:var(--ink-dim);display:flex;justify-content:space-between;margin-top:3px;}
@@ -383,7 +383,7 @@
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px;}
   .duo .card{margin:0;padding:10px 11px;}
   .duo td{font-size:13px;}
-  #toasts{position:fixed;left:12px;right:12px;bottom:14px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center;}
+  #toasts{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center;}
   .toast{pointer-events:auto;width:100%;max-width:520px;background:#12303f;border:1px solid var(--key-blue);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600;box-shadow:0 10px 28px rgba(0,0,0,.55);cursor:pointer;}
   .toast.lead{background:#103d2c;border-color:var(--good);font-size:15px;}
   .toast small{display:block;font-weight:400;color:var(--ink-dim);margin-top:2px;}

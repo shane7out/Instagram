@@ -178,7 +178,7 @@ table.who .hist{margin-top:5px;background:none;color:var(--key);border:1px solid
 #pres li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:16px;line-height:1.25}#pres li:last-child{border-bottom:0}
 #pres li small{display:block;color:rgba(255,255,255,.7);font-size:12px;line-height:1.25}#pres .a{font-weight:900;white-space:nowrap;text-align:right}#pres .a.in{color:#00a8e1}#pres .a small{font-weight:400}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.two{grid-template-columns:1fr}table{font-size:14px}table:not(.who) th:nth-child(4),table:not(.who) td:nth-child(4){display:none}}
-#dbstat{position:fixed;left:12px;bottom:12px;z-index:60;padding:8px 14px;border-radius:999px;font:700 13px Lato,system-ui,sans-serif;border:1px solid rgba(255,255,255,.4);background:#16222f;color:#fff}#dbstat.ok{border-color:#00a8e1}#dbstat.bad{background:#00a8e1;color:#0f171e;cursor:pointer}
+#dbstat{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:60;padding:8px 14px;border-radius:999px;font:700 13px Lato,system-ui,sans-serif;border:1px solid rgba(255,255,255,.4);background:#16222f;color:#fff}#dbstat.ok{border-color:#00a8e1}#dbstat.bad{background:#00a8e1;color:#0f171e;cursor:pointer}
 
 /* History report: Key Technologies look (dark navy, key blue), prints the same way */
 body.hlock{overflow:hidden}
