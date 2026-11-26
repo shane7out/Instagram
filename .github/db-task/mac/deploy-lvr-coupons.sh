@@ -9,6 +9,10 @@
 #                             and the exact wording they agreed to is saved with the sign-up. Same email twice
 #                             gets the same code back. Never reads anyone else's details.
 #
+#   lvr-team.html         - each employee's own live page (private link from the Team screen): their QR code to show guests,
+#                             and keys earned / sign-ups today / sign-ups in all, updating by itself within seconds of
+#                             each sign-up. Shows no customer details.
+#
 #   lvr-coupons-admin.html - OWNER SIGN-IN (no PIN in the page). For each restaurant: edit the offer, QR code and
 #                             printable counter sign, the customer list (name, email, phone, OK-to-email, OK-to-text with
 #                             the saved consent wording), download everyone / the email list / the text list for the
@@ -30,12 +34,14 @@ cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 
 curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-coupon.html "$RAWB/lvr-coupon.html"
 curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-coupons-admin.html "$RAWB/lvr-coupons-admin.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-team.html "$RAWB/lvr-team.html"
+echo "lvr-team.html: $(wc -c < lvr-team.html) bytes" >> "$LOG"
 echo "lvr-coupon.html: $(wc -c < lvr-coupon.html) bytes" >> "$LOG"
 echo "lvr-coupons-admin.html: $(wc -c < lvr-coupons-admin.html) bytes" >> "$LOG"
 
 # sanity: every inline script block in both files must parse before anything ships
 FAIL=0
-for f in lvr-coupon.html lvr-coupons-admin.html; do
+for f in lvr-coupon.html lvr-coupons-admin.html lvr-team.html; do
   node <<NODE >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
 const s = fs.readFileSync('$f', 'utf8');
@@ -68,7 +74,7 @@ curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --spe
 DEP="deploy-overlay.js"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"
-  OVERLAY_FILES="lvr-coupon.html lvr-coupons-admin.html" node "$DEP" >> "$LOG" 2>&1
+  OVERLAY_FILES="lvr-coupon.html lvr-coupons-admin.html lvr-team.html" node "$DEP" >> "$LOG" 2>&1
 else
   echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"
 fi
@@ -76,6 +82,7 @@ fi
 sleep 3
 echo "-- live check --" >> "$LOG"
 echo "live /lvr-coupon.html status: $(curl -s -o /tmp/lvrcoupon-live.html -w '%{http_code}' 'https://lvr-data-a60c1.web.app/lvr-coupon.html')" >> "$LOG"
+echo "live /lvr-team.html status: $(curl -s -o /tmp/lvrteam-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-team.html)" >> "$LOG"
 echo "live /lvr-coupons-admin.html status: $(curl -s -o /tmp/lvrcouponadmin-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-coupons-admin.html)" >> "$LOG"
 echo "claim page is the new one (private duplicate check): $(grep -c 'emailKey' /tmp/lvrcoupon-live.html 2>/dev/null || echo 0)" >> "$LOG"
 echo "admin page has the owner sign-in and no PIN: gate $(grep -c 'OWNER-SIGNIN-GATE' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0), old PIN $(grep -c '137900' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0)" >> "$LOG"

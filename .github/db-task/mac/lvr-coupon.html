@@ -246,6 +246,8 @@
             upd['claims/' + slug + '/' + id] = claim;
             upd['idx/' + slug + '/' + ek] = { code: code, id: id };
             upd['idx/' + slug + '/' + pk] = { code: code, id: id };
+            // the employee is credited in the very same save, so their own page ticks up the moment this customer signs up
+            if (withRef && ref) upd['staffLog/' + slug + '/' + ref + '/' + id] = { t: {'.sv': 'timestamp'}, k: Number(program.staffKeys) || 0 };
             return upd;
           }
           function send(withRef) { return fbSend('PATCH', '/lvr_coupons', build(withRef)); }

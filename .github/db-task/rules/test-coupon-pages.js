@@ -149,6 +149,19 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await ad.waitForSelector('#qrBox svg');
   const np = (await emu('GET', '/lvr_coupons/programs/noodle-bar')).j;
   ok('creating a restaurant saves it and goes straight to its QR code', np && np.bizName === 'Noodle Bar' && np.maxClaims === 25 && np.active === true);
+  // ---------- the employee's own live page
+  ok('the first sign-up through Maria was credited to her at once (credit log)', Object.keys((await emu('GET', '/lvr_coupons/staffLog/van/maria-7k3')).j || {}).length === 1);
+  const emp = await browser.newContext(); await route(emp, false);
+  const ep = await emp.newPage(); ep.on('pageerror', e => errors.push('team page: ' + e.message));
+  await ep.goto(base + '/lvr-team.html?biz=van&e=maria-7k3'); await ep.waitForSelector('#keysBig');
+  ok('the employee page greets her by name and shows her keys, sign-ups and her own QR code', /Hi Maria/.test(await ep.textContent('#app')) && (await ep.textContent('#keysBig')) === '2' && (await ep.innerHTML('.qr')).length > 2000);
+  ok('the employee page shows no customer names, emails or phone numbers', !/ann@example|Ann Lee|555/.test(await ep.textContent('#app')));
+  const cp2 = await cust.newPage(); await cp2.goto(base + '/lvr-coupon.html?biz=van&e=maria-7k3'); await cp2.waitForSelector('#claimForm');
+  await cp2.fill('#cName', 'Di Park'); await cp2.fill('#cEmail', 'di@example.com'); await cp2.fill('#cPhone', '7025550144'); await cp2.click('#claimBtn'); await cp2.waitForSelector('.code-value');
+  await ep.waitForFunction(() => document.getElementById('keysBig') && document.getElementById('keysBig').textContent === '4', null, { timeout: 15000 }).catch(() => {});
+  ok('her number goes up by itself right after the next guest signs up through her code', (await ep.textContent('#keysBig')) === '4');
+  const ep2 = await emp.newPage(); await ep2.goto(base + '/lvr-team.html?biz=van&e=nobody-123'); await ep2.waitForSelector('.state');
+  ok('an unknown employee link says it is not active', /not active/.test(await ep2.textContent('#app')));
   // a signed-out visitor to the admin page
   const stranger = await browser.newContext(); await route(stranger, false);
   const sp = await stranger.newPage(); await sp.goto(base + '/lvr-coupons-admin.html');

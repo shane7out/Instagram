@@ -2757,6 +2757,7 @@ var qrcode = function() {
   var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
   var C = '/lvr_coupons';
   var CLAIM_PAGE_URL = 'https://lvr-data-a60c1.web.app/lvr-coupon.html?biz=';
+  var TEAM_PAGE_URL = 'https://lvr-data-a60c1.web.app/lvr-team.html?biz=';
 
   // ================= OWNER SIGN-IN ================= /*OWNER-SIGNIN-GATE*/
   // No PIN. The database itself only answers the signed-in owner (rules: lvr-rules-owner.json), so customer names, emails
@@ -2955,7 +2956,7 @@ var qrcode = function() {
   }
 
   // ================= TEAM (one QR code per employee) =================
-  function newStaffId(name) { return (slugify(name).slice(0, 30) || 'staff') + '-' + Math.random().toString(36).slice(2, 5); }
+  function newStaffId(name) { var a = new Uint8Array(5), r = ''; crypto.getRandomValues(a); for (var i = 0; i < a.length; i++) r += 'abcdefghijkmnpqrstuvwxyz23456789'.charAt(a[i] % 32); return (slugify(name).slice(0, 24) || 'staff') + '-' + r; }
   function renderTeam(slug) {
     var p = programs[slug] || {}, st = staffAll[slug] || {}, per = Number(p.staffKeys) || 0;
     var cl = claimsOf(slug);
@@ -2968,6 +2969,7 @@ var qrcode = function() {
         '<div class="pc-link">' + escapeHtml(CLAIM_PAGE_URL + slug + '&e=' + sid) + '</div>' +
         '<div class="pc-actions"><button data-t="qr" data-sid="' + escapeHtml(sid) + '">QR code + sign</button>' +
         '<button data-t="copy" data-sid="' + escapeHtml(sid) + '">Copy link</button>' +
+        '<button data-t="mypage" data-sid="' + escapeHtml(sid) + '">Copy employee\'s own page link</button>' +
         (owed > 0 ? '<button data-t="paid" data-sid="' + escapeHtml(sid) + '">Mark ' + owed + ' keys given</button>' : '') +
         '<button class="danger" data-t="del" data-sid="' + escapeHtml(sid) + '">Remove</button></div></div>';
     }).join('');
@@ -2991,6 +2993,7 @@ var qrcode = function() {
       btn.addEventListener('click', function(){
         var sid = btn.getAttribute('data-sid'), t = btn.getAttribute('data-t');
         if (t === 'qr') renderQr(slug, sid);
+        else if (t === 'mypage') { var m = TEAM_PAGE_URL + slug + '&e=' + sid; if (navigator.clipboard) navigator.clipboard.writeText(m).then(function(){ showToast('Employee page link copied. Send it to them.'); }); else showToast(m); }
         else if (t === 'copy') { var u = CLAIM_PAGE_URL + slug + '&e=' + sid; if (navigator.clipboard) navigator.clipboard.writeText(u).then(function(){ showToast('Link copied'); }); else showToast(u); }
         else if (t === 'paid') {
           var upd = {}; cl.filter(function(c){ return c.ref === sid && !c.staffPaid; }).forEach(function(c){ upd['claims/' + slug + '/' + c._id + '/staffPaid'] = true; });

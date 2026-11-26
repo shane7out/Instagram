@@ -369,7 +369,7 @@
   "staff": {
    "$slug": {
     "$sid": {
-     ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+     ".read": true,
      ".write": "auth != null && auth.uid == '__OWNER_UID__'",
      ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 60 && $sid.matches(/^[a-z0-9-]{3,40}$/)",
      "name": {},
@@ -377,6 +377,22 @@
      "createdAt": {},
      "$other": {
       ".validate": false
+     }
+    }
+   }
+  },
+  "staffLog": {
+   "$slug": {
+    "$sid": {
+     ".read": true,
+     "$id": {
+      ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('staff').child($slug).child($sid).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false && newData.parent().parent().parent().parent().child('claims').child($slug).child($id).child('ref').val() == $sid)",
+      ".validate": "$id.length >= 8 && $id.length <= 40 && newData.hasChildren(['t','k']) && newData.child('t').isNumber() && newData.child('t').val() == now && newData.child('k').isNumber() && newData.child('k').val() >= 0 && newData.child('k').val() <= 100 && newData.child('k').val() == (root.child('lvr_coupons').child('programs').child($slug).child('staffKeys').exists() ? root.child('lvr_coupons').child('programs').child($slug).child('staffKeys').val() : 0)",
+      "t": {},
+      "k": {},
+      "$other": {
+       ".validate": false
+      }
      }
     }
    }

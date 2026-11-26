@@ -9,7 +9,7 @@ get deploy-lvr-coupons.sh || { echo "Could not download deploy-lvr-coupons.sh - 
 get deploy-owner-rules.sh || { echo "Could not download deploy-owner-rules.sh - nothing changed."; exit 1; }
 echo "--- 6a: putting the restaurant coupon pages live ---"
 bash /tmp/deploy-lvr-coupons.sh 2>&1 | tee /tmp/deploy-lvr-coupons.sh.log
-if ! grep -q "live /lvr-coupon.html status: 200" /tmp/deploy-lvr-coupons.sh.log || ! grep -q "gate 1, old PIN 0" /tmp/deploy-lvr-coupons.sh.log; then
+if ! grep -q "live /lvr-coupon.html status: 200" /tmp/deploy-lvr-coupons.sh.log || ! grep -q "live /lvr-team.html status: 200" /tmp/deploy-lvr-coupons.sh.log || ! grep -q "gate 1, old PIN 0" /tmp/deploy-lvr-coupons.sh.log; then
   echo; echo ">>> The coupon pages did not come up cleanly, so I did NOT touch the database rules. Send Claude a screenshot."; exit 1
 fi
 echo; echo "--- 6b: locking the customer details to you (database rules) ---"

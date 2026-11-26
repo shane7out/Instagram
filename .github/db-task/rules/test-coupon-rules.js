@@ -17,7 +17,7 @@ const EK = 'a'.repeat(32), EK2 = 'b'.repeat(32), PK = 'c'.repeat(32), PK2 = 'd'.
 const claim = (x) => Object.assign({ biz: 'van', name: 'Ann Lee', email: 'ann@example.com', phone: '7025550100', marketingOptIn: true, smsOptIn: true, consentText: 'I agree to receive texts from Vanilla Rice and Las Vegas Restaurants. Reply STOP to opt out.', consentVer: 'sms1', code: 'VAN-7K3P9', redeemed: false, createdAt: { '.sv': 'timestamp' }, ek: EK, pk: PK }, x || {});
 const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx/van/' + ek]: { code: c.code, id }, ['idx/van/' + c.pk]: { code: c.code, id } }, extra || {});
 (async () => {
-  const prog = { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 2, active: true };
+  const prog = { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 2, active: true, staffKeys: 2 };
   await t('a stranger cannot create a program', 'anon', 'PUT', '/lvr_coupons/programs/van', prog, false);
   await t('a signed-in stranger cannot create a program', 'other', 'PUT', '/lvr_coupons/programs/van', prog, false);
   await t('the owner creates a program', 'owner', 'PUT', '/lvr_coupons/programs/van', prog, true);
@@ -49,6 +49,15 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('a made-up time is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, claim({ createdAt: 5 })), false);
   await t('the duplicate-check entry must match the claim code', 'anon', 'PATCH', '/lvr_coupons', { 'claims/van/c1c1c1c1c1': claim(), ['idx/van/' + EK]: { code: 'OTHER-CODE', id: 'c1c1c1c1c1' }, ['idx/van/' + PK]: { code: 'VAN-7K3P9', id: 'c1c1c1c1c1' } }, false);
   await t('a valid claim through a real employee code is accepted', 'anon', 'PATCH', '/lvr_coupons', upd('c9c9c9c9c9', 'f'.repeat(32), claim({ email: 'ref@example.com', ek: 'f'.repeat(32), pk: '9'.repeat(32), phone: '7025550999', code: 'VAN-REF22', ref: 'maria-7k3' })), true);
+  // instant employee credit: the log entry is only allowed together with a claim that names that employee
+  await t('an employee credit without a claim is refused', 'anon', 'PUT', '/lvr_coupons/staffLog/van/maria-7k3/zzzzzzzz1', { t: { '.sv': 'timestamp' }, k: 2 }, false);
+  await t('an employee credit for the wrong number of keys is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c8c8c8c8c8', 'b1'.repeat(16), claim({ email: 'k@example.com', ek: 'b1'.repeat(16), pk: 'b2'.repeat(16), phone: '7025550888', code: 'VAN-KEY88', ref: 'maria-7k3' }), { 'staffLog/van/maria-7k3/c8c8c8c8c8': { t: { '.sv': 'timestamp' }, k: 50 } }), false);
+  await t('a claim through an employee plus the matching credit is accepted at once', 'anon', 'PATCH', '/lvr_coupons', upd('c7c7c7c7c7', 'a1'.repeat(16), claim({ email: 'j@example.com', ek: 'a1'.repeat(16), pk: 'a2'.repeat(16), phone: '7025550777', code: 'VAN-KEY77', ref: 'maria-7k3' }), { 'staffLog/van/maria-7k3/c7c7c7c7c7': { t: { '.sv': 'timestamp' }, k: 2 } }), true);
+  await t('a credit for an employee who is not on the claim is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c6c6c6c6c6', 'c1'.repeat(16), claim({ email: 'l@example.com', ek: 'c1'.repeat(16), pk: 'c2'.repeat(16), phone: '7025550666', code: 'VAN-KEY66' }), { 'staffLog/van/maria-7k3/c6c6c6c6c6': { t: { '.sv': 'timestamp' }, k: 2 } }), false);
+  await t('anyone with the employee link can read that employee\'s live count', 'anon', 'GET', '/lvr_coupons/staffLog/van/maria-7k3', undefined, true);
+  await t('anyone can read an employee\'s first name by exact link', 'anon', 'GET', '/lvr_coupons/staff/van/maria-7k3/name', undefined, true, '"Maria"');
+  await t('a stranger still cannot list the employees', 'anon', 'GET', '/lvr_coupons/staff/van', undefined, false);
+  await t('a stranger cannot erase an employee\'s credits', 'anon', 'DELETE', '/lvr_coupons/staffLog/van/maria-7k3', undefined, false);
   await t('a valid claim with its duplicate-check entry is accepted', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, claim()), true);
   await t('a claim with a phone, an Instagram handle and no text consent is accepted', 'anon', 'PATCH', '/lvr_coupons', upd('c2c2c2c2c2', EK2, (() => { const c = claim({ email: 'bo@example.com', code: 'VAN-AAAA2', ek: EK2, pk: PK2, phone: '7025550111', smsOptIn: false, ig: 'bo.chen' }); delete c.consentText; return c; })()), true);
   await t('the same phone number with a different email cannot claim twice', 'anon', 'PATCH', '/lvr_coupons', upd('c4c4c4c4c4', PK3, claim({ email: 'other@example.com', ek: PK3, code: 'VAN-ZZZZ4' })), false);
