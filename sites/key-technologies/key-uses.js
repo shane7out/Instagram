@@ -38,7 +38,7 @@ function init(){
  for(var k=0;k<all.length;k++){
   var u=all[k];u.setAttribute("data-done","1");var cp=/(^|\s)c(\s|$)/.test(u.className);
   var h='<p class="ey">'+(cp?'Use them':'What keys are for')+'</p>';
-  if(!cp)h+='<h2>Parties. Events. Food. <span>Win big.</span></h2><p class="sub">Keys are free to get. Go to parties, events and great food, meet people, and trade.</p>';
+  if(!cp)h+='<h2>Take a restaurant journey. <span>Earn Key Rewards.</span></h2><p class="sub">Eat at Las Vegas restaurants, send your receipt, and earn keys. Keys are free to get, and they are your way into parties, events and giveaways.</p>';
   h+='<div class="ug">';
   for(var i=0;i<USE.length;i++)h+='<div class="ut'+(i===0?' first':'')+'"><i>'+USE[i][2]+'</i><b>'+USE[i][0]+'</b><span>'+USE[i][1]+'</span></div>';
   h+='</div><p class="ey">'+(cp?'Big giveaway goals':'The big giveaways')+'</p><div class="gg">';
