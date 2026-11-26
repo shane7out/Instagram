@@ -10,7 +10,8 @@
 #   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/everything.sh?$(date +%s)" -o /tmp/everything.sh && bash /tmp/everything.sh
 set +e
 echo
-echo "Which email should every message end with, so replies come to you?"
+echo "Which email should the KEY TECHNOLOGIES business emails end with, so replies come to you?"
+echo "(Las Vegas Restaurants messages to restaurants never carry it - they stay separate.)"
 echo "(for example Shane@keytechnologies.si - or just press Return to keep what is on the dashboard now)"
 while true; do
   printf "Contact email: "; read -r REPLY_EMAIL < /dev/tty

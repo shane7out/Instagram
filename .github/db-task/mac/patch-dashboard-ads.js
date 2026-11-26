@@ -10,7 +10,7 @@ const fs = require('fs');
 const file = process.argv[2];
 if (!file) { console.error('usage: node patch-dashboard-ads.js index.html'); process.exit(1); }
 let s = fs.readFileSync(file, 'utf8');
-// The contact email for replies is handed in by the deploy script (REPLY_EMAIL, typed by Shane in Terminal) so it is never written into this public file.
+// The contact email (Key Technologies business emails ONLY; Las Vegas Restaurants messages never carry it) is handed in by the deploy script (REPLY_EMAIL, typed by Shane in Terminal) so it is never written into this public file.
 const REPLY = (process.env.REPLY_EMAIL || '').trim();
 if (REPLY && !/^[^\s@'"\\<>]+@[^\s@'"\\<>]+\.[^\s@'"\\<>]+$/.test(REPLY)) { console.error('ADSMSG02: REPLY_EMAIL does not look like an email address - nothing changed'); process.exit(4); }
 if (/ADSMSG02/.test(s)) {
@@ -109,7 +109,7 @@ const JS = `
   };
   M.lvr.first.body=M.lvr.first.dm; // the first sponsorship message reads the same as an email
   window._advDMText=function(n){n=n||'there';return M[mode()][kind()].dm(n)};
-  window._advMailParts=function(n){n=n||'there';var m=M[mode()][kind()];return {subject:m.subject(n),body:m.body(n)+(REPLY?'\\n'+REPLY:'')+foot()}};
+  window._advMailParts=function(n){n=n||'there';var m=M[mode()][kind()];return {subject:m.subject(n),body:m.body(n)+(REPLY&&mode()==='kt'?'\\n'+REPLY:'')+foot()}};
   function nm(a){var o=(typeof advNameOverrideMap!=='undefined'&&advNameOverrideMap[a.num]);return o||a.name||'there'}
   function rows(){
     var list=(typeof _advVFiltered!=='undefined'&&_advVFiltered&&_advVFiltered.length)?_advVFiltered:[],incl=!!(document.getElementById('adsmsg-incl')&&document.getElementById('adsmsg-incl').checked);
