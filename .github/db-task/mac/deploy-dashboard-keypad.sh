@@ -109,10 +109,10 @@ sleep 3
 curl -s https://lvr-data-a60c1.web.app/ -o /tmp/live.html
 echo "-- live check --" >> "$LOG"
 echo "live version : $(grep -ao 'APP_VERSION=[0-9]*' /tmp/live.html | head -1)" >> "$LOG"
-for MARK in 'OWNERPIN01' 'ADSMSG01'; do
-  echo "live has $MARK (should be 1 or more): $(grep -c "$MARK" /tmp/live.html)" >> "$LOG"
-  echo "live Johnny Mac chip (should be 0): $(grep -c "JOHNNYMACS-START" /tmp/live.html)" >> "$LOG"
+for MARK in 'OWNERPIN01' 'ADSMSG02' 'DMRESTORE02'; do
+  echo "live has $MARK (should be 1 or more): $(grep -ac "$MARK" /tmp/live.html)" >> "$LOG"
 done
+echo "live Johnny Mac chip (should be 0): $(grep -ac "JOHNNYMACS-START" /tmp/live.html)" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keypad.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "live Johnny Mac chip left: $(grep -c 'href="/johnny-macs.html"' /tmp/live.html)" >> "$LOG"; echo "==== done ===="; cat "$LOG"
