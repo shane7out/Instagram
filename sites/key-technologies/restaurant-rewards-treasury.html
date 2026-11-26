@@ -773,7 +773,7 @@ body.hlock{overflow:hidden}
   box.appendChild(el('p','fine','All time: '+tot.n+' receipt'+(tot.n===1?'':'s')+' from '+Object.keys(tot.g).length+' guest'+(Object.keys(tot.g).length===1?'':'s')+' at '+per2.length+' restaurant'+(per2.length===1?'':'s')+' · '+tot.ap+' approved, '+tot.pe+' waiting · '+usd(tot.sp)+' spent (approved, before tax).'));
   box.appendChild(el('p','fine','Last 24 hours: '+day.length+' receipt'+(day.length===1?'':'s')+' at '+Object.keys(dayR).length+' restaurant'+(Object.keys(dayR).length===1?'':'s')+'.'));
   box.appendChild(el('h3',null,'By restaurant'));
-  per2.forEach(function(p){box.appendChild(el('p','fine','• '+p.name+': '+p.n+' visit'+(p.n===1?'':'s')+' · '+Object.keys(p.g).length+' guest'+(Object.keys(p.g).length===1?'':'s')+' · '+p.ap+' approved, '+p.pe+' waiting'+(p.de?', '+p.de+' declined':'')+' · '+usd(p.sp)+' spent · last '+(p.last?when(p.last):'?')))});
+  per2.forEach(function(p){box.appendChild(el('p','fine','• '+p.name+': '+p.n+' visit'+(p.n===1?'':'s')+' · '+Object.keys(p.g).length+' guest'+(Object.keys(p.g).length===1?'':'s')+' · '+p.ap+' approved, '+p.pe+' waiting'+(p.de?', '+p.de+' declined':'')+' · '+usd(p.sp)+' spent · last '+(p.last?new Date(p.last).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'?')))});
   box.appendChild(el('h3',null,'Eating in the last 24 hours'));
   if(!day.length)box.appendChild(el('p','fine','Nobody in the last 24 hours.'));
   day.sort(function(a,b){return b.at-a.at}).slice(0,40).forEach(function(x){var r=x.r,row=el('div','rbrow');
