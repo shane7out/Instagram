@@ -13,6 +13,11 @@
 #                             and keys earned / sign-ups today / sign-ups in all, updating by itself within seconds of
 #                             each sign-up. Shows no customer details.
 #
+#   lvr-me.html           - the guest's own WALLET, opened by a long private link (no username, no password): their coupon with
+#                             a "Redeem now" button that first asks "Are you sure you want to redeem?", then shows the date and
+#                             time it was redeemed and can never be used again; their keys, their own QR code to bring friends
+#                             (with how many signed up), and a button to the receipt game. The restaurant only watches the screen.
+#
 #   lvr-optout.html       - "Stop all messages": a guest types their email and/or phone and is on the do-not-message list at once
 #                             (every list and download in the admin page leaves them out). Linked from the sign-up page.
 #
@@ -46,12 +51,14 @@ curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --spe
 echo "lvr-redeem.html: $(wc -c < lvr-redeem.html) bytes" >> "$LOG"
 curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-optout.html "$RAWB/lvr-optout.html"
 echo "lvr-optout.html: $(wc -c < lvr-optout.html) bytes" >> "$LOG"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-me.html "$RAWB/lvr-me.html"
+echo "lvr-me.html: $(wc -c < lvr-me.html) bytes" >> "$LOG"
 echo "lvr-coupon.html: $(wc -c < lvr-coupon.html) bytes" >> "$LOG"
 echo "lvr-coupons-admin.html: $(wc -c < lvr-coupons-admin.html) bytes" >> "$LOG"
 
 # sanity: every inline script block in both files must parse before anything ships
 FAIL=0
-for f in lvr-coupon.html lvr-coupons-admin.html lvr-team.html lvr-redeem.html lvr-optout.html; do
+for f in lvr-coupon.html lvr-coupons-admin.html lvr-team.html lvr-redeem.html lvr-optout.html lvr-me.html; do
   node <<NODE >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
 const s = fs.readFileSync('$f', 'utf8');
@@ -84,7 +91,7 @@ curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --spe
 DEP="deploy-overlay.js"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"
-  OVERLAY_FILES="lvr-coupon.html lvr-coupons-admin.html lvr-team.html lvr-redeem.html lvr-optout.html" node "$DEP" >> "$LOG" 2>&1
+  OVERLAY_FILES="lvr-coupon.html lvr-coupons-admin.html lvr-team.html lvr-redeem.html lvr-optout.html lvr-me.html" node "$DEP" >> "$LOG" 2>&1
 else
   echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"
 fi
@@ -95,6 +102,7 @@ echo "live /lvr-coupon.html status: $(curl -s -o /tmp/lvrcoupon-live.html -w '%{
 echo "live /lvr-team.html status: $(curl -s -o /tmp/lvrteam-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-team.html)" >> "$LOG"
 echo "live /lvr-redeem.html status: $(curl -s -o /tmp/lvrredeem-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-redeem.html)" >> "$LOG"
 echo "live /lvr-optout.html status: $(curl -s -o /tmp/lvroptout-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-optout.html)" >> "$LOG"
+echo "live /lvr-me.html status: $(curl -s -o /tmp/lvrme-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-me.html)" >> "$LOG"
 echo "live /lvr-coupons-admin.html status: $(curl -s -o /tmp/lvrcouponadmin-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-coupons-admin.html)" >> "$LOG"
 echo "claim page is the new one (private duplicate check): $(grep -c 'emailKey' /tmp/lvrcoupon-live.html 2>/dev/null || echo 0)" >> "$LOG"
 echo "admin page has the owner sign-in and no PIN: gate $(grep -c 'OWNER-SIGNIN-GATE' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0), old PIN $(grep -c '137900' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0)" >> "$LOG"

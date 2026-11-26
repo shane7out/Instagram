@@ -15,7 +15,9 @@ const t = async (name, who, method, p, body, allow, expectBody) => {
 };
 const EK = 'a'.repeat(32), EK2 = 'b'.repeat(32), PK = 'c'.repeat(32), PK2 = 'd'.repeat(32), PK3 = 'e'.repeat(32);
 const claim = (x) => Object.assign({ biz: 'van', name: 'Ann Lee', email: 'ann@example.com', phone: '7025550100', marketingOptIn: true, mailConsentText: 'I agree to receive emails from Vanilla Rice and Las Vegas Restaurants.', smsOptIn: true, consentText: 'I agree to receive texts from Vanilla Rice and Las Vegas Restaurants. Reply STOP to opt out.', consentVer: 'sms1', code: 'VAN-7K3P9', redeemed: false, createdAt: { '.sv': 'timestamp' }, ek: EK, pk: PK }, x || {});
-const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx/van/' + ek]: { code: c.code, id }, ['idx/van/' + c.pk]: { code: c.code, id } }, extra || {});
+const wtOf = id => ('w' + id).replace(/[^a-z0-9]/g, '').padEnd(32, '0').slice(0, 32);
+const walletFor = (id, c) => ({ ['wallets/' + (c.wt || wtOf(id))]: { biz: c.biz || 'van', id, code: c.code, t: { '.sv': 'timestamp' } } });
+const upd = (id, ek, c, extra) => { c = Object.assign({}, c, { wt: c.wt || wtOf(id) }); return Object.assign({ ['claims/van/' + id]: c, ['idx/van/' + ek]: { code: c.code, id }, ['idx/van/' + c.pk]: { code: c.code, id } }, walletFor(id, c), extra || {}); };
 (async () => {
   const prog = { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 2, active: true, staffKeys: 2 };
   await t('a stranger cannot create a program', 'anon', 'PUT', '/lvr_coupons/programs/van', prog, false);
@@ -86,7 +88,7 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('a code can only be redeemed once', 'anon', 'PUT', '/lvr_coupons/codes/van/VAN-CODE1/used', { '.sv': 'timestamp' }, false);
   await t('a made-up redeem time is refused', 'anon', 'PUT', '/lvr_coupons/codes/van/VAN-CODE1/used', 5, false);
   await t('the owner creates a program whose coupons expire at once', 'owner', 'PUT', '/lvr_coupons/programs/exp', { bizName: 'Old Co', offer: '$5 off', active: true, validDays: 0 }, true);
-  await t('a claim for it is accepted', 'anon', 'PATCH', '/lvr_coupons', { 'claims/exp/e1e1e1e1e1': claim({ biz: 'exp', email: 'w@example.com', ek: 'e1'.repeat(16), pk: 'e2'.repeat(16), phone: '7025550303', code: 'EXP-OLD11' }), ['idx/exp/' + 'e1'.repeat(16)]: { code: 'EXP-OLD11', id: 'e1e1e1e1e1' }, ['idx/exp/' + 'e2'.repeat(16)]: { code: 'EXP-OLD11', id: 'e1e1e1e1e1' }, 'codes/exp/EXP-OLD11': cd('e1e1e1e1e1') }, true);
+  await t('a claim for it is accepted', 'anon', 'PATCH', '/lvr_coupons', Object.assign(walletFor('e1e1e1e1e1', { biz: 'exp', code: 'EXP-OLD11' }), { 'claims/exp/e1e1e1e1e1': claim({ biz: 'exp', email: 'w@example.com', ek: 'e1'.repeat(16), pk: 'e2'.repeat(16), phone: '7025550303', code: 'EXP-OLD11', wt: wtOf('e1e1e1e1e1') }), ['idx/exp/' + 'e1'.repeat(16)]: { code: 'EXP-OLD11', id: 'e1e1e1e1e1' }, ['idx/exp/' + 'e2'.repeat(16)]: { code: 'EXP-OLD11', id: 'e1e1e1e1e1' }, 'codes/exp/EXP-OLD11': cd('e1e1e1e1e1') }), true);
   await t('an expired code cannot be redeemed', 'anon', 'PUT', '/lvr_coupons/codes/exp/EXP-OLD11/used', { '.sv': 'timestamp' }, false);
   await t('the owner can still mark an expired code used', 'owner', 'PUT', '/lvr_coupons/codes/exp/EXP-OLD11/used', { '.sv': 'timestamp' }, true);
   // restaurant credit and fees: owner only
@@ -123,6 +125,17 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('a guest can bring a friend through their own link (g-<their claim id>)', 'anon', 'PATCH', '/lvr_coupons', upd('f1f1f1f1f1', 'f1'.repeat(16), claim({ email: 'friend@example.com', ek: 'f1'.repeat(16), pk: 'f2'.repeat(16), phone: '7025550555', code: 'VAN-FRND1', ref: 'g-c1c1c1c1c1' })), true);
   await t('a guest link to someone who never signed up is refused', 'anon', 'PATCH', '/lvr_coupons', upd('f3f3f3f3f3', 'f3'.repeat(16), claim({ email: 'x2@example.com', ek: 'f3'.repeat(16), pk: 'f4'.repeat(16), phone: '7025550556', code: 'VAN-FRND2', ref: 'g-doesnotexist1' })), false);
   await t('the owner can mark a referrer\'s keys as given for used coupons', 'owner', 'PATCH', '/lvr_coupons/claims/van/f1f1f1f1f1', { usedPaid: true }, true);
+  // wallet link (no username or password): the long random link is the key
+  await t('anyone holding the wallet link can read that wallet', 'anon', 'GET', '/lvr_coupons/wallets/' + wtOf('c1c1c1c1c1'), undefined, true);
+  await t('nobody can list all the wallets', 'anon', 'GET', '/lvr_coupons/wallets', undefined, false);
+  await t('a wallet cannot be created without its claim', 'anon', 'PUT', '/lvr_coupons/wallets/' + 'z'.repeat(32), { biz: 'van', id: 'c1c1c1c1c1', code: 'VAN-7K3P9', t: { '.sv': 'timestamp' } }, false);
+  await t('a short or guessable wallet link is refused', 'anon', 'PATCH', '/lvr_coupons', upd('b5b5b5b5b5', 'b5'.repeat(16), claim({ email: 'sh@example.com', ek: 'b5'.repeat(16), pk: 'b6'.repeat(16), phone: '7025550777', code: 'VAN-SHRT1', wt: 'abc' })), false);
+  await t('a claim without a wallet link is refused', 'anon', 'PATCH', '/lvr_coupons', { 'claims/van/b7b7b7b7b7': (() => { const c = claim({ email: 'nw@example.com', ek: 'b7'.repeat(16), pk: 'b8'.repeat(16), phone: '7025550778', code: 'VAN-NOWL1' }); delete c.wt; return c; })(), ['idx/van/' + 'b7'.repeat(16)]: { code: 'VAN-NOWL1', id: 'b7b7b7b7b7' }, ['idx/van/' + 'b8'.repeat(16)]: { code: 'VAN-NOWL1', id: 'b7b7b7b7b7' } }, false);
+  await t('a stranger cannot overwrite someone\'s wallet', 'anon', 'PUT', '/lvr_coupons/wallets/' + wtOf('c1c1c1c1c1'), { biz: 'van', id: 'c1c1c1c1c1', code: 'EVIL-CODE1', t: { '.sv': 'timestamp' } }, false);
+  await t('a stranger cannot delete a wallet', 'anon', 'DELETE', '/lvr_coupons/wallets/' + wtOf('c1c1c1c1c1'), undefined, false);
+  await t('friends signed up through a guest are logged with the same save and are public by count', 'anon', 'PATCH', '/lvr_coupons', upd('a3a3a3a3a3', 'a3'.repeat(16), claim({ email: 'gl@example.com', ek: 'a3'.repeat(16), pk: 'a4'.repeat(16), phone: '7025550779', code: 'VAN-GLOG1', ref: 'g-c1c1c1c1c1' }), { 'guestLog/van/c1c1c1c1c1/a3a3a3a3a3': { t: { '.sv': 'timestamp' } } }), true);
+  await t('a made-up friend log entry is refused', 'anon', 'PUT', '/lvr_coupons/guestLog/van/c1c1c1c1c1/zzzzzzzz9', { t: { '.sv': 'timestamp' } }, false);
+  await t('anyone with the guest link can read how many friends signed up', 'anon', 'GET', '/lvr_coupons/guestLog/van/c1c1c1c1c1', undefined, true);
   // counter
   await t('the counter starts at 1', 'anon', 'PUT', '/lvr_coupons/counts/van', 1, true);
   await t('the counter cannot jump by 2', 'anon', 'PUT', '/lvr_coupons/counts/van', 3, false);

@@ -3192,6 +3192,7 @@ var qrcode = function() {
         (Number(p.welcomeKeys) > 0 ? '<span class="chip' + (c.welcomePaid ? ' ok' : '') + '">' + (c.welcomePaid ? 'Welcome key given' : 'Welcome key to give: ' + p.welcomeKeys) + '</span>' : '') + '</div>' +
         '<div class="claim-actions"><button data-redeem="' + escapeHtml(c._id) + '" class="' + (isUsed(slug, c) ? 'redeemed-yes' : 'redeemed-no') + '">' + (isUsed(slug, c) ? '✓ Used' : 'Mark used') + '</button>' +
         (Number(p.welcomeKeys) > 0 ? '<button data-wk="' + escapeHtml(c._id) + '">' + (c.welcomePaid ? 'Undo key given' : 'Mark key given') + '</button>' : '') +
+        (c.wt ? '<button data-wlink="' + escapeHtml(c.wt) + '">Copy wallet link</button>' : '') +
         (isOut(c) ? '' : '<button data-optout="' + escapeHtml(c._id) + '">Mark opted out (they said STOP)</button>') +
         '<button data-delclaim="' + escapeHtml(c._id) + '">Remove</button></div></div>';
     }).join('') + '</div>';
@@ -3217,6 +3218,12 @@ var qrcode = function() {
             cur.redeemed = nv; if (!nv && codesAll[slug] && codesAll[slug][cur.code]) { delete codesAll[slug][cur.code].used; fbDelete(C + '/codes/' + slug + '/' + cur.code + '/used'); }
             renderClaims(slug);
           });
+        });
+      });
+      view.querySelectorAll('[data-wlink]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var u = 'https://lvr-data-a60c1.web.app/lvr-me.html?w=' + btn.getAttribute('data-wlink');
+          if (navigator.clipboard) navigator.clipboard.writeText(u).then(function(){ showToast('Wallet link copied. Send it to them.'); }); else showToast(u);
         });
       });
       view.querySelectorAll('[data-optout]').forEach(function(btn){
