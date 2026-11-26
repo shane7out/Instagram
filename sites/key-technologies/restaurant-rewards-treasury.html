@@ -317,6 +317,7 @@ body.hlock{overflow:hidden}
 #wlbox .chk{border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;background:rgba(255,255,255,.05)}#wlbox .chk h3{margin:0 0 4px;font-size:17px}#wlbox .wlrow{border-top:1px solid rgba(255,255,255,.12);padding:8px 0}#wlbox .wlrow summary{cursor:pointer;font-size:14px;line-height:1.5}#wlbox .wlrow .btn{margin:6px 8px 6px 0}#wlbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#wlbox .btn{margin:6px 8px 0 0}#gvbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#gvbox .kvrow{padding:8px 0;border-top:1px solid rgba(255,255,255,.12)}#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
 #owebox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#owebox .gvrow input{width:100%;margin:6px 0;font-size:16px}#owebox .btn{margin:6px 8px 0 0}#dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
 #wllist .btn:disabled{opacity:.4;cursor:not-allowed}
+#kqbox .kqrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0;padding:10px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#kqbox .kqrow .kqt{flex:1;min-width:160px}#kqbox .kqrow b{display:block}#kqbox .kqph{width:100%;max-width:240px;max-height:200px;object-fit:contain;border-radius:8px;background:#fff;cursor:zoom-in}#kqbox .kqph.big{max-width:100%;max-height:70vh;cursor:zoom-out}#kqbox input{width:100%;margin:4px 0}#kqbox .kqwarn{color:#9fd6f2;font-weight:700}
 #rbbox .rbrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0;padding:8px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#rbbox .rbth{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex:none;background:#fff}#rbbox .rbth.big{width:100%;height:auto;max-height:70vh;object-fit:contain;cursor:zoom-out}#rbbox .rbtx{flex:1;min-width:150px}#rbbox .rbtx b{display:block}
 #dnbox .dnrec{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#dnbox .dnimg{display:block;width:140px;max-height:200px;object-fit:cover;border-radius:8px;background:#fff;margin:6px 0;cursor:zoom-in}#dnbox .dnimg.big{width:100%;max-height:none;object-fit:contain;cursor:zoom-out}#dnbox .dnwarn{margin:6px 0;color:#9fd6f2;font-weight:700;font-size:14px}
 
@@ -419,6 +420,11 @@ body.hlock{overflow:hidden}
   <p class="fine" style="margin-top:0">Every trade between two wallets, newest first, and who is trading most. Keys issued from the Treasury are not counted here. Members trade with each other; Key Technologies does not buy or sell keys.</p>
   <div id="twsum"></div>
   <div id="twlist"></div>
+ </div>
+ <div class="box" id="kqbox">
+  <h2>Key Quest: the restaurant journey</h2>
+  <p class="fine" style="margin-top:0">Your master list of restaurants, in order. Every player starts at level 1, goes to that restaurant, and sends a photo of their own receipt. When you approve it, they move up to level 2, and so on. Players see their keys and only their next restaurant.</p>
+  <div id="kqlist"></div>
  </div>
  <div class="box" id="rbbox">
   <h2>Receipts board: who is eating where</h2>
@@ -762,6 +768,71 @@ body.hlock{overflow:hidden}
   if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}var t=o[oid];if(t){t.payments=t.payments||{};t.payments[id]={amountCents:cents,at:Date.now(),note:note||''};dnSetLocal(o)}after();return}
   var rec={amountCents:cents,at:{'.sv':'timestamp'}};if(note)rec.note=note;RR.db('PUT','key_dine/'+oid+'/payments/'+id,rec).then(function(r){if(r.status===200)after();else dnSay('The database did not accept that payment. Sign in again and try once more.',true)})}
  function dnUnpay(oid,pid,after){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}if(o[oid]&&o[oid].payments)delete o[oid].payments[pid];dnSetLocal(o);after();return}RR.db('DELETE','key_dine/'+oid+'/payments/'+pid).then(function(){after()})}
+ /* ---- Key Quest (2026-11-26): master list of restaurants in order; each player does level 1, then 2, ...; you approve each receipt photo ---- */
+ function kqLocal(){try{return JSON.parse(localStorage.getItem('kqLocal')||'{}')||{}}catch(e){return {}}}
+ function kqSetLocal(o){try{localStorage.setItem('kqLocal',JSON.stringify(o))}catch(e){}}
+ function kqSv(v){if(v&&typeof v==='object'&&v['.sv']==='timestamp')return Date.now();if(v&&typeof v==='object'){var c={};Object.keys(v).forEach(function(k){c[k]=kqSv(v[k])});return c}return v}
+ function kqGet(path){if(!DBM){var o=kqLocal();return Promise.resolve(o[path]||{})}return RR.db('GET','key_quest/'+path).then(function(r){return r.status===200&&r.json?r.json:{}})}
+ function kqWrite(method,path,val){
+  if(!DBM){var o=kqLocal(),parts=path.split('/'),c=o;for(var i=0;i<parts.length-1;i++){c[parts[i]]=c[parts[i]]||{};c=c[parts[i]]}var k=parts[parts.length-1];
+   if(method==='DELETE')delete c[k];else if(method==='PATCH'){c[k]=c[k]||{};var v=kqSv(val);Object.keys(v).forEach(function(x){if(v[x]===null)delete c[k][x];else c[k][x]=v[x]})}else c[k]=kqSv(val);kqSetLocal(o);return Promise.resolve(true)}
+  return RR.db(method,'key_quest/'+path,method==='DELETE'?undefined:val).then(function(r){return r.status===200})}
+ function kqRid(n){var a=new Uint8Array(n||24),s='';crypto.getRandomValues(a);for(var i=0;i<a.length;i++)s+=(a[i]%36).toString(36);return s}
+ function kqLink(pid){return location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-quest.html?p='+pid+(DBM?'':'&demo=1')}
+ function kqStopsArr(stops){return Object.keys(stops||{}).map(function(k){var s=stops[k];s._id=k;return s}).sort(function(a,b){return (a.order||0)-(b.order||0)})}
+ function kqStopFields(arr,level){var s=arr[level-1];return {total:arr.length,done:arr.length>0&&level>arr.length,stopName:s?String(s.name).slice(0,80):null,stopIg:s&&s.ig?String(s.ig).slice(0,31):null,stopNote:s&&s.note?String(s.note).slice(0,140):null}}
+ function kqEnsurePlayer(w,keys){return Promise.all([kqGet('players'),kqGet('stops')]).then(function(a){var pl=a[0]||{},arr=kqStopsArr(a[1]),h=String(w.ig||'').replace(/^@+/,'').toLowerCase(),pid=null;
+  if(h)Object.keys(pl).forEach(function(k){if(String(pl[k].ig||'').toLowerCase()===h)pid=k});if(pid)return pid;
+  pid=kqRid(24);var rec={first:String(w.first||'').slice(0,60)||'Friend',last:String(w.last||'').slice(0,60),ig:h.slice(0,31),level:1,keys:keys||0,createdAt:{'.sv':'timestamp'}},sf=kqStopFields(arr,1);
+  Object.keys(sf).forEach(function(k){if(sf[k]!==null&&sf[k]!==undefined)rec[k]=sf[k]});if(!rec.last)delete rec.last;if(!rec.ig)delete rec.ig;
+  return kqWrite('PUT','players/'+pid,rec).then(function(ok){return ok?pid:null})})}
+ function kqSync(){return Promise.all([kqGet('players'),kqGet('stops')]).then(function(a){var pl=a[0]||{},arr=kqStopsArr(a[1]),jobs=[];
+  Object.keys(pl).forEach(function(k){var p=pl[k],sf=kqStopFields(arr,p.level||1);jobs.push(kqWrite('PATCH','players/'+k,sf))});return Promise.all(jobs)})}
+ function kqSay(t,bad){var m=document.querySelector('#kqlist .kqmsg');if(m){m.textContent=t;m.style.color=bad?'#ffb4a8':''}}
+ function kqApprove(sub,subId,pl,stop,cents,btn){btn.disabled=true;var reward=Number(stop&&stop.keys)||0,nm=((pl.first||'')+' '+(pl.last||'')).replace(/\s+/g,' ').trim().slice(0,40)||('@'+(pl.ig||'player'));
+  if(reward>0){var wid=find(nm);if(!wid)wid=openW(nm,'Customer');S.entries.push({id:S.next++,t:now(),from:'treasury',to:wid,amt:reward*100,note:('Key Quest level '+sub.n+': '+(stop&&stop.name||'')).slice(0,70)});save();chime();paint()}
+  kqWrite('PATCH','subs/'+subId,{status:'approved',amountCents:cents,decidedAt:{'.sv':'timestamp'}}).then(function(){return kqGet('stops')}).then(function(st){var arr=kqStopsArr(st),next=(pl.level||1)+1,sf=kqStopFields(arr,next);
+   sf.level=next;sf.keys=(Number(pl.keys)||0)+reward;sf.lastAt={'.sv':'timestamp'};return kqWrite('PATCH','players/'+sub.pid,sf)}).then(function(){window.kqNote='Approved. '+(pl.first||'They')+' moved up'+(reward?' and got '+reward+' keys':'')+'.';kqRender()})}
+ function kqRender(){var box=$('kqlist');if(!box)return;box.innerHTML='';box.appendChild(el('p','fine','Loading...'));
+  Promise.all([kqGet('stops'),kqGet('players'),kqGet('subs')]).then(function(a){var stops=a[0]||{},pl=a[1]||{},subs=a[2]||{},arr=kqStopsArr(stops);box.innerHTML='';
+   var m=el('p','fine kqmsg','');if(window.kqNote){m.textContent=window.kqNote;window.kqNote=''}box.appendChild(m);
+   /* receipts waiting */
+   var waiting=Object.keys(subs).filter(function(k){return !subs[k].status}).sort(function(x,y){return (subs[x].at||0)-(subs[y].at||0)});
+   box.appendChild(el('h3',null,'Receipts waiting ('+waiting.length+')'));
+   if(!waiting.length)box.appendChild(el('p','fine','Nothing waiting.'));
+   waiting.forEach(function(k){var sub=subs[k],p=pl[sub.pid]||{},stop=arr[(sub.n||1)-1],row=el('div','kqrow'),tx=el('div','kqt');
+    tx.appendChild(el('b',null,((p.first||'')+' '+(p.last||'')).trim()+(p.ig?'  @'+p.ig:'')));
+    tx.appendChild(el('p','fine','Level '+sub.n+': '+(stop?stop.name:'(restaurant removed)')+' · sent '+when(sub.at)));
+    var gap=(sub.at&&sub.photoAt)?sub.at-sub.photoAt:null,pt=el('p','fine'+((gap===null||gap>3*36e5||gap<-6e4)?' kqwarn':''),!sub.photoAt?'No photo time. It may not be a fresh photo, look closer.':(gap>3*36e5?'Look closer: the photo is '+Math.round(gap/36e5)+' hours older than when it was sent.':'Photo was taken '+Math.max(0,Math.round(gap/6e4))+' min before it was sent.'));tx.appendChild(pt);
+    var dup=Object.keys(subs).filter(function(o){return o!==k&&subs[o].photo===sub.photo}).length;if(dup)tx.appendChild(el('p','fine kqwarn','Careful: another receipt has this exact same photo.'));
+    row.appendChild(tx);var im=el('img','kqph');im.alt='Receipt';if(typeof sub.photo==='string'&&sub.photo.indexOf('data:image/')===0)im.src=sub.photo;im.addEventListener('click',function(){im.classList.toggle('big')});row.appendChild(im);
+    var al=el('label',null,'Bill before tax (dollars). Check it against the photo.');al.setAttribute('for','kqa'+k);var ai=el('input');ai.id='kqa'+k;ai.setAttribute('inputmode','decimal');ai.value=(typeof sub.spentCents==='number'?(sub.spentCents/100).toFixed(2):'');row.appendChild(al);row.appendChild(ai);
+    var tb=el('div','tools'),ab=el('button','btn','Approve'+(stop&&stop.keys?' and give '+stop.keys+' keys':''));ab.type='button';ab.addEventListener('click',function(){var v=Number(String(ai.value).replace(/[$,\s]/g,''));if(!(v>=0.01&&v<=10000)){ai.focus();kqSay('Type the bill before tax from the receipt, like 12.50, then approve.',true);return}kqApprove(sub,k,p,stop,Math.round(v*100),ab)});
+    var db=el('button','btn ghost','Decline');db.type='button';db.addEventListener('click',function(){db.disabled=true;kqWrite('DELETE','subs/'+k).then(function(){window.kqNote='Declined. They can send a new receipt.';kqRender()})});tb.appendChild(ab);tb.appendChild(db);row.appendChild(tb);box.appendChild(row)});
+   /* master list */
+   box.appendChild(el('h3',null,'Your restaurants, in order ('+arr.length+')'));
+   if(!arr.length)box.appendChild(el('p','fine','No restaurants yet. Add your first one below: that is level 1.'));
+   var reorder=function(i,d){var A=arr[i],B=arr[i+d];if(!A||!B)return;var oa=A.order,ob=B.order;Promise.all([kqWrite('PATCH','stops/'+A._id,{order:ob}),kqWrite('PATCH','stops/'+B._id,{order:oa})]).then(kqSync).then(kqRender)};
+   arr.forEach(function(st,i){var row=el('div','kqrow'),tx=el('div','kqt');tx.appendChild(el('b',null,'Level '+(i+1)+': '+st.name));tx.appendChild(el('p','fine',(st.ig?'@'+st.ig+' · ':'')+(st.keys||0)+' keys for finishing'+(st.note?' · '+st.note:'')));row.appendChild(tx);
+    var mk=function(t,fn,dis){var b=el('button','btn ghost',t);b.type='button';if(dis)b.disabled=true;b.addEventListener('click',function(){b.disabled=true;fn()});row.appendChild(b)};
+    mk('Up',function(){reorder(i,-1)},i===0);mk('Down',function(){reorder(i,1)},i===arr.length-1);
+    mk('Remove',function(){if(!window.confirm('Remove '+st.name+' from the list? Players on this level move to the next restaurant.'))return;kqWrite('DELETE','stops/'+st._id).then(function(){return kqGet('stops')}).then(function(left){var rest=kqStopsArr(left),jobs=[];rest.forEach(function(x,j){if(x.order!==j+1)jobs.push(kqWrite('PATCH','stops/'+x._id,{order:j+1}))});return Promise.all(jobs)}).then(kqSync).then(kqRender)});
+    box.appendChild(row)});
+   var af=el('div','kqrow');af.style.display='block';af.appendChild(el('b',null,'Add a restaurant to the end of the list'));
+   var fld=function(id,lab,ph,val){var l=el('label',null,lab);l.setAttribute('for',id);var i=el('input');i.id=id;i.placeholder=ph||'';i.autocomplete='off';if(val)i.value=val;af.appendChild(l);af.appendChild(i);return i};
+   var nI=fld('kqn','Restaurant name','Example: Johnny Mac\'s'),gI=fld('kqg','Their Instagram handle (optional)','@johnnymacs'),kI=fld('kqk','Keys a player gets for finishing this level','25','25'),oI=fld('kqo','A short note for the player (optional)','Try the hibachi.');
+   var addb=el('button','btn','Add to the list');addb.type='button';addb.addEventListener('click',function(){var nm=nI.value.trim(),keys=Math.round(Number(String(kI.value).replace(/,/g,'')));if(!nm){nI.focus();kqSay('Type the restaurant name first.',true);return}if(!(keys>=0&&keys<=100000)){kI.focus();kqSay('Keys must be a whole number from 0 to 100,000.',true);return}
+    var rec={name:nm.slice(0,80),order:arr.length+1,keys:keys};var ig=gI.value.trim().replace(/^@+/,'').slice(0,31),nt=oI.value.trim().slice(0,140);if(ig)rec.ig=ig;if(nt)rec.note=nt;addb.disabled=true;
+    kqWrite('PUT','stops/s'+kqRid(10),rec).then(function(ok){if(!ok){addb.disabled=false;kqSay('The database did not accept that. The new rules may not be live yet (run the Mac rules step), or sign in again.',true);return}return kqSync().then(function(){window.kqNote='Added as level '+(arr.length+1)+'.';kqRender()})})});
+   af.appendChild(addb);box.appendChild(af);
+   /* players */
+   var pk=Object.keys(pl).sort(function(x,y){return (pl[y].lastAt||pl[y].createdAt||0)-(pl[x].lastAt||pl[x].createdAt||0)});
+   box.appendChild(el('h3',null,'Players ('+pk.length+')'));
+   if(!pk.length)box.appendChild(el('p','fine','No players yet. Approving someone on the waiting list adds them here.'));
+   pk.slice(0,100).forEach(function(k){var p=pl[k],row=el('div','kqrow'),tx=el('div','kqt');tx.appendChild(el('b',null,((p.first||'')+' '+(p.last||'')).trim()+(p.ig?'  @'+p.ig:'')));
+    tx.appendChild(el('p','fine',(p.done?'Finished all '+p.total+' levels':'Level '+p.level+' of '+p.total+(p.stopName?': '+p.stopName:''))+' · '+(p.keys||0)+' keys'));row.appendChild(tx);
+    var cb=el('button','btn ghost','Copy their link');cb.type='button';cb.addEventListener('click',function(){var d=function(){cb.textContent='Copied'};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(kqLink(k)).then(d,d);else d()});row.appendChild(cb);box.appendChild(row)});
+   var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',kqRender);box.appendChild(rf)})}
  /* ---- Receipts board (2026-11-26): every receipt at every restaurant, who sent it, when, how much, and the photo ---- */
  function rbRender(all){var box=$('rblist');if(!box)return;box.innerHTML='';
   var now=Date.now(),DAY=864e5,per={},rows=[],tot={n:0,ap:0,pe:0,sp:0,g:{}};
@@ -803,7 +874,7 @@ body.hlock{overflow:hidden}
    box.appendChild(row)});
   var sp=el('button','btn ghost','Copy every approved receipt for a spreadsheet');sp.type='button';sp.addEventListener('click',function(){var L=['Restaurant\tDate\tReceipt no\tGuest\tAmount before tax\tYour share %\tYour share'];order.forEach(function(k){groups[k].rows.sort(function(a,b){return a.at-b.at}).forEach(function(r){L.push([groups[k].name,new Date(r.at).toISOString().slice(0,10),r.rno,r.who,(r.amt/100).toFixed(2),r.pct,(r.c/100).toFixed(2)].map(function(x){return String(x).replace(/[\t\r\n]+/g,' ')}).join('\t'))})});var t=L.join('\n'),d=function(){sp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,function(){sp.textContent='Could not copy'});else sp.textContent='Could not copy'});box.appendChild(sp)}
  function dnRender(){var box=$('dnlist');if(!box)return;var dl=$('dnrests');if(dl){dl.innerHTML='';S.wallets.filter(function(w){return w.type==='Restaurant'}).forEach(function(w){var op=document.createElement('option');op.value=w.name;dl.appendChild(op)})}
-  dnGet(function(all){oweRender(all);rbRender(all);box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
+  dnGet(function(all){oweRender(all);rbRender(all);kqRender();box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
   if(!ids.length){box.appendChild(el('p','fine','No offers yet.'));return}
   ids.forEach(function(oid){var o=all[oid],row=el('div','gvrow'),rc=o.receipts||{},rids=Object.keys(rc).sort(function(a,b){return (rc[b].at||0)-(rc[a].at||0)});
    var pend=rids.filter(function(k){return !rc[k].status});
@@ -844,7 +915,7 @@ body.hlock{overflow:hidden}
  /* Daily drip (2026-11-26, Shane): at most 5 people approved a day (Las Vegas time); everyone approved gets 1 key from the Treasury, once. */
  var WL_CAP=5;
  function lvDay(t){return new Date(t).toLocaleDateString('en-CA',{timeZone:'America/Los_Angeles'})}
- function wlDmText(first){return 'Hi '+(first||'there')+',\n\nWelcome to Key Rewards, you are in! \ud83d\udd11\n\nYour Instagram checked out, and your first key has been set aside for you. You are one of our first members, and I am glad you are here. I will message you right here as soon as your wallet is ready to use.\n\nKey Rewards is a journey: eat at Las Vegas restaurants, send your receipt, and earn more keys for parties, events and giveaways.\n\nIf you have any questions, just reply to this message and I will get back to you personally.\n\nThank you for being part of this.\n\nShane Christensen\nCreator of @lasvegas_restaurants'}
+ function wlDmText(first,link){return 'Hi '+(first||'there')+',\n\nWelcome to Key Rewards, you are in! \ud83d\udd11\n\nYour Instagram checked out, and you are one of our first members. I am glad you are here.\n\n'+(link?'This is your journey page. It shows your keys and your first restaurant to visit:\n'+link+'\n\n':'')+'Key Rewards is a journey: go to your restaurant, send a photo of your own receipt, and move up a level and earn more keys for parties, events and giveaways.\n\nIf you have any questions, just reply to this message and I will get back to you personally.\n\nThank you for being part of this.\n\nShane Christensen\nCreator of @lasvegas_restaurants'}
  function wlDmCopy(text,btn){var d=function(){btn.textContent='Copied'};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(d,function(){d()});else d()}
  function giveWelcome(w){var h=String(w.ig||'').replace(/^@+/,'').toLowerCase(),tag=('Welcome key: @'+h).slice(0,70);
   if(S.entries.some(function(e){return e.note===tag}))return 'already';
@@ -861,13 +932,13 @@ body.hlock{overflow:hidden}
    var flags=function(w){var v=vals(w),f=[],nm={ig:'same Instagram',ph:'same phone',sa:'same street address'};Object.keys(v).forEach(function(k){var d=v[k]&&dup[k+':'+v[k]];if(d&&d.length>1)f.push(nm[k]+' as '+(d.length-1)+' other'+(d.length>2?'s':''))});if(!/^89\d{3}$/.test(String(w.zip||'')))f.push('ZIP is not a Las Vegas ZIP');return f};
    var again=function(){show(o)};
    var save=function(w,ok,undo,done){var body=undo?{verified:null,verifiedAt:null}:{verified:ok,verifiedAt:{'.sv':'timestamp'}};
-    var fin=function(){if(undo){delete w.verified;delete w.verifiedAt}else{w.verified=ok;w.verifiedAt=Date.now();if(ok){var gv=giveWelcome(w);if(gv==='given'||gv==='already')window.__wlDM={first:w.first,ig:String(w.ig||'').replace(/^@+/,'')};if(gv==='given')window.__wlNote='Verified. 1 key went into '+((w.first||'')+' '+(w.last||'')).trim()+"'s wallet.";else if(gv==='empty')window.__wlNote='Verified, but the Treasury has no keys left to give.'}}done&&done();again()};
+    var fin=function(){if(undo){delete w.verified;delete w.verifiedAt}else{w.verified=ok;w.verifiedAt=Date.now();if(ok){var gv=giveWelcome(w);if(gv==='given'||gv==='already'){window.__wlDM={first:w.first,ig:String(w.ig||'').replace(/^@+/,'')};kqEnsurePlayer(w,1).then(function(pid){if(pid&&window.__wlDM){window.__wlDM.link=kqLink(pid);again()}})}if(gv==='given')window.__wlNote='Verified. 1 key went into '+((w.first||'')+' '+(w.last||'')).trim()+"'s wallet.";else if(gv==='empty')window.__wlNote='Verified, but the Treasury has no keys left to give.'}}done&&done();again()};
     if(!DBM){var lo={};try{lo=JSON.parse(localStorage.getItem('kwLocal')||'{}')||{}}catch(e){}if(lo[w._k]){if(undo){delete lo[w._k].verified;delete lo[w._k].verifiedAt}else{lo[w._k].verified=ok;lo[w._k].verifiedAt=Date.now()}try{localStorage.setItem('kwLocal',JSON.stringify(lo))}catch(e){}}fin();return}
     RR.db('PATCH','key_waitlist/'+w._k,body).then(function(r){if(r.status===200)fin();else say2('Could not save that. Check your sign-in and try again.')},function(){say2('Could not save that. Check your connection and try again.')})};
    var say2=function(t){var m=box.querySelector('.wlmsg');if(m)m.textContent=t};
    var wm=el('p','fine wlmsg','');if(window.__wlNote){wm.textContent=window.__wlNote;window.__wlNote=''}box.appendChild(wm);
-   if(window.__wlDM){var dm=window.__wlDM,dc=el('div','chk');dc.appendChild(el('h3',null,'Tell '+(dm.first||'them')+' on Instagram'));dc.appendChild(el('p','fine',wlDmText(dm.first)));
-    var dr=el('div');dr.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:6px';var cb=el('button','btn','Copy message');cb.type='button';cb.addEventListener('click',function(){wlDmCopy(wlDmText(dm.first),cb)});
+   if(window.__wlDM){var dm=window.__wlDM,dc=el('div','chk');dc.appendChild(el('h3',null,'Tell '+(dm.first||'them')+' on Instagram'));dc.appendChild(el('p','fine',wlDmText(dm.first,dm.link)));
+    var dr=el('div');dr.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:6px';var cb=el('button','btn','Copy message');cb.type='button';cb.addEventListener('click',function(){wlDmCopy(wlDmText(dm.first,dm.link),cb)});
     var da=el('a','btn ghost','Open DM with @'+dm.ig);da.href='https://ig.me/m/'+encodeURIComponent(dm.ig);da.target='_blank';da.rel='noopener noreferrer';da.style.textDecoration='none';da.style.display='inline-flex';da.style.alignItems='center';
     var dx=el('button','btn ghost','Done');dx.type='button';dx.addEventListener('click',function(){window.__wlDM=null;again()});[cb,da,dx].forEach(function(x){dr.appendChild(x)});dc.appendChild(dr);box.appendChild(dc)}
    /* sign-up switch */

@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 const DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
 const FRAG = 'https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/rules/key-rules-owner.json?cb=' + Date.now();
-const SECTIONS = ['ownerAuth', 'key_leads', 'key_pageviews', 'kt_crm', 'rr_ledger', 'key_giveaways', 'key_dine', 'key_visits', 'key_waitlist', 'key_ideas', 'key_settings'];
+const SECTIONS = ['ownerAuth', 'key_leads', 'key_pageviews', 'kt_crm', 'rr_ledger', 'key_giveaways', 'key_dine', 'key_visits', 'key_waitlist', 'key_ideas', 'key_settings', 'key_quest'];
 const mask = s => String(s).replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL]').replace(/AIza[0-9A-Za-z_-]{20,}/g, '[KEY]').replace(/ya29\.[0-9A-Za-z._-]+/g, '[TOKEN]');
 const out = [], log = s => { const m = mask(s); out.push(m); console.log(m); };
 function ask(q, hidden) {
@@ -84,6 +84,8 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
     ['members still readable', await status(`${DB}/lvr_rewards.json?shallow=true`), 200],
     ['owner sign-in key still readable', await status(`${DB}/ownerAuth/apiKey.json`), 200],
     ['a stranger cannot read the leads', await status(`${DB}/key_leads/leads.json?shallow=true`), 401],
+    ['a stranger cannot read the quest folder', await status(`${DB}/key_quest.json`), 401],
+    ['a stranger cannot list the quest players', await status(`${DB}/key_quest/players.json?shallow=true`), 401],
     ['YOU can read the leads', await status(`${DB}/key_leads/leads.json?shallow=true&auth=${A}`), 200],
     ['a stranger cannot read the page views', await status(`${DB}/key_pageviews/hits.json?shallow=true`), 401],
     ['YOU can read the page views', await status(`${DB}/key_pageviews/hits.json?shallow=true&auth=${A}`), 200],

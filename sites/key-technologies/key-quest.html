@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Your Key Rewards journey | Key Technologies.si</title>
+<meta name="description" content="Go to your next restaurant, send your receipt, and move up a level.">
+<meta name="theme-color" content="#0f171e">
+<link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png">
+<link rel="stylesheet" href="/fonts/lato.css">
+<style>
+:root{--bg:#0f171e;--panel:#16222f;--line:rgba(255,255,255,.22);--accent:#00a8e1}
+*{box-sizing:border-box}html{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:#fff;font:400 20px/1.5 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 108px) 18px 48px}
+.brandline{text-align:center;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:900;margin:0 0 10px}
+h1{font-size:32px;line-height:1.15;margin:6px 0 10px;text-align:center;font-weight:900}
+h2{font-size:24px;line-height:1.2;margin:0 0 8px;font-weight:900}
+.lead{text-align:center;margin:0 0 18px}
+.keys{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:18px;text-align:center;margin:0 0 16px}
+.keys small{display:block;font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:900}
+.keys b{display:block;font-size:64px;line-height:1.1;font-weight:900}
+.lvl{display:block;font-size:20px;margin-top:2px}
+.bar{height:14px;border-radius:9px;background:rgba(255,255,255,.18);margin:12px 0 0;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.box{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:20px 18px;margin:0 0 16px}
+.stop{font-size:30px;line-height:1.2;font-weight:900;margin:2px 0 6px}
+.note{margin:6px 0 0}
+.steps{margin:14px 0 0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;margin:0 0 12px}
+.steps li:before{content:counter(s);flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent);color:#0f171e;font-weight:900;font-size:22px;display:grid;place-items:center}
+label{display:block;font-size:17px;letter-spacing:.04em;font-weight:900;margin:16px 0 8px}
+input[type=text],input[type=file]{display:block;width:100%;border-radius:14px;border:2px solid rgba(255,255,255,.45);background:#0f171e;color:#fff;font:inherit;font-size:22px}
+input[type=text]{height:64px;padding:0 14px}input[type=file]{padding:14px;font-size:18px}
+input:focus,button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.chk{display:flex;gap:12px;align-items:flex-start;margin:18px 0 4px;font-size:19px;line-height:1.4}.chk input{flex:none;width:30px;height:30px;margin:2px 0 0;accent-color:#00a8e1}
+.go,.btn{display:block;width:100%;text-align:center;text-decoration:none;min-height:68px;border-radius:18px;font:900 24px Lato,system-ui,sans-serif;cursor:pointer;margin-top:14px;padding:0 12px}
+.go{border:0;background:var(--accent);color:#0f171e;line-height:68px}.go:disabled{opacity:.55;cursor:default}
+.btn{border:2px solid rgba(255,255,255,.6);color:#fff;line-height:64px;background:transparent}
+.err{margin:12px 0 0;padding:14px;border-radius:14px;background:rgba(255,90,110,.16);border:2px solid rgba(255,90,110,.7);color:#ffe3e6;font-size:20px;display:none}.err.on{display:block}
+.fine{font-size:17px;line-height:1.5;color:rgba(255,255,255,.88);margin:16px 4px 0;text-align:center}.fine a{color:#9fd6f2}
+.state{text-align:center}.state .big{font-size:60px;line-height:1;margin:6px 0}
+.demo{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(0,168,225,.14);border:2px solid rgba(0,168,225,.55);color:#9fd6f2;font-size:17px;text-align:center}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}.sr:focus-visible+.pick{outline:3px solid #fff;outline-offset:3px}.pick{margin-top:6px}
+img.pv{display:none;width:100%;max-height:340px;object-fit:contain;border-radius:12px;background:#fff;margin-top:10px}
+</style>
+<script src="key-top.js"></script><style id="nosway">html{overscroll-behavior-x:none}body{touch-action:pan-y pinch-zoom}</style></head>
+<body>
+<main class="wrap" id="app" aria-live="polite"><p class="brandline">Key Rewards</p><p class="lead">Loading&hellip;</p></main>
+<script>
+(function(){
+"use strict";
+var DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_quest/";
+var q=new URLSearchParams(location.search),PID=(q.get("p")||"").toLowerCase(),DEMO=q.get("demo")==="1";
+var app=document.getElementById("app");
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",")}
+function lget(){try{return JSON.parse(localStorage.getItem("kqLocal")||"{}")||{}}catch(e){return {}}}
+function lset(o){try{localStorage.setItem("kqLocal",JSON.stringify(o))}catch(e){}}
+function sentKey(n){return "kqSent_"+PID+"_"+n}
+function wasSent(n){try{return !!localStorage.getItem(sentKey(n))}catch(e){return false}}
+function markSent(n){try{localStorage.setItem(sentKey(n),String(Date.now()))}catch(e){}}
+function loadPlayer(){
+ if(DEMO){var p=(lget().players||{})[PID];return Promise.resolve(p||null)}
+ return fetch(DB+"players/"+encodeURIComponent(PID)+".json").then(function(r){return r.ok?r.json():null}).catch(function(){return null})}
+function head(){app.innerHTML="";app.appendChild(el("p","brandline","Key Rewards"));if(DEMO)app.appendChild(el("p","demo","Practice mode. Nothing here is real."))}
+function message(icon,title,text,btnText,btnFn){head();var s=el("div","state box");s.appendChild(el("div","big",icon));s.appendChild(el("h1",null,title));s.appendChild(el("p","lead",text));if(btnText){var b=el("button","go",btnText);b.type="button";b.addEventListener("click",btnFn);s.appendChild(b)}app.appendChild(s)}
+function keysCard(p){var k=el("div","keys");k.appendChild(el("small",null,"Your keys"));k.appendChild(el("b",null,fmt(p.keys||0)));
+ var total=p.total||0,lv=Math.min(p.level||1,total||1);if(total){k.appendChild(el("span","lvl",(p.done?"All "+total+" levels done":"Level "+lv+" of "+total)));var br=el("div","bar");br.setAttribute("aria-hidden","true");var i=el("i");i.style.width=Math.round(((p.done?total:(p.level||1)-1))/total*100)+"%";br.appendChild(i);k.appendChild(br)}return k}
+function shrink(file,done){
+ var fr=new FileReader();fr.onerror=function(){done(null)};fr.onload=function(){var im=new Image();im.onerror=function(){done(null)};im.onload=function(){
+  var w=im.naturalWidth,h=im.naturalHeight,m=1100,k=Math.min(1,m/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);
+  var c=document.createElement("canvas");c.width=w;c.height=h;var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  var qlt=.7,out=c.toDataURL("image/jpeg",qlt);while(out.length>420000&&qlt>.3){qlt-=.1;out=c.toDataURL("image/jpeg",qlt)}
+  done(out.length<=440000?out:null)};im.src=fr.result};fr.readAsDataURL(file)}
+function send(p,photo,photoAt,cents,done){
+ var rec={pid:PID,n:p.level,photo:photo,spentCents:cents,photoAt:photoAt};
+ if(DEMO){var o=lget();o.subs=o.subs||{};rec.at=Date.now();o.subs[PID+"_"+p.level]=rec;lset(o);return done("ok")}
+ rec.at={".sv":"timestamp"};
+ fetch(DB+"subs/"+PID+"_"+p.level+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(rec)}).then(function(r){done(r.ok?"ok":(r.status===401||r.status===403?(wasSent(p.level)?"have":"blocked"):"fail"))}).catch(function(){done("fail")})}
+function waiting(p){head();app.appendChild(keysCard(p));var s=el("div","state box");s.appendChild(el("div","big","\u2705"));s.appendChild(el("h2",null,"We got your receipt"));
+ s.appendChild(el("p",null,"We are checking it now. When it is approved, your next restaurant shows up here."));
+ var b=el("button","go","Check again");b.type="button";b.addEventListener("click",function(){b.disabled=true;b.textContent="Checking...";start()});s.appendChild(b);app.appendChild(s)}
+function finished(p){head();app.appendChild(keysCard(p));var s=el("div","state box");s.appendChild(el("div","big","\ud83c\udf89"));s.appendChild(el("h1",null,"You finished your journey!"));s.appendChild(el("p","lead","Thank you for visiting every restaurant. We will message you on Instagram about what is next."));app.appendChild(s)}
+function form(p){
+ head();app.appendChild(keysCard(p));
+ var box=el("div","box");box.appendChild(el("p","brandline","Your next restaurant"));box.appendChild(el("div","stop",p.stopName||"Your next restaurant"));
+ if(p.stopNote)box.appendChild(el("p","note",p.stopNote));
+ if(p.stopIg){var a=el("a","btn","See them on Instagram");a.href="https://www.instagram.com/"+encodeURIComponent(String(p.stopIg).replace(/^@+/,""))+"/";a.target="_blank";a.rel="noopener noreferrer";box.appendChild(a)}
+ var ol=el("ol","steps");["Go and eat there.","At the table, take a photo of your own receipt.","Send it here. We will check it."].forEach(function(t){ol.appendChild(el("li",null,t))});box.appendChild(ol);app.appendChild(box);
+ var f=el("form","box");f.setAttribute("novalidate","");f.appendChild(el("h2",null,"Send your receipt"));
+ var pi=el("input","sr");pi.type="file";pi.id="photo";pi.accept="image/*";pi.setAttribute("capture","environment");f.appendChild(pi);
+ var pb=el("label","btn pick","Take a photo of your receipt");pb.setAttribute("for","photo");f.appendChild(pb);
+ var pv=el("img","pv");pv.alt="Your receipt";f.appendChild(pv);
+ var l2=el("label",null,"Your bill before tax, in dollars (like 12.50)");l2.setAttribute("for","amt");f.appendChild(l2);
+ var am=el("input");am.type="text";am.id="amt";am.setAttribute("inputmode","decimal");am.setAttribute("autocomplete","off");am.maxLength=10;am.placeholder="12.50";f.appendChild(am);
+ var ck=el("label","chk");ck.removeAttribute("for");var cb=el("input");cb.type="checkbox";cb.id="own";ck.appendChild(cb);ck.appendChild(el("span",null,"This is my own receipt from my own meal today. I did not find it or borrow it."));f.appendChild(ck);
+ var er=el("div","err");er.setAttribute("role","alert");f.appendChild(er);
+ var go=el("button","go","Send my receipt");go.type="submit";f.appendChild(go);
+ f.appendChild(el("p","fine","Any amount is fine, big or small. We keep your photo only to check your visit. Questions? Message @lasvegas_restaurants on Instagram."));
+ app.appendChild(f);
+ var photo=null,photoAt=0;
+ function bad(m,focus){er.textContent=m;er.className="err on";if(focus)focus.focus()}
+ pi.addEventListener("change",function(){photo=null;pv.style.display="none";if(!pi.files||!pi.files[0])return;var file=pi.files[0];photoAt=file.lastModified||0;shrink(file,function(d){if(!d){bad("That photo would not load. Please take it again.");return}er.className="err";photo=d;pv.src=d;pv.style.display="block";pb.textContent="Take the photo again"})});
+ f.addEventListener("submit",function(ev){ev.preventDefault();er.className="err";
+  if(!photo)return bad("Please take a photo of your receipt first.",pi);
+  var amt=Number(String(am.value).replace(/[$,\s]/g,""));if(!(amt>=1&&amt<=10000))return bad("Please type your bill before tax, like 12.50.",am);
+  if(!cb.checked)return bad("Please tick the box to say it is your own receipt.",cb);
+  go.disabled=true;go.textContent="Sending...";
+  send(p,photo,photoAt,Math.round(amt*100),function(r){if(r==="ok"||r==="have"){markSent(p.level);waiting(p)}else{go.disabled=false;go.textContent="Send my receipt";bad(r==="blocked"?"We could not take your receipt just now. If you already sent one for this level, we are checking it. If not, please try again in a little while.":"That did not go through. Please check your connection and tap the blue button again.")}})})}
+function start(){
+ if(!/^[a-z0-9]{20,40}$/.test(PID))return message("\ud83d\udd11","This link is not active","Please use the link we sent you on Instagram.");
+ loadPlayer().then(function(p){
+  if(!p)return message("\ud83d\udd11","We could not find your journey","Please use the link we sent you on Instagram, or message us and we will help.","Try again",start);
+  if(p.done)return finished(p);
+  if(wasSent(p.level))return waiting(p);
+  form(p)})}
+start();
+})();
+</script>
+</body>
+</html>

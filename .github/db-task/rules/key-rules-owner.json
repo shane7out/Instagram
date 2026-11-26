@@ -345,5 +345,48 @@
    ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
    ".validate": "newData.isBoolean()"
   }
+ },
+ "key_quest": {
+  ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
+  ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
+  "players": {
+   "$pid": {
+    ".read": true,
+    ".validate": "!newData.exists() || (newData.hasChildren(['first','level','keys','total','createdAt']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('level').isNumber() && newData.child('level').val() >= 1 && newData.child('level').val() <= 501 && newData.child('level').val() % 1 == 0 && newData.child('keys').isNumber() && newData.child('keys').val() >= 0 && newData.child('keys').val() <= 100000000 && newData.child('keys').val() % 1 == 0 && newData.child('total').isNumber() && newData.child('total').val() >= 0 && newData.child('total').val() <= 500 && newData.child('total').val() % 1 == 0 && newData.child('createdAt').isNumber() && (!newData.child('last').exists() || (newData.child('last').isString() && newData.child('last').val().length <= 60)) && (!newData.child('ig').exists() || (newData.child('ig').isString() && newData.child('ig').val().length <= 31)) && (!newData.child('done').exists() || newData.child('done').isBoolean()) && (!newData.child('stopName').exists() || (newData.child('stopName').isString() && newData.child('stopName').val().length <= 80)) && (!newData.child('stopIg').exists() || (newData.child('stopIg').isString() && newData.child('stopIg').val().length <= 31)) && (!newData.child('stopNote').exists() || (newData.child('stopNote').isString() && newData.child('stopNote').val().length <= 140)) && (!newData.child('lastAt').exists() || newData.child('lastAt').isNumber()))",
+    "first": {},
+    "level": {},
+    "keys": {},
+    "total": {},
+    "createdAt": {},
+    "ig": {},
+    "done": {},
+    "stopName": {},
+    "stopIg": {},
+    "stopNote": {},
+    "lastAt": {},
+    "$other": {
+     ".validate": false
+    },
+    "last": {}
+   }
+  },
+  "subs": {
+   "$rid": {
+    ".write": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__') || (!data.exists() && newData.exists() && !newData.child('status').exists() && root.child('key_quest').child('players').child(newData.child('pid').val()).exists() && root.child('key_quest').child('players').child(newData.child('pid').val()).child('level').val() == newData.child('n').val() && root.child('key_quest').child('players').child(newData.child('pid').val()).child('done').val() != true)",
+    ".validate": "!newData.exists() || (newData.hasChildren(['pid','n','photo','spentCents','at']) && newData.child('pid').isString() && newData.child('pid').val().length >= 20 && newData.child('pid').val().length <= 40 && newData.child('n').isNumber() && newData.child('n').val() >= 1 && newData.child('n').val() <= 500 && newData.child('n').val() % 1 == 0 && newData.child('photo').isString() && newData.child('photo').val().length >= 200 && newData.child('photo').val().length <= 450000 && newData.child('photo').val().matches(/^data:image[/](jpeg|png);base64,/) && newData.child('spentCents').isNumber() && newData.child('spentCents').val() >= 1 && newData.child('spentCents').val() <= 1000000 && newData.child('spentCents').val() % 1 == 0 && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && (!newData.child('photoAt').exists() || newData.child('photoAt').isNumber()) && (!newData.child('status').exists() || (newData.child('status').isString() && (newData.child('status').val() == 'approved' || newData.child('status').val() == 'declined'))) && (!newData.child('amountCents').exists() || (newData.child('amountCents').isNumber() && newData.child('amountCents').val() >= 0 && newData.child('amountCents').val() <= 1000000)) && (!newData.child('decidedAt').exists() || newData.child('decidedAt').isNumber()))",
+    "pid": {},
+    "n": {},
+    "photo": {},
+    "spentCents": {},
+    "at": {},
+    "photoAt": {},
+    "status": {},
+    "amountCents": {},
+    "decidedAt": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  }
  }
 }
