@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claim Your Coupon — Las Vegas Restaurants</title>
+<title>Your Coupon — Las Vegas Restaurants</title>
 <meta name="robots" content="noindex">
 <style>
   :root{
@@ -13,6 +13,7 @@
     color-scheme: dark;
   }
   *{box-sizing:border-box;}
+  html,body{overflow-x:hidden;}
   body{
     margin:0;background:var(--bg);color:var(--ink);min-height:100vh;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
@@ -38,13 +39,15 @@
   .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-dim);margin-bottom:5px;}
   .field input[type="text"], .field input[type="email"], .field input[type="tel"]{
     width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);
-    background:var(--bg-2);color:var(--ink);font-size:15px;
+    background:var(--bg-2);color:var(--ink);font-size:16px;
   }
   .field input:focus{outline:none;border-color:var(--key-blue);}
-  .optin{display:flex;align-items:flex-start;gap:9px;text-align:left;margin:16px 0;}
-  .optin input{margin-top:3px;flex-shrink:0;}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  .optin{display:flex;align-items:flex-start;gap:9px;text-align:left;margin:12px 0;}
+  .optin input{margin-top:3px;flex-shrink:0;width:18px;height:18px;}
   .optin label{font-size:12.5px;color:var(--ink-dim);line-height:1.45;}
   .optin-note{font-size:11.5px;color:var(--ink-dim);opacity:.8;margin-top:3px;}
+  .optin.off label{opacity:.55;}
 
   .claim-btn{
     width:100%;padding:14px;border-radius:11px;border:none;background:#0f67c2;
@@ -63,224 +66,198 @@
   .code-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:700;}
   .code-value{font-size:30px;font-weight:800;letter-spacing:.08em;color:var(--key-light);margin-top:6px;}
   .instructions{font-size:13.5px;color:var(--ink-dim);line-height:1.55;}
+  .save-note{font-size:12.5px;color:var(--ink-dim);margin-top:12px;}
 
-  .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.7;margin-top:18px;}
+  .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.75;margin-top:18px;line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="brand">Las Vegas Restaurants</div>
+  <div class="brand" id="brand">Las Vegas Restaurants</div>
   <div class="card" id="card">
     <div class="state-note">Loading…</div>
   </div>
-  <div class="footer-note">Powered by Las Vegas Restaurants. Your info is only shared with the restaurant offering this coupon.</div>
+  <div class="footer-note" id="foot">Your details go to the restaurant and to Las Vegas Restaurants, and nobody else.</div>
 </div>
 
 <script>
   var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-  var PROGRAMS_PATH = '/lvr_coupons/programs/';
-  var CLAIMS_PATH = '/lvr_coupons/claims/';
+  var C = '/lvr_coupons/';
+  var CONSENT_VER = 'sms1';
 
   var params = new URLSearchParams(location.search);
-  var slug = (params.get('biz') || '').trim();
+  var slug = (params.get('biz') || '').trim().toLowerCase();
   var cardEl = document.getElementById('card');
+  var tickerInterval = null;
 
   function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
-
   function fbGet(path) {
-    return fetch(DB + path + '.json').then(function(r){ return r.json(); });
+    return fetch(DB + path + '.json').then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   }
-  function fbPost(path, body) {
-    return fetch(DB + path + '.json', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  function fbSend(method, path, body) {
+    return fetch(DB + path + '.json', { method: method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
   }
 
+  // One private fingerprint per email address. It is how we stop the same person claiming twice
+  // without ever reading anybody else's details.
+  function emailKey(email) {
+    var bytes = new TextEncoder().encode(String(email).trim().toLowerCase());
+    return crypto.subtle.digest('SHA-256', bytes).then(function(buf){
+      return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 32);
+    });
+  }
+  function randomId() {
+    var chars = 'abcdefghijklmnopqrstuvwxyz0123456789', out = '', a = new Uint8Array(16);
+    crypto.getRandomValues(a);
+    for (var i = 0; i < a.length; i++) out += chars.charAt(a[i] % chars.length);
+    return out;
+  }
+  function makeCode() {
+    var prefix = (slug.replace(/[^a-z]/gi, '').slice(0, 3) || 'LVR').toUpperCase();
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', suffix = '', a = new Uint8Array(5);
+    crypto.getRandomValues(a);
+    for (var i = 0; i < a.length; i++) suffix += chars.charAt(a[i] % chars.length);
+    return prefix + '-' + suffix;
+  }
+
+  function stopTicker() { if (tickerInterval) { clearInterval(tickerInterval); tickerInterval = null; } }
   function renderUnavailable(text) {
-    if (tickerInterval) { clearInterval(tickerInterval); tickerInterval = null; }
+    stopTicker();
     cardEl.innerHTML = '<div class="state-note">' + escapeHtml(text) + '</div>';
   }
 
-  if (!slug) {
-    renderUnavailable("This link is missing its offer — ask whoever sent it to you for the right link.");
-  } else {
-    Promise.all([
-      fbGet(PROGRAMS_PATH + encodeURIComponent(slug)),
-      fbGet(CLAIMS_PATH + encodeURIComponent(slug))
-    ]).then(function(results){
-      var program = results[0];
-      var claims = results[1] || {};
-      if (!program) {
-        renderUnavailable("This offer isn't available.");
-        return;
-      }
-      if (program.active === false) {
-        renderUnavailable("This offer isn't available right now.");
-        return;
-      }
-      if (program.expiresAt && Date.now() > program.expiresAt) {
-        renderUnavailable("This offer has expired.");
-        return;
-      }
-      var claimCount = Object.keys(claims).length;
-      if (program.maxClaims && claimCount >= program.maxClaims) {
-        renderUnavailable("This offer has been fully claimed — check back for future offers.");
-        return;
-      }
-      renderForm(program, claims, claimCount);
-      startTicker(slug, program, claimCount);
-    }).catch(function(){
-      renderUnavailable("Couldn't load this offer right now. Please try again in a moment.");
-    });
-  }
-
-  function normalize(s) { return (s || '').trim().toLowerCase(); }
-
-  function findExistingClaim(claims, email, phone) {
-    var nEmail = normalize(email);
-    var nPhone = (phone || '').replace(/[^0-9]/g, '');
-    var found = null;
-    Object.keys(claims).forEach(function(id){
-      if (found) return;
-      var c = claims[id];
-      if (!c) return;
-      if (nEmail && normalize(c.email) === nEmail) { found = c; return; }
-      if (nPhone && (c.phone || '').replace(/[^0-9]/g, '') === nPhone) { found = c; }
-    });
-    return found;
-  }
-
-  function makeCode(slug, existingCodes) {
-    var prefix = (slug.replace(/[^a-z]/gi, '').slice(0, 3) || 'LVR').toUpperCase();
-    var code;
-    do {
-      var suffix = '';
-      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      for (var i = 0; i < 5; i++) suffix += chars.charAt(Math.floor(Math.random() * chars.length));
-      code = prefix + '-' + suffix;
-    } while (existingCodes.indexOf(code) !== -1);
-    return code;
-  }
-
-  function renderSuccess(program, code) {
-    if (tickerInterval) { clearInterval(tickerInterval); tickerInterval = null; }
-    cardEl.innerHTML =
-      '<div class="offer-title">You\'re in! 🎉</div>' +
-      '<div class="code-box">' +
-        '<div class="code-label">Your coupon code</div>' +
-        '<div class="code-value">' + escapeHtml(code) + '</div>' +
-      '</div>' +
-      '<div class="instructions">' + escapeHtml(program.instructions || ('Show this code at ' + (program.bizName || 'the restaurant') + ' to redeem your ' + (program.offer || 'offer') + '.')) + '</div>';
-  }
-
-  var tickerInterval = null;
-
-  function tickerHtml(program, claimCount) {
+  function tickerHtml(program, used) {
     if (!program.maxClaims) return '';
-    var left = Math.max(0, program.maxClaims - claimCount);
-    var pct = Math.min(100, Math.round((claimCount / program.maxClaims) * 100));
+    var left = Math.max(0, program.maxClaims - used);
+    var pct = Math.min(100, Math.round((used / program.maxClaims) * 100));
     var low = left <= Math.max(3, Math.round(program.maxClaims * 0.1));
     return '<div class="ticker" id="ticker">' +
       '<div class="ticker-text"><b id="tickerLeft">' + left + '</b> of ' + program.maxClaims + ' left</div>' +
       '<div class="ticker-bar"><div class="ticker-fill' + (low ? ' low' : '') + '" id="tickerFill" style="width:' + pct + '%;"></div></div>' +
     '</div>';
   }
-
-  function startTicker(slug, program, claimCount) {
+  function startTicker(program) {
     if (!program.maxClaims) return;
-    if (tickerInterval) clearInterval(tickerInterval);
+    stopTicker();
     tickerInterval = setInterval(function(){
-      fbGet(CLAIMS_PATH + encodeURIComponent(slug)).then(function(claims){
-        claims = claims || {};
-        var count = Object.keys(claims).length;
-        if (count >= program.maxClaims) {
-          clearInterval(tickerInterval);
-          renderUnavailable("This offer has been fully claimed — check back for future offers.");
-          return;
-        }
-        var leftEl = document.getElementById('tickerLeft');
-        var fillEl = document.getElementById('tickerFill');
-        if (!leftEl || !fillEl) { clearInterval(tickerInterval); return; }
-        leftEl.textContent = program.maxClaims - count;
-        var pct = Math.min(100, Math.round((count / program.maxClaims) * 100));
-        fillEl.style.width = pct + '%';
-        var low = (program.maxClaims - count) <= Math.max(3, Math.round(program.maxClaims * 0.1));
-        fillEl.className = 'ticker-fill' + (low ? ' low' : '');
+      fbGet(C + 'counts/' + encodeURIComponent(slug)).then(function(n){
+        var used = Number(n) || 0;
+        if (used >= program.maxClaims) { renderUnavailable('This offer has been fully claimed — check back for future offers.'); return; }
+        var leftEl = document.getElementById('tickerLeft'), fillEl = document.getElementById('tickerFill');
+        if (!leftEl || !fillEl) { stopTicker(); return; }
+        leftEl.textContent = program.maxClaims - used;
+        fillEl.style.width = Math.min(100, Math.round((used / program.maxClaims) * 100)) + '%';
+        fillEl.className = 'ticker-fill' + ((program.maxClaims - used) <= Math.max(3, Math.round(program.maxClaims * 0.1)) ? ' low' : '');
       }).catch(function(){});
-    }, 12000);
+    }, 15000);
   }
 
-  function renderForm(program, claims, claimCount) {
-    var existingCodes = Object.keys(claims).map(function(id){ return claims[id] && claims[id].code; }).filter(Boolean);
+  function renderSuccess(program, code, again) {
+    stopTicker();
+    cardEl.innerHTML =
+      '<div class="offer-title">' + (again ? 'Welcome back!' : 'You\'re in! 🎉') + '</div>' +
+      '<div class="code-box">' +
+        '<div class="code-label">Your coupon code</div>' +
+        '<div class="code-value">' + escapeHtml(code) + '</div>' +
+      '</div>' +
+      '<div class="instructions">' + escapeHtml(program.instructions || ('Show this code at ' + (program.bizName || 'the restaurant') + ' to use your ' + (program.offer || 'offer') + '.')) + '</div>' +
+      '<div class="save-note">Take a screenshot so you have it when you get there.</div>';
+  }
 
+  function smsWording(program) {
+    return 'Yes, text me deals and offers from ' + (program.bizName || 'this restaurant') + ' and Las Vegas Restaurants at the number above. ' +
+      'Message frequency varies. Message and data rates may apply. Reply STOP any time to cancel, HELP for help.';
+  }
+
+  function renderForm(program, used) {
+    var sms = smsWording(program);
     cardEl.innerHTML =
       (program.photoUrl ? '<img class="photo" src="' + escapeHtml(program.photoUrl) + '" alt="">' : '') +
       '<div class="biz-name">' + escapeHtml(program.bizName || '') + '</div>' +
       '<div class="offer-title">' + escapeHtml(program.offer || 'Special Offer') + '</div>' +
-      tickerHtml(program, claimCount) +
-      '<form id="claimForm">' +
-        '<div class="field"><label for="cName">Name</label><input type="text" id="cName" required></div>' +
-        '<div class="field"><label for="cEmail">Email</label><input type="email" id="cEmail" required></div>' +
-        '<div class="field"><label for="cPhone">Phone (optional)</label><input type="tel" id="cPhone"></div>' +
-        '<div class="optin">' +
-          '<input type="checkbox" id="cOptin">' +
-          '<label for="cOptin">Also send me future deals and offers by text/email.<div class="optin-note">Optional — you don\'t need to check this to get your coupon.</div></label>' +
-        '</div>' +
-        '<button type="submit" class="claim-btn" id="claimBtn">Claim Your Coupon</button>' +
+      tickerHtml(program, used) +
+      '<form id="claimForm" novalidate>' +
+        '<div class="field"><label for="cName">Name</label><input type="text" id="cName" autocomplete="name" maxlength="80"></div>' +
+        '<div class="field"><label for="cEmail">Email</label><input type="email" id="cEmail" autocomplete="email" maxlength="254"></div>' +
+        '<div class="field"><label for="cPhone">Mobile phone (optional)</label><input type="tel" id="cPhone" autocomplete="tel" maxlength="30"></div>' +
+        '<div class="field hp" aria-hidden="true"><label for="cWeb">Leave this empty</label><input type="text" id="cWeb" tabindex="-1" autocomplete="off"></div>' +
+        '<div class="optin"><input type="checkbox" id="cEmailOpt"><label for="cEmailOpt">Email me deals and offers from ' + escapeHtml(program.bizName || 'this restaurant') + ' and Las Vegas Restaurants.<div class="optin-note">Optional. Unsubscribe any time.</div></label></div>' +
+        '<div class="optin off" id="smsRow"><input type="checkbox" id="cSms" disabled><label for="cSms">' + escapeHtml(sms) + '<div class="optin-note">Optional. Not needed to get your coupon. Turns on when you type a phone number.</div></label></div>' +
+        '<button type="submit" class="claim-btn" id="claimBtn">Get my coupon</button>' +
         '<div class="msg" id="claimMsg"></div>' +
       '</form>';
 
+    var phoneEl = document.getElementById('cPhone'), smsEl = document.getElementById('cSms'), smsRow = document.getElementById('smsRow');
+    phoneEl.addEventListener('input', function(){
+      var ok = phoneEl.value.replace(/[^0-9]/g, '').length >= 10;
+      smsEl.disabled = !ok;
+      smsRow.className = 'optin' + (ok ? '' : ' off');
+      if (!ok) smsEl.checked = false;
+    });
+
     document.getElementById('claimForm').addEventListener('submit', function(e){
       e.preventDefault();
+      var btn = document.getElementById('claimBtn'), msg = document.getElementById('claimMsg');
       var name = document.getElementById('cName').value.trim();
       var email = document.getElementById('cEmail').value.trim();
-      var phone = document.getElementById('cPhone').value.trim();
-      var optin = document.getElementById('cOptin').checked;
-      var btn = document.getElementById('claimBtn');
-      var msg = document.getElementById('claimMsg');
+      var phone = phoneEl.value.trim();
+      function bad(t) { msg.className = 'msg err'; msg.textContent = t; }
+      if (document.getElementById('cWeb').value) { renderSuccess(program, makeCode(), false); return; } // a bot: look happy, store nothing
+      if (!name) return bad('Please enter your name.');
+      if (!/^[^ @]+@[^ @]+\.[^ @]+$/.test(email)) return bad('Please enter a real email address.');
+      if (phone && phone.replace(/[^0-9]/g, '').length < 10) return bad('That phone number looks short. Leave it empty or add the area code.');
+      if (!window.crypto || !crypto.subtle) return bad('Please open this page in your phone\'s regular browser.');
+      btn.disabled = true; msg.className = 'msg'; msg.textContent = 'One moment…';
+      var smsOn = smsEl.checked && !smsEl.disabled;
 
-      if (!name || !email) {
-        msg.className = 'msg err';
-        msg.textContent = 'Please enter your name and email.';
-        return;
-      }
-
-      btn.disabled = true;
-      msg.className = 'msg';
-      msg.textContent = 'Claiming…';
-
-      var existing = findExistingClaim(claims, email, phone);
-      if (existing) {
-        renderSuccess(program, existing.code);
-        return;
-      }
-
-      var code = program.fixedCode ? String(program.fixedCode) : makeCode(slug, existingCodes);
-      var payload = {
-        biz: slug,
-        name: name,
-        email: email,
-        phone: phone,
-        marketingOptIn: optin,
-        code: code,
-        redeemed: false,
-        createdAt: {'.sv': 'timestamp'}
-      };
-
-      fbPost(CLAIMS_PATH + encodeURIComponent(slug), payload).then(function(r){
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        renderSuccess(program, code);
+      emailKey(email).then(function(ek){
+        // Already claimed? Show the same code instead of making a second one.
+        return fbGet(C + 'idx/' + encodeURIComponent(slug) + '/' + ek).then(function(hit){
+          if (hit && hit.code) { renderSuccess(program, hit.code, true); return; }
+          var id = randomId(), code = program.fixedCode ? String(program.fixedCode).slice(0, 24) : makeCode();
+          var claim = { biz: slug, name: name, email: email, code: code, redeemed: false, createdAt: {'.sv': 'timestamp'}, ek: ek,
+                        marketingOptIn: !!document.getElementById('cEmailOpt').checked, smsOptIn: smsOn };
+          if (phone) claim.phone = phone;
+          if (smsOn) { claim.consentText = sms; claim.consentVer = CONSENT_VER; }
+          var upd = {};
+          upd['claims/' + slug + '/' + id] = claim;
+          upd['idx/' + slug + '/' + ek] = { code: code, id: id };
+          return fbSend('PATCH', '/lvr_coupons', upd).then(function(r){
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            // keep the "X left" count honest (best effort; the claim above is the record)
+            fbSend('PUT', C + 'counts/' + encodeURIComponent(slug), {'.sv': {increment: 1}}).catch(function(){});
+            renderSuccess(program, code, false);
+          });
+        });
       }).catch(function(){
-        msg.className = 'msg err';
-        msg.textContent = 'Something went wrong. Please try again.';
+        bad('Something went wrong. Please try again.');
         btn.disabled = false;
       });
     });
   }
+
+  if (!slug) {
+    renderUnavailable('This link is missing its offer — ask whoever gave it to you for the right link.');
+  } else {
+    Promise.all([ fbGet(C + 'programs/' + encodeURIComponent(slug)), fbGet(C + 'counts/' + encodeURIComponent(slug)) ]).then(function(res){
+      var program = res[0], used = Number(res[1]) || 0;
+      if (!program) return renderUnavailable('This offer isn\'t available.');
+      if (program.bizName) document.getElementById('brand').textContent = program.bizName;
+      if (program.active === false) return renderUnavailable('This offer isn\'t available right now.');
+      if (program.expiresAt && Date.now() > program.expiresAt) return renderUnavailable('This offer has expired.');
+      if (program.maxClaims && used >= program.maxClaims) return renderUnavailable('This offer has been fully claimed — check back for future offers.');
+      document.getElementById('foot').textContent = 'Your details go to ' + (program.bizName || 'the restaurant') + ' and to Las Vegas Restaurants, and nobody else. Powered by Las Vegas Restaurants.';
+      renderForm(program, used);
+      startTicker(program);
+    }).catch(function(){
+      renderUnavailable('Couldn\'t load this offer right now. Please try again in a moment.');
+    });
+  }
 </script>
-<div class="kt-built-by" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
 <!--HNAV-START-->
 <style id="hnav-css">
   #hnav{position:fixed;top:0;left:0;right:0;height:34px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 10px;background:#07111f;pointer-events:none;}

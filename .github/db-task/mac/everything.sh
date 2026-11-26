@@ -5,6 +5,7 @@
 #   3) the Key Technologies DM room with the new professional messages
 #   4) blue look on the dashboard and the owner pages, the restaurant message restored (no introduction at the top), Johnny Mac's chip removed, the owner key opens the PIN pad
 #   5) weekly database backup (set up once)
+#   6) restaurant coupon pages: each restaurant gets its own page + QR code, and the customer details are readable only by you
 # FIRST it asks once for the contact email that goes at the end of every message (restaurant DM signature + Ads-tab emails). It is typed here, never stored in the public repository; Return keeps what is on the dashboard now.
 # You type the owner email (on the keyboard) and the owner password twice (steps 1 and 4). Nothing is saved except the backup sign-in token on this Mac (~/.lvr).
 #   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/everything.sh?$(date +%s)" -o /tmp/everything.sh && bash /tmp/everything.sh
@@ -34,15 +35,16 @@ step() {  # step "title" script-name   (the download is tried up to 4 times)
 }
 SA="${START_AT:-1}"
 if [ "$SA" -le 1 ]; then
-step "STEP 1 of 5 - database rules" deploy-key-rules.sh
+step "STEP 1 of 6 - database rules" deploy-key-rules.sh
 fi
 if ! grep -q "ALL CHECKS PASSED" /tmp/deploy-key-rules.sh.log; then
   echo; echo ">>> The rules step did NOT pass, so I stopped before changing anything else. Take a screenshot of this window and send it to Claude."; exit 1
 fi
-if [ "$SA" -le 2 ]; then step "STEP 2 of 5 - Prospect CRM tool" deploy-kt-crm-cars.sh; fi
-if [ "$SA" -le 3 ]; then step "STEP 3 of 5 - Key Technologies DM room (professional business messages, blue look, PIN pad)" deploy-kt-outreach.sh; fi
-if [ "$SA" -le 4 ]; then step "STEP 4 of 5 - blue look, owner PIN pad, restaurant message restored, Ads tab message toggle, Johnny Mac's chip out" deploy-dashboard-keypad.sh; fi
-if [ "$SA" -le 5 ]; then step "STEP 5 of 5 - weekly backup" backup-setup.sh; fi
+if [ "$SA" -le 2 ]; then step "STEP 2 of 6 - Prospect CRM tool" deploy-kt-crm-cars.sh; fi
+if [ "$SA" -le 3 ]; then step "STEP 3 of 6 - Key Technologies DM room (professional business messages, blue look, PIN pad)" deploy-kt-outreach.sh; fi
+if [ "$SA" -le 4 ]; then step "STEP 4 of 6 - blue look, owner PIN pad, restaurant message restored, Ads tab message toggle, Johnny Mac's chip out" deploy-dashboard-keypad.sh; fi
+if [ "$SA" -le 5 ]; then step "STEP 5 of 6 - weekly backup" backup-setup.sh; fi
+if [ "$SA" -le 6 ]; then step "STEP 6 of 6 - restaurant coupon pages (own page + QR code per restaurant, customer details private to you)" deploy-coupon-pages.sh; fi
 echo; echo "=================================================="
 echo "  SUMMARY"
 echo "=================================================="
@@ -50,4 +52,5 @@ grep -q "ALL CHECKS PASSED" /tmp/deploy-key-rules.sh.log && echo "1 rules ......
 grep -q "PROSPECT CRM LIVE" /tmp/deploy-kt-crm-cars.sh.log && echo "2 CRM tool ..... live" || echo "2 CRM tool ..... CHECK"
 grep -q "KEYPADMATCH01\|RELEASED" /tmp/deploy-dashboard-keypad.sh.log && grep -q "RELEASED" /tmp/deploy-dashboard-keypad.sh.log && echo "4 blue + PIN + restaurant message ... released" || echo "4 blue + PIN + restaurant message ... CHECK"
 grep -q "Weekly backup scheduled" /tmp/backup-setup.sh.log && echo "5 backup ....... scheduled, first backup made" || echo "5 backup ....... CHECK"
+grep -q "COUPON PAGES LIVE" /tmp/deploy-coupon-pages.sh.log && echo "6 restaurant coupon pages ... live, customer details locked to you" || echo "6 restaurant coupon pages ... CHECK"
 echo; echo "Now take a screenshot of this whole window and send it to Claude. Then you never need the Mac for this again."

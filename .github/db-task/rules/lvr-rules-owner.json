@@ -302,16 +302,56 @@
   }
  },
  "lvr_coupons": {
-  ".read": true,
+  ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+  ".write": "auth != null && auth.uid == '__OWNER_UID__'",
   "programs": {
    "$slug": {
-    ".write": true
+    ".read": true,
+    ".write": "auth != null && auth.uid == '__OWNER_UID__'"
+   }
+  },
+  "counts": {
+   "$slug": {
+    ".read": true,
+    ".write": "auth != null && auth.uid == '__OWNER_UID__' || (newData.isNumber() && newData.val() >= 1 && newData.val() % 1 == 0 && newData.val() == (data.exists() ? data.val() : 0) + 1 && root.child('lvr_coupons').child('programs').child($slug).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false && (!root.child('lvr_coupons').child('programs').child($slug).child('maxClaims').exists() || newData.val() <= root.child('lvr_coupons').child('programs').child($slug).child('maxClaims').val()))"
    }
   },
   "claims": {
    "$slug": {
     "$id": {
-     ".write": true
+     ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('programs').child($slug).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false)",
+     ".validate": "data.exists() || (newData.hasChildren(['biz','name','email','code','createdAt','ek']) && newData.child('biz').isString() && newData.child('biz').val() == $slug && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 80 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('createdAt').isNumber() && newData.child('createdAt').val() == now && newData.child('ek').isString() && newData.child('ek').val().matches(/^[0-9a-f]{32}$/) && (!newData.child('phone').exists() || (newData.child('phone').isString() && newData.child('phone').val().length <= 30)) && (!newData.child('redeemed').exists() || newData.child('redeemed').val() == false) && (!newData.child('marketingOptIn').exists() || newData.child('marketingOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').val() == false || (newData.child('phone').exists() && newData.child('consentText').exists())) && (!newData.child('consentText').exists() || (newData.child('consentText').isString() && newData.child('consentText').val().length <= 900)) && (!newData.child('consentVer').exists() || (newData.child('consentVer').isString() && newData.child('consentVer').val().length <= 20)) && newData.parent().parent().parent().child('idx').child($slug).child(newData.child('ek').val()).child('id').val() == $id)",
+     "biz": {},
+     "name": {},
+     "email": {},
+     "phone": {},
+     "marketingOptIn": {},
+     "smsOptIn": {},
+     "consentText": {},
+     "consentVer": {},
+     "code": {},
+     "redeemed": {},
+     "createdAt": {},
+     "ek": {},
+     "redeemedAt": {},
+     "fixedCode": {},
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "idx": {
+   "$slug": {
+    "$key": {
+     ".read": true,
+     ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('programs').child($slug).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false)",
+     ".validate": "$key.matches(/^[0-9a-f]{32}$/) && newData.hasChildren(['code','id']) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('id').isString() && newData.child('id').val().length >= 8 && newData.child('id').val().length <= 40 && newData.parent().parent().parent().child('claims').child($slug).child(newData.child('id').val()).child('code').val() == newData.child('code').val()",
+     "code": {},
+     "id": {},
+     "$other": {
+      ".validate": false
+     }
     }
    }
   }

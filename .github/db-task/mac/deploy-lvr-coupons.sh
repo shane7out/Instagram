@@ -3,32 +3,21 @@
 # two standalone pages on lvr-data-a60c1.web.app - same Firebase project/
 # database as the main dashboard, new top-level node /lvr_coupons.
 #
-#   lvr-coupon.html        - customer-facing claim page (no PIN).
-#                             Opened as ?biz=<slug>, e.g. for the Vanilla Rice
-#                             pitch: lvr-coupon.html?biz=vanilla-rice
-#                             Customer enters name/email/phone (marketing
-#                             opt-in always optional, never required to claim
-#                             - matches what was promised in the outreach DM),
-#                             gets a unique coupon code shown on-screen to
-#                             redeem in-restaurant. Honors active/expiresAt/
-#                             maxClaims on the program; shows a real "X of Y
-#                             left" count, never a fabricated one. Reuses an
-#                             existing claim's code instead of creating a
-#                             duplicate when the same email/phone claims
-#                             twice.
+#   lvr-coupon.html        - the customer page, one per restaurant (?biz=<page name>), reached by QR code or link.
+#                             Customer enters name + email (phone optional). Email marketing and TEXT marketing are
+#                             two separate unticked boxes; the text box only turns on once a phone number is typed,
+#                             and the exact wording they agreed to is saved with the sign-up. Same email twice
+#                             gets the same code back. Never reads anyone else's details.
 #
-#   lvr-coupons-admin.html - PIN-gated (137900) admin tool for Shane: create/
-#                             edit coupon programs per restaurant (offer,
-#                             photo, expiration, max claims, active toggle),
-#                             copy each program's claim link, view/mark-
-#                             redeemed/delete claims per program.
+#   lvr-coupons-admin.html - OWNER SIGN-IN (no PIN in the page). For each restaurant: edit the offer, QR code and
+#                             printable counter sign, the customer list (name, email, phone, OK-to-email, OK-to-text with
+#                             the saved consent wording), download everyone / the email list / the text list for the
+#                             restaurant, mark a coupon used, remove a customer.
 #
-# Both tested with mocked Firebase data via Playwright before shipping (claim
-# page: missing/not-found/inactive/expired/maxed-out states, scarcity count,
-# successful claim, dedup reuse, validation; admin tool: PIN gate, program
-# list, create/edit, claims view, mark-redeemed, delete) - no JS errors.
-# Reuses the same proven deploy-overlay.js every other dashboard/tool patch
-# uses.
+# The database rules for this (deploy-owner-rules.sh) make customer details readable only by the signed-in owner.
+# deploy-coupon-pages.sh runs this file and then the rules, in that order, as step 6 of everything.sh.
+# Tested in a real browser against the database emulator (rules/run-coupon-pages-test.sh, 35 checks) and the rules
+# themselves (rules/run-coupon-rules-test.sh, 40 checks).
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
@@ -88,14 +77,14 @@ sleep 3
 echo "-- live check --" >> "$LOG"
 echo "live /lvr-coupon.html status: $(curl -s -o /tmp/lvrcoupon-live.html -w '%{http_code}' 'https://lvr-data-a60c1.web.app/lvr-coupon.html')" >> "$LOG"
 echo "live /lvr-coupons-admin.html status: $(curl -s -o /tmp/lvrcouponadmin-live.html -w '%{http_code}' https://lvr-data-a60c1.web.app/lvr-coupons-admin.html)" >> "$LOG"
-echo "claim page has claimForm logic: $(grep -c 'claimForm' /tmp/lvrcoupon-live.html 2>/dev/null || echo 0)" >> "$LOG"
-echo "admin page has pin-screen: $(grep -c 'id=\"pin-screen\"' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0)" >> "$LOG"
+echo "claim page is the new one (private duplicate check): $(grep -c 'emailKey' /tmp/lvrcoupon-live.html 2>/dev/null || echo 0)" >> "$LOG"
+echo "admin page has the owner sign-in and no PIN: gate $(grep -c 'OWNER-SIGNIN-GATE' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0), old PIN $(grep -c '137900' /tmp/lvrcouponadmin-live.html 2>/dev/null || echo 0)" >> "$LOG"
 
 echo "" >> "$LOG"
-echo "Customer claim link for Vanilla Rice (create this program first in the admin tool):" >> "$LOG"
+echo "Customer link for Vanilla Rice (make the restaurant page in the admin tool first):" >> "$LOG"
 echo "  https://lvr-data-a60c1.web.app/lvr-coupon.html?biz=vanilla-rice" >> "$LOG"
 echo "Admin tool: https://lvr-data-a60c1.web.app/lvr-coupons-admin.html" >> "$LOG"
-echo "Admin PIN: 137900 (change it by editing the 'var PIN =' line in lvr-coupons-admin.html and re-running this deploy)" >> "$LOG"
+echo "The admin page opens with your owner sign-in (no PIN stored in it)." >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/lvrcoupondeploy.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "==== done ===="; cat "$LOG"

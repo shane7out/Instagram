@@ -68,6 +68,10 @@ const status = async (url, opts) => { try { return (await fetch(url, opts)).stat
     ['catalog still readable', await status(`${DB}/lvr_points/catalog.json?shallow=true`), 200],
     ['owner sign-in key readable', await status(`${DB}/ownerAuth/apiKey.json`), 200],
     ['a stranger cannot change settings', await status(`${DB}/lvr_points/settings/zz_probe.json`, { method: 'PUT', headers: J, body: '1' }), 401],
+    ['a stranger cannot read customer details (coupon pages)', await status(`${DB}/lvr_coupons/claims.json`), 401],
+    ['a stranger cannot create a coupon page', await status(`${DB}/lvr_coupons/programs/zz_probe.json`, { method: 'PUT', headers: J, body: '{"bizName":"x"}' }), 401],
+    ['a stranger cannot list all the coupon pages (a single offer page is still readable)', await status(`${DB}/lvr_coupons/programs.json?shallow=true`), 401],
+    ['YOU can read the coupon customers', await status(`${DB}/lvr_coupons/claims.json?shallow=true&auth=${encodeURIComponent(ID)}`), 200],
     ['YOU can change settings', await status(`${DB}/lvr_points/settings/zz_probe.json?auth=${encodeURIComponent(ID)}`, { method: 'PUT', headers: J, body: '1' }), 200],
   ];
   await status(`${DB}/lvr_points/settings/zz_probe.json?auth=${encodeURIComponent(ID)}`, { method: 'DELETE' });

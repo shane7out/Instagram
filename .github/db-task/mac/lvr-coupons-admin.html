@@ -1,9 +1,273 @@
 <!doctype html>
 <html lang="en">
 <head>
+<!--OWNER-AUTH-START-->
+<script>
+// Owner sign-in (Firebase Auth, email + password). Optional: it stays dormant until ownerAuth/apiKey exists in the
+// database (the Mac script owner-setup.sh puts it there). Once signed in, every request this page makes to the
+// database carries the owner's sign-in token, so database rules can tell the owner from a stranger.
+// The password is never stored. The token lives in this browser tab (or on this Mac if "Stay signed in" is ticked).
+(function () {
+  if (window.OWNER_AUTH) return;
+  var DBH = 'lvr-data-a60c1-default-rtdb.firebaseio.com', SS = 'lvrOwnerAuth', KEEP = 'lvrOwnerAuthKeep', LOCK = 'lvrOwnerAuthLock', TRIES = 'lvrOwnerAuthTries';
+  var lockKey = null, lockSalt = null;
+  var st = null, apiKey = null, keyP = null, origFetch = window.fetch.bind(window), listeners = [];
+  try { st = JSON.parse(sessionStorage.getItem(SS) || localStorage.getItem(KEEP) || 'null'); } catch (e) {}
+  function hasLock() { try { return !!localStorage.getItem(LOCK); } catch (e) { return false; } }
+  function save(keep) {
+    try { sessionStorage.removeItem(SS); localStorage.removeItem(KEEP); } catch (e) {}
+    if (!st) return;
+    if (hasLock() || lockKey) { try { sessionStorage.setItem(SS, JSON.stringify(st)); } catch (e) {} if (lockKey) lockSave(); return; }  // PIN mode: nothing readable is left on the device
+    try { (keep || st.keep ? localStorage : sessionStorage).setItem(keep || st.keep ? KEEP : SS, JSON.stringify(st)); } catch (e) {}
+  }
+  function note() { listeners.forEach(function (f) { try { f(); } catch (e) {} }); render(); }
+  function getKey() {
+    if (apiKey) return Promise.resolve(apiKey);
+    if (!keyP) keyP = origFetch('https://' + DBH + '/ownerAuth/apiKey.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (k) { apiKey = (typeof k === 'string' && k) || null; return apiKey; }).catch(function () { return null; });
+    return keyP;
+  }
+  function refresh() {
+    if (!st || !st.refreshToken) return Promise.resolve(null);
+    return getKey().then(function (k) {
+      if (!k) return null;
+      return origFetch('https://securetoken.googleapis.com/v1/token?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(st.refreshToken) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j) { st = null; save(); note(); return null; }
+          st = { idToken: j.id_token, refreshToken: j.refresh_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000 - 60000, uid: j.user_id, keep: st.keep };
+          save(); return st.idToken;
+        }).catch(function () { return null; });
+    });
+  }
+  function token() { if (!st) return Promise.resolve(null); if (Date.now() < st.exp) return Promise.resolve(st.idToken); return refresh(); }
+  // add the owner token to every database request this page makes
+  window.fetch = function (input, init) {
+    var isStr = typeof input === 'string', url = isStr ? input : (input && input.url) || '';
+    if (!st || url.indexOf(DBH) < 0 || /[?&](auth|access_token)=/.test(url) || !isStr) return origFetch(input, init);
+    return token().then(function (t) {
+      var u = t ? url + (url.indexOf('?') < 0 ? '?' : '&') + 'auth=' + encodeURIComponent(t) : url;
+      return origFetch(u, init).then(function (r) {
+        if (r.status === 401 && init && init.method && init.method !== 'GET') banner('The database refused that change. Sign in as owner (bottom right) and try again.');
+        return r;
+      });
+    });
+  };
+  function signIn(email, pw, keep) {
+    return getKey().then(function (k) {
+      if (!k) throw new Error('Owner sign-in is not set up yet. Run owner-setup.sh on the Mac first.');
+      return origFetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pw, returnSecureToken: true }) })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j && j.error && /PASSWORD|EMAIL|INVALID|CREDENTIAL/i.test(j.error.message || '') ? 'That email or password is not right.' : 'Sign-in did not work. Try again.'); return j; }); });
+    }).then(function (j) {
+      st = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) || 3600) * 1000 - 60000, uid: j.localId, keep: !!keep };
+      save(keep); note(); return st;
+    });
+  }
+  function signOut() { st = null; lockKey = null; lockSalt = null; try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (e) {} save(); note(); }
+  // ---- tiny UI: a button bottom right + a sign-in box
+  var btn = null, bar = null;
+  function render() {
+    if (!document.body) return;
+    if (!btn) {
+      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'ownerAuthBtn';
+      btn.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147482000;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:#0d1d33;color:#fff;font:700 13px system-ui,sans-serif;cursor:pointer;display:none;';
+      btn.addEventListener('click', function () { if (st) menu(); else pinPad(); });
+      document.body.appendChild(btn);
+    }
+    getKey().then(function (k) {
+      if (!k) { btn.style.display = 'none'; return; }
+      btn.style.display = 'block';
+      btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
+      btn.setAttribute('aria-label', st ? 'Owner signed in. Open the owner menu' : 'Owner sign-in'); btn.title = st ? 'Owner signed in' : 'Owner sign-in';
+      btn.style.background = st ? '#0f5d34' : '#7a2a00';
+    });
+  }
+  function banner(text) {
+    if (!document.body) return;
+    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; pinPad(); }); document.body.appendChild(bar); }
+    bar.textContent = text; bar.style.display = 'block'; setTimeout(function () { if (bar) bar.style.display = 'none'; }, 9000);
+  }
+  // OWNERPIN01 (Shane, 2026-11-25: "I just want to do pin numbers everywhere", no emails and passwords): the owner button opens the blue round PIN pad (same look as the LVR PIN screen).
+  // The 6-digit PIN is turned (PBKDF2, in this browser) into the password of the Treasury PIN account, i.e. the SAME PIN as the Treasury page. The database rules let that account open the
+  // Key Technologies website information (leads, CRM, page views) and nothing in the LVR program. The PIN is never stored or sent. Email + password stays under the pad for the LVR rewards admin.
+  var PIN_EMAIL = 'treasurer@kt-rr.invalid', PIN_SALT = 'kt-rr-treasurer-v1';
+  var PADCSS = '#oaPad{position:fixed;inset:0;z-index:2147483000;color:#fff;overflow:hidden;overscroll-behavior:none;touch-action:manipulation;font:400 17px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;' +
+    'background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(14,72,168,.55) 0%,transparent 65%),radial-gradient(ellipse 60% 52% at 15% 80%,rgba(0,105,230,.30) 0%,transparent 58%),radial-gradient(ellipse 55% 48% at 85% 18%,rgba(36,12,140,.35) 0%,transparent 56%),radial-gradient(ellipse 45% 38% at 68% 68%,rgba(0,180,255,.16) 0%,transparent 50%),#050b16}' +
+    '#oaPad .in{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 16px 60px;text-align:center;box-sizing:border-box}' +
+    '#oaPad h1{font-size:15px;font-weight:700;letter-spacing:.06em;color:#90CAF9;margin:0 0 6px;text-transform:uppercase}#oaPad p{color:rgba(255,255,255,.55);margin:0 0 26px;font-size:14px}' +
+    '#oaPad .dots{display:flex;gap:20px;justify-content:center;margin:0 0 40px;height:14px}#oaPad .dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);background:transparent}#oaPad .dots i.on{background:#fff;border-color:#fff}#oaPad .dots.err i{background:#FF453A;border-color:#FF453A}' +
+    '#oaPad .msg{height:20px;font-weight:700;font-size:13px;margin:22px 0 0;color:#FF453A}#oaPad .msg.ok{color:rgba(255,255,255,.7)}' +
+    '#oaPad .pad{display:grid;grid-template-columns:repeat(3,78px);gap:14px 20px;margin:0 auto}' +
+    '#oaPad .pad button{width:78px;height:78px;border-radius:50%;border:0;background:rgba(255,255,255,.175);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);color:#fff;font:300 34px/1 -apple-system,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}' +
+    '#oaPad .pad button:active{background:rgba(255,255,255,.58);color:#000}#oaPad .pad button.d{font-size:28px;font-weight:400}#oaPad .pad button.e{visibility:hidden}#oaPad .pad button:focus-visible{outline:2px solid #fff;outline-offset:3px}' +
+    '#oaPad .links{position:absolute;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom,16px));display:flex;gap:22px;justify-content:center}#oaPad .links button{background:none;border:0;color:rgba(255,255,255,.55);font:600 14px system-ui,sans-serif;padding:10px 12px;cursor:pointer}' +
+    '@media(max-height:700px){#oaPad .pad{grid-template-columns:repeat(3,66px);gap:10px 16px}#oaPad .pad button{width:66px;height:66px;font-size:27px}#oaPad .dots{margin-bottom:24px}#oaPad p{margin-bottom:14px}}';
+  function pinDerive(pin) {
+    var e = new TextEncoder();
+    return crypto.subtle.importKey('raw', e.encode(pin), 'PBKDF2', false, ['deriveBits']).then(function (k) {
+      return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: e.encode(PIN_SALT), iterations: 150000, hash: 'SHA-256' }, k, 256);
+    }).then(function (bits) { var u = new Uint8Array(bits), t = ''; for (var i = 0; i < u.length; i++) t += String.fromCharCode(u[i]); return btoa(t).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); });
+  }
+  function pinPad() {
+    if (document.getElementById('oaPad') || !document.body) return;
+    if (!document.getElementById('oaPadCss')) { var cs = document.createElement('style'); cs.id = 'oaPadCss'; cs.textContent = PADCSS; document.head.appendChild(cs); }
+    var g = document.createElement('div'); g.id = 'oaPad'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-label', 'Owner PIN');
+    var inn = document.createElement('div'); inn.className = 'in'; g.appendChild(inn);
+    function mk(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    inn.appendChild(mk('h1', null, 'Owner unlock')); inn.appendChild(mk('p', null, 'Type your 6-digit PIN.'));
+    var dots = mk('div', 'dots'); for (var i = 0; i < 6; i++) dots.appendChild(mk('i')); inn.appendChild(dots);
+    var pad = mk('div', 'pad'), msg = mk('div', 'msg'); msg.setAttribute('role', 'alert');
+    var pin = '', busy = false;
+    function paint() { for (var i = 0; i < 6; i++) dots.children[i].className = i < pin.length ? 'on' : ''; }
+    function bad(t) { msg.className = 'msg'; msg.textContent = t; dots.classList.add('err'); setTimeout(function () { pin = ''; dots.classList.remove('err'); paint(); }, 700); }
+    function submit() {
+      if (!window.crypto || !crypto.subtle) { bad('This browser cannot check a PIN.'); return; }
+      busy = true; msg.className = 'msg ok'; msg.textContent = 'Checking...';
+      pinDerive(pin).then(function (pw) {
+        return getKey().then(function (k) {
+          if (!k) throw new Error('PIN sign-in is not set up yet.');
+          return origFetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: PIN_EMAIL, password: pw, returnSecureToken: true }) });
+        });
+      }).then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok) { var m = (j && j.error && j.error.message) || ''; throw new Error(/TOO_MANY/i.test(m) ? 'Too many tries. Wait a few minutes.' : /EMAIL_NOT_FOUND/i.test(m) ? 'PIN sign-in is not set up yet.' : 'That PIN is not right.'); }
+          st = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) || 3600) * 1000 - 60000, uid: j.localId, keep: false, pin: true };
+          save(); g.remove(); note();
+        });
+      }).catch(function (e) { bad(e && e.message ? e.message : 'Could not check the PIN. Try again.'); }).then(function () { busy = false; });
+    }
+    function press(k) {
+      if (busy) return;
+      if (k === 'del') { pin = pin.slice(0, -1); paint(); return; }
+      if (pin.length >= 6) return;
+      pin += k; msg.textContent = ''; paint(); if (pin.length === 6) submit();
+    }
+    function kb(k, cls, label) { var b = mk('button', cls, label || k); b.type = 'button'; b.setAttribute('aria-label', k === 'del' ? 'Delete the last digit' : k); b.addEventListener('click', function () { press(k); }); return b; }
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9'].forEach(function (k) { pad.appendChild(kb(k)); });
+    var em = mk('button', 'e'); em.type = 'button'; em.tabIndex = -1; em.setAttribute('aria-hidden', 'true'); pad.appendChild(em);
+    pad.appendChild(kb('0')); pad.appendChild(kb('del', 'd', '⌫'));
+    inn.appendChild(pad); inn.appendChild(msg);
+    var links = mk('div', 'links'), no = mk('button', null, 'Cancel'), pw = mk('button', null, 'Use email and password'); no.type = pw.type = 'button';
+    no.addEventListener('click', function () { g.remove(); }); pw.addEventListener('click', function () { g.remove(); dialog(); });
+    links.appendChild(no); links.appendChild(pw); g.appendChild(links);
+    document.addEventListener('keydown', function onk(e) { if (!document.getElementById('oaPad')) { document.removeEventListener('keydown', onk); return; } if (/^[0-9]$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') press('del'); else if (e.key === 'Escape') g.remove(); });
+    document.body.appendChild(g);
+  }
+  function dialog() {
+    var back = document.createElement('div');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;">Owner sign-in</h3><p style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;">Only you can change settings, approvals and rewards with this login.</p>' +
+      '<label style="display:block;font-weight:700;margin:6px 0 3px;" for="oaEmail">Email</label><input id="oaEmail" type="email" autocomplete="username" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
+      '<label style="display:block;font-weight:700;margin:10px 0 3px;" for="oaPw">Password</label><input id="oaPw" type="password" autocomplete="current-password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:16px;">' +
+      '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13.5px;color:#9fb3c8;"><input id="oaKeep" type="checkbox"> Stay signed in on this Mac</label>' +
+      '<p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p>' +
+      '<div style="display:flex;gap:8px;"><button type="button" id="oaNo" style="flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;">Cancel</button><button type="submit" style="flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;">Sign in</button></div></form>';
+    document.body.appendChild(back);
+    var f = back.querySelector('form'), msg = back.querySelector('#oaMsg');
+    back.querySelector('#oaEmail').focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault(); msg.style.color = '#9fb3c8'; msg.textContent = 'Signing in…';
+      signIn(back.querySelector('#oaEmail').value.trim(), back.querySelector('#oaPw').value, back.querySelector('#oaKeep').checked)
+        .then(function () { back.remove(); if (back.querySelector('#oaKeep').checked && !hasLock()) pinSetup(); }).catch(function (er) { msg.style.color = '#ff9a9a'; msg.textContent = er.message || 'Sign-in did not work.'; });
+    });
+  }
+
+  // ---- QUICK-UNLOCK PIN (this device only). Real security stays the email + password login; the PIN just saves typing on a device you trust.
+  // The saved sign-in is encrypted with the PIN (AES-GCM, key from PBKDF2 250,000 rounds) and never stored in plain text. 5 wrong PINs erase it
+  // and ask for the email and password again. The PIN itself is never stored or sent anywhere. Use 6 to 8 digits.
+  var enc = new TextEncoder(), dec = new TextDecoder();
+  function b64(a) { var u = new Uint8Array(a), r = ''; for (var i = 0; i < u.length; i++) r += String.fromCharCode(u[i]); return btoa(r); }
+  function unb64(x) { var b = atob(x), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function deriveKey(pin, salt) {
+    return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']).then(function (k) {
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 250000, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function lockSave() {
+    if (!lockKey || !st || !st.refreshToken) return Promise.resolve();
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, lockKey, enc.encode(JSON.stringify({ refreshToken: st.refreshToken, uid: st.uid }))).then(function (ct) {
+      try { localStorage.setItem(LOCK, JSON.stringify({ s: b64(lockSalt), i: b64(iv), c: b64(ct) })); localStorage.removeItem(KEEP); } catch (e) {}
+    });
+  }
+  function shell(title, intro) {
+    var back = document.createElement('div');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147482500;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;';
+    back.innerHTML = '<form style="background:#12243a;color:#fff;border:1px solid #2c4864;border-radius:14px;padding:18px;max-width:360px;width:100%;font:15px system-ui,sans-serif;"><h3 style="margin:0 0 6px;font-size:18px;"></h3><p class="oaIntro" style="margin:0 0 12px;color:#9fb3c8;font-size:13.5px;"></p><div class="oaBody"></div><p id="oaMsg" role="status" style="min-height:20px;margin:4px 0;color:#ff9a9a;font-size:14px;"></p><div class="oaBtns" style="display:flex;gap:8px;"></div></form>';
+    back.querySelector('h3').textContent = title; back.querySelector('.oaIntro').textContent = intro;
+    document.body.appendChild(back); return back;
+  }
+  var PINSTYLE = 'width:100%;padding:12px;border-radius:8px;border:1px solid #2c4864;background:#07111f;color:#fff;font-size:22px;letter-spacing:.3em;text-align:center;box-sizing:border-box;';
+  var BTN1 = 'flex:1;padding:12px;border-radius:10px;border:1px solid #2c4864;background:transparent;color:#fff;font-weight:700;', BTN2 = 'flex:1;padding:12px;border-radius:10px;border:0;background:#00a8e1;color:#0f171e;font-weight:800;';
+  function pinSetup() {
+    var back = shell('Quick-unlock PIN', 'Optional. Next time on this device you only type this PIN instead of your email and password. Use 6 to 8 digits you will remember.');
+    back.querySelector('.oaBody').innerHTML = '<input id="oaP1" aria-label="PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '"><input id="oaP2" aria-label="Same PIN again" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Same PIN again" style="' + PINSTYLE + 'margin-top:8px;">';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Skip</button><button type="submit" style="' + BTN2 + '">Save PIN</button>';
+    var msg = back.querySelector('#oaMsg'); back.querySelector('#oaP1').focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    back.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault(); var a = back.querySelector('#oaP1').value, b = back.querySelector('#oaP2').value;
+      if (!/^\d{6,8}$/.test(a)) { msg.textContent = 'Use 6 to 8 digits, numbers only.'; return; }
+      if (a !== b) { msg.textContent = 'The two PINs do not match.'; return; }
+      if (!window.crypto || !crypto.subtle) { msg.textContent = 'This browser cannot do it. Keep using your email and password.'; return; }
+      msg.style.color = '#9fb3c8'; msg.textContent = 'Saving…';
+      lockSalt = crypto.getRandomValues(new Uint8Array(16));
+      deriveKey(a, lockSalt).then(function (k) { lockKey = k; return lockSave(); }).then(function () { try { localStorage.setItem(TRIES, '0'); } catch (er) {} save(); back.remove(); banner('Quick-unlock PIN saved on this device.'); render(); })
+        .catch(function () { lockKey = null; msg.style.color = '#ff9a9a'; msg.textContent = 'Could not save the PIN. Keep using your email and password.'; });
+    });
+  }
+  function unlockUI() {
+    if (document.getElementById('oaUnlock') || !hasLock()) return;
+    var back = shell('Enter your PIN', 'Owner quick-unlock for this device.'); back.id = 'oaUnlock';
+    back.querySelector('.oaBody').innerHTML = '<input id="oaPin" aria-label="PIN" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN" style="' + PINSTYLE + '">';
+    back.querySelector('.oaBtns').innerHTML = '<button type="button" id="oaNo" style="' + BTN1 + '">Use email and password</button><button type="submit" style="' + BTN2 + '">Unlock</button>';
+    var msg = back.querySelector('#oaMsg'), inp = back.querySelector('#oaPin'); inp.focus();
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); dialog(); });
+    back.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault(); var pin = inp.value, blob = null;
+      try { blob = JSON.parse(localStorage.getItem(LOCK) || 'null'); } catch (er) {}
+      if (!blob || !/^\d{6,8}$/.test(pin)) { msg.textContent = 'Enter your 6 to 8 digit PIN.'; return; }
+      msg.style.color = '#9fb3c8'; msg.textContent = 'Checking…';
+      deriveKey(pin, unb64(blob.s)).then(function (k) {
+        return crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(blob.i) }, k, unb64(blob.c)).then(function (pt) {
+          var p = JSON.parse(dec.decode(pt)); lockKey = k; lockSalt = unb64(blob.s);
+          st = { idToken: null, refreshToken: p.refreshToken, exp: 0, uid: p.uid, keep: true };
+          try { localStorage.setItem(TRIES, '0'); } catch (er) {}
+          return refresh().then(function (t) {
+            if (!t) { try { localStorage.removeItem(LOCK); } catch (er) {} lockKey = null; st = null; back.remove(); banner('Your saved sign-in has expired. Sign in with your email and password.'); dialog(); return; }
+            back.remove(); note();
+          });
+        });
+      }).catch(function () {
+        var n = 0; try { n = (Number(localStorage.getItem(TRIES)) || 0) + 1; localStorage.setItem(TRIES, String(n)); } catch (er) {}
+        if (n >= 5) { try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} back.remove(); banner('Too many wrong PINs. The saved sign-in was erased. Use your email and password.'); dialog(); }
+        else { msg.style.color = '#ff9a9a'; msg.textContent = 'That PIN is not right (' + (5 - n) + ' tries left).'; inp.value = ''; inp.focus(); }
+      });
+    });
+  }
+  function menu() {
+    var pinMode = !!(st && st.pin);
+    var back = shell('Owner signed in', pinMode ? 'You are signed in with your PIN. The Key Technologies website information is open.' : (hasLock() ? 'Quick-unlock PIN is on for this device.' : 'Signed in with email and password.'));
+    back.querySelector('.oaBtns').style.flexDirection = 'column';
+    back.querySelector('.oaBtns').innerHTML = (pinMode ? '<button type="button" id="oaPw" style="' + BTN2 + '">Sign in with email and password (LVR rewards admin)</button>' : '') +
+      (!pinMode && hasLock() ? '<button type="button" id="oaPinOff" style="' + BTN1 + '">Remove the quick-unlock PIN</button>' : '') +
+      '<button type="button" id="oaOut" style="' + BTN1 + '">Sign out</button><button type="button" id="oaNo" style="' + BTN1 + '">Close</button>';
+    back.querySelector('#oaNo').addEventListener('click', function () { back.remove(); });
+    back.querySelector('#oaOut').addEventListener('click', function () { back.remove(); signOut(); });
+    var pw = back.querySelector('#oaPw'); if (pw) pw.addEventListener('click', function () { back.remove(); signOut(); dialog(); });
+    var off = back.querySelector('#oaPinOff'); if (off) off.addEventListener('click', function () { back.remove(); try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (er) {} lockKey = null; save(true); banner('Quick-unlock PIN removed.'); });
+  }
+  window.OWNER_AUTH = { signedIn: function () { return !!st; }, uid: function () { return st && st.uid; }, signIn: signIn, signOut: signOut, dialog: pinPad, passwordDialog: dialog, onChange: function (f) { listeners.push(f); } };
+  function boot() { render(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  // a signed-in token that is older than its life is renewed in the background
+  setInterval(function () { if (st && Date.now() > st.exp - 120000) refresh(); }, 120000);
+})();
+</script>
+<!--OWNER-AUTH-END-->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LVR — Coupon Programs</title>
+<title>LVR — Restaurant Coupon Pages</title>
 <meta name="robots" content="noindex">
 <style>
   :root{
@@ -106,6 +370,29 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
+<style id="coupon-admin-css">
+  .tools-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+  .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:2px 7px;margin-right:6px;background:rgba(255,255,255,.1);color:var(--ink-dim);}
+  .chip.ok{background:rgba(61,220,132,.16);color:var(--green);}
+  .qr-card{background:#0c1a2b;border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center;}
+  .qr-card .sheet-qr{display:inline-block;background:#fff;padding:14px;border-radius:10px;width:260px;height:260px;}
+  .qr-card .sheet-qr svg{width:100%;height:100%;display:block;}
+  .sheet-biz{font-size:22px;font-weight:800;margin:14px 0 4px;}
+  .sheet-offer{font-size:16px;color:var(--ink-dim);margin-bottom:8px;}
+  .sheet-scan{font-size:20px;font-weight:800;color:var(--key-light);margin-bottom:6px;}
+  .sheet-url{font-size:12px;color:var(--ink-dim);word-break:break-all;}
+  .claim-flags{margin-top:6px;}
+  .small-note{font-size:12.5px;color:var(--ink-dim);line-height:1.55;margin:6px 0 14px;}
+  @media print{
+    body *{visibility:hidden !important;}
+    #printArea,#printArea *{visibility:visible !important;}
+    #printArea{position:absolute;left:0;top:0;width:100%;}
+    #printArea .qr-card{background:#fff !important;border:none !important;color:#000 !important;}
+    #printArea .sheet-biz,#printArea .sheet-scan{color:#000 !important;}
+    #printArea .sheet-offer,#printArea .sheet-url{color:#333 !important;}
+    #printArea .sheet-qr{width:420px;height:420px;}
+  }
+</style>
 <style id="ktowner-light">
 /* OWNERBLUE01 (Shane, 2026-11-25: "I don't want to ever see white again... make everything the same color as the LVR pin"). Same id as the old light block so the deploy script swaps it. */
 :root{--bg:#07142b!important;--bg-2:#0e2347!important;--card:rgba(255,255,255,.07)!important;--line:rgba(255,255,255,.18)!important;--ink:#ffffff!important;--ink-dim:rgba(255,255,255,.66)!important;--key-light:#90CAF9!important;--key-blue:#1493FF!important;--good:#4fd1a5;color-scheme:dark;}
@@ -145,26 +432,18 @@ div[style*="2147482500"] > form #oaNo{color:#ffffff!important;border-color:rgba(
 
 <div id="pin-screen">
   <div class="pin-logo">LVR Coupons</div>
-  <div class="pin-sub">Enter PIN to manage coupon programs</div>
-  <div class="pin-dots">
-    <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
-    <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span><span class="pin-dot" id="pd5"></span>
-  </div>
-  <div class="pin-grid">
-    <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
-    <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
-    <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
-    <button class="pin-key empty"></button><button class="pin-key" data-k="0">0</button><button class="pin-key" data-k="del">&larr;</button>
-  </div>
-  <div class="pin-msg" id="pin-msg"></div>
+  <div class="pin-sub">Sign in to manage restaurant coupon pages</div>
+  <p style="max-width:300px;text-align:center;font-size:14px;line-height:1.5;color:var(--ink-dim);margin:0 0 18px;">This page opens only when you are signed in as the owner.</p>
+  <button type="button" id="ownerSignInBtn" style="padding:14px 24px;border-radius:12px;border:1px solid var(--key-blue);background:transparent;color:var(--ink);font-weight:700;font-size:16px;font-family:inherit;cursor:pointer;">Sign in as owner</button>
+  <div class="pin-msg" id="pin-msg" role="status"></div>
 </div>
 
 <div id="app">
   <header>
-    <div class="brand">LVR — COUPON PROGRAMS</div>
+    <div class="brand">LVR — RESTAURANT COUPON PAGES</div>
     <div class="header-actions">
       <button class="btn" id="refreshBtn">Refresh</button>
-      <button class="btn btn-primary" id="newProgramBtn">+ New Program</button>
+      <button class="btn btn-primary" id="newProgramBtn">+ New Restaurant</button>
     </div>
   </header>
   <div id="view"></div>
@@ -173,59 +452,2339 @@ div[style*="2147482500"] > form #oaNo{color:#ffffff!important;border-color:rgba(
 <div class="toast" id="toast"></div>
 
 <script>
-  var PIN = '137900'; // change any time - edit this line and redeploy
+/* QR code generator (Kazuhiko Arase, MIT licence) */
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+</script>
+
+<script>
   var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
-  var PROGRAMS_PATH = '/lvr_coupons/programs';
-  var CLAIMS_PATH = '/lvr_coupons/claims';
+  var C = '/lvr_coupons';
   var CLAIM_PAGE_URL = 'https://lvr-data-a60c1.web.app/lvr-coupon.html?biz=';
 
-  // ================= PIN LOGIC =================
-  var pinBuf = '';
-  var dots = [document.getElementById('pd0'),document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3'),document.getElementById('pd4'),document.getElementById('pd5')];
-  function renderDots(err){
-    dots.forEach(function(d,i){
-      d.className = 'pin-dot' + (i < pinBuf.length ? ' filled' : '') + (err ? ' error' : '');
-    });
-  }
-  function pinSubmit(){
-    if (pinBuf === PIN) {
+  // ================= OWNER SIGN-IN ================= /*OWNER-SIGNIN-GATE*/
+  // No PIN. The database itself only answers the signed-in owner (rules: lvr-rules-owner.json), so customer names, emails
+  // and phone numbers can only be read by you. This page opens only while the owner is signed in.
+  var _unlocked = false;
+  function _ownerState(){
+    var on = !!(window.OWNER_AUTH && window.OWNER_AUTH.signedIn());
+    if (on && !_unlocked) {
+      _unlocked = true;
       document.getElementById('pin-screen').classList.add('hidden');
       document.getElementById('app').classList.add('visible');
-      try { sessionStorage.setItem('lvr_coupons_unlocked', '1'); } catch(e){}
-      loadPrograms();
-    } else {
-      renderDots(true);
-      document.getElementById('pin-msg').textContent = 'Wrong PIN';
-      setTimeout(function(){ pinBuf=''; renderDots(false); document.getElementById('pin-msg').textContent=''; }, 500);
+      loadAll();
+    } else if (!on && _unlocked) {
+      _unlocked = false;
+      document.getElementById('app').classList.remove('visible');
+      document.getElementById('pin-screen').classList.remove('hidden');
     }
   }
-  document.querySelectorAll('.pin-key[data-k]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var k = btn.getAttribute('data-k');
-      if (k === 'del') { pinBuf = pinBuf.slice(0, -1); renderDots(false); return; }
-      if (pinBuf.length >= 6) return;
-      pinBuf += k;
-      renderDots(false);
-      if (pinBuf.length === 6) setTimeout(pinSubmit, 120);
-    });
+  document.getElementById('ownerSignInBtn').addEventListener('click', function(){
+    var m = document.getElementById('pin-msg');
+    if (window.OWNER_AUTH) { m.textContent = ''; window.OWNER_AUTH.dialog(); }
+    else m.textContent = 'Owner sign-in is not available on this page.';
   });
-  function _lvOwnerSessionValid(){
-    try {
-      var t = parseInt(localStorage.getItem('lv_owner_session') || '0', 10);
-      return t > 0 && (Date.now() - t) < 24*60*60*1000;
-    } catch(e){ return false; }
-  }
-  try {
-    if (_lvOwnerSessionValid() || sessionStorage.getItem('lvr_coupons_unlocked') === '1') {
-      document.getElementById('pin-screen').classList.add('hidden');
-      document.getElementById('app').classList.add('visible');
-      try { sessionStorage.setItem('lvr_coupons_unlocked', '1'); } catch(e){}
-      setTimeout(loadPrograms, 0); // after the rest of the script has set up its variables;
-    }
-  } catch(e){}
+  if (window.OWNER_AUTH) window.OWNER_AUTH.onChange(_ownerState);
+  setTimeout(_ownerState, 0); // after the rest of the script has set up its variables
 
   // ================= DATA HELPERS =================
-  function fbGet(path) { return fetch(DB + path + '.json').then(function(r){ return r.json(); }); }
+  function fbGet(path) { return fetch(DB + path + '.json').then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
   function fbPut(path, body) { return fetch(DB + path + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
   function fbPatch(path, body) { return fetch(DB + path + '.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); }
   function fbDelete(path) { return fetch(DB + path + '.json', { method: 'DELETE' }); }
@@ -237,218 +2796,231 @@ div[style*="2147482500"] > form #oaNo{color:#ffffff!important;border-color:rgba(
   }
   function showToast(msg) {
     var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(function(){ t.classList.remove('show'); }, 1800);
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2200);
   }
-  function slugify(s) {
-    return (s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  function slugify(s) { return (s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function fmtWhen(ms) {
+    if (!ms) return '';
+    var d = new Date(ms);
+    return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
   }
 
-  var programs = {};
+  var programs = {}, counts = {}, claimsAll = {};
   var view = document.getElementById('view');
-
-  document.getElementById('refreshBtn').addEventListener('click', loadPrograms);
+  document.getElementById('refreshBtn').addEventListener('click', loadAll);
   document.getElementById('newProgramBtn').addEventListener('click', function(){ renderProgramForm(null); });
 
-  function loadPrograms() {
+  function loadAll() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
-    fbGet(PROGRAMS_PATH).then(function(data){
-      programs = data || {};
+    Promise.all([ fbGet(C + '/programs'), fbGet(C + '/counts'), fbGet(C + '/claims') ]).then(function(r){
+      programs = r[0] || {}; counts = r[1] || {}; claimsAll = r[2] || {};
       renderProgramList();
     }).catch(function(){
-      view.innerHTML = '<div class="empty-note">Could not load — check connection.</div>';
+      view.innerHTML = '<div class="empty-note">Could not load. Make sure you are signed in, then tap Refresh.</div>';
     });
   }
+  function claimsOf(slug) {
+    var o = claimsAll[slug] || {};
+    return Object.keys(o).map(function(id){ var c = o[id]; c._id = id; return c; });
+  }
 
-  // ================= PROGRAM LIST =================
+  // ================= RESTAURANT LIST =================
   function renderProgramList() {
     var slugs = Object.keys(programs);
     if (!slugs.length) {
-      view.innerHTML = '<div class="empty-note">No coupon programs yet. Tap "+ New Program" to create one.</div>';
+      view.innerHTML = '<div class="empty-note">No restaurant pages yet. Tap "+ New Restaurant" to make the first one.</div>';
       return;
     }
-    var rows = slugs.map(function(slug){
-      var p = programs[slug];
+    view.innerHTML = slugs.map(function(slug){
+      var p = programs[slug], cl = claimsOf(slug);
+      var texts = cl.filter(function(c){ return c.smsOptIn; }).length;
+      var mails = cl.filter(function(c){ return c.marketingOptIn; }).length;
+      var used = counts[slug] || 0;
       return '<div class="program-card">' +
-        '<div class="pc-top">' +
-          '<div>' +
-            '<div class="pc-name">' + escapeHtml(p.bizName || slug) + '</div>' +
-            '<div class="pc-offer">' + escapeHtml(p.offer || '') + '</div>' +
-          '</div>' +
-          '<span class="pc-badge ' + (p.active === false ? 'inactive' : 'active') + '">' + (p.active === false ? 'Inactive' : 'Active') + '</span>' +
-        '</div>' +
-        '<div class="pc-stats">' +
-          (p.maxClaims ? 'Max ' + p.maxClaims + ' claims' : 'Unlimited claims') +
-          (p.expiresAt ? ' · expires ' + new Date(p.expiresAt).toLocaleDateString() : '') +
-        '</div>' +
+        '<div class="pc-top"><div><div class="pc-name">' + escapeHtml(p.bizName || slug) + '</div><div class="pc-offer">' + escapeHtml(p.offer || '') + '</div></div>' +
+        '<span class="pc-badge ' + (p.active === false ? 'inactive' : 'active') + '">' + (p.active === false ? 'Paused' : 'Live') + '</span></div>' +
+        '<div class="pc-stats"><b>' + cl.length + '</b> customer' + (cl.length === 1 ? '' : 's') +
+          ' · <span class="chip ok">' + mails + ' OK to email</span><span class="chip ok">' + texts + ' OK to text</span>' +
+          (p.maxClaims ? '<br>' + used + ' of ' + p.maxClaims + ' coupons given out' : '') +
+          (p.expiresAt ? ' · expires ' + new Date(p.expiresAt).toLocaleDateString() : '') + '</div>' +
         '<div class="pc-link"><a href="' + CLAIM_PAGE_URL + encodeURIComponent(slug) + '" target="_blank" rel="noopener" style="color:inherit;">' + CLAIM_PAGE_URL + escapeHtml(slug) + '</a></div>' +
         '<div class="pc-actions">' +
-          '<button data-act="claims" data-slug="' + escapeHtml(slug) + '">View Claims</button>' +
+          '<button data-act="claims" data-slug="' + escapeHtml(slug) + '">Customers</button>' +
+          '<button data-act="qr" data-slug="' + escapeHtml(slug) + '">QR code + sign</button>' +
+          '<button data-act="copy" data-slug="' + escapeHtml(slug) + '">Copy link</button>' +
           '<button data-act="edit" data-slug="' + escapeHtml(slug) + '">Edit</button>' +
-          '<button data-act="copy" data-slug="' + escapeHtml(slug) + '">Copy Link</button>' +
-          '<button class="danger" data-act="delete" data-slug="' + escapeHtml(slug) + '">Delete</button>' +
-        '</div>' +
-      '</div>';
+          '<button class="danger" data-act="delete" data-slug="' + escapeHtml(slug) + '">Delete page</button>' +
+        '</div></div>';
     }).join('');
-    view.innerHTML = rows;
-
     view.querySelectorAll('[data-act]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        var slug = btn.getAttribute('data-slug');
-        var act = btn.getAttribute('data-act');
+        var slug = btn.getAttribute('data-slug'), act = btn.getAttribute('data-act');
         if (act === 'claims') renderClaims(slug);
+        else if (act === 'qr') renderQr(slug);
         else if (act === 'edit') renderProgramForm(slug);
         else if (act === 'copy') {
           var url = CLAIM_PAGE_URL + slug;
-          if (navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ showToast('Link copied'); });
-          else showToast(url);
+          if (navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ showToast('Link copied'); }); else showToast(url);
         } else if (act === 'delete') {
-          if (!confirm('Delete this program? Existing claims/codes already issued will stay in the database, but the claim page will stop working.')) return;
-          fbDelete(PROGRAMS_PATH + '/' + slug).then(function(){
-            delete programs[slug];
-            renderProgramList();
-            showToast('Program deleted');
+          if (!confirm('Delete this restaurant page? The customers already collected stay saved, but the page stops working.')) return;
+          fbDelete(C + '/programs/' + slug).then(function(r){
+            if (!r.ok) return showToast('Could not delete (are you signed in?)');
+            delete programs[slug]; renderProgramList(); showToast('Page deleted');
           });
         }
       });
     });
   }
 
-  // ================= CREATE / EDIT FORM =================
+  // ================= QR CODE + PRINTABLE SIGN =================
+  function qrSvg(url) {
+    var q = window.qrcode(0, 'M'); q.addData(url); q.make();
+    return q.createSvgTag({cellSize: 6, margin: 0, scalable: true});
+  }
+  function renderQr(slug) {
+    var p = programs[slug] || {}, url = CLAIM_PAGE_URL + slug;
+    view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back</div>' +
+      '<div class="small-note">Print this and put it on the counter, the table tents or the receipt. Customers scan it with their phone camera and land on this restaurant\'s page.</div>' +
+      '<div class="tools-row"><button class="btn btn-primary" id="printBtn">Print the sign</button><button class="btn" id="dlQr">Save QR picture</button></div>' +
+      '<div id="printArea"><div class="qr-card">' +
+        '<div class="sheet-scan">Scan for your free offer</div>' +
+        '<div class="sheet-qr" id="qrBox">' + qrSvg(url) + '</div>' +
+        '<div class="sheet-biz">' + escapeHtml(p.bizName || slug) + '</div>' +
+        '<div class="sheet-offer">' + escapeHtml(p.offer || '') + '</div>' +
+        '<div class="sheet-url">' + escapeHtml(url) + '</div>' +
+      '</div></div>';
+    document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
+    document.getElementById('dlQr').addEventListener('click', function(){
+      var svg = document.getElementById('qrBox').innerHTML;
+      var blob = new Blob([svg], {type: 'image/svg+xml'}), a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = slug + '-qr.svg'; document.body.appendChild(a); a.click(); a.remove();
+    });
+  }
+
+  // ================= CREATE / EDIT =================
   function renderProgramForm(slug) {
-    var p = slug ? programs[slug] : null;
-    var isEdit = !!slug;
-
+    var p = slug ? programs[slug] : null, isEdit = !!slug;
     view.innerHTML =
-      '<div class="back-link" id="backBtn">&larr; Back to programs</div>' +
+      '<div class="back-link" id="backBtn">&larr; Back</div>' +
       '<div class="form-box">' +
-        '<div class="field"><label>Business name</label><input type="text" id="fBizName" value="' + escapeHtml(p ? p.bizName : '') + '"></div>' +
-        '<div class="field"><label>Slug (used in the claim link, letters/numbers/dashes only)</label><input type="text" id="fSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
-        '<div class="field"><label>Offer (e.g. "Free Chicken &amp; Rice Bowl")</label><input type="text" id="fOffer" value="' + escapeHtml(p ? p.offer : '') + '"></div>' +
-        '<div class="field"><label>Restaurant\'s code (optional - if the restaurant gave you a code like 55555, type it here and everyone who claims sees that same code. Leave blank to give each person their own unique code.)</label><input type="text" id="fFixedCode" value="' + escapeHtml(p ? (p.fixedCode || '') : '') + '"></div>' +
-        '<div class="field"><label>Redemption instructions (shown after they claim)</label><textarea id="fInstructions">' + escapeHtml(p ? p.instructions : '') + '</textarea></div>' +
-        '<div class="field"><label>Photo URL (optional, a real photo of the food/offer)</label><input type="text" id="fPhoto" value="' + escapeHtml(p ? p.photoUrl : '') + '"></div>' +
+        '<div class="field"><label>Restaurant name</label><input type="text" id="fBizName" value="' + escapeHtml(p ? p.bizName : '') + '"></div>' +
+        '<div class="field"><label>Page name for the link (letters, numbers, dashes)</label><input type="text" id="fSlug" value="' + escapeHtml(slug || '') + '"' + (isEdit ? ' disabled' : '') + '></div>' +
+        '<div class="field"><label>The offer (for example "Free Chicken &amp; Rice Bowl")</label><input type="text" id="fOffer" value="' + escapeHtml(p ? p.offer : '') + '"></div>' +
+        '<div class="field"><label>The restaurant\'s own code (optional). Leave blank and every customer gets a different code.</label><input type="text" id="fFixedCode" maxlength="24" value="' + escapeHtml(p ? (p.fixedCode || '') : '') + '"></div>' +
+        '<div class="field"><label>What the customer does next (shown after they sign up)</label><textarea id="fInstructions">' + escapeHtml(p ? p.instructions : '') + '</textarea></div>' +
+        '<div class="field"><label>Photo web address (optional, a real photo of the food)</label><input type="text" id="fPhoto" value="' + escapeHtml(p ? p.photoUrl : '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Max claims (blank = unlimited)</label><input type="number" id="fMaxClaims" value="' + (p && p.maxClaims ? p.maxClaims : '') + '"></div>' +
-          '<div class="field"><label>Expires on (blank = never)</label><input type="date" id="fExpires" value="' + (p && p.expiresAt ? new Date(p.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
+          '<div class="field"><label>How many coupons (blank = no limit)</label><input type="number" id="fMaxClaims" min="1" value="' + (p && p.maxClaims ? p.maxClaims : '') + '"></div>' +
+          '<div class="field"><label>Ends on (blank = never)</label><input type="date" id="fExpires" value="' + (p && p.expiresAt ? new Date(p.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
         '</div>' +
-        '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!p || p.active !== false ? ' checked' : '') + '><label for="fActive">Active (claim page is live)</label></div>' +
-        '<div class="form-actions">' +
-          '<button class="btn btn-primary" id="saveBtn">' + (isEdit ? 'Save Changes' : 'Create Program') + '</button>' +
-          '<button class="btn" id="cancelBtn">Cancel</button>' +
-        '</div>' +
+        '<div class="checkbox-row"><input type="checkbox" id="fActive"' + (!p || p.active !== false ? ' checked' : '') + '><label for="fActive">Live (customers can sign up)</label></div>' +
+        '<div class="form-actions"><button class="btn btn-primary" id="saveBtn">' + (isEdit ? 'Save changes' : 'Create the page') + '</button><button class="btn" id="cancelBtn">Cancel</button></div>' +
       '</div>';
-
     document.getElementById('backBtn').addEventListener('click', renderProgramList);
     document.getElementById('cancelBtn').addEventListener('click', renderProgramList);
     document.getElementById('saveBtn').addEventListener('click', function(){
       var newSlug = isEdit ? slug : slugify(document.getElementById('fSlug').value);
-      var bizName = document.getElementById('fBizName').value.trim();
-      var offer = document.getElementById('fOffer').value.trim();
-      if (!newSlug || !bizName || !offer) {
-        showToast('Business name, slug, and offer are required');
-        return;
-      }
-      if (!isEdit && programs[newSlug]) {
-        showToast('That slug is already used by another program');
-        return;
-      }
-      var expiresVal = document.getElementById('fExpires').value;
-      var maxClaimsVal = document.getElementById('fMaxClaims').value;
+      var bizName = document.getElementById('fBizName').value.trim(), offer = document.getElementById('fOffer').value.trim();
+      if (!newSlug || !bizName || !offer) return showToast('Restaurant name, page name and offer are all needed');
+      if (!isEdit && programs[newSlug]) return showToast('That page name is already used');
+      var exp = document.getElementById('fExpires').value, mc = document.getElementById('fMaxClaims').value;
       var payload = {
-        bizName: bizName,
-        offer: offer,
+        bizName: bizName, offer: offer,
         fixedCode: document.getElementById('fFixedCode').value.trim() || null,
         instructions: document.getElementById('fInstructions').value.trim(),
         photoUrl: document.getElementById('fPhoto').value.trim(),
-        maxClaims: maxClaimsVal ? parseInt(maxClaimsVal, 10) : null,
-        expiresAt: expiresVal ? new Date(expiresVal + 'T23:59:59').getTime() : null,
+        maxClaims: mc ? parseInt(mc, 10) : null,
+        expiresAt: exp ? new Date(exp + 'T23:59:59').getTime() : null,
         active: document.getElementById('fActive').checked,
         createdAt: (p && p.createdAt) ? p.createdAt : {'.sv': 'timestamp'}
       };
-      fbPut(PROGRAMS_PATH + '/' + newSlug, payload).then(function(r){
+      fbPut(C + '/programs/' + newSlug, payload).then(function(r){
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        programs[newSlug] = payload;
-        renderProgramList();
-        showToast(isEdit ? 'Saved' : 'Program created');
-      }).catch(function(){
-        showToast('Something went wrong saving this');
-      });
+        loadAll(); showToast(isEdit ? 'Saved' : 'Page created');
+        if (!isEdit) setTimeout(function(){ renderQr(newSlug); }, 600);
+      }).catch(function(){ showToast('Could not save (are you signed in?)'); });
     });
   }
 
-  // ================= CLAIMS VIEW =================
+  // ================= CUSTOMERS =================
+  function csvCell(v) {
+    var s = String(v == null ? '' : v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;       // stop spreadsheets running a customer's text as a formula
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  function downloadCsv(name, rows) {
+    var text = rows.map(function(r){ return r.map(csvCell).join(','); }).join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], {type: 'text/csv'})); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  var HEAD = ['Name','Email','Phone','OK to email','OK to text','Text consent saved','Consent wording version','Coupon code','Used','Signed up'];
+  function claimRow(c) {
+    return [c.name, c.email, c.phone || '', c.marketingOptIn ? 'yes' : 'no', c.smsOptIn ? 'yes' : 'no',
+            c.smsOptIn ? (c.consentText || '') : '', c.smsOptIn ? (c.consentVer || '') : '', c.code, c.redeemed ? 'yes' : 'no', fmtWhen(c.createdAt)];
+  }
+
   function renderClaims(slug) {
-    view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back to programs</div><div class="empty-note">Loading claims…</div>';
-    document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    var p = programs[slug] || {}, list = claimsOf(slug).sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+    var texts = list.filter(function(c){ return c.smsOptIn; }), mails = list.filter(function(c){ return c.marketingOptIn; });
+    var head = '<div class="back-link" id="backBtn">&larr; Back</div>' +
+      '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — customers</h3>' +
+      '<div class="pc-stats" style="margin-bottom:12px;">' + list.length + ' signed up · ' + mails.length + ' OK to email · ' + texts.length + ' OK to text</div>' +
+      '<div class="tools-row">' +
+        '<button class="btn btn-primary" id="csvAll">Download everyone</button>' +
+        '<button class="btn" id="csvMail">Email list</button>' +
+        '<button class="btn" id="csvText">Text list</button>' +
+        '<button class="btn" id="fixCount">Fix the "left" count</button>' +
+      '</div>' +
+      '<div class="small-note">Everyone who signs up gets their coupon. Only the people marked OK should get your marketing: the email list has the ones who said yes to email, and the text list has the ones who ticked the separate text box (their saved consent is in the file). Anyone who replies STOP must come off the text list.</div>';
+    if (!list.length) { view.innerHTML = head + '<div class="empty-note">Nobody has signed up yet.</div>'; wire(); return; }
+    view.innerHTML = head + '<div class="claims-list">' + list.map(function(c){
+      return '<div class="claim-row"><div class="claim-top"><div class="claim-name">' + escapeHtml(c.name || '(no name)') + '</div><div class="claim-code">' + escapeHtml(c.code || '') + '</div></div>' +
+        '<div class="claim-meta">' + escapeHtml(c.email || '') + (c.phone ? '<br>' + escapeHtml(c.phone) : '') + '<br>' + escapeHtml(fmtWhen(c.createdAt)) + '</div>' +
+        '<div class="claim-flags"><span class="chip' + (c.marketingOptIn ? ' ok' : '') + '">' + (c.marketingOptIn ? 'OK to email' : 'No email marketing') + '</span>' +
+        '<span class="chip' + (c.smsOptIn ? ' ok' : '') + '">' + (c.smsOptIn ? 'OK to text' : 'No texts') + '</span></div>' +
+        '<div class="claim-actions"><button data-redeem="' + escapeHtml(c._id) + '" class="' + (c.redeemed ? 'redeemed-yes' : 'redeemed-no') + '">' + (c.redeemed ? '✓ Used' : 'Mark used') + '</button>' +
+        '<button data-delclaim="' + escapeHtml(c._id) + '">Remove</button></div></div>';
+    }).join('') + '</div>';
+    wire();
 
-    fbGet(CLAIMS_PATH + '/' + slug).then(function(data){
-      var claims = data || {};
-      var ids = Object.keys(claims);
-      var p = programs[slug] || {};
-
-      var header = '<div class="back-link" id="backBtn2">&larr; Back to programs</div>' +
-        '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — Claims</h3>' +
-        '<div class="pc-stats" style="margin-bottom:14px;">' + ids.length + ' total claim' + (ids.length === 1 ? '' : 's') + '</div>';
-
-      if (!ids.length) {
-        view.innerHTML = header + '<div class="empty-note">No one has claimed this offer yet.</div>';
-        document.getElementById('backBtn2').addEventListener('click', renderProgramList);
-        return;
-      }
-
-      var list = ids.map(function(id){ var c = claims[id]; c._id = id; return c; })
-        .sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
-
-      var rows = list.map(function(c){
-        var when = c.createdAt ? new Date(c.createdAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + new Date(c.createdAt).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : '';
-        return '<div class="claim-row">' +
-          '<div class="claim-top">' +
-            '<div><div class="claim-name">' + escapeHtml(c.name || '(no name)') + '</div></div>' +
-            '<div class="claim-code">' + escapeHtml(c.code || '') + '</div>' +
-          '</div>' +
-          '<div class="claim-meta">' +
-            (c.email ? escapeHtml(c.email) + '<br>' : '') +
-            (c.phone ? escapeHtml(c.phone) + '<br>' : '') +
-            when + (c.marketingOptIn ? ' · opted in to marketing' : '') +
-          '</div>' +
-          '<div class="claim-actions">' +
-            '<button data-redeem="' + c._id + '" class="' + (c.redeemed ? 'redeemed-yes' : 'redeemed-no') + '">' + (c.redeemed ? '✓ Redeemed' : 'Mark Redeemed') + '</button>' +
-            '<button data-delclaim="' + c._id + '">Delete</button>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-
-      view.innerHTML = header + '<div class="claims-list">' + rows + '</div>';
-      document.getElementById('backBtn2').addEventListener('click', renderProgramList);
-
+    function wire() {
+      document.getElementById('backBtn').addEventListener('click', renderProgramList);
+      var f = function(id, fn){ var b = document.getElementById(id); if (b) b.addEventListener('click', fn); };
+      f('csvAll', function(){ downloadCsv(slug + '-customers.csv', [HEAD].concat(list.map(claimRow))); });
+      f('csvMail', function(){ downloadCsv(slug + '-email-list.csv', [HEAD].concat(mails.map(claimRow))); });
+      f('csvText', function(){ downloadCsv(slug + '-text-list.csv', [HEAD].concat(texts.map(claimRow))); });
+      f('fixCount', function(){
+        fbPut(C + '/counts/' + slug, list.length).then(function(r){
+          if (!r.ok) return showToast('Could not update');
+          counts[slug] = list.length; showToast('Count set to ' + list.length);
+        });
+      });
       view.querySelectorAll('[data-redeem]').forEach(function(btn){
         btn.addEventListener('click', function(){
-          var id = btn.getAttribute('data-redeem');
-          var newVal = !claims[id].redeemed;
-          fbPatch(CLAIMS_PATH + '/' + slug + '/' + id, {redeemed: newVal}).then(function(){
-            claims[id].redeemed = newVal;
-            renderClaims(slug);
+          var id = btn.getAttribute('data-redeem'), cur = (claimsAll[slug] || {})[id] || {}, nv = !cur.redeemed;
+          fbPatch(C + '/claims/' + slug + '/' + id, nv ? {redeemed: true, redeemedAt: {'.sv': 'timestamp'}} : {redeemed: false}).then(function(r){
+            if (!r.ok) return showToast('Could not update');
+            cur.redeemed = nv; renderClaims(slug);
           });
         });
       });
       view.querySelectorAll('[data-delclaim]').forEach(function(btn){
         btn.addEventListener('click', function(){
-          var id = btn.getAttribute('data-delclaim');
-          if (!confirm('Delete this claim permanently?')) return;
-          fbDelete(CLAIMS_PATH + '/' + slug + '/' + id).then(function(){
-            renderClaims(slug);
-            showToast('Claim deleted');
+          var id = btn.getAttribute('data-delclaim'), cur = (claimsAll[slug] || {})[id] || {};
+          if (!confirm('Remove this customer for good? Their coupon stops working and they could sign up again.')) return;
+          var upd = {}; upd['claims/' + slug + '/' + id] = null; if (cur.ek) upd['idx/' + slug + '/' + cur.ek] = null;
+          fbPatch(C, upd).then(function(r){
+            if (!r.ok) return showToast('Could not remove');
+            delete claimsAll[slug][id]; renderClaims(slug); showToast('Removed');
           });
         });
       });
-    }).catch(function(){
-      view.innerHTML = '<div class="empty-note">Could not load claims.</div>';
-    });
+    }
   }
 </script>
-<div class="kt-built-by" style="text-align:center;font-size:12px;opacity:.65;padding:18px 12px 28px;">Built by <a href="https://keytechnologies.si" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Key Technologies.si</a></div>
 <script>window.HNAV_HOME="https://lvr-data-a60c1.web.app/key-room.html";</script>
 <!--HNAV-START-->
 <style id="hnav-css">
