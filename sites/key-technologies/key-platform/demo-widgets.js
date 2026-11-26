@@ -268,7 +268,7 @@ T.sms=function(root){
  ta.innerHTML=Object.keys(aud).map(function(k){return '<option value="'+k+'">'+esc(aud[k][0])+' ('+aud[k][1]+')</option>'}).join('');
  function full(){var m=tm.value.trim();return BIZ+': '+m+FOOT}
  function paint(){var t=full(),segs=Math.ceil(t.length/160);q('#tc',root).textContent=tm.value.trim().length+' characters you wrote. With the business name and opt-out line the text is '+t.length+' characters ('+segs+' message'+(segs>1?'s':'')+').';
-  q('#tp',root).innerHTML='<div style="background:#1a8be0;color:#fff;border-radius:16px 16px 16px 4px;padding:10px 12px;font-size:14px;line-height:1.35">'+esc(t)+'</div><p class="micro" style="margin:6px 4px 0">From your registered business number</p>'}
+  q('#tp',root).innerHTML='<div style="background:#0f67c2;color:#fff;border-radius:16px 16px 16px 4px;padding:10px 12px;font-size:14px;line-height:1.35">'+esc(t)+'</div><p class="micro" style="margin:6px 4px 0">From your registered business number</p>'}
  function load(){tm.value=tpl[tt.value];paint()}
  tt.onchange=load;tm.oninput=paint;load();
  function nm(n){return n.toLocaleString('en-US')}
