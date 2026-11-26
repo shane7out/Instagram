@@ -206,7 +206,7 @@ T.mobileapp=function(root){
  preset();
 };
 
-/* ---------- 14 Social Media Management: content approval dashboard ---------- */
+/* ---------- 14 Content Approval Services: content approval dashboard ---------- */
 T.social=function(root){
  /* Fictional sample data. The client uploads a video or photo, the system checks it against the brand rules, it gets a green check (or waits for a person), the client posts it, and we compare what was posted with what was approved. */
  var rules=['Brand voice and tone','No banned words or hype claims','Prices, hours and offers match the approved list','Music and images are licensed','Required tags and disclosures (#ad) are present'];

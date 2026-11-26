@@ -32,7 +32,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Security and technology review](https://keytechnologies.si/key-platform/demos/security-technology.html)
 - [Custom AI systems](https://keytechnologies.si/key-platform/demos/custom-ai-systems.html)
 - [AI-assisted website development](https://keytechnologies.si/key-platform/demos/website-development.html)
-- [Social media management](https://keytechnologies.si/key-platform/demos/social-media.html)
+- [Content approval services](https://keytechnologies.si/key-platform/demos/social-media.html)
 - [AI training](https://keytechnologies.si/key-platform/demos/ai-training.html)
 - [Custom website and web application programming](https://keytechnologies.si/key-platform/demos/custom-programming.html)
 - [ADA and website accessibility](https://keytechnologies.si/key-platform/demos/accessibility-ada.html)
