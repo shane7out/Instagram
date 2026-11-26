@@ -81,7 +81,7 @@ node /Users/mac/patch-deals-refresh.js >> "$LOG" 2>&1
 #    pull every coins/land photo into the site's own /pimg folder
 # ---------------------------------------------------------------------------
 mkdir -p pimg/coins pimg/land
-curl -sL -o /tmp/pimg-manifest.txt "$RAWB/pimg-manifest.txt"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/pimg-manifest.txt "$RAWB/pimg-manifest.txt"
 NDL=0; NERR=0
 while IFS= read -r f; do
   [ -z "$f" ] && continue
@@ -94,11 +94,11 @@ echo "pimg: downloaded $NDL new, errors $NERR, total $(find pimg -name '*.jpg' |
 # ---------------------------------------------------------------------------
 # 3) fetch the external client + photo-fixed pages into the site root
 # ---------------------------------------------------------------------------
-curl -sL -o deals-refresh.js "$RAWB/deals-refresh.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deals-refresh.js "$RAWB/deals-refresh.js"
 echo "deals-refresh.js: $(wc -c < deals-refresh.js) bytes" >> "$LOG"
-curl -sL -o coins.html "$RAWB/coins.html"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o coins.html "$RAWB/coins.html"
 echo "coins.html: $(wc -c < coins.html) bytes, $(grep -c 'raw.githubusercontent' coins.html) hosted imgs" >> "$LOG"
-curl -sL -o land-eaglepoint.html "$RAWB/land-eaglepoint.html"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o land-eaglepoint.html "$RAWB/land-eaglepoint.html"
 echo "land-eaglepoint.html: $(wc -c < land-eaglepoint.html) bytes, $(grep -c 'raw.githubusercontent' land-eaglepoint.html) hosted imgs" >> "$LOG"
 
 # ---------------------------------------------------------------------------
@@ -112,8 +112,8 @@ echo "LIVE /deals-refresh.js: $(curl -s -o /dev/null -w '%{http_code}' https://c
 echo "LIVE baked button: $(curl -s https://classiccarsforsale-co.web.app/ | grep -c '<button id=\"refreshbtn\"')" >> "$LOG"
 IMG1=$(grep -o '/pimg/[^"]*' coins.html | head -1)
 echo "LIVE sample photo ($IMG1): $(curl -s -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app$IMG1)" >> "$LOG"
-echo "LIVE /coins pimg refs: $(curl -sL https://classiccarsforsale-co.web.app/coins | grep -c '/pimg/')" >> "$LOG"
-echo "LIVE /land-eaglepoint pimg refs: $(curl -sL https://classiccarsforsale-co.web.app/land-eaglepoint | grep -c '/pimg/')" >> "$LOG"
+echo "LIVE /coins pimg refs: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 https://classiccarsforsale-co.web.app/coins | grep -c '/pimg/')" >> "$LOG"
+echo "LIVE /land-eaglepoint pimg refs: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 https://classiccarsforsale-co.web.app/land-eaglepoint | grep -c '/pimg/')" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/rui.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "==== done ===="; cat "$LOG"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run on the Mac:   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/owner-setup.sh?$(date +%s)" -o /tmp/owner-setup.sh && bash /tmp/owner-setup.sh
+# Run on the Mac:   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/owner-setup.sh?$(date +%s)" -o /tmp/owner-setup.sh && bash /tmp/owner-setup.sh
 #
 # Creates YOUR owner login for the Points admin (Firebase sign-in, free plan) and prepares the database to accept it.
 # It changes NO database rules and NO member data. It:

@@ -20,7 +20,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-fix-customrecords-nulls.js "$RAWB/patch-fix-customrecords-nulls.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-fix-customrecords-nulls.js "$RAWB/patch-fix-customrecords-nulls.js"
 echo "patcher: $(wc -c < /tmp/patch-fix-customrecords-nulls.js) bytes" >> "$LOG"
 node /tmp/patch-fix-customrecords-nulls.js "$IDX" >> "$LOG" 2>&1
 PATCH_RC=$?

@@ -7,7 +7,7 @@
 #   5) weekly database backup (set up once)
 # FIRST it asks once for the contact email that goes at the end of every message (restaurant DM signature + Ads-tab emails). It is typed here, never stored in the public repository; Return keeps what is on the dashboard now.
 # You type the owner email (on the keyboard) and the owner password twice (steps 1 and 4). Nothing is saved except the backup sign-in token on this Mac (~/.lvr).
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/everything.sh?$(date +%s)" -o /tmp/everything.sh && bash /tmp/everything.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/everything.sh?$(date +%s)" -o /tmp/everything.sh && bash /tmp/everything.sh
 set +e
 echo
 echo "Which email should every message end with, so replies come to you?"
@@ -23,10 +23,12 @@ export REPLY_EMAIL
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
 step() {  # step "title" script-name
   echo; echo "=================================================="; echo "  $1"; echo "=================================================="
-  curl -sL "$RAWB/$2?$(date +%s)" -o "/tmp/$2" || { echo "Could not download $2 - STOPPED."; exit 1; }
+  curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$RAWB/$2?$(date +%s)" -o "/tmp/$2" || { echo "Could not download $2 - STOPPED."; exit 1; }
   bash "/tmp/$2" 2>&1 | tee "/tmp/$2.log"
 }
+if [ "${START_AT:-1}" = "1" ]; then
 step "STEP 1 of 5 - database rules" deploy-key-rules.sh
+fi
 if ! grep -q "ALL CHECKS PASSED" /tmp/deploy-key-rules.sh.log; then
   echo; echo ">>> The rules step did NOT pass, so I stopped before changing anything else. Take a screenshot of this window and send it to Claude."; exit 1
 fi

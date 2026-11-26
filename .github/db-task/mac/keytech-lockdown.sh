@@ -14,7 +14,7 @@ fi
 echo "=============================================="
 echo " STEP 1 of 2: owner tools go live with sign-in"
 echo "=============================================="
-curl -sL "$RAW/deploy-owner-pages.sh$CB" -o /tmp/deploy-owner-pages.sh && bash /tmp/deploy-owner-pages.sh 2>&1 | tee /tmp/keytech-step1.txt
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$RAW/deploy-owner-pages.sh$CB" -o /tmp/deploy-owner-pages.sh && bash /tmp/deploy-owner-pages.sh 2>&1 | tee /tmp/keytech-step1.txt
 if ! grep -q "OWNER PAGES LIVE" /tmp/keytech-step1.txt; then
   echo; echo "!! Step 1 did not finish cleanly, so I stopped. Nothing was locked. Tell Claude what the screen above says."; exit 1
 fi
@@ -22,7 +22,7 @@ echo
 echo "=============================================="
 echo " STEP 2 of 2: lock leads, page views and CRM"
 echo "=============================================="
-curl -sL "$RAW/deploy-key-rules.sh$CB" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh 2>&1 | tee /tmp/keytech-step2.txt
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$RAW/deploy-key-rules.sh$CB" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh 2>&1 | tee /tmp/keytech-step2.txt
 echo
 if grep -q "ALL CHECKS PASSED" /tmp/keytech-step2.txt; then
   echo "DONE. Your leads, page views and CRM are locked to your login. Tell Claude 'keytech lockdown done' and I will check from the outside that a stranger is shut out."

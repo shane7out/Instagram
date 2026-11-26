@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-keypad.sh?$(date +%s)" -o /tmp/deploy-dashboard-keypad.sh && bash /tmp/deploy-dashboard-keypad.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-keypad.sh?$(date +%s)" -o /tmp/deploy-dashboard-keypad.sh && bash /tmp/deploy-dashboard-keypad.sh
 # (also: the Ads tab gets a toggle that decides whether the DMs and emails use the Las Vegas Restaurants or the Key Technologies message)
 # BLUE EVERYWHERE (Shane, 2026-11-25: "always make it the one on the left, blue... I don't want to ever see white again"). Two steps, one command:
 #  1) the LIVE dashboard: removes the "Johnny Mac's" chip from the PIN page, removes the light keypad block if an earlier run added it (the blue round LVR keypad stays as it is),
@@ -27,15 +27,15 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-dashboard-keypad.js "$RAWB/patch-dashboard-keypad.js"
-curl -sL -o /tmp/owner-auth.snippet.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html?$(date +%s)"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-keypad.js "$RAWB/patch-dashboard-keypad.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/owner-auth.snippet.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html?$(date +%s)"
 echo "pin sign-in code: $(wc -c < /tmp/owner-auth.snippet.html) bytes" >> "$LOG"
 echo "patcher: $(wc -c < /tmp/patch-dashboard-keypad.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-keypad.js "$IDX" /tmp/owner-auth.snippet.html >> "$LOG" 2>&1
 PATCH_RC=$?
 echo "patch exit: $PATCH_RC" >> "$LOG"
 # the Ads tab message toggle (Las Vegas Restaurants / Key Technologies); not fatal if the live page differs: the dashboard is released either way and the log says so
-curl -sL -o /tmp/patch-dashboard-ads.js "$RAWB/patch-dashboard-ads.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-ads.js "$RAWB/patch-dashboard-ads.js"
 echo "ads patcher: $(wc -c < /tmp/patch-dashboard-ads.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-ads.js "$IDX" >> "$LOG" 2>&1
 echo "ads patch exit: $?" >> "$LOG"
@@ -117,4 +117,4 @@ echo "live Johnny Mac chip (should be 0): $(grep -ac "JOHNNYMACS-START" /tmp/liv
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/keypad.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'
 echo "live Johnny Mac chip left: $(grep -c 'href="/johnny-macs.html"' /tmp/live.html)" >> "$LOG"; echo "==== done ===="; cat "$LOG"
 echo "---- now the owner pages (blue instead of white) ----"
-curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh

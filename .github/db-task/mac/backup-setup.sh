@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac ONCE (one command). Sets up an automatic weekly backup of your whole database to a folder on your Mac (~/lvr-backups), then makes the first backup now.
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/backup-setup.sh?$(date +%s)" -o /tmp/backup-setup.sh && bash /tmp/backup-setup.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/backup-setup.sh?$(date +%s)" -o /tmp/backup-setup.sh && bash /tmp/backup-setup.sh
 # You type your owner email and password HERE in Terminal (they go only to Google to sign in; the password is NOT saved anywhere). What is saved is a renewable
 # sign-in token in ~/.lvr/owner-refresh (readable only by you), so the weekly job can read your private areas (leads, CRM) without asking again.
 # The backups never leave your Mac. Newest 12 weeks are kept. To stop: launchctl unload ~/Library/LaunchAgents/com.keytech.backup.plist
@@ -10,7 +10,7 @@ RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e
 DB="https://lvr-data-a60c1-default-rtdb.firebaseio.com"
 command -v node >/dev/null 2>&1 || { echo "Node is not installed on this Mac - tell Claude."; exit 1; }
 mkdir -p "$HOME/.lvr" "$HOME/lvr-backups"; chmod 700 "$HOME/.lvr"
-curl -sL -o "$HOME/.lvr/backup-database.js" "$RAWB/backup-database.js?cb=$(date +%s)"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$HOME/.lvr/backup-database.js" "$RAWB/backup-database.js?cb=$(date +%s)"
 node --check "$HOME/.lvr/backup-database.js" || { echo "The backup program did not download correctly - nothing changed."; exit 1; }
 KEY=$(curl -s "$DB/ownerAuth/apiKey.json" | tr -d '"')
 [ -n "$KEY" ] && [ "$KEY" != "null" ] || { echo "Could not read the sign-in key - nothing changed."; exit 1; }

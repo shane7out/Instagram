@@ -46,7 +46,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 FILES="key-room.html key-leads.html kt-crm.html key-advertisers.html lvr-coupons-admin.html lvr-wallet.html lvr-points-admin.html lvr-invoice.html lvr-restaurant-portal.html lvr-rewards.html lvr-coupon.html"
 FAILED=""
 for F in $FILES; do
-  curl -sL -o "$F" "$RAWB/$F$CB"
+  curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$F" "$RAWB/$F$CB"
   echo "$F: $(wc -c < "$F") bytes" >> "$LOG"
   node <<NODE >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
@@ -72,7 +72,7 @@ PRISTINE="$IDX.pristine-$(date -u +%Y%m%dT%H%M%SZ)"
 cp "$IDX" "$PRISTINE"
 echo "pristine copy: $PRISTINE ($(wc -c < "$PRISTINE") bytes)" >> "$LOG"
 
-curl -sL -o /tmp/patch-key-room-pill.js "$RAWB/patch-key-room-pill.js$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-key-room-pill.js "$RAWB/patch-key-room-pill.js$CB"
 node /tmp/patch-key-room-pill.js "$IDX" >> "$LOG" 2>&1
 RC=$?
 echo "   patch-key-room-pill.js exit: $RC" >> "$LOG"
@@ -83,7 +83,7 @@ if [ "$RC" != "0" ]; then
   echo "==== stopped ===="; cat "$LOG"; exit 1
 fi
 
-curl -sL -o /tmp/patch-key-pill-to-room.js "$RAWB/patch-key-pill-to-room.js$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-key-pill-to-room.js "$RAWB/patch-key-pill-to-room.js$CB"
 node /tmp/patch-key-pill-to-room.js "$IDX" >> "$LOG" 2>&1
 echo "   patch-key-pill-to-room.js exit: $?" >> "$LOG"
 
@@ -140,7 +140,7 @@ NODE
 #    named in OVERLAY_FILES too) so a stale local copy can't silently drop
 #    the standalone tool files again.
 # ---------------------------------------------------------------------------
-curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
 DEP="deploy-overlay.js"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ONE command for the owner login. Run on the Mac (paste this whole line into Terminal):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/owner-login.sh?$(date +%s)" -o /tmp/owner-login.sh && bash /tmp/owner-login.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/owner-login.sh?$(date +%s)" -o /tmp/owner-login.sh && bash /tmp/owner-login.sh
 #
 # What it does, in order (you are asked before each part):
 #   Part 1 (owner-setup.sh): creates YOUR owner login. First do the one click in the Firebase console it tells you about
@@ -13,7 +13,7 @@
 BASE="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
 echo
 echo "=== PART 1 of 2: create your owner login ==="
-curl -sL "$BASE/owner-setup.sh?$(date +%s)" -o /tmp/owner-setup.sh && bash /tmp/owner-setup.sh
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$BASE/owner-setup.sh?$(date +%s)" -o /tmp/owner-setup.sh && bash /tmp/owner-setup.sh
 if [ ! -s "$HOME/.lvr/owner-uid" ]; then
   echo
   echo "Part 1 did not finish (no owner id saved), so I stopped before changing any rules. Nothing was locked."
@@ -23,12 +23,12 @@ fi
 echo
 echo "=== PART 2 of 2: lock the Points settings to your login ==="
 read -p "Part 1 worked. Press Return to lock the settings (Ctrl+C to stop here): " _
-curl -sL "$BASE/deploy-owner-rules.sh?$(date +%s)" -o /tmp/deploy-owner-rules.sh && bash /tmp/deploy-owner-rules.sh
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$BASE/deploy-owner-rules.sh?$(date +%s)" -o /tmp/deploy-owner-rules.sh && bash /tmp/deploy-owner-rules.sh
 echo
 echo "=== PART 3 of 3: lock your Key Technologies leads, page views and CRM to your login ==="
 echo "(This replaces the old PIN screens with real sign-in and shuts strangers out of your lead list.)"
 read -p "Press Return to do it (Ctrl+C to stop here; you can run it later with keytech-lockdown.sh): " _
-curl -sL "$BASE/keytech-lockdown.sh?$(date +%s)" -o /tmp/keytech-lockdown.sh && bash /tmp/keytech-lockdown.sh
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$BASE/keytech-lockdown.sh?$(date +%s)" -o /tmp/keytech-lockdown.sh && bash /tmp/keytech-lockdown.sh
 echo
 echo "Done. Open the Points admin page: you will see an Owner sign-in button at the bottom right. Sign in once there."
 echo "Then tell Claude 'owner login done' and Claude will check from the outside that a stranger is locked out."

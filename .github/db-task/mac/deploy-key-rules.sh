@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run on the Mac AFTER owner-setup.sh (owner-login.sh does that) and after the Key Technologies owner tools have been
 # re-deployed with the sign-in button (keytech-lockdown.sh does both in the right order):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh
 #
 # Locks YOUR Key Technologies data to YOUR login: the lead list (names, emails, phones), the page-view log and the CRM can then
 # be READ only by you, signed in. Website visitors can still SEND a lead and still be counted, but can no longer read, change

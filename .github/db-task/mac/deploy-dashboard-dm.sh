@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-dm.sh?$(date +%s)" -o /tmp/deploy-dashboard-dm.sh && bash /tmp/deploy-dashboard-dm.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-dm.sh?$(date +%s)" -o /tmp/deploy-dashboard-dm.sh && bash /tmp/deploy-dashboard-dm.sh
 # SHORTER RESTAURANT DM (Shane, 2026-11-16). Takes the LIVE dashboard copy and replaces ONLY the restaurant message (about 1,100 characters -> about 360):
 # no "my name is..." introduction up front, the contact email kept (read from the old message, never stored in the repo), the cell number left out.
 # The company message, advertiser, golf and model emails, PINs, data and rules are not touched. Checks every script parses first; if anything fails it restores the old page
@@ -22,7 +22,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-dashboard-dm.js "$RAWB/patch-dashboard-dm.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-dm.js "$RAWB/patch-dashboard-dm.js"
 echo "patcher: $(wc -c < /tmp/patch-dashboard-dm.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-dm.js "$IDX" >> "$LOG" 2>&1
 PATCH_RC=$?

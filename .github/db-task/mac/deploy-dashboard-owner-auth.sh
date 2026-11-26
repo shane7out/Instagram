@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-owner-auth.sh?$(date +%s)" -o /tmp/deploy-dashboard-owner-auth.sh && bash /tmp/deploy-dashboard-owner-auth.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-owner-auth.sh?$(date +%s)" -o /tmp/deploy-dashboard-owner-auth.sh && bash /tmp/deploy-dashboard-owner-auth.sh
 # DASHBOARD OWNER SIGN-IN (member data protection step 4 + dashboard owner lock, part 1). Takes the LIVE dashboard copy and
 #  1. adds the same owner sign-in (with the quick-unlock PIN) the Leads / CRM / Rewards admin pages already have, and
 #  2. lets the dashboard's Rewards list read the hidden member spot, so it keeps showing phones after the member data is protected.
@@ -23,8 +23,8 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-dashboard-owner-auth.js "$RAWB/patch-dashboard-owner-auth.js"
-curl -sL -o /tmp/owner-auth.snippet.html "${RAWB%/mac}/owner-auth/owner-auth.snippet.html"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-owner-auth.js "$RAWB/patch-dashboard-owner-auth.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/owner-auth.snippet.html "${RAWB%/mac}/owner-auth/owner-auth.snippet.html"
 [ -s /tmp/owner-auth.snippet.html ] || { echo "Could not get the sign-in snippet - nothing changed."; exit 1; }
 echo "patcher: $(wc -c < /tmp/patch-dashboard-owner-auth.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-owner-auth.js "$IDX" /tmp/owner-auth.snippet.html >> "$LOG" 2>&1

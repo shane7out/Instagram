@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-faceid.sh?$(date +%s)" -o /tmp/deploy-dashboard-faceid.sh && bash /tmp/deploy-dashboard-faceid.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-faceid.sh?$(date +%s)" -o /tmp/deploy-dashboard-faceid.sh && bash /tmp/deploy-dashboard-faceid.sh
 # LVR DASHBOARD PIN PAD: adds a Face ID / Touch ID key (bottom-left, where the empty key is) and turns the dashboard's own Face ID code back on
 # (it was switched off on 2026-07-17). The PIN works exactly as before; Face ID is a second way in. The key is dim until you have turned Face ID on:
 # enter your PIN once and say yes to "Use face unlock next time?". Takes the LIVE dashboard copy, checks every script parses first; if anything fails
@@ -22,7 +22,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-dashboard-faceid.js "$RAWB/patch-dashboard-faceid.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-faceid.js "$RAWB/patch-dashboard-faceid.js"
 echo "patcher: $(wc -c < /tmp/patch-dashboard-faceid.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-faceid.js "$IDX" >> "$LOG" 2>&1
 PATCH_RC=$?

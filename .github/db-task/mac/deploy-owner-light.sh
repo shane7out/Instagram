@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-light.sh?$(date +%s)" -o /tmp/deploy-owner-light.sh && bash /tmp/deploy-owner-light.sh
 # Gives your private owner pages the LVR PIN BLUE (no white; before 2026-11-25 it was a light look) and the blue key, and adds the optional quick-unlock PIN to the sign-in box (Shane, 2026-11-10). It takes each page's CURRENT LIVE copy, adds ONE colour-only style block
 # and recolours the key mark, and puts it back. No script, text or data is changed, and nothing else that is waiting in the repo goes live with it.
 # Pages: Prospect CRM, Leads, Advertisers, Key Room, Rewards (Points) admin, Coupons admin, Invoice. A page that cannot be fetched is skipped. Nothing is uploaded if a check fails.
@@ -15,8 +15,8 @@ LOG=/tmp/ownerlight.txt
 cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
 PAGES="kt-crm.html key-leads.html key-advertisers.html key-room.html kt-outreach.html lvr-points-admin.html lvr-coupons-admin.html lvr-invoice.html"
 rm -rf /tmp/ownerlight-new && mkdir -p /tmp/ownerlight-new
-curl -sL -o /tmp/ownerlight-snippet.html "$RAWB/owner-light.snippet.html$CB"
-curl -sL -o /tmp/ownerlight-auth.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/ownerlight-snippet.html "$RAWB/owner-light.snippet.html$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/ownerlight-auth.html "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/owner-auth/owner-auth.snippet.html$CB"
 echo "sign-in box (with quick-unlock PIN): $(wc -c < /tmp/ownerlight-auth.html) bytes" >> "$LOG"
 echo "style block: $(wc -c < /tmp/ownerlight-snippet.html) bytes" >> "$LOG"
 if ! grep -q 'ktowner-light' /tmp/ownerlight-snippet.html; then echo "Could not get the style block - nothing changed."; exit 1; fi
@@ -48,7 +48,7 @@ process.exit(bad ? 2 : 0);
 NODE
 if [ "$?" != "0" ]; then echo "A page failed its checks - NOTHING was uploaded."; cat "$LOG"; exit 1; fi
 for f in $DOPAGES; do cp "$DASH/$f" "$DASH/$f.bak-ownerlight" 2>/dev/null; cp "/tmp/ownerlight-new/$f" "$DASH/$f"; done
-curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
 export OVERLAY_FILES="$(echo $DOPAGES)"
 echo "-- deploying --" >> "$LOG"
 node deploy-overlay.js >> "$LOG" 2>&1

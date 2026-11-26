@@ -30,7 +30,7 @@ cp "$IDX" "$PRISTINE"
 echo "pristine copy: $PRISTINE ($(wc -c < "$PRISTINE") bytes)" >> "$LOG"
 
 P="patch-followup-dm.js"
-curl -sL -o "/tmp/$P" "$RAWB/$P"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "/tmp/$P" "$RAWB/$P"
 echo "-- $P ($(wc -c < "/tmp/$P") bytes) --" >> "$LOG"
 node "/tmp/$P" "$IDX" >> "$LOG" 2>&1
 RC=$?

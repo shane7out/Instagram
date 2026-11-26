@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-owner-btn.sh?$(date +%s)" -o /tmp/deploy-dashboard-owner-btn.sh && bash /tmp/deploy-dashboard-owner-btn.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-dashboard-owner-btn.sh?$(date +%s)" -o /tmp/deploy-dashboard-owner-btn.sh && bash /tmp/deploy-dashboard-owner-btn.sh
 # DASHBOARD PIN PAGE: replaces the big "Owner sign-in" button (it covered the "Dating" chip, bottom right) with a small key icon at the bottom center
 # (top-right on short screens). It is a key when signed out and a padlock when signed in, and opens the same sign-in / unlock / menu. Styling only.
 # Takes the LIVE dashboard copy, checks every script parses first; if anything fails it restores the old page and uploads nothing. Safe to run twice.
@@ -22,8 +22,8 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-dashboard-owner-btn.js "$RAWB/patch-dashboard-owner-btn.js"
-curl -sL -o /tmp/owner-auth.snippet.html "${RAWB%/mac}/owner-auth/owner-auth.snippet.html"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-owner-btn.js "$RAWB/patch-dashboard-owner-btn.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/owner-auth.snippet.html "${RAWB%/mac}/owner-auth/owner-auth.snippet.html"
 [ -s /tmp/owner-auth.snippet.html ] || { echo "Could not get the sign-in snippet - nothing changed."; exit 1; }
 echo "patcher: $(wc -c < /tmp/patch-dashboard-owner-btn.js) bytes" >> "$LOG"
 node /tmp/patch-dashboard-owner-btn.js "$IDX" /tmp/owner-auth.snippet.html >> "$LOG" 2>&1

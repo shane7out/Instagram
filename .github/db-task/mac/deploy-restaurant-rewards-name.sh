@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-restaurant-rewards-name.sh?$(date +%s)" -o /tmp/deploy-restaurant-rewards-name.sh && bash /tmp/deploy-restaurant-rewards-name.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-restaurant-rewards-name.sh?$(date +%s)" -o /tmp/deploy-restaurant-rewards-name.sh && bash /tmp/deploy-restaurant-rewards-name.sh
 # RENAME on the LVR dashboard hosting: the words "LVR Rewards" / "LVR Rewards Program" / "LVR Points" become "Restaurant Rewards" (and the big "LVR" logo word becomes "RR") on the member sign-up page (lvr-rewards.html)
 # and the Rewards admin page (lvr-points-admin.html). Only visible words change. "Las Vegas Restaurants (LVR)" as the company name, page addresses, database names and every PIN, rule and member record stay exactly as they are.
 # It ALSO gives the sign-up page the same colors, font and look as keytechnologies.si (one small style block added at the end of the page head). Takes each page's CURRENT LIVE copy, checks every script still parses, and if anything fails uploads nothing. Safe to run twice. Keeps a .bak-rrname copy of each page.
@@ -21,7 +21,7 @@ for f in $PAGES; do
 done
 [ -z "$DOPAGES" ] && { echo "No page could be fetched - nothing changed."; exit 1; }
 export DOPAGES
-curl -sL -o /tmp/rrname-theme.css "$RAWB/key-theme.css$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/rrname-theme.css "$RAWB/key-theme.css$CB"
 [ -s /tmp/rrname-theme.css ] || { echo "Could not get the theme file - nothing changed."; exit 1; }
 node <<'NODE' >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
@@ -42,7 +42,7 @@ process.exit(bad ? 2 : 0);
 NODE
 if [ "$?" != "0" ]; then echo "A page failed its checks - NOTHING was uploaded."; cat "$LOG"; exit 1; fi
 for f in $DOPAGES; do cp "$DASH/$f" "$DASH/$f.bak-rrname" 2>/dev/null; cp "/tmp/rrname-new/$f" "$DASH/$f"; done
-curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
 export OVERLAY_FILES="$(echo $DOPAGES)"
 echo "-- deploying --" >> "$LOG"
 node deploy-overlay.js >> "$LOG" 2>&1

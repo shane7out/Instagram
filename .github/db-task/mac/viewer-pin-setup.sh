@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/viewer-pin-setup.sh?$(date +%s)" -o /tmp/viewer-pin-setup.sh && bash /tmp/viewer-pin-setup.sh
+#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/viewer-pin-setup.sh?$(date +%s)" -o /tmp/viewer-pin-setup.sh && bash /tmp/viewer-pin-setup.sh
 #
 # Lets you open the Owner visitor report (keytechnologies.si/key-pageviews.html) with just a PIN. How it works:
 #   * you type a 6-digit PIN here (the report page has the same round PIN pad as the dashboard); it is never saved or sent anywhere,
@@ -71,7 +71,7 @@ const derive = pin => crypto.pbkdf2Sync(pin, SALT, 150000, 32, 'sha256').toStrin
   log('The PIN works for the report account. Saved its id on this Mac (~/.lvr/viewer-uid).');
   // 3) the page-view rules (asks for your owner email + password, backs up, checks, rolls back by itself)
   console.log('\nNow the database rules step. It asks for your OWNER email and password (typed here only).\n');
-  const rc = (() => { try { execSync('curl -sL "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); return 0; } catch (e) { return 1; } })();
+  const rc = (() => { try { execSync('curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); return 0; } catch (e) { return 1; } })();
   // 4) final check, as the report account would see it
   await new Promise(r => setTimeout(r, 3000));
   const a = await status(`${DB}/key_pageviews/hits.json?shallow=true`);

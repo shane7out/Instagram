@@ -17,7 +17,7 @@ LOG=/tmp/ktcrmdeploy.txt
 
 cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 
-curl -sL -o kt-crm.html "$RAWB/kt-crm.html"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o kt-crm.html "$RAWB/kt-crm.html"
 echo "kt-crm.html: $(wc -c < kt-crm.html) bytes" >> "$LOG"
 
 # sanity: the inline script must parse before anything ships
@@ -41,7 +41,7 @@ fi
 # ---------------------------------------------------------------------------
 # deploy + verify (same deployer the dashboard patches already use)
 # ---------------------------------------------------------------------------
-curl -sL -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
 DEP="deploy-overlay.js"
 export OVERLAY_FILES="kt-crm.html"
 if [ -n "$DEP" ]; then

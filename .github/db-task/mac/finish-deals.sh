@@ -10,7 +10,7 @@ LOG=/tmp/finish.txt
 : > "$LOG"
 
 # 1) coins page — prebuilt on the server, just fetch it
-curl -sL -o coins.html "https://raw.githubusercontent.com/shane7out/Instagram/${SHA}/.github/db-task/fetched/coins.html"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o coins.html "https://raw.githubusercontent.com/shane7out/Instagram/${SHA}/.github/db-task/fetched/coins.html"
 echo "coins.html: $(wc -c < coins.html) bytes, $(grep -c 'class=\"card\"' coins.html) cards" >> "$LOG"
 
 # 2) batman page — build from manual.json (local photos already deployed)
@@ -50,8 +50,8 @@ echo "-- deploying --" >> "$LOG"
 node _tools/rest-deploy.js >> "$LOG" 2>&1
 
 # 5) verify live
-echo "LIVE /coins: $(curl -sL -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/coins)" >> "$LOG"
-echo "LIVE /batman: $(curl -sL -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/batman)" >> "$LOG"
+echo "LIVE /coins: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/coins)" >> "$LOG"
+echo "LIVE /batman: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/batman)" >> "$LOG"
 echo "chips live: $(curl -s https://classiccarsforsale-co.web.app/ | grep -oE 'chip-coins|chip-batman' | sort -u | tr '\n' ' ')" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/finish.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'

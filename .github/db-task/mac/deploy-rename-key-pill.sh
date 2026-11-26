@@ -21,7 +21,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL -o /tmp/patch-rename-key-pill.js "$RAWB/patch-rename-key-pill.js"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-rename-key-pill.js "$RAWB/patch-rename-key-pill.js"
 echo "patcher: $(wc -c < /tmp/patch-rename-key-pill.js) bytes" >> "$LOG"
 node /tmp/patch-rename-key-pill.js "$IDX" >> "$LOG" 2>&1
 PATCH_RC=$?

@@ -10,7 +10,7 @@ OUT=/tmp/golive-rules.txt
 echo "=============================================="
 echo " STEP 1 of 2: safety rules for the points data"
 echo "=============================================="
-curl -sL "$RAW/deploy-rules.sh$CB" | bash 2>&1 | tee "$OUT"
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$RAW/deploy-rules.sh$CB" | bash 2>&1 | tee "$OUT"
 if ! grep -q "ALL CHECKS PASSED" "$OUT"; then
   echo
   echo "!! Step 1 did not finish cleanly, so I stopped. Your old rules are still in place."
@@ -21,7 +21,7 @@ echo
 echo "=============================================="
 echo " STEP 2 of 2: owner tools + sign-up pages"
 echo "=============================================="
-curl -sL "$RAW/deploy-key-room.sh$CB" | bash 2>&1 | tail -40
+curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "$RAW/deploy-key-room.sh$CB" | bash 2>&1 | tail -40
 echo
 echo "=============================================="
 echo " ALL DONE. Tell Claude 'finished' and I will check everything is live."
