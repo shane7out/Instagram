@@ -316,6 +316,7 @@ body.hlock{overflow:hidden}
 
 #wlbox .chk{border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;background:rgba(255,255,255,.05)}#wlbox .chk h3{margin:0 0 4px;font-size:17px}#wlbox .wlrow{border-top:1px solid rgba(255,255,255,.12);padding:8px 0}#wlbox .wlrow summary{cursor:pointer;font-size:14px;line-height:1.5}#wlbox .wlrow .btn{margin:6px 8px 6px 0}#wlbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#wlbox .btn{margin:6px 8px 0 0}#gvbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#gvbox .kvrow{padding:8px 0;border-top:1px solid rgba(255,255,255,.12)}#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
 #owebox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#owebox .gvrow input{width:100%;margin:6px 0;font-size:16px}#owebox .btn{margin:6px 8px 0 0}#dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
+#rbbox .rbrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0;padding:8px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#rbbox .rbth{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex:none;background:#fff}#rbbox .rbth.big{width:100%;height:auto;max-height:70vh;object-fit:contain;cursor:zoom-out}#rbbox .rbtx{flex:1;min-width:150px}#rbbox .rbtx b{display:block}
 #dnbox .dnrec{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#dnbox .dnimg{display:block;width:140px;max-height:200px;object-fit:cover;border-radius:8px;background:#fff;margin:6px 0;cursor:zoom-in}#dnbox .dnimg.big{width:100%;max-height:none;object-fit:contain;cursor:zoom-out}#dnbox .dnwarn{margin:6px 0;color:#9fd6f2;font-weight:700;font-size:14px}
 
 .gc .fineprint,.gc.sm .fineprint{font-size:11px!important;letter-spacing:.02em!important;font-weight:800!important;color:rgba(43,29,5,.92)!important;text-shadow:none!important}
@@ -417,6 +418,11 @@ body.hlock{overflow:hidden}
   <p class="fine" style="margin-top:0">Every trade between two wallets, newest first, and who is trading most. Keys issued from the Treasury are not counted here. Members trade with each other; Key Technologies does not buy or sell keys.</p>
   <div id="twsum"></div>
   <div id="twlist"></div>
+ </div>
+ <div class="box" id="rbbox">
+  <h2>Receipts board: who is eating where</h2>
+  <p class="fine" style="margin-top:0">Every receipt guests send, at every restaurant: waiting, approved and declined. Tap a photo to enlarge it.</p>
+  <div id="rblist"></div>
  </div>
  <div class="box" id="owebox">
   <h2>What restaurants owe you</h2>
@@ -755,6 +761,27 @@ body.hlock{overflow:hidden}
   if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}var t=o[oid];if(t){t.payments=t.payments||{};t.payments[id]={amountCents:cents,at:Date.now(),note:note||''};dnSetLocal(o)}after();return}
   var rec={amountCents:cents,at:{'.sv':'timestamp'}};if(note)rec.note=note;RR.db('PUT','key_dine/'+oid+'/payments/'+id,rec).then(function(r){if(r.status===200)after();else dnSay('The database did not accept that payment. Sign in again and try once more.',true)})}
  function dnUnpay(oid,pid,after){if(!DBM){var o={};try{o=JSON.parse(localStorage.getItem('kdLocal')||'{}')||{}}catch(e){}if(o[oid]&&o[oid].payments)delete o[oid].payments[pid];dnSetLocal(o);after();return}RR.db('DELETE','key_dine/'+oid+'/payments/'+pid).then(function(){after()})}
+ /* ---- Receipts board (2026-11-26): every receipt at every restaurant, who sent it, when, how much, and the photo ---- */
+ function rbRender(all){var box=$('rblist');if(!box)return;box.innerHTML='';
+  var now=Date.now(),DAY=864e5,per={},rows=[],tot={n:0,ap:0,pe:0,sp:0,g:{}};
+  Object.keys(all||{}).forEach(function(oid){var o=all[oid]||{},rc=o.receipts||{},p=per[oid]={name:String(o.rest||'Restaurant'),n:0,ap:0,pe:0,de:0,sp:0,g:{},last:0};
+   Object.keys(rc).forEach(function(k){var r=rc[k]||{},at=typeof r.at==='number'?r.at:0,st=r.status||'waiting',em=String(r.email||'').toLowerCase();
+    p.n++;tot.n++;if(st==='approved'){p.ap++;tot.ap++;if(typeof r.amountCents==='number'){p.sp+=r.amountCents;tot.sp+=r.amountCents}}else if(st==='declined')p.de++;else{p.pe++;tot.pe++}
+    if(em){p.g[em]=1;tot.g[em]=1}if(at>p.last)p.last=at;rows.push({rest:p.name,r:r,at:at,st:st})})});
+  if(!tot.n){box.appendChild(el('p','fine','No receipts yet. When a guest sends one it shows up here.'));return}
+  var per2=Object.keys(per).map(function(k){return per[k]}).filter(function(p){return p.n}).sort(function(a,b){return b.last-a.last}),day=rows.filter(function(x){return now-x.at<DAY}),dayR={};day.forEach(function(x){dayR[x.rest]=1});
+  box.appendChild(el('p','fine','All time: '+tot.n+' receipt'+(tot.n===1?'':'s')+' from '+Object.keys(tot.g).length+' guest'+(Object.keys(tot.g).length===1?'':'s')+' at '+per2.length+' restaurant'+(per2.length===1?'':'s')+' · '+tot.ap+' approved, '+tot.pe+' waiting · '+usd(tot.sp)+' spent (approved, before tax).'));
+  box.appendChild(el('p','fine','Last 24 hours: '+day.length+' receipt'+(day.length===1?'':'s')+' at '+Object.keys(dayR).length+' restaurant'+(Object.keys(dayR).length===1?'':'s')+'.'));
+  box.appendChild(el('h3',null,'By restaurant'));
+  per2.forEach(function(p){box.appendChild(el('p','fine','• '+p.name+': '+p.n+' visit'+(p.n===1?'':'s')+' · '+Object.keys(p.g).length+' guest'+(Object.keys(p.g).length===1?'':'s')+' · '+p.ap+' approved, '+p.pe+' waiting'+(p.de?', '+p.de+' declined':'')+' · '+usd(p.sp)+' spent · last '+(p.last?when(p.last):'?')))});
+  box.appendChild(el('h3',null,'Eating in the last 24 hours'));
+  if(!day.length)box.appendChild(el('p','fine','Nobody in the last 24 hours.'));
+  day.sort(function(a,b){return b.at-a.at}).slice(0,40).forEach(function(x){var r=x.r,row=el('div','rbrow');
+   if(typeof r.photo==='string'&&r.photo.indexOf('data:image/')===0){var im=el('img','rbth');im.alt='Receipt';im.src=r.photo;im.addEventListener('click',function(){im.classList.toggle('big')});row.appendChild(im)}
+   var t=el('div','rbtx');t.appendChild(el('b',null,String((r.first||'')+' '+(r.last||'')).trim()||'Guest'));
+   var amt=typeof r.amountCents==='number'?usd(r.amountCents):(typeof r.spentCents==='number'?usd(r.spentCents)+' (guest wrote)':'no amount');
+   t.appendChild(el('p','fine',x.rest+' · '+amt+' · '+new Date(x.at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+' · '+(x.st==='approved'?'approved':x.st==='declined'?'declined':'waiting to check')));row.appendChild(t);box.appendChild(row)});
+  var rf=el('button','btn ghost','Refresh');rf.type='button';rf.addEventListener('click',dnRender);box.appendChild(rf)}
  function oweRender(all){var box=$('owelist');if(!box)return;box.innerHTML='';
   var groups={},order=[];Object.keys(all||{}).forEach(function(oid){var o=all[oid],gk=String(o.rest||'').trim().toLowerCase();if(!gk)return;var g=groups[gk];if(!g){g=groups[gk]={name:o.rest,first:oid,n:0,spend:0,comm:0,paid:0,pays:[],rows:[]};order.push(gk)}
    var pct=(o.pct==null?25:o.pct),rc=o.receipts||{};Object.keys(rc).forEach(function(rid){var r=rc[rid];if(r.status==='approved'&&typeof r.amountCents==='number'){var c=Math.round(r.amountCents*pct/100);g.n++;g.spend+=r.amountCents;g.comm+=c;g.rows.push({at:r.paidAt||r.at||0,rno:r.rno||'',who:(r.first+' '+r.last).trim(),amt:r.amountCents,pct:pct,c:c})}});
@@ -775,7 +802,7 @@ body.hlock{overflow:hidden}
    box.appendChild(row)});
   var sp=el('button','btn ghost','Copy every approved receipt for a spreadsheet');sp.type='button';sp.addEventListener('click',function(){var L=['Restaurant\tDate\tReceipt no\tGuest\tAmount before tax\tYour share %\tYour share'];order.forEach(function(k){groups[k].rows.sort(function(a,b){return a.at-b.at}).forEach(function(r){L.push([groups[k].name,new Date(r.at).toISOString().slice(0,10),r.rno,r.who,(r.amt/100).toFixed(2),r.pct,(r.c/100).toFixed(2)].map(function(x){return String(x).replace(/[\t\r\n]+/g,' ')}).join('\t'))})});var t=L.join('\n'),d=function(){sp.textContent='Copied'};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,function(){sp.textContent='Could not copy'});else sp.textContent='Could not copy'});box.appendChild(sp)}
  function dnRender(){var box=$('dnlist');if(!box)return;var dl=$('dnrests');if(dl){dl.innerHTML='';S.wallets.filter(function(w){return w.type==='Restaurant'}).forEach(function(w){var op=document.createElement('option');op.value=w.name;dl.appendChild(op)})}
-  dnGet(function(all){oweRender(all);box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
+  dnGet(function(all){oweRender(all);rbRender(all);box.innerHTML='';var ids=Object.keys(all).sort(function(a,b){return (all[b].createdAt||0)-(all[a].createdAt||0)});
   if(!ids.length){box.appendChild(el('p','fine','No offers yet.'));return}
   ids.forEach(function(oid){var o=all[oid],row=el('div','gvrow'),rc=o.receipts||{},rids=Object.keys(rc).sort(function(a,b){return (rc[b].at||0)-(rc[a].at||0)});
    var pend=rids.filter(function(k){return !rc[k].status});
