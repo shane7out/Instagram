@@ -764,7 +764,7 @@ body.hlock{overflow:hidden}
  /* ---- Receipts board (2026-11-26): every receipt at every restaurant, who sent it, when, how much, and the photo ---- */
  function rbRender(all){var box=$('rblist');if(!box)return;box.innerHTML='';
   var now=Date.now(),DAY=864e5,per={},rows=[],tot={n:0,ap:0,pe:0,sp:0,g:{}};
-  Object.keys(all||{}).forEach(function(oid){var o=all[oid]||{},rc=o.receipts||{},p=per[oid]={name:String(o.rest||'Restaurant'),n:0,ap:0,pe:0,de:0,sp:0,g:{},last:0};
+  Object.keys(all||{}).forEach(function(oid){var o=all[oid]||{},rc=o.receipts||{},p=per[oid]={name:String(o.rest||'Restaurant'),n:0,ap:0,pe:0,de:0,sp:0,g:{},last:0,kpr:Number(o.keys)||0,pct:(o.pct==null?25:Number(o.pct)||0)};
    Object.keys(rc).forEach(function(k){var r=rc[k]||{},at=typeof r.at==='number'?r.at:0,st=r.status||'waiting',em=String(r.email||'').toLowerCase();
     p.n++;tot.n++;if(st==='approved'){p.ap++;tot.ap++;if(typeof r.amountCents==='number'){p.sp+=r.amountCents;tot.sp+=r.amountCents}}else if(st==='declined')p.de++;else{p.pe++;tot.pe++}
     if(em){p.g[em]=1;tot.g[em]=1}if(at>p.last)p.last=at;rows.push({rest:p.name,r:r,at:at,st:st})})});
@@ -773,7 +773,7 @@ body.hlock{overflow:hidden}
   box.appendChild(el('p','fine','All time: '+tot.n+' receipt'+(tot.n===1?'':'s')+' from '+Object.keys(tot.g).length+' guest'+(Object.keys(tot.g).length===1?'':'s')+' at '+per2.length+' restaurant'+(per2.length===1?'':'s')+' · '+tot.ap+' approved, '+tot.pe+' waiting · '+usd(tot.sp)+' spent (approved, before tax).'));
   box.appendChild(el('p','fine','Last 24 hours: '+day.length+' receipt'+(day.length===1?'':'s')+' at '+Object.keys(dayR).length+' restaurant'+(Object.keys(dayR).length===1?'':'s')+'.'));
   box.appendChild(el('h3',null,'By restaurant'));
-  per2.forEach(function(p){box.appendChild(el('p','fine','• '+p.name+': '+p.n+' visit'+(p.n===1?'':'s')+' · '+Object.keys(p.g).length+' guest'+(Object.keys(p.g).length===1?'':'s')+' · '+p.ap+' approved, '+p.pe+' waiting'+(p.de?', '+p.de+' declined':'')+' · '+usd(p.sp)+' spent · last '+(p.last?new Date(p.last).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'?')))});
+  per2.forEach(function(p){box.appendChild(el('p','fine','• '+p.name+': '+p.n+' visit'+(p.n===1?'':'s')+' · '+Object.keys(p.g).length+' guest'+(Object.keys(p.g).length===1?'':'s')+' · '+p.ap+' approved, '+p.pe+' waiting'+(p.de?', '+p.de+' declined':'')+' · '+usd(p.sp)+' spent · about '+(p.ap*p.kpr)+' keys given vs your share '+usd(Math.round(p.sp*p.pct/100))+' · last '+(p.last?new Date(p.last).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'?')))});
   box.appendChild(el('h3',null,'Eating in the last 24 hours'));
   if(!day.length)box.appendChild(el('p','fine','Nobody in the last 24 hours.'));
   day.sort(function(a,b){return b.at-a.at}).slice(0,40).forEach(function(x){var r=x.r,row=el('div','rbrow');
