@@ -21,9 +21,14 @@ while true; do
 done
 export REPLY_EMAIL
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac"
-step() {  # step "title" script-name
+step() {  # step "title" script-name   (the download is tried up to 4 times)
   echo; echo "=================================================="; echo "  $1"; echo "=================================================="
-  curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "$RAWB/$2?$(date +%s)" -o "/tmp/$2" || { echo "Could not download $2 - STOPPED."; exit 1; }
+  local ok=0 n
+  for n in 1 2 3 4; do
+    if curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "$RAWB/$2?$(date +%s)" -o "/tmp/$2" && [ -s "/tmp/$2" ]; then ok=1; break; fi
+    echo "  (download of $2 did not finish - trying again, $n of 4)"; sleep 2
+  done
+  [ "$ok" = "1" ] || { echo "Could not download $2 after 4 tries - STOPPED."; exit 1; }
   bash "/tmp/$2" 2>&1 | tee "/tmp/$2.log"
 }
 SA="${START_AT:-1}"
