@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-  :root{--bg:#0f171e;--bg2:#0f171e;--card:#1b2735;--card2:#223142;--line:#304256;--ink:#f6f8fb;--dim:#9fb0c3;--blue:#00a8e1;--blue2:#4fc8f0;--good:#3ddc97;--warn:#ffb84d;--bad:#ff7b7b;
-    --s-idea:#7d8da1;--s-script:#9a86f5;--s-made:#00a8e1;--s-rev:#ffb84d;--s-sched:#f59a6b;--s-posted:#3ddc97;color-scheme:dark;}
+  :root{--bg:#0f171e;--bg2:#0f171e;--card:#1b2735;--card2:#223142;--line:#304256;--ink:#f6f8fb;--dim:#9fb0c3;--blue:#00a8e1;--blue2:#4fc8f0;--good:#3ddc97;--warn:#9fd6f2;--bad:#ff7b7b;
+    --s-idea:#7d8da1;--s-script:#9a86f5;--s-made:#00a8e1;--s-rev:#9fd6f2;--s-sched:#a8b4ff;--s-posted:#3ddc97;color-scheme:dark;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html{-webkit-text-size-adjust:100%;}
   body{margin:0;background:radial-gradient(1200px 500px at 50% -120px,#13314a 0%,transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:15px/1.5 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom));}
@@ -55,7 +55,7 @@
   .hero h2{margin:0 0 4px;font-size:18px;} .hero p{margin:0 0 8px;font-size:13.5px;color:var(--dim);}
   .stat{display:flex;gap:8px;flex-wrap:wrap;}
   .chip{display:inline-flex;align-items:center;gap:6px;background:#111b26;border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:700;}
-  .chip.good{border-color:rgba(61,220,151,.5);color:var(--good);} .chip.warn{border-color:rgba(255,184,77,.5);color:var(--warn);}
+  .chip.good{border-color:rgba(61,220,151,.5);color:var(--good);} .chip.warn{border-color:rgba(79,200,240,.5);color:var(--warn);}
   .win{background:linear-gradient(135deg,rgba(61,220,151,.18),rgba(0,168,225,.14));border:1px solid rgba(61,220,151,.5);border-radius:14px;padding:10px 14px;margin:0 0 12px;font-weight:700;display:none;}
   .win.on{display:block;}
 
@@ -85,7 +85,7 @@
 
   /* tables, notes */
   table{width:100%;border-collapse:collapse;font-size:14px;} th,td{text-align:left;padding:8px 8px 8px 0;border-bottom:1px solid var(--line);vertical-align:top;} th{font-size:11.5px;text-transform:uppercase;color:var(--dim);letter-spacing:.04em;} tr:last-child td{border-bottom:none;}
-  .note{border:1px solid rgba(255,184,77,.45);background:rgba(255,184,77,.08);border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px;}
+  .note{border:1px solid rgba(79,200,240,.45);background:rgba(79,200,240,.08);border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px;}
   .chk label{display:flex;gap:12px;align-items:flex-start;color:var(--ink);font-size:14.5px;margin:0 0 10px;font-weight:400;} .chk input{width:22px;min-height:22px;margin-top:1px;flex:none;accent-color:var(--good);}
   .idea{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0;} .idea:last-child{border:none;} .idea>span{flex:1;font-size:14px;}
   .pill{display:inline-block;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--dim);margin-right:6px;white-space:nowrap;}

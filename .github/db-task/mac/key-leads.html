@@ -78,12 +78,12 @@
       btn.style.display = 'block';
       btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
       btn.setAttribute('aria-label', st ? 'Owner signed in. Open the owner menu' : 'Owner sign-in'); btn.title = st ? 'Owner signed in' : 'Owner sign-in';
-      btn.style.background = st ? '#0f5d34' : '#7a2a00';
+      btn.style.background = st ? '#0f5d34' : '#0b3a73';
     });
   }
   function banner(text) {
     if (!document.body) return;
-    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; pinPad(); }); document.body.appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#0b3a73;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; pinPad(); }); document.body.appendChild(bar); }
     bar.textContent = text; bar.style.display = 'block'; setTimeout(function () { if (bar) bar.style.display = 'none'; }, 9000);
   }
   // OWNERPIN01 (Shane, 2026-11-25: "I just want to do pin numbers everywhere", no emails and passwords): the owner button opens the blue round PIN pad (same look as the LVR PIN screen).
@@ -402,7 +402,7 @@ header{background:rgba(5,11,22,.6)!important;border-bottom-color:rgba(255,255,25
 table th{color:rgba(255,255,255,.66)!important;}table td,table th{border-color:rgba(255,255,255,.12)!important;}
 .tabs button[aria-selected=true]{color:#fff!important;}
 #gate button{color:#fff!important;}
-#gateMsg{color:#ffcf8a!important;}
+#gateMsg{color:#9fd6f2!important;}
 dialog,.modal,.sheet{background:#0e2347!important;color:#ffffff!important;}
 dialog::backdrop{background:rgba(0,0,0,.6)!important;}
 button[style*="2147482000"]{background:rgba(13,29,51,.92)!important;color:#ffffff!important;border-color:rgba(255,255,255,.35)!important;}

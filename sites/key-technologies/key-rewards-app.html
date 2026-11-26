@@ -16,10 +16,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
-  :root{--bg:#0f171e;--bg2:#121a22;--card:#19232f;--card2:#222f3d;--line:#2c3c4e;--ink:#f6f8fb;--dim:#9db0c4;--key:#00a8e1;--key2:#4fc8f0;--good:#4fc8f0;--warn:#ffb84d;--gold:#f0a91a;--row:56px;--r:16px;color-scheme:dark;}
+  :root{--bg:#0f171e;--bg2:#121a22;--card:#19232f;--card2:#222f3d;--line:#2c3c4e;--ink:#f6f8fb;--dim:#9db0c4;--key:#00a8e1;--key2:#4fc8f0;--good:#4fc8f0;--warn:#9fd6f2;--gold:#4fc8f0;--row:56px;--r:16px;color-scheme:dark;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:var(--ink);font:15px/1.35 Lato,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;}
-  #app{height:100vh;height:-webkit-fill-available;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:radial-gradient(700px 320px at 85% -80px,rgba(0,168,225,.16) 0%,transparent 70%),radial-gradient(520px 260px at 0% 0%,rgba(240,169,26,.07) 0%,transparent 70%),var(--bg);padding-top:env(safe-area-inset-top);}
+  #app{height:100vh;height:-webkit-fill-available;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:radial-gradient(700px 320px at 85% -80px,rgba(0,168,225,.16) 0%,transparent 70%),radial-gradient(520px 260px at 0% 0%,rgba(0,168,225,.07) 0%,transparent 70%),var(--bg);padding-top:env(safe-area-inset-top);}
   button{font:inherit;color:inherit;}
   a{color:var(--key2);}
   :focus-visible{outline:2px solid var(--key2);outline-offset:2px;}
@@ -47,10 +47,10 @@
   .btn.g{background:linear-gradient(135deg,#00a8e1,#0a86c0);border-color:transparent;color:#04121b;box-shadow:0 6px 16px rgba(0,168,225,.28);} .btn.p{background:linear-gradient(135deg,#00a8e1,#0a86c0);border-color:transparent;color:#04121b;}
   .btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
   .two{display:grid;grid-template-columns:1.25fr 1fr;gap:10px;}
-  .note{border:1px solid rgba(255,184,77,.4);background:rgba(255,184,77,.07);border-radius:14px;padding:10px 12px;font-size:14px;}
+  .note{border:1px solid rgba(79,200,240,.4);background:rgba(79,200,240,.07);border-radius:14px;padding:10px 12px;font-size:14px;}
   /* activity */
   .act{display:flex;flex-direction:column;} .arow{height:34px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);font-size:14px;} .arow:last-child{border:none;}
-  .dot{width:26px;min-width:26px;max-width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(79,200,240,.14);color:var(--good);font-weight:900;font-size:14px;} .dot.u{background:rgba(255,184,77,.14);color:var(--warn);} .dot.e{background:rgba(79,200,240,.14);color:var(--key2);}
+  .dot{width:26px;min-width:26px;max-width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(79,200,240,.14);color:var(--good);font-weight:900;font-size:14px;} .dot.u{background:rgba(79,200,240,.14);color:var(--warn);} .dot.e{background:rgba(79,200,240,.14);color:var(--key2);}
   .arow span:not(.dot){flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .arow b{flex:none;font-variant-numeric:tabular-nums;} .pos{color:var(--good);} .neg{color:var(--warn);}
   .empty{color:var(--dim);padding:14px 4px;font-size:14px;}
   /* people */

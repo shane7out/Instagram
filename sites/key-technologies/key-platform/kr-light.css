@@ -1,6 +1,6 @@
 /* Key Rewards light theme (white header, light-blue sheet, white cards, navy hero card). Used by the phone app, the member wallet,
    the friend join page, the check-in page and the dashboard. Dark remains available: More > Switch theme (kept in localStorage kr_theme). */
-html[data-theme="light"]{--bg:#eef4fc;--card:#ffffff;--card2:#e8f0fb;--line:#d5e1f3;--ink:#0b1b4d;--dim:#566a94;--key:#0a8de6;--key2:#0a6fb8;--blue:#0a8de6;--blue2:#0a6fb8;--good:#0a6fb8;--warn:#a85f00;--gold:#b97a00;color-scheme:light;}
+html[data-theme="light"]{--bg:#eef4fc;--card:#ffffff;--card2:#e8f0fb;--line:#d5e1f3;--ink:#0b1b4d;--dim:#566a94;--key:#0a8de6;--key2:#0a6fb8;--blue:#0a8de6;--blue2:#0a6fb8;--good:#0a6fb8;--warn:#07508a;--gold:#0a6fb8;color-scheme:light;}
 html[data-theme="light"] .kd{display:none;} html[data-theme="dark"] .kl,html:not([data-theme]) .kl{display:none;}
 html[data-theme="light"] body,html[data-theme="light"] html{background:#fff;color:var(--ink);}
 html[data-theme="light"] #app{background:#fff;}
@@ -23,16 +23,16 @@ html[data-theme="light"] button.b{background:#fff;color:var(--ink);border-color:
 html[data-theme="light"] .amt button{background:#f3f8ff;color:var(--ink);border-color:#cbdaf0;}
 /* cards */
 html[data-theme="light"] .tile,html[data-theme="light"] .who,html[data-theme="light"] .amt,html[data-theme="light"] .erow,html[data-theme="light"] .lot,html[data-theme="light"] .card,html[data-theme="light"] .kpi,html[data-theme="light"] .istat,html[data-theme="light"] .ok{background:#fff;border-color:#d8e5f6;box-shadow:0 4px 14px rgba(20,60,140,.07);}
-html[data-theme="light"] .lot.soon{background:linear-gradient(90deg,#fff1d6,#fff 62%);} html[data-theme="light"] .lot.soon .t small{color:#8a5200;}
+html[data-theme="light"] .lot.soon{background:linear-gradient(90deg,#e3f1fd,#fff 62%);} html[data-theme="light"] .lot.soon .t small{color:#07508a;}
 html[data-theme="light"] .istat.good{background:#e6f3fe;border-color:#9cc9f3;color:var(--ink);}
-html[data-theme="light"] .warn,html[data-theme="light"] .note{background:#fff4dc;border-color:#f0c878;color:#6e4300;}
+html[data-theme="light"] .warn,html[data-theme="light"] .note{background:#e3f1fd;border-color:#9cc8ee;color:#07508a;}
 html[data-theme="light"] .arow,html[data-theme="light"] .prow,html[data-theme="light"] .trow{border-color:#dbe6f6;} html[data-theme="light"] .prow:active{background:#f1f6fd;}
 html[data-theme="light"] .chev{stroke:#9db0cf;}
-html[data-theme="light"] .dot{background:rgba(10,141,230,.12);color:#0a6fb8;} html[data-theme="light"] .dot.u{background:rgba(184,106,0,.14);color:#a85f00;} html[data-theme="light"] .dot.e{background:rgba(10,141,230,.12);color:#0a6fb8;}
-html[data-theme="light"] .pos{color:#0a6fb8;} html[data-theme="light"] .neg{color:#a85f00;}
-html[data-theme="light"] .tag,html[data-theme="light"] .chip.open,html[data-theme="light"] .chip.closed{background:rgba(10,141,230,.1);color:#0a6fb8;border-color:rgba(10,141,230,.4);} html[data-theme="light"] .lot.soon .tag{background:rgba(184,106,0,.12);color:#8a5200;border-color:rgba(184,106,0,.4);}
+html[data-theme="light"] .dot{background:rgba(10,141,230,.12);color:#0a6fb8;} html[data-theme="light"] .dot.u{background:rgba(10,111,184,.14);color:#07508a;} html[data-theme="light"] .dot.e{background:rgba(10,141,230,.12);color:#0a6fb8;}
+html[data-theme="light"] .pos{color:#0a6fb8;} html[data-theme="light"] .neg{color:#07508a;}
+html[data-theme="light"] .tag,html[data-theme="light"] .chip.open,html[data-theme="light"] .chip.closed{background:rgba(10,141,230,.1);color:#0a6fb8;border-color:rgba(10,141,230,.4);} html[data-theme="light"] .lot.soon .tag{background:rgba(10,111,184,.12);color:#07508a;border-color:rgba(10,111,184,.4);}
 html[data-theme="light"] .chip{color:#566a94;border-color:#d0def3;}
-html[data-theme="light"] .tmeta i{background:#0a8de6;color:#fff;} html[data-theme="light"] .bdg{background:#ff9d2e;color:#2a1a00;box-shadow:0 0 0 3px #fff;}
+html[data-theme="light"] .tmeta i{background:#0a8de6;color:#fff;} html[data-theme="light"] .bdg{background:#0a8de6;color:#2a1a00;box-shadow:0 0 0 3px #fff;}
 html[data-theme="light"] .auto{color:#0a6fb8;}
 /* hero: stays a dark navy card, like the wallet */
 html[data-theme="light"] .hero{--ink:#fff;--dim:#bcd0f2;background:linear-gradient(155deg,#12388a 0%,#0c2a6b 55%,#0a1f50 100%);border-color:rgba(255,255,255,.12);box-shadow:0 12px 26px rgba(12,42,107,.3),inset 0 1px 0 rgba(255,255,255,.12);color:#fff;}
@@ -53,7 +53,7 @@ html[data-theme="light"] .bigbal b{color:#0a6fb8;}
 /* chat bubbles */
 html[data-theme="light"] .bub.me{background:linear-gradient(135deg,#0a8de6,#0a6fb8);color:#fff;} html[data-theme="light"] .bub.them{background:#fff;border-color:#d5e2f5;color:var(--ink);}
 html[data-theme="light"] #tForm input{background:#fff;}
-html[data-theme="light"] .msg.good{color:#0a6fb8;} html[data-theme="light"] .msg.err,html[data-theme="light"] .msg{color:#a85f00;}
+html[data-theme="light"] .msg.good{color:#0a6fb8;} html[data-theme="light"] .msg.err,html[data-theme="light"] .msg{color:#07508a;}
 html[data-theme="light"] .empty,html[data-theme="light"] .fine,html[data-theme="light"] .dim{color:#566a94;}
 /* member-facing pages (check-in, join) */
 html[data-theme="light"] body{background:#eef4fc;}
@@ -65,7 +65,7 @@ html[data-theme="light"] .pill{background:#e6f3fe;color:#0a6fb8;border-color:#9c
 html[data-theme="light"] header.top{background:rgba(255,255,255,.95);border-bottom-color:#d8e5f6;} html[data-theme="light"] .bar a.back{background:#fff;color:var(--ink);border-color:#cbdaf0;}
 html[data-theme="light"] th{color:#566a94;} html[data-theme="light"] td,html[data-theme="light"] th{border-bottom-color:#dbe6f6;}
 html[data-theme="light"] .bars i{background:linear-gradient(180deg,#4fb3ff,#0a8de6);}
-html[data-theme="light"] .chip.draft{color:#566a94;} html[data-theme="light"] .chip.pending{color:#a85f00;border-color:rgba(184,106,0,.45);} html[data-theme="light"] .chip.approved{color:#0a6fb8;border-color:rgba(10,141,230,.5);} html[data-theme="light"] .chip.rejected{color:#b3302a;border-color:rgba(179,48,42,.45);}
+html[data-theme="light"] .chip.draft{color:#566a94;} html[data-theme="light"] .chip.pending{color:#07508a;border-color:rgba(10,111,184,.45);} html[data-theme="light"] .chip.approved{color:#0a6fb8;border-color:rgba(10,141,230,.5);} html[data-theme="light"] .chip.rejected{color:#b3302a;border-color:rgba(179,48,42,.45);}
 html[data-theme="light"] .win{background:#e6f3fe;border-color:#9cc9f3;}
 /* send and circle screens (member wallet) */
 html[data-theme="light"] .achips button{background:#fff;color:#3f5380;border-color:#d0def3;} html[data-theme="light"] .achips button[aria-pressed=true]{background:rgba(10,141,230,.12);border-color:#0a8de6;color:var(--ink);}

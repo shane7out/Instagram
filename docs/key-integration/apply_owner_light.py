@@ -36,7 +36,7 @@ header{background:rgba(5,11,22,.6)!important;border-bottom-color:rgba(255,255,25
 table th{color:rgba(255,255,255,.66)!important;}table td,table th{border-color:rgba(255,255,255,.12)!important;}
 .tabs button[aria-selected=true]{color:#fff!important;}
 #gate button{color:#fff!important;}
-#gateMsg{color:#ffcf8a!important;}
+#gateMsg{color:#9fd6f2!important;}
 dialog,.modal,.sheet{background:#0e2347!important;color:#ffffff!important;}
 dialog::backdrop{background:rgba(0,0,0,.6)!important;}
 button[style*="2147482000"]{background:rgba(13,29,51,.92)!important;color:#ffffff!important;border-color:rgba(255,255,255,.35)!important;}

@@ -79,12 +79,12 @@
       btn.style.display = 'block';
       btn.textContent = st ? '🔒 Owner signed in' : '🔓 Owner sign-in';
       btn.setAttribute('aria-label', st ? 'Owner signed in. Open the owner menu' : 'Owner sign-in'); btn.title = st ? 'Owner signed in' : 'Owner sign-in';
-      btn.style.background = st ? '#0f5d34' : '#7a2a00';
+      btn.style.background = st ? '#0f5d34' : '#0b3a73';
     });
   }
   function banner(text) {
     if (!document.body) return;
-    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#7a2a00;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; pinPad(); }); document.body.appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.setAttribute('role', 'alert'); bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:60px;z-index:2147482001;background:#0b3a73;color:#fff;padding:12px 14px;border-radius:12px;font:600 14px system-ui,sans-serif;cursor:pointer;'; bar.addEventListener('click', function () { bar.style.display = 'none'; pinPad(); }); document.body.appendChild(bar); }
     bar.textContent = text; bar.style.display = 'block'; setTimeout(function () { if (bar) bar.style.display = 'none'; }, 9000);
   }
   // OWNERPIN01 (Shane, 2026-11-25: "I just want to do pin numbers everywhere", no emails and passwords): the owner button opens the blue round PIN pad (same look as the LVR PIN screen).
@@ -274,7 +274,7 @@
 <meta name="theme-color" content="#0f171e">
 <link rel="stylesheet" href="/fonts/lato.css">
 <style>
-:root{--bg:#0f171e;--card:#232f3e;--card2:#1a2430;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--key:#00a8e1;--ok:#5fd38d;--warn:#f3d884;--bad:#ff8a7a}
+:root{--bg:#0f171e;--card:#232f3e;--card2:#1a2430;--line:#37475a;--ink:#f6f8fb;--dim:#aab9ca;--key:#00a8e1;--ok:#5fd38d;--warn:#9fd6f2;--bad:#ff8a7a}
 *{box-sizing:border-box}
 html,body{margin:0;background:#0b1117;color:var(--ink);font:400 16px/1.45 Lato,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 body{background:#0b1117 radial-gradient(110% 380px at 50% 0,#17303f 0,#0b1117 100%) no-repeat;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
@@ -346,8 +346,8 @@ nav .dot{position:absolute;top:5px;right:calc(50% - 22px);min-width:18px;height:
 .x{flex:none;font:inherit;font-size:15px;font-weight:900;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:11px;min-height:44px;padding:0 14px;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;max-width:92%;background:#e9f9ef;color:#0d3a1f;font-weight:900;font-size:15px;padding:12px 18px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .toast[hidden]{display:none}
-.banner{background:#33290f;border:1px solid #7a6420;color:#f3e2a6;border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px}
-.banner .btn{margin-top:8px;min-height:44px;font-size:14px;background:#f3d884}
+.banner{background:#0e2347;border:1px solid #2f5f9e;color:#d6ecff;border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14px}
+.banner .btn{margin-top:8px;min-height:44px;font-size:14px;background:#9fd6f2}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .stat small{display:block;font-size:11.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
@@ -368,7 +368,7 @@ nav .dot{position:absolute;top:5px;right:calc(50% - 22px);min-width:18px;height:
 .prow .t small{display:block;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .modesw{display:flex;gap:0;margin:10px auto 4px;max-width:420px;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;overflow:hidden}
 .modesw button{flex:1;min-height:44px;padding:0 10px;border:0;background:none;color:#fff;font:800 13.5px Lato,system-ui,sans-serif;cursor:pointer}
-.modesw button[aria-pressed="true"]{background:linear-gradient(140deg,#f6d467,#e6b83a 55%,#d7a21e);color:#2b1d05}
+.modesw button[aria-pressed="true"]{background:linear-gradient(140deg,#4fc8f0,#00a8e1 55%,#0090c8);color:#04202e}
 .modenote{text-align:center;font-size:12.5px;color:var(--dim);margin:0 auto 6px;max-width:420px}
 </style>
 </head>
@@ -402,7 +402,7 @@ var DEF_LVR={
 };
 var DEF=MODE==='lvr'?DEF_LVR:DEF_KT;
 var MSGN={open:'First hello',follow:'Check in',ask:'Answer'};
-var ST={new:['Not messaged yet','#aab9ca'],sent:['Waiting for a reply','#f3d884'],replied:['They replied','#5fd38d'],call:['Call booked','#4fc3f0'],won:['Client','#5fd38d'],no:['Not interested','#ff8a7a'],cold:['No answer','#8a97a8']};
+var ST={new:['Not messaged yet','#aab9ca'],sent:['Waiting for a reply','#9fd6f2'],replied:['They replied','#5fd38d'],call:['Call booked','#4fc3f0'],won:['Client','#5fd38d'],no:['Not interested','#ff8a7a'],cold:['No answer','#8a97a8']};
 var D=load(),canSave=true,tab='today',filter='all',q='',lastFocus=null;
 function blank(){return {v:1,goal:60,pace:20,msgs:{},nextId:1,lastBackup:0,leads:[],removed:[]}}
 function load(){try{var o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&Array.isArray(o.leads)){var b=blank();for(var k in o)b[k]=o[k];if(!Array.isArray(b.removed))b.removed=[];if(!b.goalSet&&(!b.goal||b.goal===25))b.goal=60;b.leads.forEach(function(l){if(!l.key)l.key='m'+l.id+'x'+(+l.t||0).toString(36)});Object.keys(b.msgs||{}).forEach(function(k){if(typeof b.msgs[k]==='string'&&b.msgs[k].length>MAXMSG)delete b.msgs[k]});return b}}catch(e){}return blank()}
@@ -755,7 +755,7 @@ function vMore(v){
 
  v.appendChild(h('h2',{text:'Daily goal'}));
  var gi=h('input',{type:'number',inputmode:'numeric',min:'1',max:'500',value:String(D.goal),'aria-label':'Messages per day'});
- var gw=h('p',{class:'note',style:'color:#f3d884'});function gwr(){gw.textContent=D.goal>100?'Heads up: Instagram can slow down or restrict an account that sends hundreds of new messages a day, especially fast. Spread them out through the day and keep the pace timer on.':''}gwr();
+ var gw=h('p',{class:'note',style:'color:#9fd6f2'});function gwr(){gw.textContent=D.goal>100?'Heads up: Instagram can slow down or restrict an account that sends hundreds of new messages a day, especially fast. Spread them out through the day and keep the pace timer on.':''}gwr();
  gi.addEventListener('input',function(){var n=Math.max(1,Math.min(500,parseInt(gi.value,10)||60));D.goal=n;D.goalSet=true;save();gwr()});
  var pi=h('input',{type:'number',inputmode:'numeric',min:'0',max:'300',value:String(D.pace==null?20:D.pace),'aria-label':'Seconds to wait between messages'});
  pi.addEventListener('input',function(){var n=Math.max(0,Math.min(300,parseInt(pi.value,10)||0));D.pace=n;save()});
