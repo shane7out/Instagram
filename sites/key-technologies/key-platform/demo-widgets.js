@@ -206,16 +206,46 @@ T.mobileapp=function(root){
  preset();
 };
 
-/* ---------- 14 Social Media Management ---------- */
+/* ---------- 14 Social Media Management: content approval dashboard ---------- */
 T.social=function(root){
- var posts=[['Mon','Instagram','Monday motivation from the team'],['Tue','Facebook','New seasonal menu preview'],['Wed','Instagram','Behind the scenes in the kitchen'],['Thu','Facebook','Customer spotlight'],['Fri','Instagram','Weekend special announced'],['Sat','Instagram','Live from the farmers market'],['Sun','Facebook','Sunday brunch reminder']].map(function(p,i){return {d:p[0],pl:p[1],t:p[2],st:i<2?'Scheduled':'Draft'}});
- root.innerHTML='<div class="two-columns"><div class="panel"><div class="panel-heading"><h3>This week</h3><select id="sp" style="width:auto" aria-label="Platform"><option>All</option><option>Instagram</option><option>Facebook</option></select></div><div id="sg"></div></div><div class="panel"><h3>Post details</h3><div id="sd" class="muted">Choose a post.</div></div></div><div class="metrics three" style="margin-top:14px"><div class="metric"><label>Draft</label><strong id="s1">0</strong></div><div class="metric"><label>Approved</label><strong id="s2">0</strong></div><div class="metric"><label>Scheduled</label><strong id="s3">0</strong></div></div><p class="note">Nothing goes live without a person approving it. In this demo nothing is posted anywhere.</p>';
- var sel=-1;function draw(){var f=q('#sp',root).value;q('#sg',root).innerHTML=posts.map(function(p,i){return (f==='All'||p.pl===f)?'<button class="mail-item'+(i===sel?' active':'')+'" data-i="'+i+'" type="button"><strong>'+p.d+' - '+p.pl+'</strong><small>'+esc(p.t)+'</small><small>'+tag(p.st,p.st==='Scheduled'?'solid':p.st==='Approved'?'':'mute')+'</small></button>':''}).join('');
-  ['Draft','Approved','Scheduled'].forEach(function(s,i){q('#s'+(i+1),root).textContent=posts.filter(function(p){return p.st===s}).length});
-  on(root,'#sg [data-i]','click',function(){sel=+this.getAttribute('data-i');draw();show()})}
- function show(){var p=posts[sel];if(!p)return;q('#sd',root).innerHTML='<p style="color:var(--ink)"><b>'+p.d+' on '+p.pl+'</b></p><p>'+esc(p.t)+'. Draft caption and image prepared by the system, in the brand voice.</p><p class="micro">Status: '+p.st+'</p><div class="action-row"><button class="primary" id="sa" type="button"'+(p.st!=='Draft'?' disabled':'')+'>Approve</button><button class="outline" id="ss2" type="button"'+(p.st!=='Approved'?' disabled':'')+'>Schedule</button></div>';
-  q('#sa',root).onclick=function(){p.st='Approved';draw();show();say('Approved (demo)')};q('#ss2',root).onclick=function(){p.st='Scheduled';draw();show();say('Scheduled (demo, not posted)')}}
- q('#sp',root).onchange=draw;draw();
+ /* Fictional sample data. The client uploads a video or photo, the system checks it against the brand rules, it gets a green check (or waits for a person), the client posts it, and we compare what was posted with what was approved. */
+ var rules=['Brand voice and tone','No banned words or hype claims','Prices, hours and offers match the approved list','Music and images are licensed','Required tags and disclosures (#ad) are present'];
+ var items=[
+  {k:'Reel',c:'Sunrise Bakery',t:'Weekend pastry special',cap:'Fresh cinnamon rolls, Saturday and Sunday, while they last.',st:'Uploaded'},
+  {k:'Story',c:'Sunrise Bakery',t:'Meet the baker',cap:'Meet Dana, our head baker. She starts at 4 AM so you do not have to.',st:'Uploaded'},
+  {k:'Post',c:'Sunrise Bakery',t:'Best bread in town, guaranteed',cap:'The BEST bread in town, guaranteed. Nobody beats us!',st:'Uploaded',bad:'Contains a guarantee and a "best in town" claim that is not on the approved list.'},
+  {k:'Reel',c:'Sunrise Bakery',t:'Patio is open',cap:'Our patio is open daily from 8 AM. Bring a friend.',st:'Approved'},
+  {k:'Post',c:'Sunrise Bakery',t:'Happy hour coffee',cap:'Coffee happy hour, 2 to 4 PM, weekdays.',st:'Posted',posted:'Coffee happy hour, 2 to 4 PM, weekdays.'},
+  {k:'Story',c:'Sunrise Bakery',t:'New fall menu',cap:'The fall menu is here. Come try the pumpkin loaf.',st:'Posted',posted:'The fall menu is here. Come try the pumpkin loaf. 50% off all week!'}
+ ];
+ root.innerHTML='<div class="metrics three" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><label>Waiting for the check</label><strong id="m1">0</strong></div><div class="metric"><label>Green check, ready to post</label><strong id="m2">0</strong></div><div class="metric"><label>Posted and matching</label><strong id="m3">0</strong></div><div class="metric"><label>Needs attention</label><strong id="m4">0</strong></div></div>'+
+  '<div class="two-columns" style="margin-top:14px"><div class="panel"><div class="panel-heading"><h3>Content queue</h3>'+tag('Fictional client','outline')+'</div><div id="ql"></div><div class="action-row"><button class="outline" id="qu" type="button">Upload a video (demo)</button></div></div><div class="panel"><h3>Details</h3><div id="qd" class="muted">Choose an item to see its checks and next step.</div></div></div>';
+ var sel=-1,n=0;
+ function state(x){if(x.st==='Posted')return x.posted===x.cap?'Matched':'Different';return x.st}
+ function badge(x){var s=state(x);return tag(s==='Approved'?'Green check':s==='Matched'?'Posted, matches':s==='Different'?'Posted, different':s==='Needs a person'?'Needs a person':s==='Uploaded'?'Uploaded':s,s==='Different'||s==='Needs a person'?'solid':s==='Approved'||s==='Matched'?'':'mute')}
+ function draw(){
+  q('#ql',root).innerHTML=items.map(function(x,i){return '<button class="mail-item'+(i===sel?' active':'')+'" data-i="'+i+'" type="button"><strong>'+esc(x.k)+': '+esc(x.t)+'</strong><small>'+esc(x.c)+'</small><small>'+badge(x)+'</small></button>'}).join('');
+  q('#m1',root).textContent=items.filter(function(x){return x.st==='Uploaded'}).length;
+  q('#m2',root).textContent=items.filter(function(x){return x.st==='Approved'}).length;
+  q('#m3',root).textContent=items.filter(function(x){return state(x)==='Matched'}).length;
+  q('#m4',root).textContent=items.filter(function(x){var s=state(x);return s==='Needs a person'||s==='Different'}).length;
+  on(root,'#ql [data-i]','click',function(){sel=+this.getAttribute('data-i');draw();show()})}
+ function show(){var x=items[sel];if(!x){return}var s=state(x),h='<p style="color:var(--ink)"><b>'+esc(x.k)+': '+esc(x.t)+'</b></p><p class="micro">Approved caption</p><p>'+esc(x.cap)+'</p>';
+  if(x.checked){h+='<p class="micro" style="margin-top:10px;font-weight:700">What the system checked</p>'+rules.map(function(r,i){var fail=x.bad&&i===1;return '<div class="rowstat"><span>'+esc(r)+'</span><span>'+(fail?'Flagged':'Passed')+'</span></div>'}).join('');if(x.bad)h+='<p class="micro" style="margin-top:8px">'+esc(x.bad)+' A person looks at it before it can go live.</p>'}
+  if(s==='Matched')h+='<p class="success-text" style="margin-top:10px">We looked at what was posted and it matches what was approved.</p>';
+  if(s==='Different')h+='<p class="micro" style="margin-top:10px;font-weight:700">What was actually posted</p><p>'+esc(x.posted)+'</p><p class="micro">The posted caption is not the approved one: an offer was added that was never approved. The client and a person are told right away.</p>';
+  h+='<div class="action-row" style="margin-top:12px">';
+  if(s==='Uploaded')h+='<button class="primary" id="b1" type="button">Run the check</button>';
+  if(s==='Needs a person')h+='<button class="primary" id="b2" type="button">A person approves</button><button class="outline" id="b3" type="button">Ask for changes</button>';
+  if(s==='Approved')h+='<button class="primary" id="b4" type="button">Client posts it as approved</button><button class="outline" id="b5" type="button">Client posts it with a change</button>';
+  h+='</div>';q('#qd',root).innerHTML=h;
+  var b;if(b=q('#b1',root))b.onclick=function(){x.checked=true;x.st=x.bad?'Needs a person':'Approved';draw();show();say(x.bad?'Flagged for a person (demo)':'Green check (demo)')};
+  if(b=q('#b2',root))b.onclick=function(){x.bad=null;x.cap=x.cap.replace(/guaranteed|BEST|Nobody beats us!/g,'').replace(/\s+/g,' ').trim()||x.cap;x.st='Approved';draw();show();say('Approved by a person (demo)')};
+  if(b=q('#b3',root))b.onclick=function(){x.st='Uploaded';x.checked=false;draw();show();say('Sent back to the client for changes (demo)')};
+  if(b=q('#b4',root))b.onclick=function(){x.st='Posted';x.posted=x.cap;draw();show();say('Posted as approved (demo, nothing was posted)')};
+  if(b=q('#b5',root))b.onclick=function(){x.st='Posted';x.posted=x.cap+' Free dessert with every order!';draw();show();say('Posted with a change (demo, nothing was posted)')}}
+ q('#qu',root).onclick=function(){n++;items.unshift({k:n%2?'Reel':'Story',c:'Sunrise Bakery',t:'New upload '+n,cap:'Fresh bread, baked this morning. Come say hi.',st:'Uploaded'});sel=0;draw();show();say('Uploaded (demo, no file is sent anywhere)')};
+ draw();
 };
 
 /* ---------- 15 Review & Reputation ---------- */
