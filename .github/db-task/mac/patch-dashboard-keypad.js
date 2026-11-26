@@ -54,6 +54,7 @@ else {
         "    'tourists are always searching for their next great dining experience.\\n\\n' +",
         "    'Would you be open to a quick conversation about how we can partner together? ' +",
         "    'We think ' + n + ' is exactly the kind of place our audience would love.\\n\\n' +",
+        "    'If you are interested, just send me a message back with your phone number, and I will contact you.\\n\\n' +",
         "    'Looking forward to hearing from you!\\n\\n' +",
         "    'Sincerely,\\n\\n' +",
         "    'Shane Christensen\\n' +",
@@ -70,6 +71,20 @@ else {
   const reTail = /(DMRESTORE02[\s\S]*?'Creator of @lasvegas_restaurants)\\n' \+\n    '[^']+';/;
   if (reTail.test(s)) { s = s.replace(reTail, (m, a) => a + "';"); console.log('DMRESTORE03: email address removed from the end of the restaurant message'); }
   else console.log('DMRESTORE03: restaurant message already ends without an email (or was not found)');
+}
+// (6) DMRESTORE04 (Shane, 2026-11-26): "send me a message back with your phone number, and I will contact you" (no ASAP)
+{
+  const reAsk = /('We think ' \+ n \+ ' is exactly the kind of place our audience would love\.\\n\\n' \+\n)(    'Looking forward to hearing from you!)/;
+  if (/send me a message back with your phone number/.test(s)) console.log('DMRESTORE04: contact line already in the restaurant message');
+  else if (reAsk.test(s)) { s = s.replace(reAsk, (m, a1, a2) => a1 + "    'If you are interested, just send me a message back with your phone number, and I will contact you.\\n\\n' +\n" + a2); console.log('DMRESTORE04: contact line added to the restaurant message'); }
+  else console.log('DMRESTORE04: restaurant message not found in the expected shape - left as it is');
+}
+// (7) the follow-up DM: same signature as the first message, no email address and no cell number (Shane, 2026-11-26)
+{
+  const reF = /('Creator of @lasvegas_restaurants)\\n' \+\s*\n\s*'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\\n' \+\s*\n\s*'Cell: \([0-9]{3}\) [0-9]{3}-[0-9]{4}';/g;
+  const hit = (s.match(reF) || []).length;
+  if (hit) { s = s.replace(reF, (m, a1) => a1 + "';"); console.log('DMFOLLOW02: email address and cell number removed from ' + hit + ' message(s)'); }
+  else console.log('DMFOLLOW02: no follow-up message with an email or cell number found (nothing to remove)');
 }
 if (s !== before) fs.writeFileSync(file, s);
 console.log('KEYPADMATCH01 ' + (s === before ? 'no change (nothing to remove)' : 'applied'));
