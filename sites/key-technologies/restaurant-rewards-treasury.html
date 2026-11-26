@@ -348,7 +348,12 @@ body.hlock{overflow:hidden}
 
 .klogo{display:block;text-align:center;margin:0 0 8px}.klogo img{display:inline-block;height:auto}
 </style>
-<link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png"><script src="key-top.js"></script><style id="nosway">html{overscroll-behavior-x:none}body{touch-action:pan-y pinch-zoom}</style></head>
+<link rel="icon" type="image/png" sizes="48x48" href="brand/key-rewards-favicon-48.png"><link rel="icon" type="image/svg+xml" href="brand/key-badge.svg"><link rel="apple-touch-icon" href="brand/key-rewards-apple-180.png"><script src="key-top.js"></script><style id="nosway">html{overscroll-behavior-x:none}body{touch-action:pan-y pinch-zoom}/* CARD BALANCE (Shane, 2026-11-26): bottom block a little higher, "Expires in" smaller and lower, the bottom line always one row. To put the balance on the right instead, add: #pres .gc.sm .bal{flex-direction:row-reverse}#pres .gc.sm .bal .bl{align-items:flex-end;text-align:right}.gc .rt{align-items:flex-start}.gc .rt .cdr{text-align:left!important} */
+#pres .gc.sm .bal{padding-bottom:17px!important}
+#pres .gc.sm .num{padding-top:0!important}
+.gc .rt .cdr,#pres .gc .cd{font-size:8.5px!important;position:relative;top:5px}
+#pres .gc .fineprint,#pres .gc.sm .fineprint{font-size:3.3cqw!important;letter-spacing:0!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important}
+</style></head>
 <body>
 <div class="top" id="modeNote"><b>Owner tool, practice version.</b> Each Key Reward is worth $1 in credit. This page keeps its records in <b>this browser only</b>, so tap <b>Download backup</b> often.</div>
 <div id="dbstat" class="hide" role="status"></div>
