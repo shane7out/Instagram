@@ -19,6 +19,23 @@
   .lab{font-size:13px;color:var(--dim);margin-top:6px;}
   .row{display:flex;gap:10px;}.row .card{flex:1;margin-bottom:14px;}
   .row .big{font-size:34px;}
+
+  /* KG: the gold rewards card, with the key icon next to the points (Shane's rule: points are always shown on the gold card, with the key) */
+  .kg{position:relative;width:100%;aspect-ratio:1.7/1;border-radius:18px;padding:22px 20px 18px;color:#0f171e;text-align:left;overflow:hidden;display:flex;flex-direction:column;container-type:inline-size;
+    background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);box-shadow:0 12px 26px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(80,50,0,.35);margin-bottom:14px;}
+  .kg::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 54%);pointer-events:none;}
+  .kg>*{position:relative;z-index:1;}
+  .kg-brand{font-weight:900;font-size:min(17px,5cqw);letter-spacing:.04em;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35),0 2px 3px rgba(60,35,0,.25);}
+  .kg-sub{font-weight:900;font-size:min(10px,2.9cqw);letter-spacing:.22em;text-transform:uppercase;margin-top:4px;}
+  .kg-badge{position:absolute;right:16px;top:16px;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a3a52,#0f1a2b);border:2px solid #d9a93a;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+  .kg-badge img{width:30px;height:auto;display:block;}
+  .kg-name{margin-top:auto;font-weight:900;font-size:min(18px,5.2cqw);letter-spacing:.1em;text-transform:uppercase;line-height:1.15;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35);}
+  .kg-bal{margin-top:8px;padding-top:8px;border-top:1px solid rgba(90,55,0,.4);box-shadow:0 -1px 0 rgba(255,255,255,.6);}
+  .kg-bal small{display:block;font-size:min(10px,2.9cqw);letter-spacing:.16em;text-transform:uppercase;font-weight:900;}
+  .kg-bal b{display:flex;align-items:center;gap:10px;font-size:min(40px,12cqw);line-height:1.05;font-weight:900;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35);}
+  .kg-k{width:min(46px,13cqw);height:auto;flex-shrink:0;display:block;}
+  .kgn.pulse{display:inline-block;animation:kgpulse .8s ease;}
+  @keyframes kgpulse{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
   .pulse{animation:pulse .8s ease;}
   @keyframes pulse{0%{transform:scale(1);color:#fff}40%{transform:scale(1.18);color:var(--green)}100%{transform:scale(1);color:#fff}}
   .qr{display:inline-block;background:#fff;padding:12px;border-radius:12px;width:250px;height:250px;margin:6px 0 8px;}
@@ -2348,6 +2365,16 @@ var qrcode = function() {
 </script>
 <script>
   var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com', C = '/lvr_coupons/';
+  var KG_GOLD_KEY = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjAgMTIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkdvbGQga2V5Ij4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0ia2IiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iOCIgeTE9IjE0IiB4Mj0iMjM2IiB5Mj0iMTA2Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRkYzQUUiLz48c3RvcCBvZmZzZXQ9Ii4xMyIgc3RvcC1jb2xvcj0iI0Y5RDc1QyIvPjxzdG9wIG9mZnNldD0iLjI4IiBzdG9wLWNvbG9yPSIjRThCMDJDIi8+PHN0b3Agb2Zmc2V0PSIuNDIiIHN0b3AtY29sb3I9IiNCRTgyMTgiLz48c3RvcCBvZmZzZXQ9Ii41MyIgc3RvcC1jb2xvcj0iI0VGQzQ0MyIvPjxzdG9wIG9mZnNldD0iLjY4IiBzdG9wLWNvbG9yPSIjRkJENjZDIi8+PHN0b3Agb2Zmc2V0PSIuODIiIHN0b3AtY29sb3I9IiNERkE1MjMiLz48c3RvcCBvZmZzZXQ9Ii45MyIgc3RvcC1jb2xvcj0iI0JGODIwRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0EwNjYwOCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ia3MiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCIgeTE9IjE4IiB4Mj0iMCIgeTI9IjEwMiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4zIi8+PHN0b3Agb2Zmc2V0PSIuMzUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iLjY1IiBzdG9wLWNvbG9yPSIjNGEyYTAwIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzZjIzMDAiIHN0b3Atb3BhY2l0eT0iLjQiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9Imt2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjgiIHkxPSIxNCIgeDI9IjIzNiIgeTI9IjEwNiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRkZGQkUwIiBzdG9wLW9wYWNpdHk9Ii44Ii8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iI0ZGRkJFMCIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiM1YTMzMDAiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzVhMzMwMCIgc3RvcC1vcGFjaXR5PSIuMzgiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9ImtlIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHkxPSIxOCIgeDI9IjAiIHkyPSIxMDIiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRkJENiIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNEREE0MkEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2QjQwMDUiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9ImtoIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHkxPSI0MCIgeDI9IjAiIHkyPSI4MiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNWYzODAzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZFOUEwIi8+PC9saW5lYXJHcmFkaWVudD4KPGNsaXBQYXRoIGlkPSJrYyI+PHBhdGggZD0iTTMwIDIwSDcwQTIyIDIyIDAgMCAxIDkyIDQyVjQ2QzkyIDUwIDk4IDUyIDEwOCA1MkgyMjhBOCA4IDAgMCAxIDIzNiA2MEE4IDggMCAwIDEgMjI4IDY4SDIxNlY4OEE2IDYgMCAwIDEgMjEwIDk0SDIwMkE2IDYgMCAwIDEgMTk2IDg4VjY4SDE4NFY4MkE2IDYgMCAwIDEgMTc4IDg4SDE3MEE2IDYgMCAwIDEgMTY0IDgyVjY4SDEwOEM5OCA2OCA5MiA3MCA5MiA3NFY3OEEyMiAyMiAwIDAgMSA3MCAxMDBIMzBBMjIgMjIgMCAwIDEgOCA3OFY0MkEyMiAyMiAwIDAgMSAzMCAyMFoiLz48L2NsaXBQYXRoPgo8ZmlsdGVyIGlkPSJrYmwiIHg9Ii01JSIgeT0iLTMwJSIgd2lkdGg9IjExMCUiIGhlaWdodD0iMTYwJSI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iLjYiLz48L2ZpbHRlcj4KPC9kZWZzPgo8cGF0aCBmaWxsPSJ1cmwoI2tiKSIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMzAgMjBINzBBMjIgMjIgMCAwIDEgOTIgNDJWNDZDOTIgNTAgOTggNTIgMTA4IDUySDIyOEE4IDggMCAwIDEgMjM2IDYwQTggOCAwIDAgMSAyMjggNjhIMjE2Vjg4QTYgNiAwIDAgMSAyMTAgOTRIMjAyQTYgNiAwIDAgMSAxOTYgODhWNjhIMTg0VjgyQTYgNiAwIDAgMSAxNzggODhIMTcwQTYgNiAwIDAgMSAxNjQgODJWNjhIMTA4Qzk4IDY4IDkyIDcwIDkyIDc0Vjc4QTIyIDIyIDAgMCAxIDcwIDEwMEgzMEEyMiAyMiAwIDAgMSA4IDc4VjQyQTIyIDIyIDAgMCAxIDMwIDIwWiBNNDAgNDZhOCA4IDAgMCAwLTggOHYxMmE4IDggMCAwIDAgOCA4aDIwYTggOCAwIDAgMCA4LThWNTRhOCA4IDAgMCAwLTgtOFoiLz4KPHBhdGggZmlsbD0idXJsKCNrcykiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTMwIDIwSDcwQTIyIDIyIDAgMCAxIDkyIDQyVjQ2QzkyIDUwIDk4IDUyIDEwOCA1MkgyMjhBOCA4IDAgMCAxIDIzNiA2MEE4IDggMCAwIDEgMjI4IDY4SDIxNlY4OEE2IDYgMCAwIDEgMjEwIDk0SDIwMkE2IDYgMCAwIDEgMTk2IDg4VjY4SDE4NFY4MkE2IDYgMCAwIDEgMTc4IDg4SDE3MEE2IDYgMCAwIDEgMTY0IDgyVjY4SDEwOEM5OCA2OCA5MiA3MCA5MiA3NFY3OEEyMiAyMiAwIDAgMSA3MCAxMDBIMzBBMjIgMjIgMCAwIDEgOCA3OFY0MkEyMiAyMiAwIDAgMSAzMCAyMFogTTQwIDQ2YTggOCAwIDAgMC04IDh2MTJhOCA4IDAgMCAwIDggOGgyMGE4IDggMCAwIDAgOC04VjU0YTggOCAwIDAgMC04LThaIi8+CjxnIGNsaXAtcGF0aD0idXJsKCNrYykiPjxwYXRoIGQ9Ik0zMCAyMEg3MEEyMiAyMiAwIDAgMSA5MiA0MlY0NkM5MiA1MCA5OCA1MiAxMDggNTJIMjI4QTggOCAwIDAgMSAyMzYgNjBBOCA4IDAgMCAxIDIyOCA2OEgyMTZWODhBNiA2IDAgMCAxIDIxMCA5NEgyMDJBNiA2IDAgMCAxIDE5NiA4OFY2OEgxODRWODJBNiA2IDAgMCAxIDE3OCA4OEgxNzBBNiA2IDAgMCAxIDE2NCA4MlY2OEgxMDhDOTggNjggOTIgNzAgOTIgNzRWNzhBMjIgMjIgMCAwIDEgNzAgMTAwSDMwQTIyIDIyIDAgMCAxIDggNzhWNDJBMjIgMjIgMCAwIDEgMzAgMjBaIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgja3YpIiBzdHJva2Utd2lkdGg9IjQuNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTggMjlDMTggMjUgMjEgMjQgMzAgMjRINjZNMTE0IDU3SDIyNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWx0ZXI9InVybCgja2JsKSIvPjwvZz4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2tlKSIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0zMCAyMEg3MEEyMiAyMiAwIDAgMSA5MiA0MlY0NkM5MiA1MCA5OCA1MiAxMDggNTJIMjI4QTggOCAwIDAgMSAyMzYgNjBBOCA4IDAgMCAxIDIyOCA2OEgyMTZWODhBNiA2IDAgMCAxIDIxMCA5NEgyMDJBNiA2IDAgMCAxIDE5NiA4OFY2OEgxODRWODJBNiA2IDAgMCAxIDE3OCA4OEgxNzBBNiA2IDAgMCAxIDE2NCA4MlY2OEgxMDhDOTggNjggOTIgNzAgOTIgNzRWNzhBMjIgMjIgMCAwIDEgNzAgMTAwSDMwQTIyIDIyIDAgMCAxIDggNzhWNDJBMjIgMjIgMCAwIDEgMzAgMjBaIi8+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNraCkiIHN0cm9rZS13aWR0aD0iMS44IiBkPSJNNDAgNDZhOCA4IDAgMCAwLTggOHYxMmE4IDggMCAwIDAgOCA4aDIwYTggOCAwIDAgMCA4LThWNTRhOCA4IDAgMCAwLTgtOFoiLz4KPC9zdmc+";
+  var KG_DARK_KEY = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgNCAxMTYgNTAiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iS2V5Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iNSIgeDI9IjAiIHkyPSI1MyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzZiNGExMiIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMmUxZjA2Ii8+PHN0b3Agb2Zmc2V0PSIuNiIgc3RvcC1jb2xvcj0iIzRhMzMxMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzI0MTcwMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGZpbGw9InVybCgjZykiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTI0IDkuNUExNy41IDE3LjUgMCAxIDAgMjQgNDQuNUExNy41IDE3LjUgMCAxIDAgMjQgOS41Wk0yNCAyMS41QTUuNSA1LjUgMCAxIDEgMjQgMzIuNUE1LjUgNS41IDAgMSAxIDI0IDIxLjVaIi8+PHBhdGggZD0iTTM2IDIySDEwOEwxMTUgMjdMMTA4IDMySDEwMFY0MUw5NSA0Nkw5MCA0MVYzMkg4NFYzOUw3OSA0NEw3NCAzOVYzMkgzNloiLz48L2c+PC9zdmc+Cg==";
+  // the gold rewards card: brand top-left, key badge top-right, the points with the key icon beside them
+  function kgCard(name, n, idForNumber) {
+    return '<div class="kg"><div class="kg-brand">KeyTechnologies.si</div><div class="kg-sub">Rewards points</div>' +
+      '<span class="kg-badge"><img src="' + KG_GOLD_KEY + '" alt="Key"></span>' +
+      '<div class="kg-name">' + String(name == null ? '' : name).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }) + '</div>' +
+      '<div class="kg-bal"><small>Rewards points balance</small><b><img class="kg-k" src="' + KG_DARK_KEY + '" alt="Key"><span class="kgn"' + (idForNumber ? ' id="' + idForNumber + '"' : '') + '>' + n + '</span></b></div></div>';
+  }
+
   var PAGE = 'https://lvr-data-a60c1.web.app/lvr-coupon.html';
   var params = new URLSearchParams(location.search);
   var slug = (params.get('biz') || '').trim().toLowerCase(), sid = (params.get('e') || '').trim().toLowerCase();
@@ -2375,20 +2402,20 @@ var qrcode = function() {
     var grew = lastTotal !== null && st.total > lastTotal;
     // while she is typing into the join form, only update the numbers: never redraw the page under her fingers
     if (document.getElementById('jf') && !joined) {
-      var kb = document.getElementById('keysBig'); kb.textContent = st.keys; if (grew) { kb.className = 'big pulse'; chime(); }
+      var kb = document.getElementById('keysBig'); kb.textContent = st.keys; if (grew) { kb.className = 'kgn pulse'; chime(); }
       document.getElementById('todayBig').textContent = st.today; document.getElementById('totalBig').textContent = st.total; lastTotal = st.total; return;
     }
     app.innerHTML =
       '<div class="brand">' + esc(program.bizName || '') + '</div>' +
       '<h1>Hi ' + esc(who) + '</h1>' +
-      '<div class="card"><div class="big' + (grew ? ' pulse' : '') + '" id="keysBig">' + st.keys + '</div><div class="lab">reward key' + (st.keys === 1 ? '' : 's') + ' earned</div></div>' +
+      kgCard(program.bizName || 'Key Rewards', st.keys, 'keysBig') + '<div class="lab" style="margin:-4px 0 14px;">reward key' + (st.keys === 1 ? '' : 's') + ' earned</div>' +
       '<div class="row"><div class="card"><div class="big" id="todayBig">' + st.today + '</div><div class="lab">sign-ups today</div></div><div class="card"><div class="big" id="totalBig">' + st.total + '</div><div class="lab">sign-ups in all</div></div></div>' +
       '<div class="card"><div class="say">Show this to your guests</div><div class="qr">' + qr + '</div>' +
         '<div class="note">Guests scan it with their phone camera. Each sign-up through your code earns you ' + st.per + ' reward key' + (st.per === 1 ? '' : 's') + ', and your number above goes up right away.</div></div>' +
       (st.recent.length ? '<div class="card"><div class="say">Latest sign-ups</div><div class="recent">' + st.recent.map(function(t){ return '<div><span>New sign-up</span><span>' + new Date(t).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) + '</span></div>'; }).join('') + '</div></div>' : '') +
       (joined ? '<div class="card"><div class="say">You are in the Key Rewards database</div><div class="note">Your keys will be added to your Key Rewards account using your phone number. You can stop any messages any time: <a href="lvr-optout.html" style="color:var(--light)">stop all messages</a>.</div></div>' : joinCard()) +
       '<div class="note">Keys are added to your Key Rewards account by Las Vegas Restaurants. Guests\' details stay private; you only see the count.</div>';
-    if (grew) chime();
+    if (grew) { var kn = document.getElementById('keysBig'); if (kn) kn.className = 'kgn pulse'; chime(); }
     lastTotal = st.total;
   }
 

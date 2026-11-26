@@ -126,11 +126,11 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await rp.goto(base + '/lvr-redeem.html?biz=exp'); await rp.waitForSelector('#check:not([disabled])'); await rp.fill('#code', ecode); await rp.click('#check'); await rp.waitForSelector('.bad');
   ok('a coupon past its days is shown as expired and cannot be redeemed', /Expired/.test(await rp.textContent('#result')) && (await rp.$('#redeem')) === null);
   // limit
-  await emu('PUT', '/lvr_coupons/programs/full', { bizName: 'Full House', offer: 'Free soda', maxClaims: 1, active: true }, OWNER);
+  await emu('PUT', '/lvr_coupons/programs/full', { bizName: 'Full House', offer: 'Free soda', maxClaims: 1, active: true, validDays: 30 }, OWNER);
   await emu('PUT', '/lvr_coupons/counts/full', 1, OWNER);
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=full'); await page.waitForSelector('.state-note');
   ok('a used-up offer says so', /fully claimed/.test(await page.textContent('#card')));
-  await emu('PUT', '/lvr_coupons/programs/off', { bizName: 'Off', offer: 'x', active: false }, OWNER);
+  await emu('PUT', '/lvr_coupons/programs/off', { bizName: 'Off', offer: 'x', active: false, validDays: 30 }, OWNER);
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=off'); await page.waitForSelector('.state-note');
   ok('a paused offer says so', /isn.t available right now/.test(await page.textContent('#card')));
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=nope'); await page.waitForSelector('.state-note');

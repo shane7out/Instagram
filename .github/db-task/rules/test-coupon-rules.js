@@ -19,7 +19,7 @@ const wtOf = id => ('w' + id).replace(/[^a-z0-9]/g, '').padEnd(32, '0').slice(0,
 const walletFor = (id, c) => ({ ['wallets/' + (c.wt || wtOf(id))]: { biz: c.biz || 'van', id, code: c.code, t: { '.sv': 'timestamp' } } });
 const upd = (id, ek, c, extra) => { c = Object.assign({}, c, { wt: c.wt || wtOf(id) }); return Object.assign({ ['claims/van/' + id]: c, ['idx/van/' + ek]: { code: c.code, id }, ['idx/van/' + c.pk]: { code: c.code, id } }, walletFor(id, c), extra || {}); };
 (async () => {
-  const prog = { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 2, active: true, staffKeys: 2 };
+  const prog = { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 2, active: true, staffKeys: 2, validDays: 30 };
   await t('a stranger cannot create a program', 'anon', 'PUT', '/lvr_coupons/programs/van', prog, false);
   await t('a signed-in stranger cannot create a program', 'other', 'PUT', '/lvr_coupons/programs/van', prog, false);
   await t('the owner creates a program', 'owner', 'PUT', '/lvr_coupons/programs/van', prog, true);
@@ -120,7 +120,7 @@ const upd = (id, ek, c, extra) => { c = Object.assign({}, c, { wt: c.wt || wtOf(
   await t('a program cannot give more than 30 days', 'owner', 'PUT', '/lvr_coupons/programs/long', { bizName: 'Long Co', offer: '$5 off', active: true, validDays: 60 }, false);
   await t('a 30-day program is fine', 'owner', 'PUT', '/lvr_coupons/programs/ok30', { bizName: 'Ok Co', offer: '$5 off', active: true, validDays: 30 }, true);
   await t('a negative number of days is refused', 'owner', 'PUT', '/lvr_coupons/programs/neg', { bizName: 'N', offer: 'x', active: true, validDays: -1 }, false);
-  await t('a program with no days set is accepted (it defaults to 30)', 'owner', 'PUT', '/lvr_coupons/programs/nodays', { bizName: 'D', offer: 'x', active: true }, true);
+  await t('a program with no expiration is refused: every coupon must have one', 'owner', 'PUT', '/lvr_coupons/programs/nodays', { bizName: 'D', offer: 'x', active: true }, false);
   await t('a stranger cannot stretch the days of an existing program', 'anon', 'PUT', '/lvr_coupons/programs/ok30/validDays', 365, false);
   await t('a guest can bring a friend through their own link (g-<their claim id>)', 'anon', 'PATCH', '/lvr_coupons', upd('f1f1f1f1f1', 'f1'.repeat(16), claim({ email: 'friend@example.com', ek: 'f1'.repeat(16), pk: 'f2'.repeat(16), phone: '7025550555', code: 'VAN-FRND1', ref: 'g-c1c1c1c1c1' })), true);
   await t('a guest link to someone who never signed up is refused', 'anon', 'PATCH', '/lvr_coupons', upd('f3f3f3f3f3', 'f3'.repeat(16), claim({ email: 'x2@example.com', ek: 'f3'.repeat(16), pk: 'f4'.repeat(16), phone: '7025550556', code: 'VAN-FRND2', ref: 'g-doesnotexist1' })), false);

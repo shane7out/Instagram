@@ -308,7 +308,7 @@
    "$slug": {
     ".read": true,
     ".write": "auth != null && auth.uid == '__OWNER_UID__'",
-    ".validate": "!newData.exists() || ((!newData.child('validDays').exists() || (newData.child('validDays').isNumber() && newData.child('validDays').val() >= 0 && newData.child('validDays').val() <= 30)) && (!newData.child('usedKeys').exists() || (newData.child('usedKeys').isNumber() && newData.child('usedKeys').val() >= 0 && newData.child('usedKeys').val() <= 100)))"
+    ".validate": "!newData.exists() || ((newData.child('validDays').exists() && newData.child('validDays').isNumber() && newData.child('validDays').val() >= 0 && newData.child('validDays').val() <= 30) && (!newData.child('usedKeys').exists() || (newData.child('usedKeys').isNumber() && newData.child('usedKeys').val() >= 0 && newData.child('usedKeys').val() <= 100)))"
    }
   },
   "counts": {

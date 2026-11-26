@@ -581,7 +581,7 @@ const DAYMS = 86400000, HRMS = 3600000;
   await t('unknown spot under lvr_points (anonymous)', 'anon', 'PUT', L + 'mystery', { a: 1 }, false);
   await t('unknown spot under lvr_points (owner)', 'owner', 'PUT', L + 'mystery', { a: 1 }, false);
   await t('coupons: a stranger cannot create a program', 'anon', 'PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 50 }, false);
-  await t('coupons: the owner creates a program', 'owner', 'PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 50 }, true);
+  await t('coupons: the owner creates a program', 'owner', 'PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 50, validDays: 30 }, true);
   await t('coupons: a loose claim (no duplicate-check entry) is refused', 'anon', 'POST', '/lvr_coupons/claims/van', { name: 'A', email: 'a@example.com', code: '55555' }, false);
   await t('coupons: a stranger cannot read the claims', 'anon', 'GET', '/lvr_coupons/claims', undefined, false);
   await t('coupons: wipe all claims', 'anon', 'DELETE', '/lvr_coupons/claims', undefined, false);
