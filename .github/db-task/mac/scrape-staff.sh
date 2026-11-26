@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command). Car dealership sales people or real estate agents, a TRIAL first, then the full list:
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/scrape-staff.sh?$(date +%s)" -o /tmp/scrape-staff.sh && bash /tmp/scrape-staff.sh cars
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/scrape-staff.sh?$(date +%s)" -o /tmp/scrape-staff.sh && bash /tmp/scrape-staff.sh cars
 #   (agents:   bash /tmp/scrape-staff.sh realtors        full list:   bash /tmp/scrape-staff.sh cars all   or   bash /tmp/scrape-staff.sh realtors all)
 # Opens each business's OWN public "meet our team / agents" page, politely (2.5 seconds between visits, obeys robots.txt, stops if a site says no),
 # and writes the people it shows (name, title, and an email only if the page prints one next to them) into a CSV in your Downloads folder.
@@ -15,8 +15,8 @@ if ! command -v node >/dev/null 2>&1; then echo "Node is not installed on this M
 NV=$(node -p "process.versions.node.split('.')[0]")
 if [ "${NV:-0}" -lt 18 ]; then echo "Your Node is too old (version $NV, needs 18 or newer) - tell Claude."; exit 1; fi
 WORK=/tmp/staff-scrape; rm -rf "$WORK"; mkdir -p "$WORK"; cd "$WORK"
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o scrape-dealer-staff.js "$RAWB/scrape-dealer-staff.js$CB"
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o list.csv "$RAWB/$LIST$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o scrape-dealer-staff.js "$RAWB/scrape-dealer-staff.js$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o list.csv "$RAWB/$LIST$CB"
 if [ ! -s scrape-dealer-staff.js ] || [ ! -s list.csv ]; then echo "Could not download the program or the list - nothing done."; exit 1; fi
 STAMP=$(date +%Y%m%d-%H%M)
 OUT="$HOME/Downloads/$KIND-people-$STAMP.csv"

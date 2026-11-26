@@ -38,7 +38,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # 1) new standalone tool (doesn't touch the dashboard - download + syntax
 #    check on its own, no rollback needed if this part fails, just don't ship it)
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o key-advertisers.html "$RAWB/key-advertisers.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o key-advertisers.html "$RAWB/key-advertisers.html"
 echo "key-advertisers.html: $(wc -c < key-advertisers.html) bytes" >> "$LOG"
 node <<'NODE' >> "$LOG" 2>&1
 const fs = require('fs'), cp = require('child_process');
@@ -63,7 +63,7 @@ PRISTINE="$IDX.pristine-$(date -u +%Y%m%dT%H%M%SZ)"
 cp "$IDX" "$PRISTINE"
 echo "pristine copy: $PRISTINE ($(wc -c < "$PRISTINE") bytes)" >> "$LOG"
 
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dashboard-keytech.js "$RAWB/patch-dashboard-keytech.js"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /tmp/patch-dashboard-keytech.js "$RAWB/patch-dashboard-keytech.js"
 node /tmp/patch-dashboard-keytech.js "$IDX" >> "$LOG" 2>&1
 RC=$?
 echo "   patch-dashboard-keytech.js exit: $RC" >> "$LOG"
@@ -123,7 +123,7 @@ NODE
 # ---------------------------------------------------------------------------
 # 5) deploy + verify
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
 DEP="deploy-overlay.js"
 export OVERLAY_FILES="key-advertisers.html"
 if [ -n "$DEP" ]; then

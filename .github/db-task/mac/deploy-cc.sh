@@ -20,7 +20,7 @@ say(){ echo "$@" >> "$LOG"; }
 # Part A — deploy the CC site (its own Firebase Hosting site, REST, serial upload)
 # ---------------------------------------------------------------------------
 WORK=/tmp/cc-site; mkdir -p "$WORK"; cd "$WORK" || { say "no workdir"; }
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o index.html "https://raw.githubusercontent.com/shane7out/Instagram/${REF}/.github/db-task/fetched/cc.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o index.html "https://raw.githubusercontent.com/shane7out/Instagram/${REF}/.github/db-task/fetched/cc.html"
 say "cc index.html: $(wc -c < index.html) bytes"
 
 node <<'NODE' >> "$LOG" 2>&1
@@ -57,7 +57,7 @@ async function api(method,url,body,raw){
   console.log('RELEASED CC ✅ https://'+SITE+'.web.app');
 })();
 NODE
-say "LIVE CC: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /dev/null -w '%{http_code}' "$CC_URL")"
+say "LIVE CC: $(curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /dev/null -w '%{http_code}' "$CC_URL")"
 
 # ---------------------------------------------------------------------------
 # Part B — add the CC pill to the dashboard and redeploy

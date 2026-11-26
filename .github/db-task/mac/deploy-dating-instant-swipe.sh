@@ -28,7 +28,7 @@ echo "source file: $SRC ($(wc -c < "$SRC") bytes)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-dating-instant-swipe.js "$RAWB/patch-dating-instant-swipe.js"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /tmp/patch-dating-instant-swipe.js "$RAWB/patch-dating-instant-swipe.js"
 echo "patcher: $(wc -c < /tmp/patch-dating-instant-swipe.js) bytes" >> "$LOG"
 node /tmp/patch-dating-instant-swipe.js "$SRC" >> "$LOG" 2>&1
 PATCH_RC=$?

@@ -19,7 +19,7 @@ cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 # ---------------------------------------------------------------------------
 # 1) the page itself
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o sites.html "$RAWB/sites.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o sites.html "$RAWB/sites.html"
 echo "sites.html: $(wc -c < sites.html) bytes, $(grep -c 'class=\"site\"' sites.html) entries" >> "$LOG"
 
 # ---------------------------------------------------------------------------
@@ -71,7 +71,7 @@ if [ -n "$DEP" ]; then
 else
   echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"
 fi
-echo "LIVE /sites.html: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /dev/null -w '%{http_code}' https://lvr-data-a60c1.web.app/sites.html)" >> "$LOG"
+echo "LIVE /sites.html: $(curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /dev/null -w '%{http_code}' https://lvr-data-a60c1.web.app/sites.html)" >> "$LOG"
 echo "LIVE pill on dashboard: $(curl -s https://lvr-data-a60c1.web.app/ | grep -c '/sites.html')" >> "$LOG"
 
 node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/sitespill.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'

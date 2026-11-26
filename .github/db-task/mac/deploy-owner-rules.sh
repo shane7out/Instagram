@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (after owner-setup.sh):
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-rules.sh?$(date +%s)" -o /tmp/deploy-owner-rules.sh && bash /tmp/deploy-owner-rules.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-owner-rules.sh?$(date +%s)" -o /tmp/deploy-owner-rules.sh && bash /tmp/deploy-owner-rules.sh
 #
 # Installs the OWNER-ONLY database rules (settings, approvals, pool and similar can then be changed only by you,
 # signed in). Same safety as deploy-rules.sh: it saves a copy of your current rules first, replaces only the four LVR

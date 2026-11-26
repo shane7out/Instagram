@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-johnny-macs.sh?$(date +%s)" -o /tmp/deploy-johnny-macs.sh && bash /tmp/deploy-johnny-macs.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-johnny-macs.sh?$(date +%s)" -o /tmp/deploy-johnny-macs.sh && bash /tmp/deploy-johnny-macs.sh
 # Publishes the Johnny Mac's Sports Bar & Grill site (rebuilt from johnnymacswings.com) on the LVR dashboard hosting at
 #   lvr-data-a60c1.web.app/johnny-macs.html
 # and adds a "Johnny Mac's" chip to the PIN-pad page next to the other site chips (same look as Private Chef / Saint Rita's).
@@ -18,7 +18,7 @@ cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 send() { node -e 'const fs=require("fs");fetch("'"$DB"'/_debug/diag.json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(fs.readFileSync("/tmp/johnnymacs.txt","utf8").slice(-5000))}).then(()=>console.log("LOG SENT — tell Claude done")).catch(e=>console.log("send failed "+e.message))'; }
 
 # 1) the site
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o johnny-macs.html "$RAWB/johnny-macs-single.html?$(date +%s)"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o johnny-macs.html "$RAWB/johnny-macs-single.html?$(date +%s)"
 SZ=$(wc -c < johnny-macs.html)
 echo "johnny-macs.html: $SZ bytes" >> "$LOG"
 if [ "$SZ" -lt 100000 ] || ! grep -q "Johnny Mac" johnny-macs.html; then
@@ -68,6 +68,6 @@ if [ -n "$DEP" ]; then echo "-- deploying ($DEP) --" >> "$LOG"; OVERLAY_FILES="j
 else echo "NO DASHBOARD DEPLOYER FOUND in $DASH" >> "$LOG"; fi
 sleep 3
 echo "-- live check --" >> "$LOG"
-echo "LIVE /johnny-macs.html: $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /dev/null -w '%{http_code} %{size_download} bytes' https://lvr-data-a60c1.web.app/johnny-macs.html)" >> "$LOG"
+echo "LIVE /johnny-macs.html: $(curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /dev/null -w '%{http_code} %{size_download} bytes' https://lvr-data-a60c1.web.app/johnny-macs.html)" >> "$LOG"
 echo "LIVE chip on dashboard: $(curl -s https://lvr-data-a60c1.web.app/ | grep -c 'johnny-macs.html')" >> "$LOG"
 send; echo "==== done ===="; cat "$LOG"

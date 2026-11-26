@@ -2,7 +2,7 @@
 # Run on the Mac (ONE command): finds Lamborghinis, Ferraris and Porsches for sale by owner within 50 miles of Las Vegas on Craigslist,
 # adds them to the Deals site as one page per make (/lamborghini, /ferrari, /porsche) with tabs on the Deals home page, and puts it live.
 # More makes later: add a line to exotic-makes.json in the repo (make, query, emoji, color, page) and run this again.
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deals-exotics.sh?$(date +%s)" -o /tmp/deals-exotics.sh && bash /tmp/deals-exotics.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deals-exotics.sh?$(date +%s)" -o /tmp/deals-exotics.sh && bash /tmp/deals-exotics.sh
 # Add dealers too:  EXOTIC_PATH=cta bash /tmp/deals-exotics.sh      Wider search (100 miles):  EXOTIC_MILES=100 bash /tmp/deals-exotics.sh        Run it again any time: it adds new cars and removes ads that were taken down.
 set +e
 export EXOTIC_MILES="${EXOTIC_MILES:-50}"
@@ -12,8 +12,8 @@ cd /Users/mac/wholesale-classic-cars || { echo "Could not find the Deals folder 
 [ -f _tools/manual.json ] || { echo "No _tools/manual.json here - nothing changed."; exit 1; }
 LOG=/tmp/exotics.txt; : > "$LOG"
 cp _tools/manual.json _tools/manual.json.bak-exotics
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o _tools/watch-exotics.js "$RAWB/watch-exotics.js?cb=$(date +%s)"
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o _tools/exotic-makes.json "$RAWB/exotic-makes.json?cb=$(date +%s)"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o _tools/watch-exotics.js "$RAWB/watch-exotics.js?cb=$(date +%s)"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o _tools/exotic-makes.json "$RAWB/exotic-makes.json?cb=$(date +%s)"
 if ! node --check _tools/watch-exotics.js 2>/dev/null; then echo "The harvester did not download correctly - nothing changed."; exit 1; fi
 echo "Searching Craigslist (this takes a few minutes: it is polite and slow on purpose)..."
 node _tools/watch-exotics.js 2>&1 | tee -a "$LOG" | grep -E "IMPORTED|ADDED|candidates|ERR"
@@ -49,6 +49,6 @@ NODE
 echo "-- putting it live --" | tee -a "$LOG"
 node _tools/rest-deploy.js >> "$LOG" 2>&1
 sleep 3
-for p in $(node -e 'let m=[];try{m=JSON.parse(require("fs").readFileSync("_tools/exotic-makes.json","utf8"))}catch(e){};console.log((m.length?m.map(x=>x.page):["lamborghini","ferrari","porsche"]).join(" "))'); do echo "LIVE /$p: HTTP $(curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/$p)"; done
+for p in $(node -e 'let m=[];try{m=JSON.parse(require("fs").readFileSync("_tools/exotic-makes.json","utf8"))}catch(e){};console.log((m.length?m.map(x=>x.page):["lamborghini","ferrari","porsche"]).join(" "))'); do echo "LIVE /$p: HTTP $(curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /dev/null -w '%{http_code}' https://classiccarsforsale-co.web.app/$p)"; done
 echo "Tabs on the Deals home page: $(curl -s https://classiccarsforsale-co.web.app/ | grep -o 'tab-exotic' | wc -l | tr -d ' ') found"
 echo "Done. Full log: $LOG   (your list was backed up as _tools/manual.json.bak-exotics)"

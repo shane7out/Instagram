@@ -14,7 +14,7 @@ cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
 PAGES="kt-crm.html key-leads.html key-advertisers.html"
 mkdir -p /tmp/ownerpages-new && rm -f /tmp/ownerpages-new/*
 for f in $PAGES; do
-  curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "/tmp/ownerpages-new/$f" "$RAWB/$f$CB"
+  curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o "/tmp/ownerpages-new/$f" "$RAWB/$f$CB"
   echo "$f: $(wc -c < /tmp/ownerpages-new/$f) bytes" >> "$LOG"
 done
 # sanity: each page must parse, have the sign-in gate, have the sign-in box, and contain no PIN
@@ -41,7 +41,7 @@ if [ "$?" != "0" ]; then
   echo "A page failed its checks - NOTHING was uploaded."; cat "$LOG"; exit 1
 fi
 cp /tmp/ownerpages-new/*.html "$DASH"/
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
 export OVERLAY_FILES="$PAGES"
 echo "-- deploying --" >> "$LOG"
 node deploy-overlay.js >> "$LOG" 2>&1

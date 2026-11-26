@@ -1,3 +1,3 @@
 #!/bin/bash
 # Run on the Mac. Puts back the rules exactly as they were before deploy-owner-rules.sh ran.
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/undo-rules.sh?$(date +%s)" -o /tmp/undo-rules.sh && bash /tmp/undo-rules.sh "$HOME/lvr-rules-backups/LATEST-BEFORE-OWNER.json"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/undo-rules.sh?$(date +%s)" -o /tmp/undo-rules.sh && bash /tmp/undo-rules.sh "$HOME/lvr-rules-backups/LATEST-BEFORE-OWNER.json"

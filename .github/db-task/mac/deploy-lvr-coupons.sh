@@ -39,8 +39,8 @@ LOG=/tmp/lvrcoupondeploy.txt
 
 cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o lvr-coupon.html "$RAWB/lvr-coupon.html"
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o lvr-coupons-admin.html "$RAWB/lvr-coupons-admin.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-coupon.html "$RAWB/lvr-coupon.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o lvr-coupons-admin.html "$RAWB/lvr-coupons-admin.html"
 echo "lvr-coupon.html: $(wc -c < lvr-coupon.html) bytes" >> "$LOG"
 echo "lvr-coupons-admin.html: $(wc -c < lvr-coupons-admin.html) bytes" >> "$LOG"
 
@@ -75,7 +75,7 @@ fi
 # version.json no matter what else was in the folder, so this and every
 # other standalone tool was never actually going live).
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
 DEP="deploy-overlay.js"
 if [ -n "$DEP" ]; then
   echo "-- deploying ($DEP) --" >> "$LOG"

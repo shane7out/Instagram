@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/rr-pin-setup.sh?$(date +%s)" -o /tmp/rr-pin-setup.sh && bash /tmp/rr-pin-setup.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/rr-pin-setup.sh?$(date +%s)" -o /tmp/rr-pin-setup.sh && bash /tmp/rr-pin-setup.sh
 #
 # Makes the PINs for the Key Rewards Treasury. It asks "who is this PIN for?":
 #   * press Return  -> YOUR Treasury PIN (6 digits). It opens keytechnologies.si/restaurant-rewards-treasury.html and lets that
@@ -95,7 +95,7 @@ const derive = (pin, salt) => crypto.pbkdf2Sync(pin, salt, 150000, 32, 'sha256')
   }
   if (didTreasurer) {
     console.log('\nNow the database rules step. It asks for your OWNER email and password (typed here only).\n');
-    try { execSync('curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); } catch (e) { log('The rules step did not finish - run it again.'); }
+    try { execSync('curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); } catch (e) { log('The rules step did not finish - run it again.'); }
     await new Promise(r => setTimeout(r, 2000));
     const a = await status(`${DB}/rr_ledger.json?shallow=true`);
     log((a === 401 || a === 403 ? 'OK   ' : 'FAIL ') + 'a stranger cannot read the Key Rewards ledger (HTTP ' + a + ')');

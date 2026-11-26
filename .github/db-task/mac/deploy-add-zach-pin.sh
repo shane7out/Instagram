@@ -20,7 +20,7 @@ echo "before: $(grep -ao 'APP_VERSION=[0-9]*' "$IDX" | head -1)" >> "$LOG"
 # ---------------------------------------------------------------------------
 # 1) the patch
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/patch-add-zach-pin.js "$RAWB/patch-add-zach-pin.js"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /tmp/patch-add-zach-pin.js "$RAWB/patch-add-zach-pin.js"
 echo "patcher: $(wc -c < /tmp/patch-add-zach-pin.js) bytes" >> "$LOG"
 node /tmp/patch-add-zach-pin.js "$IDX" >> "$LOG" 2>&1
 PATCH_RC=$?

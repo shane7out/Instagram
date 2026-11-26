@@ -1,6 +1,6 @@
 #!/bin/bash
 # DO NOT RUN until Shane says go. Run on the Mac (one command), AFTER deploy-rewards-admin.sh and deploy-dashboard-owner-auth.sh and backup-setup.sh:
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/member-data-cutover.sh?$(date +%s)" -o /tmp/member-data-cutover.sh && bash /tmp/member-data-cutover.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/member-data-cutover.sh?$(date +%s)" -o /tmp/member-data-cutover.sh && bash /tmp/member-data-cutover.sh
 #
 # MEMBER DATA PROTECTION, steps 5 + 6 (plan: docs/key-integration/MEMBER_DATA_PLAN.md). In this order, stopping at the first problem:
 #   0. signs you in (your owner email + password are typed here, nothing is stored), then saves a backup of the member data on THIS Mac (~/lvr-backups/member-move-<date>/)
@@ -14,7 +14,7 @@
 set +e
 export PATH="/Users/mac/Downloads/google-cloud-sdk/bin:/Users/mac/.local/bin:$PATH"
 RAWB="https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task"
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/member-data-lib.js "$RAWB/mac/member-data-lib.js?cb=$(date +%s)"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /tmp/member-data-lib.js "$RAWB/mac/member-data-lib.js?cb=$(date +%s)"
 [ -s /tmp/member-data-lib.js ] || { echo "Could not download the helper - nothing changed."; exit 1; }
 cat > /tmp/member-data-cutover.js <<'NODE'
 const { execSync } = require('child_process');

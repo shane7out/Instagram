@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-xss-fix.sh?$(date +%s)" -o /tmp/deploy-xss-fix.sh && bash /tmp/deploy-xss-fix.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-xss-fix.sh?$(date +%s)" -o /tmp/deploy-xss-fix.sh && bash /tmp/deploy-xss-fix.sh
 # SECURITY FIX (2026-11-11): the Leads, Prospect CRM, Rewards admin and Advertisers pages showed some lead/receipt fields without making them safe first,
 # so a stranger could plant code in a lead that would run in YOUR signed-in page. This takes each page's CURRENT LIVE copy, makes those few spots safe
 # (text-only replacements, nothing else changes), checks the page still parses, and puts it back. A page that cannot be fetched or checked is skipped.
@@ -13,7 +13,7 @@ CB="?cb=$(date +%s)"
 LOG=/tmp/xssfix.txt; : > "$LOG"
 cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
 rm -rf /tmp/xssfix-new && mkdir -p /tmp/xssfix-new
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/xssfix.json "$RAWB/xss-fix.json$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /tmp/xssfix.json "$RAWB/xss-fix.json$CB"
 [ -s /tmp/xssfix.json ] || { echo "Could not get the fix list - nothing changed."; exit 1; }
 PAGES="key-leads.html kt-crm.html lvr-points-admin.html key-advertisers.html"
 DOPAGES=""
@@ -40,7 +40,7 @@ process.exit(bad ? 2 : 0);
 NODE
 if [ "$?" != "0" ]; then echo "A page failed its checks - NOTHING was uploaded."; cat "$LOG"; exit 1; fi
 for f in $DOPAGES; do cp "$DASH/$f" "$DASH/$f.bak-xssfix" 2>/dev/null; cp "/tmp/xssfix-new/$f" "$DASH/$f"; done
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
 export OVERLAY_FILES="$(echo $DOPAGES)"
 echo "-- deploying --" >> "$LOG"
 node deploy-overlay.js >> "$LOG" 2>&1

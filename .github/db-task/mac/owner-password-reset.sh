@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/owner-password-reset.sh?$(date +%s)" -o /tmp/owner-password-reset.sh && bash /tmp/owner-password-reset.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/owner-password-reset.sh?$(date +%s)" -o /tmp/owner-password-reset.sh && bash /tmp/owner-password-reset.sh
 #
 # For when you forgot your OWNER email and/or password. It uses your Google sign-in on this Mac (gcloud), so it needs no old password:
 #   1. finds your owner login (the saved owner id in ~/.lvr/owner-uid),
@@ -52,7 +52,7 @@ function ask(q, hidden) {
   if (up.s !== 200) { console.log('Could not set the password (HTTP ' + up.s + ') - nothing changed.'); return; }
   console.log('The new owner password is set. Use the email above and the password you just typed.');
   const run = ask('\nRun the Treasury rules step now? y/N: ', false).trim();
-  if (/^y/i.test(run)) { try { execSync('curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); } catch (e) { console.log('The rules step did not finish - run it again.'); } }
+  if (/^y/i.test(run)) { try { execSync('curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-key-rules.sh?$(date +%s)" -o /tmp/deploy-key-rules.sh && bash /tmp/deploy-key-rules.sh', { stdio: 'inherit' }); } catch (e) { console.log('The rules step did not finish - run it again.'); } }
 })();
 NODE
 node /tmp/owner-password-reset.js

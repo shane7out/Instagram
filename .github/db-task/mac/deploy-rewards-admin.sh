@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run on the Mac (one command):
-#   curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-rewards-admin.sh?$(date +%s)" -o /tmp/deploy-rewards-admin.sh && bash /tmp/deploy-rewards-admin.sh
+#   curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 "https://raw.githubusercontent.com/shane7out/Instagram/claude/master-file-e6ofy0/.github/db-task/mac/deploy-rewards-admin.sh?$(date +%s)" -o /tmp/deploy-rewards-admin.sh && bash /tmp/deploy-rewards-admin.sh
 # MEMBER DATA PROTECTION, step 4 (2026-11-11): teaches the Rewards admin page (lvr-points-admin) to read each member's phone, email, birthday and link token from EITHER the old place
 # or the new hidden place. Nothing visible changes today (the old place still has them); this must be live BEFORE the members are moved. Takes the page's CURRENT LIVE copy,
 # applies small text replacements (Rewards admin, plus the VIP sign-up page lvr-rewards.html so new sign-ups also use the hidden spot), checks the page still parses, puts it back. Safe to run twice. Nothing in the database is touched.
@@ -13,7 +13,7 @@ CB="?cb=$(date +%s)"
 LOG=/tmp/rwadm.txt; : > "$LOG"
 cd "$DASH" || { echo "NO DASH DIR ($DASH) - nothing changed."; exit 1; }
 rm -rf /tmp/rwadm-new && mkdir -p /tmp/rwadm-new
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o /tmp/rwadm.json "$RAWB/member-data-step4.json$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o /tmp/rwadm.json "$RAWB/member-data-step4.json$CB"
 [ -s /tmp/rwadm.json ] || { echo "Could not get the change list - nothing changed."; exit 1; }
 PAGES="lvr-points-admin.html lvr-rewards.html"
 DOPAGES=""
@@ -41,7 +41,7 @@ process.exit(bad ? 2 : 0);
 NODE
 if [ "$?" != "0" ]; then echo "A page failed its checks - NOTHING was uploaded."; cat "$LOG"; exit 1; fi
 for f in $DOPAGES; do cp "$DASH/$f" "$DASH/$f.bak-rwadm" 2>/dev/null; cp "/tmp/rwadm-new/$f" "$DASH/$f"; done
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o deploy-overlay.js "$RAWB/deploy-overlay.js$CB"
 export OVERLAY_FILES="$(echo $DOPAGES)"
 echo "-- deploying --" >> "$LOG"
 node deploy-overlay.js >> "$LOG" 2>&1

@@ -18,7 +18,7 @@ LOG=/tmp/keyleadsdeploy.txt
 
 cd "$DASH" || { echo "NO DASH DIR ($DASH)"; exit 1; }
 
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o key-leads.html "$RAWB/key-leads.html"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o key-leads.html "$RAWB/key-leads.html"
 echo "key-leads.html: $(wc -c < key-leads.html) bytes" >> "$LOG"
 
 # sanity: every inline script block must parse before anything ships
@@ -42,7 +42,7 @@ fi
 # ---------------------------------------------------------------------------
 # deploy + verify (same deployer the dashboard patches already use)
 # ---------------------------------------------------------------------------
-curl -sL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
+curl -sL --retry 8 --retry-delay 1 --connect-timeout 15 --speed-limit 3000 --speed-time 6 --max-time 150 -o deploy-overlay.js "$RAWB/deploy-overlay.js"
 DEP="deploy-overlay.js"
 export OVERLAY_FILES="key-leads.html"
 if [ -n "$DEP" ]; then
