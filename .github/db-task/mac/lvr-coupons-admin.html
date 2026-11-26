@@ -2806,15 +2806,15 @@ var qrcode = function() {
     return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
   }
 
-  var programs = {}, counts = {}, claimsAll = {};
+  var programs = {}, counts = {}, claimsAll = {}, staffAll = {};
   var view = document.getElementById('view');
   document.getElementById('refreshBtn').addEventListener('click', loadAll);
   document.getElementById('newProgramBtn').addEventListener('click', function(){ renderProgramForm(null); });
 
   function loadAll() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
-    Promise.all([ fbGet(C + '/programs'), fbGet(C + '/counts'), fbGet(C + '/claims') ]).then(function(r){
-      programs = r[0] || {}; counts = r[1] || {}; claimsAll = r[2] || {};
+    Promise.all([ fbGet(C + '/programs'), fbGet(C + '/counts'), fbGet(C + '/claims'), fbGet(C + '/staff') ]).then(function(r){
+      programs = r[0] || {}; counts = r[1] || {}; claimsAll = r[2] || {}; staffAll = r[3] || {};
       renderProgramList();
     }).catch(function(){
       view.innerHTML = '<div class="empty-note">Could not load. Make sure you are signed in, then tap Refresh.</div>';
@@ -2848,6 +2848,7 @@ var qrcode = function() {
         '<div class="pc-actions">' +
           '<button data-act="claims" data-slug="' + escapeHtml(slug) + '">Customers</button>' +
           '<button data-act="qr" data-slug="' + escapeHtml(slug) + '">QR code + sign</button>' +
+          '<button data-act="team" data-slug="' + escapeHtml(slug) + '">Team (' + Object.keys(staffAll[slug] || {}).length + ')</button>' +
           '<button data-act="copy" data-slug="' + escapeHtml(slug) + '">Copy link</button>' +
           '<button data-act="edit" data-slug="' + escapeHtml(slug) + '">Edit</button>' +
           '<button class="danger" data-act="delete" data-slug="' + escapeHtml(slug) + '">Delete page</button>' +
@@ -2858,6 +2859,7 @@ var qrcode = function() {
         var slug = btn.getAttribute('data-slug'), act = btn.getAttribute('data-act');
         if (act === 'claims') renderClaims(slug);
         else if (act === 'qr') renderQr(slug);
+        else if (act === 'team') renderTeam(slug);
         else if (act === 'edit') renderProgramForm(slug);
         else if (act === 'copy') {
           var url = CLAIM_PAGE_URL + slug;
@@ -2878,8 +2880,9 @@ var qrcode = function() {
     var q = window.qrcode(0, 'M'); q.addData(url); q.make();
     return q.createSvgTag({cellSize: 6, margin: 0, scalable: true});
   }
-  function renderQr(slug) {
-    var p = programs[slug] || {}, url = CLAIM_PAGE_URL + slug;
+  function renderQr(slug, sid) {
+    var p = programs[slug] || {}, url = CLAIM_PAGE_URL + slug + (sid ? '&e=' + sid : '');
+    var who = sid && staffAll[slug] && staffAll[slug][sid] ? staffAll[slug][sid].name : '';
     view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back</div>' +
       '<div class="small-note">Print this and put it on the counter, the table tents or the receipt. Customers scan it with their phone camera and land on this restaurant\'s page.</div>' +
       '<div class="tools-row"><button class="btn btn-primary" id="printBtn">Print the sign</button><button class="btn" id="dlQr">Save QR picture</button></div>' +
@@ -2888,14 +2891,15 @@ var qrcode = function() {
         '<div class="sheet-qr" id="qrBox">' + qrSvg(url) + '</div>' +
         '<div class="sheet-biz">' + escapeHtml(p.bizName || slug) + '</div>' +
         '<div class="sheet-offer">' + escapeHtml(p.offer || '') + '</div>' +
+        (who ? '<div class="sheet-offer">Your server today: <b>' + escapeHtml(who) + '</b></div>' : '') +
         '<div class="sheet-url">' + escapeHtml(url) + '</div>' +
       '</div></div>';
-    document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    document.getElementById('backBtn').addEventListener('click', sid ? function(){ renderTeam(slug); } : renderProgramList);
     document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
     document.getElementById('dlQr').addEventListener('click', function(){
       var svg = document.getElementById('qrBox').innerHTML;
       var blob = new Blob([svg], {type: 'image/svg+xml'}), a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = slug + '-qr.svg'; document.body.appendChild(a); a.click(); a.remove();
+      a.href = URL.createObjectURL(blob); a.download = slug + (sid ? '-' + sid : '') + '-qr.svg'; document.body.appendChild(a); a.click(); a.remove();
     });
   }
 
@@ -2911,6 +2915,10 @@ var qrcode = function() {
         '<div class="field"><label>The restaurant\'s own code (optional). Leave blank and every customer gets a different code.</label><input type="text" id="fFixedCode" maxlength="24" value="' + escapeHtml(p ? (p.fixedCode || '') : '') + '"></div>' +
         '<div class="field"><label>What the customer does next (shown after they sign up)</label><textarea id="fInstructions">' + escapeHtml(p ? p.instructions : '') + '</textarea></div>' +
         '<div class="field"><label>Photo web address (optional, a real photo of the food)</label><input type="text" id="fPhoto" value="' + escapeHtml(p ? p.photoUrl : '') + '"></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label>Reward keys the customer earns for signing up</label><input type="number" id="fWelcomeKeys" min="0" max="100" value="' + (p && p.welcomeKeys != null ? p.welcomeKeys : 1) + '"></div>' +
+          '<div class="field"><label>Reward keys the employee earns per signup</label><input type="number" id="fStaffKeys" min="0" max="100" value="' + (p && p.staffKeys != null ? p.staffKeys : 1) + '"></div>' +
+        '</div>' +
         '<div class="field-row">' +
           '<div class="field"><label>How many coupons (blank = no limit)</label><input type="number" id="fMaxClaims" min="1" value="' + (p && p.maxClaims ? p.maxClaims : '') + '"></div>' +
           '<div class="field"><label>Ends on (blank = never)</label><input type="date" id="fExpires" value="' + (p && p.expiresAt ? new Date(p.expiresAt).toISOString().slice(0,10) : '') + '"></div>' +
@@ -2933,6 +2941,8 @@ var qrcode = function() {
         photoUrl: document.getElementById('fPhoto').value.trim(),
         maxClaims: mc ? parseInt(mc, 10) : null,
         expiresAt: exp ? new Date(exp + 'T23:59:59').getTime() : null,
+        welcomeKeys: Math.max(0, Math.min(100, parseInt(document.getElementById('fWelcomeKeys').value, 10) || 0)),
+        staffKeys: Math.max(0, Math.min(100, parseInt(document.getElementById('fStaffKeys').value, 10) || 0)),
         active: document.getElementById('fActive').checked,
         createdAt: (p && p.createdAt) ? p.createdAt : {'.sv': 'timestamp'}
       };
@@ -2941,6 +2951,55 @@ var qrcode = function() {
         loadAll(); showToast(isEdit ? 'Saved' : 'Page created');
         if (!isEdit) setTimeout(function(){ renderQr(newSlug); }, 600);
       }).catch(function(){ showToast('Could not save (are you signed in?)'); });
+    });
+  }
+
+  // ================= TEAM (one QR code per employee) =================
+  function newStaffId(name) { return (slugify(name).slice(0, 30) || 'staff') + '-' + Math.random().toString(36).slice(2, 5); }
+  function renderTeam(slug) {
+    var p = programs[slug] || {}, st = staffAll[slug] || {}, per = Number(p.staffKeys) || 0;
+    var cl = claimsOf(slug);
+    var rows = Object.keys(st).map(function(sid){
+      var mine = cl.filter(function(c){ return c.ref === sid; });
+      var used = mine.filter(function(c){ return c.redeemed; }).length;
+      var owed = mine.filter(function(c){ return !c.staffPaid; }).length * per;
+      return '<div class="program-card"><div class="pc-top"><div><div class="pc-name">' + escapeHtml(st[sid].name) + '</div>' +
+        '<div class="pc-stats"><b>' + mine.length + '</b> signed up · ' + used + ' used · ' + (mine.length * per) + ' keys earned · <b>' + owed + ' keys still to give</b></div></div></div>' +
+        '<div class="pc-link">' + escapeHtml(CLAIM_PAGE_URL + slug + '&e=' + sid) + '</div>' +
+        '<div class="pc-actions"><button data-t="qr" data-sid="' + escapeHtml(sid) + '">QR code + sign</button>' +
+        '<button data-t="copy" data-sid="' + escapeHtml(sid) + '">Copy link</button>' +
+        (owed > 0 ? '<button data-t="paid" data-sid="' + escapeHtml(sid) + '">Mark ' + owed + ' keys given</button>' : '') +
+        '<button class="danger" data-t="del" data-sid="' + escapeHtml(sid) + '">Remove</button></div></div>';
+    }).join('');
+    view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back</div>' +
+      '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — team</h3>' +
+      '<div class="small-note">Every employee gets their own QR code. When a customer signs up through it, the employee earns ' + per + ' reward key' + (per === 1 ? '' : 's') + ' and the customer earns ' + (Number(p.welcomeKeys) || 0) + '. The keys are counted here; you add them to their Key Rewards accounts in the Treasury and then tap "Mark keys given". Tip: look at the "used" number too, it shows who is bringing in real customers.</div>' +
+      '<div class="form-box"><div class="field"><label>Add an employee (first name)</label><input type="text" id="fStaffName" maxlength="60"></div><button class="btn btn-primary" id="addStaff">Add and make their QR code</button></div>' +
+      (rows || '<div class="empty-note">No employees yet.</div>');
+    document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    document.getElementById('addStaff').addEventListener('click', function(){
+      var name = document.getElementById('fStaffName').value.trim();
+      if (!name) return showToast('Type the employee\'s name first');
+      var sid = newStaffId(name);
+      fbPut(C + '/staff/' + slug + '/' + sid, { name: name, active: true, createdAt: {'.sv': 'timestamp'} }).then(function(r){
+        if (!r.ok) return showToast('Could not add (are you signed in?)');
+        staffAll[slug] = staffAll[slug] || {}; staffAll[slug][sid] = { name: name, active: true };
+        renderQr(slug, sid);
+      });
+    });
+    view.querySelectorAll('[data-t]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var sid = btn.getAttribute('data-sid'), t = btn.getAttribute('data-t');
+        if (t === 'qr') renderQr(slug, sid);
+        else if (t === 'copy') { var u = CLAIM_PAGE_URL + slug + '&e=' + sid; if (navigator.clipboard) navigator.clipboard.writeText(u).then(function(){ showToast('Link copied'); }); else showToast(u); }
+        else if (t === 'paid') {
+          var upd = {}; cl.filter(function(c){ return c.ref === sid && !c.staffPaid; }).forEach(function(c){ upd['claims/' + slug + '/' + c._id + '/staffPaid'] = true; });
+          fbPatch(C, upd).then(function(r){ if (!r.ok) return showToast('Could not update'); Object.keys(upd).forEach(function(k){ var id = k.split('/')[2]; claimsAll[slug][id].staffPaid = true; }); renderTeam(slug); showToast('Marked as given'); });
+        } else if (t === 'del') {
+          if (!confirm('Remove this employee? Their QR code still lets customers sign up, but nobody is credited.')) return;
+          fbDelete(C + '/staff/' + slug + '/' + sid).then(function(r){ if (!r.ok) return showToast('Could not remove'); delete staffAll[slug][sid]; renderTeam(slug); });
+        }
+      });
     });
   }
 
@@ -2956,10 +3015,11 @@ var qrcode = function() {
     a.href = URL.createObjectURL(new Blob([text], {type: 'text/csv'})); a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
   }
-  var HEAD = ['Name','Email','Phone','OK to email','OK to text','Text consent saved','Consent wording version','Coupon code','Used','Signed up'];
+  var HEAD = ['Name','Email','Phone','Instagram','Employee','OK to email','OK to text','Text consent saved','Consent wording version','Coupon code','Used','Signed up','Welcome key given'];
+  function staffName(slug, sid) { var x = sid && staffAll[slug] && staffAll[slug][sid]; return x ? x.name : (sid || ''); }
   function claimRow(c) {
-    return [c.name, c.email, c.phone || '', c.marketingOptIn ? 'yes' : 'no', c.smsOptIn ? 'yes' : 'no',
-            c.smsOptIn ? (c.consentText || '') : '', c.smsOptIn ? (c.consentVer || '') : '', c.code, c.redeemed ? 'yes' : 'no', fmtWhen(c.createdAt)];
+    return [c.name, c.email, c.phone || '', c.ig ? '@' + c.ig : '', staffName(c.biz || '', c.ref), c.marketingOptIn ? 'yes' : 'no', c.smsOptIn ? 'yes' : 'no',
+            c.smsOptIn ? (c.consentText || '') : '', c.smsOptIn ? (c.consentVer || '') : '', c.code, c.redeemed ? 'yes' : 'no', fmtWhen(c.createdAt), c.welcomePaid ? 'yes' : 'no'];
   }
 
   function renderClaims(slug) {
@@ -2978,10 +3038,12 @@ var qrcode = function() {
     if (!list.length) { view.innerHTML = head + '<div class="empty-note">Nobody has signed up yet.</div>'; wire(); return; }
     view.innerHTML = head + '<div class="claims-list">' + list.map(function(c){
       return '<div class="claim-row"><div class="claim-top"><div class="claim-name">' + escapeHtml(c.name || '(no name)') + '</div><div class="claim-code">' + escapeHtml(c.code || '') + '</div></div>' +
-        '<div class="claim-meta">' + escapeHtml(c.email || '') + (c.phone ? '<br>' + escapeHtml(c.phone) : '') + '<br>' + escapeHtml(fmtWhen(c.createdAt)) + '</div>' +
+        '<div class="claim-meta">' + escapeHtml(c.email || '') + (c.phone ? '<br>' + escapeHtml(c.phone) : '') + (c.ig ? '<br>Instagram @' + escapeHtml(c.ig) : '') + (c.ref ? '<br>Signed up through ' + escapeHtml(staffName(slug, c.ref)) : '') + '<br>' + escapeHtml(fmtWhen(c.createdAt)) + '</div>' +
         '<div class="claim-flags"><span class="chip' + (c.marketingOptIn ? ' ok' : '') + '">' + (c.marketingOptIn ? 'OK to email' : 'No email marketing') + '</span>' +
-        '<span class="chip' + (c.smsOptIn ? ' ok' : '') + '">' + (c.smsOptIn ? 'OK to text' : 'No texts') + '</span></div>' +
+        '<span class="chip' + (c.smsOptIn ? ' ok' : '') + '">' + (c.smsOptIn ? 'OK to text' : 'No texts') + '</span>' +
+        (Number(p.welcomeKeys) > 0 ? '<span class="chip' + (c.welcomePaid ? ' ok' : '') + '">' + (c.welcomePaid ? 'Welcome key given' : 'Welcome key to give: ' + p.welcomeKeys) + '</span>' : '') + '</div>' +
         '<div class="claim-actions"><button data-redeem="' + escapeHtml(c._id) + '" class="' + (c.redeemed ? 'redeemed-yes' : 'redeemed-no') + '">' + (c.redeemed ? '✓ Used' : 'Mark used') + '</button>' +
+        (Number(p.welcomeKeys) > 0 ? '<button data-wk="' + escapeHtml(c._id) + '">' + (c.welcomePaid ? 'Undo key given' : 'Mark key given') + '</button>' : '') +
         '<button data-delclaim="' + escapeHtml(c._id) + '">Remove</button></div></div>';
     }).join('') + '</div>';
     wire();
@@ -3007,11 +3069,17 @@ var qrcode = function() {
           });
         });
       });
+      view.querySelectorAll('[data-wk]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = btn.getAttribute('data-wk'), cur = (claimsAll[slug] || {})[id] || {}, nv = !cur.welcomePaid;
+          fbPatch(C + '/claims/' + slug + '/' + id, {welcomePaid: nv}).then(function(r){ if (!r.ok) return showToast('Could not update'); cur.welcomePaid = nv; renderClaims(slug); });
+        });
+      });
       view.querySelectorAll('[data-delclaim]').forEach(function(btn){
         btn.addEventListener('click', function(){
           var id = btn.getAttribute('data-delclaim'), cur = (claimsAll[slug] || {})[id] || {};
           if (!confirm('Remove this customer for good? Their coupon stops working and they could sign up again.')) return;
-          var upd = {}; upd['claims/' + slug + '/' + id] = null; if (cur.ek) upd['idx/' + slug + '/' + cur.ek] = null;
+          var upd = {}; upd['claims/' + slug + '/' + id] = null; if (cur.ek) upd['idx/' + slug + '/' + cur.ek] = null; if (cur.pk) upd['idx/' + slug + '/' + cur.pk] = null;
           fbPatch(C, upd).then(function(r){
             if (!r.ok) return showToast('Could not remove');
             delete claimsAll[slug][id]; renderClaims(slug); showToast('Removed');

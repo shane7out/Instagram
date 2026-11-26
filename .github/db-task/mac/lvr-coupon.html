@@ -66,6 +66,7 @@
   .code-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:700;}
   .code-value{font-size:30px;font-weight:800;letter-spacing:.08em;color:var(--key-light);margin-top:6px;}
   .instructions{font-size:13.5px;color:var(--ink-dim);line-height:1.55;}
+  .reward-box{background:rgba(22,143,255,.14);border:1px solid var(--key-blue);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:14px;line-height:1.5;}
   .save-note{font-size:12.5px;color:var(--ink-dim);margin-top:12px;}
 
   .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.75;margin-top:18px;line-height:1.5;}
@@ -87,6 +88,8 @@
 
   var params = new URLSearchParams(location.search);
   var slug = (params.get('biz') || '').trim().toLowerCase();
+  var ref = (params.get('e') || '').trim().toLowerCase();   // the employee whose QR code brought this person here
+  if (!/^[a-z0-9-]{3,40}$/.test(ref)) ref = '';
   var cardEl = document.getElementById('card');
   var tickerInterval = null;
 
@@ -107,6 +110,13 @@
   function emailKey(email) {
     var bytes = new TextEncoder().encode(String(email).trim().toLowerCase());
     return crypto.subtle.digest('SHA-256', bytes).then(function(buf){
+      return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 32);
+    });
+  }
+  // second fingerprint, for the phone number (last 10 digits), so one phone can't claim twice with different emails
+  function phoneKey(phone) {
+    var d = String(phone).replace(/[^0-9]/g, '').slice(-10);
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('tel:' + d)).then(function(buf){
       return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 32);
     });
   }
@@ -158,6 +168,7 @@
 
   function renderSuccess(program, code, again) {
     stopTicker();
+    var keys = Number(program.welcomeKeys) || 0;
     cardEl.innerHTML =
       '<div class="offer-title">' + (again ? 'Welcome back!' : 'You\'re in! 🎉') + '</div>' +
       '<div class="code-box">' +
@@ -165,6 +176,7 @@
         '<div class="code-value">' + escapeHtml(code) + '</div>' +
       '</div>' +
       '<div class="instructions">' + escapeHtml(program.instructions || ('Show this code at ' + (program.bizName || 'the restaurant') + ' to use your ' + (program.offer || 'offer') + '.')) + '</div>' +
+      (keys > 0 && !again ? '<div class="reward-box">🔑 You also earned <b>' + keys + ' reward key' + (keys === 1 ? '' : 's') + '</b>. We\'ll add ' + (keys === 1 ? 'it' : 'them') + ' to your Key Rewards account using your phone number.</div>' : '') +
       '<div class="save-note">Take a screenshot so you have it when you get there.</div>';
   }
 
@@ -183,10 +195,11 @@
       '<form id="claimForm" novalidate>' +
         '<div class="field"><label for="cName">Name</label><input type="text" id="cName" autocomplete="name" maxlength="80"></div>' +
         '<div class="field"><label for="cEmail">Email</label><input type="email" id="cEmail" autocomplete="email" maxlength="254"></div>' +
-        '<div class="field"><label for="cPhone">Mobile phone (optional)</label><input type="tel" id="cPhone" autocomplete="tel" maxlength="30"></div>' +
+        '<div class="field"><label for="cPhone">Mobile phone</label><input type="tel" id="cPhone" autocomplete="tel" maxlength="30"></div>' +
+        '<div class="field"><label for="cIg">Instagram (if you have one)</label><input type="text" id="cIg" autocomplete="off" autocapitalize="none" placeholder="@yourname" maxlength="31"></div>' +
         '<div class="field hp" aria-hidden="true"><label for="cWeb">Leave this empty</label><input type="text" id="cWeb" tabindex="-1" autocomplete="off"></div>' +
         '<div class="optin"><input type="checkbox" id="cEmailOpt"><label for="cEmailOpt">Email me deals and offers from ' + escapeHtml(program.bizName || 'this restaurant') + ' and Las Vegas Restaurants.<div class="optin-note">Optional. Unsubscribe any time.</div></label></div>' +
-        '<div class="optin off" id="smsRow"><input type="checkbox" id="cSms" disabled><label for="cSms">' + escapeHtml(sms) + '<div class="optin-note">Optional. Not needed to get your coupon. Turns on when you type a phone number.</div></label></div>' +
+        '<div class="optin off" id="smsRow"><input type="checkbox" id="cSms" disabled><label for="cSms">' + escapeHtml(sms) + '<div class="optin-note">Optional. Not needed to get your coupon. Turns on once your phone number is in.</div></label></div>' +
         '<button type="submit" class="claim-btn" id="claimBtn">Get my coupon</button>' +
         '<div class="msg" id="claimMsg"></div>' +
       '</form>';
@@ -209,24 +222,37 @@
       if (document.getElementById('cWeb').value) { renderSuccess(program, makeCode(), false); return; } // a bot: look happy, store nothing
       if (!name) return bad('Please enter your name.');
       if (!/^[^ @]+@[^ @]+\.[^ @]+$/.test(email)) return bad('Please enter a real email address.');
-      if (phone && phone.replace(/[^0-9]/g, '').length < 10) return bad('That phone number looks short. Leave it empty or add the area code.');
+      if (phone.replace(/[^0-9]/g, '').length < 10) return bad('Please enter your mobile phone number with the area code.');
+      var ig = document.getElementById('cIg').value.trim().replace(/^@+/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[\/?].*$/, '');
+      if (ig && !/^[A-Za-z0-9._]{1,30}$/.test(ig)) return bad('That Instagram name does not look right. Leave it empty or type just the name.');
       if (!window.crypto || !crypto.subtle) return bad('Please open this page in your phone\'s regular browser.');
       btn.disabled = true; msg.className = 'msg'; msg.textContent = 'One moment…';
       var smsOn = smsEl.checked && !smsEl.disabled;
 
-      emailKey(email).then(function(ek){
-        // Already claimed? Show the same code instead of making a second one.
-        return fbGet(C + 'idx/' + encodeURIComponent(slug) + '/' + ek).then(function(hit){
-          if (hit && hit.code) { renderSuccess(program, hit.code, true); return; }
+      Promise.all([emailKey(email), phoneKey(phone)]).then(function(k){
+        var ek = k[0], pk = k[1];
+        // Already claimed (same email or same phone)? Show the same code instead of making a second one.
+        return Promise.all([ fbGet(C + 'idx/' + encodeURIComponent(slug) + '/' + ek), fbGet(C + 'idx/' + encodeURIComponent(slug) + '/' + pk) ]).then(function(h){
+          var hit = (h[0] && h[0].code) ? h[0] : ((h[1] && h[1].code) ? h[1] : null);
+          if (hit) { renderSuccess(program, hit.code, true); return; }
           var id = randomId(), code = program.fixedCode ? String(program.fixedCode).slice(0, 24) : makeCode();
-          var claim = { biz: slug, name: name, email: email, code: code, redeemed: false, createdAt: {'.sv': 'timestamp'}, ek: ek,
-                        marketingOptIn: !!document.getElementById('cEmailOpt').checked, smsOptIn: smsOn };
-          if (phone) claim.phone = phone;
-          if (smsOn) { claim.consentText = sms; claim.consentVer = CONSENT_VER; }
-          var upd = {};
-          upd['claims/' + slug + '/' + id] = claim;
-          upd['idx/' + slug + '/' + ek] = { code: code, id: id };
-          return fbSend('PATCH', '/lvr_coupons', upd).then(function(r){
+          function build(withRef) {
+            var claim = { biz: slug, name: name, email: email, phone: phone, code: code, redeemed: false, createdAt: {'.sv': 'timestamp'}, ek: ek, pk: pk,
+                          marketingOptIn: !!document.getElementById('cEmailOpt').checked, smsOptIn: smsOn };
+            if (ig) claim.ig = ig;
+            if (withRef && ref) claim.ref = ref;
+            if (smsOn) { claim.consentText = sms; claim.consentVer = CONSENT_VER; }
+            var upd = {};
+            upd['claims/' + slug + '/' + id] = claim;
+            upd['idx/' + slug + '/' + ek] = { code: code, id: id };
+            upd['idx/' + slug + '/' + pk] = { code: code, id: id };
+            return upd;
+          }
+          function send(withRef) { return fbSend('PATCH', '/lvr_coupons', build(withRef)); }
+          return send(true).then(function(r){
+            if (!r.ok && ref) return send(false);   // an old or removed employee code must never stop a customer getting their coupon
+            return r;
+          }).then(function(r){
             if (!r.ok) throw new Error('HTTP ' + r.status);
             // keep the "X left" count honest (best effort; the claim above is the record)
             fbSend('PUT', C + 'counts/' + encodeURIComponent(slug), {'.sv': {increment: 1}}).catch(function(){});

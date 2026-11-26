@@ -320,7 +320,7 @@
    "$slug": {
     "$id": {
      ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('programs').child($slug).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false)",
-     ".validate": "data.exists() || (newData.hasChildren(['biz','name','email','code','createdAt','ek']) && newData.child('biz').isString() && newData.child('biz').val() == $slug && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 80 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('createdAt').isNumber() && newData.child('createdAt').val() == now && newData.child('ek').isString() && newData.child('ek').val().matches(/^[0-9a-f]{32}$/) && (!newData.child('phone').exists() || (newData.child('phone').isString() && newData.child('phone').val().length <= 30)) && (!newData.child('redeemed').exists() || newData.child('redeemed').val() == false) && (!newData.child('marketingOptIn').exists() || newData.child('marketingOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').val() == false || (newData.child('phone').exists() && newData.child('consentText').exists())) && (!newData.child('consentText').exists() || (newData.child('consentText').isString() && newData.child('consentText').val().length <= 900)) && (!newData.child('consentVer').exists() || (newData.child('consentVer').isString() && newData.child('consentVer').val().length <= 20)) && newData.parent().parent().parent().child('idx').child($slug).child(newData.child('ek').val()).child('id').val() == $id)",
+     ".validate": "data.exists() || (newData.hasChildren(['biz','name','email','phone','code','createdAt','ek','pk']) && newData.child('biz').isString() && newData.child('biz').val() == $slug && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 80 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('createdAt').isNumber() && newData.child('createdAt').val() == now && newData.child('ek').isString() && newData.child('ek').val().matches(/^[0-9a-f]{32}$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 10 && newData.child('phone').val().length <= 30 && newData.child('pk').isString() && newData.child('pk').val().matches(/^[0-9a-f]{32}$/) && newData.child('pk').val() != newData.child('ek').val() && (!newData.child('ig').exists() || (newData.child('ig').isString() && newData.child('ig').val().matches(/^[A-Za-z0-9._]{1,30}$/))) && (!newData.child('ref').exists() || (newData.child('ref').isString() && root.child('lvr_coupons').child('staff').child($slug).child(newData.child('ref').val()).exists())) && (!newData.child('welcomePaid').exists() || newData.child('welcomePaid').isBoolean()) && (!newData.child('staffPaid').exists() || newData.child('staffPaid').isBoolean()) && (!newData.child('redeemed').exists() || newData.child('redeemed').val() == false) && (!newData.child('marketingOptIn').exists() || newData.child('marketingOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').val() == false || (newData.child('phone').exists() && newData.child('consentText').exists())) && (!newData.child('consentText').exists() || (newData.child('consentText').isString() && newData.child('consentText').val().length <= 900)) && (!newData.child('consentVer').exists() || (newData.child('consentVer').isString() && newData.child('consentVer').val().length <= 20)) && newData.parent().parent().parent().child('idx').child($slug).child(newData.child('ek').val()).child('id').val() == $id && newData.parent().parent().parent().child('idx').child($slug).child(newData.child('pk').val()).child('id').val() == $id)",
      "biz": {},
      "name": {},
      "email": {},
@@ -337,7 +337,14 @@
      "fixedCode": {},
      "$other": {
       ".validate": false
-     }
+     },
+     "ig": {},
+     "ref": {},
+     "pk": {},
+     "welcomePaid": {},
+     "staffPaid": {},
+     "staffPaidAt": {},
+     "welcomePaidAt": {}
     }
    }
   },
@@ -349,6 +356,21 @@
      ".validate": "$key.matches(/^[0-9a-f]{32}$/) && newData.hasChildren(['code','id']) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('id').isString() && newData.child('id').val().length >= 8 && newData.child('id').val().length <= 40 && newData.parent().parent().parent().child('claims').child($slug).child(newData.child('id').val()).child('code').val() == newData.child('code').val()",
      "code": {},
      "id": {},
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "staff": {
+   "$slug": {
+    "$sid": {
+     ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+     ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+     ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 60 && $sid.matches(/^[a-z0-9-]{3,40}$/)",
+     "name": {},
+     "active": {},
+     "createdAt": {},
      "$other": {
       ".validate": false
      }
