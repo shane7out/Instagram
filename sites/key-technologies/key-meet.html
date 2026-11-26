@@ -25,7 +25,7 @@ input[type=text]{width:100%;min-height:54px;padding:10px 14px;border-radius:12px
 .bar{height:8px;border-radius:6px;background:rgba(255,255,255,.15);overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--accent);width:100%;transition:width 1s linear}
 .btn{display:block;width:100%;min-height:62px;margin-top:14px;border:0;border-radius:16px;background:var(--accent);color:#0f171e;font:900 22px Lato,system-ui,sans-serif;cursor:pointer;text-align:center;text-decoration:none;padding:16px 14px}.btn.o{background:transparent;border:2px solid var(--accent);color:var(--accent)}
 .note{font-size:18px;line-height:1.5;text-align:center;margin:12px 2px 0}.hist p{margin:0 0 8px}.hist b{color:var(--accent)}
-.ov{position:fixed;inset:0;background:rgba(5,10,15,.86);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}.ov.on{display:flex}
+.ov{position:fixed;inset:0;background:rgba(5,10,15,.86);display:none;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 100px) 20px 20px;box-sizing:border-box;overflow:auto;z-index:60}.ov.on{display:flex}
 .pop{width:100%;max-width:420px;background:var(--panel);border:2px solid var(--accent);border-radius:24px;padding:26px 20px;text-align:center}.pop .big{font-size:56px;font-weight:900;line-height:1.05;margin:6px 0}.pop p{margin:6px 0;font-size:21px}
 video{width:100%;border-radius:14px;margin-top:10px;background:#000}
 
