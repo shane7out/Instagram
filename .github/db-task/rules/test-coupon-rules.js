@@ -114,6 +114,15 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('the "joined" mark is readable from the employee link', 'anon', 'GET', '/lvr_coupons/staff/van/maria-7k3/joined', undefined, true, 'true');
   await t('a stranger cannot read the employees\' contact details', 'anon', 'GET', '/lvr_coupons/staffContact/van/maria-7k3', undefined, false);
   await t('the owner can read the employees\' contact details', 'owner', 'GET', '/lvr_coupons/staffContact/van/maria-7k3', undefined, true);
+  // 30-day cap on every coupon, and guests can carry their own link
+  await t('a program cannot give more than 30 days', 'owner', 'PUT', '/lvr_coupons/programs/long', { bizName: 'Long Co', offer: '$5 off', active: true, validDays: 60 }, false);
+  await t('a 30-day program is fine', 'owner', 'PUT', '/lvr_coupons/programs/ok30', { bizName: 'Ok Co', offer: '$5 off', active: true, validDays: 30 }, true);
+  await t('a negative number of days is refused', 'owner', 'PUT', '/lvr_coupons/programs/neg', { bizName: 'N', offer: 'x', active: true, validDays: -1 }, false);
+  await t('a program with no days set is accepted (it defaults to 30)', 'owner', 'PUT', '/lvr_coupons/programs/nodays', { bizName: 'D', offer: 'x', active: true }, true);
+  await t('a stranger cannot stretch the days of an existing program', 'anon', 'PUT', '/lvr_coupons/programs/ok30/validDays', 365, false);
+  await t('a guest can bring a friend through their own link (g-<their claim id>)', 'anon', 'PATCH', '/lvr_coupons', upd('f1f1f1f1f1', 'f1'.repeat(16), claim({ email: 'friend@example.com', ek: 'f1'.repeat(16), pk: 'f2'.repeat(16), phone: '7025550555', code: 'VAN-FRND1', ref: 'g-c1c1c1c1c1' })), true);
+  await t('a guest link to someone who never signed up is refused', 'anon', 'PATCH', '/lvr_coupons', upd('f3f3f3f3f3', 'f3'.repeat(16), claim({ email: 'x2@example.com', ek: 'f3'.repeat(16), pk: 'f4'.repeat(16), phone: '7025550556', code: 'VAN-FRND2', ref: 'g-doesnotexist1' })), false);
+  await t('the owner can mark a referrer\'s keys as given for used coupons', 'owner', 'PATCH', '/lvr_coupons/claims/van/f1f1f1f1f1', { usedPaid: true }, true);
   // counter
   await t('the counter starts at 1', 'anon', 'PUT', '/lvr_coupons/counts/van', 1, true);
   await t('the counter cannot jump by 2', 'anon', 'PUT', '/lvr_coupons/counts/van', 3, false);

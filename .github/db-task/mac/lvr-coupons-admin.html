@@ -382,6 +382,12 @@
   .sheet-scan{font-size:20px;font-weight:800;color:var(--key-light);margin-bottom:6px;}
   .sheet-url{font-size:12px;color:var(--ink-dim);word-break:break-all;}
   .claim-flags{margin-top:6px;}
+  .qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .qr-card.mini .sheet-qr{width:150px;height:150px;padding:8px;}
+  .qr-card.mini{padding:14px 8px;}
+  .qr-card.mini .sheet-scan{font-size:14px;}
+  .qr-card.mini .sheet-biz{font-size:16px;}
+  @media print{.qr-card.mini{break-inside:avoid;border:1px dashed #999 !important;} #printArea .qr-card.mini .sheet-qr{width:230px;height:230px;} .qr-grid{gap:16px;}}
   .small-note{font-size:12.5px;color:var(--ink-dim);line-height:1.55;margin:6px 0 14px;}
   @media print{
     body *{visibility:hidden !important;}
@@ -2814,7 +2820,7 @@ var qrcode = function() {
   function mailOk(c) { return !!c.marketingOptIn && !isOut(c); }
   function textOk(c) { return !!c.smsOptIn && !isOut(c); }
   var DAY = 86400000;
-  function daysOf(p) { var n = Number(p && p.validDays); return isFinite(n) && n >= 0 ? n : 30; }
+  function daysOf(p) { var n = Number(p && p.validDays); return isFinite(n) && n >= 0 ? Math.min(n, 30) : 30; }   // never more than 30 days
   function feeOf(p) { if (p && p.feeWaived) return 0; var f = Number(p && p.signupFee); return isFinite(f) && f >= 0 ? f : 1; }
   function money(n) { return '$' + (Math.round(n * 100) / 100).toLocaleString(undefined, {minimumFractionDigits: (n % 1 ? 2 : 0), maximumFractionDigits: 2}); }
   function isUsed(slug, c) { var r = codesAll[slug] && codesAll[slug][c.code]; return !!(c.redeemed || (r && r.used)); }
@@ -2933,12 +2939,13 @@ var qrcode = function() {
         '<div class="field"><label>What the customer does next (shown after they sign up)</label><textarea id="fInstructions">' + escapeHtml(p ? p.instructions : '') + '</textarea></div>' +
         '<div class="field"><label>Photo web address (optional, a real photo of the food)</label><input type="text" id="fPhoto" value="' + escapeHtml(p ? p.photoUrl : '') + '"></div>' +
         '<div class="field-row">' +
-          '<div class="field"><label>Days the coupon is good for</label><input type="number" id="fValidDays" min="0" max="365" value="' + (p && p.validDays != null ? p.validDays : 30) + '"></div>' +
+          '<div class="field"><label>Days the coupon is good for (30 at most)</label><input type="number" id="fValidDays" min="1" max="30" value="' + (p && p.validDays != null ? Math.min(30, p.validDays) : 30) + '"></div>' +
           '<div class="field"><label>Fee charged to the restaurant per sign-up ($)</label><input type="number" id="fSignupFee" min="0" max="100" step="0.25" value="' + (p && p.signupFee != null ? p.signupFee : 1) + '"></div>' +
         '</div>' +
         '<div class="checkbox-row"><input type="checkbox" id="fFeeWaived"' + (p && p.feeWaived ? ' checked' : '') + '><label for="fFeeWaived">Waive the sign-up fee for this restaurant (they pay nothing per sign-up)</label></div>' +
         '<div class="field-row">' +
           '<div class="field"><label>Reward keys the customer earns for signing up</label><input type="number" id="fWelcomeKeys" min="0" max="100" value="' + (p && p.welcomeKeys != null ? p.welcomeKeys : 1) + '"></div>' +
+          '<div class="field"><label>Reward keys a person earns each time a friend they brought USES their coupon</label><input type="number" id="fUsedKeys" min="0" max="100" value="' + (p && p.usedKeys != null ? p.usedKeys : 1) + '"></div>' +
           '<div class="field"><label>Reward keys the employee earns per signup</label><input type="number" id="fStaffKeys" min="0" max="100" value="' + (p && p.staffKeys != null ? p.staffKeys : 1) + '"></div>' +
         '</div>' +
         '<div class="field-row">' +
@@ -2963,7 +2970,8 @@ var qrcode = function() {
         photoUrl: document.getElementById('fPhoto').value.trim(),
         maxClaims: mc ? parseInt(mc, 10) : null,
         expiresAt: exp ? new Date(exp + 'T23:59:59').getTime() : null,
-        validDays: Math.max(0, Math.min(365, parseInt(document.getElementById('fValidDays').value, 10) || 0)),
+        validDays: Math.max(1, Math.min(30, parseInt(document.getElementById('fValidDays').value, 10) || 30)),
+        usedKeys: Math.max(0, Math.min(100, parseInt(document.getElementById('fUsedKeys').value, 10) || 0)),
         signupFee: Math.max(0, Math.min(100, parseFloat(document.getElementById('fSignupFee').value) || 0)),
         feeWaived: document.getElementById('fFeeWaived').checked,
         welcomeKeys: Math.max(0, Math.min(100, parseInt(document.getElementById('fWelcomeKeys').value, 10) || 0)),
@@ -2982,62 +2990,100 @@ var qrcode = function() {
   // ================= TEAM (one QR code per employee) =================
   function newStaffId(name) { var a = new Uint8Array(5), r = ''; crypto.getRandomValues(a); for (var i = 0; i < a.length; i++) r += 'abcdefghijkmnpqrstuvwxyz23456789'.charAt(a[i] % 32); return (slugify(name).slice(0, 24) || 'staff') + '-' + r; }
   function renderTeam(slug) {
-    var p = programs[slug] || {}, st = staffAll[slug] || {}, per = Number(p.staffKeys) || 0;
+    var p = programs[slug] || {}, st = staffAll[slug] || {}, per = Number(p.staffKeys) || 0, uk = Number(p.usedKeys) || 0;
     var cl = claimsOf(slug);
-    var rows = Object.keys(st).map(function(sid){
+    function owedFor(sid, includeSignup) {
       var mine = cl.filter(function(c){ return c.ref === sid; });
-      var used = mine.filter(function(c){ return c.redeemed; }).length;
-      var owed = mine.filter(function(c){ return !c.staffPaid; }).length * per;
+      var a = includeSignup ? mine.filter(function(c){ return !c.staffPaid; }).length * per : 0;
+      var b = mine.filter(function(c){ return isUsed(slug, c) && !c.usedPaid; }).length * uk;
+      return { mine: mine, used: mine.filter(function(c){ return isUsed(slug, c); }).length, signupKeys: includeSignup ? mine.length * per : 0, useKeys: mine.filter(function(c){ return isUsed(slug, c); }).length * uk, owed: a + b };
+    }
+    var rows = Object.keys(st).map(function(sid){
+      var m = owedFor(sid, true);
       return '<div class="program-card"><div class="pc-top"><div><div class="pc-name">' + escapeHtml(st[sid].name) + '</div>' +
-        '<div class="pc-stats"><b>' + mine.length + '</b> signed up · ' + used + ' used · ' + (mine.length * per) + ' keys earned · <b>' + owed + ' keys still to give</b></div></div></div>' +
+        '<div class="pc-stats"><b>' + m.mine.length + '</b> signed up · ' + m.used + ' used · ' + (m.signupKeys + m.useKeys) + ' keys earned (' + m.signupKeys + ' for sign-ups, ' + m.useKeys + ' for coupons used) · <b>' + m.owed + ' keys still to give</b></div></div></div>' +
         (function(){ var ct = contactAll[slug] && contactAll[slug][sid]; if (!ct) return '<div class="claim-flags"><span class="chip">Has not joined yet</span></div>'; var out = !!(optAll[ct.ek] || optAll[ct.pk]); return '<div class="claim-flags"><span class="chip ok">In the database</span>' + (out ? '<span class="chip">Opted out of all messages</span>' : '<span class="chip' + (ct.mailOptIn ? ' ok' : '') + '">' + (ct.mailOptIn ? 'OK to email' : 'No email marketing') + '</span><span class="chip' + (ct.smsOptIn ? ' ok' : '') + '">' + (ct.smsOptIn ? 'OK to text' : 'No texts') + '</span>') + '</div><div class="claim-meta">' + escapeHtml(ct.email) + '<br>' + escapeHtml(ct.phone) + (ct.ig ? '<br>Instagram @' + escapeHtml(ct.ig) : '') + '</div>'; })() +
         '<div class="pc-link">' + escapeHtml(CLAIM_PAGE_URL + slug + '&e=' + sid) + '</div>' +
         '<div class="pc-actions"><button data-t="qr" data-sid="' + escapeHtml(sid) + '">QR code + sign</button>' +
         '<button data-t="copy" data-sid="' + escapeHtml(sid) + '">Copy link</button>' +
-        '<button data-t="mypage" data-sid="' + escapeHtml(sid) + '">Copy employee\'s own page link</button>' +
-        (owed > 0 ? '<button data-t="paid" data-sid="' + escapeHtml(sid) + '">Mark ' + owed + ' keys given</button>' : '') +
+        '<button data-t="mypage" data-sid="' + escapeHtml(sid) + '">Copy person\'s own page link</button>' +
+        (m.owed > 0 ? '<button data-t="paid" data-sid="' + escapeHtml(sid) + '">Mark ' + m.owed + ' keys given</button>' : '') +
         '<button class="danger" data-t="del" data-sid="' + escapeHtml(sid) + '">Remove</button></div></div>';
     }).join('');
+    // guests who brought friends through their own QR code
+    var gmap = {}; cl.forEach(function(c){ if (c.ref && c.ref.indexOf('g-') === 0) (gmap[c.ref] = gmap[c.ref] || []).push(c); });
+    var grows = Object.keys(gmap).map(function(rid){
+      var g = (claimsAll[slug] || {})[rid.slice(2)] || {}, list = gmap[rid], used = list.filter(function(c){ return isUsed(slug, c); }), owed = used.filter(function(c){ return !c.usedPaid; }).length * uk;
+      return '<div class="claim-row"><div class="claim-top"><div class="claim-name">' + escapeHtml(g.name || 'A guest') + '</div><div class="claim-code">' + (used.length * uk) + ' keys earned</div></div>' +
+        '<div class="claim-meta">' + escapeHtml(g.phone || '') + ' · ' + escapeHtml(g.email || '') + '<br>' + list.length + ' friend' + (list.length === 1 ? '' : 's') + ' signed up · ' + used.length + ' used their coupon · <b>' + owed + ' keys still to give</b></div>' +
+        (owed > 0 ? '<div class="claim-actions"><button data-gpaid="' + escapeHtml(rid) + '">Mark ' + owed + ' keys given</button></div>' : '') + '</div>';
+    }).join('');
     view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back</div>' +
-      '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — team</h3>' +
-      '<div class="small-note">Every employee gets their own QR code. When a customer signs up through it, the employee earns ' + per + ' reward key' + (per === 1 ? '' : 's') + ' and the customer earns ' + (Number(p.welcomeKeys) || 0) + '. The keys are counted here; you add them to their Key Rewards accounts in the Treasury and then tap "Mark keys given". Tip: look at the "used" number too, it shows who is bringing in real customers.</div>' +
-      '<div class="tools-row"><button class="btn" id="teamCsv">Download the team</button></div>' +
-      '<div class="form-box"><div class="field"><label>Add an employee (first name)</label><input type="text" id="fStaffName" maxlength="60"></div><button class="btn btn-primary" id="addStaff">Add and make their QR code</button></div>' +
-      (rows || '<div class="empty-note">No employees yet.</div>');
+      '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — team and promoters</h3>' +
+      '<div class="small-note">Give a QR code to anyone: employees, promoters, friends of the restaurant. When a guest signs up through their QR, an employee earns ' + per + ' reward key' + (per === 1 ? '' : 's') + ' at once. Whoever brought a guest also earns ' + uk + ' when that guest actually USES the coupon, and the guest earns ' + (Number(p.welcomeKeys) || 0) + ' for signing up. Every coupon is good for 30 days at most. Keys are counted here; you add them in the Treasury and tap "Mark keys given".</div>' +
+      '<div class="tools-row"><button class="btn" id="teamCsv">Download the team</button><button class="btn" id="printAll">Print everyone\'s QR codes</button></div>' +
+      '<div class="form-box"><div class="field"><label>Add one person (first name)</label><input type="text" id="fStaffName" maxlength="60"></div><button class="btn btn-primary" id="addStaff">Add and make their QR code</button></div>' +
+      '<div class="form-box"><div class="field"><label>Or add many at once (one first name per line)</label><textarea id="fMany" placeholder="Maria&#10;Jose&#10;Dee"></textarea></div><button class="btn" id="addMany">Add them all</button></div>' +
+      (rows || '<div class="empty-note">No one yet.</div>') +
+      (grows ? '<h3 style="margin:18px 0 6px;">Guests who brought friends</h3><div class="claims-list">' + grows + '</div>' : '');
     document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    document.getElementById('printAll').addEventListener('click', function(){ renderQrSheet(slug); });
     document.getElementById('teamCsv').addEventListener('click', function(){
-      var rows = [['Name','Email','Phone','Instagram','OK to email','OK to text','Email consent saved','Text consent saved','Consent wording version','Opted out','Signed up through them','Keys earned','Keys still to give']];
+      var rws = [['Name','Email','Phone','Instagram','OK to email','OK to text','Email consent saved','Text consent saved','Consent wording version','Opted out','Signed up through them','Used their coupon','Keys earned','Keys still to give']];
       Object.keys(st).forEach(function(sid){
-        var ct = (contactAll[slug] && contactAll[slug][sid]) || {}, out = !!(optAll[ct.ek] || optAll[ct.pk]), mine = cl.filter(function(c){ return c.ref === sid; });
-        rows.push([st[sid].name, ct.email || '', ct.phone || '', ct.ig ? '@' + ct.ig : '', ct.mailOptIn && !out ? 'yes' : 'no', ct.smsOptIn && !out ? 'yes' : 'no', ct.mailOptIn ? (ct.mailConsentText || '') : '', ct.smsOptIn ? (ct.consentText || '') : '', ct.consentVer || '', out ? 'yes' : 'no', mine.length, mine.length * per, mine.filter(function(c){ return !c.staffPaid; }).length * per]);
+        var ct = (contactAll[slug] && contactAll[slug][sid]) || {}, out = !!(optAll[ct.ek] || optAll[ct.pk]), m = owedFor(sid, true);
+        rws.push([st[sid].name, ct.email || '', ct.phone || '', ct.ig ? '@' + ct.ig : '', ct.mailOptIn && !out ? 'yes' : 'no', ct.smsOptIn && !out ? 'yes' : 'no', ct.mailOptIn ? (ct.mailConsentText || '') : '', ct.smsOptIn ? (ct.consentText || '') : '', ct.consentVer || '', out ? 'yes' : 'no', m.mine.length, m.used, m.signupKeys + m.useKeys, m.owed]);
       });
-      downloadCsv(slug + '-team.csv', rows);
+      downloadCsv(slug + '-team.csv', rws);
     });
-    document.getElementById('addStaff').addEventListener('click', function(){
-      var name = document.getElementById('fStaffName').value.trim();
-      if (!name) return showToast('Type the employee\'s name first');
-      var sid = newStaffId(name);
-      fbPut(C + '/staff/' + slug + '/' + sid, { name: name, active: true, createdAt: {'.sv': 'timestamp'} }).then(function(r){
+    function addPeople(names) {
+      var upd = {}, made = [];
+      names.forEach(function(n){ n = n.trim().slice(0, 60); if (!n) return; var sid = newStaffId(n); upd['staff/' + slug + '/' + sid] = { name: n, active: true, createdAt: {'.sv': 'timestamp'} }; made.push([sid, n]); });
+      if (!made.length) return showToast('Type a name first');
+      fbPatch(C, upd).then(function(r){
         if (!r.ok) return showToast('Could not add (are you signed in?)');
-        staffAll[slug] = staffAll[slug] || {}; staffAll[slug][sid] = { name: name, active: true };
-        renderQr(slug, sid);
+        staffAll[slug] = staffAll[slug] || {}; made.forEach(function(m){ staffAll[slug][m[0]] = { name: m[1], active: true }; });
+        if (made.length === 1) renderQr(slug, made[0][0]); else renderQrSheet(slug);
+      });
+    }
+    document.getElementById('addStaff').addEventListener('click', function(){ addPeople([document.getElementById('fStaffName').value]); });
+    document.getElementById('addMany').addEventListener('click', function(){ addPeople(document.getElementById('fMany').value.split(/\r?\n/).slice(0, 100)); });
+    view.querySelectorAll('[data-gpaid]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var rid = btn.getAttribute('data-gpaid'), upd = {};
+        gmap[rid].filter(function(c){ return isUsed(slug, c) && !c.usedPaid; }).forEach(function(c){ upd['claims/' + slug + '/' + c._id + '/usedPaid'] = true; });
+        fbPatch(C, upd).then(function(r){ if (!r.ok) return showToast('Could not update'); Object.keys(upd).forEach(function(k){ claimsAll[slug][k.split('/')[2]].usedPaid = true; }); renderTeam(slug); showToast('Marked as given'); });
       });
     });
     view.querySelectorAll('[data-t]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var sid = btn.getAttribute('data-sid'), t = btn.getAttribute('data-t');
         if (t === 'qr') renderQr(slug, sid);
-        else if (t === 'mypage') { var m = TEAM_PAGE_URL + slug + '&e=' + sid; if (navigator.clipboard) navigator.clipboard.writeText(m).then(function(){ showToast('Employee page link copied. Send it to them.'); }); else showToast(m); }
+        else if (t === 'mypage') { var m = TEAM_PAGE_URL + slug + '&e=' + sid; if (navigator.clipboard) navigator.clipboard.writeText(m).then(function(){ showToast('Page link copied. Send it to them.'); }); else showToast(m); }
         else if (t === 'copy') { var u = CLAIM_PAGE_URL + slug + '&e=' + sid; if (navigator.clipboard) navigator.clipboard.writeText(u).then(function(){ showToast('Link copied'); }); else showToast(u); }
         else if (t === 'paid') {
-          var upd = {}; cl.filter(function(c){ return c.ref === sid && !c.staffPaid; }).forEach(function(c){ upd['claims/' + slug + '/' + c._id + '/staffPaid'] = true; });
-          fbPatch(C, upd).then(function(r){ if (!r.ok) return showToast('Could not update'); Object.keys(upd).forEach(function(k){ var id = k.split('/')[2]; claimsAll[slug][id].staffPaid = true; }); renderTeam(slug); showToast('Marked as given'); });
+          var upd = {}; cl.filter(function(c){ return c.ref === sid; }).forEach(function(c){ if (!c.staffPaid) upd['claims/' + slug + '/' + c._id + '/staffPaid'] = true; if (isUsed(slug, c) && !c.usedPaid) upd['claims/' + slug + '/' + c._id + '/usedPaid'] = true; });
+          fbPatch(C, upd).then(function(r){ if (!r.ok) return showToast('Could not update'); Object.keys(upd).forEach(function(k){ var q = k.split('/'); claimsAll[slug][q[2]][q[3]] = true; }); renderTeam(slug); showToast('Marked as given'); });
         } else if (t === 'del') {
-          if (!confirm('Remove this employee? Their QR code still lets customers sign up, but nobody is credited.')) return;
+          if (!confirm('Remove this person? Their QR code still lets guests sign up, but nobody is credited.')) return;
           fbDelete(C + '/staff/' + slug + '/' + sid).then(function(r){ if (!r.ok) return showToast('Could not remove'); delete staffAll[slug][sid]; renderTeam(slug); });
         }
       });
     });
+  }
+
+  // every person's QR code on printable sheets (2 per row)
+  function renderQrSheet(slug) {
+    var p = programs[slug] || {}, st = staffAll[slug] || {}, ids = Object.keys(st);
+    view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back</div>' +
+      '<div class="small-note">One sign per person. Print them, cut them out, and hand them out. Each guest who signs up through a sign earns that person their reward.</div>' +
+      '<div class="tools-row"><button class="btn btn-primary" id="printBtn">Print all</button></div>' +
+      '<div id="printArea"><div class="qr-grid">' + (ids.map(function(sid){
+        var url = CLAIM_PAGE_URL + slug + '&e=' + sid;
+        return '<div class="qr-card mini"><div class="sheet-scan">Scan for ' + escapeHtml(p.offer || 'your free offer') + '</div><div class="sheet-qr">' + qrSvg(url) + '</div><div class="sheet-biz">' + escapeHtml(p.bizName || slug) + '</div><div class="sheet-offer">From <b>' + escapeHtml(st[sid].name) + '</b></div><div class="sheet-url">Good for ' + daysOf(p) + ' days</div></div>';
+      }).join('') || '<div class="empty-note">Add people first.</div>') + '</div></div>';
+    document.getElementById('backBtn').addEventListener('click', function(){ renderTeam(slug); });
+    document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
   }
 
   // ================= RESTAURANT CREDIT AND FEES =================
@@ -3115,7 +3161,11 @@ var qrcode = function() {
     document.body.appendChild(a); a.click(); a.remove();
   }
   var HEAD = ['Name','Email','Phone','Instagram','Employee','OK to email','OK to text','Email consent saved','Text consent saved','Consent wording version','Opted out','Coupon code','Used','Signed up','Welcome key given'];
-  function staffName(slug, sid) { var x = sid && staffAll[slug] && staffAll[slug][sid]; return x ? x.name : (sid || ''); }
+  function staffName(slug, sid) {
+    var x = sid && staffAll[slug] && staffAll[slug][sid]; if (x) return x.name;
+    if (sid && sid.indexOf('g-') === 0) { var g = (claimsAll[slug] || {})[sid.slice(2)]; return g ? 'guest ' + (g.name || '') : 'a guest'; }
+    return sid || '';
+  }
   function claimRow(c) {
     return [c.name, c.email, c.phone || '', c.ig ? '@' + c.ig : '', staffName(c.biz || '', c.ref), mailOk(c) ? 'yes' : 'no', textOk(c) ? 'yes' : 'no',
             c.marketingOptIn ? (c.mailConsentText || '') : '', c.smsOptIn ? (c.consentText || '') : '', c.consentVer || '', isOut(c) ? 'yes' : 'no', c.code, isUsed(c.biz || '', c) ? 'yes' : 'no', fmtWhen(c.createdAt), c.welcomePaid ? 'yes' : 'no'];

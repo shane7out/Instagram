@@ -23,7 +23,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   const errors = [];
   const pick = async (pg, mail, sms) => { await pg.check('#mail' + (mail ? 'Yes' : 'No')); await pg.check('#sms' + (sms ? 'Yes' : 'No')); };
 
-  await emu('PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 5, active: true, validDays: 30, welcomeKeys: 1, staffKeys: 2, instructions: 'Show this at the counter.' }, OWNER);
+  await emu('PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 5, active: true, validDays: 30, welcomeKeys: 1, staffKeys: 2, usedKeys: 1, instructions: 'Show this at the counter.' }, OWNER);
   await emu('PUT', '/lvr_coupons/staff/van/maria-7k3', { name: 'Maria', active: true }, OWNER);
 
   // ---------- customer page
@@ -46,6 +46,8 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await page.click('#claimBtn');
   await page.waitForSelector('.code-value');
   ok('the customer is told how long the coupon is good for', /Good for 30 days: use it by/.test(await page.textContent('#card')));
+  const shareHtml = await page.innerHTML('.share-qr').catch(() => '');
+  ok('after signing up the guest gets their own QR code to bring friends, with their own link', shareHtml.length > 2000 && /e=g-[a-z0-9]+/.test((await page.getAttribute('#shareBtn', 'data-link')) || ''));
   ok('the customer is told about their reward key', /1 reward key/.test(await page.textContent('#card')));
   const code = await page.textContent('.code-value');
   ok('a coupon code is shown', /^VAN-[A-Z0-9]{5}$/.test(code), code);
@@ -144,7 +146,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await ad.click('.back-link'); await ad.waitForSelector('.program-card');
   await ad.click('[data-act="team"][data-slug="van"]'); await ad.waitForSelector('#addStaff');
   const tt = await ad.textContent('#view');
-  ok('the team page counts the employee\'s signups, keys earned and keys still to give', /Maria/.test(tt) && /1 signed up/.test(tt) && /2 keys earned/.test(tt) && /2 keys still to give/.test(tt), tt.slice(0, 400));
+  ok('the team page counts signups, used coupons, keys earned and keys still to give', /Maria/.test(tt) && /1 signed up/.test(tt) && /1 used/.test(tt) && /3 keys earned \(2 for sign-ups, 1 for coupons used\)/.test(tt) && /3 keys still to give/.test(tt), tt.slice(0, 400));
   await ad.fill('#fStaffName', 'Jose'); await ad.click('#addStaff'); await ad.waitForSelector('#qrBox svg');
   const staff = (await emu('GET', '/lvr_coupons/staff/van', undefined, OWNER)).j || {};
   const jose = Object.keys(staff).find(k => /^jose-/.test(k));
@@ -183,10 +185,11 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await ad.click('.back-link'); await ad.waitForSelector('.program-card');
   // new program through the form
   await ad.click('#newProgramBtn');
-  await ad.fill('#fBizName', 'Noodle Bar'); await ad.fill('#fSlug', 'Noodle Bar'); await ad.fill('#fOffer', 'Free spring rolls'); await ad.fill('#fMaxClaims', '25'); await ad.click('#saveBtn');
+  await ad.fill('#fBizName', 'Noodle Bar'); await ad.fill('#fSlug', 'Noodle Bar'); await ad.fill('#fOffer', 'Free spring rolls'); await ad.fill('#fMaxClaims', '25'); await ad.fill('#fValidDays', '90'); await ad.click('#saveBtn');
   await ad.waitForSelector('#qrBox svg');
   const np = (await emu('GET', '/lvr_coupons/programs/noodle-bar')).j;
   ok('creating a restaurant saves it and goes straight to its QR code', np && np.bizName === 'Noodle Bar' && np.maxClaims === 25 && np.active === true);
+  ok('asking for 90 days saves as 30: no coupon can be good for longer', np.validDays === 30);
   // ---------- the employee's own live page
   ok('the first sign-up through Maria was credited to her at once (credit log)', Object.keys((await emu('GET', '/lvr_coupons/staffLog/van/maria-7k3')).j || {}).length === 1);
   const emp = await browser.newContext(); await route(emp, false);
@@ -209,6 +212,24 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('the employee is marked as joined and the form is gone', (await emu('GET', '/lvr_coupons/staff/van/maria-7k3/joined')).j === true && !(await ep.isVisible('#jf').catch(() => false)));
   const ep2 = await emp.newPage(); await ep2.goto(base + '/lvr-team.html?biz=van&e=nobody-123'); await ep2.waitForSelector('.state');
   ok('an unknown employee link says it is not active', /not active/.test(await ep2.textContent('#app')));
+  // ---------- guests walking around with their own QR code
+  const annClaims = (await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j; const annKey = Object.keys(annClaims).find(id => annClaims[id].email === 'ann@example.com');
+  const fp = await cust.newPage(); await fp.goto(base + '/lvr-coupon.html?biz=van&e=g-' + annKey); await fp.waitForSelector('#claimForm');
+  await fp.fill('#cName', 'Fay Friend'); await fp.fill('#cEmail', 'fay@example.com'); await fp.fill('#cPhone', '7025550166'); await pick(fp, false, false); await fp.click('#claimBtn'); await fp.waitForSelector('.code-value');
+  const fcode = await fp.textContent('.code-value');
+  const fay = Object.values((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).find(x => x.email === 'fay@example.com');
+  ok('a friend who arrives through a guest\'s own link is credited to that guest', fay && fay.ref === 'g-' + annKey);
+  ok('a guest referral does not create an employee credit entry', Object.keys((await emu('GET', '/lvr_coupons/staffLog/van', undefined, OWNER)).j || {}).every(k => k === 'maria-7k3'));
+  await rp.goto(base + '/lvr-redeem.html?biz=van'); await rp.waitForSelector('#check:not([disabled])'); await rp.fill('#code', fcode); await rp.click('#check'); await rp.waitForSelector('#redeem'); await rp.click('#redeem'); await rp.waitForFunction(() => /Redeemed/.test(document.getElementById('result').textContent));
+  await ad.goto(base + '/lvr-coupons-admin.html'); await ad.waitForSelector('.program-card');
+  await ad.click('[data-act="team"][data-slug="van"]'); await ad.waitForSelector('#addStaff');
+  const gt = await ad.textContent('#view');
+  ok('the Team screen lists the guest who brought a friend, with the friend who used the coupon and the keys owed', /Guests who brought friends/.test(gt) && /Ann Lee/.test(gt) && /1 friend signed up/.test(gt) && /1 used their coupon/.test(gt) && /1 keys still to give/.test(gt), gt.slice(-500));
+  await ad.click('[data-gpaid]'); await ad.waitForTimeout(600);
+  ok('marking the guest\'s keys as given is saved', Object.values((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).some(x => x.email === 'fay@example.com' && x.usedPaid === true));
+  await ad.fill('#fMany', 'Kim\nLee\n\nSam'); await ad.click('#addMany'); await ad.waitForSelector('.qr-grid');
+  ok('several people can be added at once and each gets a QR sign', (await ad.$$('.qr-card.mini')).length >= 4 && Object.keys((await emu('GET', '/lvr_coupons/staff/van', undefined, OWNER)).j).length >= 4);
+  ok('each printed sign says the coupon is good for 30 days', /Good for 30 days/.test(await ad.textContent('#printArea')));
   // ---------- opting out
   await ad.goto(base + '/lvr-coupons-admin.html'); await ad.waitForSelector('.program-card');
   await ad.click('[data-act="team"][data-slug="van"]'); await ad.waitForSelector('#addStaff');
@@ -230,7 +251,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('the text list no longer has the opted-out guest', !/Ann Lee/.test(fs.readFileSync(await dl6.path(), 'utf8')));
   await ad.click('[data-optout]'); await ad.waitForTimeout(700);
   ok('the owner can also mark someone opted out (they replied STOP)', Object.keys((await emu('GET', '/lvr_coupons/optout', undefined, OWNER)).j || {}).length >= 3);
-  const cp3 = await cust.newPage(); await cp3.goto(base + '/lvr-coupon.html?biz=van'); await cp3.waitForSelector('#claimForm');
+  const cp3 = await cust.newPage(); await cp3.goto(base + '/lvr-coupon.html?biz=exp'); await cp3.waitForSelector('#claimForm');
   ok('the guest sign-up page links to the stop-all-messages page', (await cp3.innerHTML('#foot')).includes('lvr-optout.html'));
   // a signed-out visitor to the admin page
   const stranger = await browser.newContext(); await route(stranger, false);
