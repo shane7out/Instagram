@@ -316,6 +316,7 @@ body.hlock{overflow:hidden}
 
 #wlbox .chk{border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 16px;margin:12px 0;background:rgba(255,255,255,.05)}#wlbox .chk h3{margin:0 0 4px;font-size:17px}#wlbox .wlrow{border-top:1px solid rgba(255,255,255,.12);padding:8px 0}#wlbox .wlrow summary{cursor:pointer;font-size:14px;line-height:1.5}#wlbox .wlrow .btn{margin:6px 8px 6px 0}#wlbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#wlbox .btn{margin:6px 8px 0 0}#gvbox .wl{margin:4px 0 8px;padding-left:20px;font-size:14px;line-height:1.5}#gvbox .kvrow{padding:8px 0;border-top:1px solid rgba(255,255,255,.12)}#gvbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#gvbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#gvbox .gvrow .btn{margin:6px 8px 0 0}#gvbox #gvlist>.btn{margin-top:12px}
 #owebox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#owebox .gvrow input{width:100%;margin:6px 0;font-size:16px}#owebox .btn{margin:6px 8px 0 0}#dnbox .gvrow{padding:12px 0 6px;border-top:1px solid rgba(255,255,255,.15);margin-top:12px}#dnbox .gvrow input[readonly]{width:100%;margin:6px 0;font-size:14px}#dnbox .gvrow .btn{margin:6px 8px 0 0}#dnbox #dnlist>.btn{margin-top:12px}
+#wllist .btn:disabled{opacity:.4;cursor:not-allowed}
 #rbbox .rbrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0;padding:8px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#rbbox .rbth{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex:none;background:#fff}#rbbox .rbth.big{width:100%;height:auto;max-height:70vh;object-fit:contain;cursor:zoom-out}#rbbox .rbtx{flex:1;min-width:150px}#rbbox .rbtx b{display:block}
 #dnbox .dnrec{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14)}#dnbox .dnimg{display:block;width:140px;max-height:200px;object-fit:cover;border-radius:8px;background:#fff;margin:6px 0;cursor:zoom-in}#dnbox .dnimg.big{width:100%;max-height:none;object-fit:contain;cursor:zoom-out}#dnbox .dnwarn{margin:6px 0;color:#9fd6f2;font-weight:700;font-size:14px}
 
@@ -840,21 +841,29 @@ body.hlock{overflow:hidden}
   tr.slice(0,25).forEach(function(e){var f=wById(e.from),t=wById(e.to);ls.appendChild(el('p','fine',fdate(e.t)+': '+(f?f.name:'?')+' \u2192 '+(t?t.name:'?')+', '+fmt(e.amt)+' keys'+(e.note?' ('+e.note+')':'')))})}
  /* Waiting list + Instagram check (2026-11-25): Check next person, one profile at a time. States use the fields the rules already have:
     verified:true = checked and active; verified:false + verifiedAt = checked, not active; neither = still to check. The sign-up switch is key_settings/signupsPaused. */
+ /* Daily drip (2026-11-26, Shane): at most 5 people approved a day (Las Vegas time); everyone approved gets 1 key from the Treasury, once. */
+ var WL_CAP=5;
+ function lvDay(t){return new Date(t).toLocaleDateString('en-CA',{timeZone:'America/Los_Angeles'})}
+ function giveWelcome(w){var h=String(w.ig||'').replace(/^@+/,'').toLowerCase(),tag=('Welcome key: @'+h).slice(0,70);
+  if(S.entries.some(function(e){return e.note===tag}))return 'already';
+  var nm=((w.first||'')+' '+(w.last||'')).replace(/\s+/g,' ').trim().slice(0,40)||('@'+h),wid=find(nm);if(!wid)wid=openW(nm,'Customer');
+  if(bal('treasury')<100)return 'empty';
+  S.entries.push({id:S.next++,t:now(),from:'treasury',to:wid,amt:100,note:tag});save();chime();paint();return 'given'}
  function wlRender(){var box=$('wllist');if(!box)return;var lk=$('wllink');if(lk)lk.textContent=location.origin+location.pathname.replace(/[^\/]*$/,'')+'key-waitlist.html'+(DBM?'':'?demo=1');
   var show=function(o){box.innerHTML='';o=o||{};
    var rows=Object.keys(o).map(function(k){var w=o[k];w._k=k;return w}).sort(function(a,b){return (a.at||0)-(b.at||0)});
    var st=function(w){return w.verified===true?'ok':(w.verifiedAt?'no':'new')},igh=function(w){return String(w.ig||'').replace(/^@+/,'')};
-   var cnt={'new':0,ok:0,no:0};rows.forEach(function(w){cnt[st(w)]++});
+   var cnt={'new':0,ok:0,no:0};rows.forEach(function(w){cnt[st(w)]++});var todayLV=lvDay(Date.now()),doneToday=rows.filter(function(w){return w.verified===true&&w.verifiedAt&&lvDay(w.verifiedAt)===todayLV}).length;
    var vals=function(w){return {ig:igh(w).toLowerCase(),ph:String(w.phone||'').replace(/\D/g,'').slice(-10),sa:String(w.street||'').toLowerCase().replace(/[^a-z0-9]/g,'')}};
    var dup={};rows.forEach(function(w){var v=vals(w);Object.keys(v).forEach(function(f){if(v[f]){var kk=f+':'+v[f];(dup[kk]=dup[kk]||[]).push(w._k)}})});
    var flags=function(w){var v=vals(w),f=[],nm={ig:'same Instagram',ph:'same phone',sa:'same street address'};Object.keys(v).forEach(function(k){var d=v[k]&&dup[k+':'+v[k]];if(d&&d.length>1)f.push(nm[k]+' as '+(d.length-1)+' other'+(d.length>2?'s':''))});if(!/^89\d{3}$/.test(String(w.zip||'')))f.push('ZIP is not a Las Vegas ZIP');return f};
    var again=function(){show(o)};
    var save=function(w,ok,undo,done){var body=undo?{verified:null,verifiedAt:null}:{verified:ok,verifiedAt:{'.sv':'timestamp'}};
-    var fin=function(){if(undo){delete w.verified;delete w.verifiedAt}else{w.verified=ok;w.verifiedAt=Date.now()}done&&done();again()};
+    var fin=function(){if(undo){delete w.verified;delete w.verifiedAt}else{w.verified=ok;w.verifiedAt=Date.now();if(ok){var gv=giveWelcome(w);if(gv==='given')window.__wlNote='Verified. 1 key went into '+((w.first||'')+' '+(w.last||'')).trim()+"'s wallet.";else if(gv==='empty')window.__wlNote='Verified, but the Treasury has no keys left to give.'}}done&&done();again()};
     if(!DBM){var lo={};try{lo=JSON.parse(localStorage.getItem('kwLocal')||'{}')||{}}catch(e){}if(lo[w._k]){if(undo){delete lo[w._k].verified;delete lo[w._k].verifiedAt}else{lo[w._k].verified=ok;lo[w._k].verifiedAt=Date.now()}try{localStorage.setItem('kwLocal',JSON.stringify(lo))}catch(e){}}fin();return}
     RR.db('PATCH','key_waitlist/'+w._k,body).then(function(r){if(r.status===200)fin();else say2('Could not save that. Check your sign-in and try again.')},function(){say2('Could not save that. Check your connection and try again.')})};
    var say2=function(t){var m=box.querySelector('.wlmsg');if(m)m.textContent=t};
-   box.appendChild(el('p','fine wlmsg',''));
+   var wm=el('p','fine wlmsg','');if(window.__wlNote){wm.textContent=window.__wlNote;window.__wlNote=''}box.appendChild(wm);
    /* sign-up switch */
    if(DBM){var pr=el('div','chk'),ps=el('p','fine','Sign-ups: checking...'),pb=el('button','btn ghost','...');ps.style.margin='0 0 8px';pb.type='button';pr.appendChild(ps);pr.appendChild(pb);box.appendChild(pr);
     var setP=function(p){ps.textContent=p?'Sign-ups are PAUSED. New people see a message that sign-ups are paused.':'Sign-ups are open.';pb.textContent=p?'Open sign-ups again':'Pause sign-ups';pb.disabled=false;pb.onclick=function(){pb.disabled=true;RR.db('PUT','key_settings/signupsPaused',!p).then(function(r){if(r.status===200)setP(!p);else{pb.disabled=false;ps.textContent='Could not change it. The database rules may not be updated yet.'}})}};
@@ -871,11 +880,16 @@ body.hlock{overflow:hidden}
     card.appendChild(el('h3',null,'Check the next person ('+todo.length+' left)'));
     var nm=el('p','fine');nm.style.margin='6px 0';nm.appendChild(el('b',null,cur.first+' '+cur.last+'  ·  @'+igh(cur)));card.appendChild(nm);
     var a1=el('a','btn','Open @'+igh(cur)+' on Instagram');a1.href='https://www.instagram.com/'+encodeURIComponent(igh(cur))+'/';a1.target='_blank';a1.rel='noopener noreferrer';a1.style.display='block';a1.style.textAlign='center';a1.style.textDecoration='none';card.appendChild(a1);
-    card.appendChild(el('p','fine','Is the account real and public? Did they post in the last 60 days? Do they follow @LasVegas_Restaurants (search the handle in your followers)? Then choose below.'));
+    card.appendChild(el('p','fine','Today: '+doneToday+' of '+WL_CAP+' approved. Everyone you approve gets 1 key. People are checked in the order they joined. No fake accounts: look at the profile, not just the name.'));
+    var ticks=[],tkw=el('div');tkw.style.cssText='display:grid;gap:6px;margin:8px 0';
+    ['It is a real person, not a bot, a business page or a brand-new empty account','They posted in the last 60 days','They follow @LasVegas_Restaurants (search the handle in your followers)'].forEach(function(t,i){var lb=el('label','fine'),cbx=document.createElement('input');cbx.type='checkbox';cbx.id='wlt'+i;cbx.style.cssText='margin-right:8px;width:20px;height:20px;vertical-align:middle';cbx.addEventListener('change',function(){setOk()});lb.appendChild(cbx);lb.appendChild(document.createTextNode(t));tkw.appendChild(lb);ticks.push(cbx)});card.appendChild(tkw);
     card.appendChild(el('p','fine',(cur.street||'')+', '+(cur.city||'')+' '+(cur.state||'')+' '+(cur.zip||'')+'  ·  joined '+when(cur.at)));
     var fl=flags(cur);if(fl.length){var fp=el('p','fine','Look closer: '+fl.join('; ')+'.');fp.style.color='#ffb4a8';card.appendChild(fp)}
     var r1=el('div');r1.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:6px';
-    var b1=el('button','btn','Active: verify (A)'),b2=el('button','btn ghost','Not active (N)'),b3=el('button','btn ghost','Skip (S)');[b1,b2,b3].forEach(function(b){b.type='button';r1.appendChild(b)});card.appendChild(r1);
+    var b1=el('button','btn','Approve: give 1 key (A)'),b2=el('button','btn ghost','Not active (N)'),b3=el('button','btn ghost','Skip (S)');[b1,b2,b3].forEach(function(b){b.type='button';r1.appendChild(b)});card.appendChild(r1);
+    var extra=false,capMsg=el('p','fine',"Today's "+WL_CAP+' are done. The rest wait in line and open again tomorrow.');capMsg.style.color='#9fd6f2';
+    var setOk=function(){var all=ticks.every(function(c){return c.checked}),capped=doneToday>=WL_CAP&&!extra;b1.disabled=!all||capped;capMsg.style.display=capped?'block':'none'};
+    card.appendChild(capMsg);if(doneToday>=WL_CAP){var ov=el('button','btn ghost','Approve one more anyway (my call)');ov.type='button';ov.addEventListener('click',function(){extra=true;ov.style.display='none';setOk()});card.appendChild(ov)}setOk();
     var go=function(f){return function(){[b1,b2,b3].forEach(function(b){b.disabled=true});f()}};
     b1.addEventListener('click',go(function(){save(cur,true)}));b2.addEventListener('click',go(function(){save(cur,false)}));b3.addEventListener('click',go(function(){skip.push(cur._k);again()}));
     window.__wlKey=function(e){if(/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||'')||e.metaKey||e.ctrlKey||e.altKey)return;var k=(e.key||'').toLowerCase();if(k==='a')b1.click();else if(k==='n')b2.click();else if(k==='s')b3.click()};document.addEventListener('keydown',window.__wlKey)}
@@ -889,7 +903,7 @@ body.hlock{overflow:hidden}
     var rb=el('div');rb.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
     var mk=function(t,fn){var b=el('button','btn ghost',t);b.type='button';b.addEventListener('click',function(){b.disabled=true;fn()});rb.appendChild(b)};
     var ha=el('a','btn ghost','Open on Instagram');ha.href='https://www.instagram.com/'+encodeURIComponent(igh(w))+'/';ha.target='_blank';ha.rel='noopener noreferrer';ha.style.textDecoration='none';ha.style.display='inline-flex';ha.style.alignItems='center';rb.appendChild(ha);
-    if(st(w)!=='ok')mk('Verify',function(){save(w,true)});if(st(w)!=='no')mk('Not active',function(){save(w,false)});if(st(w)!=='new')mk('Undo (back to check)',function(){save(w,false,true)});
+    if(st(w)!=='ok')mk('Verify and give 1 key',function(){if(doneToday>=WL_CAP&&!window.confirm("Today's "+WL_CAP+' are already approved. Approve this one anyway?')){again();return}save(w,true)});if(st(w)!=='no')mk('Not active',function(){save(w,false)});if(st(w)!=='new')mk('Undo (back to check)',function(){save(w,false,true)});
     d.appendChild(rb);box.appendChild(d)});
    if(list.length>200)box.appendChild(el('p','fine','Showing the first 200. Use the spreadsheet copy for the rest.'));
    var cp=el('button','btn','Copy the list for a spreadsheet');cp.type='button';cp.addEventListener('click',function(){var head=['First name','Last name','Email','Phone','Instagram','Street','City','State','ZIP','Open to trading','Instagram check','Joined'].join('\t'),lines=rows.map(function(w){return [w.first,w.last,w.email,w.phone,'@'+igh(w),w.street,w.city,w.state,w.zip,(w.trade===true?'yes':'no'),(st(w)==='ok'?'verified':st(w)==='no'?'not active':'to check'),new Date(w.at).toISOString()].map(function(x){return String(x==null?'':x).replace(/[\t\r\n]+/g,' ')}).join('\t')}),txt=[head].concat(lines).join('\n'),dn=function(){cp.textContent='Copied '+rows.length};if(navigator.clipboard)navigator.clipboard.writeText(txt).then(dn,function(){cp.textContent='Could not copy'});else cp.textContent='Could not copy'});box.appendChild(cp);
