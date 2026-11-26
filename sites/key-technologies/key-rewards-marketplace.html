@@ -153,7 +153,7 @@ select.sort{width:100%;height:42px;border-radius:10px;border:1.5px solid rgba(25
   <div class="tb" id="tb"></div>
   <div class="gifts" id="gifts"></div>
   <div class="grid" id="grid"></div>
-  <div class="foot"><b>The honest part.</b> Key Rewards points have no cash value and cannot be bought, sold or exchanged for cash. They are good for 60 days from the day they are issued. Trades are agreements between the two members or businesses, who are each responsible for their own taxes and for what they trade. Each offer is set by the business that provides it, can change or end at any time, and nothing on this page is a promise. Listings marked Sample are examples, not offers yet.</div>
+  <div class="foot"><b>The honest part.</b> Each Key Rewards point is worth $1 in credit toward offers at participating businesses. Points cannot be bought, sold or exchanged for cash. They are good for 60 days from the day they are issued. Trades are agreements between the two members or businesses, who are each responsible for their own taxes and for what they trade. Each offer is set by the business that provides it, can change or end at any time, and nothing on this page is a promise. Listings marked Sample are examples, not offers yet.</div>
   <div class="cta"><a class="btn" href="index.html#contact">Want your business on the marketplace?</a></div>
   <p class="ktcredit"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">KeyTechnologies.si</a></p>
  </main>
@@ -262,7 +262,7 @@ function tradeDetail(t){
  openPanel('<div class="pd">'+art+'<div class="info"><div class="pp">'+v+'<i>keys</i></div><h2 id="dt">'+esc(t.n)+' gift card</h2><div class="sub">'+esc(t.who)+' &middot; '+LOC+'</div>'+
   '<div class="acts">'+go+'</div>'+
   '<h3>How it works</h3><ol><li>Open your Key Rewards wallet.</li><li>Pick your wallet. A trade box pops up for this card.</li><li>Tap Yes. The '+v+' keys leave your wallet and the gift card goes in at once.</li></ol>'+
-  '<h3>Good to know</h3><ul><li>Keys are your Key Rewards points. If you have 5,000 keys, you have 5,000 rewards points.</li>'+(t.sample?'<li>This is a sample card. It shows how a real one will look. A business has not joined for it yet.</li>':'')+'<li>Key Rewards points have no cash value and are good for 60 days from the day they are issued.</li></ul></div></div>')}
+  '<h3>Good to know</h3><ul><li>Keys are your Key Rewards points. If you have 5,000 keys, you have 5,000 rewards points.</li>'+(t.sample?'<li>This is a sample card. It shows how a real one will look. A business has not joined for it yet.</li>':'')+'<li>Each Key Rewards point is worth $1 in credit and is good for 60 days from the day they are issued.</li></ul></div></div>')}
 function toast(t){var e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
 var lastFocus=null;
 function openPanel(html){lastFocus=document.activeElement;document.getElementById("panel").innerHTML='<button type="button" class="closex" id="cx" aria-label="Close">&times;</button>'+html;document.getElementById("ov").classList.add("show");document.body.style.overflow="hidden";document.getElementById("cx").focus()}
@@ -273,7 +273,7 @@ function detail(x){
  openPanel('<div class="pd">'+artHtml(x).replace('class="art"','class="art" aria-hidden="true"')+'<div class="info"><div class="pp">'+x.p+'<i>rewards points</i></div><h2 id="dt">'+esc(x.n)+'</h2><div class="sub">'+esc(x.note)+' &middot; '+LOC+'</div>'+
   '<div class="acts"><button type="button" class="big" data-r="'+x.id+'">'+(x.gift?"Redeem "+x.p+" points":"Get notified")+'</button><button type="button" class="sec2" data-hs="'+x.id+'" aria-label="Save">'+(saved[x.id]?"Saved":"Save")+'</button><button type="button" class="sec2" data-sh="'+x.id+'">Share</button></div>'+steps+
   '<h3>Offered by</h3><div class="seller"><div class="av" aria-hidden="true">'+ico(x.gift?"food":"star")+'</div><div><b>'+esc(biz)+'</b><span>'+(x.gift?"Key Rewards partner":"Sample listing")+' &middot; '+LOC+'</span></div></div>'+
-  '<h3>Good to know</h3><ul><li>Key Rewards points have no cash value.</li><li>Points are good for 60 days from the day they are issued.</li><li>The business sets and can change its offer.</li></ul></div></div>')}
+  '<h3>Good to know</h3><ul><li>Each Key Rewards point is worth $1 in credit toward offers.</li><li>Points are good for 60 days from the day they are issued.</li><li>The business sets and can change its offer.</li></ul></div></div>')}
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closePanel();if((e.key==="Enter"||e.key===" ")&&e.target.getAttribute&&e.target.getAttribute("data-h")!==null){e.preventDefault();e.target.click()}});
 document.getElementById("ov").addEventListener("click",function(e){if(e.target.id==="ov")closePanel()});
 document.addEventListener("click",function(e){var t=e.target;

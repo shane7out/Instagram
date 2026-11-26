@@ -80,7 +80,7 @@
   <div class="grid" id="kpis"></div>
   <div class="card" style="margin-top:12px"><h2>Rewards issued per event</h2><div class="bars" id="bars" role="img" aria-label="Rewards issued per closed event"></div><p class="dim" id="barsNote" style="margin:8px 0 0"></p></div>
   <div class="card"><h2>By restaurant</h2><div class="tw" tabindex="0" role="region" aria-label="Table, scrolls sideways"><table><thead><tr><th>Restaurant</th><th class="n">Events</th><th class="n">Issued</th><th class="n">Redeemed</th><th class="n">Outstanding</th></tr></thead><tbody id="byRest"></tbody></table></div>
-    <p class="dim" style="margin:8px 0 0">Outstanding = issued minus used. Rewards never expire, so this number stays until members use them. Rewards have no cash value.</p></div>
+    <p class="dim" style="margin:8px 0 0">Outstanding = issued minus used. Rewards never expire, so this number stays until members use them. Each reward is worth $1 in credit.</p></div>
 </section>
 
 <section class="panel" id="p-events" role="tabpanel" aria-labelledby="t-events">
@@ -102,7 +102,7 @@
 
 <section class="panel" id="p-redeem" role="tabpanel" aria-labelledby="t-redeem">
   <div class="card"><h2>Record rewards being used</h2>
-    <p class="dim">When a member uses rewards for a free offer, staff confirm it here. Every offer is at least 15 rewards. Rewards have no cash value, cannot be sold or exchanged, and are never refunded once used.</p>
+    <p class="dim">When a member uses rewards for a free offer, staff confirm it here. Every offer is at least 15 rewards. Each reward is worth $1 in credit toward an offer. Rewards cannot be sold or exchanged for cash, and are never refunded once used.</p>
     <div class="row"><div><label for="rdMember">Member</label><select id="rdMember"></select></div><div><label for="rdRest">Restaurant</label><select id="rdRest"></select></div></div>
     <div class="row" style="margin-top:10px"><div><label for="rdOffer">Offer</label><input id="rdOffer" maxlength="80" placeholder="Chicken bowl"></div><div><label for="rdAmt">Rewards used</label><input id="rdAmt" type="number" inputmode="numeric" min="15" step="1" value="15"></div></div>
     <p id="rdBal" class="dim" style="margin:10px 0 0"></p>
@@ -127,7 +127,7 @@
       <li>When you close the event, the pool is split equally among approved guests: the lesser of <b>pool divided by guests</b> (rounded down) and the <b>per-person cap</b>. Whatever is left over is never issued.</li>
       <li>Members use rewards (at least 15 each) at parties, events, meet-and-greets and participating restaurants. Staff record each use. Rewards never expire.</li>
     </ol>
-    <p class="dim">Rewards are whole numbers. They have no cash value, cannot be sold or exchanged for cash, and are never refunded once used.</p></div>
+    <p class="dim">Rewards are whole numbers. Each is worth $1 in credit toward an offer, cannot be exchanged for cash, and is never refunded once used.</p></div>
   <div class="card"><h2>Before this goes live</h2>
     <p>Live mode is <b>off</b>. This sandbox is for trying the flow. Turning it on needs, in this order:</p>
     <ol>

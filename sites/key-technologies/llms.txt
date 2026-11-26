@@ -61,7 +61,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [White hat, gray hat, black hat: what the terms mean, and why it matters for your business](https://keytechnologies.si/guides/white-hat-gray-hat-black-hat-explained.html): A plain guide to white hat, gray hat and black hat hackers, how attackers and defenders now use the same AI tool, and what to ask before anyone tests your security.
 
 ## Key Rewards (Las Vegas Restaurants)
-- [Key Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used only for food at participating restaurants and have no cash value.
+- [Key Rewards](https://keytechnologies.si/rewards.html): a rewards program for dining at participating Las Vegas restaurants. Rewards are used for free offers at participating restaurants; each reward is worth $1 in credit toward an offer and cannot be exchanged for cash.
 - [Rewards demo](https://keytechnologies.si/key-platform/demos/rewards.html)
 - [Program terms](https://keytechnologies.si/rewards-terms.html) and [privacy](https://keytechnologies.si/rewards-privacy.html)
 

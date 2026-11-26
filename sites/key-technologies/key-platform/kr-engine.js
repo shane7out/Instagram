@@ -229,7 +229,7 @@
       });
     };
     // ---------- member to member sends (TEST VERSION ONLY: refused on a live database until the rules and an attorney's review are done) ----------
-    // Rewards have no cash value and cannot be bought or sold. A send moves whole rewards from one person's balance to another's,
+    // Each reward is worth $1 in credit; rewards cannot be bought or sold. A send moves whole rewards from one person's balance to another's,
     // never more than SEND_MAX at a time, SEND_DAY_MAX and SEND_DAY_COUNT sends in any 24 hours, and every send is logged.
     api.send = function (o) {
       if (!store.sandbox) return Promise.reject(new Error('Sending between members is only in the test version for now.'));
