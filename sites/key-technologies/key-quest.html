@@ -84,7 +84,7 @@ function waiting(p){head();app.appendChild(keysCard(p));var s=el("div","state bo
 function finished(p){head();app.appendChild(keysCard(p));var s=el("div","state box");s.appendChild(el("div","big","\ud83c\udf89"));s.appendChild(el("h1",null,"You finished your journey!"));s.appendChild(el("p","lead","Thank you for visiting every restaurant. We will message you on Instagram about what is next."));app.appendChild(s)}
 function form(p){
  head();app.appendChild(keysCard(p));
- var box=el("div","box");box.appendChild(el("p","brandline","Your next restaurant"));box.appendChild(el("div","stop",p.stopName||"Your next restaurant"));
+ var box=el("div","box");box.appendChild(el("p","brandline","Your next stop on the treasure hunt"));box.appendChild(el("div","stop",p.stopName||"Your next restaurant"));
  if(p.stopNote)box.appendChild(el("p","note",p.stopNote));
  if(p.stopIg){var a=el("a","btn","See them on Instagram");a.href="https://www.instagram.com/"+encodeURIComponent(String(p.stopIg).replace(/^@+/,""))+"/";a.target="_blank";a.rel="noopener noreferrer";box.appendChild(a)}
  var ol=el("ol","steps");["Go and eat there.","At the table, take a photo of your own receipt.","Send it here. We will check it."].forEach(function(t){ol.appendChild(el("li",null,t))});box.appendChild(ol);app.appendChild(box);
@@ -97,7 +97,7 @@ function form(p){
  var ck=el("label","chk");ck.removeAttribute("for");var cb=el("input");cb.type="checkbox";cb.id="own";ck.appendChild(cb);ck.appendChild(el("span",null,"This is my own receipt from my own meal today. I did not find it or borrow it."));f.appendChild(ck);
  var er=el("div","err");er.setAttribute("role","alert");f.appendChild(er);
  var go=el("button","go","Send my receipt");go.type="submit";f.appendChild(go);
- f.appendChild(el("p","fine","Any amount is fine, big or small. We keep your photo only to check your visit. Questions? Message @lasvegas_restaurants on Instagram."));
+ f.appendChild(el("p","fine","There is no hurry and no race. Go when you like, and keep going. Any amount is fine, big or small. We keep your photo only to check your visit. Questions? Message @lasvegas_restaurants on Instagram."));
  app.appendChild(f);
  var photo=null,photoAt=0;
  function bad(m,focus){er.textContent=m;er.className="err on";if(focus)focus.focus()}
