@@ -70,6 +70,26 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('a stranger cannot delete the duplicate-check entry', 'anon', 'DELETE', '/lvr_coupons/idx/van/' + EK, undefined, false);
   await t('the owner reads all the claims', 'owner', 'GET', '/lvr_coupons/claims/van', undefined, true);
   await t('the owner marks a claim redeemed', 'owner', 'PATCH', '/lvr_coupons/claims/van/c1c1c1c1c1', { redeemed: true, redeemedAt: { '.sv': 'timestamp' } }, true);
+  // coupon codes: the restaurant's staff can check and redeem a code with no login
+  const cd = (id, code) => ({ t: { '.sv': 'timestamp' }, id });
+  await t('a code record for a code that has no claim is refused', 'anon', 'PUT', '/lvr_coupons/codes/van/NOCLAIM1', cd('c1c1c1c1c1'), false);
+  await t('a claim together with its code record is accepted', 'anon', 'PATCH', '/lvr_coupons', upd('d1d1d1d1d1', 'd1'.repeat(16), claim({ email: 'u@example.com', ek: 'd1'.repeat(16), pk: 'd2'.repeat(16), phone: '7025550301', code: 'VAN-CODE1' }), { 'codes/van/VAN-CODE1': cd('d1d1d1d1d1') }), true);
+  await t('a second claim cannot take over an existing code', 'anon', 'PATCH', '/lvr_coupons', upd('d2d2d2d2d2', 'd3'.repeat(16), claim({ email: 'v@example.com', ek: 'd3'.repeat(16), pk: 'd4'.repeat(16), phone: '7025550302', code: 'VAN-CODE1' }), { 'codes/van/VAN-CODE1': cd('d2d2d2d2d2') }), false);
+  await t('anyone can look a code up by its exact name', 'anon', 'GET', '/lvr_coupons/codes/van/VAN-CODE1/t', undefined, true);
+  await t('nobody can list all the codes', 'anon', 'GET', '/lvr_coupons/codes/van', undefined, false);
+  await t('a stranger cannot rewrite a code record', 'anon', 'PUT', '/lvr_coupons/codes/van/VAN-CODE1', cd('d9d9d9d9d9'), false);
+  await t('the restaurant\'s staff can redeem a good code', 'anon', 'PUT', '/lvr_coupons/codes/van/VAN-CODE1/used', { '.sv': 'timestamp' }, true);
+  await t('a code can only be redeemed once', 'anon', 'PUT', '/lvr_coupons/codes/van/VAN-CODE1/used', { '.sv': 'timestamp' }, false);
+  await t('a made-up redeem time is refused', 'anon', 'PUT', '/lvr_coupons/codes/van/VAN-CODE1/used', 5, false);
+  await t('the owner creates a program whose coupons expire at once', 'owner', 'PUT', '/lvr_coupons/programs/exp', { bizName: 'Old Co', offer: '$5 off', active: true, validDays: 0 }, true);
+  await t('a claim for it is accepted', 'anon', 'PATCH', '/lvr_coupons', { 'claims/exp/e1e1e1e1e1': claim({ biz: 'exp', email: 'w@example.com', ek: 'e1'.repeat(16), pk: 'e2'.repeat(16), phone: '7025550303', code: 'EXP-OLD11' }), ['idx/exp/' + 'e1'.repeat(16)]: { code: 'EXP-OLD11', id: 'e1e1e1e1e1' }, ['idx/exp/' + 'e2'.repeat(16)]: { code: 'EXP-OLD11', id: 'e1e1e1e1e1' }, 'codes/exp/EXP-OLD11': cd('e1e1e1e1e1') }, true);
+  await t('an expired code cannot be redeemed', 'anon', 'PUT', '/lvr_coupons/codes/exp/EXP-OLD11/used', { '.sv': 'timestamp' }, false);
+  await t('the owner can still mark an expired code used', 'owner', 'PUT', '/lvr_coupons/codes/exp/EXP-OLD11/used', { '.sv': 'timestamp' }, true);
+  // restaurant credit and fees: owner only
+  await t('a stranger cannot read the restaurant credit', 'anon', 'GET', '/lvr_coupons/wallet/van', undefined, false);
+  await t('a stranger cannot add restaurant credit', 'anon', 'PUT', '/lvr_coupons/wallet/van/deposits/m1', { amount: 500, t: 1 }, false);
+  await t('the owner records $500 of restaurant credit', 'owner', 'PUT', '/lvr_coupons/wallet/van/deposits/m1', { amount: 500, t: 1795000000000, note: 'November' }, true);
+  await t('a zero or negative deposit is refused', 'owner', 'PUT', '/lvr_coupons/wallet/van/deposits/m2', { amount: -5, t: 1 }, false);
   // counter
   await t('the counter starts at 1', 'anon', 'PUT', '/lvr_coupons/counts/van', 1, true);
   await t('the counter cannot jump by 2', 'anon', 'PUT', '/lvr_coupons/counts/van', 3, false);

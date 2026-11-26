@@ -22,7 +22,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   });
   const errors = [];
 
-  await emu('PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 5, active: true, welcomeKeys: 1, staffKeys: 2, instructions: 'Show this at the counter.' }, OWNER);
+  await emu('PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 5, active: true, validDays: 30, welcomeKeys: 1, staffKeys: 2, instructions: 'Show this at the counter.' }, OWNER);
   await emu('PUT', '/lvr_coupons/staff/van/maria-7k3', { name: 'Maria', active: true }, OWNER);
 
   // ---------- customer page
@@ -44,9 +44,11 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('the text wording names the restaurant and Las Vegas Restaurants and STOP', /Vanilla Rice and Las Vegas Restaurants/.test(await page.textContent('#smsRow')) && /STOP/.test(await page.textContent('#smsRow')));
   await page.click('#claimBtn');
   await page.waitForSelector('.code-value');
+  ok('the customer is told how long the coupon is good for', /Good for 30 days: use it by/.test(await page.textContent('#card')));
   ok('the customer is told about their reward key', /1 reward key/.test(await page.textContent('#card')));
   const code = await page.textContent('.code-value');
   ok('a coupon code is shown', /^VAN-[A-Z0-9]{5}$/.test(code), code);
+  ok('a lookup record was saved so the restaurant can check the code', !!((await emu('GET', '/lvr_coupons/codes/van/' + code)).j || {}).t);
   const claims = (await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j || {};
   const ids = Object.keys(claims), c = claims[ids[0]] || {};
   ok('exactly one claim was saved', ids.length === 1);
@@ -64,7 +66,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await page.goto(base + '/lvr-coupon.html?biz=van'); await page.waitForSelector('#claimForm');
   await page.fill('#cName', 'Ann Lee'); await page.fill('#cEmail', ' ANN@example.com '); await page.fill('#cPhone', '7025559999'); await page.click('#claimBtn');
   await page.waitForSelector('.code-value');
-  ok('the same email gets the same code back', (await page.textContent('.code-value')) === code && (await page.textContent('#card')).includes('Welcome back'));
+  ok('the same email gets the same code back, with its end date', (await page.textContent('.code-value')) === code && (await page.textContent('#card')).includes('Welcome back') && /use it by/.test(await page.textContent('#card')));
   ok('no second claim was created', Object.keys((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).length === 1);
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=van&e=maria-7k3'); await page.waitForSelector('#claimForm');
   await page.fill('#cName', 'Ann Again'); await page.fill('#cEmail', 'ann2@example.com'); await page.fill('#cPhone', '702-555-0100'); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
@@ -81,6 +83,22 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=van'); await page.waitForSelector('#claimForm');
   await page.fill('#cName', 'Bot'); await page.fill('#cEmail', 'bot@example.com'); await page.fill('#cPhone', '7025550133'); await page.evaluate(() => { document.getElementById('cWeb').value = 'http://spam'; }); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
   ok('a bot that fills the hidden box stores nothing', Object.keys((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).length === 3);
+  // ---------- the restaurant's redeem page (no login)
+  const rp = await cust.newPage(); rp.on('pageerror', e => errors.push('redeem page: ' + e.message));
+  await rp.goto(base + '/lvr-redeem.html?biz=van'); await rp.waitForSelector('#check:not([disabled])');
+  await rp.fill('#code', 'ZZZ-NOPE1'); await rp.click('#check'); await rp.waitForSelector('.bad');
+  ok('a made-up code is not valid', /Not a valid code/.test(await rp.textContent('#result')));
+  await rp.fill('#code', code.toLowerCase()); await rp.click('#check'); await rp.waitForSelector('#redeem');
+  ok('a good code shows the offer and its end date', /Good coupon/.test(await rp.textContent('#result')) && /Free bowl/.test(await rp.textContent('#result')) && /Good until/.test(await rp.textContent('#result')));
+  await rp.click('#redeem'); await rp.waitForFunction(() => /Redeemed/.test(document.getElementById('result').textContent));
+  await rp.fill('#code', code); await rp.click('#check'); await rp.waitForFunction(() => /Already used/.test(document.getElementById('result').textContent));
+  ok('a code works only once', true);
+  await emu('PUT', '/lvr_coupons/programs/exp', { bizName: 'Old Co', offer: '$5 off', active: true, validDays: 0 }, OWNER);
+  const ec = await cust.newPage(); await ec.goto(base + '/lvr-coupon.html?biz=exp'); await ec.waitForSelector('#claimForm');
+  await ec.fill('#cName', 'Ed Old'); await ec.fill('#cEmail', 'ed@example.com'); await ec.fill('#cPhone', '7025550155'); await ec.click('#claimBtn'); await ec.waitForSelector('.code-value');
+  const ecode = await ec.textContent('.code-value');
+  await rp.goto(base + '/lvr-redeem.html?biz=exp'); await rp.waitForSelector('#check:not([disabled])'); await rp.fill('#code', ecode); await rp.click('#check'); await rp.waitForSelector('.bad');
+  ok('a coupon past its days is shown as expired and cannot be redeemed', /Expired/.test(await rp.textContent('#result')) && (await rp.$('#redeem')) === null);
   // limit
   await emu('PUT', '/lvr_coupons/programs/full', { bizName: 'Full House', offer: 'Free soda', maxClaims: 1, active: true }, OWNER);
   await emu('PUT', '/lvr_coupons/counts/full', 1, OWNER);
@@ -142,6 +160,25 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   const [dl3] = await Promise.all([ad.waitForEvent('download'), ad.click('#csvAll')]);
   const csv3 = fs.readFileSync(await dl3.path(), 'utf8');
   ok('the full download has Instagram, the employee and the key columns', /Instagram/.test(csv3) && /@ann\.lee/.test(csv3) && /Maria/.test(csv3) && /Welcome key given/.test(csv3), csv3.slice(0, 300));
+  await ad.click('.back-link'); await ad.waitForSelector('.program-card');
+  // restaurant credit, fees and the master pool
+  await ad.click('[data-act="wallet"][data-slug="van"]'); await ad.waitForSelector('#addDep');
+  const nVan = Object.keys((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).length;
+  await ad.fill('#fDepAmt', '500'); await ad.fill('#fDepNote', 'November gift card'); await ad.click('#addDep');
+  await ad.waitForFunction(() => /\$500 credit received/.test(document.getElementById('view').textContent));
+  const wt = await ad.textContent('#view');
+  ok('the credit screen takes $1 per sign-up from the $500 and shows what is left to give away', new RegExp(nVan + ' sign-ups').test(wt) && new RegExp('\\$' + (500 - nVan) + ' left to give away').test(wt), wt.slice(0, 400));
+  ok('the $500 is saved for the owner only', Object.keys(((await emu('GET', '/lvr_coupons/wallet/van/deposits', undefined, OWNER)).j) || {}).length === 1 && (await emu('GET', '/lvr_coupons/wallet/van')).s !== 200);
+  await ad.click('.back-link'); await ad.waitForSelector('.program-card');
+  await ad.click('#poolBtn'); await ad.waitForSelector('#poolAll');
+  const pt = await ad.textContent('#view');
+  ok('the master pool counts each person once across the restaurants', new RegExp((nVan + 1) + ' different people').test(pt) || new RegExp((nVan) + ' different people').test(pt), pt.slice(0, 200));
+  const [dl4] = await Promise.all([ad.waitForEvent('download'), ad.click('#poolAll')]);
+  const csv4 = fs.readFileSync(await dl4.path(), 'utf8');
+  ok('the master download lists which restaurants each person is in', /Restaurants/.test(csv4) && /Vanilla Rice/.test(csv4));
+  await ad.click('.back-link'); await ad.waitForSelector('.program-card');
+  await ad.click('[data-act="claims"][data-slug="van"]'); await ad.waitForSelector('.claim-row');
+  ok('a coupon the restaurant redeemed shows as Used to the owner', /Used/.test(await ad.textContent('#view')));
   await ad.click('.back-link'); await ad.waitForSelector('.program-card');
   // new program through the form
   await ad.click('#newProgramBtn');

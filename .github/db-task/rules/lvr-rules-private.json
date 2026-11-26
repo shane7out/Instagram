@@ -357,12 +357,13 @@
     "$key": {
      ".read": true,
      ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('programs').child($slug).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false)",
-     ".validate": "$key.matches(/^[0-9a-f]{32}$/) && newData.hasChildren(['code','id']) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('id').isString() && newData.child('id').val().length >= 8 && newData.child('id').val().length <= 40 && newData.parent().parent().parent().child('claims').child($slug).child(newData.child('id').val()).child('code').val() == newData.child('code').val()",
+     ".validate": "$key.matches(/^[0-9a-f]{32}$/) && newData.hasChildren(['code','id']) && newData.child('code').isString() && newData.child('code').val().length >= 4 && newData.child('code').val().length <= 24 && newData.child('id').isString() && newData.child('id').val().length >= 8 && newData.child('id').val().length <= 40 && newData.parent().parent().parent().child('claims').child($slug).child(newData.child('id').val()).child('code').val() == newData.child('code').val() && (!newData.child('t').exists() || (newData.child('t').isNumber() && newData.child('t').val() == now))",
      "code": {},
      "id": {},
      "$other": {
       ".validate": false
-     }
+     },
+     "t": {}
     }
    }
   },
@@ -390,6 +391,41 @@
       ".validate": "$id.length >= 8 && $id.length <= 40 && newData.hasChildren(['t','k']) && newData.child('t').isNumber() && newData.child('t').val() == now && newData.child('k').isNumber() && newData.child('k').val() >= 0 && newData.child('k').val() <= 100 && newData.child('k').val() == (root.child('lvr_coupons').child('programs').child($slug).child('staffKeys').exists() ? root.child('lvr_coupons').child('programs').child($slug).child('staffKeys').val() : 0)",
       "t": {},
       "k": {},
+      "$other": {
+       ".validate": false
+      }
+     }
+    }
+   }
+  },
+  "codes": {
+   "$slug": {
+    "$code": {
+     ".read": true,
+     ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('programs').child($slug).exists() && root.child('lvr_coupons').child('programs').child($slug).child('active').val() != false)",
+     ".validate": "$code.length >= 4 && $code.length <= 24 && newData.hasChildren(['t','id']) && newData.child('t').isNumber() && newData.child('id').isString() && newData.child('id').val().length >= 8 && newData.child('id').val().length <= 40 && newData.child('t').val() <= now + 1000 && newData.parent().parent().parent().child('claims').child($slug).child(newData.child('id').val()).child('code').val() == $code && (data.exists() ? newData.child('t').val() == data.child('t').val() : newData.child('t').val() == now)",
+     "t": {},
+     "id": {},
+     "used": {
+      ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.isNumber() && newData.val() == now && data.parent().child('t').exists() && now <= data.parent().child('t').val() + (root.child('lvr_coupons').child('programs').child($slug).child('validDays').exists() ? root.child('lvr_coupons').child('programs').child($slug).child('validDays').val() : 30) * 86400000)",
+      ".validate": "newData.isNumber()"
+     },
+     "$other": {
+      ".validate": false
+     }
+    }
+   }
+  },
+  "wallet": {
+   "$slug": {
+    "deposits": {
+     "$id": {
+      ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+      ".write": "auth != null && auth.uid == '__OWNER_UID__'",
+      ".validate": "newData.hasChildren(['amount','t']) && newData.child('amount').isNumber() && newData.child('amount').val() > 0 && newData.child('amount').val() <= 1000000 && newData.child('t').isNumber() && (!newData.child('note').exists() || (newData.child('note').isString() && newData.child('note').val().length <= 200))",
+      "amount": {},
+      "t": {},
+      "note": {},
       "$other": {
        ".validate": false
       }

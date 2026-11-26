@@ -67,6 +67,8 @@
   .code-value{font-size:30px;font-weight:800;letter-spacing:.08em;color:var(--key-light);margin-top:6px;}
   .instructions{font-size:13.5px;color:var(--ink-dim);line-height:1.55;}
   .reward-box{background:rgba(22,143,255,.14);border:1px solid var(--key-blue);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:14px;line-height:1.5;}
+  .until{font-size:15px;margin-bottom:10px;color:var(--ink);}
+  .until.gone{color:var(--red);}
   .save-note{font-size:12.5px;color:var(--ink-dim);margin-top:12px;}
 
   .footer-note{text-align:center;font-size:11.5px;color:var(--ink-dim);opacity:.75;margin-top:18px;line-height:1.5;}
@@ -166,15 +168,20 @@
     }, 15000);
   }
 
-  function renderSuccess(program, code, again) {
+  var DAY = 86400000;
+  function daysOf(program) { var n = Number(program.validDays); return isFinite(n) && n >= 0 ? n : 30; }
+  function fmtDate(ms) { return new Date(ms).toLocaleDateString(undefined, {month: 'long', day: 'numeric', year: 'numeric'}); }
+  function renderSuccess(program, code, again, madeAt) {
     stopTicker();
     var keys = Number(program.welcomeKeys) || 0;
+    var until = madeAt ? madeAt + daysOf(program) * DAY : 0, gone = until && Date.now() > until;
     cardEl.innerHTML =
       '<div class="offer-title">' + (again ? 'Welcome back!' : 'You\'re in! 🎉') + '</div>' +
       '<div class="code-box">' +
         '<div class="code-label">Your coupon code</div>' +
         '<div class="code-value">' + escapeHtml(code) + '</div>' +
       '</div>' +
+      (until ? '<div class="until' + (gone ? ' gone' : '') + '">' + (gone ? 'This coupon ended on ' : 'Good for ' + daysOf(program) + ' days: use it by ') + '<b>' + escapeHtml(fmtDate(until)) + '</b></div>' : '') +
       '<div class="instructions">' + escapeHtml(program.instructions || ('Show this code at ' + (program.bizName || 'the restaurant') + ' to use your ' + (program.offer || 'offer') + '.')) + '</div>' +
       (keys > 0 && !again ? '<div class="reward-box">🔑 You also earned <b>' + keys + ' reward key' + (keys === 1 ? '' : 's') + '</b>. We\'ll add ' + (keys === 1 ? 'it' : 'them') + ' to your Key Rewards account using your phone number.</div>' : '') +
       '<div class="save-note">Take a screenshot so you have it when you get there.</div>';
@@ -234,7 +241,7 @@
         // Already claimed (same email or same phone)? Show the same code instead of making a second one.
         return Promise.all([ fbGet(C + 'idx/' + encodeURIComponent(slug) + '/' + ek), fbGet(C + 'idx/' + encodeURIComponent(slug) + '/' + pk) ]).then(function(h){
           var hit = (h[0] && h[0].code) ? h[0] : ((h[1] && h[1].code) ? h[1] : null);
-          if (hit) { renderSuccess(program, hit.code, true); return; }
+          if (hit) { renderSuccess(program, hit.code, true, hit.t || 0); return; }
           var id = randomId(), code = program.fixedCode ? String(program.fixedCode).slice(0, 24) : makeCode();
           function build(withRef) {
             var claim = { biz: slug, name: name, email: email, phone: phone, code: code, redeemed: false, createdAt: {'.sv': 'timestamp'}, ek: ek, pk: pk,
@@ -244,8 +251,10 @@
             if (smsOn) { claim.consentText = sms; claim.consentVer = CONSENT_VER; }
             var upd = {};
             upd['claims/' + slug + '/' + id] = claim;
-            upd['idx/' + slug + '/' + ek] = { code: code, id: id };
-            upd['idx/' + slug + '/' + pk] = { code: code, id: id };
+            upd['idx/' + slug + '/' + ek] = { code: code, id: id, t: {'.sv': 'timestamp'} };
+            upd['idx/' + slug + '/' + pk] = { code: code, id: id, t: {'.sv': 'timestamp'} };
+            // a lookup record so the restaurant's staff can check and redeem this code (not for shared codes, which cannot be told apart)
+            if (!program.fixedCode) upd['codes/' + slug + '/' + code] = { t: {'.sv': 'timestamp'}, id: id };
             // the employee is credited in the very same save, so their own page ticks up the moment this customer signs up
             if (withRef && ref) upd['staffLog/' + slug + '/' + ref + '/' + id] = { t: {'.sv': 'timestamp'}, k: Number(program.staffKeys) || 0 };
             return upd;
@@ -258,7 +267,7 @@
             if (!r.ok) throw new Error('HTTP ' + r.status);
             // keep the "X left" count honest (best effort; the claim above is the record)
             fbSend('PUT', C + 'counts/' + encodeURIComponent(slug), {'.sv': {increment: 1}}).catch(function(){});
-            renderSuccess(program, code, false);
+            renderSuccess(program, code, false, Date.now());
           });
         });
       }).catch(function(){

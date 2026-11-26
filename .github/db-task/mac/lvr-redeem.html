@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redeem a Coupon — Las Vegas Restaurants</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{--bg:#07142b;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.18);--ink:#fff;--dim:rgba(255,255,255,.7);--blue:#1493ff;--light:#90CAF9;--green:#4fd1a5;--red:#ff6b6b;color-scheme:dark;}
+  *{box-sizing:border-box;}
+  html,body{overflow-x:hidden;margin:0;}
+  body{background:radial-gradient(ellipse 90% 60% at 50% 20%,rgba(14,72,168,.55),transparent 65%),#050b16;color:var(--ink);min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;padding:28px 16px 60px;}
+  .wrap{width:100%;max-width:420px;text-align:center;}
+  .brand{font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--light);margin-bottom:6px;}
+  h1{font-size:24px;margin:0 0 6px;}
+  .sub{color:var(--dim);font-size:14px;margin-bottom:18px;line-height:1.5;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px;margin-bottom:14px;}
+  input{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;font-size:20px;letter-spacing:.08em;text-transform:uppercase;text-align:center;}
+  input:focus{outline:none;border-color:var(--blue);}
+  .btn{width:100%;background:#0f67c2;border:none;color:#fff;font-weight:700;font-size:16px;border-radius:11px;padding:14px;margin-top:12px;cursor:pointer;}
+  .btn:disabled{opacity:.6;}
+  .ok{color:var(--green);font-size:22px;font-weight:800;}
+  .bad{color:var(--red);font-size:22px;font-weight:800;}
+  .line{color:var(--dim);font-size:14px;margin-top:8px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand" id="brand">Las Vegas Restaurants</div>
+  <h1>Redeem a coupon</h1>
+  <div class="sub" id="sub">Type the code the guest shows you.</div>
+  <div class="card"><input id="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE" maxlength="24">
+    <button class="btn" id="check">Check the code</button></div>
+  <div class="card" id="result" style="display:none"></div>
+</div>
+<script>
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com', C = '/lvr_coupons/', DAY = 86400000;
+  var slug = (new URLSearchParams(location.search).get('biz') || '').trim().toLowerCase(), program = null;
+  var res = document.getElementById('result'), codeEl = document.getElementById('code'), btn = document.getElementById('check');
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function get(p) { return fetch(DB + p + '.json').then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
+  function fmt(ms) { return new Date(ms).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'}); }
+  function show(html) { res.style.display = ''; res.innerHTML = html; }
+  function days() { var n = Number(program && program.validDays); return isFinite(n) && n >= 0 ? n : 30; }
+
+  function check() {
+    var code = codeEl.value.trim().toUpperCase();
+    if (code.length < 4) return show('<div class="bad">Type the whole code</div>');
+    btn.disabled = true; show('<div class="line">Checking…</div>');
+    get(C + 'codes/' + encodeURIComponent(slug) + '/' + encodeURIComponent(code)).then(function(rec){
+      btn.disabled = false;
+      if (!rec) {
+        if (program.fixedCode && code === String(program.fixedCode).toUpperCase()) return show('<div class="ok">Good code</div><div class="line">This restaurant uses one shared code, so it cannot be tracked per guest.</div>');
+        return show('<div class="bad">Not a valid code</div><div class="line">Check the spelling, or ask the guest to open their coupon page again.</div>');
+      }
+      var until = rec.t + days() * DAY;
+      if (rec.used) return show('<div class="bad">Already used</div><div class="line">Redeemed ' + esc(fmt(rec.used)) + '.</div>');
+      if (Date.now() > until) return show('<div class="bad">Expired</div><div class="line">This coupon ended ' + esc(fmt(until)) + '.</div>');
+      show('<div class="ok">Good coupon</div><div class="line">' + esc(program.offer || 'Offer') + '<br>Good until ' + esc(fmt(until)) + '</div><button class="btn" id="redeem">Redeem it now</button>');
+      document.getElementById('redeem').addEventListener('click', function(){
+        this.disabled = true;
+        fetch(DB + C + 'codes/' + encodeURIComponent(slug) + '/' + encodeURIComponent(code) + '/used.json', { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'.sv': 'timestamp'}) }).then(function(r){
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          show('<div class="ok">Redeemed</div><div class="line">Give the guest their ' + esc(program.offer || 'offer') + '.</div>'); codeEl.value = '';
+        }).catch(function(){ show('<div class="bad">Could not redeem</div><div class="line">It may have just been used or expired. Check it again.</div>'); });
+      });
+    }).catch(function(){ btn.disabled = false; show('<div class="bad">No connection</div><div class="line">Try again in a moment.</div>'); });
+  }
+
+  if (!/^[a-z0-9-]{2,40}$/.test(slug)) { document.getElementById('sub').textContent = 'This link is missing its restaurant. Ask for the right link.'; btn.disabled = true; }
+  else get(C + 'programs/' + encodeURIComponent(slug)).then(function(p){
+    program = p;
+    if (!p) { document.getElementById('sub').textContent = 'This restaurant page is not set up.'; btn.disabled = true; return; }
+    document.getElementById('brand').textContent = p.bizName || 'Las Vegas Restaurants';
+    btn.addEventListener('click', check); codeEl.addEventListener('keydown', function(e){ if (e.key === 'Enter') check(); });
+  }).catch(function(){ document.getElementById('sub').textContent = 'Could not load. Try again.'; btn.disabled = true; });
+</script>
+</body>
+</html>
