@@ -241,5 +241,14 @@
   "cat": "Training & Rewards",
   "thumb": "demos/thumbs/rewards.jpg",
   "href": "demos/rewards.html"
+ },
+ {
+  "slug": "text-marketing",
+  "num": "28",
+  "title": "Text Message Marketing",
+  "tag": "Texts your customers asked for, sent at the right time, with opt-in, opt-out and quiet-hour rules built in.",
+  "cat": "Marketing & Content",
+  "thumb": "demos/thumbs/text-marketing.jpg",
+  "href": "demos/text-marketing.html"
  }
 ]

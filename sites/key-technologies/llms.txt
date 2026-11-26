@@ -5,7 +5,7 @@
 Key Technologies works worldwide and can communicate in any language using AI/SI, in writing and by voice. Key Technologies does not guarantee results. Interactive demos on this site use made-up data, are not connected to any real system and do not send, book or charge anything.
 
 ## Start here
-- [Home: services and free website audit](https://keytechnologies.si/): all 27 services, FAQ and contact
+- [Home: services and free website audit](https://keytechnologies.si/): all 28 services, FAQ and contact
 - [Book a free call](https://keytechnologies.si/book.html): request a call time (Mon to Fri, Pacific time); nothing is booked until confirmed
 - [Interactive demos](https://keytechnologies.si/key-platform/): a demo for each service
 - [Custom mobile apps](https://keytechnologies.si/mobile-apps.html): iPhone and Android apps, including an Android APK file the client owns, plus the websites and systems behind them
@@ -33,6 +33,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Custom AI systems](https://keytechnologies.si/key-platform/demos/custom-ai-systems.html)
 - [AI-assisted website development](https://keytechnologies.si/key-platform/demos/website-development.html)
 - [Content approval services](https://keytechnologies.si/key-platform/demos/social-media.html)
+- [Text message marketing](https://keytechnologies.si/key-platform/demos/text-marketing.html): texts to customers who opted in, with STOP, HELP, quiet hours and carrier registration built in; made-up data
 - [AI training](https://keytechnologies.si/key-platform/demos/ai-training.html)
 - [Custom website and web application programming](https://keytechnologies.si/key-platform/demos/custom-programming.html)
 - [ADA and website accessibility](https://keytechnologies.si/key-platform/demos/accessibility-ada.html)

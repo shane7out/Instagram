@@ -248,6 +248,43 @@ T.social=function(root){
  draw();
 };
 
+/* ---------- 28 Text Message Marketing: campaign dashboard with the rules built in ---------- */
+T.sms=function(root){
+ /* Fictional sample data. Texts go only to people who opted in. The system adds the business name and the opt-out line, keeps to allowed hours, limits how often one person is texted, and handles STOP and HELP. Nothing is sent. */
+ var BIZ='Sunrise Bakery',FOOT=' Reply STOP to opt out.';
+ var aud={all:['Everyone who opted in',1240],reg:['Regulars (3+ visits)',410],lapsed:['Have not visited in 30 days',320],bday:['Birthday this month',38]};
+ var tpl={special:'Fresh cinnamon rolls are out of the oven. Show this text at the counter for a free coffee today.',reminder:'Your pre-order is ready for pickup after 3 PM today. See you soon!',event:'Live music on the patio this Friday at 6 PM. Bring a friend and your appetite.',winback:'We miss you! Come in this week and enjoy a free pastry with any drink.',thanks:'Thank you for being a regular. Your next coffee is on us.'};
+ var sent={},total=0,opted=0,replies=0,month={};
+ root.innerHTML='<div class="metrics three" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><label>Opted-in subscribers</label><strong id="t1">1,240</strong></div><div class="metric"><label>Texts sent today</label><strong id="t2">0</strong></div><div class="metric"><label>Replies</label><strong id="t3">0</strong></div><div class="metric"><label>Opted out today</label><strong id="t4">0</strong></div></div>'+
+ '<div class="two-columns" style="margin-top:14px"><div class="panel"><div class="panel-heading"><h3>Write a text</h3>'+tag('Fictional business','outline')+'</div>'+
+ '<label for="tt">Start from</label><select id="tt"><option value="special">Daily special</option><option value="reminder">Pickup reminder</option><option value="event">Event</option><option value="winback">Win-back</option><option value="thanks">Thank you</option></select>'+
+ '<label for="tm">Message</label><textarea id="tm" rows="3" maxlength="200"></textarea><p class="micro" id="tc"></p>'+
+ '<label for="ta">Send to</label><select id="ta"></select>'+
+ '<label for="ts">When</label><select id="ts"><option value="now">Now (2:15 PM)</option><option value="late">Tonight at 10:00 PM</option><option value="am">Tomorrow at 9:00 AM</option></select>'+
+ '<div class="action-row"><button class="primary" id="tg" type="button">Check and send (demo)</button></div></div>'+
+ '<div class="panel"><h3>What the customer sees</h3><div id="tp" style="background:#0b1620;border:1px solid var(--line,#37475a);border-radius:18px;padding:14px;max-width:320px"></div><h3 style="margin-top:16px">Checks before it goes out</h3><div id="tk" class="muted">Press "Check and send" to see the checks.</div></div></div>'+
+ '<div class="panel" style="margin-top:14px"><h3>Customer replies</h3><div id="tr" class="muted">No replies yet.</div></div>';
+ var tt=q('#tt',root),tm=q('#tm',root),ta=q('#ta',root),ts=q('#ts',root);
+ ta.innerHTML=Object.keys(aud).map(function(k){return '<option value="'+k+'">'+esc(aud[k][0])+' ('+aud[k][1]+')</option>'}).join('');
+ function full(){var m=tm.value.trim();return BIZ+': '+m+FOOT}
+ function paint(){var t=full(),segs=Math.ceil(t.length/160);q('#tc',root).textContent=tm.value.trim().length+' characters you wrote. With the business name and opt-out line the text is '+t.length+' characters ('+segs+' message'+(segs>1?'s':'')+').';
+  q('#tp',root).innerHTML='<div style="background:#1a8be0;color:#fff;border-radius:16px 16px 16px 4px;padding:10px 12px;font-size:14px;line-height:1.35">'+esc(t)+'</div><p class="micro" style="margin:6px 4px 0">From your registered business number</p>'}
+ function load(){tm.value=tpl[tt.value];paint()}
+ tt.onchange=load;tm.oninput=paint;load();
+ function nm(n){return n.toLocaleString('en-US')}
+ function tick(ok,txt){return '<div class="rowstat"><span>'+esc(txt)+'</span><span>'+(ok?'Passed':'Fixed for you')+'</span></div>'}
+ q('#tg',root).onclick=function(){var k=ta.value,n=aud[k][1],late=ts.value==='late',m=tm.value.trim();
+  if(!m){q('#tk',root).innerHTML='<p class="micro">Write a message first.</p>';return}
+  var cnt=(month[k]||0);
+  if(cnt>=4){q('#tk',root).innerHTML='<p class="micro" style="font-weight:700">Held: this group already got 4 texts this month.</p><p class="micro">The limit protects your customers and your number. It lifts next month, or you can pick a different group.</p>';return}
+  month[k]=cnt+1;
+  var h=tick(true,'Everyone in this group opted in (consent date and wording are on file)')+tick(true,'Your business name is at the start of the text')+tick(true,'"Reply STOP to opt out" is added')+tick(!late,late?'10:00 PM is outside allowed hours, so it is moved to 8:00 AM':'Sent inside allowed hours (8 AM to 9 PM in each customer\'s time zone)')+tick(true,'No customer has had more than 4 texts this month ('+month[k]+' of 4 for this group)')+tick(m.length<=160,m.length<=160?'Fits in one message':'Longer than one message, so it is sent as '+Math.ceil(full().length/160)+' parts');
+  h+='<p class="success-text" style="margin-top:10px">'+(late?'Scheduled for 8:00 AM tomorrow':'Sent')+' to '+nm(n)+' customers (demo, nothing was sent).</p>';q('#tk',root).innerHTML=h;
+  if(!late){var rp=Math.max(1,Math.round(n*0.06)),op=Math.max(1,Math.round(n*0.004));total+=n;replies+=rp;opted+=op;q('#t2',root).textContent=nm(total);q('#t3',root).textContent=nm(replies);q('#t4',root).textContent=nm(opted);
+   q('#tr',root).innerHTML='<div class="rowstat"><span>"YES, save me one!"</span><span>Sent to a team member</span></div><div class="rowstat"><span>"What time do you close?"</span><span>Answered from your hours</span></div><div class="rowstat"><span>"STOP"</span><span>Removed from the list right away, one confirmation sent</span></div><div class="rowstat"><span>"HELP"</span><span>Replied with your business name and how to reach you</span></div><p class="micro" style="margin-top:8px">Sample results for a fictional business. Real numbers depend on your list and your offer.</p>'}
+  say(late?'Scheduled for the morning (demo)':'Sent (demo, nothing was sent)')};
+};
+
 /* ---------- 15 Review & Reputation ---------- */
 T.reviews=function(root){
  var rv=[{n:'Marcus T.',r:5,t:'Fast, friendly, and the food was great. Will be back!',p:'Google'},{n:'Priya N.',r:4,t:'Good value. Parking was a little tough.',p:'Yelp'},{n:'Sam K.',r:1,t:'Waited 50 minutes and nobody told us why. Very disappointing.',p:'Google'},{n:'Lena V.',r:5,t:'Best brunch in town.',p:'Google'},{n:'Jo B.',r:2,t:'Order was wrong and the fix took forever.',p:'Yelp'}];
