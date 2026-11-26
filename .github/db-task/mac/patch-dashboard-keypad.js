@@ -32,7 +32,6 @@ if (/DMRESTORE02/.test(s)) {
   else {
     const re = /(DMRESTORE02[\s\S]*?'Creator of @lasvegas_restaurants\\n' \+\n    ')[^']+(';)/;
     if (re.test(s)) { s = s.replace(re, (m, a, b) => a + REPLY + b); console.log('DMRESTORE02: contact email updated'); }
-    else console.log('DMRESTORE02: present but the signature was not found - left as it is');
   }
 }
 else {
@@ -65,6 +64,12 @@ else {
       console.log('DMRESTORE02 applied (restaurant message restored, no introduction paragraph, no claim that we follow them)');
     }
   }
+}
+// (5) DMRESTORE03 (Shane, 2026-11-26): the restaurant DM ends with the name and "Creator of @lasvegas_restaurants" only - no email address
+{
+  const reTail = /(DMRESTORE02[\s\S]*?'Creator of @lasvegas_restaurants)\\n' \+\n    '[^']+';/;
+  if (reTail.test(s)) { s = s.replace(reTail, (m, a) => a + "';"); console.log('DMRESTORE03: email address removed from the end of the restaurant message'); }
+  else console.log('DMRESTORE03: restaurant message already ends without an email (or was not found)');
 }
 if (s !== before) fs.writeFileSync(file, s);
 console.log('KEYPADMATCH01 ' + (s === before ? 'no change (nothing to remove)' : 'applied'));
