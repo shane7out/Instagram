@@ -30,7 +30,19 @@
     }
     return m;
   }
+  // The three qualifier answers (what the business does, what they want done, when to start) come from the form that was just submitted,
+  // so every page's own send code saves and emails them without being edited.
+  var lastForm = null;
+  document.addEventListener('submit', function (e) { if (e.target && e.target.elements && e.target.elements.businessDoes) lastForm = e.target; }, true);
+  function addQualifiers(data) {
+    if (!lastForm) return;
+    [['businessDoes', 160], ['wantDone', 600], ['startWhen', 60]].forEach(function (p) {
+      var el = lastForm.elements[p[0]];
+      if (el && !data[p[0]]) data[p[0]] = String(el.value || '').trim().slice(0, p[1]);
+    });
+  }
   function send(dbUrl, fsUrl, data, extra) {
+    addQualifiers(data);
     // forms ask for first and last name; keep one combined "name" too so the lead list and email alerts keep working
     if (!data.name && (data.firstName || data.lastName)) data.name = (String(data.firstName || '') + ' ' + String(data.lastName || '')).trim().slice(0, 80);
     var db = dbUrl ? post(dbUrl, data, false) : Promise.reject(new Error('no database'));
@@ -54,6 +66,9 @@
     var chk = [['firstName', function (v) { return !!v.trim(); }, 'Please enter your first name.'],
                ['lastName', function (v) { return !!v.trim(); }, 'Please enter your last name.'],
                ['business', function (v) { return !!v.trim(); }, 'Please enter your business name.'],
+               ['businessDoes', function (v) { return v.trim().length >= 3; }, 'Please tell us what your business does.'],
+               ['wantDone', function (v) { return v.trim().length >= 5; }, 'Please tell us what you want done.'],
+               ['startWhen', function (v) { return !!v.trim(); }, 'Please choose when you want to start.'],
                ['email', emailOk, 'Please enter a valid email.'],
                ['phone', phoneOk, 'Please enter a phone number we can reach you on (with area code).']];
     for (var i = 0; i < chk.length; i++) {
