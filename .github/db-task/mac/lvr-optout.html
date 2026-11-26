@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stop messages — Las Vegas Restaurants</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{--bg:#07142b;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.18);--ink:#fff;--dim:rgba(255,255,255,.7);--blue:#1493ff;--light:#90CAF9;--green:#4fd1a5;--red:#ff6b6b;color-scheme:dark;}
+  *{box-sizing:border-box;}
+  html,body{overflow-x:hidden;margin:0;}
+  body{background:radial-gradient(ellipse 90% 60% at 50% 20%,rgba(14,72,168,.55),transparent 65%),#050b16;color:var(--ink);min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;padding:28px 16px 60px;}
+  .wrap{width:100%;max-width:420px;}
+  .brand{text-align:center;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--light);margin-bottom:10px;}
+  h1{font-size:24px;margin:0 0 8px;text-align:center;}
+  .sub{color:var(--dim);font-size:14px;line-height:1.55;margin-bottom:18px;text-align:center;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px;}
+  label{display:block;font-size:12.5px;font-weight:700;color:var(--dim);margin:12px 0 5px;}
+  input{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;font-size:16px;}
+  input:focus{outline:none;border-color:var(--blue);}
+  .btn{width:100%;background:#0f67c2;border:none;color:#fff;font-weight:700;font-size:16px;border-radius:11px;padding:14px;margin-top:16px;cursor:pointer;}
+  .btn:disabled{opacity:.6;}
+  .msg{font-size:14px;margin-top:14px;min-height:18px;text-align:center;line-height:1.5;}
+  .msg.err{color:var(--red);} .msg.ok{color:var(--green);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Las Vegas Restaurants</div>
+  <h1>Stop all messages</h1>
+  <div class="sub">Type your email, your phone number, or both. We will stop all marketing emails and texts to them, from Las Vegas Restaurants and from the restaurants that signed you up. Your coupon still works.</div>
+  <form class="card" id="f" novalidate>
+    <label for="em">Email</label><input id="em" type="email" autocomplete="email">
+    <label for="ph">Mobile phone</label><input id="ph" type="tel" autocomplete="tel">
+    <button class="btn" id="go" type="submit">Stop the messages</button>
+    <div class="msg" id="msg" role="status"></div>
+  </form>
+</div>
+<script>
+  var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
+  function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 32); }
+  function sha(t) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(hex); }
+  function put(key) {
+    return fetch(DB + '/lvr_coupons/optout/' + key + '.json', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ t: {'.sv': 'timestamp'} }) })
+      .then(function(r){ return r.ok || r.status === 401 || r.status === 403; });   // already on the list counts as done
+  }
+  document.getElementById('f').addEventListener('submit', function(e){
+    e.preventDefault();
+    var em = document.getElementById('em').value.trim().toLowerCase(), ph = document.getElementById('ph').value.replace(/[^0-9]/g, '').slice(-10);
+    var msg = document.getElementById('msg'), btn = document.getElementById('go');
+    function bad(t) { msg.className = 'msg err'; msg.textContent = t; }
+    if (em && !/^[^ @]+@[^ @]+\.[^ @]+$/.test(em)) return bad('That email does not look right.');
+    if (document.getElementById('ph').value.trim() && ph.length < 10) return bad('That phone number looks short. Add the area code.');
+    if (!em && !ph) return bad('Type your email or your phone number.');
+    if (!window.crypto || !crypto.subtle) return bad('Please open this page in your phone\'s regular browser.');
+    btn.disabled = true; msg.className = 'msg'; msg.textContent = 'One moment…';
+    var jobs = []; if (em) jobs.push(sha(em)); if (ph) jobs.push(sha('tel:' + ph));
+    Promise.all(jobs).then(function(keys){ return Promise.all(keys.map(put)); }).then(function(r){
+      if (r.every(Boolean)) { msg.className = 'msg ok'; msg.textContent = 'Done. You will not get marketing emails or texts from us.'; document.getElementById('f').reset(); btn.disabled = false; }
+      else throw new Error('x');
+    }).catch(function(){ btn.disabled = false; bad('Something went wrong. Please try again.'); });
+  });
+</script>
+</body>
+</html>

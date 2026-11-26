@@ -374,6 +374,10 @@
      "createdAt": {},
      "$other": {
       ".validate": false
+     },
+     "joined": {
+      ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.val() == true && newData.parent().parent().parent().parent().child('staffContact').child($slug).child($sid).exists())",
+      ".validate": "newData.isBoolean()"
      }
     }
    }
@@ -426,6 +430,39 @@
        ".validate": false
       }
      }
+    }
+   }
+  },
+  "optout": {
+   "$key": {
+    ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+    ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists())",
+    ".validate": "$key.matches(/^[0-9a-f]{32}$/) && newData.hasChildren(['t']) && newData.child('t').isNumber() && newData.child('t').val() == now",
+    "t": {},
+    "$other": {
+     ".validate": false
+    }
+   }
+  },
+  "staffContact": {
+   "$slug": {
+    "$sid": {
+     ".read": "auth != null && auth.uid == '__OWNER_UID__'",
+     ".write": "auth != null && auth.uid == '__OWNER_UID__' || (!data.exists() && newData.exists() && root.child('lvr_coupons').child('staff').child($slug).child($sid).exists())",
+     ".validate": "newData.hasChildren(['email','phone','t','ek','pk']) && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 10 && newData.child('phone').val().length <= 30 && newData.child('t').isNumber() && newData.child('t').val() == now && (!newData.child('ig').exists() || (newData.child('ig').isString() && newData.child('ig').val().matches(/^[A-Za-z0-9._]{1,30}$/))) && (!newData.child('mailOptIn').exists() || newData.child('mailOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').isBoolean()) && (!newData.child('smsOptIn').exists() || newData.child('smsOptIn').val() == false || newData.child('consentText').exists()) && (!newData.child('consentText').exists() || (newData.child('consentText').isString() && newData.child('consentText').val().length <= 900)) && (!newData.child('consentVer').exists() || (newData.child('consentVer').isString() && newData.child('consentVer').val().length <= 20)) && newData.child('ek').isString() && newData.child('ek').val().matches(/^[0-9a-f]{32}$/) && newData.child('pk').isString() && newData.child('pk').val().matches(/^[0-9a-f]{32}$/)",
+     "email": {},
+     "phone": {},
+     "ig": {},
+     "mailOptIn": {},
+     "smsOptIn": {},
+     "consentText": {},
+     "consentVer": {},
+     "t": {},
+     "$other": {
+      ".validate": false
+     },
+     "ek": {},
+     "pk": {}
     }
    }
   }

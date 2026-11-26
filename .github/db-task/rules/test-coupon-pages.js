@@ -197,8 +197,37 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await cp2.fill('#cName', 'Di Park'); await cp2.fill('#cEmail', 'di@example.com'); await cp2.fill('#cPhone', '7025550144'); await cp2.click('#claimBtn'); await cp2.waitForSelector('.code-value');
   await ep.waitForFunction(() => document.getElementById('keysBig') && document.getElementById('keysBig').textContent === '4', null, { timeout: 15000 }).catch(() => {});
   ok('her number goes up by itself right after the next guest signs up through her code', (await ep.textContent('#keysBig')) === '4');
+  ok('the join form is offered, with the two consents separate and unticked', (await ep.isVisible('#jf')) && !(await ep.isChecked('#jMail')) && (await ep.isDisabled('#jSms')));
+  await ep.fill('#jPh', '(702) 555-0444'); await ep.fill('#jEm', 'maria@example.com'); await ep.fill('#jIg', '@maria.v'); await ep.check('#jMail'); await ep.check('#jSms');
+  await ep.click('#jGo'); await ep.waitForFunction(() => /in the Key Rewards database/.test(document.getElementById('app').textContent), null, { timeout: 15000 });
+  const sc = (await emu('GET', '/lvr_coupons/staffContact/van/maria-7k3', undefined, OWNER)).j || {};
+  ok('the employee\'s details and exact consent wording were saved', sc.email === 'maria@example.com' && sc.ig === 'maria.v' && sc.mailOptIn === true && sc.smsOptIn === true && /Las Vegas Restaurants/.test(sc.consentText || '') && sc.consentVer === 'sms1');
+  ok('the employee is marked as joined and the form is gone', (await emu('GET', '/lvr_coupons/staff/van/maria-7k3/joined')).j === true && !(await ep.isVisible('#jf').catch(() => false)));
   const ep2 = await emp.newPage(); await ep2.goto(base + '/lvr-team.html?biz=van&e=nobody-123'); await ep2.waitForSelector('.state');
   ok('an unknown employee link says it is not active', /not active/.test(await ep2.textContent('#app')));
+  // ---------- opting out
+  await ad.goto(base + '/lvr-coupons-admin.html'); await ad.waitForSelector('.program-card');
+  await ad.click('[data-act="team"][data-slug="van"]'); await ad.waitForSelector('#addStaff');
+  const tt2 = await ad.textContent('#view');
+  ok('the Team screen shows who joined the database and what they agreed to', /In the database/.test(tt2) && /OK to email/.test(tt2) && /OK to text/.test(tt2) && /maria@example\.com/.test(tt2));
+  const [dl5] = await Promise.all([ad.waitForEvent('download'), ad.click('#teamCsv')]);
+  const csv5 = fs.readFileSync(await dl5.path(), 'utf8');
+  ok('the team download has contact, consent and keys', /Maria/.test(csv5) && /maria@example\.com/.test(csv5) && /sms1/.test(csv5));
+  const oc = await cust.newPage(); await oc.goto(base + '/lvr-optout.html');
+  await oc.fill('#em', 'bad'); await oc.click('#go'); ok('a bad email is refused on the opt-out page', /does not look right/.test(await oc.textContent('#msg')));
+  await oc.fill('#em', ' ANN@example.com '); await oc.click('#go'); await oc.waitForFunction(() => /Done/.test(document.getElementById('msg').textContent));
+  await oc.fill('#em', 'ann@example.com'); await oc.click('#go'); await oc.waitForFunction(() => /Done/.test(document.getElementById('msg').textContent));
+  ok('opting out works, and asking twice is still fine', Object.keys((await emu('GET', '/lvr_coupons/optout', undefined, OWNER)).j || {}).length === 1);
+  ok('a stranger cannot see who opted out', (await emu('GET', '/lvr_coupons/optout')).s !== 200);
+  await ad.goto(base + '/lvr-coupons-admin.html'); await ad.waitForSelector('.program-card');
+  await ad.click('[data-act="claims"][data-slug="van"]'); await ad.waitForSelector('.claim-row');
+  ok('the opted-out guest shows as opted out and is off the lists', /Opted out of all messages/.test(await ad.textContent('#view')));
+  const [dl6] = await Promise.all([ad.waitForEvent('download'), ad.click('#csvText')]);
+  ok('the text list no longer has the opted-out guest', !/Ann Lee/.test(fs.readFileSync(await dl6.path(), 'utf8')));
+  await ad.click('[data-optout]'); await ad.waitForTimeout(700);
+  ok('the owner can also mark someone opted out (they replied STOP)', Object.keys((await emu('GET', '/lvr_coupons/optout', undefined, OWNER)).j || {}).length >= 3);
+  const cp3 = await cust.newPage(); await cp3.goto(base + '/lvr-coupon.html?biz=van'); await cp3.waitForSelector('#claimForm');
+  ok('the guest sign-up page links to the stop-all-messages page', (await cp3.innerHTML('#foot')).includes('lvr-optout.html'));
   // a signed-out visitor to the admin page
   const stranger = await browser.newContext(); await route(stranger, false);
   const sp = await stranger.newPage(); await sp.goto(base + '/lvr-coupons-admin.html');

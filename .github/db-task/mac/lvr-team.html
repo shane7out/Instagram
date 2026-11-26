@@ -6,7 +6,7 @@
 <title>My Sign-ups — Las Vegas Restaurants</title>
 <meta name="robots" content="noindex">
 <style>
-  :root{--bg:#07142b;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.18);--ink:#fff;--dim:rgba(255,255,255,.7);--blue:#1493ff;--light:#90CAF9;--green:#4fd1a5;color-scheme:dark;}
+  :root{--red:#ff6b6b;--bg:#07142b;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.18);--ink:#fff;--dim:rgba(255,255,255,.7);--blue:#1493ff;--light:#90CAF9;--green:#4fd1a5;color-scheme:dark;}
   *{box-sizing:border-box;}
   html,body{overflow-x:hidden;margin:0;}
   body{background:radial-gradient(ellipse 90% 60% at 50% 20%,rgba(14,72,168,.55),transparent 65%),#050b16;color:var(--ink);min-height:100vh;
@@ -27,6 +27,11 @@
   .note{font-size:12.5px;color:var(--dim);line-height:1.55;margin-top:8px;}
   .recent{font-size:13px;color:var(--dim);text-align:left;margin-top:4px;}
   .recent div{padding:7px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;}
+  .f{text-align:left;margin-top:10px;}.f label{display:block;font-size:12.5px;font-weight:700;color:var(--dim);margin-bottom:5px;}
+  .f input[type=text],.f input[type=email],.f input[type=tel]{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;font-size:16px;}
+  .opt{display:flex;gap:9px;align-items:flex-start;text-align:left;margin:12px 0;font-size:12.5px;color:var(--dim);line-height:1.45;}.opt input{margin-top:3px;width:18px;height:18px;flex-shrink:0;}
+  .opt.off{opacity:.55;}
+  .err{color:var(--red);font-size:13.5px;margin-top:10px;min-height:18px;}
   .state{color:var(--dim);font-size:15px;line-height:1.6;padding:30px 6px;}
   .btn{background:#0f67c2;border:none;color:#fff;font-weight:700;font-size:14px;border-radius:10px;padding:11px 16px;cursor:pointer;}
 </style>
@@ -2339,7 +2344,7 @@ var qrcode = function() {
   var PAGE = 'https://lvr-data-a60c1.web.app/lvr-coupon.html';
   var params = new URLSearchParams(location.search);
   var slug = (params.get('biz') || '').trim().toLowerCase(), sid = (params.get('e') || '').trim().toLowerCase();
-  var app = document.getElementById('app'), lastTotal = null, program = null, who = '';
+  var app = document.getElementById('app'), lastTotal = null, program = null, who = '', joined = false, CONSENT_VER = 'sms1';
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function get(path) { return fetch(DB + path + '.json').then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
@@ -2361,26 +2366,69 @@ var qrcode = function() {
     var link = PAGE + '?biz=' + encodeURIComponent(slug) + '&e=' + encodeURIComponent(sid);
     var qr = ''; try { var q = window.qrcode(0, 'M'); q.addData(link); q.make(); qr = q.createSvgTag({cellSize: 6, margin: 0, scalable: true}); } catch (e) {}
     var grew = lastTotal !== null && st.total > lastTotal;
+    // while she is typing into the join form, only update the numbers: never redraw the page under her fingers
+    if (document.getElementById('jf') && !joined) {
+      var kb = document.getElementById('keysBig'); kb.textContent = st.keys; if (grew) { kb.className = 'big pulse'; chime(); }
+      document.getElementById('todayBig').textContent = st.today; document.getElementById('totalBig').textContent = st.total; lastTotal = st.total; return;
+    }
     app.innerHTML =
       '<div class="brand">' + esc(program.bizName || '') + '</div>' +
       '<h1>Hi ' + esc(who) + '</h1>' +
       '<div class="card"><div class="big' + (grew ? ' pulse' : '') + '" id="keysBig">' + st.keys + '</div><div class="lab">reward key' + (st.keys === 1 ? '' : 's') + ' earned</div></div>' +
-      '<div class="row"><div class="card"><div class="big">' + st.today + '</div><div class="lab">sign-ups today</div></div><div class="card"><div class="big">' + st.total + '</div><div class="lab">sign-ups in all</div></div></div>' +
+      '<div class="row"><div class="card"><div class="big" id="todayBig">' + st.today + '</div><div class="lab">sign-ups today</div></div><div class="card"><div class="big" id="totalBig">' + st.total + '</div><div class="lab">sign-ups in all</div></div></div>' +
       '<div class="card"><div class="say">Show this to your guests</div><div class="qr">' + qr + '</div>' +
         '<div class="note">Guests scan it with their phone camera. Each sign-up through your code earns you ' + st.per + ' reward key' + (st.per === 1 ? '' : 's') + ', and your number above goes up right away.</div></div>' +
       (st.recent.length ? '<div class="card"><div class="say">Latest sign-ups</div><div class="recent">' + st.recent.map(function(t){ return '<div><span>New sign-up</span><span>' + new Date(t).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) + '</span></div>'; }).join('') + '</div></div>' : '') +
+      (joined ? '<div class="card"><div class="say">You are in the Key Rewards database</div><div class="note">Your keys will be added to your Key Rewards account using your phone number. You can stop any messages any time: <a href="lvr-optout.html" style="color:var(--light)">stop all messages</a>.</div></div>' : joinCard()) +
       '<div class="note">Keys are added to your Key Rewards account by Las Vegas Restaurants. Guests\' details stay private; you only see the count.</div>';
     if (grew) chime();
     lastTotal = st.total;
   }
 
-  function refresh() { return get(C + 'staffLog/' + encodeURIComponent(slug) + '/' + encodeURIComponent(sid)).then(function(log){ draw(stats(log), false); }); }
+  function smsWording() {
+    return 'Yes, text me deals, free items and updates from Las Vegas Restaurants at the number above. Message frequency varies. Message and data rates may apply. Reply STOP any time to cancel, HELP for help.';
+  }
+  function joinCard() {
+    return '<div class="card" id="joinCard"><div class="say">Join Key Rewards</div><div class="note">Add your details so your keys can be added to your own Key Rewards account.</div>' +
+      '<form id="jf" novalidate><div class="f"><label for="jPh">Mobile phone</label><input id="jPh" type="tel" autocomplete="tel" maxlength="30"></div>' +
+      '<div class="f"><label for="jEm">Email</label><input id="jEm" type="email" autocomplete="email" maxlength="254"></div>' +
+      '<div class="f"><label for="jIg">Instagram (if you have one)</label><input id="jIg" type="text" autocapitalize="none" placeholder="@yourname" maxlength="31"></div>' +
+      '<div class="opt"><input type="checkbox" id="jMail"><label for="jMail">Email me deals, free items and updates from Las Vegas Restaurants. Optional. Unsubscribe any time.</label></div>' +
+      '<div class="opt off" id="jSmsRow"><input type="checkbox" id="jSms" disabled><label for="jSms">' + esc(smsWording()) + ' Optional.</label></div>' +
+      '<button class="btn" id="jGo" type="submit">Join</button><div class="err" id="jErr" role="status"></div></form></div>';
+  }
+  function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 32); }
+  function sha(t) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(hex); }
+  function wireJoin() {
+    var f = document.getElementById('jf'); if (!f) return;
+    var ph = document.getElementById('jPh'), sms = document.getElementById('jSms'), row = document.getElementById('jSmsRow');
+    ph.addEventListener('input', function(){ var ok = ph.value.replace(/[^0-9]/g, '').length >= 10; sms.disabled = !ok; row.className = 'opt' + (ok ? '' : ' off'); if (!ok) sms.checked = false; });
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var em = document.getElementById('jEm').value.trim(), phone = ph.value.trim(), err = document.getElementById('jErr'), btn = document.getElementById('jGo');
+      var ig = document.getElementById('jIg').value.trim().replace(/^@+/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[\/?].*$/, '');
+      if (!/^[^ @]+@[^ @]+\.[^ @]+$/.test(em)) { err.textContent = 'Please enter a real email address.'; return; }
+      if (phone.replace(/[^0-9]/g, '').length < 10) { err.textContent = 'Please enter your mobile phone number with the area code.'; return; }
+      if (ig && !/^[A-Za-z0-9._]{1,30}$/.test(ig)) { err.textContent = 'That Instagram name does not look right.'; return; }
+      if (!window.crypto || !crypto.subtle) { err.textContent = 'Please open this page in your phone\'s regular browser.'; return; }
+      btn.disabled = true; err.textContent = '';
+      Promise.all([sha(em.toLowerCase()), sha('tel:' + phone.replace(/[^0-9]/g, '').slice(-10))]).then(function(k){
+      var rec = { email: em, phone: phone, ek: k[0], pk: k[1], mailOptIn: document.getElementById('jMail').checked, smsOptIn: sms.checked && !sms.disabled, t: {'.sv': 'timestamp'} };
+      if (ig) rec.ig = ig; if (rec.smsOptIn) { rec.consentText = smsWording(); rec.consentVer = CONSENT_VER; }
+      var upd = {}; upd['staffContact/' + slug + '/' + sid] = rec; upd['staff/' + slug + '/' + sid + '/joined'] = true;
+      return fetch(DB + '/lvr_coupons.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(upd) }).then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        joined = true; refresh();
+      }); }).catch(function(){ btn.disabled = false; err.textContent = 'Something went wrong. Please try again.'; });
+    });
+  }
+  function refresh() { return get(C + 'staffLog/' + encodeURIComponent(slug) + '/' + encodeURIComponent(sid)).then(function(log){ draw(stats(log), false); wireJoin(); }); }
 
   if (!/^[a-z0-9-]{3,40}$/.test(slug) || !/^[a-z0-9-]{3,40}$/.test(sid)) {
     app.innerHTML = '<div class="state">This link is missing something. Ask your manager for your link again.</div>';
   } else {
-    Promise.all([ get(C + 'programs/' + encodeURIComponent(slug)), get(C + 'staff/' + encodeURIComponent(slug) + '/' + encodeURIComponent(sid) + '/name') ]).then(function(r){
-      program = r[0]; who = r[1];
+    Promise.all([ get(C + 'programs/' + encodeURIComponent(slug)), get(C + 'staff/' + encodeURIComponent(slug) + '/' + encodeURIComponent(sid) + '/name'), get(C + 'staff/' + encodeURIComponent(slug) + '/' + encodeURIComponent(sid) + '/joined') ]).then(function(r){
+      program = r[0]; who = r[1]; joined = r[2] === true;
       if (!program || !who) { app.innerHTML = '<div class="state">This link is not active. Ask your manager for a new one.</div>'; return; }
       return refresh().then(function(){ setInterval(function(){ refresh().catch(function(){}); }, 6000); });
     }).catch(function(){ app.innerHTML = '<div class="state">Could not load. Check your connection and try again.</div>'; });

@@ -2809,7 +2809,10 @@ var qrcode = function() {
     return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
   }
 
-  var programs = {}, counts = {}, claimsAll = {}, staffAll = {}, codesAll = {}, walletAll = {};
+  var programs = {}, counts = {}, claimsAll = {}, staffAll = {}, codesAll = {}, walletAll = {}, optAll = {}, contactAll = {};
+  function isOut(c) { return !!(c && (optAll[c.ek] || optAll[c.pk])); }
+  function mailOk(c) { return !!c.marketingOptIn && !isOut(c); }
+  function textOk(c) { return !!c.smsOptIn && !isOut(c); }
   var DAY = 86400000;
   function daysOf(p) { var n = Number(p && p.validDays); return isFinite(n) && n >= 0 ? n : 30; }
   function feeOf(p) { if (p && p.feeWaived) return 0; var f = Number(p && p.signupFee); return isFinite(f) && f >= 0 ? f : 1; }
@@ -2823,8 +2826,8 @@ var qrcode = function() {
 
   function loadAll() {
     view.innerHTML = '<div class="empty-note">Loading…</div>';
-    Promise.all([ fbGet(C + '/programs'), fbGet(C + '/counts'), fbGet(C + '/claims'), fbGet(C + '/staff'), fbGet(C + '/codes'), fbGet(C + '/wallet') ]).then(function(r){
-      programs = r[0] || {}; counts = r[1] || {}; claimsAll = r[2] || {}; staffAll = r[3] || {}; codesAll = r[4] || {}; walletAll = r[5] || {};
+    Promise.all([ fbGet(C + '/programs'), fbGet(C + '/counts'), fbGet(C + '/claims'), fbGet(C + '/staff'), fbGet(C + '/codes'), fbGet(C + '/wallet'), fbGet(C + '/optout'), fbGet(C + '/staffContact') ]).then(function(r){
+      programs = r[0] || {}; counts = r[1] || {}; claimsAll = r[2] || {}; staffAll = r[3] || {}; codesAll = r[4] || {}; walletAll = r[5] || {}; optAll = r[6] || {}; contactAll = r[7] || {};
       renderProgramList();
     }).catch(function(){
       view.innerHTML = '<div class="empty-note">Could not load. Make sure you are signed in, then tap Refresh.</div>';
@@ -2844,8 +2847,8 @@ var qrcode = function() {
     }
     view.innerHTML = slugs.map(function(slug){
       var p = programs[slug], cl = claimsOf(slug);
-      var texts = cl.filter(function(c){ return c.smsOptIn; }).length;
-      var mails = cl.filter(function(c){ return c.marketingOptIn; }).length;
+      var texts = cl.filter(textOk).length;
+      var mails = cl.filter(mailOk).length;
       var used = counts[slug] || 0;
       return '<div class="program-card">' +
         '<div class="pc-top"><div><div class="pc-name">' + escapeHtml(p.bizName || slug) + '</div><div class="pc-offer">' + escapeHtml(p.offer || '') + '</div></div>' +
@@ -2987,6 +2990,7 @@ var qrcode = function() {
       var owed = mine.filter(function(c){ return !c.staffPaid; }).length * per;
       return '<div class="program-card"><div class="pc-top"><div><div class="pc-name">' + escapeHtml(st[sid].name) + '</div>' +
         '<div class="pc-stats"><b>' + mine.length + '</b> signed up · ' + used + ' used · ' + (mine.length * per) + ' keys earned · <b>' + owed + ' keys still to give</b></div></div></div>' +
+        (function(){ var ct = contactAll[slug] && contactAll[slug][sid]; if (!ct) return '<div class="claim-flags"><span class="chip">Has not joined yet</span></div>'; var out = !!(optAll[ct.ek] || optAll[ct.pk]); return '<div class="claim-flags"><span class="chip ok">In the database</span>' + (out ? '<span class="chip">Opted out of all messages</span>' : '<span class="chip' + (ct.mailOptIn ? ' ok' : '') + '">' + (ct.mailOptIn ? 'OK to email' : 'No email marketing') + '</span><span class="chip' + (ct.smsOptIn ? ' ok' : '') + '">' + (ct.smsOptIn ? 'OK to text' : 'No texts') + '</span>') + '</div><div class="claim-meta">' + escapeHtml(ct.email) + '<br>' + escapeHtml(ct.phone) + (ct.ig ? '<br>Instagram @' + escapeHtml(ct.ig) : '') + '</div>'; })() +
         '<div class="pc-link">' + escapeHtml(CLAIM_PAGE_URL + slug + '&e=' + sid) + '</div>' +
         '<div class="pc-actions"><button data-t="qr" data-sid="' + escapeHtml(sid) + '">QR code + sign</button>' +
         '<button data-t="copy" data-sid="' + escapeHtml(sid) + '">Copy link</button>' +
@@ -2997,9 +3001,18 @@ var qrcode = function() {
     view.innerHTML = '<div class="back-link" id="backBtn">&larr; Back</div>' +
       '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — team</h3>' +
       '<div class="small-note">Every employee gets their own QR code. When a customer signs up through it, the employee earns ' + per + ' reward key' + (per === 1 ? '' : 's') + ' and the customer earns ' + (Number(p.welcomeKeys) || 0) + '. The keys are counted here; you add them to their Key Rewards accounts in the Treasury and then tap "Mark keys given". Tip: look at the "used" number too, it shows who is bringing in real customers.</div>' +
+      '<div class="tools-row"><button class="btn" id="teamCsv">Download the team</button></div>' +
       '<div class="form-box"><div class="field"><label>Add an employee (first name)</label><input type="text" id="fStaffName" maxlength="60"></div><button class="btn btn-primary" id="addStaff">Add and make their QR code</button></div>' +
       (rows || '<div class="empty-note">No employees yet.</div>');
     document.getElementById('backBtn').addEventListener('click', renderProgramList);
+    document.getElementById('teamCsv').addEventListener('click', function(){
+      var rows = [['Name','Email','Phone','Instagram','OK to email','OK to text','Text consent saved','Consent wording version','Opted out','Signed up through them','Keys earned','Keys still to give']];
+      Object.keys(st).forEach(function(sid){
+        var ct = (contactAll[slug] && contactAll[slug][sid]) || {}, out = !!(optAll[ct.ek] || optAll[ct.pk]), mine = cl.filter(function(c){ return c.ref === sid; });
+        rows.push([st[sid].name, ct.email || '', ct.phone || '', ct.ig ? '@' + ct.ig : '', ct.mailOptIn && !out ? 'yes' : 'no', ct.smsOptIn && !out ? 'yes' : 'no', ct.smsOptIn ? (ct.consentText || '') : '', ct.smsOptIn ? (ct.consentVer || '') : '', out ? 'yes' : 'no', mine.length, mine.length * per, mine.filter(function(c){ return !c.staffPaid; }).length * per]);
+      });
+      downloadCsv(slug + '-team.csv', rows);
+    });
     document.getElementById('addStaff').addEventListener('click', function(){
       var name = document.getElementById('fStaffName').value.trim();
       if (!name) return showToast('Type the employee\'s name first');
@@ -3065,7 +3078,7 @@ var qrcode = function() {
       claimsOf(slug).forEach(function(c){
         var key = c.pk || c.ek || (c.email || '').toLowerCase();
         var x = by[key] = by[key] || { name: c.name, email: c.email, phone: c.phone, ig: c.ig, mail: false, sms: false, places: [], first: c.createdAt || 0 };
-        x.mail = x.mail || !!c.marketingOptIn; x.sms = x.sms || !!c.smsOptIn; x.ig = x.ig || c.ig;
+        x.mail = x.mail || mailOk(c); x.sms = x.sms || textOk(c); x.ig = x.ig || c.ig;
         x.places.push((programs[slug] && programs[slug].bizName) || slug); x.first = Math.min(x.first || Infinity, c.createdAt || Infinity);
       });
     });
@@ -3101,16 +3114,16 @@ var qrcode = function() {
     a.href = URL.createObjectURL(new Blob([text], {type: 'text/csv'})); a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
   }
-  var HEAD = ['Name','Email','Phone','Instagram','Employee','OK to email','OK to text','Text consent saved','Consent wording version','Coupon code','Used','Signed up','Welcome key given'];
+  var HEAD = ['Name','Email','Phone','Instagram','Employee','OK to email','OK to text','Text consent saved','Consent wording version','Opted out','Coupon code','Used','Signed up','Welcome key given'];
   function staffName(slug, sid) { var x = sid && staffAll[slug] && staffAll[slug][sid]; return x ? x.name : (sid || ''); }
   function claimRow(c) {
-    return [c.name, c.email, c.phone || '', c.ig ? '@' + c.ig : '', staffName(c.biz || '', c.ref), c.marketingOptIn ? 'yes' : 'no', c.smsOptIn ? 'yes' : 'no',
-            c.smsOptIn ? (c.consentText || '') : '', c.smsOptIn ? (c.consentVer || '') : '', c.code, isUsed(c.biz || '', c) ? 'yes' : 'no', fmtWhen(c.createdAt), c.welcomePaid ? 'yes' : 'no'];
+    return [c.name, c.email, c.phone || '', c.ig ? '@' + c.ig : '', staffName(c.biz || '', c.ref), mailOk(c) ? 'yes' : 'no', textOk(c) ? 'yes' : 'no',
+            c.smsOptIn ? (c.consentText || '') : '', c.smsOptIn ? (c.consentVer || '') : '', isOut(c) ? 'yes' : 'no', c.code, isUsed(c.biz || '', c) ? 'yes' : 'no', fmtWhen(c.createdAt), c.welcomePaid ? 'yes' : 'no'];
   }
 
   function renderClaims(slug) {
     var p = programs[slug] || {}, list = claimsOf(slug).sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
-    var texts = list.filter(function(c){ return c.smsOptIn; }), mails = list.filter(function(c){ return c.marketingOptIn; });
+    var texts = list.filter(textOk), mails = list.filter(mailOk);
     var head = '<div class="back-link" id="backBtn">&larr; Back</div>' +
       '<h3 style="margin:0 0 4px;">' + escapeHtml(p.bizName || slug) + ' — customers</h3>' +
       '<div class="pc-stats" style="margin-bottom:12px;">' + list.length + ' signed up · ' + mails.length + ' OK to email · ' + texts.length + ' OK to text</div>' +
@@ -3125,11 +3138,11 @@ var qrcode = function() {
     view.innerHTML = head + '<div class="claims-list">' + list.map(function(c){
       return '<div class="claim-row"><div class="claim-top"><div class="claim-name">' + escapeHtml(c.name || '(no name)') + '</div><div class="claim-code">' + escapeHtml(c.code || '') + '</div></div>' +
         '<div class="claim-meta">' + escapeHtml(c.email || '') + (c.phone ? '<br>' + escapeHtml(c.phone) : '') + (c.ig ? '<br>Instagram @' + escapeHtml(c.ig) : '') + (c.ref ? '<br>Signed up through ' + escapeHtml(staffName(slug, c.ref)) : '') + '<br>' + escapeHtml(fmtWhen(c.createdAt)) + '</div>' +
-        '<div class="claim-flags"><span class="chip' + (isUsed(slug, c) ? ' ok' : '') + '">' + (isUsed(slug, c) ? 'Used' : (isExpired(slug, c) ? 'Expired' : 'Good until ' + new Date(c.createdAt + daysOf(p) * DAY).toLocaleDateString(undefined,{month:'short',day:'numeric'}))) + '</span><span class="chip' + (c.marketingOptIn ? ' ok' : '') + '">' + (c.marketingOptIn ? 'OK to email' : 'No email marketing') + '</span>' +
-        '<span class="chip' + (c.smsOptIn ? ' ok' : '') + '">' + (c.smsOptIn ? 'OK to text' : 'No texts') + '</span>' +
+        '<div class="claim-flags"><span class="chip' + (isUsed(slug, c) ? ' ok' : '') + '">' + (isUsed(slug, c) ? 'Used' : (isExpired(slug, c) ? 'Expired' : 'Good until ' + new Date(c.createdAt + daysOf(p) * DAY).toLocaleDateString(undefined,{month:'short',day:'numeric'}))) + '</span>' + (isOut(c) ? '<span class="chip">Opted out of all messages</span>' : '<span class="chip' + (c.marketingOptIn ? ' ok' : '') + '">' + (c.marketingOptIn ? 'OK to email' : 'No email marketing') + '</span><span class="chip' + (c.smsOptIn ? ' ok' : '') + '">' + (c.smsOptIn ? 'OK to text' : 'No texts') + '</span>') +
         (Number(p.welcomeKeys) > 0 ? '<span class="chip' + (c.welcomePaid ? ' ok' : '') + '">' + (c.welcomePaid ? 'Welcome key given' : 'Welcome key to give: ' + p.welcomeKeys) + '</span>' : '') + '</div>' +
         '<div class="claim-actions"><button data-redeem="' + escapeHtml(c._id) + '" class="' + (isUsed(slug, c) ? 'redeemed-yes' : 'redeemed-no') + '">' + (isUsed(slug, c) ? '✓ Used' : 'Mark used') + '</button>' +
         (Number(p.welcomeKeys) > 0 ? '<button data-wk="' + escapeHtml(c._id) + '">' + (c.welcomePaid ? 'Undo key given' : 'Mark key given') + '</button>' : '') +
+        (isOut(c) ? '' : '<button data-optout="' + escapeHtml(c._id) + '">Mark opted out (they said STOP)</button>') +
         '<button data-delclaim="' + escapeHtml(c._id) + '">Remove</button></div></div>';
     }).join('') + '</div>';
     wire();
@@ -3154,6 +3167,14 @@ var qrcode = function() {
             cur.redeemed = nv; if (!nv && codesAll[slug] && codesAll[slug][cur.code]) { delete codesAll[slug][cur.code].used; fbDelete(C + '/codes/' + slug + '/' + cur.code + '/used'); }
             renderClaims(slug);
           });
+        });
+      });
+      view.querySelectorAll('[data-optout]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var cur = (claimsAll[slug] || {})[btn.getAttribute('data-optout')] || {};
+          if (!confirm('Stop all marketing emails and texts to ' + (cur.name || 'this person') + ' from now on?')) return;
+          var u = {}; u['optout/' + cur.ek] = { t: {'.sv': 'timestamp'} }; u['optout/' + cur.pk] = { t: {'.sv': 'timestamp'} };
+          fbPatch(C, u).then(function(r){ if (!r.ok) return showToast('Could not save'); optAll[cur.ek] = { t: Date.now() }; optAll[cur.pk] = { t: Date.now() }; renderClaims(slug); showToast('Opted out. They are off every list.'); });
         });
       });
       view.querySelectorAll('[data-wk]').forEach(function(btn){

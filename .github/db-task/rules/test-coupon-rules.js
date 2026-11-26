@@ -90,6 +90,24 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('a stranger cannot add restaurant credit', 'anon', 'PUT', '/lvr_coupons/wallet/van/deposits/m1', { amount: 500, t: 1 }, false);
   await t('the owner records $500 of restaurant credit', 'owner', 'PUT', '/lvr_coupons/wallet/van/deposits/m1', { amount: 500, t: 1795000000000, note: 'November' }, true);
   await t('a zero or negative deposit is refused', 'owner', 'PUT', '/lvr_coupons/wallet/van/deposits/m2', { amount: -5, t: 1 }, false);
+  // opt-out and employees joining the database
+  const HK = 'a9'.repeat(16);
+  await t('anyone can opt a number or email out', 'anon', 'PUT', '/lvr_coupons/optout/' + HK, { t: { '.sv': 'timestamp' } }, true);
+  await t('an opt-out cannot be undone by a stranger', 'anon', 'DELETE', '/lvr_coupons/optout/' + HK, undefined, false);
+  await t('a stranger cannot read who opted out', 'anon', 'GET', '/lvr_coupons/optout', undefined, false);
+  await t('the owner can read the opt-outs', 'owner', 'GET', '/lvr_coupons/optout', undefined, true);
+  await t('an opt-out with a made-up time or a bad key is refused', 'anon', 'PUT', '/lvr_coupons/optout/notahash', { t: 5 }, false);
+  const SMS = 'I agree to receive texts from Las Vegas Restaurants. Reply STOP to cancel.';
+  const emp = (x) => Object.assign({ email: 'maria@example.com', phone: '7025550444', ig: 'maria.v', mailOptIn: true, smsOptIn: true, consentText: SMS, consentVer: 'sms1', ek: '1a'.repeat(16), pk: '2b'.repeat(16), t: { '.sv': 'timestamp' } }, x || {});
+  const join = (c) => ({ 'staffContact/van/maria-7k3': c, 'staff/van/maria-7k3/joined': true });
+  await t('an employee cannot join without a phone number', 'anon', 'PATCH', '/lvr_coupons', join((() => { const c = emp(); delete c.phone; return c; })()), false);
+  await t('an employee cannot tick text consent without the wording', 'anon', 'PATCH', '/lvr_coupons', join((() => { const c = emp(); delete c.consentText; return c; })()), false);
+  await t('"joined" cannot be set without the contact details', 'anon', 'PUT', '/lvr_coupons/staff/van/maria-7k3/joined', true, false);
+  await t('an employee joins with email, phone and separate consents', 'anon', 'PATCH', '/lvr_coupons', join(emp()), true);
+  await t('an employee cannot join twice or change what they agreed to', 'anon', 'PATCH', '/lvr_coupons', join(emp({ email: 'x@example.com' })), false);
+  await t('the "joined" mark is readable from the employee link', 'anon', 'GET', '/lvr_coupons/staff/van/maria-7k3/joined', undefined, true, 'true');
+  await t('a stranger cannot read the employees\' contact details', 'anon', 'GET', '/lvr_coupons/staffContact/van/maria-7k3', undefined, false);
+  await t('the owner can read the employees\' contact details', 'owner', 'GET', '/lvr_coupons/staffContact/van/maria-7k3', undefined, true);
   // counter
   await t('the counter starts at 1', 'anon', 'PUT', '/lvr_coupons/counts/van', 1, true);
   await t('the counter cannot jump by 2', 'anon', 'PUT', '/lvr_coupons/counts/van', 3, false);
