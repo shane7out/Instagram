@@ -29,6 +29,13 @@
   .recent div{padding:7px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;}
   .f{text-align:left;margin-top:10px;}.f label{display:block;font-size:12.5px;font-weight:700;color:var(--dim);margin-bottom:5px;}
   .f input[type=text],.f input[type=email],.f input[type=tel]{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;font-size:16px;}
+  .ask{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0;text-align:left;background:rgba(255,255,255,.04);}
+  .ask .q{font-size:13px;line-height:1.5;font-weight:600;margin-bottom:10px;}
+  .ask .yn{display:flex;gap:10px;margin-top:6px;}
+  .ask .yn label{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:15px;font-weight:700;cursor:pointer;}
+  .ask .yn input{width:18px;height:18px;margin:0;}
+  .ask .yn label:has(input:checked){border-color:var(--blue);background:rgba(20,147,255,.18);}
+  .ask.need{border-color:var(--red);}
   .opt{display:flex;gap:9px;align-items:flex-start;text-align:left;margin:12px 0;font-size:12.5px;color:var(--dim);line-height:1.45;}.opt input{margin-top:3px;width:18px;height:18px;flex-shrink:0;}
   .opt.off{opacity:.55;}
   .err{color:var(--red);font-size:13.5px;margin-top:10px;min-height:18px;}
@@ -2344,7 +2351,7 @@ var qrcode = function() {
   var PAGE = 'https://lvr-data-a60c1.web.app/lvr-coupon.html';
   var params = new URLSearchParams(location.search);
   var slug = (params.get('biz') || '').trim().toLowerCase(), sid = (params.get('e') || '').trim().toLowerCase();
-  var app = document.getElementById('app'), lastTotal = null, program = null, who = '', joined = false, CONSENT_VER = 'sms1';
+  var app = document.getElementById('app'), lastTotal = null, program = null, who = '', joined = false, CONSENT_VER = 'v2';
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function get(path) { return fetch(DB + path + '.json').then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
@@ -2386,35 +2393,38 @@ var qrcode = function() {
   }
 
   function smsWording() {
-    return 'Yes, text me deals, free items and updates from Las Vegas Restaurants at the number above. Message frequency varies. Message and data rates may apply. Reply STOP any time to cancel, HELP for help.';
+    return 'Text me deals, free items and updates from Las Vegas Restaurants at the number above. Message frequency varies. Message and data rates may apply. Reply STOP any time to cancel, HELP for help.';
   }
+  function mailWording() { return 'Email me deals, free items and updates from Las Vegas Restaurants. I can unsubscribe at any time.'; }
   function joinCard() {
     return '<div class="card" id="joinCard"><div class="say">Join Key Rewards</div><div class="note">Add your details so your keys can be added to your own Key Rewards account.</div>' +
       '<form id="jf" novalidate><div class="f"><label for="jPh">Mobile phone</label><input id="jPh" type="tel" autocomplete="tel" maxlength="30"></div>' +
       '<div class="f"><label for="jEm">Email</label><input id="jEm" type="email" autocomplete="email" maxlength="254"></div>' +
       '<div class="f"><label for="jIg">Instagram (if you have one)</label><input id="jIg" type="text" autocapitalize="none" placeholder="@yourname" maxlength="31"></div>' +
-      '<div class="opt"><input type="checkbox" id="jMail"><label for="jMail">Email me deals, free items and updates from Las Vegas Restaurants. Optional. Unsubscribe any time.</label></div>' +
-      '<div class="opt off" id="jSmsRow"><input type="checkbox" id="jSms" disabled><label for="jSms">' + esc(smsWording()) + ' Optional.</label></div>' +
+      '<div class="ask" id="jAskMail" role="group" aria-labelledby="jqMail"><div class="q" id="jqMail">' + esc(mailWording()) + '</div><div class="yn"><label><input type="radio" name="jm" id="jMailYes" value="yes"> Yes</label><label><input type="radio" name="jm" id="jMailNo" value="no"> No</label></div></div>' +
+      '<div class="ask" id="jAskSms" role="group" aria-labelledby="jqSms"><div class="q" id="jqSms">' + esc(smsWording()) + '</div><div class="yn"><label><input type="radio" name="js" id="jSmsYes" value="yes"> Yes</label><label><input type="radio" name="js" id="jSmsNo" value="no"> No</label></div></div>' +
+      '<div class="note">Please choose Yes or No for both. Either answer is fine. You can stop any message at any time.</div>' +
       '<button class="btn" id="jGo" type="submit">Join</button><div class="err" id="jErr" role="status"></div></form></div>';
   }
   function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 32); }
   function sha(t) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(hex); }
   function wireJoin() {
     var f = document.getElementById('jf'); if (!f) return;
-    var ph = document.getElementById('jPh'), sms = document.getElementById('jSms'), row = document.getElementById('jSmsRow');
-    ph.addEventListener('input', function(){ var ok = ph.value.replace(/[^0-9]/g, '').length >= 10; sms.disabled = !ok; row.className = 'opt' + (ok ? '' : ' off'); if (!ok) sms.checked = false; });
+    var ph = document.getElementById('jPh');
     f.addEventListener('submit', function(e){
       e.preventDefault();
-      var em = document.getElementById('jEm').value.trim(), phone = ph.value.trim(), err = document.getElementById('jErr'), btn = document.getElementById('jGo');
+      var mp = document.querySelector('input[name=jm]:checked'), sp = document.querySelector('input[name=js]:checked'), em = document.getElementById('jEm').value.trim(), phone = ph.value.trim(), err = document.getElementById('jErr'), btn = document.getElementById('jGo');
       var ig = document.getElementById('jIg').value.trim().replace(/^@+/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[\/?].*$/, '');
       if (!/^[^ @]+@[^ @]+\.[^ @]+$/.test(em)) { err.textContent = 'Please enter a real email address.'; return; }
       if (phone.replace(/[^0-9]/g, '').length < 10) { err.textContent = 'Please enter your mobile phone number with the area code.'; return; }
       if (ig && !/^[A-Za-z0-9._]{1,30}$/.test(ig)) { err.textContent = 'That Instagram name does not look right.'; return; }
+      document.getElementById('jAskMail').classList.toggle('need', !mp); document.getElementById('jAskSms').classList.toggle('need', !sp);
+      if (!mp || !sp) { err.textContent = 'Please choose Yes or No for emails and for texts.'; return; }
       if (!window.crypto || !crypto.subtle) { err.textContent = 'Please open this page in your phone\'s regular browser.'; return; }
       btn.disabled = true; err.textContent = '';
       Promise.all([sha(em.toLowerCase()), sha('tel:' + phone.replace(/[^0-9]/g, '').slice(-10))]).then(function(k){
-      var rec = { email: em, phone: phone, ek: k[0], pk: k[1], mailOptIn: document.getElementById('jMail').checked, smsOptIn: sms.checked && !sms.disabled, t: {'.sv': 'timestamp'} };
-      if (ig) rec.ig = ig; if (rec.smsOptIn) { rec.consentText = smsWording(); rec.consentVer = CONSENT_VER; }
+      var rec = { email: em, phone: phone, ek: k[0], pk: k[1], mailOptIn: mp.value === 'yes', smsOptIn: sp.value === 'yes', consentVer: CONSENT_VER, t: {'.sv': 'timestamp'} };
+      if (ig) rec.ig = ig; if (rec.mailOptIn) rec.mailConsentText = mailWording(); if (rec.smsOptIn) rec.consentText = smsWording();
       var upd = {}; upd['staffContact/' + slug + '/' + sid] = rec; upd['staff/' + slug + '/' + sid + '/joined'] = true;
       return fetch(DB + '/lvr_coupons.json', { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(upd) }).then(function(r){
         if (!r.ok) throw new Error('HTTP ' + r.status);

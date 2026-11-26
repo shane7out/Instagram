@@ -14,7 +14,7 @@ const t = async (name, who, method, p, body, allow, expectBody) => {
   ok ? pass++ : fail++; console.log((ok ? 'PASS' : 'FAIL') + '  [' + who + '] ' + name + (ok ? '' : '  (HTTP ' + r.s + ' ' + r.t.replace(/\s+/g, ' ').slice(0, 200) + ')'));
 };
 const EK = 'a'.repeat(32), EK2 = 'b'.repeat(32), PK = 'c'.repeat(32), PK2 = 'd'.repeat(32), PK3 = 'e'.repeat(32);
-const claim = (x) => Object.assign({ biz: 'van', name: 'Ann Lee', email: 'ann@example.com', phone: '7025550100', marketingOptIn: true, smsOptIn: true, consentText: 'I agree to receive texts from Vanilla Rice and Las Vegas Restaurants. Reply STOP to opt out.', consentVer: 'sms1', code: 'VAN-7K3P9', redeemed: false, createdAt: { '.sv': 'timestamp' }, ek: EK, pk: PK }, x || {});
+const claim = (x) => Object.assign({ biz: 'van', name: 'Ann Lee', email: 'ann@example.com', phone: '7025550100', marketingOptIn: true, mailConsentText: 'I agree to receive emails from Vanilla Rice and Las Vegas Restaurants.', smsOptIn: true, consentText: 'I agree to receive texts from Vanilla Rice and Las Vegas Restaurants. Reply STOP to opt out.', consentVer: 'sms1', code: 'VAN-7K3P9', redeemed: false, createdAt: { '.sv': 'timestamp' }, ek: EK, pk: PK }, x || {});
 const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx/van/' + ek]: { code: c.code, id }, ['idx/van/' + c.pk]: { code: c.code, id } }, extra || {});
 (async () => {
   const prog = { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 2, active: true, staffKeys: 2 };
@@ -44,6 +44,10 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('a stranger cannot read the employee list', 'anon', 'GET', '/lvr_coupons/staff/van', undefined, false);
   await t('the owner cannot add an employee with a bad id', 'owner', 'PUT', '/lvr_coupons/staff/van/X', { name: 'Maria' }, false);
   await t('text consent without the consent wording is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, (() => { const c = claim(); delete c.consentText; return c; })()), false);
+  await t('a claim that did not answer the email question is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, (() => { const c = claim(); delete c.marketingOptIn; return c; })()), false);
+  await t('a claim that did not answer the text question is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, (() => { const c = claim(); delete c.smsOptIn; return c; })()), false);
+  await t('a yes to email without the email wording saved is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, (() => { const c = claim(); delete c.mailConsentText; return c; })()), false);
+  await t('a claim without the wording version is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, (() => { const c = claim(); delete c.consentVer; return c; })()), false);
   await t('a claim that arrives already redeemed is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, claim({ redeemed: true })), false);
   await t('a claim with an unknown field is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, claim({ hack: 1 })), false);
   await t('a made-up time is refused', 'anon', 'PATCH', '/lvr_coupons', upd('c1c1c1c1c1', EK, claim({ createdAt: 5 })), false);
@@ -98,9 +102,11 @@ const upd = (id, ek, c, extra) => Object.assign({ ['claims/van/' + id]: c, ['idx
   await t('the owner can read the opt-outs', 'owner', 'GET', '/lvr_coupons/optout', undefined, true);
   await t('an opt-out with a made-up time or a bad key is refused', 'anon', 'PUT', '/lvr_coupons/optout/notahash', { t: 5 }, false);
   const SMS = 'I agree to receive texts from Las Vegas Restaurants. Reply STOP to cancel.';
-  const emp = (x) => Object.assign({ email: 'maria@example.com', phone: '7025550444', ig: 'maria.v', mailOptIn: true, smsOptIn: true, consentText: SMS, consentVer: 'sms1', ek: '1a'.repeat(16), pk: '2b'.repeat(16), t: { '.sv': 'timestamp' } }, x || {});
+  const emp = (x) => Object.assign({ email: 'maria@example.com', phone: '7025550444', ig: 'maria.v', mailOptIn: true, mailConsentText: 'I agree to receive emails from Las Vegas Restaurants.', smsOptIn: true, consentText: SMS, consentVer: 'sms1', ek: '1a'.repeat(16), pk: '2b'.repeat(16), t: { '.sv': 'timestamp' } }, x || {});
   const join = (c) => ({ 'staffContact/van/maria-7k3': c, 'staff/van/maria-7k3/joined': true });
   await t('an employee cannot join without a phone number', 'anon', 'PATCH', '/lvr_coupons', join((() => { const c = emp(); delete c.phone; return c; })()), false);
+  await t('an employee cannot skip the email or text question', 'anon', 'PATCH', '/lvr_coupons', join((() => { const c = emp(); delete c.mailOptIn; return c; })()), false);
+  await t('an employee cannot say yes to email without the wording', 'anon', 'PATCH', '/lvr_coupons', join((() => { const c = emp(); delete c.mailConsentText; return c; })()), false);
   await t('an employee cannot tick text consent without the wording', 'anon', 'PATCH', '/lvr_coupons', join((() => { const c = emp(); delete c.consentText; return c; })()), false);
   await t('"joined" cannot be set without the contact details', 'anon', 'PUT', '/lvr_coupons/staff/van/maria-7k3/joined', true, false);
   await t('an employee joins with email, phone and separate consents', 'anon', 'PATCH', '/lvr_coupons', join(emp()), true);

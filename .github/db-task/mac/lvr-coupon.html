@@ -43,6 +43,14 @@
   }
   .field input:focus{outline:none;border-color:var(--key-blue);}
   .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  .ask{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0;text-align:left;background:var(--bg-2);}
+  .ask .q{font-size:13px;line-height:1.5;font-weight:600;margin-bottom:10px;}
+  .ask .fine{font-size:11.5px;color:var(--ink-dim);margin:4px 0 8px;line-height:1.45;}
+  .ask .yn{display:flex;gap:10px;}
+  .ask .yn label{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:15px;font-weight:700;cursor:pointer;color:var(--ink);}
+  .ask .yn input{width:18px;height:18px;margin:0;}
+  .ask .yn label:has(input:checked){border-color:var(--key-blue);background:rgba(22,143,255,.16);}
+  .ask.need{border-color:var(--red);}
   .optin{display:flex;align-items:flex-start;gap:9px;text-align:left;margin:12px 0;}
   .optin input{margin-top:3px;flex-shrink:0;width:18px;height:18px;}
   .optin label{font-size:12.5px;color:var(--ink-dim);line-height:1.45;}
@@ -86,7 +94,7 @@
 <script>
   var DB = 'https://lvr-data-a60c1-default-rtdb.firebaseio.com';
   var C = '/lvr_coupons/';
-  var CONSENT_VER = 'sms1';
+  var CONSENT_VER = 'v2';
 
   var params = new URLSearchParams(location.search);
   var slug = (params.get('biz') || '').trim().toLowerCase();
@@ -189,8 +197,11 @@
   }
 
   function smsWording(program) {
-    return 'Yes, text me deals and offers from ' + (program.bizName || 'this restaurant') + ' and Las Vegas Restaurants at the number above. ' +
+    return 'Text me deals, free items and offers from ' + (program.bizName || 'this restaurant') + ' and Las Vegas Restaurants at the number above. ' +
       'Message frequency varies. Message and data rates may apply. Reply STOP any time to cancel, HELP for help.';
+  }
+  function mailWording(program) {
+    return 'Email me deals, free items and offers from ' + (program.bizName || 'this restaurant') + ' and Las Vegas Restaurants. I can unsubscribe at any time.';
   }
 
   function renderForm(program, used) {
@@ -206,19 +217,14 @@
         '<div class="field"><label for="cPhone">Mobile phone</label><input type="tel" id="cPhone" autocomplete="tel" maxlength="30"></div>' +
         '<div class="field"><label for="cIg">Instagram (if you have one)</label><input type="text" id="cIg" autocomplete="off" autocapitalize="none" placeholder="@yourname" maxlength="31"></div>' +
         '<div class="field hp" aria-hidden="true"><label for="cWeb">Leave this empty</label><input type="text" id="cWeb" tabindex="-1" autocomplete="off"></div>' +
-        '<div class="optin"><input type="checkbox" id="cEmailOpt"><label for="cEmailOpt">Email me deals and offers from ' + escapeHtml(program.bizName || 'this restaurant') + ' and Las Vegas Restaurants.<div class="optin-note">Optional. Unsubscribe any time.</div></label></div>' +
-        '<div class="optin off" id="smsRow"><input type="checkbox" id="cSms" disabled><label for="cSms">' + escapeHtml(sms) + '<div class="optin-note">Optional. Not needed to get your coupon. Turns on once your phone number is in.</div></label></div>' +
+        '<div class="ask" id="askMail" role="group" aria-labelledby="qMail"><div class="q" id="qMail">' + escapeHtml(mailWording(program)) + '</div><div class="yn"><label><input type="radio" name="mail" id="mailYes" value="yes"> Yes</label><label><input type="radio" name="mail" id="mailNo" value="no"> No</label></div></div>' +
+        '<div class="ask" id="askSms" role="group" aria-labelledby="qSms"><div class="q" id="qSms">' + escapeHtml(sms) + '</div><div class="yn"><label><input type="radio" name="sms" id="smsYes" value="yes"> Yes</label><label><input type="radio" name="sms" id="smsNo" value="no"> No</label></div></div>' +
+        '<div class="fine" style="font-size:11.5px;color:var(--ink-dim);margin:2px 0 8px;text-align:left;">Please choose Yes or No for both. Either answer is fine, and you get your coupon either way. You can change your mind any time.</div>' +
         '<button type="submit" class="claim-btn" id="claimBtn">Get my coupon</button>' +
         '<div class="msg" id="claimMsg"></div>' +
       '</form>';
 
-    var phoneEl = document.getElementById('cPhone'), smsEl = document.getElementById('cSms'), smsRow = document.getElementById('smsRow');
-    phoneEl.addEventListener('input', function(){
-      var ok = phoneEl.value.replace(/[^0-9]/g, '').length >= 10;
-      smsEl.disabled = !ok;
-      smsRow.className = 'optin' + (ok ? '' : ' off');
-      if (!ok) smsEl.checked = false;
-    });
+    var phoneEl = document.getElementById('cPhone');
 
     document.getElementById('claimForm').addEventListener('submit', function(e){
       e.preventDefault();
@@ -235,7 +241,10 @@
       if (ig && !/^[A-Za-z0-9._]{1,30}$/.test(ig)) return bad('That Instagram name does not look right. Leave it empty or type just the name.');
       if (!window.crypto || !crypto.subtle) return bad('Please open this page in your phone\'s regular browser.');
       btn.disabled = true; msg.className = 'msg'; msg.textContent = 'One moment…';
-      var smsOn = smsEl.checked && !smsEl.disabled;
+      var mailPick = document.querySelector('input[name=mail]:checked'), smsPick = document.querySelector('input[name=sms]:checked');
+      document.getElementById('askMail').classList.toggle('need', !mailPick); document.getElementById('askSms').classList.toggle('need', !smsPick);
+      if (!mailPick || !smsPick) { btn.disabled = false; return bad('Please choose Yes or No for emails and for texts.'); }
+      var mailOn = mailPick.value === 'yes', smsOn = smsPick.value === 'yes';
 
       Promise.all([emailKey(email), phoneKey(phone)]).then(function(k){
         var ek = k[0], pk = k[1];
@@ -246,10 +255,11 @@
           var id = randomId(), code = program.fixedCode ? String(program.fixedCode).slice(0, 24) : makeCode();
           function build(withRef) {
             var claim = { biz: slug, name: name, email: email, phone: phone, code: code, redeemed: false, createdAt: {'.sv': 'timestamp'}, ek: ek, pk: pk,
-                          marketingOptIn: !!document.getElementById('cEmailOpt').checked, smsOptIn: smsOn };
+                          marketingOptIn: mailOn, smsOptIn: smsOn, consentVer: CONSENT_VER };
             if (ig) claim.ig = ig;
             if (withRef && ref) claim.ref = ref;
-            if (smsOn) { claim.consentText = sms; claim.consentVer = CONSENT_VER; }
+            if (mailOn) claim.mailConsentText = mailWording(program);
+            if (smsOn) claim.consentText = sms;
             var upd = {};
             upd['claims/' + slug + '/' + id] = claim;
             upd['idx/' + slug + '/' + ek] = { code: code, id: id, t: {'.sv': 'timestamp'} };

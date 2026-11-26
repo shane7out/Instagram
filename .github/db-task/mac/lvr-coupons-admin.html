@@ -3006,10 +3006,10 @@ var qrcode = function() {
       (rows || '<div class="empty-note">No employees yet.</div>');
     document.getElementById('backBtn').addEventListener('click', renderProgramList);
     document.getElementById('teamCsv').addEventListener('click', function(){
-      var rows = [['Name','Email','Phone','Instagram','OK to email','OK to text','Text consent saved','Consent wording version','Opted out','Signed up through them','Keys earned','Keys still to give']];
+      var rows = [['Name','Email','Phone','Instagram','OK to email','OK to text','Email consent saved','Text consent saved','Consent wording version','Opted out','Signed up through them','Keys earned','Keys still to give']];
       Object.keys(st).forEach(function(sid){
         var ct = (contactAll[slug] && contactAll[slug][sid]) || {}, out = !!(optAll[ct.ek] || optAll[ct.pk]), mine = cl.filter(function(c){ return c.ref === sid; });
-        rows.push([st[sid].name, ct.email || '', ct.phone || '', ct.ig ? '@' + ct.ig : '', ct.mailOptIn && !out ? 'yes' : 'no', ct.smsOptIn && !out ? 'yes' : 'no', ct.smsOptIn ? (ct.consentText || '') : '', ct.smsOptIn ? (ct.consentVer || '') : '', out ? 'yes' : 'no', mine.length, mine.length * per, mine.filter(function(c){ return !c.staffPaid; }).length * per]);
+        rows.push([st[sid].name, ct.email || '', ct.phone || '', ct.ig ? '@' + ct.ig : '', ct.mailOptIn && !out ? 'yes' : 'no', ct.smsOptIn && !out ? 'yes' : 'no', ct.mailOptIn ? (ct.mailConsentText || '') : '', ct.smsOptIn ? (ct.consentText || '') : '', ct.consentVer || '', out ? 'yes' : 'no', mine.length, mine.length * per, mine.filter(function(c){ return !c.staffPaid; }).length * per]);
       });
       downloadCsv(slug + '-team.csv', rows);
     });
@@ -3114,11 +3114,11 @@ var qrcode = function() {
     a.href = URL.createObjectURL(new Blob([text], {type: 'text/csv'})); a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
   }
-  var HEAD = ['Name','Email','Phone','Instagram','Employee','OK to email','OK to text','Text consent saved','Consent wording version','Opted out','Coupon code','Used','Signed up','Welcome key given'];
+  var HEAD = ['Name','Email','Phone','Instagram','Employee','OK to email','OK to text','Email consent saved','Text consent saved','Consent wording version','Opted out','Coupon code','Used','Signed up','Welcome key given'];
   function staffName(slug, sid) { var x = sid && staffAll[slug] && staffAll[slug][sid]; return x ? x.name : (sid || ''); }
   function claimRow(c) {
     return [c.name, c.email, c.phone || '', c.ig ? '@' + c.ig : '', staffName(c.biz || '', c.ref), mailOk(c) ? 'yes' : 'no', textOk(c) ? 'yes' : 'no',
-            c.smsOptIn ? (c.consentText || '') : '', c.smsOptIn ? (c.consentVer || '') : '', isOut(c) ? 'yes' : 'no', c.code, isUsed(c.biz || '', c) ? 'yes' : 'no', fmtWhen(c.createdAt), c.welcomePaid ? 'yes' : 'no'];
+            c.marketingOptIn ? (c.mailConsentText || '') : '', c.smsOptIn ? (c.consentText || '') : '', c.consentVer || '', isOut(c) ? 'yes' : 'no', c.code, isUsed(c.biz || '', c) ? 'yes' : 'no', fmtWhen(c.createdAt), c.welcomePaid ? 'yes' : 'no'];
   }
 
   function renderClaims(slug) {

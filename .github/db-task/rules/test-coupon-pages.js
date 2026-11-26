@@ -21,6 +21,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
     await r.fulfill({ status: res.status, headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' }, body: await res.text() });
   });
   const errors = [];
+  const pick = async (pg, mail, sms) => { await pg.check('#mail' + (mail ? 'Yes' : 'No')); await pg.check('#sms' + (sms ? 'Yes' : 'No')); };
 
   await emu('PUT', '/lvr_coupons/programs/van', { bizName: 'Vanilla Rice', offer: 'Free bowl', maxClaims: 5, active: true, validDays: 30, welcomeKeys: 1, staffKeys: 2, instructions: 'Show this at the counter.' }, OWNER);
   await emu('PUT', '/lvr_coupons/staff/van/maria-7k3', { name: 'Maria', active: true }, OWNER);
@@ -32,16 +33,16 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   await page.waitForSelector('#claimForm');
   ok('the restaurant name and the offer show', (await page.textContent('#card')).includes('Vanilla Rice') && (await page.textContent('#card')).includes('Free bowl'));
   ok('"5 of 5 left" shows from the public counter', (await page.textContent('#tickerLeft')) === '5');
-  ok('the text box starts switched off', await page.isDisabled('#cSms'));
-  ok('the email box and the text box are separate and start unticked', !(await page.isChecked('#cEmailOpt')) && !(await page.isChecked('#cSms')));
+  ok('email and text are two separate Yes/No questions and neither answer is pre-selected', (await page.$$('input[name=mail]:checked')).length === 0 && (await page.$$('input[name=sms]:checked')).length === 0 && (await page.$$('#askMail input[type=radio]')).length === 2 && (await page.$$('#askSms input[type=radio]')).length === 2);
   await page.fill('#cName', 'Ann Lee'); await page.fill('#cEmail', 'ann@example.com'); await page.fill('#cPhone', '702'); await page.fill('#cIg', '@ann.lee');
   await page.click('#claimBtn');
   ok('a too-short phone number is refused on the page', /phone/i.test(await page.textContent('#claimMsg')) && (await page.$('.code-value')) === null);
-  ok('a short phone number keeps the text box off', await page.isDisabled('#cSms'));
   await page.fill('#cPhone', '(702) 555-0100');
-  ok('a full phone number switches the text box on', !(await page.isDisabled('#cSms')));
-  await page.check('#cSms');
-  ok('the text wording names the restaurant and Las Vegas Restaurants and STOP', /Vanilla Rice and Las Vegas Restaurants/.test(await page.textContent('#smsRow')) && /STOP/.test(await page.textContent('#smsRow')));
+  await page.fill('#cPhone', '(702) 555-0100');
+  await page.click('#claimBtn');
+  ok('the form will not go through until Yes or No is chosen for both questions', /choose Yes or No/.test(await page.textContent('#claimMsg')) && (await page.$('.code-value')) === null && (await page.$$('.ask.need')).length === 2);
+  await pick(page, false, true);
+  ok('the text wording names the restaurant and Las Vegas Restaurants and STOP', /Vanilla Rice and Las Vegas Restaurants/.test(await page.textContent('#askSms')) && /STOP/.test(await page.textContent('#askSms')));
   await page.click('#claimBtn');
   await page.waitForSelector('.code-value');
   ok('the customer is told how long the coupon is good for', /Good for 30 days: use it by/.test(await page.textContent('#card')));
@@ -53,8 +54,8 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   const ids = Object.keys(claims), c = claims[ids[0]] || {};
   ok('exactly one claim was saved', ids.length === 1);
   ok('the claim has name, email, phone, code', c.name === 'Ann Lee' && c.email === 'ann@example.com' && c.phone === '(702) 555-0100' && c.code === code);
-  ok('text consent and its exact wording were saved', c.smsOptIn === true && /Vanilla Rice and Las Vegas Restaurants/.test(c.consentText || '') && c.consentVer === 'sms1');
-  ok('email marketing stayed off because it was not ticked', c.marketingOptIn === false);
+  ok('text consent and its exact wording were saved', c.smsOptIn === true && /Vanilla Rice and Las Vegas Restaurants/.test(c.consentText || '') && c.consentVer === 'v2');
+  ok('the email answer No was saved as No, with no email wording', c.marketingOptIn === false && c.mailConsentText === undefined);
   ok('the Instagram handle was saved without the @', c.ig === 'ann.lee');
   ok('the claim remembers which employee QR it came through', c.ref === 'maria-7k3');
   ok('both duplicate-check entries (email and phone) were saved', Object.keys((await emu('GET', '/lvr_coupons/idx/van', undefined, OWNER)).j || {}).length === 2);
@@ -64,24 +65,24 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   // same person again
   page = await cust.newPage(); page.on('pageerror', e => errors.push('claim page 2: ' + e.message));
   await page.goto(base + '/lvr-coupon.html?biz=van'); await page.waitForSelector('#claimForm');
-  await page.fill('#cName', 'Ann Lee'); await page.fill('#cEmail', ' ANN@example.com '); await page.fill('#cPhone', '7025559999'); await page.click('#claimBtn');
+  await page.fill('#cName', 'Ann Lee'); await page.fill('#cEmail', ' ANN@example.com '); await page.fill('#cPhone', '7025559999'); await pick(page, false, false); await page.click('#claimBtn');
   await page.waitForSelector('.code-value');
   ok('the same email gets the same code back, with its end date', (await page.textContent('.code-value')) === code && (await page.textContent('#card')).includes('Welcome back') && /use it by/.test(await page.textContent('#card')));
   ok('no second claim was created', Object.keys((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).length === 1);
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=van&e=maria-7k3'); await page.waitForSelector('#claimForm');
-  await page.fill('#cName', 'Ann Again'); await page.fill('#cEmail', 'ann2@example.com'); await page.fill('#cPhone', '702-555-0100'); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
+  await page.fill('#cName', 'Ann Again'); await page.fill('#cEmail', 'ann2@example.com'); await page.fill('#cPhone', '702-555-0100'); await pick(page, false, false); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
   ok('the same phone with a different email gets the same code back (no farming rewards)', (await page.textContent('.code-value')) === code && Object.keys((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).length === 1);
   // a different person, email yes
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=van'); await page.waitForSelector('#claimForm');
-  await page.fill('#cName', 'Bo Chen'); await page.fill('#cEmail', 'bo@example.com'); await page.fill('#cPhone', '7025550111'); await page.check('#cEmailOpt'); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
+  await page.fill('#cName', 'Bo Chen'); await page.fill('#cEmail', 'bo@example.com'); await page.fill('#cPhone', '7025550111'); await pick(page, true, false); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
   const all2 = (await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j; const bo = Object.values(all2).find(x => x.email === 'bo@example.com');
-  ok('a customer with no Instagram and no employee saves with email yes and texts no', bo && bo.marketingOptIn === true && bo.smsOptIn === false && bo.ig === undefined && bo.ref === undefined);
+  ok('a customer with no Instagram and no employee saves with email yes (with its wording) and texts no', bo && bo.marketingOptIn === true && /Vanilla Rice and Las Vegas Restaurants/.test(bo.mailConsentText || '') && bo.smsOptIn === false && bo.ig === undefined && bo.ref === undefined);
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=van&e=ghost-zzz'); await page.waitForSelector('#claimForm');
-  await page.fill('#cName', 'Cy Diaz'); await page.fill('#cEmail', 'cy@example.com'); await page.fill('#cPhone', '7025550122'); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
+  await page.fill('#cName', 'Cy Diaz'); await page.fill('#cEmail', 'cy@example.com'); await page.fill('#cPhone', '7025550122'); await pick(page, false, false); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
   ok('a removed or fake employee code still gets the customer their coupon (without credit to anyone)', Object.values((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).some(x => x.email === 'cy@example.com' && x.ref === undefined));
   // honeypot
   page = await cust.newPage(); await page.goto(base + '/lvr-coupon.html?biz=van'); await page.waitForSelector('#claimForm');
-  await page.fill('#cName', 'Bot'); await page.fill('#cEmail', 'bot@example.com'); await page.fill('#cPhone', '7025550133'); await page.evaluate(() => { document.getElementById('cWeb').value = 'http://spam'; }); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
+  await page.fill('#cName', 'Bot'); await page.fill('#cEmail', 'bot@example.com'); await page.fill('#cPhone', '7025550133'); await pick(page, false, false); await page.evaluate(() => { document.getElementById('cWeb').value = 'http://spam'; }); await page.click('#claimBtn'); await page.waitForSelector('.code-value');
   ok('a bot that fills the hidden box stores nothing', Object.keys((await emu('GET', '/lvr_coupons/claims/van', undefined, OWNER)).j).length === 3);
   // ---------- the restaurant's redeem page (no login)
   const rp = await cust.newPage(); rp.on('pageerror', e => errors.push('redeem page: ' + e.message));
@@ -95,7 +96,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('a code works only once', true);
   await emu('PUT', '/lvr_coupons/programs/exp', { bizName: 'Old Co', offer: '$5 off', active: true, validDays: 0 }, OWNER);
   const ec = await cust.newPage(); await ec.goto(base + '/lvr-coupon.html?biz=exp'); await ec.waitForSelector('#claimForm');
-  await ec.fill('#cName', 'Ed Old'); await ec.fill('#cEmail', 'ed@example.com'); await ec.fill('#cPhone', '7025550155'); await ec.click('#claimBtn'); await ec.waitForSelector('.code-value');
+  await ec.fill('#cName', 'Ed Old'); await ec.fill('#cEmail', 'ed@example.com'); await ec.fill('#cPhone', '7025550155'); await pick(ec, false, false); await ec.click('#claimBtn'); await ec.waitForSelector('.code-value');
   const ecode = await ec.textContent('.code-value');
   await rp.goto(base + '/lvr-redeem.html?biz=exp'); await rp.waitForSelector('#check:not([disabled])'); await rp.fill('#code', ecode); await rp.click('#check'); await rp.waitForSelector('.bad');
   ok('a coupon past its days is shown as expired and cannot be redeemed', /Expired/.test(await rp.textContent('#result')) && (await rp.$('#redeem')) === null);
@@ -129,7 +130,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('the customer list shows names, emails, phone and text consent', /Ann Lee/.test(await ad.textContent('#view')) && /ann@example.com/.test(await ad.textContent('#view')) && /OK to text/.test(await ad.textContent('#view')));
   const [dl] = await Promise.all([ad.waitForEvent('download'), ad.click('#csvText')]);
   const csv = fs.readFileSync(await dl.path(), 'utf8');
-  ok('the text list has only the person who agreed, with the wording they agreed to', /Ann Lee/.test(csv) && !/Bo Chen/.test(csv) && /Las Vegas Restaurants/.test(csv) && /sms1/.test(csv), csv.slice(0, 300));
+  ok('the text list has only the person who agreed, with the wording they agreed to', /Ann Lee/.test(csv) && !/Bo Chen/.test(csv) && /Las Vegas Restaurants/.test(csv) && /v2/.test(csv), csv.slice(0, 300));
   const [dl2] = await Promise.all([ad.waitForEvent('download'), ad.click('#csvMail')]);
   const csv2 = fs.readFileSync(await dl2.path(), 'utf8');
   ok('the email list has only the person who agreed to email', /Bo Chen/.test(csv2) && !/Ann Lee/.test(csv2));
@@ -194,14 +195,17 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('the employee page greets her by name and shows her keys, sign-ups and her own QR code', /Hi Maria/.test(await ep.textContent('#app')) && (await ep.textContent('#keysBig')) === '2' && (await ep.innerHTML('.qr')).length > 2000);
   ok('the employee page shows no customer names, emails or phone numbers', !/ann@example|Ann Lee|555/.test(await ep.textContent('#app')));
   const cp2 = await cust.newPage(); await cp2.goto(base + '/lvr-coupon.html?biz=van&e=maria-7k3'); await cp2.waitForSelector('#claimForm');
-  await cp2.fill('#cName', 'Di Park'); await cp2.fill('#cEmail', 'di@example.com'); await cp2.fill('#cPhone', '7025550144'); await cp2.click('#claimBtn'); await cp2.waitForSelector('.code-value');
+  await cp2.fill('#cName', 'Di Park'); await cp2.fill('#cEmail', 'di@example.com'); await cp2.fill('#cPhone', '7025550144'); await pick(cp2, false, false); await cp2.click('#claimBtn'); await cp2.waitForSelector('.code-value');
   await ep.waitForFunction(() => document.getElementById('keysBig') && document.getElementById('keysBig').textContent === '4', null, { timeout: 15000 }).catch(() => {});
   ok('her number goes up by itself right after the next guest signs up through her code', (await ep.textContent('#keysBig')) === '4');
-  ok('the join form is offered, with the two consents separate and unticked', (await ep.isVisible('#jf')) && !(await ep.isChecked('#jMail')) && (await ep.isDisabled('#jSms')));
-  await ep.fill('#jPh', '(702) 555-0444'); await ep.fill('#jEm', 'maria@example.com'); await ep.fill('#jIg', '@maria.v'); await ep.check('#jMail'); await ep.check('#jSms');
+  ok('the join form asks email and text as two separate Yes/No questions with nothing pre-selected', (await ep.isVisible('#jf')) && (await ep.$$('input[name=jm]:checked')).length === 0 && (await ep.$$('input[name=js]:checked')).length === 0);
+  await ep.fill('#jPh', '(702) 555-0444'); await ep.fill('#jEm', 'maria@example.com'); await ep.fill('#jIg', '@maria.v');
+  await ep.click('#jGo');
+  ok('the employee form will not go through until both questions are answered', /choose Yes or No/.test(await ep.textContent('#jErr')) && (await ep.$$('.ask.need')).length === 2);
+  await ep.check('#jMailYes'); await ep.check('#jSmsYes');
   await ep.click('#jGo'); await ep.waitForFunction(() => /in the Key Rewards database/.test(document.getElementById('app').textContent), null, { timeout: 15000 });
   const sc = (await emu('GET', '/lvr_coupons/staffContact/van/maria-7k3', undefined, OWNER)).j || {};
-  ok('the employee\'s details and exact consent wording were saved', sc.email === 'maria@example.com' && sc.ig === 'maria.v' && sc.mailOptIn === true && sc.smsOptIn === true && /Las Vegas Restaurants/.test(sc.consentText || '') && sc.consentVer === 'sms1');
+  ok('the employee\'s details and exact consent wording were saved', sc.email === 'maria@example.com' && sc.ig === 'maria.v' && sc.mailOptIn === true && /Las Vegas Restaurants/.test(sc.mailConsentText || '') && sc.smsOptIn === true && /Las Vegas Restaurants/.test(sc.consentText || '') && sc.consentVer === 'v2');
   ok('the employee is marked as joined and the form is gone', (await emu('GET', '/lvr_coupons/staff/van/maria-7k3/joined')).j === true && !(await ep.isVisible('#jf').catch(() => false)));
   const ep2 = await emp.newPage(); await ep2.goto(base + '/lvr-team.html?biz=van&e=nobody-123'); await ep2.waitForSelector('.state');
   ok('an unknown employee link says it is not active', /not active/.test(await ep2.textContent('#app')));
@@ -212,7 +216,7 @@ const emu = async (method, p, body, tok) => { const r = await fetch(`${EMU}${p}.
   ok('the Team screen shows who joined the database and what they agreed to', /In the database/.test(tt2) && /OK to email/.test(tt2) && /OK to text/.test(tt2) && /maria@example\.com/.test(tt2));
   const [dl5] = await Promise.all([ad.waitForEvent('download'), ad.click('#teamCsv')]);
   const csv5 = fs.readFileSync(await dl5.path(), 'utf8');
-  ok('the team download has contact, consent and keys', /Maria/.test(csv5) && /maria@example\.com/.test(csv5) && /sms1/.test(csv5));
+  ok('the team download has contact, consent and keys', /Maria/.test(csv5) && /maria@example\.com/.test(csv5) && /v2/.test(csv5));
   const oc = await cust.newPage(); await oc.goto(base + '/lvr-optout.html');
   await oc.fill('#em', 'bad'); await oc.click('#go'); ok('a bad email is refused on the opt-out page', /does not look right/.test(await oc.textContent('#msg')));
   await oc.fill('#em', ' ANN@example.com '); await oc.click('#go'); await oc.waitForFunction(() => /Done/.test(document.getElementById('msg').textContent));
