@@ -252,6 +252,15 @@
   "href": "demos/installable-apps.html"
  },
  {
+  "slug": "sales-call-coach",
+  "num": "30",
+  "title": "Live Sales Call Coach",
+  "tag": "A coach that follows a sales call as it happens: what to ask next, how to answer a concern, and a quoted scorecard at the end.",
+  "cat": "Operations & Sales",
+  "thumb": "demos/thumbs/sales-call-coach.jpg",
+  "href": "demos/sales-call-coach.html"
+ },
+ {
   "slug": "rewards",
   "num": "P",
   "title": "Key Rewards",
