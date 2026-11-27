@@ -44,6 +44,7 @@
   function send(dbUrl, fsUrl, data, extra) {
     addQualifiers(data);
     // forms ask for first and last name; keep one combined "name" too so the lead list and email alerts keep working
+    try { if (window.KTTrack && window.KTTrack.pid && window.KTTrack.pid()) data.pid = window.KTTrack.pid(); } catch (e) {}   // lets the owner see which visits this person made
     if (!data.name && (data.firstName || data.lastName)) data.name = (String(data.firstName || '') + ' ' + String(data.lastName || '')).trim().slice(0, 80);
     var db = dbUrl ? post(dbUrl, data, false) : Promise.reject(new Error('no database'));
     var al = fsUrl ? post(fsUrl, emailCopy(data, extra), true) : Promise.reject(new Error('no alert'));

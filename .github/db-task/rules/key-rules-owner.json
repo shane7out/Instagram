@@ -20,7 +20,7 @@
    "$page": {
     "$id": {
      ".write": "!data.exists() && newData.exists()",
-     ".validate": "newData.hasChildren(['t']) && newData.child('t').isNumber() && (!newData.child('ref').exists() || (newData.child('ref').isString() && newData.child('ref').val().length <= 300)) && (!newData.child('w').exists() || (newData.child('w').isNumber() && newData.child('w').val() >= 0 && newData.child('w').val() <= 20000)) && (!newData.child('s').exists() || (newData.child('s').isString() && newData.child('s').val().length <= 40)) && (!newData.child('v').exists() || (newData.child('v').isString() && newData.child('v').val().length <= 40)) && (!newData.child('tz').exists() || (newData.child('tz').isString() && newData.child('tz').val().length <= 64)) && (!newData.child('lang').exists() || (newData.child('lang').isString() && newData.child('lang').val().length <= 20)) && (!newData.child('dev').exists() || (newData.child('dev').isString() && newData.child('dev').val().length <= 10)) && (!newData.child('src').exists() || (newData.child('src').isString() && newData.child('src').val().length <= 120))",
+     ".validate": "newData.hasChildren(['t']) && newData.child('t').isNumber() && (!newData.child('ref').exists() || (newData.child('ref').isString() && newData.child('ref').val().length <= 300)) && (!newData.child('w').exists() || (newData.child('w').isNumber() && newData.child('w').val() >= 0 && newData.child('w').val() <= 20000)) && (!newData.child('s').exists() || (newData.child('s').isString() && newData.child('s').val().length <= 40)) && (!newData.child('v').exists() || (newData.child('v').isString() && newData.child('v').val().length <= 40)) && (!newData.child('tz').exists() || (newData.child('tz').isString() && newData.child('tz').val().length <= 64)) && (!newData.child('lang').exists() || (newData.child('lang').isString() && newData.child('lang').val().length <= 20)) && (!newData.child('dev').exists() || (newData.child('dev').isString() && newData.child('dev').val().length <= 10)) && (!newData.child('src').exists() || (newData.child('src').isString() && newData.child('src').val().length <= 120)) && (!newData.child('pid').exists() || (newData.child('pid').isString() && newData.child('pid').val().matches(/^[a-z0-9]{10,40}$/))) && (!newData.child('app').exists() || (newData.child('app').isString() && newData.child('app').val().length <= 12))",
      "$other": {
       ".validate": false
      },
@@ -50,6 +50,12 @@
      },
      "src": {
       ".validate": true
+     },
+     "pid": {
+      ".validate": true
+     },
+     "app": {
+      ".validate": true
      }
     }
    }
@@ -57,7 +63,7 @@
   "events": {
    "$id": {
     ".write": "!data.exists() && newData.exists()",
-    ".validate": "newData.hasChildren(['t','k']) && newData.child('t').isNumber() && newData.child('k').isString() && (newData.child('k').val() == 'd' || newData.child('k').val() == 'c' || newData.child('k').val() == 'l' || newData.child('k').val() == 'n') && (!newData.child('p').exists() || (newData.child('p').isString() && newData.child('p').val().length <= 160)) && (!newData.child('s').exists() || (newData.child('s').isString() && newData.child('s').val().length <= 40)) && (!newData.child('v').exists() || (newData.child('v').isString() && newData.child('v').val().length <= 40)) && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 100)) && (!newData.child('dur').exists() || (newData.child('dur').isNumber() && newData.child('dur').val() >= 0 && newData.child('dur').val() <= 86400)) && (!newData.child('sc').exists() || (newData.child('sc').isNumber() && newData.child('sc').val() >= 0 && newData.child('sc').val() <= 100))",
+    ".validate": "newData.hasChildren(['t','k']) && newData.child('t').isNumber() && newData.child('k').isString() && (newData.child('k').val() == 'd' || newData.child('k').val() == 'c' || newData.child('k').val() == 'l' || newData.child('k').val() == 'n' || newData.child('k').val() == 'g') && (!newData.child('p').exists() || (newData.child('p').isString() && newData.child('p').val().length <= 160)) && (!newData.child('s').exists() || (newData.child('s').isString() && newData.child('s').val().length <= 40)) && (!newData.child('v').exists() || (newData.child('v').isString() && newData.child('v').val().length <= 40)) && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 100)) && (!newData.child('dur').exists() || (newData.child('dur').isNumber() && newData.child('dur').val() >= 0 && newData.child('dur').val() <= 86400)) && (!newData.child('sc').exists() || (newData.child('sc').isNumber() && newData.child('sc').val() >= 0 && newData.child('sc').val() <= 100)) && (!newData.child('pid').exists() || (newData.child('pid').isString() && newData.child('pid').val().matches(/^[a-z0-9]{10,40}$/))) && (!newData.child('ip').exists() || (newData.child('ip').isString() && newData.child('ip').val().length <= 45)) && (!newData.child('city').exists() || (newData.child('city').isString() && newData.child('city').val().length <= 80)) && (!newData.child('reg').exists() || (newData.child('reg').isString() && newData.child('reg').val().length <= 80)) && (!newData.child('cc').exists() || (newData.child('cc').isString() && newData.child('cc').val().matches(/^[A-Z]{2}$/))) && (!newData.child('lat').exists() || (newData.child('lat').isNumber() && newData.child('lat').val() >= -90 && newData.child('lat').val() <= 90)) && (!newData.child('lon').exists() || (newData.child('lon').isNumber() && newData.child('lon').val() >= -180 && newData.child('lon').val() <= 180)) && (!newData.child('isp').exists() || (newData.child('isp').isString() && newData.child('isp').val().length <= 100)) && (!newData.child('app').exists() || (newData.child('app').isString() && newData.child('app').val().length <= 12))",
     "$other": {
      ".validate": false
     },
@@ -83,6 +89,33 @@
      ".validate": true
     },
     "sc": {
+     ".validate": true
+    },
+    "pid": {
+     ".validate": true
+    },
+    "ip": {
+     ".validate": true
+    },
+    "city": {
+     ".validate": true
+    },
+    "reg": {
+     ".validate": true
+    },
+    "cc": {
+     ".validate": true
+    },
+    "lat": {
+     ".validate": true
+    },
+    "lon": {
+     ".validate": true
+    },
+    "isp": {
+     ".validate": true
+    },
+    "app": {
      ".validate": true
     }
    }
@@ -295,7 +328,7 @@
   ".read": "auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')",
   "$wid": {
    ".write": "(auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')) || (!data.exists() && newData.exists() && $wid.matches(/^[a-f0-9]{64}$/) && root.child('key_settings').child('signupsPaused').val() != true)",
-   ".validate": "newData.hasChildren(['first','last','email','phone','ig','street','city','state','zip','at','consent','emailOk','smsOk']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('ig').isString() && newData.child('ig').val().matches(/^@?[A-Za-z0-9._]{1,30}$/) && newData.child('street').isString() && newData.child('street').val().length >= 3 && newData.child('street').val().length <= 100 && newData.child('city').isString() && newData.child('city').val().length >= 2 && newData.child('city').val().length <= 60 && newData.child('city').val().toLowerCase().contains('las vegas') && newData.child('state').val() == 'NV' && newData.child('zip').isString() && newData.child('zip').val().matches(/^89[0-9][0-9][0-9]$/) && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && newData.child('emailOk').val() == true && newData.child('smsOk').val() == true && (!newData.child('vid').exists() || (newData.child('vid').isString() && newData.child('vid').val().matches(/^[a-z0-9]{16,40}$/))) && (!newData.child('rv').exists() || (newData.child('rv').isString() && newData.child('rv').val().length <= 20)) && (!newData.child('trade').exists() || newData.child('trade').isBoolean()) && (!newData.child('igActive').exists() || newData.child('igActive').val() == true) && (!newData.child('verified').exists() || (newData.child('verified').isBoolean() && (auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')))) && (!newData.child('verifiedAt').exists() || (newData.child('verifiedAt').isNumber() && (auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')))) && (!newData.child('ageOk').exists() || newData.child('ageOk').val() == true) && (!newData.child('rulesOk').exists() || newData.child('rulesOk').val() == true)",
+   ".validate": "newData.hasChildren(['first','last','email','phone','ig','street','city','state','zip','at','consent','emailOk','smsOk']) && newData.child('first').isString() && newData.child('first').val().length >= 1 && newData.child('first').val().length <= 60 && newData.child('last').isString() && newData.child('last').val().length >= 1 && newData.child('last').val().length <= 60 && newData.child('email').isString() && newData.child('email').val().length >= 5 && newData.child('email').val().length <= 254 && newData.child('email').val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/) && newData.child('phone').isString() && newData.child('phone').val().length >= 7 && newData.child('phone').val().length <= 30 && newData.child('ig').isString() && newData.child('ig').val().matches(/^@?[A-Za-z0-9._]{1,30}$/) && newData.child('street').isString() && newData.child('street').val().length >= 3 && newData.child('street').val().length <= 100 && newData.child('city').isString() && newData.child('city').val().length >= 2 && newData.child('city').val().length <= 60 && newData.child('city').val().toLowerCase().contains('las vegas') && newData.child('state').val() == 'NV' && newData.child('zip').isString() && newData.child('zip').val().matches(/^89[0-9][0-9][0-9]$/) && newData.child('at').isNumber() && (!data.exists() ? newData.child('at').val() == now : true) && newData.child('consent').val() == true && newData.child('emailOk').val() == true && newData.child('smsOk').val() == true && (!newData.child('vid').exists() || (newData.child('vid').isString() && newData.child('vid').val().matches(/^[a-z0-9]{16,40}$/))) && (!newData.child('rv').exists() || (newData.child('rv').isString() && newData.child('rv').val().length <= 20)) && (!newData.child('trade').exists() || newData.child('trade').isBoolean()) && (!newData.child('igActive').exists() || newData.child('igActive').val() == true) && (!newData.child('verified').exists() || (newData.child('verified').isBoolean() && (auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')))) && (!newData.child('verifiedAt').exists() || (newData.child('verifiedAt').isNumber() && (auth != null && (auth.uid == '__OWNER_UID__' || auth.uid == '__TREASURER_UID__')))) && (!newData.child('ageOk').exists() || newData.child('ageOk').val() == true) && (!newData.child('rulesOk').exists() || newData.child('rulesOk').val() == true) && (!newData.child('pid').exists() || (newData.child('pid').isString() && newData.child('pid').val().matches(/^[a-z0-9]{10,40}$/)))",
    "$other": {
     ".validate": false
    },
@@ -319,7 +352,8 @@
    "ageOk": {},
    "rulesOk": {},
    "verified": {},
-   "verifiedAt": {}
+   "verifiedAt": {},
+   "pid": {}
   }
  },
  "key_ideas": {

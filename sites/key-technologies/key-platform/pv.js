@@ -1,14 +1,19 @@
-/* Key Technologies visitor counter: first-party and anonymous.
-   Records, in this site's own database (no third party, no ad network):
-     - one record per page view: which page, when, the page that linked here (address only, no query),
-       screen width, browser language, time zone (the region, not a place), device type (phone/tablet/desktop),
-       a campaign tag if the link had one (utm_*), and a random tab id that is forgotten when the tab closes;
+/* Key Technologies visitor counter: first-party database, plus one outside lookup for the rough place.
+   Records, in this site's own database (no ad network):
+     - one record per page view: which page, when, the page that linked here (address only, no query), screen width,
+       browser language, time zone, device type (phone/tablet/desktop), the in-app browser if there is one (Instagram,
+       Facebook, TikTok), a campaign tag if the link had one (utm_*), a random tab id that is forgotten when the tab
+       closes, and a random visitor id kept on this device so a returning visitor is recognised;
+     - the rough place and network (2026-11-27, Shane's decision): the visitor's IP address, city, region, country, a
+       map spot (rounded to about a mile) and the internet provider, from one lookup to ipwho.is (or ipapi.co if that
+       fails). That lookup is the only outside service the counter uses, and the result is kept on the device for 12 hours;
      - how long the page was actually in view and how far down it was scrolled;
      - which main buttons and links were pressed (name only), which form was sent (the form's name only, never
-       what was typed), and which addresses led to the "page not found" page.
-   NEVER collected: IP address, name, email, phone, anything typed into a form, cookies, fingerprints, or a
-   permanent visitor id. It stays off when the visitor has Do Not Track or Global Privacy Control turned on, for
-   robots and test browsers, and for the owner's own browsers (see ?notrack=1 below).
+       what was typed), and which addresses led to the "page not found" page;
+     - if a visitor then sends one of our forms, the form carries the same visitor id, so the owner can see which visits
+       that person made (only the owner can read any of this).
+   NEVER collected: anything typed into a form by this script, cookies, fingerprints. It stays off when the visitor has Do Not
+   Track or Global Privacy Control turned on, for robots and test browsers, and for the owner's own browsers (see ?notrack=1).
    Owner switch: open any page with ?notrack=1 to stop counting that browser, ?notrack=0 to count it again. */
 (function () {
   if (window.__ktPV) return;
@@ -43,6 +48,11 @@
   }
   var page = window.KT_NOT_FOUND ? '404_html' : pageKey(); // a missing address is filed under the "not found" page, with the address kept in the event
   var vid = rid(10);
+  // a random visitor id kept on this device (not a cookie, never sent anywhere except our own database)
+  var pid = '';
+  try { pid = localStorage.getItem('kt_pid') || ''; if (!/^[a-z0-9]{10,40}$/.test(pid)) { pid = rid(16); localStorage.setItem('kt_pid', pid); } } catch (e) { pid = ''; }
+  // the app the visitor came through, when it is one of the in-app browsers (a link opened from Instagram, Facebook, TikTok ...)
+  var ua = nav.userAgent || '', inapp = /Instagram/i.test(ua) ? 'instagram' : /FBAN|FBAV|FB_IAB/i.test(ua) ? 'facebook' : /TikTok|musical_ly|BytedanceWebview/i.test(ua) ? 'tiktok' : /Snapchat/i.test(ua) ? 'snapchat' : /LinkedInApp/i.test(ua) ? 'linkedin' : /Twitter/i.test(ua) ? 'x' : '';
   var sid = '';
   try { sid = sessionStorage.getItem('kt_sid') || ''; if (!sid) { sid = rid(12); sessionStorage.setItem('kt_sid', sid); } } catch (e) { sid = ''; }
 
@@ -59,6 +69,8 @@
   var ref = (document.referrer || '').split(/[?#]/)[0];
   if (ref) rec.ref = clean(ref, 200);
   if (sid) rec.s = sid;
+  if (pid) rec.pid = pid;
+  if (inapp) rec.app = inapp;
   try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone; if (tz) rec.tz = clean(tz, 60); } catch (e) {}
   if (nav.language) rec.lang = clean(nav.language, 16);
   try {
@@ -66,6 +78,42 @@
     if (tag) rec.src = clean(tag, 100);
   } catch (e) {}
   post('/hits/' + page, rec, false);
+
+  // ---------- the rough place (one outside lookup, kept on the device for 12 hours) ----------
+  function lookup(cb) {
+    var G = null; try { G = JSON.parse(localStorage.getItem('kt_geo') || 'null'); } catch (e) {}
+    if (G && G.ip && Date.now() - (G.t || 0) < 12 * 3600 * 1000) return cb(G);
+    var done = false;
+    function fin(g) { if (done) return; done = true; if (g) { g.t = Date.now(); try { localStorage.setItem('kt_geo', JSON.stringify(g)); } catch (e) {} } cb(g || null); }
+    function num(x) { x = Number(x); return isFinite(x) ? Math.round(x * 100) / 100 : null; }
+    function second() {
+      fetch('https://ipapi.co/json/').then(function (r) { return r.json(); }).then(function (j) {
+        fin(j && j.ip ? { ip: j.ip, city: j.city, reg: j.region, cc: j.country_code, lat: num(j.latitude), lon: num(j.longitude), isp: j.org } : null);
+      }).catch(function () { fin(null); });
+    }
+    try {
+      fetch('https://ipwho.is/?fields=success,ip,city,region,country_code,latitude,longitude,connection').then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.success !== false && j.ip) fin({ ip: j.ip, city: j.city, reg: j.region, cc: j.country_code, lat: num(j.latitude), lon: num(j.longitude), isp: j.connection && j.connection.isp });
+        else second();
+      }).catch(second);
+    } catch (e) { second(); }
+    setTimeout(function () { fin(null); }, 6000);
+  }
+  lookup(function (g) {
+    if (!g) return;
+    var e = { t: Date.now(), k: 'g', p: page, v: vid };
+    if (sid) e.s = sid;
+    if (pid) e.pid = pid;
+    if (inapp) e.app = inapp;
+    if (g.ip) e.ip = clean(g.ip, 45);
+    if (g.city) e.city = clean(g.city, 80);
+    if (g.reg) e.reg = clean(g.reg, 80);
+    if (/^[A-Za-z]{2}$/.test(g.cc || '')) e.cc = String(g.cc).toUpperCase();
+    if (typeof g.lat === 'number' && g.lat >= -90 && g.lat <= 90) e.lat = g.lat;
+    if (typeof g.lon === 'number' && g.lon >= -180 && g.lon <= 180) e.lon = g.lon;
+    if (g.isp) e.isp = clean(g.isp, 100);
+    post('/events', e, true);
+  });
 
   // ---------- events (names only) ----------
   var sent = 0;
@@ -78,7 +126,7 @@
     if (extra) for (var k in extra) e[k] = extra[k];
     post('/events', e, true);
   }
-  window.KTTrack = { event: function (name) { event('c', name); }, lead: function (source) { event('l', 'lead:' + clean(source, 40)); } };
+  window.KTTrack = { event: function (name) { event('c', name); }, lead: function (source) { event('l', 'lead:' + clean(source, 40)); }, pid: function () { return pid; } };
 
   if (window.KT_NOT_FOUND) event('n', loc.pathname);
 
