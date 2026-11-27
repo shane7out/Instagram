@@ -87,6 +87,13 @@ else {
     console.log('DMRESTORE05: the restaurant message no longer says "quick conversation"; it now asks them to just reply');
   } else console.log('DMRESTORE05: restaurant message already has the newest wording (or was not found)');
 }
+// (6c) DMRESTORE06 (Shane, 2026-11-27: "no such thing as quick conversation"): the golf-experiences email gets the same treatment as the restaurant message.
+{
+  const oldG = 'Would you be open to a quick conversation about a partnership?';
+  const newG = 'We would love to work with you on a partnership. If you are interested, just reply and we will take it from there.';
+  if (s.includes(oldG)) { s = s.split(oldG).join(newG); console.log('DMRESTORE06: the golf email no longer says "quick conversation"'); }
+  else console.log('DMRESTORE06: golf email already has the newest wording (or was not found)');
+}
 // (7) the follow-up DM: same signature as the first message, no email address and no cell number (Shane, 2026-11-26)
 {
   const reF = /('Creator of @lasvegas_restaurants)\\n' \+\s*\n\s*'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\\n' \+\s*\n\s*'Cell: \([0-9]{3}\) [0-9]{3}-[0-9]{4}';/g;
