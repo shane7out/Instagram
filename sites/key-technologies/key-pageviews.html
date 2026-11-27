@@ -516,7 +516,6 @@
 
       <div class="panels">
         <section class="panel on" id="p-overview" role="tabpanel" aria-labelledby="t-overview">
-          <div class="card span2" id="auditCard"><h2>Are these numbers real? <span class="pill">check</span></h2><div id="audit"></div></div>
           <div class="card span2"><h2>Visits per day</h2><div id="chartWrap"></div></div>
           <div class="card mini"><h2>Top pages</h2><div id="mPages"></div><button type="button" class="more-link" data-go="pages">See all pages &rarr;</button></div>
           <div class="card mini"><h2>Where they came from</h2><div id="mSources"></div><button type="button" class="more-link" data-go="sources">See all sources &rarr;</button></div>
@@ -524,6 +523,7 @@
             <div class="card"><h2>Countries</h2><div id="mCountries"></div><button type="button" class="more-link" data-go="where">More &rarr;</button></div>
             <div class="card"><h2>Devices</h2><div id="mDevices"></div></div>
           </div>
+          <div class="card span2" id="auditCard"><h2>Behind the numbers <span class="pill">robots hidden</span></h2><div id="audit"></div></div>
         </section>
 
         <section class="panel" id="p-map" role="tabpanel" aria-labelledby="t-map">
@@ -923,7 +923,7 @@ document.addEventListener("click", function (e) { var m = $("menu"); if (m.open 
 //   likely real: everything else.
 // "Robot-like" is a strong signal; "no activity" is only a hint (a person who closes the tab at once looks the same).
 var ONLYREAL = false;
-try { ONLYREAL = localStorage.getItem("kt_onlyreal") === "1"; } catch (e) {}
+ONLYREAL = true; try { if (localStorage.getItem("kt_onlyreal") === "0") ONLYREAL = false; } catch (e) {}
 var DCRE = /amazon|aws|google llc|google cloud|microsoft|azure|digitalocean|hetzner|ovh|linode|akamai|vultr|oracle|choopa|leaseweb|contabo|scaleway|m247|datacamp|cloudflare|hosting|data ?cent|server|\bvps\b|\bcloud\b|colo|\bvpn\b|proxy|tor |alibaba|tencent|ucloud|ionos|rackspace|fastly|zscaler|netskope/i;
 function flagViews(views, events) {
   var byKey = {};
@@ -959,13 +959,13 @@ function renderAudit(all) {
   var dk = Object.keys(days).sort(function (a, b) { return days[b] - days[a]; }), peak = dk[0];
   var geoCount = all.filter(function (v) { return v.isp; }).length;
   el.innerHTML =
-    "<p class='note' style='margin:0 0 4px'>Of <b>" + n + "</b> page views in this range:</p>" +
+    "<p class='note' style='margin:0 0 4px'>" + (ONLYREAL ? "Every number and chart in this report shows <b>real-looking people only</b>. " : "Showing <b>everything</b>, robots included. ") + "Of <b>" + n + "</b> page views in this range:</p>" +
     "<div class='aud' role='img' aria-label='Share of views that look real, show no activity, or look like robots'>" + seg(real, "#4fd1a5") + seg(quiet, "#e0b24a") + seg(rob, "#e5645a") + "</div>" +
     row("#4fd1a5", real, "Look like real people", "They scrolled, clicked or stayed on the page.") +
     row("#e0b24a", quiet, "No sign of a person", "Left at once or never scrolled or clicked. Could be a robot, or someone who closed the tab.") +
     row("#e5645a", rob, "Look like robots", (dc ? dc + " came from hosting or data-centre networks" + (top ? " (" + top + ")" : "") : "") + (dc && bu ? "; " : "") + (bu ? bu + " from a visitor who opened 8 or more pages within a minute" : "") + (!dc && !bu ? "None found." : ".")) +
     (peak ? "<p class='note' style='margin:8px 0 0'>Busiest day: <b>" + peak + "</b> with " + days[peak] + " views." + (geoCount < n * 0.5 ? " Network names exist only for visits since 2026-11-27, so older robot visits can only be spotted by the \"no sign of a person\" and burst checks." : "") + "</p>" : "") +
-    "<label class='audsw'><input type='checkbox' id='onlyReal'" + (ONLYREAL ? " checked" : "") + "> Count only likely real people (hides the red and yellow from every number and chart)</label>" +
+    "<label class='audsw'><input type='checkbox' id='onlyReal'" + (ONLYREAL ? " checked" : "") + "> Show only real-looking people (turn off to see everything, robots included)</label>" +
     "<p class='note' style='margin:6px 0 0'>Also good to know: \"Visits\" counts browser tabs, and before 2026-11-27 \"Visitors\" could not tell two tabs from two people, so one person looking at the site on a phone and a laptop, or coming back the next day, counted several times. The permanent visitor code that fixes this only applies from 2026-11-27 on. Your own devices are not counted once you open any page with ?notrack=1.</p>";
   var cb = $("onlyReal");
   if (cb) cb.addEventListener("change", function () { ONLYREAL = cb.checked; try { localStorage.setItem("kt_onlyreal", ONLYREAL ? "1" : "0"); } catch (e) {} render(); });
