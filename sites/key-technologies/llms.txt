@@ -35,7 +35,7 @@ Key Technologies works worldwide and can communicate in any language using AI/SI
 - [Content approval services](https://keytechnologies.si/key-platform/demos/social-media.html)
 - [Text message marketing](https://keytechnologies.si/key-platform/demos/text-marketing.html): texts to customers who opted in, with STOP, HELP, quiet hours and carrier registration built in; made-up data
 - [Installable business apps](https://keytechnologies.si/key-platform/demos/installable-apps.html): your dashboard, rewards or crew tool added to a phone's home screen and opened full screen like an app; made-up data
-- [Live sales call coach](https://keytechnologies.si/key-platform/demos/sales-call-coach.html): a coach that follows a sales call with everyone's consent, suggests what to ask next, spots concerns and scores the call with quotes; made-up call
+- [Live sales call coach](https://keytechnologies.si/key-platform/demos/sales-call-coach.html): word-for-word scripts for each kind of incoming call, plus a coach that follows a call with everyone's consent, spots concerns and scores it with quotes; made-up call
 - [AI training](https://keytechnologies.si/key-platform/demos/ai-training.html)
 - [Custom website and web application programming](https://keytechnologies.si/key-platform/demos/custom-programming.html)
 - [ADA and website accessibility](https://keytechnologies.si/key-platform/demos/accessibility-ada.html)

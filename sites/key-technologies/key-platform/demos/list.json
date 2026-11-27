@@ -255,7 +255,7 @@
   "slug": "sales-call-coach",
   "num": "30",
   "title": "Live Sales Call Coach",
-  "tag": "A coach that follows a sales call as it happens: what to ask next, how to answer a concern, and a quoted scorecard at the end.",
+  "tag": "Word-for-word scripts for each kind of incoming call, plus a coach that follows the call, answers concerns and scores it with quotes.",
   "cat": "Operations & Sales",
   "thumb": "demos/thumbs/sales-call-coach.jpg",
   "href": "demos/sales-call-coach.html"

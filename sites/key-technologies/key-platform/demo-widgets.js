@@ -302,8 +302,97 @@ T.installapp=function(root){
  draw();
 };
 
-/* ---------- 30 Live Sales Call Coach: a made-up sales call with the coach panel updating line by line ---------- */
-T.callcoach=function(root){
+/* ---------- 30 Live Sales Call Coach: tab 1 = read-along scripts (our own wording), tab 2 = the sample call ---------- */
+function scriptReader(root){
+ var TYPES=[
+  {id:'form',n:'They sent the free-review form',when:'Someone asked for the free review. You are calling them, or they called in.',steps:[
+   ['Open and say who you are','Hi {name}, this is {me} with Key Technologies. You asked for a free review for {biz}. Do you have a few minutes right now? Before we start: I like to take notes with an AI note-taker. Is that okay with you?','A clear yes. If it is a no, take notes by hand and carry on.'],
+   ['Find out why today','What made you ask for the review today?','The real reason now: a missed call, a slow season, a competitor, a bad experience. Let them finish.'],
+   ['Say their problem back','So what I am hearing is {their problem, in their words}. Did I get that right?','A yes, or a correction. Fix it until they agree.'],
+   ['Ask what they have tried','What have you tried so far, and what did not work about it?','Past tools and bad experiences. That is what they will test you on.'],
+   ['Ask for the result they want','If that were solved a month from now, what would be different for you and {biz}?','Their own words for the result. Use those words again at the end.'],
+   ['Explain in two sentences','Here is how we would approach it. We start with a review of how {biz} really works, then pick the one or two places AI could help, and show you a demo for your kind of business before anything is built. You approve each step.','Stop after two sentences and ask the next question.'],
+   ['Check it fits','Does that sound like what you were hoping for?','A yes, a maybe, or a worry. A maybe or a worry goes to the concern answers below.'],
+   ['Ask for their concerns','What questions or concerns do you have?','Let them list all of them before you answer any.'],
+   ['Ask for the decision','I suggest we do the free review. It is no obligation and it gives you an honest look at what would help. Shall we set it up?','Wait for the answer. Do not fill the silence.'],
+   ['Book the next step','Let us book it now. Does {day and time} work? I will send a calendar invite and a short note of what we talked about today. Who else should join?','A booked time, and the names of anyone else who decides.'],
+   ['Close warmly','Thanks, {name}. You will have the invite in a few minutes. Is there anything else before we hang up?','End on time and kindly.']]},
+  {id:'rewards',n:'A restaurant owner asking about Key Rewards',when:'A restaurant owner or manager heard about Key Rewards and called.',steps:[
+   ['Open and say who you are','Hi {name}, this is {me} with Key Technologies. Thanks for calling about Key Rewards for {biz}. Is now a good time? I like to take notes with an AI note-taker. Is that okay with you?','A clear yes. If no, take notes by hand.'],
+   ['Find out why they are interested','What got you interested in a rewards program for {biz}?','More repeat guests, slow nights, wanting their own guest list, something a competitor does.'],
+   ['Ask how they bring guests back today','How do you bring guests back today, and how is that going?','Punch cards, social posts, nothing at all. Do not criticize it.'],
+   ['Explain it plainly','Key Rewards is a rewards program for Las Vegas restaurants. Guests send in a receipt, earn rewards once the receipt is checked, and use them for food at participating restaurants. Rewards have no cash value.','Say it in your own voice. Never promise results or numbers.'],
+   ['Ask what they want from it','What would a good result look like for {biz} six months from now?','Their goal in their words.'],
+   ['Handle the data question honestly','Guests only join your list if they say yes to getting texts or email, and they can opt out at any time. We make that part simple and legal.','If they ask for details, say you will send the written rules.'],
+   ['Ask for the decision','Would you like to be one of the participating restaurants? I can send the short sign-up form today.','Wait for the answer.'],
+   ['Book the next step','Let us pick a time to go through it together, and I will send the form before then. Does {day and time} work?','A booked time and who else should be there.'],
+   ['Close warmly','Thank you, {name}. I am looking forward to it. Anything else before we hang up?','End on time and kindly.']]},
+  {id:'price',n:'They ask "how much does it cost?" first',when:'The very first thing the caller asks about is the price.',steps:[
+   ['Welcome the question','That is a fair question, {name}, and I want to give you a real answer, not a guess.','Stay friendly. Do not dodge, and do not quote a number on this call.'],
+   ['Say why it depends','What it costs depends on what we build. Can I ask you three quick questions so I point you the right way?','A yes. If they say no, go to the answer below for the price concern.'],
+   ['Question one','What is the main thing you want to be different in {biz}?','Their goal.'],
+   ['Question two','What are you doing about it today?','Their current way, and what it costs them in time or missed work.'],
+   ['Question three','Who else has a say in a decision like this?','Names of other deciders.'],
+   ['Promise a clear written proposal','Thank you. Once I understand that, I will put a clear written proposal in front of you so you can decide with the full picture. Fair?','A yes.'],
+   ['Book the next step','Let us set a short call to go through your answers. Does {day and time} work? Who else should join?','A booked time.'],
+   ['Close warmly','Thanks, {name}. Talk then.','End on time and kindly.']]},
+  {id:'referral',n:'Someone referred them',when:'A friend, client or colleague told them about Key Technologies.',steps:[
+   ['Open and name the referrer','Hi {name}, this is {me} with Key Technologies. {who sent them} mentioned you might be looking at AI for {biz}. Is that right? I like to take notes with an AI note-taker. Is that okay with you?','A yes to both. Thank the referrer later, not on this call.'],
+   ['Ask what they were told','What did {who sent them} tell you about us?','What they expect. Correct anything that sounds like a promise.'],
+   ['Find out why today','What made now the right time to look at this?','The real reason.'],
+   ['Say their problem back','So {their problem, in their words}. Did I get that right?','A yes, or a correction.'],
+   ['Ask what they have tried','What have you tried so far?','Past tools and results.'],
+   ['Explain in two sentences','We start with a free review of how {biz} works, then show you a demo for your kind of business. Nothing is built until you approve it.','Stop and ask a question.'],
+   ['Ask for the decision','Would you like to start with the free review?','Wait for the answer.'],
+   ['Book the next step','Let us book it now. Does {day and time} work?','A booked time and any other deciders.'],
+   ['Close warmly','Thanks, {name}. I will let {who sent them} know we spoke, if that is okay with you.','Only mention the referrer again if they agree.']]},
+  {id:'curious',n:'"I am just curious about AI"',when:'No specific problem yet. They are looking around.',steps:[
+   ['Open and say who you are','Hi {name}, this is {me} with Key Technologies. I understand you are curious about AI for {biz}. Is now a good time? I like to take notes with an AI note-taker. Is that okay with you?','A clear yes.'],
+   ['Welcome the curiosity','A lot of owners are in the same spot, so you are in good company. What got you curious?','What they read or saw.'],
+   ['Find one task','If you could hand off one task tomorrow, what would it be?','A real task, like answering calls, replying to reviews or booking.'],
+   ['Ask what it costs them','How much time does that take you or your team in a week?','Hours. Do not turn it into a number for them.'],
+   ['Offer a demo, not a pitch','I will send you a demo that looks like your kind of business, with made-up data, so you can see it without any commitment.','A yes, and their best email or number for the link.'],
+   ['Book a follow-up','Can we talk for 15 minutes after you have tried it? Does {day and time} work?','A booked time.'],
+   ['Close warmly','Thanks, {name}. Enjoy the demo, and I will talk to you then.','End on time and kindly.']]}
+ ];
+ var OBJ=[
+  ['It costs too much','I hear you. Let us make sure it is worth it first. When you say cost, is it the monthly spend, or whether it will pay off? Once I understand that, I will put a clear written proposal in front of you and you decide.','Do not discount and do not quote a number on this call.'],
+  ['I need to think about it','Of course. So I can help you think it through, what part are you still unsure about?','Listen for the real reason: money, timing, someone else, or trust. Then answer that one.'],
+  ['Send me some info','Happy to. What would you want it to show you, so I send the right thing? And can we set 15 minutes on {day and time} to go over it together, so you are not left to figure it out alone?','Never just send it and hang up. Book the time.'],
+  ['I have to ask my partner','That makes sense. Would it help if I joined a short call with you both? What do you think they will ask? Let us answer that now so you are not selling it for me.','Book a time with the partner before you hang up.'],
+  ['We already have someone','Good, that means you take this seriously. What do they do well, and is there anything you wish they did better? I am not asking you to switch today. A free review could show you where AI would add something.','Do not criticize the other company.'],
+  ['Is AI safe with my customers\' information?','Good thing to ask. We only work inside the access you give us, your accounts stay in your name, a person approves what goes out, and we say plainly what AI cannot do yet. Before anything is built we go through exactly what information is involved.','If they want details, offer the written privacy page and a call with the person who will do the work.'],
+  ['Will this replace my staff?','The goal is to take the repetitive work off your team so they can spend their time with customers. You decide what the AI does and what stays with a person.','Do not promise headcount outcomes either way.'],
+  ['Not now, bad timing','Understood. What would need to be true for the timing to be right? May I check back with you on {day and time}?','Put the follow-up date in the calendar before you hang up.']
+ ];
+ var cur=0,done={},who={name:'',biz:'',me:'',ref:''},objSel=-1;
+ root.innerHTML='<div class="panel"><div class="panel-heading"><h3>Read-along scripts</h3><span class="tag outline">Our own wording</span></div>'+
+ '<p class="micro" style="margin:6px 0 10px">Pick the kind of call, fill in the names, and read each step out loud. Words in {braces} are for you to fill in. Nothing you type here is sent or saved.</p>'+
+ '<label for="rsType">What kind of call is this?</label><select id="rsType">'+TYPES.map(function(t,i){return '<option value="'+i+'">'+esc(t.n)+'</option>'}).join('')+'</select>'+
+ '<p class="micro" id="rsWhen" style="margin:8px 0 10px"></p>'+
+ '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px"><div><label for="rsName">Their name</label><input id="rsName" autocomplete="off" placeholder="for example Dana"></div><div><label for="rsBiz">Their business</label><input id="rsBiz" autocomplete="off" placeholder="for example Rivera Roofing"></div><div><label for="rsMe">Your name</label><input id="rsMe" autocomplete="off" placeholder="your first name"></div><div><label for="rsRef">Who sent them</label><input id="rsRef" autocomplete="off" placeholder="only for referrals"></div></div>'+
+ '<ol id="rsSteps" style="list-style:none;margin:0;padding:0;display:grid;gap:10px"></ol>'+
+ '<p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-primary" id="rsCopy">Copy this script</button><button type="button" class="btn btn-ghost" id="rsClear">Clear the ticks</button></p></div>'+
+ '<div class="panel" style="margin-top:16px"><h3>When they say&hellip;</h3><p class="micro" style="margin:6px 0 10px">Tap what you just heard. These work on any kind of call.</p><div id="rsObj" style="display:flex;flex-wrap:wrap;gap:8px"></div><div id="rsAns" role="status" aria-live="polite" style="margin-top:12px"></div></div>';
+ function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]')}
+ function draw(){
+  var T0=TYPES[cur];q('#rsWhen',root).textContent=T0.when;
+  q('#rsSteps',root).innerHTML=T0.steps.map(function(s,i){var d=done[cur+':'+i];return '<li style="border:1px solid var(--line);border-radius:12px;padding:12px;opacity:'+(d?.55:1)+'"><label class="checkline" style="margin:0 0 6px!important"><input type="checkbox" data-i="'+i+'"'+(d?' checked':'')+'><span><b>'+(i+1)+'. '+esc(s[0])+'</b></span></label><div style="font-size:17px;line-height:1.5;margin:4px 0 6px"><span class="micro" style="display:block;font-weight:700">Say:</span>&ldquo;'+esc(fill(s[1]))+'&rdquo;</div><div class="micro"><b>Listen for:</b> '+esc(s[2])+'</div></li>'}).join('');
+  qa('#rsSteps input',root).forEach(function(c){c.onchange=function(){done[cur+':'+this.getAttribute('data-i')]=this.checked;draw()}});
+  q('#rsObj',root).innerHTML=OBJ.map(function(o,i){return '<button type="button" class="btn btn-ghost" data-o="'+i+'" aria-pressed="'+(i===objSel?'true':'false')+'">'+esc(o[0])+'</button>'}).join('');
+  qa('#rsObj button',root).forEach(function(b){b.onclick=function(){objSel=+this.getAttribute('data-o');draw()}});
+  var o=OBJ[objSel];q('#rsAns',root).innerHTML=o?'<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:12px"><span class="micro" style="display:block;font-weight:700">Say:</span><div style="font-size:17px;line-height:1.5">&ldquo;'+esc(fill(o[1]))+'&rdquo;</div><div class="micro" style="margin-top:6px"><b>Remember:</b> '+esc(o[2])+'</div></div>':'';
+ }
+ function plain(){var T0=TYPES[cur];return T0.n+'\n'+T0.steps.map(function(s,i){return (i+1)+'. '+s[0]+'\nSay: '+fill(s[1])+'\nListen for: '+s[2]}).join('\n\n')+'\n\nIf they say...\n'+OBJ.map(function(o){return '- '+o[0]+': '+fill(o[1])}).join('\n')}
+ q('#rsType',root).onchange=function(){cur=+this.value;draw()};
+ [['rsName','name'],['rsBiz','biz'],['rsMe','me'],['rsRef','ref']].forEach(function(x){q('#'+x[0],root).oninput=function(){who[x[1]]=this.value.slice(0,60);draw();q('#'+x[0],root).focus()}});
+ q('#rsCopy',root).onclick=function(){var t=plain();try{navigator.clipboard.writeText(t).then(function(){say('Script copied')},function(){say('Could not copy. Select the text instead.')})}catch(e){say('Could not copy. Select the text instead.')}};
+ q('#rsClear',root).onclick=function(){done={};draw()};
+ draw();
+}
+
+/* the sample call with the coach panel updating line by line */
+function sampleCall(root){
  var PH=[['why','Why they called today'],['label','Their problem, said back'],['tried','What they have tried'],['result','The result they want'],['concerns','Concerns answered'],['ask','Asked for the decision'],['next','Next step booked']];
  var CALLS={
   good:{n:'A well-run call',who:'Sam (sales rep) and Dana, owner of a fictional roofing company',L:[
@@ -384,6 +473,12 @@ T.callcoach=function(root){
  q('#ccnext',root).onclick=function(){if(!consent)return;stop();step();draw()};
  q('#ccrst',root).onclick=function(){stop();idx=-1;draw()};
  draw();
+}
+T.callcoach=function(root){
+ root.innerHTML='<div role="tablist" aria-label="Coach tools" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button type="button" role="tab" class="btn btn-primary" id="cct1" aria-selected="true" aria-controls="ccp1">Read-along scripts</button><button type="button" role="tab" class="btn btn-ghost" id="cct2" aria-selected="false" aria-controls="ccp2">Follow a sample call</button></div><div id="ccp1" role="tabpanel" aria-labelledby="cct1"></div><div id="ccp2" role="tabpanel" aria-labelledby="cct2" hidden></div>';
+ scriptReader(q('#ccp1',root));sampleCall(q('#ccp2',root));
+ function pick(n){[1,2].forEach(function(i){var on=i===n;q('#ccp'+i,root).hidden=!on;var b=q('#cct'+i,root);b.setAttribute('aria-selected',on?'true':'false');b.className='btn '+(on?'btn-primary':'btn-ghost')})}
+ q('#cct1',root).onclick=function(){pick(1)};q('#cct2',root).onclick=function(){pick(2)};
 };
 
 /* ---------- 28 Text Message Marketing: campaign dashboard with the rules built in ---------- */

@@ -269,10 +269,11 @@ MORE = {
  'sales-call-coach': dict(
   file='key-platform/demos/sales-call-coach.html', path='key-platform/demos/sales-call-coach.html',
   title='Live Sales Call Coach: AI Prompts During the Call | Key Technologies.si',
-  desc='Try a sample: follow a made-up sales call while a coach suggests what to ask next, spots concerns and scores the call. Everyone is told and agrees first.',
+  desc='Read sales scripts for each kind of incoming call, then follow a sample call with a live coach. Consent step first. Fictional data.',
   name='Live sales call coach',
   h2='How a live sales call coach works',
-  steps=['Before the call, everyone is told that an AI coach is assisting and agrees. If anyone says no, the coach stays off.',
+  steps=['Pick the kind of incoming call (a form, a restaurant, a price question, a referral, a curious caller) and read the script word for word, filling in the caller\'s name and business.',
+         'Before the call, everyone is told that an AI coach is assisting and agrees. If anyone says no, the coach stays off.',
          'During the call it follows the conversation and shows the salesperson where they are: why the customer called, the problem, what they have tried, the result they want, their concerns, the ask and the next step.',
          'It suggests what to ask next, flags a concern as soon as it is said, and warns when the salesperson is talking too much.',
          'After the call it scores each step and quotes the exact words behind every score, so coaching is about what was said.'],
