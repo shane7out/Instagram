@@ -79,6 +79,8 @@
     '#rrGate .offer{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#12243a;border:1.5px solid rgba(20,147,255,.4);border-radius:16px;padding:16px 22px;width:min(300px,calc(100% - 32px));box-sizing:border-box;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5)}#rrGate .offer b{display:block;font-size:14px;margin-bottom:12px}#rrGate .offer .row{display:flex;gap:10px;justify-content:center}#rrGate .offer button{border:0;border-radius:10px;padding:9px 20px;font:700 13px Lato,system-ui,sans-serif;cursor:pointer}#rrGate .offer .yes{background:#1493FF;color:#fff}#rrGate .offer .no{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}#rrGate .offer small{display:block;color:#9fd6f2;font-size:12.5px;margin-top:8px}' +
     '@media(max-height:700px){#rrGate .in{justify-content:flex-start;padding-top:max(26px,env(safe-area-inset-top,26px))}#rrGate .pad{grid-template-columns:repeat(3,66px);gap:10px 16px;width:230px}#rrGate .pad button{width:66px;height:66px;font-size:27px}#rrGate .dots{margin-bottom:24px}#rrGate p{margin-bottom:14px}#rrGate .msg{margin-top:10px}#rrGate .skip{margin-top:4px}}';
 
+  css += '#rrGate .facebig{display:flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:13px 24px;margin:0 0 8px;border-radius:999px;border:1.5px solid rgba(20,147,255,.7);background:rgba(20,147,255,.28);color:#fff;font:700 16px Lato,system-ui,sans-serif;cursor:pointer}#rrGate .facebig:active{background:rgba(20,147,255,.5)}#rrGate .facebig svg{width:24px;height:24px}#rrGate .orpin{font-size:13px;color:rgba(255,255,255,.55);margin:0 0 20px}#rrGate .facebig[hidden],#rrGate .orpin[hidden]{display:none}@media(max-height:700px){#rrGate .orpin{margin-bottom:10px}}';
+
   /* Face ID / Touch ID: a passkey (WebAuthn "prf" extension) unlocks a copy of this account's sign-in password that is encrypted on this phone and can only be
      decrypted with the passkey, i.e. with your face or finger. The PIN itself is never stored. Same method as the LVR report page. */
   var BIO_SALT = enc.encode('kt-rr-bio-v1');
@@ -118,6 +120,8 @@
     inn.appendChild(mk('h1', null, o.title)); inn.appendChild(mk('p', null, o.sub || 'Type your 6-digit PIN.'));
     var idIn = null;
     if (o.askId) { var row = mk('div', 'idrow'), lb = mk('label', null, o.askId.label); lb.setAttribute('for', 'rrId'); idIn = mk('input'); idIn.id = 'rrId'; idIn.setAttribute('autocomplete', 'off'); idIn.setAttribute('autocapitalize', 'none'); idIn.setAttribute('spellcheck', 'false'); idIn.maxLength = 20; idIn.placeholder = o.askId.placeholder || ''; try { var last = localStorage.getItem('rrLastId'); if (last) idIn.value = last; } catch (e) {} row.appendChild(lb); row.appendChild(idIn); inn.appendChild(row); }
+    var fbig = mk('button', 'facebig'); fbig.type = 'button'; fbig.hidden = true; fbig.innerHTML = FACE + '<span>Use Face ID</span>'; inn.appendChild(fbig);
+    var orpin = mk('div', 'orpin', 'or type your PIN'); orpin.hidden = true; inn.appendChild(orpin);
     var dots = mk('div', 'dots'); for (var i = 0; i < 6; i++) dots.appendChild(mk('i')); inn.appendChild(dots);
     var msg = mk('div', 'msg'); msg.setAttribute('role', 'alert');
     var pad = mk('div', 'pad');
@@ -131,13 +135,13 @@
     }
     function done() { g.remove(); document.body.style.overflow = ''; o.onOK(); }
     function offer() {
-      var no = false; try { no = !!localStorage.getItem('rrBioNo'); } catch (e) {}
-      if (!bioOK() || no || !lastPw || bioGet(lastEmail)) { done(); return; }
+      var no = false, want = false; try { no = !!localStorage.getItem('rrBioNo'); want = !!localStorage.getItem('rrBioWant'); } catch (e) {}
+      if (!bioOK() || (no && !want) || !lastPw || bioGet(lastEmail)) { done(); return; }
       var d = mk('div', 'offer'); d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Use Face ID next time'); d.appendChild(mk('b', null, 'Use Face ID next time?'));
       var r = mk('div', 'row'), y = mk('button', 'yes', 'Set up'), n = mk('button', 'no', 'Not now'); y.type = n.type = 'button'; r.appendChild(y); r.appendChild(n); d.appendChild(r);
       var sm = mk('small', null, ''); d.appendChild(sm); g.appendChild(d);
-      n.addEventListener('click', function () { try { localStorage.setItem('rrBioNo', '1'); } catch (e) {} lastPw = null; done(); });
-      y.addEventListener('click', function () { bioSetup(lastEmail, lastPw).then(function () { lastPw = null; done(); }).catch(function (e) { sm.textContent = /noprf/.test(String(e && e.message)) ? 'This phone cannot do Face ID for this page yet. Keep using your PIN.' : 'Face ID was not set up.'; }); });
+      n.addEventListener('click', function () { try { localStorage.setItem('rrBioNo', '1'); localStorage.removeItem('rrBioWant'); } catch (e) {} lastPw = null; done(); });
+      y.addEventListener('click', function () { bioSetup(lastEmail, lastPw).then(function () { lastPw = null; try { localStorage.removeItem('rrBioWant'); } catch (e) {} done(); }).catch(function (e) { sm.textContent = /noprf/.test(String(e && e.message)) ? 'This phone cannot do Face ID for this page yet. Keep using your PIN.' : 'Face ID was not set up.'; }); });
     }
     function press(k) {
       if (busy) return;
@@ -165,8 +169,10 @@
       fb.classList.toggle('ready', ready); fb.classList.toggle('off', !ready);
       fb.setAttribute('aria-label', ready ? 'Open with Face ID or Touch ID' : 'Face ID or Touch ID (turn it on after your first PIN sign-in)');
       if (off) off.hidden = !ready;
+      if (on) on.hidden = ready || !bioOK();
+      fbig.hidden = !ready; orpin.hidden = !ready;
     }
-    fb.addEventListener('click', function () {
+    function faceUnlock() {
       if (busy) return; msg.textContent = '';
       var w = who(); if (!w) { msg.textContent = 'Type your restaurant ID first (like w1).'; return; }
       if (!bioOK()) { msg.textContent = 'Face ID is not available in this browser.'; return; }
@@ -177,10 +183,13 @@
         if (/INVALID|not right|PASSWORD/i.test(m)) { bioDrop(w.email); paintFace(); msg.textContent = 'Face ID needs to be set up again. Use your PIN.'; }
         else if (!/NotAllowed|abort|cancel/i.test(nm + m)) msg.textContent = 'Face ID did not work. Use your PIN.';
       }).then(function () { busy = false; });
-    });
+    }
+    fb.addEventListener('click', faceUnlock); fbig.addEventListener('click', faceUnlock);
     inn.appendChild(pad); inn.appendChild(msg);
     var off = null;
     if (bioOK()) { off = mk('button', 'linkb', 'Turn off Face ID on this phone'); off.type = 'button'; off.hidden = true; off.addEventListener('click', function () { var w = who(); if (w) bioDrop(w.email); try { localStorage.removeItem('rrBioNo'); } catch (e) {} paintFace(); msg.textContent = 'Face ID is off for this phone.'; }); inn.appendChild(off); }
+    var on = null;
+    if (bioOK()) { on = mk('button', 'linkb', 'Turn on Face ID on this phone'); on.type = 'button'; on.hidden = true; on.addEventListener('click', function () { try { localStorage.removeItem('rrBioNo'); localStorage.setItem('rrBioWant', '1'); } catch (e) {} msg.className = 'msg ok'; msg.textContent = 'Type your PIN now, then tap Set up.'; }); inn.appendChild(on); }
     if (idIn) idIn.addEventListener('input', paintFace);
     if (o.onSkip) { var sk = mk('button', 'skip', o.onSkip.label); sk.type = 'button'; sk.addEventListener('click', function () { g.remove(); document.body.style.overflow = ''; o.onSkip.fn(); }); inn.appendChild(sk); }
     document.addEventListener('keydown', function kd(e) {
