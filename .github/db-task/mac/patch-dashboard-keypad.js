@@ -52,9 +52,8 @@ else {
         "    'We offer reposting, features, and promotional campaigns tailored specifically for ' +",
         "    'Las Vegas restaurants like yours. Our engaged community of food lovers, locals, and ' +",
         "    'tourists are always searching for their next great dining experience.\\n\\n' +",
-        "    'Would you be open to a quick conversation about how we can partner together? ' +",
-        "    'We think ' + n + ' is exactly the kind of place our audience would love.\\n\\n' +",
-        "    'If you are interested, just send me a message back with your phone number, and I will contact you.\\n\\n' +",
+        "    'We think ' + n + ' is exactly the kind of place our audience would love, and we would love to work with you.\\n\\n' +",
+        "    'If you are interested, just reply with your phone number and we will contact you.\\n\\n' +",
         "    'Looking forward to hearing from you!\\n\\n' +",
         "    'Sincerely,\\n\\n' +",
         "    'Shane Christensen\\n' +",
@@ -75,9 +74,18 @@ else {
 // (6) DMRESTORE04 (Shane, 2026-11-26): "send me a message back with your phone number, and I will contact you" (no ASAP)
 {
   const reAsk = /('We think ' \+ n \+ ' is exactly the kind of place our audience would love\.\\n\\n' \+\n)(    'Looking forward to hearing from you!)/;
-  if (/send me a message back with your phone number/.test(s)) console.log('DMRESTORE04: contact line already in the restaurant message');
+  if (/send me a message back with your phone number|just reply with your phone number/.test(s)) console.log('DMRESTORE04: contact line already in the restaurant message');
   else if (reAsk.test(s)) { s = s.replace(reAsk, (m, a1, a2) => a1 + "    'If you are interested, just send me a message back with your phone number, and I will contact you.\\n\\n' +\n" + a2); console.log('DMRESTORE04: contact line added to the restaurant message'); }
   else console.log('DMRESTORE04: restaurant message not found in the expected shape - left as it is');
+}
+// (6b) DMRESTORE05 (Shane, 2026-11-27): "I don't want to put the word quick... there's nothing to be quick... Don't say DM, just reply." The restaurant message no longer asks for "a quick conversation";
+// it says we would love to work with them and asks them to just reply with their phone number. Upgrades a page that already has the 2026-11-25/26 wording; a fresh build already has the new wording.
+{
+  const re5 = /    'Would you be open to a quick conversation about how we can partner together\? ' \+\n    'We think ' \+ n \+ ' is exactly the kind of place our audience would love\.\\n\\n' \+\n(?:    'If you are interested, just send me a message back with your phone number, and I will contact you\.\\n\\n' \+\n)?/;
+  if (re5.test(s)) {
+    s = s.replace(re5, () => "    'We think ' + n + ' is exactly the kind of place our audience would love, and we would love to work with you.\\n\\n' +\n    'If you are interested, just reply with your phone number and we will contact you.\\n\\n' +\n");
+    console.log('DMRESTORE05: the restaurant message no longer says "quick conversation"; it now asks them to just reply');
+  } else console.log('DMRESTORE05: restaurant message already has the newest wording (or was not found)');
 }
 // (7) the follow-up DM: same signature as the first message, no email address and no cell number (Shane, 2026-11-26)
 {
