@@ -293,7 +293,7 @@ T.installapp=function(root){
   q('#iast',root).textContent={web:'Step 1 of 3: the tool is open in the phone\'s browser, with the address bar and tabs around it.',ask:'Step 2 of 3: the phone asks to add it to the home screen. Choose Add.',home:'Step 3 of 3: it is now on the home screen. Open it.',app:'Done: it opens full screen, like an app.'}[st];
   q('#iago',root).textContent={web:'Add it to the home screen',ask:'Choose Add on the phone',home:'Open the app',app:'It is installed'}[st];
   q('#iago',root).disabled=(st==='ask'||st==='app');
-  q('#iach',root).innerHTML=changes.map(function(c){return '<li style="display:flex;gap:8px;margin:7px 0;opacity:'+(inst?1:.55)+'"><span aria-hidden="true" style="color:'+(inst?'#4fd1a5':'inherit')+';font-weight:800;width:16px;flex:none">'+(inst?'&#10003;':'&#9675;')+'</span><span><b>'+esc(c[0])+'</b><br><span class="micro">'+esc(c[1])+'</span></span></li>'}).join('');
+  q('#iach',root).innerHTML=changes.map(function(c){return '<li style="display:flex;gap:8px;margin:7px 0"><span aria-hidden="true" style="color:'+(inst?'#4fd1a5':'inherit')+';font-weight:800;width:16px;flex:none">'+(inst?'&#10003;':'&#9675;')+'</span><span><b>'+esc(c[0])+'</b><br><span class="micro">'+esc(c[1])+'</span></span></li>'}).join('');
   phone();
  }
  q('#iak',root).onchange=function(){cur=this.value;st='web';draw()};
@@ -377,7 +377,7 @@ function scriptReader(root){
  function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]')}
  function draw(){
   var T0=TYPES[cur];q('#rsWhen',root).textContent=T0.when;
-  q('#rsSteps',root).innerHTML=T0.steps.map(function(s,i){var d=done[cur+':'+i];return '<li style="border:1px solid var(--line);border-radius:12px;padding:12px;opacity:'+(d?.55:1)+'"><label class="checkline" style="margin:0 0 6px!important"><input type="checkbox" data-i="'+i+'"'+(d?' checked':'')+'><span><b>'+(i+1)+'. '+esc(s[0])+'</b></span></label><div style="font-size:17px;line-height:1.5;margin:4px 0 6px"><span class="micro" style="display:block;font-weight:700">Say:</span>&ldquo;'+esc(fill(s[1]))+'&rdquo;</div><div class="micro"><b>Listen for:</b> '+esc(s[2])+'</div></li>'}).join('');
+  q('#rsSteps',root).innerHTML=T0.steps.map(function(s,i){var d=done[cur+':'+i];return '<li style="border:1px solid '+(d?'#4fd1a5':'var(--line)')+';border-radius:12px;padding:12px"><label class="checkline" style="margin:0 0 6px!important"><input type="checkbox" data-i="'+i+'"'+(d?' checked':'')+'><span><b>'+(i+1)+'. '+esc(s[0])+'</b></span></label><div style="font-size:17px;line-height:1.5;margin:4px 0 6px"><span class="micro" style="display:block;font-weight:700">Say:</span>&ldquo;'+esc(fill(s[1]))+'&rdquo;</div><div class="micro"><b>Listen for:</b> '+esc(s[2])+'</div></li>'}).join('');
   qa('#rsSteps input',root).forEach(function(c){c.onchange=function(){done[cur+':'+this.getAttribute('data-i')]=this.checked;draw()}});
   q('#rsObj',root).innerHTML=OBJ.map(function(o,i){return '<button type="button" class="btn btn-ghost" data-o="'+i+'" aria-pressed="'+(i===objSel?'true':'false')+'">'+esc(o[0])+'</button>'}).join('');
   qa('#rsObj button',root).forEach(function(b){b.onclick=function(){objSel=+this.getAttribute('data-o');draw()}});
@@ -455,7 +455,7 @@ function sampleCall(root){
   q('#ccsay',root).style.borderColor=S.flag?'#e5a14a':'';
   q('#ccobj',root).innerHTML=S.obj?'<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:10px;margin:8px 0;font-size:14px"><b>Concern spotted: '+esc(S.obj[0])+'</b><br>'+esc(S.obj[1])+'</div>':'';
   var nxt=null;PH.forEach(function(p){if(!nxt&&!S.done[p[0]])nxt=p[0]});
-  q('#ccph',root).innerHTML=PH.map(function(p){var d=S.done[p[0]],c=!d&&p[0]===nxt&&idx>=0;return '<li style="display:flex;gap:8px;margin:5px 0;opacity:'+(d||c?1:.55)+'"><span aria-hidden="true" style="width:16px;flex:none;font-weight:800;color:'+(d?'#4fd1a5':(c?'#4fb9ff':'inherit')+'')+'">'+(d?'&#10003;':(c?'&#9654;':'&#9675;'))+'</span><span>'+esc(p[1])+(c?' <span class="micro">(up next)</span>':'')+'</span></li>'}).join('');
+  q('#ccph',root).innerHTML=PH.map(function(p){var d=S.done[p[0]],c=!d&&p[0]===nxt&&idx>=0;return '<li style="display:flex;gap:8px;margin:5px 0"><span aria-hidden="true" style="width:16px;flex:none;font-weight:800;color:'+(d?'#4fd1a5':(c?'#4fb9ff':'inherit')+'')+'">'+(d?'&#10003;':(c?'&#9654;':'&#9675;'))+'</span><span>'+esc(p[1])+(c?' <span class="micro">(up next)</span>':'')+'</span></li>'}).join('');
   var tot=S.wr+S.wb,pr=tot?Math.round(S.wr/tot*100):0;
   q('#cctalk',root).innerHTML=tot?'<i style="width:'+pr+'%;background:'+(pr>65?'#e5a14a':'#4fb9ff')+'"></i><i style="width:'+(100-pr)+'%;background:#4fd1a5"></i>':'';
   q('#cctalkt',root).textContent=tot?'Salesperson '+pr+'%, customer '+(100-pr)+'%'+(pr>65?' (the salesperson is talking too much)':''):'Nothing yet.';
