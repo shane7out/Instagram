@@ -1,3 +1,4 @@
+// ADSTXT03 (2026-11-27): Key Technologies first hello is now point-first ("Is your business ready for AI?").
 // ADSMSG02 (Shane, 2026-11-25): the Ads tab message toggle and the email tools.
 //  * a toggle at the top of the Ads tab: Las Vegas Restaurants | Key Technologies (which wording every Ads-tab DM and email uses), remembered on the device;
 //  * a second toggle: First hello | Follow-up (a short, gentle second message);
@@ -14,8 +15,8 @@ let s = fs.readFileSync(file, 'utf8');
 const REPLY = (process.env.REPLY_EMAIL || '').trim();
 if (REPLY && !/^[^\s@'"\\<>]+@[^\s@'"\\<>]+\.[^\s@'"\\<>]+$/.test(REPLY)) { console.error('ADSMSG02: REPLY_EMAIL does not look like an email address - nothing changed'); process.exit(4); }
 if (/ADSMSG02/.test(s)) {
-  if (!REPLY) { console.log('ADSMSG02 already present, skipping'); process.exit(0); }
-  console.log('ADSMSG02 present: refreshing it with the contact email');
+  if (!REPLY && /ADSTXT03/.test(s)) { console.log('ADSMSG02 with the 2026-11-27 wording (ADSTXT03) already present, skipping'); process.exit(0); }
+  console.log('ADSMSG02 present: refreshing it' + (REPLY ? ' with the contact email' : ' with the newest wording'));
 }
 
 // 1) the five places that hold the old sponsorship message. Skipped (not an error) when version 1 already replaced them.
@@ -68,7 +69,7 @@ if (!anchored) { console.error('ADSMSG02: could not find the top of the Ads tab 
 // 4) the messages, the switches and the email tools
 const JS = `
 <script>
-/* ADSMSG02 */
+/* ADSMSG02 ADSTXT03 */
 (function(){
   var MK='lv_ads_msg_mode_v1',KK='lv_ads_msg_kind_v1',AK='lv_ads_addr_v1',REPLY=__REPLY__;
   function ls(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}
@@ -91,7 +92,7 @@ const JS = `
       subject:function(n){return 'Re: Sponsorship spot on @lasvegas_restaurants'}}
    },
    kt:{
-    first:{dm:function(n){return 'Hi '+n+'! We help local Las Vegas businesses save time with AI/SI, like an AI receptionist that answers calls and texts, plus websites and small custom tools. Would you like a free, friendly look at where it could help '+n+'? No pressure at all. keytechnologies.si'},
+    first:{dm:function(n){return 'Hi '+n+'! Is your business ready for AI? We build things like an AI receptionist that answers calls and texts, so nothing gets missed, plus websites and small custom tools, all built in-house. Want a free, friendly look at where it could help? No pressure. keytechnologies.si'},
       body:function(n){return 'Hello '+n+' team,\\n\\n'+
       'We hope your week is going well!\\n\\n'+
       'We help local Las Vegas businesses save time with AI/SI, and we thought '+n+' might enjoy a couple of ideas. Things like:\\n'+
