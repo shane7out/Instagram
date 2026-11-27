@@ -73,13 +73,12 @@
     '#rrGate .pad{display:grid;grid-template-columns:repeat(3,78px);gap:14px 20px;margin:0 auto;width:274px}' +
     '#rrGate .pad button{width:78px;height:78px;border-radius:50%;border:0;background:rgba(255,255,255,.175);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);color:#fff;display:flex;align-items:center;justify-content:center;padding:0;font-weight:300;font-size:32px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation;font-family:Lato,system-ui,sans-serif;transition:background .08s,color .08s}' +
     '#rrGate .pad button:active,#rrGate .pad button.pressed{background:rgba(255,255,255,.58);color:#000}#rrGate .pad button.d{font-size:28px;font-weight:400}#rrGate .pad button:focus-visible{outline:2px solid #fff;outline-offset:3px}' +
-    '#rrGate .face svg{display:block}#rrGate .face .scan{opacity:0}#rrGate .face.off{opacity:.5}#rrGate .face.ready{background:rgba(20,147,255,.30);box-shadow:0 0 0 1.5px rgba(20,147,255,.65),0 0 22px rgba(20,147,255,.45);animation:rrpulse 2.6s ease-in-out infinite}#rrGate .face.ready .scan{opacity:.95;animation:rrscan 2s ease-in-out infinite}' +
-    '@keyframes rrscan{0%,100%{transform:translateY(0)}50%{transform:translateY(14px)}}@keyframes rrpulse{0%,100%{box-shadow:0 0 0 1.5px rgba(20,147,255,.65),0 0 14px rgba(20,147,255,.30)}50%{box-shadow:0 0 0 1.5px rgba(20,147,255,.9),0 0 28px rgba(20,147,255,.6)}}@media(prefers-reduced-motion:reduce){#rrGate .face.ready,#rrGate .face.ready .scan{animation:none}}' +
+    '#rrGate .face svg{display:block}#rrGate .face .scan{opacity:0}#rrGate .face.off{opacity:.5}#rrGate .face.ready{background:rgba(20,147,255,.34);box-shadow:inset 0 0 0 1.5px rgba(20,147,255,.7);animation:rrpulse 2.6s ease-in-out infinite}#rrGate .face.ready .scan{opacity:.95;animation:rrscan 2s ease-in-out infinite}' +
+    '@keyframes rrscan{0%,100%{transform:translateY(0)}50%{transform:translateY(14px)}}@keyframes rrpulse{0%,100%{background:rgba(20,147,255,.30);box-shadow:inset 0 0 0 1.5px rgba(20,147,255,.6)}50%{background:rgba(20,147,255,.46);box-shadow:inset 0 0 0 1.5px rgba(20,147,255,.95)}}@media(prefers-reduced-motion:reduce){#rrGate .face.ready,#rrGate .face.ready .scan{animation:none}}' +
     '#rrGate .linkb{position:absolute;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom,14px));white-space:nowrap}#rrGate .msg.ok{color:rgba(255,255,255,.7)}#rrGate .skip,#rrGate .linkb{background:none;border:0;color:rgba(255,255,255,.45);font:600 13px Lato,system-ui,sans-serif;text-decoration:underline;cursor:pointer;padding:10px;margin-top:10px}' +
     '#rrGate .offer{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#12243a;border:1.5px solid rgba(20,147,255,.4);border-radius:16px;padding:16px 22px;width:min(300px,calc(100% - 32px));box-sizing:border-box;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5)}#rrGate .offer b{display:block;font-size:14px;margin-bottom:12px}#rrGate .offer .row{display:flex;gap:10px;justify-content:center}#rrGate .offer button{border:0;border-radius:10px;padding:9px 20px;font:700 13px Lato,system-ui,sans-serif;cursor:pointer}#rrGate .offer .yes{background:#1493FF;color:#fff}#rrGate .offer .no{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}#rrGate .offer small{display:block;color:#9fd6f2;font-size:12.5px;margin-top:8px}' +
     '@media(max-height:700px){#rrGate .in{justify-content:flex-start;padding-top:max(26px,env(safe-area-inset-top,26px))}#rrGate .pad{grid-template-columns:repeat(3,66px);gap:10px 16px;width:230px}#rrGate .pad button{width:66px;height:66px;font-size:27px}#rrGate .dots{margin-bottom:24px}#rrGate p{margin-bottom:14px}#rrGate .msg{margin-top:10px}#rrGate .skip{margin-top:4px}}';
 
-  css += '#rrGate .facebig{display:flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:13px 24px;margin:0 0 8px;border-radius:999px;border:1.5px solid rgba(20,147,255,.7);background:rgba(20,147,255,.28);color:#fff;font:700 16px Lato,system-ui,sans-serif;cursor:pointer}#rrGate .facebig:active{background:rgba(20,147,255,.5)}#rrGate .facebig svg{width:24px;height:24px}#rrGate .orpin{font-size:13px;color:rgba(255,255,255,.55);margin:0 0 20px}#rrGate .facebig[hidden],#rrGate .orpin[hidden]{display:none}@media(max-height:700px){#rrGate .orpin{margin-bottom:10px}}';
 
   /* Face ID / Touch ID: a passkey (WebAuthn "prf" extension) unlocks a copy of this account's sign-in password that is encrypted on this phone and can only be
      decrypted with the passkey, i.e. with your face or finger. The PIN itself is never stored. Same method as the LVR report page. */
@@ -120,8 +119,6 @@
     inn.appendChild(mk('h1', null, o.title)); inn.appendChild(mk('p', null, o.sub || 'Type your 6-digit PIN.'));
     var idIn = null;
     if (o.askId) { var row = mk('div', 'idrow'), lb = mk('label', null, o.askId.label); lb.setAttribute('for', 'rrId'); idIn = mk('input'); idIn.id = 'rrId'; idIn.setAttribute('autocomplete', 'off'); idIn.setAttribute('autocapitalize', 'none'); idIn.setAttribute('spellcheck', 'false'); idIn.maxLength = 20; idIn.placeholder = o.askId.placeholder || ''; try { var last = localStorage.getItem('rrLastId'); if (last) idIn.value = last; } catch (e) {} row.appendChild(lb); row.appendChild(idIn); inn.appendChild(row); }
-    var fbig = mk('button', 'facebig'); fbig.type = 'button'; fbig.hidden = true; fbig.innerHTML = FACE + '<span>Use Face ID</span>'; inn.appendChild(fbig);
-    var orpin = mk('div', 'orpin', 'or type your PIN'); orpin.hidden = true; inn.appendChild(orpin);
     var dots = mk('div', 'dots'); for (var i = 0; i < 6; i++) dots.appendChild(mk('i')); inn.appendChild(dots);
     var msg = mk('div', 'msg'); msg.setAttribute('role', 'alert');
     var pad = mk('div', 'pad');
@@ -170,7 +167,6 @@
       fb.setAttribute('aria-label', ready ? 'Open with Face ID or Touch ID' : 'Face ID or Touch ID (turn it on after your first PIN sign-in)');
       if (off) off.hidden = !ready;
       if (on) on.hidden = ready || !bioOK();
-      fbig.hidden = !ready; orpin.hidden = !ready;
     }
     function faceUnlock() {
       if (busy) return; msg.textContent = '';
@@ -184,7 +180,7 @@
         else if (!/NotAllowed|abort|cancel/i.test(nm + m)) msg.textContent = 'Face ID did not work. Use your PIN.';
       }).then(function () { busy = false; });
     }
-    fb.addEventListener('click', faceUnlock); fbig.addEventListener('click', faceUnlock);
+    fb.addEventListener('click', faceUnlock);
     inn.appendChild(pad); inn.appendChild(msg);
     var off = null;
     if (bioOK()) { off = mk('button', 'linkb', 'Turn off Face ID on this phone'); off.type = 'button'; off.hidden = true; off.addEventListener('click', function () { var w = who(); if (w) bioDrop(w.email); try { localStorage.removeItem('rrBioNo'); } catch (e) {} paintFace(); msg.textContent = 'Face ID is off for this phone.'; }); inn.appendChild(off); }
