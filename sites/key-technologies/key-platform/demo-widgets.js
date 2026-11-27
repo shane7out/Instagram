@@ -302,6 +302,90 @@ T.installapp=function(root){
  draw();
 };
 
+/* ---------- 30 Live Sales Call Coach: a made-up sales call with the coach panel updating line by line ---------- */
+T.callcoach=function(root){
+ var PH=[['why','Why they called today'],['label','Their problem, said back'],['tried','What they have tried'],['result','The result they want'],['concerns','Concerns answered'],['ask','Asked for the decision'],['next','Next step booked']];
+ var CALLS={
+  good:{n:'A well-run call',who:'Sam (sales rep) and Dana, owner of a fictional roofing company',L:[
+   ['rep','Thanks for making time, Dana. What made you want to talk today?',['why'],null,'Good: an open question about why now. Let her finish, then say her problem back to her.'],
+   ['buyer','Honestly we miss calls after five o\'clock and I think we lose jobs because of it.',[],null,'She named the problem. Say it back in her words and ask if you got it right.'],
+   ['rep','So after-hours calls go unanswered and some jobs walk away. Did I get that right?',['label'],null,'Wait for a yes. Then ask what she has already tried.'],
+   ['buyer','Yes, exactly that.',[],null,'Ask what she has tried so far, and why it did not work.'],
+   ['rep','What have you tried so far?',['tried'],null,'Listen for what she disliked about it. That is what she will test you on.'],
+   ['buyer','We had an answering service. It was clunky and callers hated it.',[],null,'Ask what changes for her if after-hours calls are answered well.'],
+   ['rep','If after-hours calls were answered and booked for you, what would that change?',['result'],null,'Let her describe the result in her own words.'],
+   ['buyer','We would win more jobs, and honestly I would sleep better.',[],null,'Keep it short now. Explain the plan in two sentences, then ask a question.'],
+   ['rep','Here is how it would work. Calls after hours get answered by an AI receptionist that says it is an AI, collects the job details and puts a callback on your calendar, and anything urgent goes straight to your phone. The setup takes about a week, and we would review the first calls together before it goes fully live, so you can hear exactly what callers hear and change anything you do not like.',[],null,'Talk share is high. Stop explaining and ask a question.',true],
+   ['buyer','It sounds good, but I need to think about the cost.',[],['Cost concern','Ask what "cost" means to her before answering: the monthly spend, or whether it pays off? Do not discount yet.'],'Concern spotted. Ask what she means by cost.'],
+   ['rep','Totally fair. When you say cost, is it the monthly spend, or whether it will pay off?',['concerns'],null,'Good: you asked before answering. Let her explain.'],
+   ['buyer','Mostly whether it pays off. And I would have to run it by my partner.',[],['Second decision-maker','Offer to include the partner in a short follow-up so you are not asking Dana to sell it for you.'],'Two concerns: payoff and the partner. Work out the payoff with her numbers first.'],
+   ['rep','Let us look at it with your numbers. About how many after-hours calls did you miss last week?',[],null,'Use her number to show the payoff in her own terms.'],
+   ['buyer','Maybe ten.',[],null,'Offer a small first step, ask for the decision, then book the partner.'],
+   ['rep','Then I suggest a two-week trial so you can see it on your own calls. Does that work for you?',['ask'],null,'You asked clearly. Wait for the answer.'],
+   ['buyer','Yes, let us try it.',[],null,'Confirm what happens next and book the partner meeting before you hang up.'],
+   ['rep','Great choice. I will send the trial details today, and let us book Thursday at ten to go over it with your partner. Does that work?',['next'],null,'Next step booked. Say why it is a good decision, then end warmly.'],
+   ['buyer','Thursday works.',[],null,'Call complete. See the scorecard.']],
+   sc:{why:[4,'What made you want to talk today'],label:[4,'Did I get that right'],tried:[3,'What have you tried so far'],result:[3,'what would that change'],concerns:[3,'is it the monthly spend, or whether it will pay off'],ask:[4,'Does that work for you'],next:[4,'let us book Thursday at ten']},
+   note:'Keep opening with why they called. Next time, shorten the explanation so the buyer talks more.'},
+  rushed:{n:'A rushed call',who:'Sam (sales rep) and Luis, owner of a fictional dental office',L:[
+   ['rep','Hi Luis. Let me tell you about our AI receptionist, it answers calls, books visits and sends reminders, and we have set it up for a lot of offices.',[],null,'You started pitching before asking why he called. Ask what made him take the call today.',true],
+   ['buyer','Okay. We do get a lot of calls.',[],null,'Ask why now. You do not know his problem yet.'],
+   ['rep','It also integrates with most scheduling software and handles after-hours calls and cancellations and reminders, and you can customize the voice and the greeting and the questions it asks.',[],null,'Still pitching. Talk share is very high. Stop and ask a question.',true],
+   ['buyer','Hm. Send me some info and I will take a look.',[],['Brush-off: "send me info"','Do not just send it. Ask what he would want to see in it, and book a time to go over it together.'],'A brush-off. Ask what would make the info useful, and book a time.'],
+   ['rep','Sure, I will email it over. Let me know if you have questions.',[],null,'No question, no next step. Try: "What would you want it to show you? Can we look at it together Thursday?"'],
+   ['buyer','Will do. Thanks.',[],null,'Call over with no next step. See the scorecard.']],
+   sc:{why:[0,''],label:[0,''],tried:[0,''],result:[1,'it answers calls, books visits and sends reminders'],concerns:[0,''],ask:[0,''],next:[0,'']},
+   note:'Start with a question about why they called. Next time, never end without booking a time to talk again.'}
+ };
+ var cur='good',idx=-1,playing=false,timer=null,consent=false;
+ root.innerHTML='<div class="panel" id="ccg" style="margin-bottom:16px"><div class="panel-heading"><h3>Step 0: everyone is told, and agrees</h3><span class="tag outline">Always first</span></div>'+
+ '<p style="margin:8px 0">Before anything is listened to, everyone on the call hears: <b>&ldquo;This call is assisted by an AI note-taker and coach. Is that okay with you?&rdquo;</b> In some places everyone has to agree. If anyone says no, the coach stays off.</p>'+
+ '<label class="checkline"><input type="checkbox" id="ccok"><span><b>Everyone said yes</b> <span class="micro">(tick this to start the sample call)</span></span></label></div>'+
+ '<div class="two-columns"><div class="panel"><div class="panel-heading"><h3>The call</h3><span class="tag outline">Fictional</span></div>'+
+ '<label for="ccsel">Which sample call?</label><select id="ccsel">'+Object.keys(CALLS).map(function(k){return '<option value="'+k+'">'+esc(CALLS[k].n)+'</option>'}).join('')+'</select>'+
+ '<p class="micro" id="ccwho" style="margin:8px 0"></p>'+
+ '<div id="cclog" role="log" aria-live="polite" aria-label="The call so far" style="min-height:260px;max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:8px;align-content:start"></div>'+
+ '<p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-primary" id="ccplay">Play the call</button><button type="button" class="btn btn-ghost" id="ccnext">Next line</button><button type="button" class="btn btn-ghost" id="ccrst">Start over</button></p></div>'+
+ '<div class="panel" id="ccpanel"><div class="panel-heading"><h3>The coach</h3><span class="tag outline">Only the salesperson sees this</span></div>'+
+ '<div id="ccsay" role="status" aria-live="polite" style="background:rgba(79,185,255,.12);border:1px solid var(--key-blue);border-radius:12px;padding:10px;margin:8px 0;font-size:14.5px"></div>'+
+ '<div id="ccobj"></div>'+
+ '<p class="micro" style="margin:12px 0 4px;font-weight:700">Where you are in the call</p><ul id="ccph" style="list-style:none;margin:0;padding:0"></ul>'+
+ '<p class="micro" style="margin:12px 0 4px;font-weight:700">Who is talking</p><div id="cctalk" style="display:flex;height:14px;border-radius:6px;overflow:hidden;background:#17212c"></div><p class="micro" id="cctalkt" style="margin:4px 0 0"></p>'+
+ '<div id="ccscore"></div></div></div>'+
+ '<div class="panel" style="margin-top:16px"><h3>What the coach does and does not do</h3><ul style="margin:10px 0 0;padding-left:18px"><li>It suggests; the salesperson decides what to say. It never speaks to the customer.</li><li>It reads the words of the call, not tone of voice or faces, so a suggestion is a prompt, not a verdict.</li><li>It starts only after everyone is told and agrees, and it can be turned off at any moment.</li><li>Every score in the end-of-call card quotes the words that earned it.</li></ul></div>';
+ function words(s){return s.split(/\s+/).filter(Boolean).length}
+ function state(){var done={},wr=0,wb=0,obj=null,tip='Tick the box above, then press Play.',flag=false,L=CALLS[cur].L;
+  for(var i=0;i<=idx;i++){var l=L[i];l[2].forEach(function(p){done[p]=true});if(l[0]==='rep')wr+=words(l[1]);else wb+=words(l[1]);obj=(l[3]&&l[0]==='buyer')?l[3]:(l[0]==='rep'?null:obj);tip=l[4];flag=!!l[5]}
+  return {done:done,wr:wr,wb:wb,obj:obj,tip:tip,flag:flag}}
+ function draw(){
+  var C=CALLS[cur],S=state(),L=C.L,fin=idx>=L.length-1;
+  q('#ccwho',root).textContent=C.who+'. Every name and line here is made up.';
+  q('#cclog',root).innerHTML=L.slice(0,idx+1).map(function(l){var rep=l[0]==='rep';return '<div style="display:flex;justify-content:'+(rep?'flex-start':'flex-end')+'"><div style="max-width:88%;background:'+(rep?'rgba(79,185,255,.16)':'rgba(255,255,255,.08)')+';border-radius:12px;padding:8px 11px;font-size:14px"><span class="micro" style="display:block;font-weight:700">'+(rep?'Salesperson':'Customer')+'</span>'+esc(l[1])+'</div></div>'}).join('')||'<span class="micro">The call has not started.</span>';
+  var lg=q('#cclog',root);lg.scrollTop=lg.scrollHeight;
+  q('#ccsay',root).innerHTML='<b>'+(fin?'Call complete':'Say next')+'</b><br>'+esc(idx<0?(consent?'Press Play, or Next line to go one line at a time.':'Waiting for everyone to agree (Step 0).'):S.tip);
+  q('#ccsay',root).style.borderColor=S.flag?'#e5a14a':'';
+  q('#ccobj',root).innerHTML=S.obj?'<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:10px;margin:8px 0;font-size:14px"><b>Concern spotted: '+esc(S.obj[0])+'</b><br>'+esc(S.obj[1])+'</div>':'';
+  var nxt=null;PH.forEach(function(p){if(!nxt&&!S.done[p[0]])nxt=p[0]});
+  q('#ccph',root).innerHTML=PH.map(function(p){var d=S.done[p[0]],c=!d&&p[0]===nxt&&idx>=0;return '<li style="display:flex;gap:8px;margin:5px 0;opacity:'+(d||c?1:.55)+'"><span aria-hidden="true" style="width:16px;flex:none;font-weight:800;color:'+(d?'#4fd1a5':(c?'#4fb9ff':'inherit')+'')+'">'+(d?'&#10003;':(c?'&#9654;':'&#9675;'))+'</span><span>'+esc(p[1])+(c?' <span class="micro">(up next)</span>':'')+'</span></li>'}).join('');
+  var tot=S.wr+S.wb,pr=tot?Math.round(S.wr/tot*100):0;
+  q('#cctalk',root).innerHTML=tot?'<i style="width:'+pr+'%;background:'+(pr>65?'#e5a14a':'#4fb9ff')+'"></i><i style="width:'+(100-pr)+'%;background:#4fd1a5"></i>':'';
+  q('#cctalkt',root).textContent=tot?'Salesperson '+pr+'%, customer '+(100-pr)+'%'+(pr>65?' (the salesperson is talking too much)':''):'Nothing yet.';
+  if(fin){var tot2=0,rows=PH.map(function(p){var s=C.sc[p[0]];tot2+=s[0];return '<tr><td>'+esc(p[1])+'</td><td style="text-align:right;font-weight:700">'+s[0]+'/4</td><td class="micro">'+(s[1]?'&ldquo;'+esc(s[1])+'&rdquo;':'Did not happen')+'</td></tr>'}).join('');
+   q('#ccscore',root).innerHTML='<h4 style="margin:16px 0 6px">End-of-call scorecard: '+Math.round(tot2/28*100)+' out of 100</h4><table style="width:100%;border-collapse:collapse;font-size:13px"><tbody>'+rows+'</tbody></table><p style="margin:8px 0 0;font-size:13.5px"><b>Note:</b> '+esc(C.note)+'</p><p class="micro" style="margin:6px 0 0">Scores are a read of the words only, and every quote is copied from the call above.</p>'}
+  else q('#ccscore',root).innerHTML='';
+  q('#ccplay',root).textContent=playing?'Pause':'Play the call';
+  q('#ccplay',root).disabled=!consent||fin;q('#ccnext',root).disabled=!consent||fin;
+ }
+ function step(){if(idx<CALLS[cur].L.length-1){idx++;draw()}if(idx>=CALLS[cur].L.length-1)stop()}
+ function stop(){playing=false;if(timer){clearInterval(timer);timer=null}}
+ q('#ccok',root).onchange=function(){consent=this.checked;if(!consent){stop();idx=-1}draw();if(consent)say('Consent recorded for this demo')};
+ q('#ccsel',root).onchange=function(){cur=this.value;stop();idx=-1;draw()};
+ q('#ccplay',root).onclick=function(){if(!consent)return;if(playing){stop();draw();return}playing=true;step();timer=setInterval(step,2600);draw()};
+ q('#ccnext',root).onclick=function(){if(!consent)return;stop();step();draw()};
+ q('#ccrst',root).onclick=function(){stop();idx=-1;draw()};
+ draw();
+};
+
 /* ---------- 28 Text Message Marketing: campaign dashboard with the rules built in ---------- */
 T.sms=function(root){
  /* Fictional sample data. Texts go only to people who opted in. The system adds the business name and the opt-out line, keeps to allowed hours, limits how often one person is texted, and handles STOP and HELP. Nothing is sent. */
