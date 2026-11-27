@@ -21,7 +21,7 @@
   "slug": "content-creators",
   "num": "01",
   "title": "Digital Content Creators",
-  "tag": "AI/SI creators with a consistent brand voice that make posts around the clock.",
+  "tag": "AI creators with a consistent brand voice that make posts around the clock.",
   "cat": "Marketing & Content",
   "thumb": "demos/thumbs/content-creators.jpg",
   "href": "demos/content-creators.html"
@@ -30,7 +30,7 @@
   "slug": "ai-strategy",
   "num": "02",
   "title": "AI/SI Strategy",
-  "tag": "Find where AI/SI pays off, and where it can not yet.",
+  "tag": "Find where AI pays off, and where it can not yet.",
   "cat": "AI Systems & Strategy",
   "thumb": "demos/thumbs/ai-strategy.jpg",
   "href": "demos/ai-strategy.html"
@@ -174,7 +174,7 @@
   "slug": "ai-training",
   "num": "18",
   "title": "Training & Custom Training Software",
-  "tag": "Teach your team to use AI/SI well, in your own portal.",
+  "tag": "Teach your team to use AI well, in your own portal.",
   "cat": "Training & Rewards",
   "thumb": "demos/thumbs/ai-training.jpg",
   "href": "demos/ai-training.html"
