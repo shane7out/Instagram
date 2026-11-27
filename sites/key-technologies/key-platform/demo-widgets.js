@@ -248,6 +248,60 @@ T.social=function(root){
  draw();
 };
 
+/* ---------- 29 Installable Business Apps: a web tool added to the home screen ---------- */
+T.installapp=function(root){
+ var tools={
+  guest:{n:'Corner Cafe Rewards',s:'Corner Cafe',l:'C',c:'#0a6fb8',url:'cornercafe.example/rewards',kind:'Rewards for a fictional cafe'},
+  owner:{n:'Bright Smile Stats',s:'Bright Smile',l:'B',c:'#15805f',url:'brightsmile.example/owner',kind:'Owner dashboard for a fictional dental office'},
+  crew:{n:'Desert Pro Crew',s:'Desert Pro',l:'D',c:'#a04a12',url:'desertpro.example/crew',kind:'Crew check-in for a fictional cleaning company'}
+ };
+ var bodies={
+  guest:'<div style="font-weight:800;color:#0b1b4d;margin-bottom:8px">Your rewards</div><div style="background:#eaf6fd;border-radius:12px;padding:12px"><div style="font-size:26px;font-weight:800;color:#0a6fb8">120</div><div class="micro" style="color:#46598a">sample points</div></div><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-top:10px">Free pastry at 150</div>',
+  owner:'<div style="font-weight:800;color:#0b1b4d;margin-bottom:8px">Today</div><div style="display:flex;gap:8px"><div style="flex:1;background:#e8f7f0;border-radius:10px;padding:10px"><b style="font-size:20px;color:#15805f">14</b><div class="micro" style="color:#46598a">visits</div></div><div style="flex:1;background:#e8f7f0;border-radius:10px;padding:10px"><b style="font-size:20px;color:#15805f">3</b><div class="micro" style="color:#46598a">new leads</div></div></div><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-top:10px">Reply to Sam (sample)</div>',
+  crew:'<div style="font-weight:800;color:#0b1b4d;margin-bottom:8px">Today\'s jobs</div><div style="border:1px solid #dbe6f6;border-radius:10px;padding:9px;margin-bottom:6px"><b>8:30</b> Sample Office A<br><span class="micro" style="color:#46598a">Gate code in notes</span></div><div style="background:#a04a12;color:#fff;text-align:center;border-radius:10px;padding:9px;font-weight:700">Check in</div>'
+ };
+ var changes=[['Its own icon and name','On the home screen next to the phone\'s other apps.'],['Opens full screen','No browser address bar or tabs in the way.'],['Sign-in stays put','Sign in once; Face ID or a PIN where the phone supports it.'],['Keeps working on weak signal','The screens you need are saved on the phone; changes sync when you are back online.'],['Notifications','Reminders and news, where the phone allows them.']];
+ var cur='guest',st='web';
+ root.innerHTML='<div class="two-columns"><div class="panel"><div class="panel-heading"><h3>Put a tool on the home screen</h3><span class="tag outline">Fictional</span></div>'+
+ '<label for="iak">Which tool?</label><select id="iak">'+Object.keys(tools).map(function(k){return '<option value="'+k+'">'+esc(tools[k].kind)+'</option>'}).join('')+'</select>'+
+ '<p class="micro" style="margin:12px 0 4px;font-weight:700" id="iast" role="status" aria-live="polite"></p>'+
+ '<p style="margin:8px 0 12px"><button type="button" class="btn btn-primary" id="iago"></button> <button type="button" class="btn btn-ghost" id="iarst">Start over</button></p>'+
+ '<p class="micro" style="margin:12px 0 4px;font-weight:700">What changes once it is installed</p><ul id="iach" style="list-style:none;margin:0;padding:0"></ul>'+
+ '<p class="micro" style="margin-top:10px">Sample screens only. Nothing is installed on your phone from this page.</p></div>'+
+ '<div class="panel" style="display:grid;place-items:center"><div id="iaph" style="width:min(260px,100%);height:420px;box-sizing:border-box;border:8px solid #0b1118;border-radius:34px;background:#fff;color:#0b1b4d;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4);position:relative;display:flex;flex-direction:column"></div></div></div>'+
+ '<div class="panel" style="margin-top:16px"><h3>What a home-screen app can and cannot do</h3><ul style="margin:10px 0 0;padding-left:18px"><li>It installs from the browser in a few taps: no app store account and no waiting for a review.</li><li>It is the same tool you already use, so a fix or a new screen reaches everyone at once.</li><li>It cannot do everything a store app can. If your idea needs one of those phone features, we say so up front and tell you when a store app is the better choice.</li></ul></div>';
+ function icon(t,size){return '<div style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.round(size*0.23)+'px;background:'+t.c+';color:#fff;font-weight:800;font-size:'+Math.round(size*0.5)+'px;display:grid;place-items:center;flex:none">'+t.l+'</div>'}
+ function phone(){
+  var t=tools[cur],h='';
+  if(st==='web'||st==='ask'){
+   h='<div style="background:#f1f3f6;padding:10px 10px 8px;font-size:11px;color:#46598a"><div style="font-size:11px;color:#0b1b4d;margin-bottom:6px">9:41</div><div style="background:#fff;border-radius:9px;padding:6px 10px;display:flex;justify-content:space-between"><span>'+esc(t.url)+'</span><span aria-hidden="true">&#8635;</span></div></div>'+
+    '<div style="background:'+t.c+';color:#fff;padding:10px 14px;font-weight:800">'+esc(t.n)+'</div><div style="flex:1;padding:14px;font-size:14px;overflow:hidden">'+bodies[cur]+'</div>'+
+    '<div style="background:#f1f3f6;display:flex;justify-content:space-around;padding:10px 0;color:#46598a;font-size:16px" aria-hidden="true"><span>&lsaquo;</span><span>&rsaquo;</span><span>&#9099;</span><span>&#9633;</span></div>';
+   if(st==='ask')h+='<div role="dialog" aria-label="Add to Home Screen" style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:14px"><div style="background:#fff;border-radius:14px;padding:14px;width:100%;box-sizing:border-box;text-align:center">'+'<div style="display:grid;place-items:center;margin-bottom:8px">'+icon(t,52)+'</div><div style="font-weight:800;font-size:14px">Add &ldquo;'+esc(t.s)+'&rdquo; to your Home Screen?</div><div class="micro" style="color:#46598a;margin:4px 0 10px">It opens like an app.</div><div style="display:flex;gap:8px"><button type="button" class="btn btn-ghost" id="iano" style="flex:1;color:#0b1b4d">Cancel</button><button type="button" class="btn btn-primary" id="iayes" style="flex:1">Add</button></div></div></div>';
+  }else if(st==='home'){
+   var grid='';for(var i=0;i<7;i++)grid+='<div style="width:48px;height:48px;border-radius:11px;background:rgba(255,255,255,.35)" aria-hidden="true"></div>';
+   h='<div style="background:linear-gradient(160deg,#254a86,#0b1b4d);flex:1;padding:14px;color:#fff"><div style="font-size:11px;margin-bottom:18px">9:41</div><div style="display:grid;grid-template-columns:repeat(4,48px);gap:16px 14px;justify-content:center">'+grid+'<button type="button" id="iaopen" aria-label="Open '+esc(t.s)+'" style="background:none;border:0;padding:0;color:#fff;cursor:pointer;display:grid;justify-items:center;gap:3px;box-shadow:0 0 0 3px rgba(255,255,255,.9);border-radius:13px">'+icon(t,48)+'</button></div><div style="text-align:center;margin-top:16px;font-size:12px">&uarr; Tap the new icon to open it</div></div>';
+  }else{
+   h='<div style="background:'+t.c+';color:#fff;padding:10px 14px 10px"><div style="font-size:11px;margin-bottom:6px">9:41</div><div style="font-weight:800;font-size:17px">'+esc(t.n)+'</div></div><div style="flex:1;padding:14px;font-size:14px;overflow:hidden">'+bodies[cur]+'</div><div style="text-align:center;padding:8px;font-size:11px;color:#46598a;border-top:1px solid #dbe6f6">Full screen: no browser bars</div>';
+  }
+  q('#iaph',root).innerHTML=h;
+  var yes=q('#iayes',root),no=q('#iano',root),op=q('#iaopen',root);
+  if(yes)yes.onclick=function(){st='home';draw()};if(no)no.onclick=function(){st='web';draw()};if(op)op.onclick=function(){st='app';draw()};
+ }
+ function draw(){
+  var inst=(st==='home'||st==='app');
+  q('#iast',root).textContent={web:'Step 1 of 3: the tool is open in the phone\'s browser, with the address bar and tabs around it.',ask:'Step 2 of 3: the phone asks to add it to the home screen. Choose Add.',home:'Step 3 of 3: it is now on the home screen. Open it.',app:'Done: it opens full screen, like an app.'}[st];
+  q('#iago',root).textContent={web:'Add it to the home screen',ask:'Choose Add on the phone',home:'Open the app',app:'It is installed'}[st];
+  q('#iago',root).disabled=(st==='ask'||st==='app');
+  q('#iach',root).innerHTML=changes.map(function(c){return '<li style="display:flex;gap:8px;margin:7px 0;opacity:'+(inst?1:.55)+'"><span aria-hidden="true" style="color:'+(inst?'#4fd1a5':'inherit')+';font-weight:800;width:16px;flex:none">'+(inst?'&#10003;':'&#9675;')+'</span><span><b>'+esc(c[0])+'</b><br><span class="micro">'+esc(c[1])+'</span></span></li>'}).join('');
+  phone();
+ }
+ q('#iak',root).onchange=function(){cur=this.value;st='web';draw()};
+ q('#iago',root).onclick=function(){if(st==='web')st='ask';else if(st==='home')st='app';draw()};
+ q('#iarst',root).onclick=function(){st='web';draw();say('Demo restarted')};
+ draw();
+};
+
 /* ---------- 28 Text Message Marketing: campaign dashboard with the rules built in ---------- */
 T.sms=function(root){
  /* Fictional sample data. Texts go only to people who opted in. The system adds the business name and the opt-out line, keeps to allowed hours, limits how often one person is texted, and handles STOP and HELP. Nothing is sent. */

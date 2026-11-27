@@ -234,15 +234,6 @@
   "href": "demos/mobile-apps.html"
  },
  {
-  "slug": "rewards",
-  "num": "P",
-  "title": "Key Rewards",
-  "tag": "One universal rewards balance. Earn at any participating restaurant and use it at any of them.",
-  "cat": "Training & Rewards",
-  "thumb": "demos/thumbs/rewards.jpg",
-  "href": "demos/rewards.html"
- },
- {
   "slug": "text-marketing",
   "num": "28",
   "title": "Text Message Marketing",
@@ -250,5 +241,23 @@
   "cat": "Marketing & Content",
   "thumb": "demos/thumbs/text-marketing.jpg",
   "href": "demos/text-marketing.html"
+ },
+ {
+  "slug": "installable-apps",
+  "num": "29",
+  "title": "Installable Business Apps",
+  "tag": "Your dashboards, rewards and crew tools on your customers' and team's home screens, with your icon and name.",
+  "cat": "Websites & Security",
+  "thumb": "demos/thumbs/installable-apps.jpg",
+  "href": "demos/installable-apps.html"
+ },
+ {
+  "slug": "rewards",
+  "num": "P",
+  "title": "Key Rewards",
+  "tag": "One universal rewards balance. Earn at any participating restaurant and use it at any of them.",
+  "cat": "Training & Rewards",
+  "thumb": "demos/thumbs/rewards.jpg",
+  "href": "demos/rewards.html"
  }
 ]

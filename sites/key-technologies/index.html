@@ -530,7 +530,7 @@
 
     <div class="nav-cta">
       <a class="btn btn-ghost" href="book.html">Book a Call</a>
-      <a class="home-btn hold" href="index.html" aria-label="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg><span>Home</span></a>
+      <a class="home-btn" href="index.html" aria-label="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg><span>Home</span></a>
       <button class="burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
         <span></span><span></span>
       </button>
@@ -538,6 +538,7 @@
   </div>
 
 </header>
+<script>(function(){var h=document.querySelector(".home-btn");if(h)h.classList.add("hold")})();</script>
 
 <!-- Deliberately a sibling of header, not a child of it: header has
      backdrop-filter for the frosted-glass sticky effect, and backdrop-filter
@@ -605,7 +606,7 @@
   <section class="wrap trust-band" aria-label="Why Key Technologies">
     <ul class="trust-grid">
       <li class="reveal"><a class="trust-link" href="#about"><b>42+ years</b><span>working with computers and software</span></a></li>
-      <li class="reveal"><a class="trust-link" href="#services"><b>28 services</b><span>each with a live demo you can try</span></a></li>
+      <li class="reveal"><a class="trust-link" href="#services"><b>29 services</b><span>each with a live demo you can try</span></a></li>
       <li class="reveal"><a class="trust-link" href="#lead-short"><b>Free review</b><span>no obligation, an honest look at what would actually help</span></a></li>
       <li class="reveal"><a class="trust-link" href="#locations"><b>Worldwide</b><span>In person around our home markets, online anywhere</span></a></li>
     </ul>
@@ -647,6 +648,7 @@
       <li class="reveal"><a class="svc-name" href="key-platform/demos/custom-programming.html">Custom Website Programming</a><span class="svc-desc">Full custom-coded sites and web applications.</span><a class="svc-demo" href="key-platform/demos/custom-programming.html" aria-label="Try the Custom Website Programming demo">Demo &rarr;</a></li>
       <li class="reveal"><a class="svc-name" href="key-platform/demos/accessibility-ada.html">ADA &amp; Accessibility Compliance</a><span class="svc-desc">Make a site usable for everyone and reduce legal risk.</span><a class="svc-demo" href="key-platform/demos/accessibility-ada.html" aria-label="Try the ADA &amp; Accessibility Compliance demo">Demo &rarr;</a></li>
       <li class="reveal"><a class="svc-name" href="key-platform/demos/php-wordpress-migration.html">PHP &amp; WordPress Migration</a><span class="svc-desc">Move off PHP and WordPress to a modern custom stack.</span><a class="svc-demo" href="key-platform/demos/php-wordpress-migration.html" aria-label="Try the PHP &amp; WordPress Migration demo">Demo &rarr;</a></li>
+      <li class="reveal"><a class="svc-name" href="key-platform/demos/installable-apps.html">Installable Business Apps</a><span class="svc-desc">Your dashboards, rewards and crew tools on your customers' and team's home screens, with your icon and name.</span><a class="svc-demo" href="key-platform/demos/installable-apps.html" aria-label="Try the Installable Business Apps demo">Demo &rarr;</a></li>
       <li class="reveal"><a class="svc-name" href="key-platform/demos/business-dashboards.html">Business Dashboards &amp; Suites</a><span class="svc-desc">Your sales, customers, busiest hours, reviews and follow-ups on one screen, built around the systems you already use.</span><a class="svc-demo" href="key-platform/demos/business-dashboards.html" aria-label="Try the Business Dashboards &amp; Suites demo">Demo &rarr;</a></li>
       <li class="reveal"><a class="svc-name" href="key-platform/demos/key-rewards-events.html">Key Rewards: Guest Events &amp; Loyalty</a><span class="svc-desc">Share a pool of rewards equally among the guests who are really there, with check-in, approval and a dashboard. Rewards never expire, have no cash value and cannot be sold or exchanged for cash.</span><a class="svc-demo" href="key-platform/demos/key-rewards-events.html" aria-label="Try the Key Rewards: Guest Events &amp; Loyalty demo">Demo &rarr;</a></li>
       <li class="reveal"><a class="svc-name" href="key-platform/demos/ai-training.html">Training &amp; Custom Training Software</a><span class="svc-desc">Teach your team to use AI well, in your own portal.</span><a class="svc-demo" href="key-platform/demos/ai-training.html" aria-label="Try the Training &amp; Custom Training Software demo">Demo &rarr;</a></li>
@@ -1869,16 +1871,24 @@
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Key Rewards",
-          "description": "One universal rewards balance. Earn at any participating restaurant and use it at any of them."
+          "name": "Text Message Marketing",
+          "description": "Texts your customers asked for, sent at the right time, with opt-in, opt-out and quiet-hour rules built in."
         }
       },
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Text Message Marketing",
-          "description": "Texts your customers asked for, sent at the right time, with opt-in, opt-out and quiet-hour rules built in."
+          "name": "Installable Business Apps",
+          "description": "Your dashboards, rewards and crew tools on your customers' and team's home screens, with your icon and name."
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Key Rewards",
+          "description": "One universal rewards balance. Earn at any participating restaurant and use it at any of them."
         }
       }
     ]
