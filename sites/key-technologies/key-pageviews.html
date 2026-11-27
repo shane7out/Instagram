@@ -370,6 +370,12 @@
   .heat b{font-weight:600;text-align:right;padding-right:4px;}
   .heat i{display:block;height:17px;border-radius:3px;background:var(--key-blue);}
   .heat span{text-align:center;}
+  .aud{display:flex;height:16px;border-radius:6px;overflow:hidden;margin:8px 0 10px;background:#17212c;}
+  .aud i{display:block;height:100%;}
+  .audrow{display:flex;gap:8px;align-items:baseline;font-size:13px;margin:5px 0;}.audrow b{min-width:48px;text-align:right;font-variant-numeric:tabular-nums;}
+  .audrow i{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none;transform:translateY(1px);}
+  .audrow span{color:var(--ink-dim);font-size:12.5px;}
+  .audsw{display:flex;gap:9px;align-items:center;margin:12px 0 4px;font-size:13.5px;}.audsw input{width:20px;height:20px;}
   .dbar{display:grid;grid-template-columns:78px 1fr 40px;gap:8px;align-items:center;font-size:12.5px;margin:6px 0;}
   .dbar .t{height:14px;background:#17212c;border-radius:5px;overflow:hidden;}.dbar .t i{display:block;height:100%;background:linear-gradient(90deg,#0a7fd0,#4fb9ff);}
   .dbar .n{text-align:right;color:var(--ink-dim);}
@@ -510,6 +516,7 @@
 
       <div class="panels">
         <section class="panel on" id="p-overview" role="tabpanel" aria-labelledby="t-overview">
+          <div class="card span2" id="auditCard"><h2>Are these numbers real? <span class="pill">check</span></h2><div id="audit"></div></div>
           <div class="card span2"><h2>Visits per day</h2><div id="chartWrap"></div></div>
           <div class="card mini"><h2>Top pages</h2><div id="mPages"></div><button type="button" class="more-link" data-go="pages">See all pages &rarr;</button></div>
           <div class="card mini"><h2>Where they came from</h2><div id="mSources"></div><button type="button" class="more-link" data-go="sources">See all sources &rarr;</button></div>
@@ -907,6 +914,62 @@ TABS.forEach(function (t) { $("t-" + t).addEventListener("click", function () { 
 document.querySelectorAll("[data-go]").forEach(function (b) { b.addEventListener("click", function () { setTab(b.getAttribute("data-go")); }); });
 document.addEventListener("click", function (e) { var m = $("menu"); if (m.open && !m.contains(e.target)) m.open = false; });
 
+
+// ---------- "Are these numbers real?" ----------
+// Every view is sorted into one of three groups, using only what the counter already saved:
+//   robot-like: it came from a hosting company or data centre (Amazon, Google Cloud, Microsoft, DigitalOcean ...), or one
+//               visitor made many views within a minute;
+//   no activity: the page was never scrolled, clicked or kept open (a real person almost always leaves some sign);
+//   likely real: everything else.
+// "Robot-like" is a strong signal; "no activity" is only a hint (a person who closes the tab at once looks the same).
+var ONLYREAL = false;
+try { ONLYREAL = localStorage.getItem("kt_onlyreal") === "1"; } catch (e) {}
+var DCRE = /amazon|aws|google llc|google cloud|microsoft|azure|digitalocean|hetzner|ovh|linode|akamai|vultr|oracle|choopa|leaseweb|contabo|scaleway|m247|datacamp|cloudflare|hosting|data ?cent|server|\bvps\b|\bcloud\b|colo|\bvpn\b|proxy|tor |alibaba|tencent|ucloud|ionos|rackspace|fastly|zscaler|netskope/i;
+function flagViews(views, events) {
+  var byKey = {};
+  views.forEach(function (v) { var k = v.pid || v.s || v.v || v.id; (byKey[k] = byKey[k] || []).push(v.t); });
+  var burst = {};
+  Object.keys(byKey).forEach(function (k) {
+    var a = byKey[k].sort(function (x, y) { return x - y; });
+    for (var i = 0, j = 0; i < a.length; i++) { while (a[i] - a[j] > 60000) j++; if (i - j + 1 >= 8) { burst[k] = 1; break; } }
+  });
+  var clicked = {}; events.forEach(function (e) { if (e.k === "c" && e.v) clicked[e.v] = 1; });
+  views.forEach(function (v) {
+    var k = v.pid || v.s || v.v || v.id;
+    v.dc = !!(v.isp && DCRE.test(v.isp));
+    v.burst = !!burst[k];
+    v.rob = v.dc || v.burst;
+    var old = Date.now() - v.t > 120000;
+    v.quiet = !v.rob && old && (v.dur == null || (v.dur < 2 && !(v.sc > 0))) && !(v.v && clicked[v.v]);
+  });
+}
+function renderAudit(all) {
+  var el = $("audit"); if (!el) return;
+  var n = all.length, rob = 0, quiet = 0, dc = 0, bu = 0, real = 0, isps = {}, days = {};
+  all.forEach(function (v) {
+    if (v.rob) { rob++; if (v.dc) { dc++; isps[v.isp] = (isps[v.isp] || 0) + 1; } if (v.burst) bu++; }
+    else if (v.quiet) quiet++; else real++;
+    var d = new Date(v.t).toISOString().slice(0, 10); days[d] = (days[d] || 0) + 1;
+  });
+  if (!n) { el.innerHTML = "<div class='empty'>No visits in this range yet.</div>"; return; }
+  var pct = function (x) { return Math.round(x / n * 100); };
+  var seg = function (x, c) { return x ? "<i style='width:" + (x / n * 100) + "%;background:" + c + "'></i>" : ""; };
+  var row = function (c, x, t, d) { return "<div class='audrow'><i style='background:" + c + "'></i><b>" + x + "</b><div>" + t + " <span>(" + pct(x) + "%)</span><br><span>" + d + "</span></div></div>"; };
+  var top = Object.keys(isps).sort(function (a, b) { return isps[b] - isps[a]; }).slice(0, 4).map(function (k) { return esc(k) + " " + isps[k]; }).join(", ");
+  var dk = Object.keys(days).sort(function (a, b) { return days[b] - days[a]; }), peak = dk[0];
+  var geoCount = all.filter(function (v) { return v.isp; }).length;
+  el.innerHTML =
+    "<p class='note' style='margin:0 0 4px'>Of <b>" + n + "</b> page views in this range:</p>" +
+    "<div class='aud' role='img' aria-label='Share of views that look real, show no activity, or look like robots'>" + seg(real, "#4fd1a5") + seg(quiet, "#e0b24a") + seg(rob, "#e5645a") + "</div>" +
+    row("#4fd1a5", real, "Look like real people", "They scrolled, clicked or stayed on the page.") +
+    row("#e0b24a", quiet, "No sign of a person", "Left at once or never scrolled or clicked. Could be a robot, or someone who closed the tab.") +
+    row("#e5645a", rob, "Look like robots", (dc ? dc + " came from hosting or data-centre networks" + (top ? " (" + top + ")" : "") : "") + (dc && bu ? "; " : "") + (bu ? bu + " from a visitor who opened 8 or more pages within a minute" : "") + (!dc && !bu ? "None found." : ".")) +
+    (peak ? "<p class='note' style='margin:8px 0 0'>Busiest day: <b>" + peak + "</b> with " + days[peak] + " views." + (geoCount < n * 0.5 ? " Network names exist only for visits since 2026-11-27, so older robot visits can only be spotted by the \"no sign of a person\" and burst checks." : "") + "</p>" : "") +
+    "<label class='audsw'><input type='checkbox' id='onlyReal'" + (ONLYREAL ? " checked" : "") + "> Count only likely real people (hides the red and yellow from every number and chart)</label>" +
+    "<p class='note' style='margin:6px 0 0'>Also good to know: \"Visits\" counts browser tabs, and before 2026-11-27 \"Visitors\" could not tell two tabs from two people, so one person looking at the site on a phone and a laptop, or coming back the next day, counted several times. The permanent visitor code that fixes this only applies from 2026-11-27 on. Your own devices are not counted once you open any page with ?notrack=1.</p>";
+  var cb = $("onlyReal");
+  if (cb) cb.addEventListener("change", function () { ONLYREAL = cb.checked; try { localStorage.setItem("kt_onlyreal", ONLYREAL ? "1" : "0"); } catch (e) {} render(); });
+}
 // The new counter went live 2026-11-05 21:09 UTC. Records saved before that came from the older, simpler counter (and
 // include many test visits). They are kept, not deleted: pick "Older records" to see them. Every other range starts here.
 var LAUNCH = Date.UTC(2026, 10, 5, 21, 9, 0);
@@ -920,6 +983,15 @@ function render() {
   var eng = {};
   events.forEach(function (e) { if (e.k === "d" && e.v) { var c = eng[e.v]; if (!c || (e.dur || 0) > c.dur) eng[e.v] = { dur: e.dur || 0, sc: e.sc || 0 }; } });
   views.forEach(function (v) { var g = v.v && eng[v.v]; v.dur = g ? g.dur : null; v.sc = g ? g.sc : null; });
+  mapData(views, events);
+  var allViews = views;
+  flagViews(allViews, events);
+  if (ONLYREAL) {
+    views = allViews.filter(function (v) { return !v.rob && !v.quiet; });
+    var kept = {}; views.forEach(function (v) { if (v.v) kept[v.v] = 1; });
+    events = events.filter(function (e) { return !e.v || kept[e.v]; });
+  }
+  renderAudit(allViews);
   CUR = { views: views, events: events, d: eng };
 
   var sessions = {}; views.forEach(function (v) { if (v.s) sessions[v.s] = 1; });
@@ -931,7 +1003,6 @@ function render() {
   live.forEach(function (v) { liveS[v.s || v.v || ("x" + (li++))] = 1; });
   function k(n, l, cls) { return "<div class='kpi" + (cls ? " " + cls : "") + "'><div class='n'>" + n + "</div><div class='l'>" + l + "</div></div>"; }
   $("kpisA").innerHTML = k(Object.keys(liveS).length, "On now", "live") + k(views.length, "Views") + k(Object.keys(sessions).length, "Visits") + k(withDur.length ? durShort(avgDur) : "—", "Avg time");
-  mapData(views, events);
   var people = {}; views.forEach(function (v) { people[v.pid || v.s || v.v || v.id] = 1; });
   var cityCount = {}; views.forEach(function (v) { if (v.city) cityCount[v.city + "|" + (v.cc || "")] = 1; });
   $("kpisB").innerHTML = k(Object.keys(people).length, "Visitors") + k(Object.keys(cityCount).length || "—", "Cities") + k(withDur.length ? Math.round(avgSc) + "%" : "—", "Scrolled") + k(clicks, "Clicks") + k(leads, "Forms sent");
