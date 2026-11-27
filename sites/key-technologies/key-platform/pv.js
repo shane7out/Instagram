@@ -77,7 +77,19 @@
     var q = new URLSearchParams(loc.search), tag = [q.get('utm_source'), q.get('utm_medium'), q.get('utm_campaign')].filter(Boolean).join('/');
     if (tag) rec.src = clean(tag, 100);
   } catch (e) {}
-  post('/hits/' + page, rec, false);
+  // If the database has not been given the newer rules yet it refuses the extra fields: send the plain hit again so no visit is ever lost
+  var newRules = true;
+  (function () {
+    try {
+      fetch(DB + '/hits/' + page + '.json', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rec) }).then(function (r) {
+        if (r && r.ok === false && (rec.pid || rec.app)) {
+          newRules = false;
+          var plain = {}; for (var k in rec) if (k !== 'pid' && k !== 'app') plain[k] = rec[k];
+          post('/hits/' + page, plain, false);
+        }
+      }).catch(function () {});
+    } catch (e) {}
+  })();
 
   // ---------- the rough place (one outside lookup, kept on the device for 12 hours) ----------
   function lookup(cb) {
@@ -112,7 +124,7 @@
     if (typeof g.lat === 'number' && g.lat >= -90 && g.lat <= 90) e.lat = g.lat;
     if (typeof g.lon === 'number' && g.lon >= -180 && g.lon <= 180) e.lon = g.lon;
     if (g.isp) e.isp = clean(g.isp, 100);
-    post('/events', e, true);
+    setTimeout(function () { if (newRules) post('/events', e, true); }, 1500);
   });
 
   // ---------- events (names only) ----------

@@ -147,7 +147,7 @@ function form(){head();SHOWN=Date.now();
 var RULES_NEW=false;
 function paused(cb){if(DEMO){RULES_NEW=true;return cb(false)}fetch("https://lvr-data-a60c1-default-rtdb.firebaseio.com/key_settings/signupsPaused.json").then(function(r){return r.ok?r.json():null}).then(function(v){RULES_NEW=(v===true||v===false);cb(v===true)}).catch(function(){cb(false)})}
 function rec(v){var r={first:v.first,last:v.last,email:v.email,phone:v.phone,ig:v.ig,street:v.street,city:v.city,state:"NV",zip:v.zip,consent:true,emailOk:true,smsOk:true,igActive:true,ageOk:true,rulesOk:true,trade:!!v.trade,rv:"v3"};if(VID)r.vid=VID;try{var P=localStorage.getItem("kt_pid");if(/^[a-z0-9]{10,40}$/.test(P||""))r.pid=P}catch(e){}return r}
-function join(v,cb){var r=rec(v);if(!RULES_NEW){delete r.ageOk;delete r.rulesOk}
+function join(v,cb){var r=rec(v);if(!RULES_NEW){delete r.ageOk;delete r.rulesOk;delete r.pid}
  fingerprint(v.email).then(function(id){
   if(DEMO){var o=lget();if(!o[id]){r.at=Date.now();o[id]=r;lset(o)}return cb(true)}
   r.at={".sv":"timestamp"};
