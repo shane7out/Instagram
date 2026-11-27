@@ -353,6 +353,12 @@ body.hlock{overflow:hidden}
 #pres .gc.sm .num{padding-top:0!important}
 .gc .rt .cdr,#pres .gc .cd{font-size:8.5px!important;position:relative;top:5px}
 #pres .gc .fineprint,#pres .gc.sm .fineprint{font-size:3.3cqw!important;letter-spacing:0!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important}
+/* CLOSE X (Shane, 2026-11-27): one X on the Treasury and on its PIN screen that takes you back to the screen you came from. It sits under the Treasury's own panels (they have their own X and close back to the Treasury). */
+.tclose{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);right:12px;z-index:10001;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tclose:hover{background:rgba(255,255,255,.14)}.tclose:focus-visible{outline:3px solid #00a8e1;outline-offset:2px}
+#rrGate .tclose{z-index:2147483001;background:rgba(255,255,255,.12)}
+body:has(#pres:not(.hide)) > .tclose,body:has(#rdm:not(.hide)) > .tclose,body:has(#hrep:not(.hide)) > .tclose{display:none}
+@media print{.tclose{display:none!important}}
 </style></head>
 <body>
 <div class="top" id="modeNote"><b>Owner tool, practice version.</b> Each Key Reward is worth $1 in credit. This page keeps its records in <b>this browser only</b>, so tap <b>Download backup</b> often.</div>
@@ -1260,6 +1266,30 @@ body.hlock{overflow:hidden}
    if(!window.confirm('Replace everything on this page with the backup ('+o.wallets.length+' wallets, '+o.entries.length+' moves)?'))return;S=o;sel='all';say('tmsg','Backup restored.');paint()}catch(e){say('tmsg','That file is not a Key Rewards backup.',true)}};r.readAsText(f);this.value=''});
  $('reset').addEventListener('click',function(){var t=window.prompt('This erases every wallet and move on this page. Type RESET to continue.');if(t==='RESET'){S=fresh();sel='all';say('tmsg','Started over with the full supply in the Treasury.');paint()}});
  if(/[?&]demo=1\b/.test(location.search)){$('modeNote').innerHTML='<b>Demo.</b> Sample wallets only. Tap a wallet card, then <b>Show this wallet</b>. Each Key Reward is worth $1 in credit.';enterLocal()}else if(RR.signedIn()&&RR.email()===RR.TREASURER.email)enterDb();else start();
+})();
+
+/* CLOSE X: back to the screen you came from (Shane, 2026-11-27) */
+(function(){
+ function leave(){
+  try{ if(history.length>1 && document.referrer){ history.back(); return } }catch(e){}
+  try{ if(window.opener){ window.close(); return } }catch(e){}
+  location.href='index.html';
+ }
+ function mk(){
+  var b=document.createElement('button');b.type='button';b.className='tclose';b.setAttribute('aria-label','Close and go back');
+  b.innerHTML='<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+  b.addEventListener('click',leave);return b;
+ }
+ function init(){
+  if(!document.querySelector('body > .tclose'))document.body.appendChild(mk());
+  var seen=null;
+  new MutationObserver(function(){
+   var g=document.getElementById('rrGate');
+   if(g&&g!==seen){seen=g;if(!g.querySelector('.tclose'))g.appendChild(mk())}
+  }).observe(document.body,{childList:true});
+  var g0=document.getElementById('rrGate');if(g0&&!g0.querySelector('.tclose')){seen=g0;g0.appendChild(mk())}
+ }
+ if(document.body)init();else document.addEventListener('DOMContentLoaded',init);
 })();
 </script>
 <p class="ktcredit" style="text-align:center;margin:22px 16px 28px;font:700 12px/1.3 Lato,system-ui,sans-serif;letter-spacing:.08em;opacity:.78"><!--KTCREDIT-->Design by <a href="https://keytechnologies.si/" style="color:inherit;text-decoration:underline">KeyTechnologies.si</a></p>
