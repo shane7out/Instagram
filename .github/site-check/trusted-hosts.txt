@@ -1,0 +1,22 @@
+# Outside websites this site is allowed to load code, fonts, frames or data from, or send data to.
+# Anything else fails the site check (static.py), so a new outside host can never slip in unnoticed.
+# To add one, a person must say why, here, on purpose. Plain links that visitors click are not checked.
+keytechnologies.si                         # our own site
+lvr-data-a60c1-default-rtdb.firebaseio.com # our own database (Firebase)
+identitytoolkit.googleapis.com             # owner sign-in (Firebase Auth)
+securetoken.googleapis.com                 # owner sign-in (Firebase Auth)
+www.googleapis.com                         # PageSpeed check in the free website audit (key not set yet)
+fonts.googleapis.com                       # fonts (marketplace demo)
+fonts.gstatic.com                          # fonts (marketplace demo)
+www.google.com                             # embedded maps / frames
+www.googletagmanager.com                   # Google Analytics: switched OFF until an ID is set (index.html)
+www.google-analytics.com                   # Google Analytics (off)
+*.google-analytics.com                     # Google Analytics (off)
+*.analytics.google.com                     # Google Analytics (off)
+formspree.io                               # form handler (not configured yet)
+formsubmit.co                              # lead alert copy by email
+api.allorigins.win                         # TRUST RISK: free public proxy used by the free website audit; replace with our own when a server exists
+ipwho.is                                   # visitor place lookup (visitor report)
+ipapi.co                                   # backup place lookup (visitor report)
+www.instagram.com                          # one embedded reel on two demo pages, chosen by Shane
+instagram.com                              # plain links

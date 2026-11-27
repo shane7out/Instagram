@@ -1,0 +1,3 @@
+# Sites we have decided never to use. The site check fails if any of these appear anywhere in the published
+# site or the owner tools. Shane's rule (2026-11-27): nothing from a source we do not know gets installed or run.
+champmack.ai

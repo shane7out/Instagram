@@ -85,7 +85,53 @@ for _p in ['rewards.html','my-account.html','menu.html','join-restaurant.html','
 # private/unlisted pages must stay out of search engines (owner tool and client demos)
 for _p in ['restaurant-rewards-treasury.html','restaurant-confirm.html','restaurant-rewards-uses.html','key-rewards-marketplace.html','restaurant-rewards-share.html','restaurant-rewards-share-gold.html','restaurant-rewards-share-story.html','restaurant-rewards-share-kt.html','sign-agreement.html','outreach.html','johnny-macs-demo/index.html','johnny-macs-demo/wallet.html','johnny-macs-demo/app.html','johnny-macs-demo/cards.html','thin-blue-702-demo/index.html']:
     if os.path.exists(_p) and 'noindex' not in read(_p): issues.append((_p,'theme drift: private page is missing noindex'))
-HARD=('theme drift','service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
+# ---- TRUST CHECK: only approved outside hosts, and nothing from a blocked host (Shane, 2026-11-27) ----
+import fnmatch as _fn
+_REPO=os.path.abspath('../..')
+def _hostlist(path):
+    out=[]
+    try:
+        for _l in open(path,encoding='utf-8'):
+            _l=_l.split('#',1)[0].strip()
+            if _l: out.append(_l.lower())
+    except OSError: pass
+    return out
+_TRUST=_hostlist(os.path.join(_REPO,'.github/site-check/trusted-hosts.txt'))
+_BLOCK=_hostlist(os.path.join(_REPO,'.github/site-check/blocked-hosts.txt'))
+def _trusted(h):
+    h=h.lower()
+    return any(_fn.fnmatch(h,pat) for pat in _TRUST)
+_Q="[\"']?"
+_URLRX=re.compile(r'(?:<script[^>]+src\s*=|<iframe[^>]+src\s*=|<embed[^>]+src\s*=|<object[^>]+data\s*=|<link[^>]+href\s*=|@import\s+url\(|importScripts\(|\bimport\(|\bfetch\(|\.src\s*=)\s*'+_Q+r'(https?://[A-Za-z0-9.-]+)',re.I)
+_LINKREL=re.compile(r'<link[^>]*rel=["\'](?:stylesheet|preload|modulepreload|prefetch|preconnect|dns-prefetch)',re.I)
+def _check_text(name,_t,is_page):
+    for _x in _URLRX.finditer(_t):
+        _host=re.sub(r'^https?://','',_x.group(1)).lower()
+        if _t[_x.start():_x.start()+5].lower()=='<link' and not _LINKREL.match(_t[_x.start():_x.start()+300]): continue
+        if not _trusted(_host): issues.append((name,'untrusted host loaded by '+('the page' if is_page else 'a script')+': '+_host))
+for _p in pages:
+    _t=read(_p)
+    _m=re.search(r'http-equiv="Content-Security-Policy" content="([^"]*)"',_t)
+    if _m:
+        for _tok in re.findall(r'(?:https?|wss?)://([A-Za-z0-9.*-]+)',_m.group(1)):
+            if not _trusted(_tok): issues.append((_p,'untrusted host in the content security policy: '+_tok))
+    _check_text(_p,_t,True)
+for _d,_,_fs in os.walk('.'):
+    for _f in _fs:
+        if _f.endswith(('.js','.css')) and 'node_modules' not in _d:
+            _check_text(os.path.join(_d,_f)[2:],read(os.path.join(_d,_f)),False)
+for _base in ['.',os.path.join(_REPO,'.github/db-task')]:
+    for _d,_,_fs in os.walk(_base):
+        if 'node_modules' in _d or '/.git' in _d: continue
+        for _f in _fs:
+            if _f.endswith(('.html','.js','.css','.json','.sh','.py','.txt','.xml','.webmanifest')):
+                try: _t=open(os.path.join(_d,_f),encoding='utf-8',errors='ignore').read().lower()
+                except OSError: continue
+                for _b in _BLOCK:
+                    if _b in _t: issues.append((os.path.join(_d,_f),'untrusted host BLOCKED by Shane: '+_b))
+for _i in issues:
+    if _i[1].startswith('untrusted host'): print(_i)
+HARD=('untrusted host','theme drift','service count','broken link','missing anchor','no title','no meta description','no canonical','EMAIL on page','price-ish','img without alt','sitemap URL missing')
 hard=[i for i in issues if i[1].startswith(HARD)]
 print('HARD problems:',len(hard))
 sys.exit(1 if hard else 0)
