@@ -383,19 +383,26 @@
   .demo-strip a.btn-primary{color:#0f171e;text-decoration:none;}
 
   /* ---- Key Technologies Method ---- */
-  .method-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
-  @media (max-width:900px){.method-row{grid-template-columns:repeat(3,1fr);}}
-  @media (max-width:560px){.method-row{grid-template-columns:1fr 1fr;}}
-  .method-step{
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:18px 16px;text-align:left;
-    border-top:3px solid var(--accent, var(--key-light));
+  /* a numbered flow: on phones and tablets the steps stack top to bottom joined by a line with arrowheads; on wide screens they run left to right joined by arrows */
+  .method-row{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:0;}
+  .method-step{position:relative;display:flex;gap:16px;align-items:flex-start;padding:0 0 26px;margin:0;}
+  .method-step:last-child{padding-bottom:0;}
+  .method-step .num{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:19px;font-weight:900;line-height:1;color:#0f171e;background:var(--accent,var(--key-light));position:relative;z-index:1;box-shadow:0 0 0 4px var(--bg);}
+  .method-step::before{content:"";position:absolute;left:20px;top:44px;bottom:6px;width:2px;background:linear-gradient(var(--accent,var(--key-light)),var(--line));}
+  .method-step::after{content:"";position:absolute;left:14px;bottom:0;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--line);}
+  .method-step:last-child::before,.method-step:last-child::after{display:none;}
+  .method-step .mbody{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent,var(--key-light));border-radius:14px;padding:14px 16px;text-align:left;}
+  .method-step h3{margin:0;font-size:17px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--accent,var(--key-light));}
+  .method-step p{margin:6px 0 0;font-size:15px;}
+  @media (min-width:901px){
+    .method-row{grid-template-columns:repeat(6,1fr);gap:18px;}
+    .method-step{flex-direction:column;gap:12px;padding:0;}
+    .method-step::before{left:50px;right:-18px;top:20px;bottom:auto;width:auto;height:2px;background:linear-gradient(90deg,var(--accent,var(--key-light)),var(--line));}
+    .method-step::after{left:auto;right:-20px;top:13px;bottom:auto;border-top:7px solid transparent;border-bottom:7px solid transparent;border-right:0;border-left:9px solid var(--line);}
+    .method-step .mbody{border-left:1px solid var(--line);border-top:4px solid var(--accent,var(--key-light));height:100%;}
+    .method-step .mbody{padding:14px;}
+    .method-step p{font-size:14px;}
   }
-  .method-step .letter{
-    font-size:13px;font-weight:800;color:var(--accent, var(--key-light));letter-spacing:.08em;
-  }
-  .method-step h3{margin-top:6px;font-size:16px;}
-  .method-step p{margin-top:6px;font-size:14px;}
 
   /* ---- about ---- */
   .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
@@ -797,38 +804,14 @@
       <h2>The Key Technologies Method</h2>
       <p>A straightforward process for figuring out where AI actually helps — and proving it before scaling it.</p>
     </div>
-    <div class="method-row">
-      <div class="method-step" style="--accent:#00a8e1;">
-        <span class="letter">MAP</span>
-        <h3>Understand</h3>
-        <p>Understand the business as it actually runs today.</p>
-      </div>
-      <div class="method-step" style="--accent:#5eead4;">
-        <span class="letter">FIND</span>
-        <h3>Identify</h3>
-        <p>Identify where AI or automation could realistically help.</p>
-      </div>
-      <div class="method-step" style="--accent:#9fd6f2;">
-        <span class="letter">VALUE</span>
-        <h3>Prioritize</h3>
-        <p>Prioritize the highest-value opportunities first.</p>
-      </div>
-      <div class="method-step" style="--accent:#7fb6ff;">
-        <span class="letter">BUILD</span>
-        <h3>Create</h3>
-        <p>Create the system around how the business works.</p>
-      </div>
-      <div class="method-step" style="--accent:#c084fc;">
-        <span class="letter">PROVE</span>
-        <h3>Measure</h3>
-        <p>Measure results before scaling further.</p>
-      </div>
-      <div class="method-step" style="--accent:#4ade80;">
-        <span class="letter">EVOLVE</span>
-        <h3>Improve</h3>
-        <p>Continue improving as the business changes.</p>
-      </div>
-    </div>
+    <ol class="method-row" aria-label="The six steps, in order">
+      <li class="method-step" style="--accent:#00a8e1;"><span class="num" aria-hidden="true">1</span><div class="mbody"><h3>Map</h3><p>Understand the business as it actually runs today.</p></div></li>
+      <li class="method-step" style="--accent:#5eead4;"><span class="num" aria-hidden="true">2</span><div class="mbody"><h3>Find</h3><p>Identify where AI or automation could realistically help.</p></div></li>
+      <li class="method-step" style="--accent:#9fd6f2;"><span class="num" aria-hidden="true">3</span><div class="mbody"><h3>Value</h3><p>Prioritize the highest-value opportunities first.</p></div></li>
+      <li class="method-step" style="--accent:#7fb6ff;"><span class="num" aria-hidden="true">4</span><div class="mbody"><h3>Build</h3><p>Create the system around how the business works.</p></div></li>
+      <li class="method-step" style="--accent:#c084fc;"><span class="num" aria-hidden="true">5</span><div class="mbody"><h3>Prove</h3><p>Measure results before scaling further.</p></div></li>
+      <li class="method-step" style="--accent:#4ade80;"><span class="num" aria-hidden="true">6</span><div class="mbody"><h3>Evolve</h3><p>Continue improving as the business changes.</p></div></li>
+    </ol>
   </section>
 
   <!-- ============ ABOUT SHANE ============ -->
