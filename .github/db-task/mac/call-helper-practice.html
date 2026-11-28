@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Call helper (practice)</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--ink:#0b1b4d;--mut:#33456b;--line:#c9d4e8;--btn:#0b5cad;--btnink:#fff;--gold:#fff6dc;--goldline:#b98a10;--stop:#fde8e6;--stopline:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1118;--card:#16202e;--ink:#eef3fb;--mut:#b9c6dc;--line:#33445f;--btn:#35b6ee;--btnink:#04121f;--gold:#3a3524;--goldline:#e0b24a;--stop:#4a2220;--stopline:#ff8a80}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}h1{font-size:24px;margin:6px 0 10px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 14px}
+.warn{border-color:var(--goldline);background:var(--gold)}button,select,input{font:inherit;color:inherit}
+button{min-height:48px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);cursor:pointer}button.p{background:var(--btn);color:var(--btnink);border-color:var(--btn);font-weight:700}
+button[aria-pressed=true]{outline:3px solid var(--btn)}button:disabled{opacity:1;color:var(--mut);cursor:not-allowed}
+select,input[type=text]{width:100%;min-height:48px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 150px}label{display:block;font-weight:700;margin:0 0 4px}.mut{color:var(--mut);font-size:15px}
+#log{min-height:120px;max-height:260px;overflow:auto;white-space:pre-wrap;font-size:16px}#sug{border:2px solid var(--goldline);background:var(--gold);border-radius:14px;padding:16px}#sug.stop{border-color:var(--stopline);background:var(--stop)}
+#say{font-size:24px;line-height:1.45;margin:6px 0}.chk{display:flex;gap:10px;align-items:flex-start}.chk input{width:24px;height:24px;margin-top:3px}
+</style></head><body><main>
+<h1>Call helper (practice)</h1>
+<div class="card warn" role="note"><b>Practice only.</b> Do not use this with real customers or real personal information. Your browser's speech feature may send the audio to its maker (for Chrome, Google) to turn it into words. Nothing is saved by this tool. A person, not this helper, speaks to the customer.</div>
+<div class="card"><label class="chk" for="ok"><input type="checkbox" id="ok"><span>Everyone in this practice call knows an AI helper is listening and agrees. I can turn it off at any moment.</span></label></div>
+<div class="card"><div class="row"><div><label for="type">Kind of call</label><select id="type"><option value="sales">Sales call (free review)</option><option value="final">Final expense insurance (licensed agent)</option><option value="life">Life insurance (licensed agent)</option></select></div>
+<div><label>Who is speaking?</label><div class="row"><button type="button" id="spP" class="p" aria-pressed="true">The other person</button><button type="button" id="spA" aria-pressed="false">Me, the agent</button></div></div></div>
+<p style="margin:12px 0 0" class="row"><button type="button" class="p" id="mic" disabled>Start listening</button><button type="button" id="now" disabled>Suggest now</button><button type="button" id="clr">Clear everything</button></p>
+<p class="mut" id="status" role="status" aria-live="polite" style="margin:8px 0 0">Tick the box above to begin.</p></div>
+<div class="card"><label for="typed">Or type what was said</label><div class="row"><input type="text" id="typed" autocomplete="off" placeholder="for example: I already have a policy through work"><button type="button" id="add" disabled>Add</button></div></div>
+<div class="card" id="sug" aria-live="polite" hidden><span class="mut" id="stage"></span><div id="say"></div><div class="mut"><b>Why:</b> <span id="why"></span><br><b>Do not:</b> <span id="avoid"></span></div></div>
+<div class="card"><h2 style="font-size:18px;margin:0 0 6px">What was heard</h2><div id="log" role="log" aria-live="off" tabindex="0"></div></div>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},lines=[],speaker='P',rec=null,listening=false,timer=null,busy=false,SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+var STOP=/(stop calling|do not call|don'?t call|take me off|remove (me|my number)|leave me alone|harass)/i;
+function paintLog(){$('log').textContent=lines.map(function(l){return (l.s==='P'?'Other person: ':'Agent: ')+l.t}).join('\n');$('log').scrollTop=1e9}
+function show(s){var b=$('sug');b.hidden=false;b.className=s.stop?'card stop':'card';b.id='sug';$('stage').textContent=s.stop?'STOP: end the call':'Next, stage: '+s.stage;$('say').textContent='“'+s.say+'”';$('why').textContent=s.why||'';$('avoid').textContent=s.avoid||''}
+function status(t){$('status').textContent=t}
+function setSpeaker(s){speaker=s;$('spP').setAttribute('aria-pressed',s==='P'?'true':'false');$('spA').setAttribute('aria-pressed',s==='A'?'true':'false')}
+function add(t,s){t=String(t||'').trim();if(!t)return;lines.push({s:s,t:t.slice(0,500)});if(lines.length>40)lines.shift();paintLog();
+ if(s==='P'){if(STOP.test(t)){show({stop:true,stage:'stop',say:'I am sorry to have bothered you. I will take your number off our list now. Take care.',why:'They asked you to stop. That is the end of the call.',avoid:'Do not ask anything else. Record the do-not-call request.'});return}
+  clearTimeout(timer);timer=setTimeout(ask,900)}}
+function ask(){if(busy||!lines.length)return;busy=true;status('Thinking...');
+ var tr=lines.map(function(l){return l.s+': '+l.t}).join('\n').slice(-3500);
+ fetch('/suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:$('type').value,transcript:tr})}).then(function(r){return r.json()}).then(function(j){busy=false;
+  if(j&&j.ok&&j.suggestion){show(j.suggestion);status(listening?'Listening...':'Ready.')}else status((j&&j.error)||'No suggestion. Keep going with the script.')}).catch(function(){busy=false;status('Could not reach the helper. Keep going with the script.')})}
+function enable(on){['mic','now','add'].forEach(function(i){$(i).disabled=!on});if(!on&&listening)stop();status(on?'Ready. Start listening, or type what was said.':'Tick the box above to begin.')}
+function start(){if(!SR){status('This browser has no speech feature. Use Chrome, or type what was said below.');return}
+ rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang='en-US';
+ rec.onresult=function(e){var interim='';for(var i=e.resultIndex;i<e.results.length;i++){var r=e.results[i];if(r.isFinal)add(r[0].transcript,speaker);else interim+=r[0].transcript}if(interim)status('Hearing: '+interim.slice(-80))};
+ rec.onerror=function(e){status('Microphone problem: '+(e&&e.error||'unknown')+'. You can type instead.')};
+ rec.onend=function(){if(listening){try{rec.start()}catch(x){}}};
+ try{rec.start();listening=true;$('mic').textContent='Stop listening';status('Listening...')}catch(x){status('Could not start the microphone.')}}
+function stop(){listening=false;try{rec&&rec.stop()}catch(x){}$('mic').textContent='Start listening';status('Stopped.')}
+$('ok').onchange=function(){enable(this.checked)};
+$('mic').onclick=function(){listening?stop():start()};
+$('spP').onclick=function(){setSpeaker('P')};$('spA').onclick=function(){setSpeaker('A')};
+$('now').onclick=function(){clearTimeout(timer);ask()};
+$('add').onclick=function(){add($('typed').value,speaker);$('typed').value=''};
+$('typed').onkeydown=function(e){if(e.key==='Enter'&&!$('add').disabled){e.preventDefault();$('add').click()}};
+$('clr').onclick=function(){lines=[];paintLog();$('sug').hidden=true;stop();status('Cleared. Nothing was saved.')};
+window.addEventListener('beforeunload',function(){lines=[]});
+})();
+</script></body></html>
