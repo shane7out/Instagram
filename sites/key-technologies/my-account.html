@@ -4,7 +4,7 @@
 <meta charset="utf-8"><!--KTSEC1--><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://lvr-data-a60c1-default-rtdb.firebaseio.com https://ipwho.is https://ipapi.co https://formspree.io https://formsubmit.co https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.allorigins.win https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://www.google.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io"><meta name="referrer" content="strict-origin-when-cross-origin"><!--/KTSEC1-->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Key Rewards — Las Vegas Restaurants</title>
-<meta name="description" content="Your Key Rewards account: your balance, free spin, offers and activity at participating Las Vegas restaurants.">
+<meta name="description" content="Your Key Rewards account: your balance, offers and activity at participating Las Vegas restaurants.">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="same-origin">
 <link rel="stylesheet" href="/fonts/lato.css">
@@ -250,16 +250,26 @@
   .balance-num{font-size:58px;font-weight:800;line-height:1;color:var(--key-light);text-shadow:0 0 12px rgba(0,168,225,.65),0 0 32px rgba(0,168,225,.45);}
   @media (prefers-reduced-motion:no-preference){.balance-num{animation:balGlow 3.2s ease-in-out infinite;}}
   @keyframes balGlow{0%,100%{text-shadow:0 0 10px rgba(0,168,225,.55),0 0 26px rgba(0,168,225,.35);}50%{text-shadow:0 0 16px rgba(0,168,225,.9),0 0 42px rgba(0,168,225,.6);}}
-  /* KGOLD01 (Shane, standing rule 2026-11-26 and 2026-11-28: whenever Key Rewards points are shown they are on a GOLD CARD with the key icon, "at all times"): the balance card and the slim bar that stays on screen are gold, with the dark key beside the number */
-  .top-panel .balance-card,.balance-card{position:relative;overflow:hidden;background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);border:0;border-radius:18px;padding:18px 16px 16px 18px;margin:0 0 14px;color:#0f171e;box-shadow:0 12px 26px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(80,50,0,.35);}
-  .balance-card::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 54%);pointer-events:none;}
-  .balance-card>*{position:relative;z-index:1;}
-  .balance-main::before{content:"KeyTechnologies.si";display:block;font-weight:900;font-size:11.5px;letter-spacing:.02em;white-space:nowrap;margin-bottom:6px;color:#0f171e;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35),0 2px 3px rgba(60,35,0,.25);}
-  .balance-card .balance-name,.balance-card .balance-name b,.balance-card .balance-name span{color:#0f171e!important;font-weight:900;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35);}
-  .balance-card .balance-num{display:flex;align-items:center;gap:10px;color:#0f171e;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35);animation:none;font-size:52px;}
-  .balance-card .balance-num::before{content:"";flex:none;width:46px;height:21px;background:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgNCAxMTYgNTAiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iS2V5Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iNSIgeDI9IjAiIHkyPSI1MyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzZiNGExMiIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMmUxZjA2Ii8+PHN0b3Agb2Zmc2V0PSIuNiIgc3RvcC1jb2xvcj0iIzRhMzMxMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzI0MTcwMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGZpbGw9InVybCgjZykiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTI0IDkuNUExNy41IDE3LjUgMCAxIDAgMjQgNDQuNUExNy41IDE3LjUgMCAxIDAgMjQgOS41Wk0yNCAyMS41QTUuNSA1LjUgMCAxIDEgMjQgMzIuNUE1LjUgNS41IDAgMSAxIDI0IDIxLjVaIi8+PHBhdGggZD0iTTM2IDIySDEwOEwxMTUgMjdMMTA4IDMySDEwMFY0MUw5NSA0Nkw5MCA0MVYzMkg4NFYzOUw3OSA0NEw3NCAzOVYzMkgzNloiLz48L2c+PC9zdmc+Cg==") center/contain no-repeat;}
-  .balance-card .balance-label{color:#0f171e;font-weight:900;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-top:1px solid rgba(90,55,0,.4);box-shadow:0 -1px 0 rgba(255,255,255,.6);margin-top:8px;padding-top:6px;}
-  .balance-card .reward-tile{background:#0f171e;border-color:rgba(255,211,92,.55);}
+  /* KGOLD02 (Shane, 2026-11-28): one gold Rewards card everywhere: credit-card proportions, number bottom-right, "Rewards points balance" bottom-left, chip and card number; the slim bar that follows the page is gold too. The free spin is switched off for now. */
+  .kgw{width:100%;max-width:340px;margin:0 auto 14px;container-type:inline-size}
+  .kg{position:relative;width:100%;aspect-ratio:1.586/1;border-radius:4.2cqw;padding:5.2cqw 5.6cqw 4.6cqw;color:#0f171e;text-align:left;overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);box-shadow:0 12px 26px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 6px rgba(80,50,0,.35)}
+  .kg::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 42%,transparent 54%);pointer-events:none}
+  .kg>*{position:relative;z-index:1}
+  .kg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:3cqw}
+  .kg-brand{font-weight:900;font-size:5.4cqw;letter-spacing:.03em;line-height:1.1;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35),0 2px 3px rgba(60,35,0,.25)}
+  .kg-sub{font-weight:900;font-size:2.7cqw;letter-spacing:.22em;text-transform:uppercase;margin-top:1.2cqw}
+  .kg-badge{flex:none;width:11.5cqw;height:11.5cqw;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a3a52,#0f1a2b);border:.6cqw solid #d9a93a;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .kg-badge img{width:7.6cqw;height:auto;display:block}
+  .kg-chip{margin-top:3.4cqw;width:12.5cqw;height:9.4cqw;border-radius:1.8cqw;position:relative;background:linear-gradient(135deg,#e9d38a,#a97d1c);border:1px solid rgba(80,50,0,.45);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+  .kg-chip::before,.kg-chip::after{content:"";position:absolute;background:rgba(80,50,0,.45)}.kg-chip::before{left:0;right:0;top:50%;height:1px}.kg-chip::after{top:0;bottom:0;left:50%;width:1px}
+  .kg-no{margin-top:auto;font-weight:700;font-size:5.9cqw;letter-spacing:.12em;font-variant-numeric:tabular-nums;white-space:nowrap;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35)}
+  .kg-name{margin-top:1.4cqw;font-weight:900;font-size:3.6cqw;letter-spacing:.1em;text-transform:uppercase;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35)}
+  .kg-bal{display:flex;justify-content:space-between;align-items:flex-end;gap:3cqw;margin-top:2.4cqw;padding-top:2cqw;border-top:1px solid rgba(90,55,0,.4);box-shadow:0 -1px 0 rgba(255,255,255,.6)}
+  .kg-bal small{font-size:2.9cqw;letter-spacing:.14em;text-transform:uppercase;font-weight:900;line-height:1.25;padding-bottom:.8cqw;max-width:42%}
+  .kg-bal b{display:flex;align-items:center;gap:2.4cqw;font-size:11cqw;line-height:1;font-weight:900;text-shadow:-1px -1px 0 rgba(255,255,255,.75),1px 1px 0 rgba(60,35,0,.35)}
+  .kg-k{width:11cqw;height:auto;flex-shrink:0;display:block}
+  .kgn.pulse{display:inline-block;animation:kgpulse .8s ease}@keyframes kgpulse{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+  @media (prefers-reduced-motion:reduce){.kgn.pulse{animation:none}}
   .mini-bal{background:linear-gradient(135deg,#f7dc8a 0%,#d9a93a 28%,#f3d37a 48%,#b9851f 72%,#e6bf5a 100%);border-bottom:0;box-shadow:0 6px 16px rgba(0,0,0,.45);}
   .mini-bal span{display:inline-flex;align-items:center;gap:8px;color:#0f171e;text-shadow:none;}
   .mini-bal span::before{content:"";width:34px;height:15px;background:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgNCAxMTYgNTAiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iS2V5Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iNSIgeDI9IjAiIHkyPSI1MyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzZiNGExMiIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMmUxZjA2Ii8+PHN0b3Agb2Zmc2V0PSIuNiIgc3RvcC1jb2xvcj0iIzRhMzMxMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzI0MTcwMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGZpbGw9InVybCgjZykiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTI0IDkuNUExNy41IDE3LjUgMCAxIDAgMjQgNDQuNUExNy41IDE3LjUgMCAxIDAgMjQgOS41Wk0yNCAyMS41QTUuNSA1LjUgMCAxIDEgMjQgMzIuNUE1LjUgNS41IDAgMSAxIDI0IDIxLjVaIi8+PHBhdGggZD0iTTM2IDIySDEwOEwxMTUgMjdMMTA4IDMySDEwMFY0MUw5NSA0Nkw5MCA0MVYzMkg4NFYzOUw3OSA0NEw3NCAzOVYzMkgzNloiLz48L2c+PC9zdmc+Cg==") center/contain no-repeat;}
@@ -493,7 +503,7 @@
     </div>
   </div>
   <div class="own-foot" id="ownFoot"><button type="button" id="ownEditBtn">✏️ Edit restaurants</button><button type="button" id="ownRoomBtn">🔑 Owner room</button></div>
-  <div class="footer-note" id="builtBy"><a href="rewards-terms.html" data-pterms>Program Terms</a> · <a href="rewards-privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="spin-terms.html" id="termsFoot">Spin Terms</a> · Key Rewards is run by Las Vegas Restaurants, <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram.<br>Own a restaurant and want to be part of this? <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">Send us a DM</a> or <a href="join-restaurant.html">fill out the form</a>.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
+  <div class="footer-note" id="builtBy"><a href="rewards-terms.html" data-pterms>Program Terms</a> · <a href="rewards-privacy.html" target="_blank" rel="noopener">Privacy</a><span id="spinFootWrap"> · <a href="spin-terms.html" id="termsFoot">Spin Terms</a></span> · Key Rewards is run by Las Vegas Restaurants, <a href="https://instagram.com/lasvegas_restaurants" target="_blank" rel="noopener">@LasVegas_Restaurants</a> on Instagram.<br>Own a restaurant and want to be part of this? <a href="https://ig.me/m/lasvegas_restaurants" target="_blank" rel="noopener">Send us a DM</a> or <a href="join-restaurant.html">fill out the form</a>.<br>Built by <a href="index.html">Key Technologies.si</a> — we build programs like this for businesses. <a href="index.html#contact">Want one?</a></div>
 </main>
 
 <div id="redeemOverlay">
@@ -527,7 +537,7 @@
   var contentEl = document.getElementById('content');
   (function () {
     var row = document.getElementById('liveDemoRow'); if (!row) return; if (!DEMO) { row.remove(); return; }
-    row.innerHTML = DEMO ? '<button type="button" class="live-demo" id="demoHelpBtn"><span class="dot" aria-hidden="true"></span>How the demo works</button><a class="live-demo alt" href="rewards.html" style="margin-left:8px;">Join for real \u203a</a><div id="demoWatchRes" role="status" style="flex-basis:100%;text-align:right;"></div>' : '';
+    row.innerHTML = DEMO ? (SPIN_ON ? '<button type="button" class="live-demo" id="demoHelpBtn"><span class="dot" aria-hidden="true"></span>How the demo works</button>' : '') + '<a class="live-demo alt" href="rewards.html" style="margin-left:8px;">Join for real \u203a</a><div id="demoWatchRes" role="status" style="flex-basis:100%;text-align:right;"></div>' : '';
   })();
 
   // A token in the URL (e.g. a link texted to a new device) always wins and
@@ -543,6 +553,11 @@
     try { token = (localStorage.getItem(TOKEN_KEY) || '').trim(); } catch (e) {}
   }
 
+  function kgCardHtml(w) {
+    var name = w.name || w.email || 'Key Rewards member', seed = w.id || w.phone || w.email || name;
+    return '<div class="kgw"><div class="kg" role="group" aria-label="Key Rewards gold card"><div class="kg-top"><div><div class="kg-brand">KeyTechnologies.si</div><div class="kg-sub">Rewards card</div></div><span class="kg-badge"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjAgMTIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkdvbGQga2V5Ij4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0ia2IiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iOCIgeTE9IjE0IiB4Mj0iMjM2IiB5Mj0iMTA2Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRkYzQUUiLz48c3RvcCBvZmZzZXQ9Ii4xMyIgc3RvcC1jb2xvcj0iI0Y5RDc1QyIvPjxzdG9wIG9mZnNldD0iLjI4IiBzdG9wLWNvbG9yPSIjRThCMDJDIi8+PHN0b3Agb2Zmc2V0PSIuNDIiIHN0b3AtY29sb3I9IiNCRTgyMTgiLz48c3RvcCBvZmZzZXQ9Ii41MyIgc3RvcC1jb2xvcj0iI0VGQzQ0MyIvPjxzdG9wIG9mZnNldD0iLjY4IiBzdG9wLWNvbG9yPSIjRkJENjZDIi8+PHN0b3Agb2Zmc2V0PSIuODIiIHN0b3AtY29sb3I9IiNERkE1MjMiLz48c3RvcCBvZmZzZXQ9Ii45MyIgc3RvcC1jb2xvcj0iI0JGODIwRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0EwNjYwOCIvPjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0ia3MiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCIgeTE9IjE4IiB4Mj0iMCIgeTI9IjEwMiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4zIi8+PHN0b3Agb2Zmc2V0PSIuMzUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iLjY1IiBzdG9wLWNvbG9yPSIjNGEyYTAwIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzZjIzMDAiIHN0b3Atb3BhY2l0eT0iLjQiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9Imt2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjgiIHkxPSIxNCIgeDI9IjIzNiIgeTI9IjEwNiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRkZGQkUwIiBzdG9wLW9wYWNpdHk9Ii44Ii8+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iI0ZGRkJFMCIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiM1YTMzMDAiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzVhMzMwMCIgc3RvcC1vcGFjaXR5PSIuMzgiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9ImtlIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHkxPSIxOCIgeDI9IjAiIHkyPSIxMDIiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRkJENiIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiNEREE0MkEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2QjQwMDUiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9ImtoIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHkxPSI0MCIgeDI9IjAiIHkyPSI4MiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNWYzODAzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZFOUEwIi8+PC9saW5lYXJHcmFkaWVudD4KPGNsaXBQYXRoIGlkPSJrYyI+PHBhdGggZD0iTTMwIDIwSDcwQTIyIDIyIDAgMCAxIDkyIDQyVjQ2QzkyIDUwIDk4IDUyIDEwOCA1MkgyMjhBOCA4IDAgMCAxIDIzNiA2MEE4IDggMCAwIDEgMjI4IDY4SDIxNlY4OEE2IDYgMCAwIDEgMjEwIDk0SDIwMkE2IDYgMCAwIDEgMTk2IDg4VjY4SDE4NFY4MkE2IDYgMCAwIDEgMTc4IDg4SDE3MEE2IDYgMCAwIDEgMTY0IDgyVjY4SDEwOEM5OCA2OCA5MiA3MCA5MiA3NFY3OEEyMiAyMiAwIDAgMSA3MCAxMDBIMzBBMjIgMjIgMCAwIDEgOCA3OFY0MkEyMiAyMiAwIDAgMSAzMCAyMFoiLz48L2NsaXBQYXRoPgo8ZmlsdGVyIGlkPSJrYmwiIHg9Ii01JSIgeT0iLTMwJSIgd2lkdGg9IjExMCUiIGhlaWdodD0iMTYwJSI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iLjYiLz48L2ZpbHRlcj4KPC9kZWZzPgo8cGF0aCBmaWxsPSJ1cmwoI2tiKSIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMzAgMjBINzBBMjIgMjIgMCAwIDEgOTIgNDJWNDZDOTIgNTAgOTggNTIgMTA4IDUySDIyOEE4IDggMCAwIDEgMjM2IDYwQTggOCAwIDAgMSAyMjggNjhIMjE2Vjg4QTYgNiAwIDAgMSAyMTAgOTRIMjAyQTYgNiAwIDAgMSAxOTYgODhWNjhIMTg0VjgyQTYgNiAwIDAgMSAxNzggODhIMTcwQTYgNiAwIDAgMSAxNjQgODJWNjhIMTA4Qzk4IDY4IDkyIDcwIDkyIDc0Vjc4QTIyIDIyIDAgMCAxIDcwIDEwMEgzMEEyMiAyMiAwIDAgMSA4IDc4VjQyQTIyIDIyIDAgMCAxIDMwIDIwWiBNNDAgNDZhOCA4IDAgMCAwLTggOHYxMmE4IDggMCAwIDAgOCA4aDIwYTggOCAwIDAgMCA4LThWNTRhOCA4IDAgMCAwLTgtOFoiLz4KPHBhdGggZmlsbD0idXJsKCNrcykiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTMwIDIwSDcwQTIyIDIyIDAgMCAxIDkyIDQyVjQ2QzkyIDUwIDk4IDUyIDEwOCA1MkgyMjhBOCA4IDAgMCAxIDIzNiA2MEE4IDggMCAwIDEgMjI4IDY4SDIxNlY4OEE2IDYgMCAwIDEgMjEwIDk0SDIwMkE2IDYgMCAwIDEgMTk2IDg4VjY4SDE4NFY4MkE2IDYgMCAwIDEgMTc4IDg4SDE3MEE2IDYgMCAwIDEgMTY0IDgyVjY4SDEwOEM5OCA2OCA5MiA3MCA5MiA3NFY3OEEyMiAyMiAwIDAgMSA3MCAxMDBIMzBBMjIgMjIgMCAwIDEgOCA3OFY0MkEyMiAyMiAwIDAgMSAzMCAyMFogTTQwIDQ2YTggOCAwIDAgMC04IDh2MTJhOCA4IDAgMCAwIDggOGgyMGE4IDggMCAwIDAgOC04VjU0YTggOCAwIDAgMC04LThaIi8+CjxnIGNsaXAtcGF0aD0idXJsKCNrYykiPjxwYXRoIGQ9Ik0zMCAyMEg3MEEyMiAyMiAwIDAgMSA5MiA0MlY0NkM5MiA1MCA5OCA1MiAxMDggNTJIMjI4QTggOCAwIDAgMSAyMzYgNjBBOCA4IDAgMCAxIDIyOCA2OEgyMTZWODhBNiA2IDAgMCAxIDIxMCA5NEgyMDJBNiA2IDAgMCAxIDE5NiA4OFY2OEgxODRWODJBNiA2IDAgMCAxIDE3OCA4OEgxNzBBNiA2IDAgMCAxIDE2NCA4MlY2OEgxMDhDOTggNjggOTIgNzAgOTIgNzRWNzhBMjIgMjIgMCAwIDEgNzAgMTAwSDMwQTIyIDIyIDAgMCAxIDggNzhWNDJBMjIgMjIgMCAwIDEgMzAgMjBaIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgja3YpIiBzdHJva2Utd2lkdGg9IjQuNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTggMjlDMTggMjUgMjEgMjQgMzAgMjRINjZNMTE0IDU3SDIyNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWx0ZXI9InVybCgja2JsKSIvPjwvZz4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2tlKSIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0zMCAyMEg3MEEyMiAyMiAwIDAgMSA5MiA0MlY0NkM5MiA1MCA5OCA1MiAxMDggNTJIMjI4QTggOCAwIDAgMSAyMzYgNjBBOCA4IDAgMCAxIDIyOCA2OEgyMTZWODhBNiA2IDAgMCAxIDIxMCA5NEgyMDJBNiA2IDAgMCAxIDE5NiA4OFY2OEgxODRWODJBNiA2IDAgMCAxIDE3OCA4OEgxNzBBNiA2IDAgMCAxIDE2NCA4MlY2OEgxMDhDOTggNjggOTIgNzAgOTIgNzRWNzhBMjIgMjIgMCAwIDEgNzAgMTAwSDMwQTIyIDIyIDAgMCAxIDggNzhWNDJBMjIgMjIgMCAwIDEgMzAgMjBaIi8+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNraCkiIHN0cm9rZS13aWR0aD0iMS44IiBkPSJNNDAgNDZhOCA4IDAgMCAwLTggOHYxMmE4IDggMCAwIDAgOCA4aDIwYTggOCAwIDAgMCA4LThWNTRhOCA4IDAgMCAwLTgtOFoiLz4KPC9zdmc+" alt=""></span></div><div class="kg-chip" aria-hidden="true"></div><div class="kg-no">' + kgNo(seed) + '</div><div class="kg-name">' + escapeHtml(name) + '</div><div class="kg-bal"><small>Rewards points balance</small><b><img class="kg-k" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgNCAxMTYgNTAiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iS2V5Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iNSIgeDI9IjAiIHkyPSI1MyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzZiNGExMiIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMmUxZjA2Ii8+PHN0b3Agb2Zmc2V0PSIuNiIgc3RvcC1jb2xvcj0iIzRhMzMxMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzI0MTcwMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGZpbGw9InVybCgjZykiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTI0IDkuNUExNy41IDE3LjUgMCAxIDAgMjQgNDQuNUExNy41IDE3LjUgMCAxIDAgMjQgOS41Wk0yNCAyMS41QTUuNSA1LjUgMCAxIDEgMjQgMzIuNUE1LjUgNS41IDAgMSAxIDI0IDIxLjVaIi8+PHBhdGggZD0iTTM2IDIySDEwOEwxMTUgMjdMMTA4IDMySDEwMFY0MUw5NSA0Nkw5MCA0MVYzMkg4NFYzOUw3OSA0NEw3NCAzOVYzMkgzNloiLz48L2c+PC9zdmc+Cg==" alt="Key"><span class="kgn" id="balanceNum">' + (w.points || 0) + '</span></b></div></div></div>';
+  }
+  function kgNo(seed){try{var s=String(seed==null?'':seed),h=0,i;for(i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;var idx=BigInt(h),M=10000000000n,n=(idx*6123456789n+2718281828n)%M,dg=('9'+String(n).padStart(10,'0')+'0'+'5683').split('').map(Number),sum=0,k=0,x=0;for(i=dg.length-1;i>=0;i--,k++){if(i===11)continue;var v=dg[i];if(k%2===1){v*=2;if(v>9)v-=9}sum+=v}for(;x<10;x++){var f=x*2>9?x*2-9:x*2;if((sum+f)%10===0)break}dg[11]=(x+1)%10;return dg.join('').replace(/(\d{4})(?=\d)/g,'$1 ')}catch(e){return '9000 0000 0000 5683'}}
   function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -647,7 +662,7 @@
       ['Limits', 'One of each free offer per person. You may give your free offer to one friend. You must be 18 or older, and the restaurant may ask to see a valid ID.'],
       ['Fair play', (giftOn() ? 'Rewards can be used for free offers at participating restaurants, or for the gift cards we list. ' : 'Rewards can only be used for free offers at participating restaurants. ') + 'They cannot be exchanged for cash, cannot be sold, and are never refunded once used. A code expires on the date shown. Key Rewards is a free promotion: we may pause, change or end it, and adjust or take back rewards, at any time at our sole discretion, with nothing owed (see the Program Terms).']
     ];
-    rules = rules.filter(Boolean);
+    rules = rules.filter(Boolean).filter(function (r) { return SPIN_ON || r[0] !== 'Spin for free rewards'; });
     return '<ol class="steps">' + rules.map(function (x, i) {
       return '<li><span class="n">' + (i + 1) + '</span><div><b>' + escapeHtml(x[0]) + '</b><p>' + escapeHtml(x[1]) + '</p></div></li>';
     }).join('') + '</ol>' +
@@ -759,7 +774,7 @@
     removed = removed || [];
     var list = removed.length ? '<details style="width:100%;margin-top:4px;"><summary style="cursor:pointer;font-weight:800;">' + removed.length + ' removed · tap to restore</summary><div style="margin-top:8px;display:grid;gap:6px;">' + removed.map(function (n) { return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>' + escapeHtml(n) + '</span><button type="button" class="own-btn restore" data-own="restore" data-name="' + escapeHtml(n) + '">Restore</button></div>'; }).join('') + '</div></details>' : '';
     return '<div class="own-bar"><span><b>Owner mode.</b> This is exactly what customers see. Tap Remove on any restaurant you do not want. Tap the Key Technologies name at the top to open your Key Tech room.' + (removed.length ? '' : ' None removed yet.') + '</span><button type="button" id="ownDone">Done</button>' + list +
-      '<div class="own-tools"><b>Demos:</b> <button type="button" id="ownPractice">🎡 Practice spin</button> <a href="?demo=65">Full demo</a> <a href="?demo=5">5 pts</a> <a href="?demo=20">20 pts</a> <a href="?demo=40">40 pts</a> <a href="?demo=200">200 pts</a></div></div>';
+      '<div class="own-tools"><b>Demos:</b> ' + (SPIN_ON ? '<button type="button" id="ownPractice">🎡 Practice spin</button> ' : '') + '<a href="?demo=65">Full demo</a> <a href="?demo=5">5 pts</a> <a href="?demo=20">20 pts</a> <a href="?demo=40">40 pts</a> <a href="?demo=200">200 pts</a></div></div>';
   }
   // In owner mode the Key Technologies name at the top opens your Key Tech room instead of the public site.
   var KEY_ROOM_URL = 'https://lvr-data-a60c1.web.app/key-room.html';
@@ -967,9 +982,9 @@
       tagCfg().enabled ? ['tag', '📸', 'Tag us, earn ' + tagCfg().points + ' rewards', 'Post and tag @LasVegas_Restaurants', ''] : null,
       ['rules', '📜', 'How Key Rewards Work', 'The simple rules', ''],
       ['pterms', '📃', 'Program Terms', 'Our rights to pause, change or end the program', ''],
-      ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''],
+      SPIN_ON ? ['terms', '✅', 'Spin Terms', 'The rules of the free spin', ''] : null,
       ['faq', '❓', 'Questions & answers', 'Quick answers', ''],
-      ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''],
+      SPIN_ON ? ['fair', '🎡', 'Is the spin fair?', 'How the free spin works', ''] : null,
       ['contact', '💬', 'Contact us', 'Message us on Instagram', '']
     ].filter(Boolean);
     return '<div class="lr-list">' + rows.map(function (x) {
@@ -1240,6 +1255,7 @@
     if (prize) qa.push(['What is the bonus spin?', 'Every ' + cycleText(c.waitDays) + ' a wheel is ready for you. Tap the bonus clock at the top and spin it to win ' + prize + ' free rewards. The number is random and we have no control over it. You have ' + c.claimHours + ' hours to spin. After that the spin is gone and the wait starts again.']);
     qa = qa.filter(Boolean);
     qa.push(['My receipt was not approved. Why?', 'We need a clear photo that shows the restaurant, the date, the receipt number and the total. Each receipt can only be sent once. If you think we made a mistake, message us on Instagram.']);
+    if (!SPIN_ON) qa = qa.filter(function (q) { return !/spin|wheel/i.test(q[0]); });
     return '<div class="faq">' + qa.map(function (q) { return '<details><summary>' + escapeHtml(q[0]) + '</summary><p>' + escapeHtml(q[1]) + '</p></details>'; }).join('') + '</div>';
   }
   function prizesHtml() {
@@ -1512,12 +1528,7 @@
       noticeHtml() +
       welcomeHtml() +
       '<div class="top-panel">' +
-      '<div class="balance-card">' +
-        '<div class="balance-main"><div class="balance-name"><b style="color:var(--ink);font-size:16px;">' + escapeHtml(wallet.name || wallet.email || '') + '</b>' + (wallet.instagram ? '<span style="display:block;margin-top:1px;">@' + escapeHtml(String(wallet.instagram).replace(/^@/, '')) + '</span>' : '') + '</div>' +
-        '<div class="balance-num" id="balanceNum">' + (wallet.points || 0) + '</div>' +
-        '<div class="balance-label">rewards available</div></div>' +
-        '<button type="button" class="reward-tile" id="giftBtn" aria-label="Your bonus"><span class="chest-count"></span></button>' +
-      '</div>' +
+      kgCardHtml(wallet) +
       '</div>' +
       (DEMO ? '' : '<div class="see-demo-row"><a class="live-demo" href="my-account.html?demo=65"><span class="dot" aria-hidden="true"></span>See demo &#9654;</a></div>') +
       '<div class="pt-note"><b>1 reward = $1</b> toward a free offer at any participating restaurant, new ones included. Every offer is at least 15 Key Rewards.' + (welcomeCfg().enabled && welcomeCfg().when === 'signup' && welcomeCfg().amount > 0 ? ' Everyone starts with <b>' + welcomeCfg().amount + ' free rewards</b> ($' + welcomeCfg().amount + ').' : '') + ' Rewards can only be used for those offers, not for anything else or exchanged for cash.</div>' +
@@ -1778,10 +1789,14 @@
   // Until the owner sets a prize above 0 the chest only says "coming soon".
   // "1 to 10", or "up to 10" when a zero slot is on the wheel
   function prizeRange(c) { return c.prizeMin <= 0 ? 'up to ' + c.prizeMax : (c.prizeMin === c.prizeMax ? String(c.prizeMax) : c.prizeMin + (c.prizeMax - c.prizeMin === 1 ? ' or ' : '-') + c.prizeMax); }
+  // SPIN_ON (Shane, 2026-11-28: "remove the spin wheel for right now"): the free spin is switched OFF. With it off there is no bonus tile, no wheel, no spin rules, questions or terms on this screen. Set it to true to bring the spin back.
+  var SPIN_ON = false;
+  (function () { var f = document.getElementById('spinFootWrap'); if (f && !SPIN_ON) f.hidden = true; })();
   function chestCfg() {
     var raw = (appSettings && appSettings.chest) || {};
     var max = raw.prizeMax != null ? Number(raw.prizeMax) : (Number(raw.bonus) || 0);
     var min = raw.prizeMin != null ? Number(raw.prizeMin) : max;
+    if (!SPIN_ON) { max = 0; min = 0; }
     return { waitDays: Number(raw.waitDays) || 7, claimHours: Number(raw.claimHours) || 48, prizeMin: Math.max(1, Math.min(min, max)), prizeMax: max, repeat: raw.repeat === true };
   }
   function chestInfo() {
@@ -2080,7 +2095,7 @@
   // Slim balance bar that appears at the top while the big card is scrolled out of view
   var miniObs = null, balObs = null;
   function bindMini() {
-    var card = document.querySelector('.balance-card'), num = document.getElementById('balanceNum'), bar = document.getElementById('miniBal'), mn = document.getElementById('miniNum');
+    var card = document.querySelector('.kgw'), num = document.getElementById('balanceNum'), bar = document.getElementById('miniBal'), mn = document.getElementById('miniNum');
     if (!card || !num || !bar || !('IntersectionObserver' in window)) return;
     function setMini() { var r = document.querySelectorAll('.item-card.ready').length; mn.textContent = num.textContent; mn.nextSibling.textContent = ' rewards'; }
     setMini();
