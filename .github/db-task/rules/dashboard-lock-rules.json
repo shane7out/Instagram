@@ -1,0 +1,6 @@
+{
+ "$rest": {
+  ".read": "(auth != null && auth.uid == '__OWNER_UID__') || (!$rest.matches(/^(dashboard.*|company_dashboard|customrecords|staging_.*|records)$/) || $rest.matches(/^dashboard_(friend|advertisers_friend.*|cc)$/))",
+  ".write": "(newData.exists() && (!data.child('customrecords').exists() || newData.child('customrecords').exists()) && (!data.child('staging_approved').exists() || newData.child('staging_approved').exists()) && (!data.child('staging_added').exists() || newData.child('staging_added').exists()) && (!data.child('records').exists() || newData.child('records').exists())) && ((auth != null && auth.uid == '__OWNER_UID__') || (!$rest.matches(/^(dashboard.*|company_dashboard|customrecords|staging_.*|records)$/) || $rest.matches(/^dashboard_(friend|advertisers_friend.*|cc)$/)))"
+ }
+}

@@ -56,10 +56,12 @@
         .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j && j.error && /PASSWORD|EMAIL|INVALID|CREDENTIAL/i.test(j.error.message || '') ? 'That email or password is not right.' : 'Sign-in did not work. Try again.'); return j; }); });
     }).then(function (j) {
       st = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (Number(j.expiresIn) || 3600) * 1000 - 60000, uid: j.localId, keep: !!keep };
-      save(keep); note(); return st;
+      save(keep); sdk('signIn', email, pw); note(); return st;
     });
   }
-  function signOut() { st = null; lockKey = null; lockSalt = null; try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (e) {} save(); note(); }
+  // optional bridge for pages whose data goes through the Firebase live (WebSocket) SDK instead of fetch: they define window.OWNER_AUTH_SDK
+  function sdk(m, a, b) { try { var h = window.OWNER_AUTH_SDK; if (h && typeof h[m] === 'function') h[m](a, b); } catch (e) {} }
+  function signOut() { sdk('signOut'); st = null; lockKey = null; lockSalt = null; try { localStorage.removeItem(LOCK); localStorage.removeItem(TRIES); } catch (e) {} save(); note(); }
   // ---- tiny UI: a button bottom right + a sign-in box
   var btn = null, bar = null;
   function render() {

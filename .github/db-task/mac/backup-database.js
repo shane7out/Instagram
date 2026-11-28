@@ -7,6 +7,11 @@ const DB = process.env.BACKUP_DB || 'https://lvr-data-a60c1-default-rtdb.firebas
 const TOKEN_URL = process.env.BACKUP_TOKEN_URL || 'https://securetoken.googleapis.com/v1/token';
 const HOME = os.homedir(), OUTROOT = process.env.BACKUP_OUT || path.join(HOME, 'lvr-backups');
 const NODES = ['dashboard', 'dashboard_crec', 'dashboard_adv_crec', 'dashboard_exp_crec', 'dashboard_infl_crec', 'dashboard_deleted', 'dashboard_rest_stg_crec',
+  // every list the dashboard owner lock covers (added 2026-11-28): nothing gets locked that is not backed up
+  'dashboard_adv_stg_crec', 'dashboard_adv_stg_removed', 'dashboard_adv_deleted', 'dashboard_golf_crec', 'dashboard_golf_removed', 'dashboard_mdl_crec', 'dashboard_mdl_deleted',
+  'dashboard_infl_deleted', 'dashboard_advertisers', 'dashboard_customrecords', 'dashboard_igovr', 'dashboard_badig', 'company_dashboard', 'customrecords', 'staging_approved', 'staging_added', 'records',
+  // not locked, but worth a copy: credit-card tracker, friend/helper variants, private chef bookings
+  'dashboard_cc', 'dashboard_friend', 'dashboard_advertisers_friend', 'guest10_dm', 'coeditor_dm', 'coeditor_infl_dm', 'coeditor_adv_dm', 'lvr_staff_apps', 'lvr_rewards_friend', 'chef_bookings',
   'lvr_points', 'lvr_rewards', 'lvr_instagram_index', 'lvr_coupons', 'key_leads', 'key_pageviews', 'kt_crm', 'key_rewards', 'lvr_member_private', 'lvr_refcodes', '_deals'];
 (async () => {
   let idToken = '';
