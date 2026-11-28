@@ -2419,7 +2419,7 @@ var qrcode = function() {
         '<div class="note">Guests scan it with their phone camera. Each sign-up through your code earns you ' + st.per + ' reward key' + (st.per === 1 ? '' : 's') + ', and your number above goes up right away.</div></div>' +
       (st.recent.length ? '<div class="card"><div class="say">Latest sign-ups</div><div class="recent">' + st.recent.map(function(t){ return '<div><span>New sign-up</span><span>' + new Date(t).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) + '</span></div>'; }).join('') + '</div></div>' : '') +
       (joined ? '<div class="card"><div class="say">You are in the Key Rewards database</div><div class="note">Your keys will be added to your Key Rewards account using your phone number. You can stop any messages any time: <a href="lvr-optout.html" style="color:var(--light)">stop all messages</a>.</div></div>' : joinCard()) +
-      '<div class="note">Keys are added to your Key Rewards account by Las Vegas Restaurants. Guests\' details stay private; you only see the count.</div>';
+      '<div class="note">Keys are added to your Key Rewards account by Key Technologies. Guests\' details stay private; you only see the count.</div>';
     if (grew) { var kn = document.getElementById('keysBig'); if (kn) kn.className = 'kgn pulse'; chime(); }
     lastTotal = st.total;
   }

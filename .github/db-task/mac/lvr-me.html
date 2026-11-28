@@ -2408,7 +2408,7 @@ var qrcode = function() {
     try { var q = window.qrcode(0, 'M'); q.addData(link); q.make(); svg = q.createSvgTag({cellSize: 6, margin: 0, scalable: true}); } catch (e) {}
     app.innerHTML =
       '<div class="brand">' + esc(P.bizName || '') + '</div><h1>My coupon wallet</h1>' + couponCard() +
-      (k > 0 ? kgCard(P.bizName || 'Key Rewards', k, null, token) + '<div class="note" style="margin:-4px 0 14px;">Earned for signing up. Las Vegas Restaurants adds your keys to your Key Rewards account using your phone number.</div>' : '') +
+      (k > 0 ? kgCard(P.bizName || 'Key Rewards', k, null, token) + '<div class="note" style="margin:-4px 0 14px;">Earned for signing up. Key Technologies adds your keys to your Key Rewards account using your phone number.</div>' : '') +
       '<div class="card"><div class="say">Bring friends</div><div class="note">Show this QR code to a friend or send them the link. They get ' + esc(P.offer || 'the offer') + ' too' + (uk > 0 ? ', and you earn ' + uk + ' reward key' + (uk === 1 ? '' : 's') + ' each time a friend uses their coupon' : '') + '.</div>' +
         (svg ? '<div class="qr">' + svg + '</div>' : '') +
         '<div class="note"><b>' + FRIENDS + '</b> friend' + (FRIENDS === 1 ? '' : 's') + ' signed up through your QR so far.</div>' +
