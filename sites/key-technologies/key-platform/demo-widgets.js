@@ -366,6 +366,34 @@ function scriptReader(root){
    ['Offer a demo, not a pitch','I will send you a demo that looks like your kind of business, with made-up data, so you can see it without any commitment.','A yes, and their best email or number for the link.'],
    ['Book a follow-up','Can we talk for 15 minutes after you have tried it? Does {day and time} work?','A booked time.'],
    ['Close warmly','Thanks, {name}. Enjoy the demo, and I will talk to you then.','End on time and kindly.']]}
+  ,{id:'fe',n:"Final expense insurance (licensed agents)",when:"A licensed agent speaking with someone who asked about coverage for funeral and burial costs. Sample wording only: follow your state, carrier and company rules.",
+   obj:[
+    ["I already have a policy","Good, that means you have already been thinking about your family. Do you know what it pays out and whether it would cover funeral costs right away? I am not asking you to change anything. If it already covers what you want, that is a fine answer.","Never tell them to cancel or replace a policy on this call. Replacing coverage has its own rules."],
+    ["I cannot afford it","I understand, and I only want something that fits. What monthly amount would feel comfortable to you? We can look at a smaller amount of coverage so it stays comfortable.","Do not push past the amount they gave you."],
+    ["My kids will take care of it","That is a loving thing to say. Do they know what you would want, and could they pay for it right away if they had to? Some people like to make that part easy for them.","No guilt, no scare lines about burdening the family."],
+    ["I need to talk to my family","That makes sense. Would it help if I joined a short call with you both so everyone hears the same thing? What day and time work?","Book the time before you hang up. Offer to send the written details."],
+    ["I am not interested","That is fine. May I ask what made you say that, so I do not waste your time?","Ask ONE respectful question. If they say no again, thank them and end the call."],
+    ["Is this a scam? How did you get my number?","Fair question. I am a licensed agent with {agency}. You asked for information, and I can tell you where that request came from. If you would rather I did not call, I will remove your number right now.","Give your license and agency honestly. Offer to end the call."],
+    ["I am too old or too sick","Thank you for telling me. There are questions on the application, and what options exist depends on the carrier and your answers. Would you like me to go through them honestly, so you know where you stand?","Never promise approval. Never coach them to leave out a health condition."],
+    ["Just mail me something","I can send the written details. So it is useful, what would you want to see in it? And can we set a short call to go through it together?","Offer a booked time, not a hang-up."],
+    ["Stop calling me / do not call","I am sorry to have bothered you. I will take your number off our list now. Take care.","STOP. Do not ask another question. Record the do-not-call request."]
+   ],
+   steps:[
+   ["Open, license and recording","Hi {name}, this is {me}, a licensed insurance agent with {agency}. You asked about coverage to help your family with final expenses. Do you have a few minutes? Before we start: this call may be recorded for quality and for my notes. Is that okay with you?","A clear yes to talking AND to recording. If no to recording, do not record. If it is a bad time, book a call back."],
+   ["Confirm they asked","I am calling because you asked for information. Is that right?","A yes. If they do not remember asking, apologize, offer to remove the number and end the call."],
+   ["Find out why now","What got you thinking about this?","A loss in the family, a birthday, a friend's experience, not wanting to be a burden. Let them finish."],
+   ["Say it back","So what matters to you is {their reason, in their words}. Did I get that right?","A yes, or a correction. Fix it until they agree."],
+   ["Ask what they have now","Do you have any life insurance or burial coverage today, through work, a policy you bought, or a pre-paid funeral plan?","Who, how much, what it covers. Do not suggest canceling anything."],
+   ["Ask who would handle it","If something happened, who would take care of the arrangements and the costs?","A name. Do not use fear or guilt."],
+   ["Ask what they want covered","What would you want to be sure is taken care of?","Funeral, burial or cremation, bills, something left for family. Their words."],
+   ["Ask what is comfortable","What monthly amount would feel comfortable to you?","Their number. Stay inside it."],
+   ["Explain the health questions","To see which options you may qualify for, I will ask a few health questions. Honest answers protect you, because a claim can be denied if the application is not accurate. Is that okay?","A yes. Never coach them to leave anything out."],
+   ["Explain the option plainly","Based on what you told me, here is an option that fits. I will go through what it covers, what it does not cover, any waiting period, and exactly what it costs before you decide anything.","Read the carrier's disclosures as written. No promised approval, no made-up numbers."],
+   ["Check it fits","Does that sound like what you were hoping to take care of?","A yes, a maybe, or a worry. A maybe or a worry goes to the answers under the tricky button."],
+   ["Ask for their concerns","What questions or concerns do you have?","Let them list all of them before you answer any."],
+   ["Ask for the decision","If this fits, would you like to start the application today?","Ask once, then wait. Yes: go on. Not yet: book a time. A clear no: thank them and stop."],
+   ["Application or next step","Great. I will ask the application questions now, one at a time. / No problem. Let us pick a time to finish, and you can include {family member} if you like.","A started application, or a booked day and time with the other people who decide."],
+   ["Close warmly","Thank you, {name}. I will confirm what happens next and how to reach me. You will also have a review period after the policy is issued, and I will tell you how long it is for your state.","End on time and kindly. Say the review period only as the carrier states it."]]}
  ];
  var OBJ=[
   ['It costs too much','I hear you. Let us make sure it is worth it first. When you say cost, is it the monthly spend, or whether it will pay off? Once I understand that, I will put a clear written proposal in front of you and you decide.','Do not discount and do not quote a number on this call.'],
@@ -387,7 +415,7 @@ function scriptReader(root){
  '<ol id="rsSteps" style="list-style:none;margin:0;padding:0;display:grid;gap:10px"></ol>'+
  '<p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-primary" id="rsCopy">Copy this script</button><button type="button" class="btn btn-ghost" id="rsClear">Clear the ticks</button></p></div>'+
  '<div class="panel" style="margin-top:16px"><h3>When they say&hellip;</h3><p class="micro" style="margin:6px 0 10px">Tap what you just heard. These work on any kind of call.</p><div id="rsObj" style="display:flex;flex-wrap:wrap;gap:8px"></div><div id="rsAns" role="status" aria-live="polite" style="margin-top:12px"></div></div>';
- function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]')}
+ function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]').replace(/\{agency\}/g,'[your agency]')}
  function draw(){
   var T0=TYPES[cur];q('#rsWhen',root).textContent=T0.when;
   q('#rsSteps',root).innerHTML=T0.steps.map(function(s,i){var d=done[cur+':'+i];return '<li style="border:1px solid '+(d?'#4fd1a5':'var(--line)')+';border-radius:12px;padding:12px"><label class="checkline" style="margin:0 0 6px!important"><input type="checkbox" data-i="'+i+'"'+(d?' checked':'')+'><span><b>'+(i+1)+'. '+esc(s[0])+'</b></span></label><div style="font-size:17px;line-height:1.5;margin:4px 0 6px"><span class="micro" style="display:block;font-weight:700">Say:</span>&ldquo;'+esc(fill(s[1]))+'&rdquo;</div><div class="micro"><b>Listen for:</b> '+esc(s[2])+'</div></li>'}).join('');
@@ -404,27 +432,50 @@ function scriptReader(root){
  draw();
 }
 
+/* Final expense "what did they just say?" helper. SAMPLE: it matches words in what the rep types or taps and shows a suggested next question.
+   It runs in the browser only, sends nothing, and does not listen to anything. A version that listens to a live call is a separate build. */
+var FE_RULES=[
+ {k:"stop",re:/(stop calling|do not call|don'?t call|take me off|remove (me|my number)|leave me alone|harass)/i,tag:"STOP",q:"I am sorry to have bothered you. I will take your number off our list now. Take care.",why:"They asked you to stop. That is the end of the call.",avoid:"Do not ask anything else. Do not try to save it. Record the do-not-call request."},
+ {k:"scam",re:/(scam|how did you get my|who is this|who are you|fraud|why are you calling|where did you get)/i,tag:"Build trust",q:"Fair question. I am a licensed agent with [your agency], my license number is [number], and you asked for information. If you would rather I did not call, I will remove your number right now. Would you like to hear what this is about?",why:"Trust has to come first. Honest answers and an easy way out.",avoid:"Do not get defensive and do not keep going if they say no."},
+ {k:"notint",re:/(not interested|no thanks|no thank you|don'?t need (it|any|that))/i,tag:"One respectful question",q:"That is fine. May I ask what made you say that, so I do not waste your time?",why:"You ask once, to understand. It might be timing, or a worry you can answer.",avoid:"If they say no again, thank them and end the call. Do not argue."},
+ {k:"afford",re:/(afford|too expensive|can'?t pay|fixed income|too much|on a budget|social security)/i,tag:"Comfort first",q:"I understand. What monthly amount would feel comfortable to you? We can look at a smaller amount of coverage so it stays comfortable.",why:"Money is a real limit. Work inside it.",avoid:"Do not push past their number and do not make them feel bad about it."},
+ {k:"have",re:/(already have|have a policy|have insurance|have coverage|covered|through (work|my job|the union)|pre-?paid)/i,tag:"Check the gap",q:"Good, that means you have been thinking ahead. Do you know what it pays out, and whether that would cover the funeral costs right away?",why:"They may be fully covered, or there may be a gap. Let them see it.",avoid:"Never tell them to cancel or replace a policy on this call."},
+ {k:"kids",re:/(my (kids|son|daughter|children|family|grand)|they'?ll (take care|handle)|will take care of)/i,tag:"Respect, then ask",q:"That is a loving thing to say. Do they know what you would want, and could they pay for it right away if they had to?",why:"It opens a calm talk about planning, without guilt.",avoid:"No scare lines about burdening the family."},
+ {k:"think",re:/(think about it|talk to|ask my|check with|spouse|discuss|call (you )?back|not (right )?now|bad time)/i,tag:"Book the next step",q:"That makes sense. Would it help if I joined a short call with you both so everyone hears the same thing? What day and time work?",why:"A booked time with the other decider beats a vague maybe.",avoid:"No false deadlines or made-up pressure."},
+ {k:"health",re:/(sick|cancer|heart|diabet|dialysis|oxygen|stroke|health|medication|surgery|won'?t qualify|too old|copd)/i,tag:"Honest and kind",q:"Thank you for telling me. There are health questions on the application, and what options exist depends on the carrier and your answers. May I go through them honestly with you so you know where you stand?",why:"They are worried about approval. Honest answers protect them.",avoid:"Never promise approval. Never suggest leaving out a condition."},
+ {k:"loss",re:/(passed away|funeral|died|lost my|death|buried|cremat|widow|wake)/i,tag:"Empathy first",q:"I am sorry. Would you like to tell me a little about that? What do you most want to make easier for your family?",why:"A loss is why many people call. Listen before you offer anything.",avoid:"Do not use their loss to rush a decision."},
+ {k:"burden",re:/(burden|don'?t want (my|them|anyone)|leave (my|them|anyone) with|cost (my|them))/i,tag:"Reflect, then ask",q:"It sounds like you want to make this easy for the people you love. Who would that be, and what would you want taken care of?",why:"Their reason in their own words is the best guide for the rest of the call.",avoid:"Do not add fear. Use their words, not yours."},
+ {k:"mail",re:/(send me|mail me|brochure|in the mail|information first|email me)/i,tag:"Info plus a time",q:"I can send the written details. So it is useful, what would you want to see in it? And can we set a short call to go through it together?",why:"They want to check without pressure. Give them that, and keep a next step.",avoid:"Do not just send it and hang up."},
+ {k:"yes",re:/(\byes\b|\bsure\b|okay|sounds good|go ahead|let'?s do|i'?m ready|that works)/i,tag:"Ask for the decision",q:"Wonderful. Would you like to start the application now? I will ask the questions one at a time, and you can stop me any time.",why:"They said yes. Move to the application while they are ready.",avoid:"Do not keep selling after a yes. Read the disclosures as written."}
+];
+function feSuggest(text){
+ var t=String(text||"").trim();
+ if(!t)return null;
+ for(var i=0;i<FE_RULES.length;i++){if(FE_RULES[i].re.test(t))return FE_RULES[i]}
+ return {k:"other",tag:"Keep listening",q:"Tell me a little more about that.",why:"Nothing clear to answer yet. An open question keeps them talking.",avoid:"Do not move to the next step until you understand what they mean."};
+}
+
 /* Easy call mode: one big step at a time, for a new rep on a live call (same scripts as the read-along tab) */
 function easyMode(root){
  var D=scriptReader.data,TYPES=D.TYPES,OBJ=D.OBJ;
- var SHORT=['They filled out the free-review form','A restaurant owner asking about Key Rewards','Their first question is the price','Someone sent them to us','They say they are just curious about AI'];
- var who={name:'',biz:'',me:'',ref:''},cur=-1,step=0,showObj=false,objSel=-1;
+ var SHORT=['They filled out the free-review form','A restaurant owner asking about Key Rewards','Their first question is the price','Someone sent them to us','They say they are just curious about AI','Final expense insurance (licensed agents)'];
+ var who={name:'',biz:'',me:'',ref:'',agency:''},cur=-1,step=0,showObj=false,objSel=-1,feText='',feShow=false;
  var BIG='display:block;width:100%;box-sizing:border-box;text-align:left;font-size:18px;line-height:1.35;padding:16px 18px;min-height:60px;margin:0 0 10px';
  root.innerHTML='<div class="panel" id="ezBox"></div>';
- function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]')}
+ function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]').replace(/\{agency\}/g,who.agency||'[your agency]')}
  function names(){
   return '<details style="margin:0 0 14px"><summary style="cursor:pointer;font-weight:700;padding:10px 0;min-height:24px">Names to fill in (optional)</summary><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:6px">'+
   '<div><label for="ezName">Their name</label><input id="ezName" autocomplete="off" value="'+esc(who.name)+'" placeholder="Dana"></div><div><label for="ezBiz">Their business</label><input id="ezBiz" autocomplete="off" value="'+esc(who.biz)+'" placeholder="Dana Roofing"></div>'+
-  '<div><label for="ezMe">Your name</label><input id="ezMe" autocomplete="off" value="'+esc(who.me)+'" placeholder="Sam"></div><div><label for="ezRef">Who sent them</label><input id="ezRef" autocomplete="off" value="'+esc(who.ref)+'" placeholder="only if someone did"></div></div><p class="micro" style="margin-top:8px">Nothing you type here is sent or saved.</p></details>';
+  '<div><label for="ezMe">Your name</label><input id="ezMe" autocomplete="off" value="'+esc(who.me)+'" placeholder="Sam"></div>'+(cur===5?'<div><label for="ezAg">Your agency</label><input id="ezAg" autocomplete="off" value="'+esc(who.agency)+'" placeholder="your agency name"></div>':'')+'<div><label for="ezRef">Who sent them</label><input id="ezRef" autocomplete="off" value="'+esc(who.ref)+'" placeholder="only if someone did"></div></div><p class="micro" style="margin-top:8px">Nothing you type here is sent or saved.</p></details>';
  }
  function wireNames(){
-  [['ezName','name'],['ezBiz','biz'],['ezMe','me'],['ezRef','ref']].forEach(function(x){var el=q('#'+x[0],root);if(el)el.oninput=function(){who[x[1]]=this.value.slice(0,60);paintCard()}});
+  [['ezName','name'],['ezBiz','biz'],['ezMe','me'],['ezRef','ref'],['ezAg','agency']].forEach(function(x){var el=q('#'+x[0],root);if(el)el.oninput=function(){who[x[1]]=this.value.slice(0,60);paintCard()}});
  }
  function home(){
   cur=-1;step=0;showObj=false;objSel=-1;
   q('#ezBox',root).innerHTML='<h3 style="font-size:22px;margin:0 0 6px">What kind of call is it?</h3><p class="micro" style="margin:0 0 14px;font-size:15px">Tap one. You will get the words to say, one step at a time.</p>'+
    TYPES.map(function(t,i){return '<button type="button" class="btn btn-primary" data-t="'+i+'" style="'+BIG+'"><b>'+esc(SHORT[i]||t.n)+'</b></button>'}).join('');
-  qa('#ezBox [data-t]',root).forEach(function(b){b.onclick=function(){cur=+this.getAttribute('data-t');step=0;showObj=false;objSel=-1;draw();focusTop()}});
+  qa('#ezBox [data-t]',root).forEach(function(b){b.onclick=function(){cur=+this.getAttribute('data-t');step=0;showObj=false;objSel=-1;feText='';feShow=false;draw();focusTop()}});
  }
  function focusTop(){var h=q('#ezHead',root);if(h){h.focus();}}
  function draw(){
@@ -432,12 +483,29 @@ function easyMode(root){
   q('#ezBox',root).innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px"><button type="button" class="btn btn-ghost" id="ezHomeBtn" style="min-height:44px">&lsaquo; Change call type</button></div>'+names()+'<div id="ezCard"></div>';
   q('#ezHomeBtn',root).onclick=home;wireNames();paintCard();
  }
+
+ function fePanel(){
+  var sg=feShow?feSuggest(feText):null;
+  var chips=[['They said yes','yes sounds good'],['Not interested','not interested'],['Too expensive','I cannot afford it'],['Already has a policy','I already have a policy'],['Kids will handle it','my kids will take care of it'],['Needs to talk to family','I need to talk to my wife'],['Sick or too old','I am too old and have heart problems'],['Who is this? Scam?','is this a scam'],['Stop calling','stop calling me']];
+  return '<div id="feBox" style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 16px"><h4 style="margin:0 0 4px;font-size:18px">What did they just say?</h4><p class="micro" style="margin:0 0 10px;font-size:15px">Type a few words, or tap one. You get a suggested next question.</p>'+
+   '<label for="feIn">What they said</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="feIn" autocomplete="off" value="'+esc(feText)+'" placeholder="for example: I already have a policy" style="flex:1 1 180px"><button type="button" class="btn btn-primary" id="feGo" style="min-height:48px">What do I ask next?</button></div>'+
+   '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:10px 0">'+chips.map(function(c,i){return '<button type="button" class="btn btn-ghost" data-fc="'+i+'" style="min-height:48px;width:100%">'+esc(c[0])+'</button>'}).join('')+'</div>'+
+   '<div id="feOut" role="status" aria-live="polite">'+(sg?'<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:14px"><span class="micro" style="display:block;font-weight:700;font-size:14px">'+esc(sg.tag)+(sg.k==='stop'?' (end the call)':' - ask this:')+'</span><div style="font-size:21px;line-height:1.5">&ldquo;'+esc(fill(sg.q))+'&rdquo;</div><div class="micro" style="margin-top:8px;font-size:15px"><b>Why:</b> '+esc(sg.why)+'<br><b>Do not:</b> '+esc(sg.avoid)+'</div></div>':'')+'</div>'+
+   '<p class="micro" style="margin:10px 0 0;font-size:13px">Sample helper. It matches the words you type, runs only in this page, listens to nothing and sends nothing. It is not legal or compliance advice.</p></div>';
+ }
+ function wireFe(c){
+  var go=q('#feGo',c),inp=q('#feIn',c);if(!go)return;
+  go.onclick=function(){feText=inp.value.slice(0,200);feShow=true;paintCard();var o=q('#feOut',root);if(o&&o.scrollIntoView)o.scrollIntoView({block:'nearest'})};
+  inp.onkeydown=function(ev){if(ev.key==='Enter'){ev.preventDefault();go.click()}};
+  var chips=[['yes sounds good'],['not interested'],['I cannot afford it'],['I already have a policy'],['my kids will take care of it'],['I need to talk to my wife'],['I am too old and have heart problems'],['is this a scam'],['stop calling me']];
+  qa('#feBox [data-fc]',c).forEach(function(b){b.onclick=function(){feText=chips[+this.getAttribute('data-fc')][0];feShow=true;paintCard();var o=q('#feOut',root);if(o&&o.scrollIntoView)o.scrollIntoView({block:'nearest'})}});
+ }
  function paintCard(){
   var T0=TYPES[cur],c=q('#ezCard',root);if(!c)return;
   if(showObj){
-   var o=OBJ[objSel];
+   var OB=T0.obj||OBJ,o=OB[objSel];
    c.innerHTML='<h3 id="ezHead" tabindex="-1" style="font-size:20px;margin:0 0 6px">What did they say?</h3><p class="micro" style="margin:0 0 12px;font-size:15px">Tap the closest one.</p>'+
-    OBJ.map(function(x,i){return '<button type="button" class="btn btn-ghost" data-o="'+i+'" aria-pressed="'+(i===objSel?'true':'false')+'" style="'+BIG+';min-height:52px;font-size:17px">'+esc(x[0])+'</button>'}).join('')+
+    OB.map(function(x,i){return '<button type="button" class="btn btn-ghost" data-o="'+i+'" aria-pressed="'+(i===objSel?'true':'false')+'" style="'+BIG+';min-height:52px;font-size:17px">'+esc(x[0])+'</button>'}).join('')+
     (o?'<div role="status" aria-live="polite" style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:14px;margin:6px 0 12px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Say:</span><div style="font-size:21px;line-height:1.5">&ldquo;'+esc(fill(o[1]))+'&rdquo;</div><div class="micro" style="margin-top:8px;font-size:15px"><b>Remember:</b> '+esc(o[2])+'</div></div>':'')+
     '<button type="button" class="btn btn-primary" id="ezBack" style="'+BIG+'"><b>&lsaquo; Back to the script</b></button>';
    qa('#ezCard [data-o]',c).forEach(function(b){b.onclick=function(){objSel=+this.getAttribute('data-o');paintCard()}});
@@ -452,15 +520,17 @@ function easyMode(root){
    return;
   }
   var s=T0.steps[step],pct=Math.round(step/n*100);
-  c.innerHTML='<p class="micro" style="margin:0 0 6px;font-size:15px">'+esc(T0.n)+'</p>'+
+  c.innerHTML='<p class="micro" style="margin:0 0 6px;font-size:15px">'+esc(T0.n)+'</p>'+(T0.id==='fe'?'<p class="micro" style="margin:0 0 10px;font-size:14px;border-left:3px solid #e0b24a;padding-left:10px"><b>Always:</b> licensed agents only. Ask permission to record. Respect a clear no. Never pressure, rush or promise approval.</p>':'')+
    '<div style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="font-weight:800;font-size:15px;white-space:nowrap">Step '+(step+1)+' of '+n+'</span><div role="progressbar" aria-label="Call progress" aria-valuemin="0" aria-valuemax="'+n+'" aria-valuenow="'+step+'" style="flex:1;height:10px;border-radius:6px;background:var(--line,#2b3a55);overflow:hidden"><div style="width:'+pct+'%;height:100%;background:#4fd1a5"></div></div></div>'+
    '<h3 id="ezHead" tabindex="-1" style="font-size:22px;margin:0 0 10px">'+esc(s[0])+'</h3>'+
    '<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:16px;margin:0 0 12px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Say this:</span><div style="font-size:22px;line-height:1.5">&ldquo;'+esc(fill(s[1]))+'&rdquo;</div></div>'+
    '<div style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 16px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Listen for:</span><div style="font-size:17px;line-height:1.5">'+esc(s[2])+'</div></div>'+
+   ''+(T0.id==='fe'?fePanel():'')+
    '<div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;margin:0 0 12px"><button type="button" class="btn btn-ghost" id="ezPrev" style="min-height:60px;font-size:18px"'+(step===0?' disabled':'')+'>&lsaquo; Back</button><button type="button" class="btn btn-primary" id="ezNext" style="min-height:60px;font-size:20px"><b>'+(step===n-1?'Finish call':'Next &rsaquo;')+'</b></button></div>'+
    '<button type="button" class="btn btn-ghost" id="ezTricky" style="'+BIG+';min-height:56px"><b>They said something tricky</b><br><span class="micro" style="font-size:14px">Too expensive, need to think, ask my partner&hellip;</span></button>';
-  q('#ezNext',c).onclick=function(){step++;paintCard();focusTop()};
-  q('#ezPrev',c).onclick=function(){if(step>0){step--;paintCard();focusTop()}};
+  wireFe(c);
+  q('#ezNext',c).onclick=function(){step++;feText='';feShow=false;paintCard();focusTop()};
+  q('#ezPrev',c).onclick=function(){if(step>0){step--;feText='';feShow=false;paintCard();focusTop()}};
   q('#ezTricky',c).onclick=function(){showObj=true;paintCard();focusTop()};
  }
  home();
