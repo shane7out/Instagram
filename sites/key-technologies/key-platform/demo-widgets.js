@@ -377,6 +377,7 @@ function scriptReader(root){
   ['Will this replace my staff?','The goal is to take the repetitive work off your team so they can spend their time with customers. You decide what the AI does and what stays with a person.','Do not promise headcount outcomes either way.'],
   ['Not now, bad timing','Understood. What would need to be true for the timing to be right? May I check back with you on {day and time}?','Put the follow-up date in the calendar before you hang up.']
  ];
+ scriptReader.data={TYPES:TYPES,OBJ:OBJ};
  var cur=0,done={},who={name:'',biz:'',me:'',ref:''},objSel=-1;
  root.innerHTML='<div class="panel"><div class="panel-heading"><h3>Read-along scripts</h3><span class="tag outline">Our own wording</span></div>'+
  '<p class="micro" style="margin:6px 0 10px">Pick the kind of call, fill in the names, and read each step out loud. Words in {braces} are for you to fill in. Nothing you type here is sent or saved.</p>'+
@@ -401,6 +402,68 @@ function scriptReader(root){
  q('#rsCopy',root).onclick=function(){var t=plain();try{navigator.clipboard.writeText(t).then(function(){say('Script copied')},function(){say('Could not copy. Select the text instead.')})}catch(e){say('Could not copy. Select the text instead.')}};
  q('#rsClear',root).onclick=function(){done={};draw()};
  draw();
+}
+
+/* Easy call mode: one big step at a time, for a new rep on a live call (same scripts as the read-along tab) */
+function easyMode(root){
+ var D=scriptReader.data,TYPES=D.TYPES,OBJ=D.OBJ;
+ var SHORT=['They filled out the free-review form','A restaurant owner asking about Key Rewards','Their first question is the price','Someone sent them to us','They say they are just curious about AI'];
+ var who={name:'',biz:'',me:'',ref:''},cur=-1,step=0,showObj=false,objSel=-1;
+ var BIG='display:block;width:100%;box-sizing:border-box;text-align:left;font-size:18px;line-height:1.35;padding:16px 18px;min-height:60px;margin:0 0 10px';
+ root.innerHTML='<div class="panel" id="ezBox"></div>';
+ function fill(t){return t.replace(/\{name\}/g,who.name||'[their name]').replace(/\{biz\}/g,who.biz||'[their business]').replace(/\{me\}/g,who.me||'[your name]').replace(/\{who sent them\}/g,who.ref||'[who sent them]')}
+ function names(){
+  return '<details style="margin:0 0 14px"><summary style="cursor:pointer;font-weight:700;padding:10px 0;min-height:24px">Names to fill in (optional)</summary><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:6px">'+
+  '<div><label for="ezName">Their name</label><input id="ezName" autocomplete="off" value="'+esc(who.name)+'" placeholder="Dana"></div><div><label for="ezBiz">Their business</label><input id="ezBiz" autocomplete="off" value="'+esc(who.biz)+'" placeholder="Dana Roofing"></div>'+
+  '<div><label for="ezMe">Your name</label><input id="ezMe" autocomplete="off" value="'+esc(who.me)+'" placeholder="Sam"></div><div><label for="ezRef">Who sent them</label><input id="ezRef" autocomplete="off" value="'+esc(who.ref)+'" placeholder="only if someone did"></div></div><p class="micro" style="margin-top:8px">Nothing you type here is sent or saved.</p></details>';
+ }
+ function wireNames(){
+  [['ezName','name'],['ezBiz','biz'],['ezMe','me'],['ezRef','ref']].forEach(function(x){var el=q('#'+x[0],root);if(el)el.oninput=function(){who[x[1]]=this.value.slice(0,60);paintCard()}});
+ }
+ function home(){
+  cur=-1;step=0;showObj=false;objSel=-1;
+  q('#ezBox',root).innerHTML='<h3 style="font-size:22px;margin:0 0 6px">What kind of call is it?</h3><p class="micro" style="margin:0 0 14px;font-size:15px">Tap one. You will get the words to say, one step at a time.</p>'+
+   TYPES.map(function(t,i){return '<button type="button" class="btn btn-primary" data-t="'+i+'" style="'+BIG+'"><b>'+esc(SHORT[i]||t.n)+'</b></button>'}).join('');
+  qa('#ezBox [data-t]',root).forEach(function(b){b.onclick=function(){cur=+this.getAttribute('data-t');step=0;showObj=false;objSel=-1;draw();focusTop()}});
+ }
+ function focusTop(){var h=q('#ezHead',root);if(h){h.focus();}}
+ function draw(){
+  var T0=TYPES[cur];
+  q('#ezBox',root).innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px"><button type="button" class="btn btn-ghost" id="ezHomeBtn" style="min-height:44px">&lsaquo; Change call type</button></div>'+names()+'<div id="ezCard"></div>';
+  q('#ezHomeBtn',root).onclick=home;wireNames();paintCard();
+ }
+ function paintCard(){
+  var T0=TYPES[cur],c=q('#ezCard',root);if(!c)return;
+  if(showObj){
+   var o=OBJ[objSel];
+   c.innerHTML='<h3 id="ezHead" tabindex="-1" style="font-size:20px;margin:0 0 6px">What did they say?</h3><p class="micro" style="margin:0 0 12px;font-size:15px">Tap the closest one.</p>'+
+    OBJ.map(function(x,i){return '<button type="button" class="btn btn-ghost" data-o="'+i+'" aria-pressed="'+(i===objSel?'true':'false')+'" style="'+BIG+';min-height:52px;font-size:17px">'+esc(x[0])+'</button>'}).join('')+
+    (o?'<div role="status" aria-live="polite" style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:14px;margin:6px 0 12px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Say:</span><div style="font-size:21px;line-height:1.5">&ldquo;'+esc(fill(o[1]))+'&rdquo;</div><div class="micro" style="margin-top:8px;font-size:15px"><b>Remember:</b> '+esc(o[2])+'</div></div>':'')+
+    '<button type="button" class="btn btn-primary" id="ezBack" style="'+BIG+'"><b>&lsaquo; Back to the script</b></button>';
+   qa('#ezCard [data-o]',c).forEach(function(b){b.onclick=function(){objSel=+this.getAttribute('data-o');paintCard()}});
+   q('#ezBack',c).onclick=function(){showObj=false;paintCard();focusTop()};
+   return;
+  }
+  var n=T0.steps.length;
+  if(step>=n){
+   c.innerHTML='<h3 id="ezHead" tabindex="-1" style="font-size:22px;margin:0 0 8px">Call finished</h3><ul style="margin:0 0 14px;padding-left:20px;font-size:17px;line-height:1.6"><li>Did you book the next step with a day and time?</li><li>Did you write down who else decides?</li><li>Put any follow-up date in your calendar now.</li></ul>'+
+    '<button type="button" class="btn btn-primary" id="ezNew" style="'+BIG+'"><b>Start another call</b></button><button type="button" class="btn btn-ghost" id="ezPrev" style="'+BIG+'">&lsaquo; Back one step</button>';
+   q('#ezNew',c).onclick=function(){who={name:'',biz:'',me:'',ref:''};home()};q('#ezPrev',c).onclick=function(){step=n-1;paintCard();focusTop()};
+   return;
+  }
+  var s=T0.steps[step],pct=Math.round(step/n*100);
+  c.innerHTML='<p class="micro" style="margin:0 0 6px;font-size:15px">'+esc(T0.n)+'</p>'+
+   '<div style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="font-weight:800;font-size:15px;white-space:nowrap">Step '+(step+1)+' of '+n+'</span><div role="progressbar" aria-label="Call progress" aria-valuemin="0" aria-valuemax="'+n+'" aria-valuenow="'+step+'" style="flex:1;height:10px;border-radius:6px;background:var(--line,#2b3a55);overflow:hidden"><div style="width:'+pct+'%;height:100%;background:#4fd1a5"></div></div></div>'+
+   '<h3 id="ezHead" tabindex="-1" style="font-size:22px;margin:0 0 10px">'+esc(s[0])+'</h3>'+
+   '<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:16px;margin:0 0 12px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Say this:</span><div style="font-size:22px;line-height:1.5">&ldquo;'+esc(fill(s[1]))+'&rdquo;</div></div>'+
+   '<div style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 16px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Listen for:</span><div style="font-size:17px;line-height:1.5">'+esc(s[2])+'</div></div>'+
+   '<div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;margin:0 0 12px"><button type="button" class="btn btn-ghost" id="ezPrev" style="min-height:60px;font-size:18px"'+(step===0?' disabled':'')+'>&lsaquo; Back</button><button type="button" class="btn btn-primary" id="ezNext" style="min-height:60px;font-size:20px"><b>'+(step===n-1?'Finish call':'Next &rsaquo;')+'</b></button></div>'+
+   '<button type="button" class="btn btn-ghost" id="ezTricky" style="'+BIG+';min-height:56px"><b>They said something tricky</b><br><span class="micro" style="font-size:14px">Too expensive, need to think, ask my partner&hellip;</span></button>';
+  q('#ezNext',c).onclick=function(){step++;paintCard();focusTop()};
+  q('#ezPrev',c).onclick=function(){if(step>0){step--;paintCard();focusTop()}};
+  q('#ezTricky',c).onclick=function(){showObj=true;paintCard();focusTop()};
+ }
+ home();
 }
 
 /* the sample call with the coach panel updating line by line */
@@ -487,10 +550,10 @@ function sampleCall(root){
  draw();
 }
 T.callcoach=function(root){
- root.innerHTML='<div role="tablist" aria-label="Coach tools" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button type="button" role="tab" class="btn btn-primary" id="cct1" aria-selected="true" aria-controls="ccp1">Read-along scripts</button><button type="button" role="tab" class="btn btn-ghost" id="cct2" aria-selected="false" aria-controls="ccp2">Follow a sample call</button></div><div id="ccp1" role="tabpanel" aria-labelledby="cct1"></div><div id="ccp2" role="tabpanel" aria-labelledby="cct2" hidden></div>';
- scriptReader(q('#ccp1',root));sampleCall(q('#ccp2',root));
- function pick(n){[1,2].forEach(function(i){var on=i===n;q('#ccp'+i,root).hidden=!on;var b=q('#cct'+i,root);b.setAttribute('aria-selected',on?'true':'false');b.className='btn '+(on?'btn-primary':'btn-ghost')})}
- q('#cct1',root).onclick=function(){pick(1)};q('#cct2',root).onclick=function(){pick(2)};
+ root.innerHTML='<div role="tablist" aria-label="Coach tools" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button type="button" role="tab" class="btn btn-primary" id="cct0" aria-selected="true" aria-controls="ccp0">Easy call mode</button><button type="button" role="tab" class="btn btn-ghost" id="cct1" aria-selected="false" aria-controls="ccp1">All scripts</button><button type="button" role="tab" class="btn btn-ghost" id="cct2" aria-selected="false" aria-controls="ccp2">Follow a sample call</button></div><div id="ccp0" role="tabpanel" aria-labelledby="cct0"></div><div id="ccp1" role="tabpanel" aria-labelledby="cct1" hidden></div><div id="ccp2" role="tabpanel" aria-labelledby="cct2" hidden></div>';
+ scriptReader(q('#ccp1',root));easyMode(q('#ccp0',root));sampleCall(q('#ccp2',root));
+ function pick(n){[0,1,2].forEach(function(i){var on=i===n;q('#ccp'+i,root).hidden=!on;var b=q('#cct'+i,root);b.setAttribute('aria-selected',on?'true':'false');b.className='btn '+(on?'btn-primary':'btn-ghost')})}
+ q('#cct0',root).onclick=function(){pick(0)};q('#cct1',root).onclick=function(){pick(1)};q('#cct2',root).onclick=function(){pick(2)};
 };
 
 /* ---------- 28 Text Message Marketing: campaign dashboard with the rules built in ---------- */
