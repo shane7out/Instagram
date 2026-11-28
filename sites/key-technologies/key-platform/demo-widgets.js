@@ -366,7 +366,7 @@ function scriptReader(root){
    ['Offer a demo, not a pitch','I will send you a demo that looks like your kind of business, with made-up data, so you can see it without any commitment.','A yes, and their best email or number for the link.'],
    ['Book a follow-up','Can we talk for 15 minutes after you have tried it? Does {day and time} work?','A booked time.'],
    ['Close warmly','Thanks, {name}. Enjoy the demo, and I will talk to you then.','End on time and kindly.']]}
-  ,{id:'fe',n:"Final expense insurance (licensed agents)",when:"A licensed agent speaking with someone who asked about coverage for funeral and burial costs. Sample wording only: follow your state, carrier and company rules.",
+  ,{id:'fe',n:"Final expense insurance (licensed agents)",agent:true,rk:"fe",chips:[["They said yes","yes sounds good"],["Not interested","not interested"],["Too expensive","I cannot afford it"],["Already has a policy","I already have a policy"],["Kids will handle it","my kids will take care of it"],["Needs to talk to family","I need to talk to my wife"],["Sick or too old","I am too old and have heart problems"],["Who is this? Scam?","is this a scam"],["Stop calling","stop calling me"]],when:"A licensed agent speaking with someone who asked about coverage for funeral and burial costs. Sample wording only: follow your state, carrier and company rules.",
    obj:[
     ["I already have a policy","Good, that means you have already been thinking about your family. Do you know what it pays out and whether it would cover funeral costs right away? I am not asking you to change anything. If it already covers what you want, that is a fine answer.","Never tell them to cancel or replace a policy on this call. Replacing coverage has its own rules."],
     ["I cannot afford it","I understand, and I only want something that fits. What monthly amount would feel comfortable to you? We can look at a smaller amount of coverage so it stays comfortable.","Do not push past the amount they gave you."],
@@ -394,6 +394,36 @@ function scriptReader(root){
    ["Ask for the decision","If this fits, would you like to start the application today?","Ask once, then wait. Yes: go on. Not yet: book a time. A clear no: thank them and stop."],
    ["Application or next step","Great. I will ask the application questions now, one at a time. / No problem. Let us pick a time to finish, and you can include {family member} if you like.","A started application, or a booked day and time with the other people who decide."],
    ["Close warmly","Thank you, {name}. I will confirm what happens next and how to reach me. You will also have a review period after the policy is issued, and I will tell you how long it is for your state.","End on time and kindly. Say the review period only as the carrier states it."]]}
+  ,{id:'life',n:"Life insurance (licensed agents)",agent:true,rk:"life",when:"A licensed agent speaking with someone who asked about life insurance to protect their family. Sample wording only: follow your state, carrier and company rules.",
+   chips:[["They said yes","yes sounds good"],["Not interested","not interested"],["Has it through work","I have coverage through work"],["Young and healthy","I am young and healthy, I do not need it"],["Too expensive","I cannot afford it"],["Term or whole?","should I get term or whole life"],["Needs to talk to spouse","I need to talk to my wife"],["Do it later","I will think about it later"],["Who is this? Scam?","is this a scam"],["Stop calling","stop calling me"]],
+   obj:[
+    ["I have coverage through work","Good, that is a real benefit. Do you know how much it is, and whether it stays with you if you change jobs or retire? I am not asking you to give anything up. We just want to be sure your family is covered either way.","Do not tell them to drop or replace any coverage on this call. Replacing a policy has its own rules."],
+    ["I am young and healthy, I do not need it","I am glad you are healthy. Does anyone depend on your income, a partner, children, a mortgage? Many people look at coverage while they are healthy because the questions on the application are easier then.","Do not scare them. Ask who depends on them and let them decide."],
+    ["I cannot afford it","I understand, and I only want something that fits. What monthly amount would feel comfortable to you? We can look at a smaller amount of coverage or a shorter period.","Stay inside the amount they give you."],
+    ["I need to talk to my spouse","That makes sense. Would it help if I joined a short call with you both so you hear the same thing? What day and time work?","Book the time before you hang up. Offer to send the written details."],
+    ["I will think about it","Of course. So I can help you think it through, what part are you still unsure about?","Listen for the real reason: cost, timing, trust, or someone else. Then answer that one. No false deadlines."],
+    ["Which is better, term or whole life?","It depends on what you need. Term covers a set number of years, like while the kids are growing or the mortgage is being paid. Whole life is meant to last your whole life and can build cash value. Which sounds closer to what you want to protect?","Describe both fairly. Do not promise returns or call a policy an investment."],
+    ["Is this a scam? How did you get my number?","Fair question. I am a licensed agent with {agency}. You asked for information, and I can tell you where that request came from. If you would rather I did not call, I will remove your number right now.","Give your license and agency honestly. Offer to end the call."],
+    ["Just send me something","I can send the written details. So it is useful, what would you want to see in it? And can we set a short call to go through it together?","Offer a booked time, not a hang-up."],
+    ["I am not interested","That is fine. May I ask what made you say that, so I do not waste your time?","Ask ONE respectful question. If they say no again, thank them and end the call."],
+    ["Stop calling me / do not call","I am sorry to have bothered you. I will take your number off our list now. Take care.","STOP. Do not ask another question. Record the do-not-call request."]
+   ],
+   steps:[
+   ["Open, license and recording","Hi {name}, this is {me}, a licensed insurance agent with {agency}. You asked about life insurance. Do you have a few minutes? Before we start: this call may be recorded for quality and for my notes. Is that okay with you?","A clear yes to talking AND to recording. If no to recording, do not record. If it is a bad time, book a call back."],
+   ["Confirm they asked","I am calling because you asked for information. Is that right?","A yes. If they do not remember asking, apologize, offer to remove the number and end the call."],
+   ["Find out why now","What got you looking at life insurance?","A new baby, a home, a marriage, a job change, a birthday, a friend's experience. Let them finish."],
+   ["Say it back","So what matters to you is {their reason, in their words}. Did I get that right?","A yes, or a correction. Fix it until they agree."],
+   ["Ask who depends on them","Who depends on you or your income today?","Partner, children, parents. Names, and whether they work."],
+   ["Ask what to protect","If your income stopped, what would your family need to keep going: the home, bills, school, final costs?","Their list, in their words. Do not add things for them."],
+   ["Ask what they have now","Do you have any life insurance today, through work or a policy of your own? Do you know how much?","Amount, who owns it, whether it ends if they leave the job. Do not suggest canceling anything."],
+   ["Ask how long","How long would your family need that protection: until the children are grown, until the home is paid off, or for life?","A time frame. It guides term versus permanent coverage."],
+   ["Ask what is comfortable","What monthly amount would feel comfortable to you?","Their number. Stay inside it."],
+   ["Explain the health questions","To see which options you may qualify for, I will ask a few health and lifestyle questions. Honest answers protect you, because a claim can be denied if the application is not accurate. Is that okay?","A yes. Never coach them to leave anything out."],
+   ["Explain the options plainly","Based on what you told me, here are the kinds of coverage that fit. Term covers a set number of years. Permanent coverage is meant to last your whole life and may build cash value. I will go through what each covers, what it does not cover, and exactly what it costs before you decide anything.","Read the carrier's disclosures as written. No promised approval, returns or tax claims, and do not call a policy an investment."],
+   ["Check it fits","Does that sound like what you were hoping to protect?","A yes, a maybe, or a worry. A maybe or a worry goes to the answers under the tricky button."],
+   ["Ask for their concerns","What questions or concerns do you have?","Let them list all of them before you answer any."],
+   ["Ask for the decision","If this fits, would you like to start the application today?","Ask once, then wait. Yes: go on. Not yet: book a time with the people who decide. A clear no: thank them and stop."],
+   ["Application or next step, then close","Great. I will ask the application questions now, one at a time. / No problem. Let us pick a time to finish, and you can include {family member} if you like. Once it is submitted the carrier may ask for more information, and you will have a review period after the policy is issued. I will tell you how long it is for your state.","A started application, or a booked day and time. Say the review period only as the carrier states it. End on time and kindly."]]}
  ];
  var OBJ=[
   ['It costs too much','I hear you. Let us make sure it is worth it first. When you say cost, is it the monthly spend, or whether it will pay off? Once I understand that, I will put a clear written proposal in front of you and you decide.','Do not discount and do not quote a number on this call.'],
@@ -448,17 +478,29 @@ var FE_RULES=[
  {k:"mail",re:/(send me|mail me|brochure|in the mail|information first|email me)/i,tag:"Info plus a time",q:"I can send the written details. So it is useful, what would you want to see in it? And can we set a short call to go through it together?",why:"They want to check without pressure. Give them that, and keep a next step.",avoid:"Do not just send it and hang up."},
  {k:"yes",re:/(\byes\b|\bsure\b|okay|sounds good|go ahead|let'?s do|i'?m ready|that works)/i,tag:"Ask for the decision",q:"Wonderful. Would you like to start the application now? I will ask the questions one at a time, and you can stop me any time.",why:"They said yes. Move to the application while they are ready.",avoid:"Do not keep selling after a yes. Read the disclosures as written."}
 ];
-function feSuggest(text){
- var t=String(text||"").trim();
+var LIFE_RULES=(function(){
+ function g(k){for(var i=0;i<FE_RULES.length;i++)if(FE_RULES[i].k===k)return FE_RULES[i]}
+ return [g("stop"),g("scam"),g("notint"),
+  {k:"work",re:/(through (work|my job|the company|the union)|my employer|group (policy|coverage)|work (covers|provides|offers))/i,tag:"Check the gap",q:"Good, that is a real benefit. Do you know how much it is, and whether it stays with you if you change jobs or retire?",why:"Work coverage is often small and may end with the job. Let them see it.",avoid:"Never tell them to drop or replace any coverage on this call."},
+  {k:"young",re:/(young|healthy|don'?t need|do not need|no need|nothing wrong|no one depends)/i,tag:"Who depends on them?",q:"I am glad you are healthy. Does anyone depend on your income, a partner, children, a mortgage?",why:"The need depends on who relies on them, not on their age.",avoid:"No scare lines. Ask, listen, and let them decide."},
+  g("afford"),
+  {k:"termwhole",re:/(term|whole life|permanent|universal|cash value|which is better|difference between)/i,tag:"Explain fairly",q:"It depends on what you need. Term covers a set number of years, like while the kids are growing or the mortgage is being paid. Whole life is meant to last your whole life and can build cash value. Which sounds closer to what you want to protect?",why:"They want to understand the choice. Describe both fairly and let them pick.",avoid:"Do not promise returns, tax results, or call a policy an investment."},
+  {k:"event",re:/(baby|newborn|pregnant|expecting|new home|bought a house|mortgage|got married|wedding|divorce|new job|retire)/i,tag:"Find what to protect",q:"Congratulations on that. With that change, what would you want to be sure is taken care of for your family?",why:"A life event is usually why they asked. Let them name what matters.",avoid:"Do not decide the amount for them."},
+  {k:"later",re:/(think about it|later|not (right )?now|bad time|call (you )?back|next year|wait)/i,tag:"Find the real reason",q:"Of course. So I can help you think it through, what part are you still unsure about?",why:"A vague maybe hides a real reason: cost, timing, trust, or someone else.",avoid:"No false deadlines or made-up pressure."},
+  {k:"spouse",re:/(talk to|ask my|check with|spouse|wife|husband|partner|discuss)/i,tag:"Book the next step",q:"That makes sense. Would it help if I joined a short call with you both so everyone hears the same thing? What day and time work?",why:"A booked time with the other decider beats a vague maybe.",avoid:"Do not go around the other person."},
+  g("health"),g("mail"),g("yes")];
+})();
+function feSuggest(text,rk){
+ var t=String(text||"").trim(),R=rk==="life"?LIFE_RULES:FE_RULES;
  if(!t)return null;
- for(var i=0;i<FE_RULES.length;i++){if(FE_RULES[i].re.test(t))return FE_RULES[i]}
+ for(var i=0;i<R.length;i++){if(R[i].re.test(t))return R[i]}
  return {k:"other",tag:"Keep listening",q:"Tell me a little more about that.",why:"Nothing clear to answer yet. An open question keeps them talking.",avoid:"Do not move to the next step until you understand what they mean."};
 }
 
 /* Easy call mode: one big step at a time, for a new rep on a live call (same scripts as the read-along tab) */
 function easyMode(root){
  var D=scriptReader.data,TYPES=D.TYPES,OBJ=D.OBJ;
- var SHORT=['They filled out the free-review form','A restaurant owner asking about Key Rewards','Their first question is the price','Someone sent them to us','They say they are just curious about AI','Final expense insurance (licensed agents)'];
+ var SHORT=['They filled out the free-review form','A restaurant owner asking about Key Rewards','Their first question is the price','Someone sent them to us','They say they are just curious about AI','Final expense insurance (licensed agents)','Life insurance (licensed agents)'];
  var who={name:'',biz:'',me:'',ref:'',agency:''},cur=-1,step=0,showObj=false,objSel=-1,feText='',feShow=false;
  var BIG='display:block;width:100%;box-sizing:border-box;text-align:left;font-size:18px;line-height:1.35;padding:16px 18px;min-height:60px;margin:0 0 10px';
  root.innerHTML='<div class="panel" id="ezBox"></div>';
@@ -466,7 +508,7 @@ function easyMode(root){
  function names(){
   return '<details style="margin:0 0 14px"><summary style="cursor:pointer;font-weight:700;padding:10px 0;min-height:24px">Names to fill in (optional)</summary><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:6px">'+
   '<div><label for="ezName">Their name</label><input id="ezName" autocomplete="off" value="'+esc(who.name)+'" placeholder="Dana"></div><div><label for="ezBiz">Their business</label><input id="ezBiz" autocomplete="off" value="'+esc(who.biz)+'" placeholder="Dana Roofing"></div>'+
-  '<div><label for="ezMe">Your name</label><input id="ezMe" autocomplete="off" value="'+esc(who.me)+'" placeholder="Sam"></div>'+(cur===5?'<div><label for="ezAg">Your agency</label><input id="ezAg" autocomplete="off" value="'+esc(who.agency)+'" placeholder="your agency name"></div>':'')+'<div><label for="ezRef">Who sent them</label><input id="ezRef" autocomplete="off" value="'+esc(who.ref)+'" placeholder="only if someone did"></div></div><p class="micro" style="margin-top:8px">Nothing you type here is sent or saved.</p></details>';
+  '<div><label for="ezMe">Your name</label><input id="ezMe" autocomplete="off" value="'+esc(who.me)+'" placeholder="Sam"></div>'+(TYPES[cur]&&TYPES[cur].agent?'<div><label for="ezAg">Your agency</label><input id="ezAg" autocomplete="off" value="'+esc(who.agency)+'" placeholder="your agency name"></div>':'')+'<div><label for="ezRef">Who sent them</label><input id="ezRef" autocomplete="off" value="'+esc(who.ref)+'" placeholder="only if someone did"></div></div><p class="micro" style="margin-top:8px">Nothing you type here is sent or saved.</p></details>';
  }
  function wireNames(){
   [['ezName','name'],['ezBiz','biz'],['ezMe','me'],['ezRef','ref'],['ezAg','agency']].forEach(function(x){var el=q('#'+x[0],root);if(el)el.oninput=function(){who[x[1]]=this.value.slice(0,60);paintCard()}});
@@ -485,8 +527,8 @@ function easyMode(root){
  }
 
  function fePanel(){
-  var sg=feShow?feSuggest(feText):null;
-  var chips=[['They said yes','yes sounds good'],['Not interested','not interested'],['Too expensive','I cannot afford it'],['Already has a policy','I already have a policy'],['Kids will handle it','my kids will take care of it'],['Needs to talk to family','I need to talk to my wife'],['Sick or too old','I am too old and have heart problems'],['Who is this? Scam?','is this a scam'],['Stop calling','stop calling me']];
+  var sg=feShow?feSuggest(feText,TYPES[cur].rk):null;
+  var chips=TYPES[cur].chips;
   return '<div id="feBox" style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 16px"><h4 style="margin:0 0 4px;font-size:18px">What did they just say?</h4><p class="micro" style="margin:0 0 10px;font-size:15px">Type a few words, or tap one. You get a suggested next question.</p>'+
    '<label for="feIn">What they said</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="feIn" autocomplete="off" value="'+esc(feText)+'" placeholder="for example: I already have a policy" style="flex:1 1 180px"><button type="button" class="btn btn-primary" id="feGo" style="min-height:48px">What do I ask next?</button></div>'+
    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:10px 0">'+chips.map(function(c,i){return '<button type="button" class="btn btn-ghost" data-fc="'+i+'" style="min-height:48px;width:100%">'+esc(c[0])+'</button>'}).join('')+'</div>'+
@@ -497,7 +539,7 @@ function easyMode(root){
   var go=q('#feGo',c),inp=q('#feIn',c);if(!go)return;
   go.onclick=function(){feText=inp.value.slice(0,200);feShow=true;paintCard();var o=q('#feOut',root);if(o&&o.scrollIntoView)o.scrollIntoView({block:'nearest'})};
   inp.onkeydown=function(ev){if(ev.key==='Enter'){ev.preventDefault();go.click()}};
-  var chips=[['yes sounds good'],['not interested'],['I cannot afford it'],['I already have a policy'],['my kids will take care of it'],['I need to talk to my wife'],['I am too old and have heart problems'],['is this a scam'],['stop calling me']];
+  var chips=TYPES[cur].chips.map(function(c){return [c[1]]});
   qa('#feBox [data-fc]',c).forEach(function(b){b.onclick=function(){feText=chips[+this.getAttribute('data-fc')][0];feShow=true;paintCard();var o=q('#feOut',root);if(o&&o.scrollIntoView)o.scrollIntoView({block:'nearest'})}});
  }
  function paintCard(){
@@ -520,12 +562,12 @@ function easyMode(root){
    return;
   }
   var s=T0.steps[step],pct=Math.round(step/n*100);
-  c.innerHTML='<p class="micro" style="margin:0 0 6px;font-size:15px">'+esc(T0.n)+'</p>'+(T0.id==='fe'?'<p class="micro" style="margin:0 0 10px;font-size:14px;border-left:3px solid #e0b24a;padding-left:10px"><b>Always:</b> licensed agents only. Ask permission to record. Respect a clear no. Never pressure, rush or promise approval.</p>':'')+
+  c.innerHTML='<p class="micro" style="margin:0 0 6px;font-size:15px">'+esc(T0.n)+'</p>'+(T0.agent?'<p class="micro" style="margin:0 0 10px;font-size:14px;border-left:3px solid #e0b24a;padding-left:10px"><b>Always:</b> licensed agents only. Ask permission to record. Respect a clear no. Never pressure, rush or promise approval.</p>':'')+
    '<div style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="font-weight:800;font-size:15px;white-space:nowrap">Step '+(step+1)+' of '+n+'</span><div role="progressbar" aria-label="Call progress" aria-valuemin="0" aria-valuemax="'+n+'" aria-valuenow="'+step+'" style="flex:1;height:10px;border-radius:6px;background:var(--line,#2b3a55);overflow:hidden"><div style="width:'+pct+'%;height:100%;background:#4fd1a5"></div></div></div>'+
    '<h3 id="ezHead" tabindex="-1" style="font-size:22px;margin:0 0 10px">'+esc(s[0])+'</h3>'+
    '<div style="border:1px solid #e0b24a;background:rgba(224,178,74,.12);border-radius:12px;padding:16px;margin:0 0 12px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Say this:</span><div style="font-size:22px;line-height:1.5">&ldquo;'+esc(fill(s[1]))+'&rdquo;</div></div>'+
    '<div style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 16px"><span class="micro" style="display:block;font-weight:700;font-size:14px">Listen for:</span><div style="font-size:17px;line-height:1.5">'+esc(s[2])+'</div></div>'+
-   ''+(T0.id==='fe'?fePanel():'')+
+   ''+(T0.agent?fePanel():'')+
    '<div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;margin:0 0 12px"><button type="button" class="btn btn-ghost" id="ezPrev" style="min-height:60px;font-size:18px"'+(step===0?' disabled':'')+'>&lsaquo; Back</button><button type="button" class="btn btn-primary" id="ezNext" style="min-height:60px;font-size:20px"><b>'+(step===n-1?'Finish call':'Next &rsaquo;')+'</b></button></div>'+
    '<button type="button" class="btn btn-ghost" id="ezTricky" style="'+BIG+';min-height:56px"><b>They said something tricky</b><br><span class="micro" style="font-size:14px">Too expensive, need to think, ask my partner&hellip;</span></button>';
   wireFe(c);
